@@ -1,0 +1,5 @@
+﻿Boss Checklist lets you view a boss checklist while playing so you can progress through bosses as you can handle them. 
+
+The following mods are supported: ThoriumMod, Bluemagic, CalamityMod
+
+Adding more mods is easy, as the mod is hosted on github.
