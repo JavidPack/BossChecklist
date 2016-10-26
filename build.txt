@@ -10,4 +10,4 @@ includePDB = true
 side = Client
 buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config, lib\*, .gitignore
 weakReferences = ThoriumMod@1.2.10.10, Bluemagic@1.0.5, CalamityMod@1.1.5.942
-todoReferences = CrystiliumMod@1.0.5, SacredTools@0.22.1, Tremor@1.2.1.5
+todoReferences = CrystiliumMod@1.0.5, SacredTools@0.22.1, Tremor@1.2.1.5, Pumpking@1.1.1.7

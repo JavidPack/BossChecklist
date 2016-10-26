@@ -133,6 +133,9 @@ namespace BossChecklist.UI
 
 		//	new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => Tremor.CustomWorldData.),
 
+			new BossInfo("Pumpking Horseman", DukeFishron + 0.3f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedPumpkingHorseman),
+			new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
+
 		};
 
 		//			Calamity

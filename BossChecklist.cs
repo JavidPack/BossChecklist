@@ -23,6 +23,7 @@ namespace BossChecklist
 		internal bool calamityLoaded;
 		internal bool sacredToolsLoaded;
 		internal bool tremorLoaded;
+		internal bool pumpkingLoaded;
 
 		public BossChecklist()
 		{
@@ -91,6 +92,7 @@ namespace BossChecklist
 				crystiliumLoaded = ModLoader.GetMod("CrystiliumMod") != null;
 				sacredToolsLoaded = ModLoader.GetMod("SacredTools") != null;
 				tremorLoaded = ModLoader.GetMod("Tremor") != null;
+				pumpkingLoaded = ModLoader.GetMod("Pumpking") != null;
 			}
 			catch (Exception e)
 			{
