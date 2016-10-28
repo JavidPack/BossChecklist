@@ -74,8 +74,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thorium_v1.2.10.10">
-      <HintPath>lib\Thorium_v1.2.10.10.dll</HintPath>
+    <Reference Include="ThoriumMod_v1.2.10.14">
+      <HintPath>lib\ThoriumMod_v1.2.10.14.dll</HintPath>
     </Reference>
     <Reference Include="Tremor_v1.2.1.5">
       <HintPath>lib\Tremor_v1.2.1.5.dll</HintPath>
