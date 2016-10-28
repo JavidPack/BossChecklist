@@ -60,6 +60,9 @@
     <Reference Include="Microsoft.Xna.Framework.Xact">
       <HintPath>..\..\solutiondlls\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
+    <Reference Include="Pumpking_v1.1.1.7">
+      <HintPath>lib\Pumpking_v1.1.1.7.dll</HintPath>
+    </Reference>
     <Reference Include="SacredTools_v0.22.1">
       <HintPath>lib\SacredTools_v0.22.1.dll</HintPath>
     </Reference>

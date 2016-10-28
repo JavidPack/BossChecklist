@@ -109,33 +109,34 @@ namespace BossChecklist.UI
 			new BossInfo("Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust),
 			// TODO, all other event bosses...Maybe all pillars as 1?
 
+			// ThoriumMod
 			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird),
 			new BossInfo("The Queen Jellyfish", Skeletron - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedJelly),
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.),
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.),
+			new BossInfo("Granite Energy Storm", Skeletron + 0.2f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedStorm),
+			new BossInfo("The Star Scouter", Skeletron + 0.3f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedScout),
 			new BossInfo("Coznix, the Fallen Beholder", WallOfFlesh + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedFallenBeholder),
 			new BossInfo("The Lich", SkeletronPrime + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedLich),
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedPatchwerk),
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedSkelly),
 
+			// Bluemagic
 			new BossInfo("Abomination", DukeFishron + 0.2f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedAbomination),
 			new BossInfo("Spirit of Purity", Moonlord + 0.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedPuritySpirit),
-			
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.),
 
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => CrystiliumMod.CrystalWorld.),
-
+			// Calamity
 			new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
 			new BossInfo("Calamitas", Plantera - 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCalamitas),
 			new BossInfo("The Devourer of Gods", Golem - 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDevourerofGods),
 			new BossInfo("Plaguebringer Goliath", Golem + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPlaguebringerGoliath),
 			new BossInfo("Slime God", Skeletron + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedSlimeGod),
-
-		//	new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => Tremor.CustomWorldData.),
-
+			
+			// Pumpking
 			new BossInfo("Pumpking Horseman", DukeFishron + 0.3f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedPumpkingHorseman),
 			new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
 
+			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => Tremor.CustomWorldData.),
+						
+			//new BossInfo(, 0.1f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.),
+
+			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => CrystiliumMod.CrystalWorld.),
 		};
 
 		//			Calamity
