@@ -86,7 +86,7 @@ namespace BossChecklist.UI
 		public const float LunaticCultist = 13f;
 		public const float Moonlord = 14f;
 
-		BossInfo[] allBosses = new BossInfo[] {
+		List<BossInfo> allBosses = new BossInfo[] {
 			// Bosses -- Vanilla
 			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing),
 			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1),
@@ -138,6 +138,11 @@ namespace BossChecklist.UI
 
 			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => CrystiliumMod.CrystalWorld.),
 		};
+
+		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned)
+		{
+			allBosses.Add(new BossInfo(bossname, bossValue, () => true, bossDowned); 
+		}
 
 		//			Calamity
 		//	--King Slime

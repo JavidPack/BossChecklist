@@ -82,6 +82,13 @@ namespace BossChecklist
 				);
 			}
 		}
+
+		// An alternative approach to the weak reference approach is to do the following in YOUR mod in PostSetupContent
+		//Mod bossChecklist = ModLoader.GetMod("BossChecklist");
+		//if (bossChecklist != null)
+		//{
+		//	bossChecklist.Call("AddBoss", "My BossesName", 2.3f, (Func<bool>)(() => MyMod.MyModWorld.downedMyBoss));
+		//}
 		public override void PostSetupContent()
 		{
 			try
@@ -98,6 +105,33 @@ namespace BossChecklist
 			{
 				ErrorLogger.Log("BossChecklist PostSetupContent Error: " + e.StackTrace + e.Message);
 			}
+		}
+
+		// Messages:
+		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
+		public override object Call(params object[] args)
+		{
+			try
+			{
+				string message = args[0] as string;
+				if (message == "AddBoss")
+				{
+					string bossname = args[1] as string;
+					float bossValue = Convert.ToSingle(args[2]);
+					Func<bool> bossDowned = args[3] as Func<bool>;
+					bossChecklistUI.AddBoss(bossname, bossValue, bossDowned);
+					//RegisterButton(args[1] as Texture2D, args[2] as Action, args[3] as Func<string>);
+				}
+				else
+				{
+					ErrorLogger.Log("BossChecklist Call Error: Unknown Message: " + message);
+				}
+			}
+			catch (Exception e)
+			{
+				ErrorLogger.Log("BossChecklist Call Error: " + e.StackTrace + e.Message);
+			}
+			return null;
 		}
 	}
 }
