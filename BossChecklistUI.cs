@@ -5,16 +5,22 @@ using Terraria.ModLoader;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using System;
+using System.Collections.Generic;
+using Terraria.ID;
+using Terraria.ModLoader.UI;
 
 namespace BossChecklist.UI
 {
 	class BossChecklistUI : UIState
 	{
+		public UIHoverImageButton toggleButton;
 		public UIPanel checklistPanel;
 		public UIList checklistList;
 
 		float spacing = 8f;
 		public static bool visible = false;
+		public static bool showCompleted = true;
+		public string hoverText = "";
 
 		public override void OnInitialize()
 		{
@@ -22,14 +28,21 @@ namespace BossChecklist.UI
 			checklistPanel.SetPadding(10);
 			checklistPanel.Left.Pixels = 0;
 			checklistPanel.HAlign = 1f;
-			checklistPanel.Top.Set(0f, 0f);
+			checklistPanel.Top.Set(50f, 0f);
 			checklistPanel.Width.Set(250f, 0f);
-			checklistPanel.Height.Set(0f, 1f);
+			checklistPanel.Height.Set(-100, 1f);
 			checklistPanel.BackgroundColor = new Color(73, 94, 171);
 
+			toggleButton = new UIHoverImageButton(Main.itemTexture[ItemID.SuspiciousLookingEye], "Toggle Completed");
+			toggleButton.OnClick += ToggleButtonClicked;
+			toggleButton.Left.Pixels = spacing;
+			toggleButton.Top.Pixels = spacing;
+			checklistPanel.Append(toggleButton);
+
 			checklistList = new UIList();
+			checklistList.Top.Pixels = 32f + spacing;
 			checklistList.Width.Set(0f, 1f);
-			checklistList.Height.Set(0f, 1f);
+			checklistList.Height.Set(-32f, 1f);
 			checklistList.ListPadding = 12f;
 			checklistPanel.Append(checklistList);
 
@@ -47,6 +60,13 @@ namespace BossChecklist.UI
 			// TODO, game window resize issue
 		}
 
+		private void ToggleButtonClicked(UIMouseEvent evt, UIElement listeningElement)
+		{
+			Main.PlaySound(10, -1, -1, 1);
+			showCompleted = !showCompleted;
+			UpdateCheckboxes();
+		}
+
 		internal void UpdateCheckboxes()
 		{
 			checklistList.Clear();
@@ -55,9 +75,12 @@ namespace BossChecklist.UI
 			{
 				if (boss.available())
 				{
-					UICheckbox box = new UICheckbox(boss.progression, boss.name, 1f, false);
-					box.Selected = boss.downed();
-					checklistList.Add(box);
+					if (showCompleted || !boss.downed())
+					{
+						UICheckbox box = new UICheckbox(boss.progression, boss.name, 1f, false);
+						box.Selected = boss.downed();
+						checklistList.Add(box);
+					}
 				}
 			}
 		}
@@ -86,7 +109,7 @@ namespace BossChecklist.UI
 		public const float LunaticCultist = 13f;
 		public const float Moonlord = 14f;
 
-		List<BossInfo> allBosses = new BossInfo[] {
+		List<BossInfo> allBosses = new List<BossInfo> {
 			// Bosses -- Vanilla
 			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing),
 			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1),
@@ -109,7 +132,7 @@ namespace BossChecklist.UI
 			new BossInfo("Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust),
 			// TODO, all other event bosses...Maybe all pillars as 1?
 
-			// ThoriumMod
+			// ThoriumMod -- Working, missing some minibosses/bosses?
 			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird),
 			new BossInfo("The Queen Jellyfish", Skeletron - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedJelly),
 			new BossInfo("Granite Energy Storm", Skeletron + 0.2f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedStorm),
@@ -117,31 +140,36 @@ namespace BossChecklist.UI
 			new BossInfo("Coznix, the Fallen Beholder", WallOfFlesh + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedFallenBeholder),
 			new BossInfo("The Lich", SkeletronPrime + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedLich),
 
-			// Bluemagic
+			// Bluemagic -- Working 100%
 			new BossInfo("Abomination", DukeFishron + 0.2f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedAbomination),
 			new BossInfo("Spirit of Purity", Moonlord + 0.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedPuritySpirit),
+			new BossInfo("Spirit of Chaos", Moonlord + 1.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedChaosSpirit),
 
-			// Calamity
-			new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
-			new BossInfo("Calamitas", Plantera - 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCalamitas),
-			new BossInfo("The Devourer of Gods", Golem - 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDevourerofGods),
-			new BossInfo("Plaguebringer Goliath", Golem + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPlaguebringerGoliath),
-			new BossInfo("Slime God", Skeletron + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedSlimeGod),
+			// Calamity -- Not Working, Bools never set
+			//new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
+			//new BossInfo("Calamitas", Plantera - 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCalamitas),
+			//new BossInfo("The Devourer of Gods", Golem - 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDevourerofGods),
+			//new BossInfo("Plaguebringer Goliath", Golem + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPlaguebringerGoliath),
+			//new BossInfo("Slime God", Skeletron + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedSlimeGod),
 			
-			// Pumpking
-			new BossInfo("Pumpking Horseman", DukeFishron + 0.3f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedPumpkingHorseman),
-			new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
+			// SacredTools -- Working 100%
+			new BossInfo("Harpy", Skeletron + .3f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedHarpy),
+			new BossInfo("Harpy Queen, Raynare", Plantera - 0.1f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedRaynare),
+			new BossInfo("Abaddon", LunaticCultist + .5f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedAbaddon),
+			new BossInfo("Flare Serpent", Moonlord + .2f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.FlariumSpawns),
+			new BossInfo("Lunarians", Moonlord + .3f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedLunarians),
 
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => Tremor.CustomWorldData.),
-						
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.),
-
+			// CrystiliumMod -- Need exposed downedBoss bools
 			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => CrystiliumMod.CrystalWorld.),
+			
+			// Pumpking -- downedBoss bools incorrectly programed
+			//new BossInfo("Pumpking Horseman", DukeFishron + 0.3f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedPumpkingHorseman),
+			//new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
 		};
 
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned)
 		{
-			allBosses.Add(new BossInfo(bossname, bossValue, () => true, bossDowned); 
+			allBosses.Add(new BossInfo(bossname, bossValue, () => true, bossDowned));
 		}
 
 		//			Calamity

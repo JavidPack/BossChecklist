@@ -13,15 +13,16 @@ namespace BossChecklist
 		static internal BossChecklist instance;
 		private UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
-		private double pressedRandomBuffHotKeyTime;
+		private double pressedToggleChecklistHotKeyTime;
 
 		// Mods that have been added
 		internal bool vanillaLoaded = true;
 		internal bool thoriumLoaded;
 		internal bool bluemagicLoaded;
-		internal bool crystiliumLoaded;
-		internal bool calamityLoaded;
 		internal bool sacredToolsLoaded;
+		// Mods that need fixes
+		internal bool calamityLoaded;
+		internal bool crystiliumLoaded;
 		internal bool tremorLoaded;
 		internal bool pumpkingLoaded;
 
@@ -47,9 +48,9 @@ namespace BossChecklist
 		{
 			if (name == "Toggle Boss Checklist")
 			{
-				if (Math.Abs(Main.time - pressedRandomBuffHotKeyTime) > 60)
+				if (Math.Abs(Main.time - pressedToggleChecklistHotKeyTime) > 60)
 				{
-					pressedRandomBuffHotKeyTime = Main.time;
+					pressedToggleChecklistHotKeyTime = Main.time;
 
 					if (!BossChecklistUI.visible)
 					{
@@ -120,7 +121,7 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					bossChecklistUI.AddBoss(bossname, bossValue, bossDowned);
-					//RegisterButton(args[1] as Texture2D, args[2] as Action, args[3] as Func<string>);
+					return "Success";
 				}
 				else
 				{
@@ -131,7 +132,7 @@ namespace BossChecklist
 			{
 				ErrorLogger.Log("BossChecklist Call Error: " + e.StackTrace + e.Message);
 			}
-			return null;
+			return "Failure";
 		}
 	}
 }
