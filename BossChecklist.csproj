@@ -42,8 +42,8 @@
     <Reference Include="Bluemagic_v1.1">
       <HintPath>lib\Bluemagic_v1.1.dll</HintPath>
     </Reference>
-    <Reference Include="CalamityMod_v1.1.5.942">
-      <HintPath>lib\CalamityMod_v1.1.5.942.dll</HintPath>
+    <Reference Include="CalamityMod_v1.1.5.943">
+      <HintPath>lib\CalamityMod_v1.1.5.943.dll</HintPath>
     </Reference>
     <Reference Include="CrystiliumMod_v1.0.5">
       <HintPath>lib\CrystiliumMod_v1.0.5.dll</HintPath>
