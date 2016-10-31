@@ -157,7 +157,7 @@ namespace BossChecklist.UI
 			// CalamityMod.CalamityWorld.downedYharon
 			
 			// SacredTools -- Working 100%
-			new BossInfo("Harpy", Skeletron + .3f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedHarpy),
+			new BossInfo("Grand Harpy", Skeletron + .3f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedHarpy),
 			new BossInfo("Harpy Queen, Raynare", Plantera - 0.1f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedRaynare),
 			new BossInfo("Abaddon", LunaticCultist + .5f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedAbaddon),
 			new BossInfo("Flare Serpent", Moonlord + .2f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.FlariumSpawns),
