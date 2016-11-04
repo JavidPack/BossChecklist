@@ -48,6 +48,9 @@
     <Reference Include="CrystiliumMod_v1.0.5">
       <HintPath>lib\CrystiliumMod_v1.0.5.dll</HintPath>
     </Reference>
+    <Reference Include="JoostMod_v0.5.0.6">
+      <HintPath>lib\JoostMod_v0.5.0.6.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework">
       <HintPath>..\..\solutiondlls\Microsoft.Xna.Framework.dll</HintPath>
     </Reference>

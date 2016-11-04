@@ -20,6 +20,7 @@ namespace BossChecklist
 		internal bool thoriumLoaded;
 		internal bool bluemagicLoaded;
 		internal bool sacredToolsLoaded;
+		internal bool joostLoaded;
 		// Mods that need fixes
 		internal bool calamityLoaded;
 		internal bool crystiliumLoaded;
@@ -97,6 +98,7 @@ namespace BossChecklist
 				thoriumLoaded = ModLoader.GetMod("ThoriumMod") != null;
 				bluemagicLoaded = ModLoader.GetMod("Bluemagic") != null;
 				calamityLoaded = ModLoader.GetMod("CalamityMod") != null;
+				joostLoaded = ModLoader.GetMod("JoostMod") != null;
 				crystiliumLoaded = ModLoader.GetMod("CrystiliumMod") != null;
 				sacredToolsLoaded = ModLoader.GetMod("SacredTools") != null;
 				tremorLoaded = ModLoader.GetMod("Tremor") != null;
