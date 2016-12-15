@@ -39,17 +39,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bluemagic_v1.1">
-      <HintPath>lib\Bluemagic_v1.1.dll</HintPath>
-    </Reference>
-    <Reference Include="CalamityMod_v1.1.5.943">
-      <HintPath>lib\CalamityMod_v1.1.5.943.dll</HintPath>
-    </Reference>
-    <Reference Include="CrystiliumMod_v1.0.5">
-      <HintPath>lib\CrystiliumMod_v1.0.5.dll</HintPath>
-    </Reference>
-    <Reference Include="JoostMod_v0.5.0.6">
-      <HintPath>lib\JoostMod_v0.5.0.6.dll</HintPath>
+    <Reference Include="CalamityMod_v1.1.6.14">
+      <HintPath>lib\CalamityMod_v1.1.6.14.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework">
       <HintPath>..\..\solutiondlls\Microsoft.Xna.Framework.dll</HintPath>
@@ -63,12 +54,6 @@
     <Reference Include="Microsoft.Xna.Framework.Xact">
       <HintPath>..\..\solutiondlls\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
-    <Reference Include="Pumpking_v1.1.1.7">
-      <HintPath>lib\Pumpking_v1.1.1.7.dll</HintPath>
-    </Reference>
-    <Reference Include="SacredTools_v0.22.3">
-      <HintPath>lib\SacredTools_v0.22.3.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -77,16 +62,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ThoriumMod_v1.2.10.14">
-      <HintPath>lib\ThoriumMod_v1.2.10.14.dll</HintPath>
+    <Reference Include="ThoruimMod_v1.2.13.3">
+      <HintPath>lib\ThoruimMod_v1.2.13.3.dll</HintPath>
     </Reference>
-    <Reference Include="Tremor_v1.2.1.5">
-      <HintPath>lib\Tremor_v1.2.1.5.dll</HintPath>
+    <Reference Include="tModLoader">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoader.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BossChecklist.cs" />
     <Compile Include="BossChecklistUI.cs" />
+    <Compile Include="NPCs\ExamplePerson.cs" />
     <Compile Include="UICheckbox.cs" />
     <Compile Include="UIHoverImageButton.cs" />
   </ItemGroup>
@@ -95,17 +81,11 @@
     <Content Include="description.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Modding\tModLoader\src\tModLoader\Terraria.csproj">
-      <Project>{3996d5fa-6e59-4fe4-9f2b-40eeef9645d5}</Project>
-      <Name>Terraria</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\terraria\tModLoader v0.8.3.5.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\terraria\tModLoader.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

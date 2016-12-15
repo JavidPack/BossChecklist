@@ -2,7 +2,9 @@
 
 Toggle the checklist with the hotkey assigned to it in the settings. 
 
-The following mods are currently supported: ThoriumMod, Bluemagic, SacredTools, CalamityMod, JoostMod
+The following mods are currently supported: ThoriumMod, CalamityMod
+
+The following mods can be supported once they update: Bluemagic, SacredTools, JoostMod
 
 Adding more mods is easy, as the mod is hosted on github. If you would like a mod to be supported, please encourage the modder to add their mod to this mod.
 

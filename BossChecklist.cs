@@ -18,11 +18,11 @@ namespace BossChecklist
 		// Mods that have been added
 		internal bool vanillaLoaded = true;
 		internal bool thoriumLoaded;
-		internal bool bluemagicLoaded;
-		internal bool sacredToolsLoaded;
-		internal bool joostLoaded;
-		// Mods that need fixes
 		internal bool calamityLoaded;
+		// Mods that need fixes
+		internal bool joostLoaded;
+		internal bool sacredToolsLoaded;
+		internal bool bluemagicLoaded;
 		internal bool crystiliumLoaded;
 		internal bool tremorLoaded;
 		internal bool pumpkingLoaded;
@@ -58,7 +58,7 @@ namespace BossChecklist
 						bossChecklistUI.UpdateCheckboxes();
 					}
 					BossChecklistUI.visible = !BossChecklistUI.visible;
-
+					 
 					//BossChecklistUI
 				}
 			}
