@@ -11,6 +11,7 @@ namespace BossChecklist
 	public class BossChecklist : Mod
 	{
 		static internal BossChecklist instance;
+		internal static ModHotKey ToggleChecklistHotKey;
 		private UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
 		private double pressedToggleChecklistHotKeyTime;
@@ -19,48 +20,32 @@ namespace BossChecklist
 		internal bool vanillaLoaded = true;
 		internal bool thoriumLoaded;
 		internal bool calamityLoaded;
+		internal bool bluemagicLoaded;
 		// Mods that need fixes
 		internal bool joostLoaded;
 		internal bool sacredToolsLoaded;
-		internal bool bluemagicLoaded;
 		internal bool crystiliumLoaded;
 		internal bool tremorLoaded;
 		internal bool pumpkingLoaded;
 
 		public BossChecklist()
 		{
+			Properties = new ModProperties()
+			{
+				Autoload = true,
+			};
 		}
 
 		public override void Load()
 		{
 			instance = this;
-			RegisterHotKey("Toggle Boss Checklist", "P");
+			ToggleChecklistHotKey = RegisterHotKey("Toggle Boss Checklist", "P");
 			if (!Main.dedServ)
 			{
 				bossChecklistUI = new BossChecklistUI();
 				bossChecklistUI.Activate();
 				bossChecklistInterface = new UserInterface();
 				bossChecklistInterface.SetState(bossChecklistUI);
-			}
-		}
-
-
-		public override void HotKeyPressed(string name)
-		{
-			if (name == "Toggle Boss Checklist")
-			{
-				if (Math.Abs(Main.time - pressedToggleChecklistHotKeyTime) > 60)
-				{
-					pressedToggleChecklistHotKeyTime = Main.time;
-
-					if (!BossChecklistUI.visible)
-					{
-						bossChecklistUI.UpdateCheckboxes();
-					}
-					BossChecklistUI.visible = !BossChecklistUI.visible;
-					 
-					//BossChecklistUI
-				}
 			}
 		}
 

@@ -144,9 +144,9 @@ namespace BossChecklist.UI
 			new BossInfo("The Ragnarok", Moonlord + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedRealityBreaker),
 
 			// Bluemagic -- Working 100%
-			//new BossInfo("Abomination", DukeFishron + 0.2f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedAbomination),
-			//new BossInfo("Spirit of Purity", Moonlord + 0.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedPuritySpirit),
-			//new BossInfo("Spirit of Chaos", Moonlord + 1.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedChaosSpirit),
+			new BossInfo("Abomination", DukeFishron + 0.2f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedAbomination),
+			new BossInfo("Spirit of Purity", Moonlord + 0.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedPuritySpirit),
+			new BossInfo("Spirit of Chaos", Moonlord + 1.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedChaosSpirit),
 
 			// Calamity -- Looks like some bosses are still WIP?
 			new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
