@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using System;
+using Terraria.GameContent.UI.Chat;
+using Terraria;
 
 namespace BossChecklist.UI
 {
@@ -13,6 +15,8 @@ namespace BossChecklist.UI
 		static Texture2D checkmarkTexture = ((BossChecklist)ModLoader.GetMod("BossChecklist")).GetTexture("checkMark");
 		public event EventHandler SelectedChanged;
 		float order = 0;
+		//public Item spawnItem;
+		public int spawnItemID;
 
 		private bool selected = false;
 		public bool Selected
@@ -52,6 +56,21 @@ namespace BossChecklist.UI
 				spriteBatch.Draw(checkmarkTexture, pos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
 			base.DrawSelf(spriteBatch);
+
+			if (IsMouseHovering && spawnItemID != 0)
+			{
+				BossChecklistUI.hoverText = "Spawn using: [i:" + spawnItemID + "]";
+				//BossChecklistUI.hoverText = "Spawn using: " + ItemTagHandler.GenerateTag(spawnItem);
+
+				// other approaches, for reference
+				//  Main.hoverItemName = "Spawn using: " + ItemTagHandler.GenerateTag(spawnItem); // doesn't work for tags.
+				//  Dont use MouseText since it doesn't calculate position
+				//	Main.instance.MouseText("Spawn using: " + ItemTagHandler.GenerateTag(spawnItem));
+
+				//	Main.toolTip = new Item();
+				//  Main.toolTip.SetDefaults(1);
+				//	Main.toolTip.name = "Spawn using: " + ItemTagHandler.GenerateTag(spawnItem);
+			}
 		}
 
 		public override int CompareTo(object obj)
@@ -62,8 +81,3 @@ namespace BossChecklist.UI
 	}
 }
 
-//public string Text
-//{
-//    get { return label.Text; }
-//    set { label.Text = value; }
-//}

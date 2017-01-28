@@ -20,7 +20,7 @@ namespace BossChecklist.UI
 		float spacing = 8f;
 		public static bool visible = false;
 		public static bool showCompleted = true;
-		public string hoverText = "";
+		public static string hoverText = "";
 
 		public override void OnInitialize()
 		{
@@ -41,14 +41,16 @@ namespace BossChecklist.UI
 
 			checklistList = new UIList();
 			checklistList.Top.Pixels = 32f + spacing;
-			checklistList.Width.Set(0f, 1f);
+			checklistList.Width.Set(-25f, 1f);
 			checklistList.Height.Set(-32f, 1f);
 			checklistList.ListPadding = 12f;
 			checklistPanel.Append(checklistList);
 
-			UIScrollbar checklistListScrollbar = new UIScrollbar();
+			FixedUIScrollbar checklistListScrollbar = new FixedUIScrollbar();
 			checklistListScrollbar.SetView(100f, 1000f);
-			checklistListScrollbar.Height.Set(0f, 1f);
+			//checklistListScrollbar.Height.Set(0f, 1f);
+			checklistListScrollbar.Top.Pixels = 32f + spacing;
+			checklistListScrollbar.Height.Set(-32f - spacing, 1f);
 			checklistListScrollbar.HAlign = 1f;
 			checklistPanel.Append(checklistListScrollbar);
 			checklistList.SetScrollbar(checklistListScrollbar);
@@ -67,6 +69,23 @@ namespace BossChecklist.UI
 			UpdateCheckboxes();
 		}
 
+		//internal void ThorMess()
+		//{
+		//	Main.NewText("ThoriumMod.ThoriumWorld.downedScout " + ThoriumMod.ThoriumWorld.downedScout);
+		//}
+
+
+		//public bool ThoriumModdownedScout
+		//{
+		//	get { return ThoriumMod.ThoriumWorld.downedScout; }
+		//}
+
+		public bool ThoriumModDownedScout
+		{
+			get { return ThoriumMod.ThoriumWorld.downedScout; }
+		}
+		public bool CalamityDS => CalamityMod.CalamityWorld.downedDesertScourge;
+
 		internal void UpdateCheckboxes()
 		{
 			checklistList.Clear();
@@ -79,14 +98,54 @@ namespace BossChecklist.UI
 					{
 						UICheckbox box = new UICheckbox(boss.progression, boss.name, 1f, false);
 						box.Selected = boss.downed();
+						box.spawnItemID = boss.spawnItemID;
+						//box.spawnItem = new Item();
+						//box.spawnItem.SetDefaults(boss.spawnItemID);
 						checklistList.Add(box);
 					}
 				}
 			}
+
+			// Binding failure
+			//if (BossChecklist.instance.thoriumLoaded)
+			//{
+			//	Main.NewText("ThoriumMod.ThoriumWorld.downedScout " + ThoriumMod.ThoriumWorld.downedScout);
+			//}
+
+			//works, ugly
+			//if (BossChecklist.instance.thoriumLoaded)
+			//{
+			//	ThorMess();
+			//}
+
+			if (BossChecklist.instance.thoriumLoaded)
+			{
+				if (ThoriumModDownedScout)
+				{
+					// Add items here
+				}
+			}
+			if (BossChecklist.instance.calamityLoaded)
+			{
+				Main.NewText("ThoriumMod.calamityLoaded.sd " + CalamityDS);
+			}
+
+
+			/*public override void NPCLoot(NPC npc)
+		{
+			if (Fargowiltas.instance.thoriumLoaded)
+			{
+				if(Main.expertMode)
+				{
+					if (npc.type == ModLoader.GetMod("ThoriumMod").NPCType("PhaseBeing"))
+					{
+					FargoWorld.downedFallenBeholder = true;
+					}*/
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
+			hoverText = "";
 			Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
 			if (checklistPanel.ContainsPoint(MousePosition))
 			{
@@ -111,20 +170,20 @@ namespace BossChecklist.UI
 
 		List<BossInfo> allBosses = new List<BossInfo> {
 			// Bosses -- Vanilla
-			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing),
-			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1),
-			new BossInfo("Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2),
-			new BossInfo("Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee),
-			new BossInfo("Skeletron", Skeletron, () => true, () => NPC.downedBoss3),
-			new BossInfo("Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode),
-			new BossInfo("The Twins", TheTwins, () => true, () => NPC.downedMechBoss2),
-			new BossInfo("The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1),
-			new BossInfo("Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3),
+			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing) {spawnItemID = ItemID.SlimeCrown },
+			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1) {spawnItemID = ItemID.SuspiciousLookingEye },
+			new BossInfo("Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2)  {spawnItemID = ItemID.WormFood },
+			new BossInfo("Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee) {spawnItemID = ItemID.Abeemination },
+			new BossInfo("Skeletron", Skeletron, () => true, () => NPC.downedBoss3)  {spawnItemID = ItemID.ClothierVoodooDoll },
+			new BossInfo("Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode)  {spawnItemID = ItemID.GuideVoodooDoll },
+			new BossInfo("The Twins", TheTwins, () => true, () => NPC.downedMechBoss2){spawnItemID = ItemID.MechanicalEye },
+			new BossInfo("The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1) {spawnItemID = ItemID.MechanicalWorm },
+			new BossInfo("Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3) {spawnItemID = ItemID.MechanicalSkull },
 			new BossInfo("Plantera", Plantera, () => true, () => NPC.downedPlantBoss),
-			new BossInfo("Golem", Golem, () => true, () => NPC.downedGolemBoss),
-			new BossInfo("Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron),
+			new BossInfo("Golem", Golem, () => true, () => NPC.downedGolemBoss)  {spawnItemID = ItemID.LihzahrdPowerCell },
+			new BossInfo("Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron) {spawnItemID = ItemID.TruffleWorm },
 			new BossInfo("Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist),
-			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord),
+			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord)  {spawnItemID = ItemID.CelestialSigil },
 			// Event Bosses -- Vanilla
 			new BossInfo("Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula),
 			new BossInfo("Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex),
@@ -242,6 +301,7 @@ namespace BossChecklist.UI
 		internal Func<bool> downed;
 		internal string name;
 		internal float progression;
+		internal int spawnItemID;
 
 		public BossInfo(string name, float progression, Func<bool> available, Func<bool> downed)
 		{
@@ -249,6 +309,25 @@ namespace BossChecklist.UI
 			this.progression = progression;
 			this.available = available;
 			this.downed = downed;
+		}
+	}
+
+	public class FixedUIScrollbar : UIScrollbar
+	{
+		protected override void DrawSelf(SpriteBatch spriteBatch)
+		{
+			UserInterface temp = UserInterface.ActiveInstance;
+			UserInterface.ActiveInstance = BossChecklist.bossChecklistInterface;
+			base.DrawSelf(spriteBatch);
+			UserInterface.ActiveInstance = temp;
+		}
+
+		public override void MouseDown(UIMouseEvent evt)
+		{
+			UserInterface temp = UserInterface.ActiveInstance;
+			UserInterface.ActiveInstance = BossChecklist.bossChecklistInterface;
+			base.MouseDown(evt);
+			UserInterface.ActiveInstance = temp;
 		}
 	}
 }

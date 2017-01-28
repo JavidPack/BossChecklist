@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using Terraria.UI;
 using Terraria.DataStructures;
 using BossChecklist.UI;
+using Microsoft.Xna.Framework;
+using Terraria.UI.Chat;
+using System.Linq;
+using Terraria.GameContent.UI.Chat;
 
 namespace BossChecklist
 {
@@ -12,7 +16,7 @@ namespace BossChecklist
 	{
 		static internal BossChecklist instance;
 		internal static ModHotKey ToggleChecklistHotKey;
-		private UserInterface bossChecklistInterface;
+		internal static UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
 		private double pressedToggleChecklistHotKeyTime;
 
@@ -49,6 +53,8 @@ namespace BossChecklist
 			}
 		}
 
+		int lastSeenScreenWidth;
+		int lastSeenScreenHeight;
 		public override void ModifyInterfaceLayers(List<MethodSequenceListItem> layers)
 		{
 			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
@@ -60,8 +66,47 @@ namespace BossChecklist
 					{
 						if (BossChecklistUI.visible)
 						{
+							if (lastSeenScreenWidth != Main.screenWidth || lastSeenScreenHeight != Main.screenHeight)
+							{
+								bossChecklistInterface.Recalculate();
+								lastSeenScreenWidth = Main.screenWidth;
+								lastSeenScreenHeight = Main.screenHeight;
+							}
+
 							bossChecklistInterface.Update(Main._drawInterfaceGameTime);
 							bossChecklistUI.Draw(Main.spriteBatch);
+
+							if (BossChecklistUI.hoverText != "")
+							{
+								float x = Main.fontMouseText.MeasureString(BossChecklistUI.hoverText).X;
+								Vector2 vector = new Vector2((float)Main.mouseX, (float)Main.mouseY) + new Vector2(16f, 16f);
+								if (vector.Y > (float)(Main.screenHeight - 30))
+								{
+									vector.Y = (float)(Main.screenHeight - 30);
+								}
+								if (vector.X > (float)(Main.screenWidth - x - 30))
+								{
+									vector.X = (float)(Main.screenWidth - x - 30);
+								}
+								//Utils.DrawBorderStringFourWay(Main.spriteBatch, Main.fontMouseText, BossChecklistUI.hoverText,
+								//	vector.X, vector.Y, new Color((int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor), Color.Black, Vector2.Zero, 1f);
+								//	Utils.draw
+
+								//ItemTagHandler.GenerateTag(item)
+								int hoveredSnippet = -1;
+								TextSnippet[] array = ChatManager.ParseMessage(BossChecklistUI.hoverText, Color.White);
+								ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, array,
+									vector, 0f, Vector2.Zero, Vector2.One, out hoveredSnippet/*, -1f, 2f*/);
+
+								if (hoveredSnippet > -1)
+								{
+									array[hoveredSnippet].OnHover();
+									//if (Main.mouseLeft && Main.mouseLeftRelease)
+									//{
+									//	array[hoveredSnippet].OnClick();
+									//}
+								}
+							}
 						}
 						return true;
 					},
