@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using System;
 using System.Collections.Generic;
 using Terraria.ID;
-using Terraria.ModLoader.UI;
 
 namespace BossChecklist.UI
 {
@@ -68,23 +66,12 @@ namespace BossChecklist.UI
 			showCompleted = !showCompleted;
 			UpdateCheckboxes();
 		}
-
-		//internal void ThorMess()
-		//{
-		//	Main.NewText("ThoriumMod.ThoriumWorld.downedScout " + ThoriumMod.ThoriumWorld.downedScout);
-		//}
-
-
-		//public bool ThoriumModdownedScout
-		//{
-		//	get { return ThoriumMod.ThoriumWorld.downedScout; }
-		//}
-
-		public bool ThoriumModDownedScout
+		
+		/*public bool ThoriumModDownedScout
 		{
 			get { return ThoriumMod.ThoriumWorld.downedScout; }
 		}
-		public bool CalamityDS => CalamityMod.CalamityWorld.downedDesertScourge;
+		public bool CalamityDS => CalamityMod.CalamityWorld.downedDesertScourge;*/
 
 		internal void UpdateCheckboxes()
 		{
@@ -106,41 +93,13 @@ namespace BossChecklist.UI
 				}
 			}
 
-			// Binding failure
 			//if (BossChecklist.instance.thoriumLoaded)
 			//{
-			//	Main.NewText("ThoriumMod.ThoriumWorld.downedScout " + ThoriumMod.ThoriumWorld.downedScout);
+			//	if (ThoriumModDownedScout)
+			//	{
+			//		// Add items here
+			//	}
 			//}
-
-			//works, ugly
-			//if (BossChecklist.instance.thoriumLoaded)
-			//{
-			//	ThorMess();
-			//}
-
-			if (BossChecklist.instance.thoriumLoaded)
-			{
-				if (ThoriumModDownedScout)
-				{
-					// Add items here
-				}
-			}
-			if (BossChecklist.instance.calamityLoaded)
-			{
-				Main.NewText("ThoriumMod.calamityLoaded.sd " + CalamityDS);
-			}
-
-
-			/*public override void NPCLoot(NPC npc)
-		{
-			if (Fargowiltas.instance.thoriumLoaded)
-			{
-				if(Main.expertMode)
-				{
-					if (npc.type == ModLoader.GetMod("ThoriumMod").NPCType("PhaseBeing"))
-					{
-					FargoWorld.downedFallenBeholder = true;
-					}*/
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
