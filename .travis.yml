@@ -1,4 +1,4 @@
-language: csharp
+language: c
 
 notifications:
   email: false
@@ -21,6 +21,7 @@ branches:
 script:
   - pwd
   - ls
+  - git tag
   
 #  - download mod, check latest version
 # return non zero to fail
@@ -30,11 +31,11 @@ after_success:
   # CREATE GIT TAG
   - git config --global user.email "builds@travis-ci.com"
   - git config --global user.name "Travis CI"
-  - export GIT_TAG=build-$TRAVIS_BRANCH-$(date -u "+%Y-%m-%d")-$TRAVIS_BUILD_NUMBER
-  - echo -n $GIT_TAG > public/version
-  - git commit -m "Set build VERSION number" public/version
-  - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
-  - git push --quiet https://$GITHUBKEY@github.com/dev-confidence/example-backend-api $GIT_TAG > /dev/null 2>&1
+  - export GIT_TAG=v0.1.1.7
+#  - echo -n $GIT_TAG > public/version
+#  - git commit -m "Set build VERSION number" public/version
+  - git tag $GIT_TAG
+  - git push --quiet https://$GH_REPO_TOKEN@github.com/JavidPack/BossChecklist $GIT_TAG > /dev/null 2>&1
 
 deploy:
   provider: releases
