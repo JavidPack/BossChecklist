@@ -13,7 +13,8 @@ echo "tags are $tags"
 
 version=`curl http://javid.ddns.net/tModLoader/tools/latestmodversionsimple.php?modname=BossChecklist`
 echo "Mod Browser version is $version"
-gitVersion=`git describe`
+gitVersion=`git describe --abbrev=0`
+echo "git version is $gitVersion"
 
 if [ "$version" = "$gitVersion" ]; then 
 	echo "Version does match, no need to push release";
