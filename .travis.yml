@@ -11,7 +11,6 @@ branches:
 env:
   global:
     - MODNAME: BossChecklist
-    - NEEDDEPLOY: DOESNOTNEEDDEPLOY
     
 script:
   - pwd
@@ -21,9 +20,7 @@ script:
   - ls
   - chmod +x AutoReleaseFromModBrowser.sh
   # fails if mod browser version already released to github
-  - export NEEDDEPLOY
   - ./AutoReleaseFromModBrowser.sh
-  - echo "NEEDDEPLOY is $NEEDDEPLOY"
 
 before_deploy:
   - wget -O $MODNAME.tmod http://javid.ddns.net/tModLoader/download.php?Down=mods/$MODNAME.tmod
@@ -37,4 +34,3 @@ deploy:
   skip_cleanup: true
   on:
     tags: false
-    condition: "$NEEDDEPLOY = NEEDSDEPLOY"

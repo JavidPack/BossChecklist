@@ -18,7 +18,6 @@ echo "git version is $gitVersion"
 
 if [ "$version" = "$gitVersion" ]; then 
 	echo "Version does match, no need to push release";
-	NEEDDEPLOY="DOESNOTNEEDDEPLOY"
 	exit 1;
 else 
 	echo "Version does not match, need to push release";
@@ -31,8 +30,6 @@ else
 	echo "3";
 	git push --quiet https://$GH_REPO_TOKEN@github.com/JavidPack/BossChecklist $version > /dev/null 2>&1
 	echo "4";
-	NEEDDEPLOY="NEEDSDEPLOY"
-	echo "NEEDDEPLOY is $NEEDDEPLOY"
 	exit 0;
 fi
 echo "Travis Script End"
