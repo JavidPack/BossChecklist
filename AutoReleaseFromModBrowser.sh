@@ -18,7 +18,7 @@ echo "git version is $gitVersion"
 
 if [ "$version" = "$gitVersion" ]; then 
 	echo "Version does match, no need to push release";
-	export NEEDDEPLOY=no
+	#export NEEDDEPLOY=no
 	exit 1;
 else 
 	echo "Version does not match, need to push release";
