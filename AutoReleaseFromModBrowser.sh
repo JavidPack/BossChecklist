@@ -31,7 +31,8 @@ else
 	echo "3";
 	git push --quiet https://$GH_REPO_TOKEN@github.com/JavidPack/BossChecklist $version > /dev/null 2>&1
 	echo "4";
-	NEEDDEPLOY=NEEDSDEPLOY
+	NEEDDEPLOY="NEEDSDEPLOY"
+	echo "NEEDDEPLOY is $NEEDDEPLOY"
 	exit 0;
 fi
 echo "Travis Script End"
