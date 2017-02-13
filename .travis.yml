@@ -22,6 +22,7 @@ script:
   - chmod +x AutoReleaseFromModBrowser.sh
   # fails if mod browser version already released to github
   - . AutoReleaseFromModBrowser.sh
+  - echo $Deploy
 
 before_deploy:
   - wget -O $MODNAME.tmod http://javid.ddns.net/tModLoader/download.php?Down=mods/$MODNAME.tmod
