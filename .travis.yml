@@ -41,7 +41,7 @@ script:
 #  - download mod, check latest version
 # return non zero to fail
 before_deploy:
-  - wget http://javid.ddns.net/tModLoader/download.php?Down=mods/BossChecklist.tmod
+  - wget -O BossChecklist.tmod http://javid.ddns.net/tModLoader/download.php?Down=mods/BossChecklist.tmod
   - ls
   
 # Generate and deploy documentation
