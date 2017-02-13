@@ -21,7 +21,8 @@ script:
   - ls
   - chmod +x AutoReleaseFromModBrowser.sh
   # fails if mod browser version already released to github
-  - . AutoReleaseFromModBrowser.sh
+  - export NEEDDEPLOY
+  - ./AutoReleaseFromModBrowser.sh
   - echo "NEEDDEPLOY is $NEEDDEPLOY"
 
 before_deploy:
