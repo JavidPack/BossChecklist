@@ -3,10 +3,10 @@
 echo "Travis Script Start"
 
 # 2nd run -- might not run?
-if [ "$TRAVIS_TAG" ]; then
-	echo "TRAVIS_TAG is set";
-	exit 0;
-fi
+#if [ "$TRAVIS_TAG" ]; then
+#	echo "TRAVIS_TAG is set";
+	#exit 0;
+#fi
 
 tags=`git tag`
 echo "tags are $tags"
@@ -18,7 +18,8 @@ echo "git version is $gitVersion"
 
 if [ "$version" = "$gitVersion" ]; then 
 	echo "Version does match, no need to push release";
-	exit 1;
+	Deploy=no
+	#exit 1;
 else 
 	echo "Version does not match, need to push release";
 	git config --global user.email "builds@travis-ci.com"
@@ -30,7 +31,8 @@ else
 	echo "3";
 	git push --quiet https://$GH_REPO_TOKEN@github.com/JavidPack/BossChecklist $version > /dev/null 2>&1
 	echo "4";
-	exit 0;
+	Deploy=yes
+	#exit 0;
 fi
 echo "Travis Script End"
 

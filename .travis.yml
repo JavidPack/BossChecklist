@@ -11,6 +11,7 @@ branches:
 env:
   global:
     - MODNAME: BossChecklist
+    - Deploy: no
     
 script:
   - pwd
@@ -20,7 +21,7 @@ script:
   - ls
   - chmod +x AutoReleaseFromModBrowser.sh
   # fails if mod browser version already released to github
-  - ./AutoReleaseFromModBrowser.sh
+  - . AutoReleaseFromModBrowser.sh
 
 before_deploy:
   - wget -O $MODNAME.tmod http://javid.ddns.net/tModLoader/download.php?Down=mods/$MODNAME.tmod
@@ -34,3 +35,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: false
+    condition: "$Deploy = yes"
