@@ -2,7 +2,7 @@
 
 echo "Travis Script Start"
 
-# 2nd run
+# 2nd run -- might not run?
 if [ "$TRAVIS_TAG" ]; then
 	echo "TRAVIS_TAG is set";
 	exit 0;
@@ -18,7 +18,7 @@ echo "git version is $gitVersion"
 
 if [ "$version" = "$gitVersion" ]; then 
 	echo "Version does match, no need to push release";
-	exit 0;
+	exit 1;
 else 
 	echo "Version does not match, need to push release";
 	git config --global user.email "builds@travis-ci.com"
