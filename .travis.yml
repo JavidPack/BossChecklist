@@ -11,7 +11,7 @@ branches:
 env:
   global:
     - MODNAME: BossChecklist
-    - NEEDDEPLOY: no
+    - NEEDDEPLOY: DOESNOTNEEDDEPLOY
     
 script:
   - pwd
@@ -36,4 +36,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: false
-    condition: "$NEEDDEPLOY = yes"
+    condition: "$NEEDDEPLOY = NEEDSDEPLOY"
