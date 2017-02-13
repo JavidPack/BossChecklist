@@ -8,13 +8,14 @@ if [ "$TRAVIS_TAG" ]; then
 	exit 0;
 fi
 
-
 tags=`git tag`
 echo "tags are $tags"
 
-#version=`curl http://javid.ddns.net/tModLoader/tools/latestmodversionsimple.php?modname=CheatSheet`
-echo "version is $version"
-if [ "$version" = "v0.2.5.13" ]; then 
+version=`curl http://javid.ddns.net/tModLoader/tools/latestmodversionsimple.php?modname=BossChecklist`
+echo "Mod Browser version is $version"
+gitVersion=`git describe`
+
+if [ "$version" = "$gitVersion" ]; then 
 	echo "Version does match, no need to push release";
 	exit 0;
 else 
