@@ -167,15 +167,15 @@ namespace BossChecklist.UI
 			new BossInfo("Spirit of Chaos", Moonlord + 1.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedChaosSpirit),
 
 			// Calamity -- Looks like some bosses are still WIP?
-			new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
-			new BossInfo("The Hive Mind", QueenBee + .51f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedHiveMind),
-			new BossInfo("The Perforator", QueenBee + .51f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPerforator),
-			new BossInfo("Slime God", Skeletron + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedSlimeGod),
-			new BossInfo("Cryogen", WallOfFlesh + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCryogen),
-			new BossInfo("Calamitas", Plantera - 0.3f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCalamitas),
-			new BossInfo("Plaguebringer Goliath", Golem + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPlaguebringer),
-			new BossInfo("The Devourer of Gods", Moonlord + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDoG),
-			new BossInfo("Jungle Dragon, Yharon", Moonlord + 1.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedYharon),
+			//new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
+			//new BossInfo("The Hive Mind", QueenBee + .51f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedHiveMind),
+			//new BossInfo("The Perforator", QueenBee + .51f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPerforator),
+			//new BossInfo("Slime God", Skeletron + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedSlimeGod),
+			//new BossInfo("Cryogen", WallOfFlesh + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCryogen),
+			//new BossInfo("Calamitas", Plantera - 0.3f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCalamitas),
+			//new BossInfo("Plaguebringer Goliath", Golem + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPlaguebringer),
+			//new BossInfo("The Devourer of Gods", Moonlord + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDoG),
+			//new BossInfo("Jungle Dragon, Yharon", Moonlord + 1.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedYharon),
 			// CalamityMod.CalamityWorld.downedYharon
 			
 			// SacredTools -- Working 100%
