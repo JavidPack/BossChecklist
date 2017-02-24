@@ -155,7 +155,8 @@ namespace BossChecklist
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
-					bossChecklistUI.AddBoss(bossname, bossValue, bossDowned);
+					if (!Main.dedServ)
+						bossChecklistUI.AddBoss(bossname, bossValue, bossDowned);
 					return "Success";
 				}
 				else
