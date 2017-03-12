@@ -23,14 +23,14 @@ namespace BossChecklist
 		// Mods that have been added manually
 		internal bool vanillaLoaded = true;
 		internal bool thoriumLoaded;
-		internal bool bluemagicLoaded;
 
 		// Mods with bosses that could use suppory, but need fixes in the tmod files.
 		//internal bool sacredToolsLoaded;
 		//internal bool crystiliumLoaded;
-		//internal bool tremorLoaded;
 
 		// Mods that have been added natively, no longer need code here.
+		//internal bool tremorLoaded;
+		//internal bool bluemagicLoaded;
 		//internal bool joostLoaded;
 		//internal bool calamityLoaded;
 		//internal bool pumpkingLoaded;
@@ -129,7 +129,7 @@ namespace BossChecklist
 			try
 			{
 				thoriumLoaded = ModLoader.GetMod("ThoriumMod") != null;
-				bluemagicLoaded = ModLoader.GetMod("Bluemagic") != null;
+				//bluemagicLoaded = ModLoader.GetMod("Bluemagic") != null;
 				//calamityLoaded = ModLoader.GetMod("CalamityMod") != null;
 				//joostLoaded = ModLoader.GetMod("JoostMod") != null;
 				//crystiliumLoaded = ModLoader.GetMod("CrystiliumMod") != null;
