@@ -167,7 +167,7 @@ namespace BossChecklist.UI
 			// TODO, all other event bosses...Maybe all pillars as 1?
 
 			// ThoriumMod -- Working, missing some minibosses/bosses?
-			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird,  $"Spawn during day by shooting a [i:{ModLoader.GetMod("ThoriumMod").ItemType("StormFlare")}] with a [i:{ModLoader.GetMod("ThoriumMod").ItemType("StrongFlareGun")}]"),
+			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird,  $"Spawn during day by shooting a [i:{ModLoader.GetMod("ThoriumMod")?.ItemType("StormFlare") ?? 0}] with a [i:{ModLoader.GetMod("ThoriumMod")?.ItemType("StrongFlareGun") ?? 0}]"),
 			new BossInfo("The Queen Jellyfish", Skeletron - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedJelly),
 			new BossInfo("Granite Energy Storm", Skeletron + 0.2f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedStorm),
 			new BossInfo("The Star Scouter", Skeletron + 0.3f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedScout),
