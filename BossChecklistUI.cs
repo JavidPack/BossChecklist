@@ -6,6 +6,8 @@ using Terraria.UI;
 using System;
 using System.Collections.Generic;
 using Terraria.ID;
+using Terraria.UI.Chat;
+using Terraria.ModLoader;
 
 namespace BossChecklist.UI
 {
@@ -66,7 +68,7 @@ namespace BossChecklist.UI
 			showCompleted = !showCompleted;
 			UpdateCheckboxes();
 		}
-		
+
 		/*public bool ThoriumModDownedScout
 		{
 			get { return ThoriumMod.ThoriumWorld.downedScout; }
@@ -83,11 +85,7 @@ namespace BossChecklist.UI
 				{
 					if (showCompleted || !boss.downed())
 					{
-						UICheckbox box = new UICheckbox(boss.progression, boss.name, 1f, false);
-						box.Selected = boss.downed();
-						box.spawnItemID = boss.spawnItemID;
-						//box.spawnItem = new Item();
-						//box.spawnItem.SetDefaults(boss.spawnItemID);
+						UIBossCheckbox box = new UIBossCheckbox(boss);
 						checklistList.Add(box);
 					}
 				}
@@ -102,6 +100,7 @@ namespace BossChecklist.UI
 			//}
 		}
 
+
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			hoverText = "";
@@ -109,6 +108,23 @@ namespace BossChecklist.UI
 			if (checklistPanel.ContainsPoint(MousePosition))
 			{
 				Main.player[Main.myPlayer].mouseInterface = true;
+			}
+		}
+
+		public TextSnippet hoveredTextSnipped;
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			base.Draw(spriteBatch);
+
+			// now we can draw after all other drawing.
+			if (hoveredTextSnipped != null)
+			{
+				hoveredTextSnipped.OnHover();
+				if (Main.mouseLeft && Main.mouseLeftRelease)
+				{
+					hoveredTextSnipped.OnClick();
+				}
+				hoveredTextSnipped = null;
 			}
 		}
 
@@ -129,29 +145,29 @@ namespace BossChecklist.UI
 
 		List<BossInfo> allBosses = new List<BossInfo> {
 			// Bosses -- Vanilla
-			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing) {spawnItemID = ItemID.SlimeCrown },
-			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1) {spawnItemID = ItemID.SuspiciousLookingEye },
-			new BossInfo("Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2)  {spawnItemID = ItemID.WormFood },
-			new BossInfo("Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee) {spawnItemID = ItemID.Abeemination },
-			new BossInfo("Skeletron", Skeletron, () => true, () => NPC.downedBoss3)  {spawnItemID = ItemID.ClothierVoodooDoll },
-			new BossInfo("Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode)  {spawnItemID = ItemID.GuideVoodooDoll },
-			new BossInfo("The Twins", TheTwins, () => true, () => NPC.downedMechBoss2){spawnItemID = ItemID.MechanicalEye },
-			new BossInfo("The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1) {spawnItemID = ItemID.MechanicalWorm },
-			new BossInfo("Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3) {spawnItemID = ItemID.MechanicalSkull },
-			new BossInfo("Plantera", Plantera, () => true, () => NPC.downedPlantBoss),
-			new BossInfo("Golem", Golem, () => true, () => NPC.downedGolemBoss)  {spawnItemID = ItemID.LihzahrdPowerCell },
-			new BossInfo("Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron) {spawnItemID = ItemID.TruffleWorm },
-			new BossInfo("Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist),
-			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord)  {spawnItemID = ItemID.CelestialSigil },
+			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing, $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain."),
+			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1,  $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP\nAchievement : [a:EYE_ON_YOU]"),
+			new BossInfo("Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2,  $"Use [i:{ItemID.WormFood}] or [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts or Shadow Orbs"),
+			new BossInfo("Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee,  $"Use [i:{ItemID.Abeemination}] or break Larva in Jungle"),
+			new BossInfo("Skeletron", Skeletron, () => true, () => NPC.downedBoss3,  $"Visit dungeon or use [i:{ItemID.ClothierVoodooDoll}] at night"),
+			new BossInfo("Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode  ,  $"Spawn by throwing [i:{ItemID.GuideVoodooDoll}] in lava in the Underworld. [c/FF0000:Starts Hardmode!]"),
+			new BossInfo("The Twins", TheTwins, () => true, () => NPC.downedMechBoss2,  $"Use [i:{ItemID.MechanicalEye}] at night to spawn"),
+			new BossInfo("The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1,  $"Use [i:{ItemID.MechanicalWorm}] at night to spawn"),
+			new BossInfo("Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3,  $"Use [i:{ItemID.MechanicalSkull}] at night to spawn"),
+			new BossInfo("Plantera", Plantera, () => true, () => NPC.downedPlantBoss,  $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated"),
+			new BossInfo("Golem", Golem, () => true, () => NPC.downedGolemBoss,  $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar"),
+			new BossInfo("Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron,  $"Fish in ocean using the [i:{ItemID.TruffleWorm}] bait"),
+			new BossInfo("Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist,  $"Kill the cultists outside the dungeon post-Golem"),
+			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord,  $"Use [i:{ItemID.CelestialSigil}] or defeat all 4 pillars"),
 			// Event Bosses -- Vanilla
-			new BossInfo("Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula),
-			new BossInfo("Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex),
-			new BossInfo("Solar Pillar", LunaticCultist +.3f, () => true, () => NPC.downedTowerSolar),
-			new BossInfo("Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust),
+			new BossInfo("Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo("Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo("Solar Pillar", LunaticCultist +.3f, () => true, () => NPC.downedTowerSolar,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo("Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
 			// TODO, all other event bosses...Maybe all pillars as 1?
 
 			// ThoriumMod -- Working, missing some minibosses/bosses?
-			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird),
+			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird,  $"Spawn during day by shooting a [i:{ModLoader.GetMod("ThoriumMod").ItemType("StormFlare")}] with a [i:{ModLoader.GetMod("ThoriumMod").ItemType("StrongFlareGun")}]"),
 			new BossInfo("The Queen Jellyfish", Skeletron - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedJelly),
 			new BossInfo("Granite Energy Storm", Skeletron + 0.2f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedStorm),
 			new BossInfo("The Star Scouter", Skeletron + 0.3f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedScout),
@@ -198,9 +214,9 @@ namespace BossChecklist.UI
 			//new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
 		};
 
-		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned)
+		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
 		{
-			allBosses.Add(new BossInfo(bossname, bossValue, () => true, bossDowned));
+			allBosses.Add(new BossInfo(bossname, bossValue, () => true, bossDowned, bossInfo));
 		}
 
 		//			Calamity
@@ -261,14 +277,16 @@ namespace BossChecklist.UI
 		internal Func<bool> downed;
 		internal string name;
 		internal float progression;
-		internal int spawnItemID;
+		//internal int spawnItemID;
+		internal string info;
 
-		public BossInfo(string name, float progression, Func<bool> available, Func<bool> downed)
+		public BossInfo(string name, float progression, Func<bool> available, Func<bool> downed, string info = null)
 		{
 			this.name = name;
 			this.progression = progression;
 			this.available = available;
 			this.downed = downed;
+			this.info = info;
 		}
 	}
 

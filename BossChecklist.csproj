@@ -70,6 +70,7 @@
     <Compile Include="BossChecklist.cs" />
     <Compile Include="BossChecklistPlayer.cs" />
     <Compile Include="BossChecklistUI.cs" />
+    <Compile Include="UIBossCheckbox.cs" />
     <Compile Include="UICheckbox.cs" />
     <Compile Include="UIHoverImageButton.cs" />
   </ItemGroup>

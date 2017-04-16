@@ -159,6 +159,16 @@ namespace BossChecklist
 						bossChecklistUI.AddBoss(bossname, bossValue, bossDowned);
 					return "Success";
 				}
+				else if (message == "AddBossWithInfo")
+				{
+					string bossname = args[1] as string;
+					float bossValue = Convert.ToSingle(args[2]);
+					Func<bool> bossDowned = args[3] as Func<bool>;
+					string bossInfo = args[4] as string;
+					if (!Main.dedServ)
+						bossChecklistUI.AddBoss(bossname, bossValue, bossDowned, bossInfo);
+					return "Success";
+				}
 				else
 				{
 					ErrorLogger.Log("BossChecklist Call Error: Unknown Message: " + message);

@@ -16,7 +16,7 @@ namespace BossChecklist.UI
 		public event EventHandler SelectedChanged;
 		float order = 0;
 		//public Item spawnItem;
-		public int spawnItemID;
+		//public int spawnItemID;
 
 		private bool selected = false;
 		public bool Selected
@@ -51,26 +51,14 @@ namespace BossChecklist.UI
 			CalculatedStyle innerDimensions = base.GetInnerDimensions();
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
 
+			//Rectangle hitbox = GetInnerDimensions().ToRectangle();
+			//Main.spriteBatch.Draw(Main.magicPixel, hitbox, Color.Red * 0.6f);
+
 			spriteBatch.Draw(checkboxTexture, pos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 			if (Selected)
 				spriteBatch.Draw(checkmarkTexture, pos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
 			base.DrawSelf(spriteBatch);
-
-			if (IsMouseHovering && spawnItemID != 0)
-			{
-				BossChecklistUI.hoverText = "Spawn using: [i:" + spawnItemID + "]";
-				//BossChecklistUI.hoverText = "Spawn using: " + ItemTagHandler.GenerateTag(spawnItem);
-
-				// other approaches, for reference
-				//  Main.hoverItemName = "Spawn using: " + ItemTagHandler.GenerateTag(spawnItem); // doesn't work for tags.
-				//  Dont use MouseText since it doesn't calculate position
-				//	Main.instance.MouseText("Spawn using: " + ItemTagHandler.GenerateTag(spawnItem));
-
-				//	Main.toolTip = new Item();
-				//  Main.toolTip.SetDefaults(1);
-				//	Main.toolTip.name = "Spawn using: " + ItemTagHandler.GenerateTag(spawnItem);
-			}
 		}
 
 		public override int CompareTo(object obj)
