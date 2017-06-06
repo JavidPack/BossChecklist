@@ -65,7 +65,7 @@ namespace BossChecklist.UI
 			{
 				string info = boss.info ?? "No info available";
 				int hoveredSnippet = -1;
-				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White);
+				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);
 
 				for (int i = 0; i < ChatManager.ShadowDirections.Length; i++)

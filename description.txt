@@ -1,11 +1,9 @@
 ﻿Boss Checklist lets you view a boss checklist while playing so you can progress through bosses as you can handle them. 
 
-Toggle the checklist with the hotkey assigned to it in the settings. 
+Toggle the checklist with the hotkey assigned to it in the settings. Visit Settings->Controls->Keybindings to set or check the current hotkey
 
-The following mods are currently supported: ThoriumMod, CalamityMod, Bluemagic
+Most popular mods are supported.
 
-The following mods can be supported once they update: SacredTools, JoostMod
-
-Adding more mods is easy, as the mod is hosted on github. If you would like a mod to be supported, please encourage the modder to add their mod to this mod.
+If you would like a mod to be supported, please encourage the modder to add support to this mod.
 
 Future Feature ideas: Minibosses filter, Town NPC checklist, more supported mods, summon help, whatever else by popular demand.

@@ -10,6 +10,8 @@ using Terraria.UI.Chat;
 using System.Linq;
 using Terraria.GameContent.UI.Chat;
 
+// TODO: Kill all npc checklist
+// TODO: Currently have all town npc checklist
 namespace BossChecklist
 {
 	public class BossChecklist : Mod
@@ -58,12 +60,12 @@ namespace BossChecklist
 
 		int lastSeenScreenWidth;
 		int lastSeenScreenHeight;
-		public override void ModifyInterfaceLayers(List<MethodSequenceListItem> layers)
+		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
 			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
 			if (MouseTextIndex != -1)
 			{
-				layers.Insert(MouseTextIndex, new MethodSequenceListItem(
+				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
 					"BossChecklist: Boss Checklist",
 					delegate
 					{
@@ -97,7 +99,7 @@ namespace BossChecklist
 
 								//ItemTagHandler.GenerateTag(item)
 								int hoveredSnippet = -1;
-								TextSnippet[] array = ChatManager.ParseMessage(BossChecklistUI.hoverText, Color.White);
+								TextSnippet[] array = ChatManager.ParseMessage(BossChecklistUI.hoverText, Color.White).ToArray();
 								ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, array,
 									vector, 0f, Vector2.Zero, Vector2.One, out hoveredSnippet/*, -1f, 2f*/);
 
@@ -113,7 +115,7 @@ namespace BossChecklist
 						}
 						return true;
 					},
-					null)
+					InterfaceScaleType.UI)
 				);
 			}
 		}
