@@ -47,6 +47,12 @@ namespace BossChecklist
 
 		public override void Load()
 		{
+			// Too many people are downloading 0.10 versions on 0.9....
+			if (ModLoader.version < new Version(0, 10))
+			{
+				throw new Exception("\nThis mod uses functionality only present in the latest tModLoader. Please update tModLoader to use this mod\n\n");
+			}
+
 			instance = this;
 			ToggleChecklistHotKey = RegisterHotKey("Toggle Boss Checklist", "P");
 			if (!Main.dedServ)

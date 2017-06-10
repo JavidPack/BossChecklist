@@ -1,5 +1,5 @@
 ﻿author = jopojelly
-version = 0.1.3
+version = 0.1.3.1
 displayName = Boss Checklist
 homepage = http://forums.terraria.org/index.php?threads/boss-checklist-in-game-progression-checklist.50668/
 hideCode = false
@@ -9,6 +9,3 @@ languageVersion = 6
 includePDB = true
 notworkingside = Client
 buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config, lib\*, .gitignore, .git\*, .travis.yml
-weakReferences = ThoriumMod@1.3.1.6
-noSupportYet = CrystiliumMod, SacredTools
-supportThroughCall = JoostMod, Pumpking, CalamityMod, Bluemagic, Tremor
