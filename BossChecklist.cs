@@ -24,14 +24,14 @@ namespace BossChecklist
 
 		// Mods that have been added manually
 		internal bool vanillaLoaded = true;
-		internal bool thoriumLoaded;
+		//internal bool thoriumLoaded;
 
 		// Mods with bosses that could use suppory, but need fixes in the tmod files.
 		//internal bool sacredToolsLoaded;
 		//internal bool crystiliumLoaded;
 
 		// Mods that have been added natively, no longer need code here.
-		//internal bool tremorLoaded;
+		internal static bool tremorLoaded;
 		//internal bool bluemagicLoaded;
 		//internal bool joostLoaded;
 		//internal bool calamityLoaded;
@@ -52,9 +52,11 @@ namespace BossChecklist
 			{
 				throw new Exception("\nThis mod uses functionality only present in the latest tModLoader. Please update tModLoader to use this mod\n\n");
 			}
-
 			instance = this;
 			ToggleChecklistHotKey = RegisterHotKey("Toggle Boss Checklist", "P");
+
+			tremorLoaded = ModLoader.GetMod("Tremor") != null;
+
 			if (!Main.dedServ)
 			{
 				bossChecklistUI = new BossChecklistUI();
@@ -62,6 +64,7 @@ namespace BossChecklist
 				bossChecklistInterface = new UserInterface();
 				bossChecklistInterface.SetState(bossChecklistUI);
 			}
+
 		}
 
 		int lastSeenScreenWidth;
@@ -136,13 +139,12 @@ namespace BossChecklist
 		{
 			try
 			{
-				thoriumLoaded = ModLoader.GetMod("ThoriumMod") != null;
+				//thoriumLoaded = ModLoader.GetMod("ThoriumMod") != null;
 				//bluemagicLoaded = ModLoader.GetMod("Bluemagic") != null;
 				//calamityLoaded = ModLoader.GetMod("CalamityMod") != null;
 				//joostLoaded = ModLoader.GetMod("JoostMod") != null;
 				//crystiliumLoaded = ModLoader.GetMod("CrystiliumMod") != null;
 				//sacredToolsLoaded = ModLoader.GetMod("SacredTools") != null;
-				//tremorLoaded = ModLoader.GetMod("Tremor") != null;
 				//pumpkingLoaded = ModLoader.GetMod("Pumpking") != null;
 			}
 			catch (Exception e)

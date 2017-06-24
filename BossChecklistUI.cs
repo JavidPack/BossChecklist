@@ -60,6 +60,7 @@ namespace BossChecklist.UI
 			Append(checklistPanel);
 
 			// TODO, game window resize issue
+			InitializeVanillaBosses();
 		}
 
 		private void ToggleButtonClicked(UIMouseEvent evt, UIElement listeningElement)
@@ -143,7 +144,11 @@ namespace BossChecklist.UI
 		public const float LunaticCultist = 13f;
 		public const float Moonlord = 14f;
 
-		List<BossInfo> allBosses = new List<BossInfo> {
+		List<BossInfo> allBosses;
+
+		private void InitializeVanillaBosses()
+		{
+			allBosses = new List<BossInfo> {
 			// Bosses -- Vanilla
 			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing, $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain."),
 			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1,  $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP\nAchievement : [a:EYE_ON_YOU]"),
@@ -158,7 +163,7 @@ namespace BossChecklist.UI
 			new BossInfo("Golem", Golem, () => true, () => NPC.downedGolemBoss,  $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar"),
 			new BossInfo("Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron,  $"Fish in ocean using the [i:{ItemID.TruffleWorm}] bait"),
 			new BossInfo("Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist,  $"Kill the cultists outside the dungeon post-Golem"),
-			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord,  $"Use [i:{ItemID.CelestialSigil}] or defeat all 4 pillars"),
+			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord,  $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}"),
 			// Event Bosses -- Vanilla
 			new BossInfo("Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
 			new BossInfo("Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
@@ -214,7 +219,8 @@ namespace BossChecklist.UI
 			// Pumpking -- downedBoss bools incorrectly programed
 			//new BossInfo("Pumpking Horseman", DukeFishron + 0.3f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedPumpkingHorseman),
 			//new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
-		};
+			};
+		}
 
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
 		{
