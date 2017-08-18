@@ -39,10 +39,6 @@ namespace BossChecklist
 
 		public BossChecklist()
 		{
-			Properties = new ModProperties()
-			{
-				Autoload = true,
-			};
 		}
 
 		public override void Load()
