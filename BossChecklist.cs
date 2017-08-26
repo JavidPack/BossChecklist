@@ -60,7 +60,13 @@ namespace BossChecklist
 				bossChecklistInterface = new UserInterface();
 				bossChecklistInterface.SetState(bossChecklistUI);
 			}
+		}
 
+		public override void Unload()
+		{
+			instance = null;
+			ToggleChecklistHotKey = null;
+			bossChecklistInterface = null;
 		}
 
 		int lastSeenScreenWidth;
