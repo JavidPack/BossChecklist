@@ -20,6 +20,10 @@ namespace BossChecklist.UI
 			Height.Pixels = 15;
 
 			checkbox = new UICheckbox(boss.progression, boss.name, 1f, false);
+			if (boss.type == BossChecklistType.Event)
+				checkbox.TextColor = Color.Blue;
+			if (boss.type == BossChecklistType.MiniBoss)
+				checkbox.TextColor = Color.Yellow;
 			checkbox.Selected = boss.downed();
 			//checkbox.spawnItemID = boss.spawnItemID;
 			Append(checkbox);

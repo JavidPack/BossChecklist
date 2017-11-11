@@ -13,13 +13,17 @@ namespace BossChecklist.UI
 {
 	class BossChecklistUI : UIState
 	{
-		public UIHoverImageButton toggleButton;
+		public UIHoverImageButton toggleCompletedButton;
+		public UIHoverImageButton toggleMiniBossButton;
+		public UIHoverImageButton toggleEventButton;
 		public UIPanel checklistPanel;
 		public UIList checklistList;
 
 		float spacing = 8f;
 		public static bool visible = false;
 		public static bool showCompleted = true;
+		public static bool showMiniBoss = true;
+		public static bool showEvent = true;
 		public static string hoverText = "";
 
 		public override void OnInitialize()
@@ -33,11 +37,23 @@ namespace BossChecklist.UI
 			checklistPanel.Height.Set(-100, 1f);
 			checklistPanel.BackgroundColor = new Color(73, 94, 171);
 
-			toggleButton = new UIHoverImageButton(Main.itemTexture[ItemID.SuspiciousLookingEye], "Toggle Completed");
-			toggleButton.OnClick += ToggleButtonClicked;
-			toggleButton.Left.Pixels = spacing;
-			toggleButton.Top.Pixels = spacing;
-			checklistPanel.Append(toggleButton);
+			toggleCompletedButton = new UIHoverImageButton(Main.itemTexture[ItemID.SuspiciousLookingEye], "Toggle Completed");
+			toggleCompletedButton.OnClick += ToggleCompletedButtonClicked;
+			toggleCompletedButton.Left.Pixels = spacing;
+			toggleCompletedButton.Top.Pixels = spacing;
+			checklistPanel.Append(toggleCompletedButton);
+
+			toggleMiniBossButton = new UIHoverImageButton(Main.itemTexture[ItemID.CandyCorn], "Toggle Mini Bosses");
+			toggleMiniBossButton.OnClick += ToggleMiniBossButtonClicked;
+			toggleMiniBossButton.Left.Pixels = spacing + 32;
+			toggleMiniBossButton.Top.Pixels = spacing;
+			checklistPanel.Append(toggleMiniBossButton);
+
+			toggleEventButton = new UIHoverImageButton(Main.itemTexture[ItemID.SnowGlobe], "Toggle Events");
+			toggleEventButton.OnClick += ToggleEventButtonClicked;
+			toggleEventButton.Left.Pixels = spacing + 64;
+			toggleEventButton.Top.Pixels = spacing;
+			checklistPanel.Append(toggleEventButton);
 
 			checklistList = new UIList();
 			checklistList.Top.Pixels = 32f + spacing;
@@ -63,10 +79,24 @@ namespace BossChecklist.UI
 			InitializeVanillaBosses();
 		}
 
-		private void ToggleButtonClicked(UIMouseEvent evt, UIElement listeningElement)
+		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement)
 		{
-			Main.PlaySound(10, -1, -1, 1);
+			Main.PlaySound(SoundID.MenuOpen);
 			showCompleted = !showCompleted;
+			UpdateCheckboxes();
+		}
+
+		private void ToggleMiniBossButtonClicked(UIMouseEvent evt, UIElement listeningElement)
+		{
+			Main.PlaySound(SoundID.MenuOpen);
+			showMiniBoss = !showMiniBoss;
+			UpdateCheckboxes();
+		}
+
+		private void ToggleEventButtonClicked(UIMouseEvent evt, UIElement listeningElement)
+		{
+			Main.PlaySound(SoundID.MenuOpen);
+			showEvent = !showEvent;
 			UpdateCheckboxes();
 		}
 
@@ -86,6 +116,10 @@ namespace BossChecklist.UI
 				{
 					if (showCompleted || !boss.downed())
 					{
+						if (boss.type == BossChecklistType.Event && !showEvent)
+							continue;
+						if (boss.type == BossChecklistType.MiniBoss && !showMiniBoss)
+							continue;
 						UIBossCheckbox box = new UIBossCheckbox(boss);
 						checklistList.Add(box);
 					}
@@ -150,26 +184,39 @@ namespace BossChecklist.UI
 		{
 			allBosses = new List<BossInfo> {
 			// Bosses -- Vanilla
-			new BossInfo("Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing, $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain."),
-			new BossInfo("Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1,  $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP\nAchievement : [a:EYE_ON_YOU]"),
-			new BossInfo("Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2,  $"Use [i:{ItemID.WormFood}] or [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts or Shadow Orbs"),
-			new BossInfo("Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee,  $"Use [i:{ItemID.Abeemination}] or break Larva in Jungle"),
-			new BossInfo("Skeletron", Skeletron, () => true, () => NPC.downedBoss3,  $"Visit dungeon or use [i:{ItemID.ClothierVoodooDoll}] at night"),
-			new BossInfo("Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode  ,  $"Spawn by throwing [i:{ItemID.GuideVoodooDoll}] in lava in the Underworld. [c/FF0000:Starts Hardmode!]"),
-			new BossInfo("The Twins", TheTwins, () => true, () => NPC.downedMechBoss2,  $"Use [i:{ItemID.MechanicalEye}] at night to spawn"),
-			new BossInfo("The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1,  $"Use [i:{ItemID.MechanicalWorm}] at night to spawn"),
-			new BossInfo("Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3,  $"Use [i:{ItemID.MechanicalSkull}] at night to spawn"),
-			new BossInfo("Plantera", Plantera, () => true, () => NPC.downedPlantBoss,  $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated"),
-			new BossInfo("Golem", Golem, () => true, () => NPC.downedGolemBoss,  $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar"),
-			new BossInfo("Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron,  $"Fish in ocean using the [i:{ItemID.TruffleWorm}] bait"),
-			new BossInfo("Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist,  $"Kill the cultists outside the dungeon post-Golem"),
-			new BossInfo("Moonlord", Moonlord, () => true, () => NPC.downedMoonlord,  $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}"),
+			new BossInfo(BossChecklistType.Boss, "Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing, $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain."),
+			new BossInfo(BossChecklistType.Boss, "Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1,  $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP\nAchievement : [a:EYE_ON_YOU]"),
+			new BossInfo(BossChecklistType.Boss, "Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2,  $"Use [i:{ItemID.WormFood}] or [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts or Shadow Orbs"),
+			new BossInfo(BossChecklistType.Boss, "Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee,  $"Use [i:{ItemID.Abeemination}] or break Larva in Jungle"),
+			new BossInfo(BossChecklistType.Boss, "Skeletron", Skeletron, () => true, () => NPC.downedBoss3,  $"Visit dungeon or use [i:{ItemID.ClothierVoodooDoll}] at night"),
+			new BossInfo(BossChecklistType.Boss, "Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode  ,  $"Spawn by throwing [i:{ItemID.GuideVoodooDoll}] in lava in the Underworld. [c/FF0000:Starts Hardmode!]"),
+			new BossInfo(BossChecklistType.Boss, "The Twins", TheTwins, () => true, () => NPC.downedMechBoss2,  $"Use [i:{ItemID.MechanicalEye}] at night to spawn"),
+			new BossInfo(BossChecklistType.Boss, "The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1,  $"Use [i:{ItemID.MechanicalWorm}] at night to spawn"),
+			new BossInfo(BossChecklistType.Boss, "Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3,  $"Use [i:{ItemID.MechanicalSkull}] at night to spawn"),
+			new BossInfo(BossChecklistType.Boss, "Plantera", Plantera, () => true, () => NPC.downedPlantBoss,  $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated"),
+			new BossInfo(BossChecklistType.Boss, "Golem", Golem, () => true, () => NPC.downedGolemBoss,  $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar"),
+			new BossInfo(BossChecklistType.Boss, "Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron,  $"Fish in ocean using the [i:{ItemID.TruffleWorm}] bait"),
+			new BossInfo(BossChecklistType.Boss, "Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist,  $"Kill the cultists outside the dungeon post-Golem"),
+			new BossInfo(BossChecklistType.Boss, "Moonlord", Moonlord, () => true, () => NPC.downedMoonlord,  $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}"),
 			// Event Bosses -- Vanilla
-			new BossInfo("Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			new BossInfo("Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			new BossInfo("Solar Pillar", LunaticCultist +.3f, () => true, () => NPC.downedTowerSolar,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			new BossInfo("Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo(BossChecklistType.Event, "Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo(BossChecklistType.Event, "Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo(BossChecklistType.Event, "Solar Pillar", LunaticCultist +.3f, () => true, () => NPC.downedTowerSolar,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			new BossInfo(BossChecklistType.Event, "Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
 			// TODO, all other event bosses...Maybe all pillars as 1?
+			new BossInfo(BossChecklistType.MiniBoss, "Clown", WallOfFlesh + 0.1f, () => true, () => NPC.downedClown,  $"Spawns during Hardmode Bloodmoon"),
+			new BossInfo(BossChecklistType.Event, "Goblin Army", EyeOfCthulhu + 0.5f, () => true, () => NPC.downedGoblins,  $"Occurs randomly at dawn once a Shadow Orb or Crimson Heart has been destroyed. Alternatively, spawn with [i:{ItemID.GoblinBattleStandard}]"),
+			new BossInfo(BossChecklistType.MiniBoss, "Ice Queen", Plantera + 0.9f, () => true, () => NPC.downedChristmasIceQueen,  $"Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
+			new BossInfo(BossChecklistType.MiniBoss, "Santa-NK1", Plantera + 0.6f, () => true, () => NPC.downedChristmasSantank,  $"Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
+			new BossInfo(BossChecklistType.MiniBoss, "Everscream", Plantera + 0.3f, () => true, () => NPC.downedChristmasTree,  $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
+			new BossInfo(BossChecklistType.MiniBoss, "Frost Legion", WallOfFlesh + 0.6f, () => true, () => NPC.downedFrost,  $"Use [i:{ItemID.SnowGlobe}] to start. Find [i:{ItemID.SnowGlobe}] by opening [i:{ItemID.Present}] while in Hardmode during Christmas season."),
+			new BossInfo(BossChecklistType.MiniBoss, "Pumpking", Plantera + 0.3f, () => true, () => NPC.downedHalloweenKing,  $"Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
+			new BossInfo(BossChecklistType.MiniBoss, "Mourning Wood", Plantera + 0.6f, () => true, () => NPC.downedHalloweenTree,  $"Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
+			new BossInfo(BossChecklistType.Event, "Martian Madness", Golem + 0.4f, () => true, () => NPC.downedMartians,  $"After defeating Golem, find a Martian Probe above ground and let it escape."),
+			new BossInfo(BossChecklistType.Event, "Pirate Invasion", WallOfFlesh + 0.7f, () => true, () => NPC.downedPirates,  $"Occurs randomly in Hardmode after an Altar has been destroyed. Alternatively, spawn with [i:{ItemID.PirateMap}]"),
+			new BossInfo(BossChecklistType.Event, "Old One's Army 1", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			new BossInfo(BossChecklistType.Event, "Old One's Army 2", TheTwins + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT2,  $"After defeating a mechanical boss, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
 
 			// ThoriumMod -- Working, missing some minibosses/bosses?
 			/*
@@ -224,7 +271,17 @@ namespace BossChecklist.UI
 
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
 		{
-			allBosses.Add(new BossInfo(bossname, bossValue, () => true, bossDowned, bossInfo));
+			allBosses.Add(new BossInfo(BossChecklistType.Boss, bossname, bossValue, () => true, bossDowned, bossInfo));
+		}
+
+		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
+		{
+			allBosses.Add(new BossInfo(BossChecklistType.MiniBoss, bossname, bossValue, () => true, bossDowned, bossInfo));
+		}
+
+		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
+		{
+			allBosses.Add(new BossInfo(BossChecklistType.Event, bossname, bossValue, () => true, bossDowned, bossInfo));
 		}
 
 		//			Calamity
@@ -287,15 +344,24 @@ namespace BossChecklist.UI
 		internal float progression;
 		//internal int spawnItemID;
 		internal string info;
+		internal BossChecklistType type;
 
-		public BossInfo(string name, float progression, Func<bool> available, Func<bool> downed, string info = null)
+		internal BossInfo(BossChecklistType type, string name, float progression, Func<bool> available, Func<bool> downed, string info = null)
 		{
+			this.type = type;
 			this.name = name;
 			this.progression = progression;
 			this.available = available;
 			this.downed = downed;
 			this.info = info;
 		}
+	}
+
+	internal enum BossChecklistType
+	{
+		Boss,
+		MiniBoss,
+		Event
 	}
 
 	public class FixedUIScrollbar : UIScrollbar
