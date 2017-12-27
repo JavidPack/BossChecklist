@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.UI.Chat;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Input;
 
 namespace BossChecklist.UI
 {
@@ -16,6 +17,7 @@ namespace BossChecklist.UI
 		public UIHoverImageButton toggleCompletedButton;
 		public UIHoverImageButton toggleMiniBossButton;
 		public UIHoverImageButton toggleEventButton;
+		public UIHoverImageButton toggleHiddenButton;
 		public UIPanel checklistPanel;
 		public UIList checklistList;
 
@@ -24,6 +26,7 @@ namespace BossChecklist.UI
 		public static bool showCompleted = true;
 		public static bool showMiniBoss = true;
 		public static bool showEvent = true;
+		public static bool showHidden = false;
 		public static string hoverText = "";
 
 		public override void OnInitialize()
@@ -54,6 +57,12 @@ namespace BossChecklist.UI
 			toggleEventButton.Left.Pixels = spacing + 64;
 			toggleEventButton.Top.Pixels = spacing;
 			checklistPanel.Append(toggleEventButton);
+
+			toggleHiddenButton = new UIHoverImageButton(Main.itemTexture[ItemID.InvisibilityPotion], "Toggle Show Hidden Bosses\n- Alt Click to clear Hidden bosses\n-Alt Click on boss to hide");
+			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
+			toggleHiddenButton.Left.Pixels = spacing + 96;
+			toggleHiddenButton.Top.Pixels = spacing;
+			checklistPanel.Append(toggleHiddenButton);
 
 			checklistList = new UIList();
 			checklistList.Top.Pixels = 32f + spacing;
@@ -100,6 +109,27 @@ namespace BossChecklist.UI
 			UpdateCheckboxes();
 		}
 
+		private void ToggleHiddenButtonClicked(UIMouseEvent evt, UIElement listeningElement)
+		{
+			Main.PlaySound(SoundID.MenuOpen);
+			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt))
+			{
+				BossChecklistWorld.HiddenBosses.Clear();
+				showHidden = false;
+				UpdateCheckboxes();
+
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+				{
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)BossChecklistMessageType.RequestClearHidden);
+					packet.Send();
+				}
+				return;
+			}
+			showHidden = !showHidden;
+			UpdateCheckboxes();
+		}
+
 		/*public bool ThoriumModDownedScout
 		{
 			get { return ThoriumMod.ThoriumWorld.downedScout; }
@@ -112,7 +142,8 @@ namespace BossChecklist.UI
 
 			foreach (BossInfo boss in allBosses)
 			{
-				if (boss.available())
+				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.name);
+				if (boss.available() && (!boss.hidden || showHidden))
 				{
 					if (showCompleted || !boss.downed())
 					{
@@ -214,9 +245,10 @@ namespace BossChecklist.UI
 			new BossInfo(BossChecklistType.MiniBoss, "Mourning Wood", Plantera + 0.6f, () => true, () => NPC.downedHalloweenTree,  $"Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
 			new BossInfo(BossChecklistType.Event, "Martian Madness", Golem + 0.4f, () => true, () => NPC.downedMartians,  $"After defeating Golem, find a Martian Probe above ground and let it escape."),
 			new BossInfo(BossChecklistType.Event, "Pirate Invasion", WallOfFlesh + 0.7f, () => true, () => NPC.downedPirates,  $"Occurs randomly in Hardmode after an Altar has been destroyed. Alternatively, spawn with [i:{ItemID.PirateMap}]"),
-			new BossInfo(BossChecklistType.Event, "Old One's Army 1", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-			new BossInfo(BossChecklistType.Event, "Old One's Army 2", TheTwins + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT2,  $"After defeating a mechanical boss, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-			new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			new BossInfo(BossChecklistType.Event, "Old One's Army Any Tier", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			//new BossInfo(BossChecklistType.Event, "Old One's Army 1", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			//new BossInfo(BossChecklistType.Event, "Old One's Army 2", TheTwins + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT2,  $"After defeating a mechanical boss, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			//new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
 
 			// ThoriumMod -- Working, missing some minibosses/bosses?
 			/*
@@ -339,6 +371,7 @@ namespace BossChecklist.UI
 	public class BossInfo
 	{
 		internal Func<bool> available;
+		internal bool hidden;
 		internal Func<bool> downed;
 		internal string name;
 		internal float progression;
@@ -354,6 +387,7 @@ namespace BossChecklist.UI
 			this.available = available;
 			this.downed = downed;
 			this.info = info;
+			this.hidden = false;
 		}
 	}
 

@@ -3,9 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI;
 using Terraria;
 using Terraria.UI.Chat;
+using Microsoft.Xna.Framework.Input;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace BossChecklist.UI
 {
+	// TODO: investigate DD event problem: complete dd1, dd2 and 3 are checked off. -> vanilla bug.
 	class UIBossCheckbox : UIElement
 	{
 		internal UICheckbox checkbox;
@@ -24,6 +28,8 @@ namespace BossChecklist.UI
 				checkbox.TextColor = Color.MediumPurple;
 			if (boss.type == BossChecklistType.MiniBoss)
 				checkbox.TextColor = Color.CornflowerBlue;
+			if (boss.hidden)
+				checkbox.TextColor = Color.DarkGreen;
 			checkbox.Selected = boss.downed();
 			//checkbox.spawnItemID = boss.spawnItemID;
 			Append(checkbox);
@@ -33,6 +39,25 @@ namespace BossChecklist.UI
 
 		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement)
 		{
+			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt))
+			{
+				boss.hidden = !boss.hidden;
+				if (boss.hidden)
+					BossChecklistWorld.HiddenBosses.Add(boss.name);
+				else
+					BossChecklistWorld.HiddenBosses.Remove(boss.name);
+				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+				{
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)BossChecklistMessageType.RequestHideBoss);
+					packet.Write(boss.name);
+					packet.Write(boss.hidden);
+					packet.Send();
+				}
+				return;
+			}
+
 			UIBossCheckbox clicked = listeningElement as UIBossCheckbox;
 			foreach (var item in BossChecklist.instance.bossChecklistUI.checklistList._items)
 			{

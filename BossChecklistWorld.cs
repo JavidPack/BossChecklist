@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
@@ -9,6 +11,29 @@ namespace BossChecklist
 	/// </summary>
 	class BossChecklistWorld : ModWorld
 	{
+		public static HashSet<string> HiddenBosses = new HashSet<string>();
+		public override void Initialize()
+		{
+			HiddenBosses.Clear();
+		}
+
+		public override void Load(TagCompound tag)
+		{
+			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
+			foreach (var bossName in HiddenBossesList)
+			{
+				HiddenBosses.Add(bossName);
+			}
+		}
+
+		public override TagCompound Save()
+		{
+			var HiddenBossesList = new List<string>(HiddenBosses);
+			return new TagCompound {
+				{"HiddenBossesList", HiddenBossesList}
+			};
+		}
+
 		public override void NetSend(BinaryWriter writer)
 		{
 			BitsByte flags = new BitsByte();
@@ -17,6 +42,12 @@ namespace BossChecklist
 			flags[2] = NPC.downedTowerNebula;
 			flags[3] = NPC.downedTowerStardust;
 			writer.Write(flags);
+
+			writer.Write(HiddenBosses.Count);
+			foreach (var bossName in HiddenBosses)
+			{
+				writer.Write(bossName);
+			}
 		}
 
 		public override void NetReceive(BinaryReader reader)
@@ -26,6 +57,14 @@ namespace BossChecklist
 			NPC.downedTowerVortex = flags[1];
 			NPC.downedTowerNebula = flags[2];
 			NPC.downedTowerStardust = flags[3];
+
+			HiddenBosses.Clear();
+			int count = reader.ReadInt32();
+			for (int i = 0; i < count; i++)
+			{
+				HiddenBosses.Add(reader.ReadString());
+			}
+			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
 		}
 	}
 }

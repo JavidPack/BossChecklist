@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework;
 using Terraria.UI.Chat;
 using System.Linq;
 using Terraria.GameContent.UI.Chat;
+using System.IO;
+using Terraria.ID;
 
 // TODO: Kill all npc checklist
 // TODO: Currently have all town npc checklist
@@ -212,6 +214,51 @@ namespace BossChecklist
 			}
 			return "Failure";
 		}
+
+		public override void HandlePacket(BinaryReader reader, int whoAmI)
+		{
+			BossChecklistMessageType msgType = (BossChecklistMessageType)reader.ReadByte();
+			switch (msgType)
+			{
+				// Sent from Client to Server
+				case BossChecklistMessageType.RequestHideBoss:
+					//if (Main.netMode == NetmodeID.MultiplayerClient)
+					//{
+					//	Main.NewText("Huh? RequestHideBoss on client?");
+					//}
+					string bossName = reader.ReadString();
+					bool hide = reader.ReadBoolean();
+					if (hide)
+						BossChecklistWorld.HiddenBosses.Add(bossName);
+					else
+						BossChecklistWorld.HiddenBosses.Remove(bossName);
+					if (Main.netMode == NetmodeID.Server)
+						NetMessage.SendData(MessageID.WorldData);
+					//else
+					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
+					break;
+				case BossChecklistMessageType.RequestClearHidden:
+					//if (Main.netMode == NetmodeID.MultiplayerClient)
+					//{
+					//	Main.NewText("Huh? RequestClearHidden on client?");
+					//}
+					BossChecklistWorld.HiddenBosses.Clear();
+					if (Main.netMode == NetmodeID.Server)
+						NetMessage.SendData(MessageID.WorldData);
+					//else
+					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
+					break;
+				default:
+					ErrorLogger.Log("BossChecklist: Unknown Message type: " + msgType);
+					break;
+			}
+		}
+	}
+
+	enum BossChecklistMessageType : byte
+	{
+		RequestHideBoss,
+		RequestClearHidden,
 	}
 }
 
