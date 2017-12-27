@@ -58,7 +58,7 @@ namespace BossChecklist.UI
 			toggleEventButton.Top.Pixels = spacing;
 			checklistPanel.Append(toggleEventButton);
 
-			toggleHiddenButton = new UIHoverImageButton(Main.itemTexture[ItemID.InvisibilityPotion], "Toggle Show Hidden Bosses\n- Alt Click to clear Hidden bosses\n-Alt Click on boss to hide");
+			toggleHiddenButton = new UIHoverImageButton(Main.itemTexture[ItemID.InvisibilityPotion], "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
 			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
 			toggleHiddenButton.Left.Pixels = spacing + 96;
 			toggleHiddenButton.Top.Pixels = spacing;
