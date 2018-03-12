@@ -11,8 +11,8 @@ namespace BossChecklist.UI
 {
 	class UICheckbox : UIText
 	{
-		static Texture2D checkboxTexture = ((BossChecklist)ModLoader.GetMod("BossChecklist")).GetTexture("checkBox");
-		static Texture2D checkmarkTexture = ((BossChecklist)ModLoader.GetMod("BossChecklist")).GetTexture("checkMark");
+		internal static Texture2D checkboxTexture;
+		internal static Texture2D checkmarkTexture;
 		public event EventHandler SelectedChanged;
 		float order = 0;
 		//public Item spawnItem;

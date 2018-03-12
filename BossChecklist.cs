@@ -61,6 +61,9 @@ namespace BossChecklist
 				bossChecklistUI.Activate();
 				bossChecklistInterface = new UserInterface();
 				bossChecklistInterface.SetState(bossChecklistUI);
+
+				UICheckbox.checkboxTexture = GetTexture("checkBox");
+				UICheckbox.checkmarkTexture = GetTexture("checkMark");
 			}
 		}
 
@@ -69,6 +72,9 @@ namespace BossChecklist
 			instance = null;
 			ToggleChecklistHotKey = null;
 			bossChecklistInterface = null;
+
+			UICheckbox.checkboxTexture = null;
+			UICheckbox.checkmarkTexture = null;
 		}
 
 		int lastSeenScreenWidth;
