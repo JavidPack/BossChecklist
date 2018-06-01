@@ -19,10 +19,10 @@ namespace BossChecklist
 	public class BossChecklist : Mod
 	{
 		static internal BossChecklist instance;
+		internal static BossTracker bossTracker;
 		internal static ModHotKey ToggleChecklistHotKey;
 		internal static UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
-		private double pressedToggleChecklistHotKeyTime;
 
 		// Mods that have been added manually
 		internal bool vanillaLoaded = true;
@@ -55,6 +55,8 @@ namespace BossChecklist
 
 			tremorLoaded = ModLoader.GetMod("Tremor") != null;
 
+			bossTracker = new BossTracker();
+
 			if (!Main.dedServ)
 			{
 				bossChecklistUI = new BossChecklistUI();
@@ -72,6 +74,7 @@ namespace BossChecklist
 			instance = null;
 			ToggleChecklistHotKey = null;
 			bossChecklistInterface = null;
+			bossTracker = null;
 
 			UICheckbox.checkboxTexture = null;
 			UICheckbox.checkmarkTexture = null;
@@ -175,8 +178,7 @@ namespace BossChecklist
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
-					if (!Main.dedServ)
-						bossChecklistUI.AddBoss(bossname, bossValue, bossDowned);
+					bossTracker.AddBoss(bossname, bossValue, bossDowned);
 					return "Success";
 				}
 				else if (message == "AddBossWithInfo")
@@ -185,8 +187,7 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
-					if (!Main.dedServ)
-						bossChecklistUI.AddBoss(bossname, bossValue, bossDowned, bossInfo);
+					bossTracker.AddBoss(bossname, bossValue, bossDowned, bossInfo);
 					return "Success";
 				}
 				else if (message == "AddMiniBossWithInfo")
@@ -195,8 +196,7 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
-					if (!Main.dedServ)
-						bossChecklistUI.AddMiniBoss(bossname, bossValue, bossDowned, bossInfo);
+					bossTracker.AddMiniBoss(bossname, bossValue, bossDowned, bossInfo);
 					return "Success";
 				}
 				else if (message == "AddEventWithInfo")
@@ -205,10 +205,15 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
-					if (!Main.dedServ)
-						bossChecklistUI.AddEvent(bossname, bossValue, bossDowned, bossInfo);
+					bossTracker.AddEvent(bossname, bossValue, bossDowned, bossInfo);
 					return "Success";
 				}
+				// TODO
+				//else if (message == "GetCurrentBossStates")
+				//{
+				//	// Returns List<Tuple<string, float, int, bool>>: Name, value, bosstype(boss, miniboss, event), downed.
+				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
+				//}
 				else
 				{
 					ErrorLogger.Log("BossChecklist Call Error: Unknown Message: " + message);

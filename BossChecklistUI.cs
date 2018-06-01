@@ -40,28 +40,35 @@ namespace BossChecklist.UI
 			checklistPanel.Height.Set(-100, 1f);
 			checklistPanel.BackgroundColor = new Color(73, 94, 171);
 
-			toggleCompletedButton = new UIHoverImageButton(Main.itemTexture[ItemID.SuspiciousLookingEye], "Toggle Completed");
+			//Main.spriteBatch.Begin(); 
+			Texture2D completedToggle = ResizeImage(Main.itemTexture[ItemID.SuspiciousLookingEye], 32, 32);
+			Texture2D miniBossToggle = ResizeImage(Main.itemTexture[ItemID.CandyCorn], 32, 32);
+			Texture2D eventToggle = ResizeImage(Main.itemTexture[ItemID.SnowGlobe], 32, 32);
+			Texture2D showHiddenToggle = ResizeImage(Main.itemTexture[ItemID.InvisibilityPotion], 32, 32);
+			//Main.spriteBatch.End();
+
+			toggleCompletedButton = new UIHoverImageButton(completedToggle, "Toggle Completed");
 			toggleCompletedButton.OnClick += ToggleCompletedButtonClicked;
 			toggleCompletedButton.Left.Pixels = spacing;
-			toggleCompletedButton.Top.Pixels = spacing;
+			toggleCompletedButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleCompletedButton);
 
-			toggleMiniBossButton = new UIHoverImageButton(Main.itemTexture[ItemID.CandyCorn], "Toggle Mini Bosses");
+			toggleMiniBossButton = new UIHoverImageButton(miniBossToggle, "Toggle Mini Bosses");
 			toggleMiniBossButton.OnClick += ToggleMiniBossButtonClicked;
 			toggleMiniBossButton.Left.Pixels = spacing + 32;
-			toggleMiniBossButton.Top.Pixels = spacing;
+			toggleMiniBossButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleMiniBossButton);
 
-			toggleEventButton = new UIHoverImageButton(Main.itemTexture[ItemID.SnowGlobe], "Toggle Events");
+			toggleEventButton = new UIHoverImageButton(eventToggle, "Toggle Events");
 			toggleEventButton.OnClick += ToggleEventButtonClicked;
 			toggleEventButton.Left.Pixels = spacing + 64;
-			toggleEventButton.Top.Pixels = spacing;
+			toggleEventButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleEventButton);
 
-			toggleHiddenButton = new UIHoverImageButton(Main.itemTexture[ItemID.InvisibilityPotion], "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
+			toggleHiddenButton = new UIHoverImageButton(showHiddenToggle, "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
 			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
 			toggleHiddenButton.Left.Pixels = spacing + 96;
-			toggleHiddenButton.Top.Pixels = spacing;
+			toggleHiddenButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleHiddenButton);
 
 			checklistList = new UIList();
@@ -85,7 +92,6 @@ namespace BossChecklist.UI
 			Append(checklistPanel);
 
 			// TODO, game window resize issue
-			InitializeVanillaBosses();
 		}
 
 		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement)
@@ -140,7 +146,7 @@ namespace BossChecklist.UI
 		{
 			checklistList.Clear();
 
-			foreach (BossInfo boss in allBosses)
+			foreach (BossInfo boss in BossChecklist.bossTracker.allBosses)
 			{
 				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.name);
 				if (boss.available() && (!boss.hidden || showHidden))
@@ -165,7 +171,6 @@ namespace BossChecklist.UI
 			//	}
 			//}
 		}
-
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
@@ -194,226 +199,28 @@ namespace BossChecklist.UI
 			}
 		}
 
-		public const float SlimeKing = 1f;
-		public const float EyeOfCthulhu = 2f;
-		public const float EaterOfWorlds = 3f;
-		public const float QueenBee = 4f;
-		public const float Skeletron = 5f;
-		public const float WallOfFlesh = 6f;
-		public const float TheTwins = 7f;
-		public const float TheDestroyer = 8f;
-		public const float SkeletronPrime = 9f;
-		public const float Plantera = 10f;
-		public const float Golem = 11f;
-		public const float DukeFishron = 12f;
-		public const float LunaticCultist = 13f;
-		public const float Moonlord = 14f;
-
-		List<BossInfo> allBosses;
-
-		private void InitializeVanillaBosses()
+		private Texture2D ResizeImage(Texture2D texture2D, int desiredWidth, int desiredHeight)
 		{
-			allBosses = new List<BossInfo> {
-			// Bosses -- Vanilla
-			new BossInfo(BossChecklistType.Boss, "Slime King", SlimeKing, () => true, () => NPC.downedSlimeKing, $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain."),
-			new BossInfo(BossChecklistType.Boss, "Eye of Cthulhu", EyeOfCthulhu, () => true, () => NPC.downedBoss1,  $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP\nAchievement : [a:EYE_ON_YOU]"),
-			new BossInfo(BossChecklistType.Boss, "Eater of Worlds / Brain of Cthulhu", EaterOfWorlds, () => true, () => NPC.downedBoss2,  $"Use [i:{ItemID.WormFood}] or [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts or Shadow Orbs"),
-			new BossInfo(BossChecklistType.Boss, "Queen Bee", QueenBee, () => true, () => NPC.downedQueenBee,  $"Use [i:{ItemID.Abeemination}] or break Larva in Jungle"),
-			new BossInfo(BossChecklistType.Boss, "Skeletron", Skeletron, () => true, () => NPC.downedBoss3,  $"Visit dungeon or use [i:{ItemID.ClothierVoodooDoll}] at night"),
-			new BossInfo(BossChecklistType.Boss, "Wall of Flesh", WallOfFlesh, () => true, () => Main.hardMode  ,  $"Spawn by throwing [i:{ItemID.GuideVoodooDoll}] in lava in the Underworld. [c/FF0000:Starts Hardmode!]"),
-			new BossInfo(BossChecklistType.Boss, "The Twins", TheTwins, () => true, () => NPC.downedMechBoss2,  $"Use [i:{ItemID.MechanicalEye}] at night to spawn"),
-			new BossInfo(BossChecklistType.Boss, "The Destroyer",TheDestroyer, () => true, () => NPC.downedMechBoss1,  $"Use [i:{ItemID.MechanicalWorm}] at night to spawn"),
-			new BossInfo(BossChecklistType.Boss, "Skeletron Prime", SkeletronPrime, () => true, () => NPC.downedMechBoss3,  $"Use [i:{ItemID.MechanicalSkull}] at night to spawn"),
-			new BossInfo(BossChecklistType.Boss, "Plantera", Plantera, () => true, () => NPC.downedPlantBoss,  $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated"),
-			new BossInfo(BossChecklistType.Boss, "Golem", Golem, () => true, () => NPC.downedGolemBoss,  $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar"),
-			new BossInfo(BossChecklistType.Boss, "Duke Fishron", DukeFishron, () => true, () => NPC.downedFishron,  $"Fish in ocean using the [i:{ItemID.TruffleWorm}] bait"),
-			new BossInfo(BossChecklistType.Boss, "Lunatic Cultist", LunaticCultist, () => true, () => NPC.downedAncientCultist,  $"Kill the cultists outside the dungeon post-Golem"),
-			new BossInfo(BossChecklistType.Boss, "Moonlord", Moonlord, () => true, () => NPC.downedMoonlord,  $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}"),
-			// Event Bosses -- Vanilla
-			new BossInfo(BossChecklistType.Event, "Nebula Pillar", LunaticCultist + .1f, () => true, () => NPC.downedTowerNebula,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			new BossInfo(BossChecklistType.Event, "Vortex Pillar", LunaticCultist + .2f, () => true, () => NPC.downedTowerVortex,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			new BossInfo(BossChecklistType.Event, "Solar Pillar", LunaticCultist +.3f, () => true, () => NPC.downedTowerSolar,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			new BossInfo(BossChecklistType.Event, "Stardust Pillar", LunaticCultist + .4f, () => true, () => NPC.downedTowerStardust,  $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			// TODO, all other event bosses...Maybe all pillars as 1?
-			new BossInfo(BossChecklistType.MiniBoss, "Clown", WallOfFlesh + 0.1f, () => true, () => NPC.downedClown,  $"Spawns during Hardmode Bloodmoon"),
-			new BossInfo(BossChecklistType.Event, "Goblin Army", EyeOfCthulhu + 0.5f, () => true, () => NPC.downedGoblins,  $"Occurs randomly at dawn once a Shadow Orb or Crimson Heart has been destroyed. Alternatively, spawn with [i:{ItemID.GoblinBattleStandard}]"),
-			new BossInfo(BossChecklistType.MiniBoss, "Ice Queen", Plantera + 0.9f, () => true, () => NPC.downedChristmasIceQueen,  $"Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
-			new BossInfo(BossChecklistType.MiniBoss, "Santa-NK1", Plantera + 0.6f, () => true, () => NPC.downedChristmasSantank,  $"Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
-			new BossInfo(BossChecklistType.MiniBoss, "Everscream", Plantera + 0.3f, () => true, () => NPC.downedChristmasTree,  $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
-			new BossInfo(BossChecklistType.Event, "Frost Legion", WallOfFlesh + 0.6f, () => true, () => NPC.downedFrost,  $"Use [i:{ItemID.SnowGlobe}] to start. Find [i:{ItemID.SnowGlobe}] by opening [i:{ItemID.Present}] while in Hardmode during Christmas season."),
-			new BossInfo(BossChecklistType.MiniBoss, "Pumpking", Plantera + 0.3f, () => true, () => NPC.downedHalloweenKing,  $"Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
-			new BossInfo(BossChecklistType.MiniBoss, "Mourning Wood", Plantera + 0.6f, () => true, () => NPC.downedHalloweenTree,  $"Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
-			new BossInfo(BossChecklistType.Event, "Martian Madness", Golem + 0.4f, () => true, () => NPC.downedMartians,  $"After defeating Golem, find a Martian Probe above ground and let it escape."),
-			new BossInfo(BossChecklistType.Event, "Pirate Invasion", WallOfFlesh + 0.7f, () => true, () => NPC.downedPirates,  $"Occurs randomly in Hardmode after an Altar has been destroyed. Alternatively, spawn with [i:{ItemID.PirateMap}]"),
-			new BossInfo(BossChecklistType.Event, "Old One's Army Any Tier", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-			//new BossInfo(BossChecklistType.Event, "Old One's Army 1", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-			//new BossInfo(BossChecklistType.Event, "Old One's Army 2", TheTwins + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT2,  $"After defeating a mechanical boss, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-			//new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
+			RenderTarget2D renderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, desiredWidth, desiredHeight);
+			Main.instance.GraphicsDevice.SetRenderTarget(renderTarget);
+			Main.instance.GraphicsDevice.Clear(Color.Transparent);
+			Main.spriteBatch.Begin();
 
-			// ThoriumMod -- Working, missing some minibosses/bosses?
-			/*
-			new BossInfo("The Grand Thunder Bird", SlimeKing - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedThunderBird,  $"Spawn during day by shooting a [i:{ModLoader.GetMod("ThoriumMod")?.ItemType("StormFlare") ?? 0}] with a [i:{ModLoader.GetMod("ThoriumMod")?.ItemType("StrongFlareGun") ?? 0}]"),
-			new BossInfo("The Queen Jellyfish", Skeletron - 0.5f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedJelly),
-			new BossInfo("Granite Energy Storm", Skeletron + 0.2f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedStorm),
-			new BossInfo("The Star Scouter", Skeletron + 0.3f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedScout),
-			new BossInfo("The Buried Champion", Skeletron + 0.4f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedChampion),
-			new BossInfo("Borean Strider", WallOfFlesh + .05f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedStrider),
-			new BossInfo("Coznix, the Fallen Beholder", WallOfFlesh + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedFallenBeholder),
-			new BossInfo("The Lich", SkeletronPrime + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedLich),
-			new BossInfo("Abyssion, The Forgotten One", Plantera + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedDepthBoss),
-			new BossInfo("The Ragnarok", Moonlord + .1f, () => BossChecklist.instance.thoriumLoaded, () => ThoriumMod.ThoriumWorld.downedRealityBreaker),
-			*/
+			float scale = 1;
+			if (texture2D.Width > desiredWidth || texture2D.Height > desiredHeight)
+			{
+				if (texture2D.Height > texture2D.Width)
+					scale = (float)desiredWidth / texture2D.Height;
+				else
+					scale = (float)desiredWidth / texture2D.Width;
+			}
 
-			// Bluemagic -- Working 100%
-			//new BossInfo("Abomination", DukeFishron + 0.2f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedAbomination),
-			//new BossInfo("Spirit of Purity", Moonlord + 0.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedPuritySpirit),
-			//new BossInfo("Spirit of Chaos", Moonlord + 1.9f, () => BossChecklist.instance.bluemagicLoaded, () => Bluemagic.BluemagicWorld.downedChaosSpirit),
+			//new Vector2(texture2D.Width / 2 * scale, texture2D.Height / 2 * scale) desiredWidth/2, desiredHeight/2
+			Main.spriteBatch.Draw(texture2D, new Vector2(desiredWidth / 2, desiredHeight / 2), null, Color.White, 0f, new Vector2(texture2D.Width / 2, texture2D.Height / 2), scale, SpriteEffects.None, 0f);
 
-			// Calamity -- Looks like some bosses are still WIP?
-			//new BossInfo("Desert Scourge", SlimeKing + .5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDesertScourge),
-			//new BossInfo("The Hive Mind", QueenBee + .51f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedHiveMind),
-			//new BossInfo("The Perforator", QueenBee + .51f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPerforator),
-			//new BossInfo("Slime God", Skeletron + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedSlimeGod),
-			//new BossInfo("Cryogen", WallOfFlesh + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCryogen),
-			//new BossInfo("Calamitas", Plantera - 0.3f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedCalamitas),
-			//new BossInfo("Plaguebringer Goliath", Golem + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedPlaguebringer),
-			//new BossInfo("The Devourer of Gods", Moonlord + 0.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedDoG),
-			//new BossInfo("Jungle Dragon, Yharon", Moonlord + 1.5f, () => BossChecklist.instance.calamityLoaded, () => CalamityMod.CalamityWorld.downedYharon),
-			// CalamityMod.CalamityWorld.downedYharon
-			
-			// SacredTools -- Working 100%
-			//new BossInfo("Grand Harpy", Skeletron + .3f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedHarpy),
-			//new BossInfo("Harpy Queen, Raynare", Plantera - 0.4f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedRaynare),
-			//new BossInfo("Abaddon", LunaticCultist + .5f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedAbaddon),
-			//new BossInfo("Flare Serpent", Moonlord + .2f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.FlariumSpawns),
-			//new BossInfo("Lunarians", Moonlord + .3f, () => BossChecklist.instance.sacredToolsLoaded, () => SacredTools.ModdedWorld.downedLunarians),
-
-			// Joost
-			//new BossInfo("Jumbo Cactuar", Moonlord + 0.7f, () => BossChecklist.instance.joostLoaded, () => JoostMod.JoostWorld.downedJumboCactuar),
-			//new BossInfo("SA-X", Moonlord + 0.8f, () => BossChecklist.instance.joostLoaded, () => JoostMod.JoostWorld.downedSAX),
-
-			// CrystiliumMod -- Need exposed downedBoss bools
-			//new BossInfo(, 0.1f, () => BossChecklist.instance.crystiliumLoaded, () => CrystiliumMod.CrystalWorld.),
-			
-			// Pumpking -- downedBoss bools incorrectly programed
-			//new BossInfo("Pumpking Horseman", DukeFishron + 0.3f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedPumpkingHorseman),
-			//new BossInfo("Terra Lord", Moonlord + 0.4f, () => BossChecklist.instance.pumpkingLoaded, () => Pumpking.PumpkingWorld.downedTerraLord),
-			};
-		}
-
-		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
-		{
-			allBosses.Add(new BossInfo(BossChecklistType.Boss, bossname, bossValue, () => true, bossDowned, bossInfo));
-		}
-
-		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
-		{
-			allBosses.Add(new BossInfo(BossChecklistType.MiniBoss, bossname, bossValue, () => true, bossDowned, bossInfo));
-		}
-
-		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
-		{
-			allBosses.Add(new BossInfo(BossChecklistType.Event, bossname, bossValue, () => true, bossDowned, bossInfo));
-		}
-
-		//			Calamity
-		//	--King Slime
-		//	Desert Scourge
-		//	Sea Dragon Leviathan (WIP) - Meant to be fought in Hardmode but can be fought earlier for a challenge
-		//	--Eye of Cthulhu
-		//	--Eater of Worlds/Brain of Cthulhu
-		//	--Queen Bee
-		//	The Perforator/The Hive Mind
-		//	--Skeletron
-		//	Slime God
-		//	--Wall of Flesh
-		//	Cryogen
-		//	--The Destroyer/Skeletron Prime/The Twins
-		//	Calamitas
-		//	--Plantera
-		//	The Devourer of Gods
-		//	--The Golem
-		//	Plaguebringer Goliath
-		//	--Duke Fishron
-		//	--Lunatic Cultist
-		//	--Moon Lord
-		//	Providence, the Profaned God (Currently being programmed and sprited, Hallowed Boss) Profaned Guardian (Miniboss that Providence spawns every 10% life)
-		//	Alpha & Omega (WIP)
-		//	Andromeda (Martian Star Destroyer) (WIP, Space Boss)
-		//	Dargon
-		//	Yharim, Lord of the Cosmos/Soul of Yharim (WIP)
-
-		//			Thorium
-		//The Grand Thunder Bird -- 1000 hp: Grand Flare Gun, Storm flare to summon
-		//The Queen Jellyfish - Pre Skeletron boss / 4000 -- Jellyfish Resonator
-		//Granite Energy Storm -- 4250 hp, Unstable Core, post skele
-		//The Star Scouter - Post Skeletron Sky boss / 10000	-- Star Caller
-		//Coznix, the Fallen Beholder - Early Hardmode Underworld boss / 14000 Life -- Void Lens
-		//The Lich - Post mechanical Hardmode Boss / 16500 -- Grim Harvest Sigil 
-		//The Ragnarok - Doom Sayer's Coin - 1 of each pillar fragment
-
-		//			BlueMagic:
-		//Abomination -- Post fishron - Foul Orb
-		//Spirit of Purity --  Elemental Purge
-
-		//			SacredTools:
-		//	?????Abaddon -- 80000 -- Key of Obliteration
-		//	Grand Harpy -- after skeltron Feather Talisman  -- fether and sunplate blocks
-		//	Grand Harpy Queen -- post mechs, after skeletron prime -  Golden Feather Talisman
-		//	oblivion shade - post cultist
-		//	The Flare Serpent -- post moon, before spirit of purity - 300000HP --Obsidian Core
-
-		//		Crystilium
-		//	Crystal King -- Around Duke: summon at fountain with cryptic crystal
-
-	}
-
-	public class BossInfo
-	{
-		internal Func<bool> available;
-		internal bool hidden;
-		internal Func<bool> downed;
-		internal string name;
-		internal float progression;
-		//internal int spawnItemID;
-		internal string info;
-		internal BossChecklistType type;
-
-		internal BossInfo(BossChecklistType type, string name, float progression, Func<bool> available, Func<bool> downed, string info = null)
-		{
-			this.type = type;
-			this.name = name;
-			this.progression = progression;
-			this.available = available;
-			this.downed = downed;
-			this.info = info;
-			this.hidden = false;
-		}
-	}
-
-	internal enum BossChecklistType
-	{
-		Boss,
-		MiniBoss,
-		Event
-	}
-
-	public class FixedUIScrollbar : UIScrollbar
-	{
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
-			UserInterface temp = UserInterface.ActiveInstance;
-			UserInterface.ActiveInstance = BossChecklist.bossChecklistInterface;
-			base.DrawSelf(spriteBatch);
-			UserInterface.ActiveInstance = temp;
-		}
-
-		public override void MouseDown(UIMouseEvent evt)
-		{
-			UserInterface temp = UserInterface.ActiveInstance;
-			UserInterface.ActiveInstance = BossChecklist.bossChecklistInterface;
-			base.MouseDown(evt);
-			UserInterface.ActiveInstance = temp;
+			Main.spriteBatch.End();
+			Main.instance.GraphicsDevice.SetRenderTarget(null);
+			return renderTarget;
 		}
 	}
 }
