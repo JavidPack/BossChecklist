@@ -80,10 +80,20 @@ namespace BossChecklist
 			UICheckbox.checkmarkTexture = null;
 		}
 
+		public override void UpdateUI(GameTime gameTime)
+		{
+			bossChecklistInterface?.Update(gameTime);
+		}
+
 		int lastSeenScreenWidth;
 		int lastSeenScreenHeight;
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
+			//if (BossChecklistUI.visible)
+			//{
+			//	layers.RemoveAll(x => x.Name == "Vanilla: Resource Bars" || x.Name == "Vanilla: Map / Minimap");
+			//}
+
 			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
 			if (MouseTextIndex != -1)
 			{
@@ -100,7 +110,6 @@ namespace BossChecklist
 								lastSeenScreenHeight = Main.screenHeight;
 							}
 
-							bossChecklistInterface.Update(Main._drawInterfaceGameTime);
 							bossChecklistUI.Draw(Main.spriteBatch);
 
 							if (BossChecklistUI.hoverText != "")

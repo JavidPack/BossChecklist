@@ -29,6 +29,24 @@ namespace BossChecklist.UI
 		public static bool showHidden = false;
 		public static string hoverText = "";
 
+		bool imagesResized;
+		public override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+			if (!imagesResized)
+			{
+				Texture2D completedToggle = ResizeImage(Main.itemTexture[ItemID.SuspiciousLookingEye], 32, 32);
+				Texture2D miniBossToggle = ResizeImage(Main.itemTexture[ItemID.CandyCorn], 32, 32);
+				Texture2D eventToggle = ResizeImage(Main.itemTexture[ItemID.SnowGlobe], 32, 32);
+				Texture2D showHiddenToggle = ResizeImage(Main.itemTexture[ItemID.InvisibilityPotion], 32, 32);
+				toggleCompletedButton.SetImage(completedToggle);
+				toggleMiniBossButton.SetImage(miniBossToggle);
+				toggleEventButton.SetImage(eventToggle);
+				toggleHiddenButton.SetImage(showHiddenToggle);
+				imagesResized = true;
+			}
+		}
+
 		public override void OnInitialize()
 		{
 			checklistPanel = new UIPanel();
@@ -40,32 +58,25 @@ namespace BossChecklist.UI
 			checklistPanel.Height.Set(-100, 1f);
 			checklistPanel.BackgroundColor = new Color(73, 94, 171);
 
-			//Main.spriteBatch.Begin(); 
-			Texture2D completedToggle = ResizeImage(Main.itemTexture[ItemID.SuspiciousLookingEye], 32, 32);
-			Texture2D miniBossToggle = ResizeImage(Main.itemTexture[ItemID.CandyCorn], 32, 32);
-			Texture2D eventToggle = ResizeImage(Main.itemTexture[ItemID.SnowGlobe], 32, 32);
-			Texture2D showHiddenToggle = ResizeImage(Main.itemTexture[ItemID.InvisibilityPotion], 32, 32);
-			//Main.spriteBatch.End();
-
-			toggleCompletedButton = new UIHoverImageButton(completedToggle, "Toggle Completed");
+			toggleCompletedButton = new UIHoverImageButton(Main.magicPixel, "Toggle Completed");
 			toggleCompletedButton.OnClick += ToggleCompletedButtonClicked;
 			toggleCompletedButton.Left.Pixels = spacing;
 			toggleCompletedButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleCompletedButton);
 
-			toggleMiniBossButton = new UIHoverImageButton(miniBossToggle, "Toggle Mini Bosses");
+			toggleMiniBossButton = new UIHoverImageButton(Main.magicPixel, "Toggle Mini Bosses");
 			toggleMiniBossButton.OnClick += ToggleMiniBossButtonClicked;
 			toggleMiniBossButton.Left.Pixels = spacing + 32;
 			toggleMiniBossButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleMiniBossButton);
 
-			toggleEventButton = new UIHoverImageButton(eventToggle, "Toggle Events");
+			toggleEventButton = new UIHoverImageButton(Main.magicPixel, "Toggle Events");
 			toggleEventButton.OnClick += ToggleEventButtonClicked;
 			toggleEventButton.Left.Pixels = spacing + 64;
 			toggleEventButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleEventButton);
 
-			toggleHiddenButton = new UIHoverImageButton(showHiddenToggle, "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
+			toggleHiddenButton = new UIHoverImageButton(Main.magicPixel, "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
 			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
 			toggleHiddenButton.Left.Pixels = spacing + 96;
 			toggleHiddenButton.Top.Pixels = 0;
@@ -220,7 +231,12 @@ namespace BossChecklist.UI
 
 			Main.spriteBatch.End();
 			Main.instance.GraphicsDevice.SetRenderTarget(null);
-			return renderTarget;
+
+			Texture2D mergedTexture = new Texture2D(Main.instance.GraphicsDevice, desiredWidth, desiredHeight);
+			Color[] content = new Color[desiredWidth * desiredHeight];
+			renderTarget.GetData<Color>(content);
+			mergedTexture.SetData<Color>(content);
+			return mergedTexture;
 		}
 	}
 }
