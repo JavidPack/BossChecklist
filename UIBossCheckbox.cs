@@ -108,7 +108,7 @@ namespace BossChecklist.UI
 				if (hoveredSnippet > -1)
 				{
 					// because of draw order, we'll do the hover later.
-					BossChecklist.instance.bossChecklistUI.hoveredTextSnipped = textSnippets[hoveredSnippet];
+					BossChecklist.instance.bossChecklistUI.hoveredTextSnippet = textSnippets[hoveredSnippet];
 					//array[hoveredSnippet].OnHover();
 					//if (Main.mouseLeft && Main.mouseLeftRelease)
 					//{

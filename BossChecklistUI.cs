@@ -9,6 +9,8 @@ using Terraria.ID;
 using Terraria.UI.Chat;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace BossChecklist.UI
 {
@@ -190,23 +192,27 @@ namespace BossChecklist.UI
 			if (checklistPanel.ContainsPoint(MousePosition))
 			{
 				Main.player[Main.myPlayer].mouseInterface = true;
+
+				// Doesn't fully fix problem. Clicks still happen in back to front manner.
+				//Main.HoverItem = new Item();
+				//Main.hoverItemName = "";
 			}
 		}
 
-		public TextSnippet hoveredTextSnipped;
+		public TextSnippet hoveredTextSnippet;
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			base.Draw(spriteBatch);
 
 			// now we can draw after all other drawing.
-			if (hoveredTextSnipped != null)
+			if (hoveredTextSnippet != null)
 			{
-				hoveredTextSnipped.OnHover();
+				hoveredTextSnippet.OnHover();
 				if (Main.mouseLeft && Main.mouseLeftRelease)
 				{
-					hoveredTextSnipped.OnClick();
+					hoveredTextSnippet.OnClick();
 				}
-				hoveredTextSnipped = null;
+				hoveredTextSnippet = null;
 			}
 		}
 
@@ -237,6 +243,28 @@ namespace BossChecklist.UI
 			renderTarget.GetData<Color>(content);
 			mergedTexture.SetData<Color>(content);
 			return mergedTexture;
+		}
+	}
+
+	public class HoveredTextSnippetTooltipHack : GlobalItem
+	{
+		const int paddingForBox = 10;
+		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y)
+		{
+			if(BossChecklist.instance.bossChecklistUI.hoveredTextSnippet != null)
+			{
+				var texts = lines.Select(z => z.text);
+				string longestText = texts.ToList().OrderByDescending(z => z.Length).First();
+				int widthForBox = (int)Main.fontMouseText.MeasureString(longestText).X ;
+				int heightForBox = (int)texts.ToList().Sum(z => Main.fontMouseText.MeasureString(z).Y);
+
+				Vector2 drawPosForBox = new Vector2(x - paddingForBox, y - paddingForBox);
+				Rectangle drawRectForBox = new Rectangle(x, y, widthForBox, heightForBox);
+				drawRectForBox.Inflate(paddingForBox, paddingForBox);
+				// Draw the magic box
+				Main.spriteBatch.Draw(Main.magicPixel, drawRectForBox, Color.NavajoWhite);
+			}
+			return base.PreDrawTooltip(item, lines, ref x, ref y);
 		}
 	}
 }
