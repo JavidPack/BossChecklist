@@ -24,7 +24,12 @@ namespace BossChecklist.UI
 		public UIList checklistList;
 
 		float spacing = 8f;
-		public static bool visible = false;
+		public static bool Visible
+		{
+			get { return BossChecklist.bossChecklistInterface.CurrentState == BossChecklist.instance.bossChecklistUI; }
+			set { BossChecklist.bossChecklistInterface.SetState(value ? BossChecklist.instance.bossChecklistUI : null); }
+		}
+
 		public static bool showCompleted = true;
 		public static bool showMiniBoss = true;
 		public static bool showEvent = true;

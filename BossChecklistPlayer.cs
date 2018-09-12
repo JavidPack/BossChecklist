@@ -11,11 +11,11 @@ namespace BossChecklist
 		{
 			if (BossChecklist.ToggleChecklistHotKey.JustPressed)
 			{
-				if (!BossChecklistUI.visible)
+				if (!BossChecklistUI.Visible)
 				{
 					BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
 				}
-				BossChecklistUI.visible = !BossChecklistUI.visible;
+				BossChecklistUI.Visible = !BossChecklistUI.Visible;
 			}
 		}
 	}

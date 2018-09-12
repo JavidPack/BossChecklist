@@ -101,16 +101,9 @@ namespace BossChecklist
 					"BossChecklist: Boss Checklist",
 					delegate
 					{
-						if (BossChecklistUI.visible)
+						if (BossChecklistUI.Visible)
 						{
-							if (lastSeenScreenWidth != Main.screenWidth || lastSeenScreenHeight != Main.screenHeight)
-							{
-								bossChecklistInterface.Recalculate();
-								lastSeenScreenWidth = Main.screenWidth;
-								lastSeenScreenHeight = Main.screenHeight;
-							}
-
-							bossChecklistUI.Draw(Main.spriteBatch);
+							bossChecklistInterface?.Draw(Main.spriteBatch, new GameTime());
 
 							if (BossChecklistUI.hoverText != "")
 							{
