@@ -18,5 +18,10 @@ namespace BossChecklist
 				BossChecklistUI.Visible = !BossChecklistUI.Visible;
 			}
 		}
+
+		public override void OnEnterWorld(Player player)
+		{
+			BossChecklistUI.Visible = false;
+		}
 	}
 }

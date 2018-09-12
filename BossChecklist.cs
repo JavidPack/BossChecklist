@@ -62,7 +62,6 @@ namespace BossChecklist
 				bossChecklistUI = new BossChecklistUI();
 				bossChecklistUI.Activate();
 				bossChecklistInterface = new UserInterface();
-				bossChecklistInterface.SetState(bossChecklistUI);
 
 				UICheckbox.checkboxTexture = GetTexture("checkBox");
 				UICheckbox.checkmarkTexture = GetTexture("checkMark");
@@ -85,8 +84,8 @@ namespace BossChecklist
 			bossChecklistInterface?.Update(gameTime);
 		}
 
-		int lastSeenScreenWidth;
-		int lastSeenScreenHeight;
+		//int lastSeenScreenWidth;
+		//int lastSeenScreenHeight;
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
 			//if (BossChecklistUI.visible)
