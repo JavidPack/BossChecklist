@@ -12,7 +12,7 @@ namespace BossChecklist.UI
 		Event
 	}
 
-	public class BossTracker
+	internal class BossTracker
 	{
 		public const float SlimeKing = 1f;
 		public const float EyeOfCthulhu = 2f;
@@ -77,23 +77,23 @@ namespace BossChecklist.UI
 			};
 		}
 
-		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
+		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null)
 		{
-			allBosses.Add(new BossInfo(BossChecklistType.Boss, bossname, bossValue, () => true, bossDowned, bossInfo));
+			allBosses.Add(new BossInfo(BossChecklistType.Boss, bossname, bossValue, available, bossDowned, bossInfo));
 		}
 
-		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
+		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null)
 		{
-			allBosses.Add(new BossInfo(BossChecklistType.MiniBoss, bossname, bossValue, () => true, bossDowned, bossInfo));
+			allBosses.Add(new BossInfo(BossChecklistType.MiniBoss, bossname, bossValue, available, bossDowned, bossInfo));
 		}
 
-		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null)
+		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null)
 		{
-			allBosses.Add(new BossInfo(BossChecklistType.Event, bossname, bossValue, () => true, bossDowned, bossInfo));
+			allBosses.Add(new BossInfo(BossChecklistType.Event, bossname, bossValue, available, bossDowned, bossInfo));
 		}
 	}
 
-	public class BossInfo
+	internal class BossInfo
 	{
 		internal Func<bool> available;
 		internal bool hidden;
@@ -109,7 +109,7 @@ namespace BossChecklist.UI
 			this.type = type;
 			this.name = name;
 			this.progression = progression;
-			this.available = available;
+			this.available = available ?? (() => true);
 			this.downed = downed;
 			this.info = info;
 			this.hidden = false;

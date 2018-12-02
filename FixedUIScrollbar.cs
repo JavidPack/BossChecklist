@@ -4,7 +4,7 @@ using Terraria.UI;
 
 namespace BossChecklist.UI
 {
-	public class FixedUIScrollbar : UIScrollbar
+	internal class FixedUIScrollbar : UIScrollbar
 	{
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{

@@ -16,7 +16,7 @@ using Terraria.ID;
 // TODO: Currently have all town npc checklist
 namespace BossChecklist
 {
-	public class BossChecklist : Mod
+	internal class BossChecklist : Mod
 	{
 		static internal BossChecklist instance;
 		internal static BossTracker bossTracker;
@@ -169,6 +169,7 @@ namespace BossChecklist
 
 		// Messages:
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
+		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
 		public override object Call(params object[] args)
 		{
 			try
@@ -188,7 +189,8 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
-					bossTracker.AddBoss(bossname, bossValue, bossDowned, bossInfo);
+					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
+					bossTracker.AddBoss(bossname, bossValue, bossDowned, bossInfo, available);
 					return "Success";
 				}
 				else if (message == "AddMiniBossWithInfo")
@@ -197,7 +199,8 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
-					bossTracker.AddMiniBoss(bossname, bossValue, bossDowned, bossInfo);
+					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
+					bossTracker.AddMiniBoss(bossname, bossValue, bossDowned, bossInfo, available);
 					return "Success";
 				}
 				else if (message == "AddEventWithInfo")
@@ -206,7 +209,8 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
-					bossTracker.AddEvent(bossname, bossValue, bossDowned, bossInfo);
+					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
+					bossTracker.AddEvent(bossname, bossValue, bossDowned, bossInfo, available);
 					return "Success";
 				}
 				// TODO

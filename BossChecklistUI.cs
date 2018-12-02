@@ -251,7 +251,7 @@ namespace BossChecklist.UI
 		}
 	}
 
-	public class HoveredTextSnippetTooltipHack : GlobalItem
+	internal class HoveredTextSnippetTooltipHack : GlobalItem
 	{
 		const int paddingForBox = 10;
 		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y)
