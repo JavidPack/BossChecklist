@@ -94,6 +94,7 @@ namespace BossChecklist.UI
 			checklistList.Width.Set(-25f, 1f);
 			checklistList.Height.Set(-32f, 1f);
 			checklistList.ListPadding = 12f;
+			checklistList.OnScrollWheel += OnScrollWheel_FixHotbarScroll;
 			checklistPanel.Append(checklistList);
 
 			FixedUIScrollbar checklistListScrollbar = new FixedUIScrollbar();
@@ -114,28 +115,27 @@ namespace BossChecklist.UI
 
 		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement)
 		{
-			Main.PlaySound(SoundID.MenuOpen);
 			showCompleted = !showCompleted;
+			Main.PlaySound(showCompleted ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
 		private void ToggleMiniBossButtonClicked(UIMouseEvent evt, UIElement listeningElement)
 		{
-			Main.PlaySound(SoundID.MenuOpen);
 			showMiniBoss = !showMiniBoss;
+			Main.PlaySound(showMiniBoss ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
 		private void ToggleEventButtonClicked(UIMouseEvent evt, UIElement listeningElement)
 		{
-			Main.PlaySound(SoundID.MenuOpen);
 			showEvent = !showEvent;
+			Main.PlaySound(showEvent ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
 		private void ToggleHiddenButtonClicked(UIMouseEvent evt, UIElement listeningElement)
 		{
-			Main.PlaySound(SoundID.MenuOpen);
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt))
 			{
 				BossChecklistWorld.HiddenBosses.Clear();
@@ -148,9 +148,11 @@ namespace BossChecklist.UI
 					packet.Write((byte)BossChecklistMessageType.RequestClearHidden);
 					packet.Send();
 				}
+				Main.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
 				return;
 			}
 			showHidden = !showHidden;
+			Main.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
@@ -219,6 +221,11 @@ namespace BossChecklist.UI
 				}
 				hoveredTextSnippet = null;
 			}
+		}
+
+		internal static void OnScrollWheel_FixHotbarScroll(UIScrollWheelEvent evt, UIElement listeningElement)
+		{
+			Main.LocalPlayer.ScrollHotbar(Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120);
 		}
 
 		private Texture2D ResizeImage(Texture2D texture2D, int desiredWidth, int desiredHeight)
