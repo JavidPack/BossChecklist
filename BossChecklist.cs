@@ -11,6 +11,9 @@ using System.Linq;
 using Terraria.GameContent.UI.Chat;
 using System.IO;
 using Terraria.ID;
+using Terraria.Graphics;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 
 // TODO: Kill all npc checklist
 // TODO: Currently have all town npc checklist
@@ -18,19 +21,16 @@ namespace BossChecklist
 {
 	internal class BossChecklist : Mod
 	{
-		static internal BossChecklist instance;
+		internal static BossChecklist instance;
 		internal static BossTracker bossTracker;
 		internal static ModHotKey ToggleChecklistHotKey;
+		public static ModHotKey ToggleBossLog;
 		internal static UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
 
 		// Mods that have been added manually
 		internal bool vanillaLoaded = true;
 		//internal bool thoriumLoaded;
-
-		// Mods with bosses that could use suppory, but need fixes in the tmod files.
-		//internal bool sacredToolsLoaded;
-		//internal bool crystiliumLoaded;
 
 		// Mods that have been added natively, no longer need code here.
 		internal static bool tremorLoaded;
@@ -39,23 +39,34 @@ namespace BossChecklist
 		//internal bool calamityLoaded;
 		//internal bool pumpkingLoaded;
 
+		internal static ClientConfiguration ClientConfig;
+		internal static DebugConfiguration DebugConfig;
+		public static List<BossStats>[] ServerCollectedRecords;
+		internal UserInterface BossLogInterface;
+		internal BossLogUI BossLog;
+		internal SetupBossList setup;
+		//Zoom level, (for UIs)
+		public static Vector2 ZoomFactor; //0f == fully zoomed out, 1f == fully zoomed in
+
+		internal static UserInterface BossRadarUIInterface;
+		internal static BossRadarUI BossRadarUI;
+
 		public BossChecklist()
 		{
 		}
 
 		public override void Load()
 		{
-			// Too many people are downloading 0.10 versions on 0.9....
-			if (ModLoader.version < new Version(0, 10))
-			{
-				throw new Exception("\nThis mod uses functionality only present in the latest tModLoader. Please update tModLoader to use this mod\n\n");
-			}
 			instance = this;
 			ToggleChecklistHotKey = RegisterHotKey("Toggle Boss Checklist", "P");
+			ToggleBossLog = RegisterHotKey("Toggle Boss Log", "L");
 
 			tremorLoaded = ModLoader.GetMod("Tremor") != null;
 
 			bossTracker = new BossTracker();
+
+			MapAssist.FullMapInitialize();
+			setup = new SetupBossList();
 
 			if (!Main.dedServ)
 			{
@@ -66,6 +77,29 @@ namespace BossChecklist
 				UICheckbox.checkboxTexture = GetTexture("checkBox");
 				UICheckbox.checkmarkTexture = GetTexture("checkMark");
 			}
+
+			if (Main.netMode == NetmodeID.Server) {
+				ServerCollectedRecords = new List<BossStats>[255];
+				for (int i = 0; i < 255; i++) {
+					ServerCollectedRecords[i] = new List<BossStats>();
+					for (int j = 0; j < instance.setup.SortedBosses.Count; j++) {
+						ServerCollectedRecords[i].Add(new BossStats());
+					}
+				}
+			}
+
+			if (!Main.dedServ) {
+				BossLog = new BossLogUI();
+				BossLog.Activate();
+				BossLogInterface = new UserInterface();
+				BossLogInterface.SetState(BossLog);
+
+				//important, after setup has been initialized
+				BossRadarUI = new BossRadarUI();
+				BossRadarUI.Activate();
+				BossRadarUIInterface = new UserInterface();
+				BossRadarUIInterface.SetState(BossRadarUI);
+			}
 		}
 
 		public override void Unload()
@@ -74,6 +108,10 @@ namespace BossChecklist
 			ToggleChecklistHotKey = null;
 			bossChecklistInterface = null;
 			bossTracker = null;
+			ToggleBossLog = null;
+			setup = null;
+			ServerCollectedRecords = null;
+			BossRadarUI.arrowTexture = null;
 
 			UICheckbox.checkboxTexture = null;
 			UICheckbox.checkmarkTexture = null;
@@ -82,6 +120,14 @@ namespace BossChecklist
 		public override void UpdateUI(GameTime gameTime)
 		{
 			bossChecklistInterface?.Update(gameTime);
+
+			if (BossLogInterface != null) BossLogInterface.Update(gameTime);
+			BossRadarUI.Update(gameTime);
+		}
+
+		public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
+			//this is needed for Boss Radar, so it takes the range at which to draw the icon properly
+			ZoomFactor = Transform.Zoom - (Vector2.UnitX + Vector2.UnitY);
 		}
 
 		//int lastSeenScreenWidth;
@@ -141,6 +187,71 @@ namespace BossChecklist
 					InterfaceScaleType.UI)
 				);
 			}
+			if (MouseTextIndex != -1) {
+				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
+					delegate {
+						BossLogInterface.Draw(Main.spriteBatch, new GameTime());
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+				layers.Insert(++MouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Radar",
+					delegate {
+						BossRadarUIInterface.Draw(Main.spriteBatch, new GameTime());
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+			}
+			int InventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Death Text"));
+			if (InventoryIndex != -1) {
+				layers.Insert(InventoryIndex, new LegacyGameInterfaceLayer("BossChecklist: Respawn Timer",
+					delegate {
+						if (Main.LocalPlayer.dead && Main.LocalPlayer.difficulty != 2) {
+							if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) Main.PlaySound(25);
+							string timer = (Main.LocalPlayer.respawnTimer / 60 + 1).ToString();
+							DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontDeathText, timer, new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 - 75), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
+						}
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+			}
+			#region DEBUG
+			int PlayerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
+			if (PlayerChatIndex != -1) {
+				layers.Insert(PlayerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Debug Timers and Counters",
+					delegate {
+						if (Main.LocalPlayer.difficulty != 2) {
+							string calc = "";
+							List<int> list;
+							if (DebugConfig.ShowTimerOrCounter == "RecordTimers") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordTimers;
+							else if (DebugConfig.ShowTimerOrCounter == "BrinkChecker") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BrinkChecker;
+							else if (DebugConfig.ShowTimerOrCounter == "MaxHealth") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().MaxHealth;
+							else if (DebugConfig.ShowTimerOrCounter == "DeathTracker") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().DeathTracker;
+							else if (DebugConfig.ShowTimerOrCounter == "DodgeTimer") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().DodgeTimer;
+							else if (DebugConfig.ShowTimerOrCounter == "AttackCounter") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AttackCounter;
+							if (DebugConfig.ShowTimerOrCounter != "None") {
+								foreach (int timer in Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordTimers) {
+									calc += timer + ", ";
+								}
+								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, DebugConfig.ShowTimerOrCounter, new Vector2(20, Main.screenHeight - 50), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
+								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, calc, new Vector2(20, Main.screenHeight - 25), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
+							}
+						}
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+			}
+			#endregion
+		}
+
+		public override void PostDrawFullscreenMap(ref string mouseText) {
+			MapAssist.DrawFullscreenMap();
+			if (MapAssist.shouldDraw) {
+				MapAssist.DrawNearestEvil(MapAssist.tilePos);
+			}
 		}
 
 		// An alternative approach to the weak reference approach is to do the following in YOUR mod in PostSetupContent
@@ -163,13 +274,14 @@ namespace BossChecklist
 			}
 			catch (Exception e)
 			{
-				ErrorLogger.Log("BossChecklist PostSetupContent Error: " + e.StackTrace + e.Message);
+				Logger.Error("BossChecklist PostSetupContent Error: " + e.StackTrace + e.Message);
 			}
 		}
 
 		// Messages:
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
+		// Merge Notes: AddStatPage added, new AddBoss needed.
 		public override object Call(params object[] args)
 		{
 			try
@@ -183,6 +295,16 @@ namespace BossChecklist
 					bossTracker.AddBoss(bossname, bossValue, bossDowned);
 					return "Success";
 				}
+				/* TODO: Decide on new AddBoss. Find use for bossID
+				if (AddType == "AddBoss") {
+					int bossID = Convert.ToInt32(args[1]);
+					string bossMessage = args[2] as string;
+
+					WorldAssist.ModBossTypes.Add(bossID);
+					WorldAssist.ModBossMessages.Add(bossMessage);
+					return "Success";
+				}
+				*/
 				else if (message == "AddBossWithInfo")
 				{
 					string bossname = args[1] as string;
@@ -219,14 +341,61 @@ namespace BossChecklist
 				//	// Returns List<Tuple<string, float, int, bool>>: Name, value, bosstype(boss, miniboss, event), downed.
 				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
 				//}
-				else
-				{
-					ErrorLogger.Log("BossChecklist Call Error: Unknown Message: " + message);
+				else if (message == "AddStatPage") {
+					float BossValue = Convert.ToSingle(args[1]);
+
+					List<int> BossID;
+					if (args[2] is List<int>) BossID = args[2] as List<int>;
+					else BossID = new List<int>() { Convert.ToInt32(args[2]) };
+
+					string ModName = args[3].ToString();
+					string BossName = args[4].ToString();
+					Func<bool> BossDowned = args[5] as Func<bool>;
+
+					List<int> BossSpawn;
+					if (args[6] is List<int>) BossSpawn = args[6] as List<int>;
+					else BossSpawn = new List<int>() { Convert.ToInt32(args[6]) };
+
+					List<int> BossCollect = args[7] as List<int>;
+					List<int> BossLoot = args[8] as List<int>;
+					string BossTexture = "";
+					if (args.Length > 9) BossTexture = args[9].ToString();
+
+					setup.AddBoss(BossValue, BossID, ModName, BossName, BossDowned, BossSpawn, BossCollect, BossLoot, BossTexture);
+				}
+				/*
+                // Will be added in later once some fixes are made and features are introduced
+
+				//
+                else if (AddType == "AddLoot")
+                {
+                    string ModName = args[1].ToString();
+                    int BossID = Convert.ToInt32(args[2]);
+                    List<int> BossLoot = args[3] as List<int>;
+                    // This list is for adding on to existing bosses loot drops
+                    setup.AddToLootTable(BossID, ModName, BossLoot);
+                }
+                else if (AddType == "AddCollectibles")
+                {
+                    string ModName = args[1].ToString();
+                    int BossID = Convert.ToInt32(args[2]);
+                    List<int> BossCollect = args[3] as List<int>;
+                    // This list is for adding on to existing bosses loot drops
+                    setup.AddToCollection(BossID, ModName, BossCollect);
+                }
+				//
+                else
+                {
+
+                }
+				*/
+				else {
+					Logger.Error("BossChecklist Call Error: Unknown Message: " + message);
 				}
 			}
 			catch (Exception e)
 			{
-				ErrorLogger.Log("BossChecklist Call Error: " + e.StackTrace + e.Message);
+				Logger.Error("BossChecklist Call Error: " + e.StackTrace + e.Message);
 			}
 			return "Failure";
 		}
@@ -234,6 +403,8 @@ namespace BossChecklist
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
 		{
 			BossChecklistMessageType msgType = (BossChecklistMessageType)reader.ReadByte();
+			Player player;
+			PlayerAssist modPlayer;
 			switch (msgType)
 			{
 				// Sent from Client to Server
@@ -264,17 +435,75 @@ namespace BossChecklist
 					//else
 					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
 					break;
+				case BossChecklistMessageType.SendRecordsToServer:
+					player = Main.player[whoAmI];
+					Console.WriteLine("Receiving boss records from the joined player + " + player.name + "!");
+					for (int i = 0; i < instance.setup.SortedBosses.Count; i++) {
+						ServerCollectedRecords[whoAmI][i].kills = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].deaths = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].fightTime = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].fightTime2 = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].brink2 = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].brink = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].totalDodges = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].totalDodges2 = reader.ReadInt32();
+						ServerCollectedRecords[whoAmI][i].dodgeTime = reader.ReadInt32();
+
+						Console.WriteLine("Establishing " + player.name + "'s records for " + instance.setup.SortedBosses[i].name + " to the server");
+					}
+					break;
+				case BossChecklistMessageType.RecordUpdate:
+					player = Main.LocalPlayer;
+					modPlayer = player.GetModPlayer<PlayerAssist>();
+					//Server just sent us information about what boss just got killed and its records shall be updated
+					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
+					RecordID brokenRecords = (RecordID)reader.ReadInt32();
+					int npcPos = reader.ReadInt32();
+
+					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat;
+					//RecordID.Kills will just be increased by 1 automatically
+					specificRecord.kills++;
+
+					if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+						specificRecord.fightTime = reader.ReadInt32();
+						Main.NewText("New Record for Quickest Fight!");
+					}
+					if (brokenRecords.HasFlag(RecordID.LongestFightTime)) specificRecord.fightTime2 = reader.ReadInt32();
+					specificRecord.fightTimeL = reader.ReadInt32();
+
+					if (brokenRecords.HasFlag(RecordID.BestBrink)) {
+						specificRecord.brink2 = reader.ReadInt32();
+						specificRecord.brinkPercent2 = reader.ReadInt32();
+					}
+					if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
+						specificRecord.brink = reader.ReadInt32();
+						specificRecord.brinkPercent = reader.ReadInt32();
+					}
+					specificRecord.brinkL = reader.ReadInt32();
+					specificRecord.brinkPercentL = reader.ReadInt32();
+
+					if (brokenRecords.HasFlag(RecordID.LeastHits)) specificRecord.totalDodges = reader.ReadInt32();
+					if (brokenRecords.HasFlag(RecordID.MostHits)) specificRecord.totalDodges2 = reader.ReadInt32();
+					specificRecord.totalDodgesL = reader.ReadInt32();
+					if (brokenRecords.HasFlag(RecordID.DodgeTime)) specificRecord.dodgeTime = reader.ReadInt32();
+					specificRecord.dodgeTimeL = reader.ReadInt32();
+
+					//Ill need to update the serverrecords too so they can be used later
+
+					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].kills + " / " + ServerCollectedRecords[Main.myPlayer][0].deaths);
+					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].fightTime.ToString());
+					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].brink + "(" + ServerCollectedRecords[Main.myPlayer][0].brinkPercent + ")");
+					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].totalDodges + "(" + ServerCollectedRecords[Main.myPlayer][0].dodgeTime + ")");
+
+					// ORDER MATTERS FOR reader
+					break;
 				default:
-					ErrorLogger.Log("BossChecklist: Unknown Message type: " + msgType);
+					Logger.Error("BossChecklist: Unknown Message type: " + msgType);
 					break;
 			}
 		}
 	}
 
-	enum BossChecklistMessageType : byte
-	{
-		RequestHideBoss,
-		RequestClearHidden,
-	}
+
 }
 
