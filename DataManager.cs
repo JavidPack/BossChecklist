@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
+	// TODO: Any way to migrate data from BossAssist save?
     public class BossRecord : TagSerializable
     {
         internal string bossName;
@@ -97,13 +99,72 @@ namespace BossChecklist
                 { nameof(brinkPercent2), brinkPercent2 }
             };
         }
-    }
+
+		internal void NetRecieve(BinaryReader reader) {
+			RecordID brokenRecords = (RecordID)reader.ReadInt32();
+
+			//RecordID.Kills will just be increased by 1 automatically
+			kills++;
+
+			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+				fightTime = reader.ReadInt32();
+				Main.NewText("New Record for Quickest Fight!");
+			}
+			if (brokenRecords.HasFlag(RecordID.LongestFightTime)) fightTime2 = reader.ReadInt32();
+			fightTimeL = reader.ReadInt32();
+
+			if (brokenRecords.HasFlag(RecordID.BestBrink)) {
+				brink2 = reader.ReadInt32();
+				brinkPercent2 = reader.ReadInt32();
+			}
+			if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
+				brink = reader.ReadInt32();
+				brinkPercent = reader.ReadInt32();
+			}
+			brinkL = reader.ReadInt32();
+			brinkPercentL = reader.ReadInt32();
+
+			if (brokenRecords.HasFlag(RecordID.LeastHits)) totalDodges = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.MostHits)) totalDodges2 = reader.ReadInt32();
+			totalDodgesL = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTime = reader.ReadInt32();
+			dodgeTimeL = reader.ReadInt32();
+		}
+
+		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
+			writer.Write((int)specificRecord);
+			// Kills update by 1 automatically
+			// Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
+
+			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(fightTimeL);
+			if (specificRecord.HasFlag(RecordID.LongestFightTime)) writer.Write(fightTimeL);
+			writer.Write(fightTimeL);
+
+			if (specificRecord.HasFlag(RecordID.BestBrink)) {
+				writer.Write(brinkL);
+				writer.Write(brinkPercentL);
+			}
+			if (specificRecord.HasFlag(RecordID.WorstBrink)) {
+				writer.Write(brinkL);
+				writer.Write(brinkPercentL);
+			}
+			writer.Write(brinkL);
+			writer.Write(brinkPercentL);
+
+			if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(totalDodgesL);
+			if (specificRecord.HasFlag(RecordID.MostHits)) writer.Write(totalDodgesL);
+			writer.Write(totalDodgesL);
+			if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimeL);
+			writer.Write(dodgeTimeL);
+		}
+	}
 
     public class BossCollection : TagSerializable
     {
         internal string modName;
         internal string bossName;
 
+		// TODO: Use ItemDefinition
         internal List<Item> loot;
         internal List<Item> collectibles;
 

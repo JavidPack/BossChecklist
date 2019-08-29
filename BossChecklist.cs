@@ -459,36 +459,10 @@ namespace BossChecklist
 					modPlayer = player.GetModPlayer<PlayerAssist>();
 					//Server just sent us information about what boss just got killed and its records shall be updated
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
-					RecordID brokenRecords = (RecordID)reader.ReadInt32();
 					int npcPos = reader.ReadInt32();
 
 					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat;
-					//RecordID.Kills will just be increased by 1 automatically
-					specificRecord.kills++;
-
-					if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
-						specificRecord.fightTime = reader.ReadInt32();
-						Main.NewText("New Record for Quickest Fight!");
-					}
-					if (brokenRecords.HasFlag(RecordID.LongestFightTime)) specificRecord.fightTime2 = reader.ReadInt32();
-					specificRecord.fightTimeL = reader.ReadInt32();
-
-					if (brokenRecords.HasFlag(RecordID.BestBrink)) {
-						specificRecord.brink2 = reader.ReadInt32();
-						specificRecord.brinkPercent2 = reader.ReadInt32();
-					}
-					if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
-						specificRecord.brink = reader.ReadInt32();
-						specificRecord.brinkPercent = reader.ReadInt32();
-					}
-					specificRecord.brinkL = reader.ReadInt32();
-					specificRecord.brinkPercentL = reader.ReadInt32();
-
-					if (brokenRecords.HasFlag(RecordID.LeastHits)) specificRecord.totalDodges = reader.ReadInt32();
-					if (brokenRecords.HasFlag(RecordID.MostHits)) specificRecord.totalDodges2 = reader.ReadInt32();
-					specificRecord.totalDodgesL = reader.ReadInt32();
-					if (brokenRecords.HasFlag(RecordID.DodgeTime)) specificRecord.dodgeTime = reader.ReadInt32();
-					specificRecord.dodgeTimeL = reader.ReadInt32();
+					specificRecord.NetRecieve(reader);
 
 					//Ill need to update the serverrecords too so they can be used later
 

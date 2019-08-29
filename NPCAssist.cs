@@ -302,34 +302,8 @@ namespace BossChecklist
 
 					ModPacket packet = mod.GetPacket();
 					packet.Write((byte)BossChecklistMessageType.RecordUpdate);
-
-					packet.Write((int)specificRecord);
 					packet.Write((int)recordIndex);
-					// Kills update by 1 automatically
-					// Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
-
-					if (specificRecord.HasFlag(RecordID.ShortestFightTime)) packet.Write(newRecord.fightTimeL);
-					if (specificRecord.HasFlag(RecordID.LongestFightTime)) packet.Write(newRecord.fightTimeL);
-					packet.Write(newRecord.fightTimeL);
-
-					if (specificRecord.HasFlag(RecordID.BestBrink))
-					{
-						packet.Write(newRecord.brinkL);
-						packet.Write(newRecord.brinkPercentL);
-					}
-					if (specificRecord.HasFlag(RecordID.WorstBrink))
-					{
-						packet.Write(newRecord.brinkL);
-						packet.Write(newRecord.brinkPercentL);
-					}
-					packet.Write(newRecord.brinkL);
-					packet.Write(newRecord.brinkPercentL);
-
-					if (specificRecord.HasFlag(RecordID.LeastHits)) packet.Write(newRecord.totalDodgesL);
-					if (specificRecord.HasFlag(RecordID.MostHits)) packet.Write(newRecord.totalDodgesL);
-					packet.Write(newRecord.totalDodgesL);
-					if (specificRecord.HasFlag(RecordID.DodgeTime)) packet.Write(newRecord.dodgeTimeL);
-					packet.Write(newRecord.dodgeTimeL);
+					newRecord.NetSend(packet, specificRecord);
 
 					// ORDER MATTERS
 					packet.Send(toClient: i);
