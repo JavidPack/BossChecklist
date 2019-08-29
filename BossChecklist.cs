@@ -225,14 +225,15 @@ namespace BossChecklist
 						if (Main.LocalPlayer.difficulty != 2) {
 							string calc = "";
 							List<int> list;
-							if (DebugConfig.ShowTimerOrCounter == "RecordTimers") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordTimers;
-							else if (DebugConfig.ShowTimerOrCounter == "BrinkChecker") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BrinkChecker;
-							else if (DebugConfig.ShowTimerOrCounter == "MaxHealth") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().MaxHealth;
-							else if (DebugConfig.ShowTimerOrCounter == "DeathTracker") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().DeathTracker;
-							else if (DebugConfig.ShowTimerOrCounter == "DodgeTimer") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().DodgeTimer;
-							else if (DebugConfig.ShowTimerOrCounter == "AttackCounter") list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AttackCounter;
+							PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+							if (DebugConfig.ShowTimerOrCounter == "RecordTimers") list = playerAssist.RecordTimers;
+							else if (DebugConfig.ShowTimerOrCounter == "BrinkChecker") list = playerAssist.BrinkChecker;
+							else if (DebugConfig.ShowTimerOrCounter == "MaxHealth") list = playerAssist.MaxHealth;
+							else if (DebugConfig.ShowTimerOrCounter == "DeathTracker") list = playerAssist.DeathTracker;
+							else if (DebugConfig.ShowTimerOrCounter == "DodgeTimer") list = playerAssist.DodgeTimer;
+							else if (DebugConfig.ShowTimerOrCounter == "AttackCounter") list = playerAssist.AttackCounter;
 							if (DebugConfig.ShowTimerOrCounter != "None") {
-								foreach (int timer in Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordTimers) {
+								foreach (int timer in playerAssist.RecordTimers) {
 									calc += timer + ", ";
 								}
 								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, DebugConfig.ShowTimerOrCounter, new Vector2(20, Main.screenHeight - 50), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
@@ -439,15 +440,16 @@ namespace BossChecklist
 					player = Main.player[whoAmI];
 					Console.WriteLine("Receiving boss records from the joined player + " + player.name + "!");
 					for (int i = 0; i < instance.setup.SortedBosses.Count; i++) {
-						ServerCollectedRecords[whoAmI][i].kills = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].deaths = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].fightTime = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].fightTime2 = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].brink2 = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].brink = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].totalDodges = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].totalDodges2 = reader.ReadInt32();
-						ServerCollectedRecords[whoAmI][i].dodgeTime = reader.ReadInt32();
+						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
+						bossStats.kills = reader.ReadInt32();
+						bossStats.deaths = reader.ReadInt32();
+						bossStats.fightTime = reader.ReadInt32();
+						bossStats.fightTime2 = reader.ReadInt32();
+						bossStats.brink2 = reader.ReadInt32();
+						bossStats.brink = reader.ReadInt32();
+						bossStats.totalDodges = reader.ReadInt32();
+						bossStats.totalDodges2 = reader.ReadInt32();
+						bossStats.dodgeTime = reader.ReadInt32();
 
 						Console.WriteLine("Establishing " + player.name + "'s records for " + instance.setup.SortedBosses[i].name + " to the server");
 					}

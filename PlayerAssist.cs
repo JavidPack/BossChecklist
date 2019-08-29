@@ -49,11 +49,12 @@ namespace BossChecklist
 
             // For being able to complete records in Multiplayer
             RecordTimers = new List<int>();
-            BrinkChecker = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-            MaxHealth = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-            DeathTracker = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-            DodgeTimer = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-            AttackCounter = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
+			int bossCount = BossChecklist.instance.setup.SortedBosses.Count;
+			BrinkChecker = new List<int>(bossCount);
+			MaxHealth = new List<int>(bossCount);
+			DeathTracker = new List<int>(bossCount);
+			DodgeTimer = new List<int>(bossCount);
+			AttackCounter = new List<int>(bossCount);
 
 			foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
 			{
@@ -125,12 +126,13 @@ namespace BossChecklist
 
         public override void OnEnterWorld(Player player)
 		{
-			RecordTimers = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-			BrinkChecker = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-			MaxHealth = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-			DeathTracker = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-			DodgeTimer = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
-			AttackCounter = new List<int>(BossChecklist.instance.setup.SortedBosses.Count);
+			int bossCount = BossChecklist.instance.setup.SortedBosses.Count;
+			RecordTimers = new List<int>(bossCount);
+			BrinkChecker = new List<int>(bossCount);
+			MaxHealth = new List<int>(bossCount);
+			DeathTracker = new List<int>(bossCount);
+			DodgeTimer = new List<int>(bossCount);
+			AttackCounter = new List<int>(bossCount);
 
 			foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
 			{
@@ -147,17 +149,18 @@ namespace BossChecklist
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = mod.GetPacket();
 				packet.Write((byte)BossChecklistMessageType.SendRecordsToServer);
-				for (int i = 0; i < BossChecklist.instance.setup.SortedBosses.Count; i++)
+				for (int i = 0; i < bossCount; i++)
 				{
-					packet.Write(AllBossRecords[i].stat.kills);
-					packet.Write(AllBossRecords[i].stat.deaths);
-					packet.Write(AllBossRecords[i].stat.fightTime);
-					packet.Write(AllBossRecords[i].stat.fightTime2);
-					packet.Write(AllBossRecords[i].stat.brink2);
-					packet.Write(AllBossRecords[i].stat.brink);
-					packet.Write(AllBossRecords[i].stat.totalDodges);
-					packet.Write(AllBossRecords[i].stat.totalDodges2);
-					packet.Write(AllBossRecords[i].stat.dodgeTime);
+					BossStats stat = AllBossRecords[i].stat;
+					packet.Write(stat.kills);
+					packet.Write(stat.deaths);
+					packet.Write(stat.fightTime);
+					packet.Write(stat.fightTime2);
+					packet.Write(stat.brink2);
+					packet.Write(stat.brink);
+					packet.Write(stat.totalDodges);
+					packet.Write(stat.totalDodges2);
+					packet.Write(stat.dodgeTime);
 				}
 				packet.Send(); // To server
 			}

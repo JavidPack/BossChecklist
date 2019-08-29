@@ -122,79 +122,80 @@ namespace BossChecklist
 		{
 			int recordIndex = ListedBossNum(npc);
 			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
-			int currentRecord = modplayer.AllBossRecords[recordIndex].stat.fightTime;
-			int worstRecord = modplayer.AllBossRecords[recordIndex].stat.fightTime2;
+			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
+			int currentRecord = bossStats.fightTime;
+			int worstRecord = bossStats.fightTime2;
 
-			modplayer.AllBossRecords[recordIndex].stat.fightTimeL = recordAttempt;
+			bossStats.fightTimeL = recordAttempt;
 
 			int brinkAttempt = modplayer.BrinkChecker[recordIndex]; // Trying to set a new record
 			int MaxLife = modplayer.MaxHealth[recordIndex];
-			int currentBrink = modplayer.AllBossRecords[recordIndex].stat.brink2;
-			int worstBrink = modplayer.AllBossRecords[recordIndex].stat.brink;
+			int currentBrink = bossStats.brink2;
+			int worstBrink = bossStats.brink;
 
-			modplayer.AllBossRecords[recordIndex].stat.brinkL = brinkAttempt;
+			bossStats.brinkL = brinkAttempt;
 			double lastHealth = (double)brinkAttempt / (double)MaxLife;
-			modplayer.AllBossRecords[recordIndex].stat.brinkPercentL = (int)(lastHealth * 100);
+			bossStats.brinkPercentL = (int)(lastHealth * 100);
 
 			int dodgeTimeAttempt = modplayer.DodgeTimer[recordIndex];
-			int currentDodgeTime = modplayer.AllBossRecords[recordIndex].stat.dodgeTime;
+			int currentDodgeTime = bossStats.dodgeTime;
 			int dodgeAttempt = modplayer.AttackCounter[recordIndex];
-			int currentDodges = modplayer.AllBossRecords[recordIndex].stat.totalDodges;
-			int worstDodges = modplayer.AllBossRecords[recordIndex].stat.totalDodges2;
+			int currentDodges = bossStats.totalDodges;
+			int worstDodges = bossStats.totalDodges2;
 
-			modplayer.AllBossRecords[recordIndex].stat.dodgeTimeL = dodgeTimeAttempt;
-			modplayer.AllBossRecords[recordIndex].stat.totalDodgesL = dodgeAttempt;
+			bossStats.dodgeTimeL = dodgeTimeAttempt;
+			bossStats.totalDodgesL = dodgeAttempt;
 
 			// Increase kill count
-			modplayer.AllBossRecords[recordIndex].stat.kills++;
+			bossStats.kills++;
 
 			if (recordAttempt < currentRecord && currentRecord != 0 && worstRecord <= 0)
 			{
 				// First make the current record the worst record if no worst record has been made and a new record was made
-				modplayer.AllBossRecords[recordIndex].stat.fightTime2 = currentRecord;
+				bossStats.fightTime2 = currentRecord;
 			}
 			if (recordAttempt < currentRecord || currentRecord <= 0)
 			{
 				//The player has beaten their best record, so we have to overwrite the old record with the new one
-				modplayer.AllBossRecords[recordIndex].stat.fightTime = recordAttempt;
+				bossStats.fightTime = recordAttempt;
 			}
 			else if (recordAttempt > worstRecord || worstRecord <= 0)
 			{
 				//The player has beaten their worst record, so we have to overwrite the old record with the new one
-				modplayer.AllBossRecords[recordIndex].stat.fightTime2 = recordAttempt;
+				bossStats.fightTime2 = recordAttempt;
 			}
 
 			if (brinkAttempt > currentBrink && currentBrink != 0 && worstBrink <= 0)
 			{
-				modplayer.AllBossRecords[recordIndex].stat.brink = currentBrink;
+				bossStats.brink = currentBrink;
 			}
 			if (brinkAttempt > currentBrink || currentBrink <= 0)
 			{
-				modplayer.AllBossRecords[recordIndex].stat.brink2 = brinkAttempt;
+				bossStats.brink2 = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
-				modplayer.AllBossRecords[recordIndex].stat.brinkPercent2 = (int)(newHealth * 100);
+				bossStats.brinkPercent2 = (int)(newHealth * 100);
 			}
 			else if (brinkAttempt < worstBrink || worstBrink <= 0)
 			{
-				modplayer.AllBossRecords[recordIndex].stat.brink = brinkAttempt;
+				bossStats.brink = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
-				modplayer.AllBossRecords[recordIndex].stat.brinkPercent = (int)(newHealth * 100);
+				bossStats.brinkPercent = (int)(newHealth * 100);
 			}
 
 			if (dodgeTimeAttempt > currentDodgeTime || currentDodgeTime < 0)
 			{
 				// There is no "worse record" for this one so just overwrite any better records made
-				modplayer.AllBossRecords[recordIndex].stat.dodgeTime = dodgeTimeAttempt;
+				bossStats.dodgeTime = dodgeTimeAttempt;
 			}
 
 			if (dodgeAttempt < currentDodges || currentDodges < 0)
 			{
-				modplayer.AllBossRecords[recordIndex].stat.totalDodges = dodgeAttempt;
-				if (worstDodges == 0) modplayer.AllBossRecords[recordIndex].stat.totalDodges2 = currentDodges;
+				bossStats.totalDodges = dodgeAttempt;
+				if (worstDodges == 0) bossStats.totalDodges2 = currentDodges;
 			}
 			else if (dodgeAttempt > worstDodges || worstDodges < 0)
 			{
-				modplayer.AllBossRecords[recordIndex].stat.totalDodges2 = dodgeAttempt;
+				bossStats.totalDodges2 = dodgeAttempt;
 			}
 
 			modplayer.DodgeTimer[recordIndex] = 0;
@@ -248,54 +249,54 @@ namespace BossChecklist
 					{
 						Console.WriteLine("This Fight (" + newRecord.fightTimeL + ") was better than your current best (" + oldRecord.fightTime + ")");
 						specificRecord |= RecordID.ShortestFightTime;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].fightTime = newRecord.fightTimeL;
+						oldRecord.fightTime = newRecord.fightTimeL;
 					}
 					if (newRecord.fightTimeL > oldRecord.fightTime2 && newRecord.fightTimeL > 0)
 					{
 						Console.WriteLine("This Fight (" + newRecord.fightTimeL + ") was worse than your current worst (" + oldRecord.fightTime2 + ")");
 						specificRecord |= RecordID.LongestFightTime;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].fightTime2 = newRecord.fightTimeL;
+						oldRecord.fightTime2 = newRecord.fightTimeL;
 					}
-					BossChecklist.ServerCollectedRecords[i][recordIndex].fightTimeL = newRecord.fightTimeL;
+					oldRecord.fightTimeL = newRecord.fightTimeL;
 
 					if (newRecord.brinkL > oldRecord.brink2 && newRecord.brinkL > 0)
 					{
 						Console.WriteLine("This Fight (" + newRecord.brink2 + ") was better than your current best (" + oldRecord.brink2 + ")");
 						specificRecord |= RecordID.BestBrink;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].brink2 = newRecord.brinkL;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].brinkPercent2 = newRecord.brinkPercentL;
+						oldRecord.brink2 = newRecord.brinkL;
+						oldRecord.brinkPercent2 = newRecord.brinkPercentL;
 					}
 					if (newRecord.brinkL < oldRecord.brink && newRecord.brinkL > 0)
 					{
 						Console.WriteLine("This Fight (" + newRecord.brink + ") was better than your current best (" + oldRecord.brink + ")");
 						specificRecord |= RecordID.WorstBrink;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].brink = newRecord.brinkL;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].brinkPercent = newRecord.brinkPercentL;
+						oldRecord.brink = newRecord.brinkL;
+						oldRecord.brinkPercent = newRecord.brinkPercentL;
 					}
-					BossChecklist.ServerCollectedRecords[i][recordIndex].brinkL = newRecord.brinkL;
-					BossChecklist.ServerCollectedRecords[i][recordIndex].brinkPercentL = newRecord.brinkPercentL;
+					oldRecord.brinkL = newRecord.brinkL;
+					oldRecord.brinkPercentL = newRecord.brinkPercentL;
 
 					if (newRecord.totalDodgesL < oldRecord.totalDodges && newRecord.totalDodgesL > -1)
 					{
 						Console.WriteLine("This Fight (" + newRecord.totalDodgesL + ") was better than your current best (" + oldRecord.totalDodges + ")");
 						specificRecord |= RecordID.LeastHits;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].totalDodges = newRecord.totalDodgesL;
+						oldRecord.totalDodges = newRecord.totalDodgesL;
 					}
 					if (newRecord.totalDodgesL > oldRecord.totalDodges2 && oldRecord.totalDodgesL > -1)
 					{
 						Console.WriteLine("This Fight (" + newRecord.totalDodgesL + ") was better than your current best (" + oldRecord.totalDodges2 + ")");
 						specificRecord |= RecordID.MostHits;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].totalDodges2 = newRecord.totalDodgesL;
+						oldRecord.totalDodges2 = newRecord.totalDodgesL;
 					}
-					BossChecklist.ServerCollectedRecords[i][recordIndex].totalDodgesL = newRecord.totalDodgesL;
+					oldRecord.totalDodgesL = newRecord.totalDodgesL;
 
 					if (newRecord.dodgeTimeL > oldRecord.dodgeTime && oldRecord.dodgeTimeL > 0)
 					{
 						Console.WriteLine("This Fight (" + newRecord.dodgeTimeL + ") was better than your current best (" + oldRecord.dodgeTime + ")");
 						specificRecord |= RecordID.DodgeTime;
-						BossChecklist.ServerCollectedRecords[i][recordIndex].dodgeTime = newRecord.dodgeTimeL;
+						oldRecord.dodgeTime = newRecord.dodgeTimeL;
 					}
-					BossChecklist.ServerCollectedRecords[i][recordIndex].dodgeTimeL = newRecord.dodgeTimeL;
+					oldRecord.dodgeTimeL = newRecord.dodgeTimeL;
 					
 					// Make the packet
 

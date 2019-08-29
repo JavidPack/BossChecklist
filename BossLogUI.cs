@@ -380,8 +380,8 @@ namespace BossChecklist
                     {
                         recordType = "Kill Death Ratio";
 
-                        int killTimes = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.kills;
-                        int deathTimes = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.deaths;
+                        int killTimes = record.kills;
+                        int deathTimes = record.deaths;
 
                         if (killTimes >= deathTimes)
                         {
@@ -406,9 +406,9 @@ namespace BossChecklist
 						if (BossLogUI.AltRecords) recordType = "Slowest Victory";
                         string finalResult = "";
 
-                        int BestRecord = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.fightTime;
-                        int WorstRecord = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.fightTime2;
-                        int LastRecord = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.fightTimeL;
+                        int BestRecord = record.fightTime;
+                        int WorstRecord = record.fightTime2;
+                        int LastRecord = record.fightTimeL;
 
                         if (!BossLogUI.AltRecords)
                         {
@@ -537,12 +537,12 @@ namespace BossChecklist
                         recordType = "Vitality";
 						if (BossLogUI.AltRecords) recordType = "Brink of Death";
 
-						int BestRecord = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.brink2;
-                        int BestPercent = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.brinkPercent2;
-                        int WorstRecord = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.brink;
-                        int WorstPercent = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.brinkPercent;
-                        int LastRecord = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.brinkL;
-                        int LastPercent = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.brinkPercentL;
+						int BestRecord = record.brink2;
+                        int BestPercent = record.brinkPercent2;
+                        int WorstRecord = record.brink;
+                        int WorstPercent = record.brinkPercent;
+                        int LastRecord = record.brinkL;
+                        int LastPercent = record.brinkPercentL;
 
                         if (!BossLogUI.AltRecords)
                         {
@@ -615,12 +615,12 @@ namespace BossChecklist
                         recordType = "Ninja Reflexes";
 						if (BossLogUI.AltRecords) recordType = "Clumsy Fool";
 
-						int timer = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.dodgeTime;
-                        int low = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.totalDodges;
-                        int high = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.totalDodges2;
-                        int last = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.totalDodgesL;
+						int timer = record.dodgeTime;
+                        int low = record.totalDodges;
+                        int high = record.totalDodges2;
+                        int last = record.totalDodgesL;
 
-                        double timer2 = (double)Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat.dodgeTime / 60;
+                        double timer2 = (double)record.dodgeTime / 60;
                         string timerOutput = timer2.ToString("0.##");
 
                         if (!BossLogUI.AltRecords)
