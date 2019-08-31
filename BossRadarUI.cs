@@ -11,8 +11,8 @@ namespace BossChecklist
 {
     class BossRadarUI : UIState
     {
-		// TODO: Fix the twins.
-        internal static List<int> type;
+		// TODO: Fix the twins. Twins only shows 1 icon, needs 2.
+		internal static List<int> type;
 
         internal static List<int> bossHeadIndex;
 
