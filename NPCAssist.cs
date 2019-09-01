@@ -327,7 +327,7 @@ namespace BossChecklist
 
         public static int ListedBossNum(NPC boss)
         {
-            List<BossInfo> BL = BossChecklist.instance.setup.SortedBosses;
+            List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (boss.type < Main.maxNPCTypes) return BL.FindIndex(x => x.ids.Any(y => y == boss.type));
 			else return BL.FindIndex(x => x.name == boss.FullName && x.source == boss.modNPC.mod.Name && x.ids.Any(y => y == boss.type));
         }
@@ -335,12 +335,12 @@ namespace BossChecklist
         public bool TruelyDead(NPC npc)
         {
 			// Check all multibosses
-			List<BossInfo> BL = BossChecklist.instance.setup.SortedBosses;
+			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (ListedBossNum(npc) != -1)
 			{
-				for (int i = 0; i < BossChecklist.instance.setup.SortedBosses[ListedBossNum(npc)].ids.Count; i++)
+				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[ListedBossNum(npc)].ids.Count; i++)
 				{
-					if (Main.npc.Any(x => x != npc && x.type == BossChecklist.instance.setup.SortedBosses[ListedBossNum(npc)].ids[i] && x.active)) return false;
+					if (Main.npc.Any(x => x != npc && x.type == BossChecklist.bossTracker.SortedBosses[ListedBossNum(npc)].ids[i] && x.active)) return false;
 				}
 			}
 			return true;

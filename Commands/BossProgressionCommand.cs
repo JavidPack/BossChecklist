@@ -16,7 +16,7 @@ namespace BossChecklist.Commands
 
 		public override void Action(CommandCaller caller, string input, string[] args)
 		{
-			var sortedBosses = BossChecklist.bossTracker.allBosses.OrderBy(x => x.progression);
+			var sortedBosses = BossChecklist.bossTracker.SortedBosses.OrderBy(x => x.progression);
 			foreach (var boss in sortedBosses)
 			{
 				bool downed = boss.downed();

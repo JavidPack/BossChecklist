@@ -2,6 +2,13 @@
 
 namespace BossChecklist
 {
+	internal enum BossChecklistType
+	{
+		Boss,
+		MiniBoss,
+		Event
+	}
+
 	enum BossChecklistMessageType : byte
 	{
 		RequestHideBoss,

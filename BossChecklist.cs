@@ -14,6 +14,7 @@ using Terraria.ID;
 using Terraria.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
+using System.Reflection;
 
 // TODO: Kill all npc checklist
 // TODO: Currently have all town npc checklist
@@ -44,7 +45,6 @@ namespace BossChecklist
 		public static List<BossStats>[] ServerCollectedRecords;
 		internal UserInterface BossLogInterface;
 		internal BossLogUI BossLog;
-		internal SetupBossList setup;
 		//Zoom level, (for UIs)
 		public static Vector2 ZoomFactor; //0f == fully zoomed out, 1f == fully zoomed in
 
@@ -66,7 +66,6 @@ namespace BossChecklist
 			bossTracker = new BossTracker();
 
 			MapAssist.FullMapInitialize();
-			setup = new SetupBossList();
 
 			if (!Main.dedServ)
 			{
@@ -82,7 +81,7 @@ namespace BossChecklist
 				ServerCollectedRecords = new List<BossStats>[255];
 				for (int i = 0; i < 255; i++) {
 					ServerCollectedRecords[i] = new List<BossStats>();
-					for (int j = 0; j < instance.setup.SortedBosses.Count; j++) {
+					for (int j = 0; j < bossTracker.SortedBosses.Count; j++) {
 						ServerCollectedRecords[i].Add(new BossStats());
 					}
 				}
@@ -109,7 +108,6 @@ namespace BossChecklist
 			bossChecklistInterface = null;
 			bossTracker = null;
 			ToggleBossLog = null;
-			setup = null;
 			ServerCollectedRecords = null;
 			BossRadarUI.arrowTexture = null;
 
@@ -313,6 +311,7 @@ namespace BossChecklist
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					string bossInfo = args[4] as string;
 					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
+					// possible? var assembly = Assembly.GetCallingAssembly();
 					bossTracker.AddBoss(bossname, bossValue, bossDowned, bossInfo, available);
 					return "Success";
 				}
@@ -362,7 +361,7 @@ namespace BossChecklist
 					string BossTexture = "";
 					if (args.Length > 9) BossTexture = args[9].ToString();
 
-					setup.AddBoss(BossValue, BossID, ModName, BossName, BossDowned, BossSpawn, BossCollect, BossLoot, BossTexture);
+					bossTracker.AddBoss(BossValue, BossID, ModName, BossName, BossDowned, BossSpawn, BossCollect, BossLoot, BossTexture);
 				}
 				/*
                 // Will be added in later once some fixes are made and features are introduced
@@ -439,7 +438,7 @@ namespace BossChecklist
 				case BossChecklistMessageType.SendRecordsToServer:
 					player = Main.player[whoAmI];
 					Console.WriteLine("Receiving boss records from the joined player + " + player.name + "!");
-					for (int i = 0; i < instance.setup.SortedBosses.Count; i++) {
+					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
 						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
 						bossStats.kills = reader.ReadInt32();
 						bossStats.deaths = reader.ReadInt32();
@@ -451,7 +450,7 @@ namespace BossChecklist
 						bossStats.totalDodges2 = reader.ReadInt32();
 						bossStats.dodgeTime = reader.ReadInt32();
 
-						Console.WriteLine("Establishing " + player.name + "'s records for " + instance.setup.SortedBosses[i].name + " to the server");
+						Console.WriteLine("Establishing " + player.name + "'s records for " + bossTracker.SortedBosses[i].name + " to the server");
 					}
 					break;
 				case BossChecklistMessageType.RecordUpdate:

@@ -166,7 +166,7 @@ namespace BossChecklist.UI
 		{
 			checklistList.Clear();
 
-			foreach (BossInfo boss in BossChecklist.bossTracker.allBosses)
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
 			{
 				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.name);
 				if (boss.available() && (!boss.hidden || showHidden))

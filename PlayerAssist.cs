@@ -29,7 +29,7 @@ namespace BossChecklist
         public override void Initialize()
         {
             AllBossRecords = new List<BossRecord>();
-            foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
+            foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
             {
                 AllBossRecords.Add(new BossRecord(boss.source, boss.name));
             }
@@ -37,7 +37,7 @@ namespace BossChecklist
             // Make a new list of collections
             BossTrophies = new List<BossCollection>();
             // For each boss added...
-            foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
+            foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
             {
                 // 1.) Add a collection for the boss
                 BossTrophies.Add(new BossCollection(boss.source, boss.name));
@@ -49,14 +49,14 @@ namespace BossChecklist
 
             // For being able to complete records in Multiplayer
             RecordTimers = new List<int>();
-			int bossCount = BossChecklist.instance.setup.SortedBosses.Count;
+			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			BrinkChecker = new List<int>(bossCount);
 			MaxHealth = new List<int>(bossCount);
 			DeathTracker = new List<int>(bossCount);
 			DodgeTimer = new List<int>(bossCount);
 			AttackCounter = new List<int>(bossCount);
 
-			foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
 			{
 				RecordTimers.Add(0);
 				BrinkChecker.Add(0);
@@ -126,7 +126,7 @@ namespace BossChecklist
 
         public override void OnEnterWorld(Player player)
 		{
-			int bossCount = BossChecklist.instance.setup.SortedBosses.Count;
+			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			RecordTimers = new List<int>(bossCount);
 			BrinkChecker = new List<int>(bossCount);
 			MaxHealth = new List<int>(bossCount);
@@ -134,7 +134,7 @@ namespace BossChecklist
 			DodgeTimer = new List<int>(bossCount);
 			AttackCounter = new List<int>(bossCount);
 
-			foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
 			{
 				RecordTimers.Add(0);
 				BrinkChecker.Add(0);

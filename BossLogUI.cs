@@ -198,7 +198,7 @@ namespace BossChecklist
 						new List<int>(),
 						new List<int>()
 					};
-					foreach (int type in BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].collection)
+					foreach (int type in BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].collection)
 					{
 						if (type != -1)
 						{
@@ -246,15 +246,15 @@ namespace BossChecklist
 
                 if (headNum != -1)
                 {
-					for (int h = 0; h < BossChecklist.instance.setup.SortedBosses[headNum].ids.Count; h++)
+					for (int h = 0; h < BossChecklist.bossTracker.SortedBosses[headNum].ids.Count; h++)
 					{
 						Color maskedHead;
-						if (!BossChecklist.instance.setup.SortedBosses[headNum].downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
+						if (!BossChecklist.bossTracker.SortedBosses[headNum].downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
 						else maskedHead = Color.White;
 						
-						if (BossLogUI.GetBossHead(BossChecklist.instance.setup.SortedBosses[headNum].ids[h]) != ModContent.GetTexture("Terraria/NPC_Head_0"))
+						if (BossLogUI.GetBossHead(BossChecklist.bossTracker.SortedBosses[headNum].ids[h]) != ModContent.GetTexture("Terraria/NPC_Head_0"))
 						{
-							Texture2D head = BossLogUI.GetBossHead(BossChecklist.instance.setup.SortedBosses[headNum].ids[h]);
+							Texture2D head = BossLogUI.GetBossHead(BossChecklist.bossTracker.SortedBosses[headNum].ids[h]);
 							spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * h), Main.mouseY + 15, head.Width, head.Height), maskedHead);
 						}
 					}
@@ -263,9 +263,9 @@ namespace BossChecklist
 
             if (Id == "PageOne" && BossLogUI.PageNum >= 0)
             {
-                BossInfo shortcut = BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum];
+                BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 
-                Texture2D bossTexture = ModContent.GetTexture(BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].pageTexture);
+                Texture2D bossTexture = ModContent.GetTexture(BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].pageTexture);
                 Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (bossTexture.Width / 2), pageRect.Y + (pageRect.Height / 2) - (bossTexture.Height / 2), bossTexture.Width, bossTexture.Height);
                 Rectangle cutRect = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
                 Color masked;
@@ -273,25 +273,22 @@ namespace BossChecklist
 				else masked = Color.White;
                 spriteBatch.Draw(bossTexture, posRect, cutRect, masked);
 
-				for (int h = 0; h < BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].ids.Count; h++)
+				for (int h = 0; h < BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].ids.Count; h++)
 				{
 					Color maskedHead;
-					if (!BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
+					if (!BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
 					else maskedHead = Color.White;
 
-					if (BossLogUI.GetBossHead(BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].ids[h]) != ModContent.GetTexture("Terraria/NPC_Head_0"))
+					if (BossLogUI.GetBossHead(BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].ids[h]) != ModContent.GetTexture("Terraria/NPC_Head_0"))
 					{
-						Texture2D head = BossLogUI.GetBossHead(BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].ids[h]);
+						Texture2D head = BossLogUI.GetBossHead(BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].ids[h]);
 						Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * h), pageRect.Y + 5, head.Width, head.Height);
 						spriteBatch.Draw(head, headPos, maskedHead);
 					}
 				}
 				
-                string sourceDisplayName = "";
-                string isDefeated = "";
-
-				if (shortcut.source == "Vanilla") sourceDisplayName = "[c/9696ff:" + shortcut.source + "]";
-				else sourceDisplayName = "[c/9696ff:" + ModLoader.GetMod(shortcut.source).DisplayName + "]";
+                string sourceDisplayName = $"[c/9696ff:{shortcut.SourceDisplayName}]";
+				string isDefeated = "";
 
                 if (shortcut.downed()) isDefeated = "[c/d3ffb5:Defeated in " + Main.worldName + "]";
                 else isDefeated = "[c/ffccc8:Undefeated in " + Main.worldName + "]";
@@ -339,11 +336,11 @@ namespace BossChecklist
                 // Credits Page
 
                 List<string> optedMods = new List<string>();
-                foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
+                foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
                 {
-                    if (boss.source != "Vanilla")
+                    if (boss.source != "Vanilla" && boss.source != "Unknown")
                     {
-                        string sourceDisplayName = ModLoader.GetMod(boss.source).DisplayName;
+                        string sourceDisplayName = boss.SourceDisplayName;
                         if (!optedMods.Contains(sourceDisplayName))
                         {
                             optedMods.Add(sourceDisplayName);
@@ -696,10 +693,10 @@ namespace BossChecklist
                 // Loot Table Subpage
                 Main.instance.LoadTiles(237);
                 Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/treasureBag");
-                for (int i = 0; i < BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].loot.Count; i++)
+                for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].loot.Count; i++)
                 {
                     Item bagItem = new Item();
-                    bagItem.SetDefaults(BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].loot[i]);
+                    bagItem.SetDefaults(BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].loot[i]);
                     if (bagItem.expert && bagItem.Name.Contains("Treasure Bag"))
                     {
                         if (bagItem.type < ItemID.Count)
@@ -724,7 +721,7 @@ namespace BossChecklist
             if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 3 && validItems != null)
             {
                 // Collectibles Subpage
-                BossInfo BossPage = BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum];
+                BossInfo BossPage = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
                 BossCollection Collections = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 				
 				// PageNum already corresponds with the index of the saved player data
@@ -988,24 +985,25 @@ namespace BossChecklist
 			}
 			
 			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
-			int index = BossChecklist.instance.setup.SortedBosses.FindIndex(x => x.progression == order);
+			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
+			int index = sortedBosses.FindIndex(x => x.progression == order);
 
 			bool allLoot = false;
 			bool allCollect = false;
 
-			foreach (int loot in BossChecklist.instance.setup.SortedBosses[index].loot)
+			foreach (int loot in sortedBosses[index].loot)
 			{
 				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].loot.Any(x => x.type == loot))
 				{
 					allLoot = true;
 				}
-				else if (loot != BossChecklist.instance.setup.SortedBosses[index].loot[0])
+				else if (loot != sortedBosses[index].loot[0])
 				{
 					allLoot = false;
 					break;
 				}
 			}
-			foreach (int collectible in BossChecklist.instance.setup.SortedBosses[index].collection)
+			foreach (int collectible in sortedBosses[index].collection)
 			{
 				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].collectibles.Any(x => x.type == collectible))
 				{
@@ -1037,7 +1035,7 @@ namespace BossChecklist
 
 				if (BossChecklist.ClientConfig.SelectedCheckmarkType == "Strike-through")
 				{
-					if (BA.setup.SortedBosses[Convert.ToInt32(Id)].downed())
+					if (sortedBosses[Convert.ToInt32(Id)].downed())
 					{
 						int textWidth = (int)Main.fontMouseText.MeasureString(text).X;
 
@@ -1060,22 +1058,22 @@ namespace BossChecklist
 				{
 					if (BossChecklist.ClientConfig.SelectedCheckmarkType == "X and  ☐")
 						checkType = BA.GetTexture("Resources/Checkbox_CheckAlt");
-					if (BA.setup.SortedBosses[Convert.ToInt32(Id)].downed())
+					if (sortedBosses[Convert.ToInt32(Id)].downed())
 						spriteBatch.Draw(checkType, pos, Color.White);
-					else if (!BA.setup.SortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark)
+					else if (!sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark)
 						spriteBatch.Draw(BA.GetTexture("Resources/Checkbox_Next"), pos, Color.White);
-					else if (!BA.setup.SortedBosses[Convert.ToInt32(Id)].downed() && BossChecklist.ClientConfig.SelectedCheckmarkType == "✓ and  X")
+					else if (!sortedBosses[Convert.ToInt32(Id)].downed() && BossChecklist.ClientConfig.SelectedCheckmarkType == "✓ and  X")
 						spriteBatch.Draw(BA.GetTexture("Resources/Checkbox_CheckAlt"), pos, Color.White);
 				}
 				
 				if (BossChecklist.ClientConfig.ColoredBossText)
 				{
-					if (IsMouseHovering && BA.setup.SortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
-					else if (IsMouseHovering && !BA.setup.SortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
-					else if (!IsMouseHovering && BA.setup.SortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
-					else if (!IsMouseHovering && !BA.setup.SortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
-					if (IsMouseHovering && !BA.setup.SortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark) TextColor = new Color(189, 180, 64);
-					else if (!IsMouseHovering && !BA.setup.SortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
+					else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
+					else if (!IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
+					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
+					if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark) TextColor = new Color(189, 180, 64);
+					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
 				}
 				else
 				{
@@ -1083,10 +1081,10 @@ namespace BossChecklist
 					else TextColor = new Color(140, 145, 160);
 				}
 
-				if ((WorldGen.crimson && BA.setup.SortedBosses[Convert.ToInt32(Id)].name == "Eater of Worlds")
-				|| (!WorldGen.crimson && BA.setup.SortedBosses[Convert.ToInt32(Id)].name == "Brain of Cthulhu"))
+				if ((WorldGen.crimson && sortedBosses[Convert.ToInt32(Id)].name == "Eater of Worlds")
+				|| (!WorldGen.crimson && sortedBosses[Convert.ToInt32(Id)].name == "Brain of Cthulhu"))
 				{
-					if (BA.setup.SortedBosses[Convert.ToInt32(Id)].downed()) TextColor = new Color(105, 125, 105);
+					if (sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = new Color(105, 125, 105);
 					else TextColor = new Color(125, 105, 105);
 				}
 
@@ -1153,7 +1151,7 @@ namespace BossChecklist
 									displayRecord = false;
 									/*if (Main.dedServ)
 									{
-										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
+										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.allBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
 										if (displayArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[0]), new Color(138, 210, 137));
 										if (displayArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[1]), new Color(138, 210, 137));
 										if (displayArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[2]), new Color(138, 210, 137));
@@ -1161,7 +1159,7 @@ namespace BossChecklist
 									}
 									else*/
 									{
-										Main.NewText("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].name + "]", new Color(82, 175, 82));
+										Main.NewText("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]", new Color(82, 175, 82));
 										if (displayArray[0] != "") Main.NewText(displayArray[0], new Color(138, 210, 137));
 										if (displayArray[1] != "") Main.NewText(displayArray[1], new Color(138, 210, 137));
 										if (displayArray[2] != "") Main.NewText(displayArray[2], new Color(138, 210, 137));
@@ -1174,7 +1172,7 @@ namespace BossChecklist
 									displayRecord = false;
 									/*if (Main.dedServ)
 									{
-										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
+										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.bossTracker.allBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
 										if (displayLastArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[0]), new Color(138, 210, 137));
 										if (displayLastArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[1]), new Color(138, 210, 137));
 										if (displayLastArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[2]), new Color(138, 210, 137));
@@ -1182,7 +1180,7 @@ namespace BossChecklist
 									}
 									else*/
 									{
-										Main.NewText("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.instance.setup.SortedBosses[BossLogUI.PageNum].name + "]", new Color(82, 175, 82));
+										Main.NewText("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]", new Color(82, 175, 82));
 										Main.NewText(displayLastArray[0], new Color(138, 210, 137));
 										Main.NewText(displayLastArray[1], new Color(138, 210, 137));
 										Main.NewText(displayLastArray[2], new Color(138, 210, 137));
@@ -1486,9 +1484,9 @@ namespace BossChecklist
 
         private void OpenNextBoss(UIMouseEvent evt, UIElement listeningElement)
         {
-            for (int b = 0; b < BossChecklist.instance.setup.SortedBosses.Count; b++)
+            for (int b = 0; b < BossChecklist.bossTracker.SortedBosses.Count; b++)
             {
-                if (!BossChecklist.instance.setup.SortedBosses[b].downed())
+                if (!BossChecklist.bossTracker.SortedBosses[b].downed())
                 {
                     if (PageNum != b)
                     {
@@ -1500,7 +1498,7 @@ namespace BossChecklist
                     break;
                 }
                 // If the final boss page is downed, just redirect to the Table of Contents
-                if (b == BossChecklist.instance.setup.SortedBosses.Count - 1) PageNum = -1;
+                if (b == BossChecklist.bossTracker.SortedBosses.Count - 1) PageNum = -1;
             }
             BossLogPanel.visible = true;
             bossLogPanel.Append(PageOne);
@@ -1571,7 +1569,7 @@ namespace BossChecklist
 			if (listeningElement.Id == "Previous")
             {
                 if (PageNum > -1) PageNum--;
-                else if (PageNum == -2) PageNum = BossChecklist.instance.setup.SortedBosses.Count - 1;
+                else if (PageNum == -2) PageNum = BossChecklist.bossTracker.SortedBosses.Count - 1;
                 if (PageNum == -1) UpdateTableofContents();
                 else
                 {
@@ -1583,7 +1581,7 @@ namespace BossChecklist
             }
             else if (listeningElement.Id == "Next")
             {
-                if (PageNum != BossChecklist.instance.setup.SortedBosses.Count - 1) PageNum++;
+                if (PageNum != BossChecklist.bossTracker.SortedBosses.Count - 1) PageNum++;
                 else UpdateCredits();
 
                 if (PageNum != -2)
@@ -1612,17 +1610,17 @@ namespace BossChecklist
 			int TotalRecipes = 0;
 			ResetPageTwo();
             if (PageNum < 0) return;
-			if (BossChecklist.instance.setup.SortedBosses[PageNum].spawnItem.Count < 1) return;
+			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) return;
 			
             List<Item> ingredients = new List<Item>();
             List<int> requiredTiles = new List<int>();
 			string recipeMod = "Vanilla";
             //List<Recipe> recipes = Main.recipe.ToList();
             Item spawn = new Item();
-            if (BossChecklist.instance.setup.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0)
+            if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0)
 			{
 				RecipeFinder finder = new RecipeFinder();
-				finder.SetResult(BossChecklist.instance.setup.SortedBosses[PageNum].spawnItem[RecipePageNum]);
+				finder.SetResult(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
 
 				foreach (Recipe recipe in finder.SearchRecipes())
 				{
@@ -1640,7 +1638,7 @@ namespace BossChecklist
 					}
 					TotalRecipes++;
 				}
-				spawn.SetDefaults(BossChecklist.instance.setup.SortedBosses[PageNum].spawnItem[RecipePageNum]);
+				spawn.SetDefaults(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
 
 				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
                 spawnItemSlot.Height.Pixels = 50;
@@ -1735,7 +1733,7 @@ namespace BossChecklist
 					PageTwo.Append(PrevItem);
 				}
 
-				if (RecipePageNum < BossChecklist.instance.setup.SortedBosses[PageNum].spawnItem.Count - 1)
+				if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1)
 				{
 					BossAssistButton NextItem = new BossAssistButton(BossChecklist.instance.GetTexture("Resources/Next"), "");
 					NextItem.Id = "NextItem";
@@ -1792,7 +1790,7 @@ namespace BossChecklist
             pageTwoScroll.HAlign = 1f;
 
             pageTwoItemList.Clear();
-            BossInfo shortcut = BossChecklist.instance.setup.SortedBosses[PageNum];
+            BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
             LootRow newRow = new LootRow(0) { Id = "Loot0" };
             for (int i = 0; i < shortcut.loot.Count; i++)
             {
@@ -1869,7 +1867,7 @@ namespace BossChecklist
 
             pageTwoItemList.Clear();
             LootRow newRow = new LootRow(0) { Id = "Collect0"};
-            BossInfo shortcut = BossChecklist.instance.setup.SortedBosses[PageNum];
+            BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
             for (int i = 0; i < shortcut.collection.Count; i++)
 			{
 				if (shortcut.collection[i] == -1) continue;
@@ -1903,21 +1901,19 @@ namespace BossChecklist
             ResetPageTwo();
             int nextCheck = 0;
             bool nextCheckBool = false;
-            prehardmodeList.Clear();
-            hardmodeList.Clear();
+			prehardmodeList.Clear();
+			hardmodeList.Clear();
             
-            List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.instance.setup.SortedBosses.Count);
-            foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
-            {
-                copiedList.Add(boss);
+            List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses.Count);
+            foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+            	copiedList.Add(boss);
             }
             copiedList.Sort((x, y) => x.progression.CompareTo(y.progression));
-
-			/// Readd Evil Opposites, instead fade out/blacken the non valid type
-
-            for (int i = 0; i < copiedList.Count; i++)
-            {
-                if (!copiedList[i].downed()) nextCheck++;
+            
+            /// Readd Evil Opposites, instead fade out/blacken the non valid type
+            
+            for (int i = 0; i < copiedList.Count; i++) {
+				if (!copiedList[i].downed()) nextCheck++;
                 if (nextCheck == 1) nextCheckBool = true;
 
                 TableOfContents next = new TableOfContents(copiedList[i].progression, copiedList[i].name, nextCheckBool);
@@ -1982,11 +1978,11 @@ namespace BossChecklist
             PageNum = -2;
             ResetPageTwo();
             List<string> optedMods = new List<string>();
-            foreach (BossInfo boss in BossChecklist.instance.setup.SortedBosses)
+            foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
             {
-                if (boss.source != "Vanilla")
+                if (boss.source != "Vanilla" && boss.source != "Unknown") // TODO: find a way to get source mod from old integrations without necessitating mod updates.
                 {
-                    string sourceDisplayName = ModLoader.GetMod(boss.source).DisplayName;
+                    string sourceDisplayName = boss.SourceDisplayName;
                     if (!optedMods.Contains(sourceDisplayName))
                     {
                         optedMods.Add(sourceDisplayName);
