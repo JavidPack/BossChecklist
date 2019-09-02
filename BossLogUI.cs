@@ -12,6 +12,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Terraria.UI.Chat;
 
 // ✓ Kills
 // ✓ Deaths
@@ -939,8 +940,8 @@ namespace BossChecklist
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
-        {
-            if (!visible || Main.LocalPlayer.dead) return;
+		{
+			if (!visible || Main.LocalPlayer.dead) return;
             base.DrawSelf(spriteBatch);
             Main.playerInventory = false;
             
@@ -955,7 +956,20 @@ namespace BossChecklist
                 Main.LocalPlayer.showItemIcon2 = -1;
                 Main.ItemIconCacheUpdate(0);
             }
-        }
+
+			if (Id.Contains("_Tab"))
+			{
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+				Texture2D texture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
+				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11, inner.Y + Height.Pixels / 2 - 11);
+				Rectangle cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
+				if (Id == "Bosses_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
+				else if (Id == "MiniBosses_Tab") cut = new Rectangle(1 * 24, 1 * 24, 22, 22);
+				else if (Id == "Events_Tab") cut = new Rectangle(2 * 24, 1 * 24, 22, 22);
+				else if (Id == "Credits_Tab") cut = new Rectangle(3 * 24, 0 * 24, 22, 22);
+				spriteBatch.Draw(texture, pos, cut, Color.White);
+			}
+		}
     }
 
     internal class TableOfContents : UIText
@@ -1099,6 +1113,36 @@ namespace BossChecklist
         }
     }
 
+	internal class FittedTextPanel : UITextPanel<string>
+	{
+		string text;
+		public FittedTextPanel(string text, float textScale = 1, bool large = false) : base(text, textScale, large)
+		{
+			this.text = text;
+		}
+
+		const float infoScaleX = 1f;
+		const float infoScaleY = 1f;
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			Rectangle hitbox = new Rectangle((int)GetInnerDimensions().X, (int)GetInnerDimensions().Y, (int)Width.Pixels, 100);
+			
+			string info = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].info ?? "No info available";
+			int hoveredSnippet = -1;
+			TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
+			ChatManager.ConvertNormalSnippets(textSnippets);
+
+			for (int i = 0; i < ChatManager.ShadowDirections.Length; i++)
+			{
+				ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, Main.fontMouseText, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1,
+					Color.Black, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), hitbox.Width - (7 * 2), 1);
+			}
+			Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, Main.fontMouseText, textSnippets,
+				new Vector2(2, 15 + 3) + hitbox.TopLeft(), Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out hoveredSnippet, hitbox.Width - (7 * 2), false);
+			
+		}
+	}
+
     internal class SubpageButton : UIPanel
     {
         string buttonString;
@@ -1237,6 +1281,7 @@ namespace BossChecklist
         public BossAssistButton bosslogbutton;
 
         public BookUI bossLogPanel;
+		public BookUI hardback;
         public BossLogPanel PageOne;
         public BossLogPanel PageTwo;
 
@@ -1247,14 +1292,16 @@ namespace BossChecklist
 		public SubpageButton displayRecordButton;
 		public SubpageButton toolTipButton;
         
-        public static UIImage[] itemIngredients;
-
         public UIImageButton NextPage;
         public UIImageButton PrevPage;
-        public UIImageButton TOCPage;
-        public UIImageButton CredPage;
 
-        public UIList prehardmodeList;
+		public BookUI ToCTab;
+		public BookUI CreditsTab;
+		public BookUI BossTab;
+		public BookUI MiniBossTab;
+		public BookUI EventTab;
+
+		public UIList prehardmodeList;
         public UIList hardmodeList;
         public FixedUIScrollbar scrollOne;
         public FixedUIScrollbar scrollTwo;
@@ -1278,16 +1325,62 @@ namespace BossChecklist
             bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
             bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
             bosslogbutton.OnClick += new MouseEvent(OpenBossLog);
-            bosslogbutton.OnRightClick += new MouseEvent(OpenNextBoss);
 
-            Texture2D bosslogTexture = BossChecklist.instance.GetTexture("Resources/UIBook_byRiverOaken");
+            Texture2D bosslogTexture = BossChecklist.instance.GetTexture("Resources/UIBook_Paper");
             bossLogPanel = new BookUI(bosslogTexture);
             bossLogPanel.Width.Pixels = 800;
             bossLogPanel.Height.Pixels = 500;
             bossLogPanel.Left.Pixels = (Main.screenWidth / 2) - (bossLogPanel.Width.Pixels / 2);
             bossLogPanel.Top.Pixels = (Main.screenHeight / 2) - (bossLogPanel.Height.Pixels / 2);
 
-            PageOne = new BossLogPanel { Id = "PageOne" };
+			Texture2D backTexture = BossChecklist.instance.GetTexture("Resources/UIBook_Back");
+			hardback = new BookUI(backTexture);
+			hardback.Width.Pixels = 800;
+			hardback.Height.Pixels = 500;
+			hardback.Left.Pixels = (Main.screenWidth / 2) - (bossLogPanel.Width.Pixels / 2);
+			hardback.Top.Pixels = (Main.screenHeight / 2) - (bossLogPanel.Height.Pixels / 2);
+
+			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			ToCTab.Height.Pixels = 76;
+			ToCTab.Width.Pixels = 36;
+			ToCTab.Left.Pixels = -18;
+			ToCTab.Top.Pixels = 20;
+			ToCTab.Id = "TableOfContents_Tab";
+			ToCTab.OnClick += new MouseEvent(OpenViaTab);
+			
+			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			BossTab.Height.Pixels = 76;
+			BossTab.Width.Pixels = 36;
+			BossTab.Left.Pixels = -18;
+			BossTab.Top.Pixels = 30 + 76;
+			BossTab.Id = "Bosses_Tab";
+			BossTab.OnClick += new MouseEvent(OpenViaTab);
+
+			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			MiniBossTab.Height.Pixels = 76;
+			MiniBossTab.Width.Pixels = 36;
+			MiniBossTab.Left.Pixels = -18;
+			MiniBossTab.Top.Pixels = 40 + (76 * 2);
+			MiniBossTab.Id = "MiniBosses_Tab";
+			MiniBossTab.OnClick += new MouseEvent(OpenViaTab);
+
+			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			EventTab.Height.Pixels = 76;
+			EventTab.Width.Pixels = 36;
+			EventTab.Left.Pixels = -18;
+			EventTab.Top.Pixels = 50 + (76 * 3);
+			EventTab.Id = "Events_Tab";
+			EventTab.OnClick += new MouseEvent(OpenViaTab);
+
+			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			CreditsTab.Height.Pixels = 76;
+			CreditsTab.Width.Pixels = 36;
+			CreditsTab.Left.Pixels = -18;
+			CreditsTab.Top.Pixels = 60 + (76 * 4);
+			CreditsTab.Id = "Credits_Tab";
+			CreditsTab.OnClick += new MouseEvent(OpenViaTab);
+
+			PageOne = new BossLogPanel { Id = "PageOne" };
             PageOne.Width.Pixels = 375;
             PageOne.Height.Pixels = 480;
             PageOne.Left.Pixels = 20;
@@ -1297,19 +1390,10 @@ namespace BossChecklist
             PrevPage = new BossAssistButton(prevTexture, "") { Id = "Previous" };
             PrevPage.Width.Pixels = 14;
             PrevPage.Height.Pixels = 20;
-            PrevPage.Left.Pixels = 30;
+            PrevPage.Left.Pixels = 8;
             PrevPage.Top.Pixels = 416;
             PrevPage.OnClick += new MouseEvent(PageChangerClicked);
-
-            Texture2D tocTexture = BossChecklist.instance.GetTexture("Resources/ToC");
-            TOCPage = new BossAssistButton(tocTexture, "") { Id = "TableOfContents" };
-            TOCPage.Width.Pixels = 22;
-            TOCPage.Height.Pixels = 22;
-            TOCPage.Left.Pixels = 0;
-            TOCPage.Top.Pixels = 416;
-            TOCPage.OnClick += new MouseEvent(PageChangerClicked);
-            PageOne.Append(TOCPage);
-
+			
             prehardmodeList = new UIList();
             prehardmodeList.Left.Pixels = 4;
             prehardmodeList.Top.Pixels = 44;
@@ -1342,33 +1426,15 @@ namespace BossChecklist
             pageTwoItemList = new UIList();
 
             pageTwoScroll = new FixedUIScrollbar();
-
-            itemIngredients = new UIImage[15];
-            for (int i = 0; i < 15; i++)
-            {
-                itemIngredients[i] = new UIImage(Main.itemTexture[0]);
-                itemIngredients[i].Top.Pixels = PageTwo.Height.Pixels / 2 + itemIngredients[i].Height.Pixels;
-                itemIngredients[i].Left.Pixels = itemIngredients[i].Width.Pixels + (35 * i);
-                PageTwo.Append(itemIngredients[i]);
-            }
-
+			
             Texture2D nextTexture = BossChecklist.instance.GetTexture("Resources/Next");
             NextPage = new BossAssistButton(nextTexture, "") { Id = "Next" };
             NextPage.Width.Pixels = 14;
             NextPage.Height.Pixels = 20;
-            NextPage.Left.Pixels = PageTwo.Width.Pixels - (int)(NextPage.Width.Pixels * 4.5);
+            NextPage.Left.Pixels = PageTwo.Width.Pixels - (int)(NextPage.Width.Pixels * 3);
             NextPage.Top.Pixels = 416;
             NextPage.OnClick += new MouseEvent(PageChangerClicked);
             PageTwo.Append(NextPage);
-
-            Texture2D credTexture = BossChecklist.instance.GetTexture("Resources/Credits");
-            CredPage = new BossAssistButton(credTexture, "") { Id = "Credits" };
-            CredPage.Width.Pixels = 22;
-            CredPage.Height.Pixels = 22;
-            CredPage.Left.Pixels = PageTwo.Width.Pixels - (int)(NextPage.Width.Pixels * 3);
-            CredPage.Top.Pixels = 416;
-            CredPage.OnClick += new MouseEvent(PageChangerClicked);
-            PageTwo.Append(CredPage);
 
             hardmodeList = new UIList();
             hardmodeList.Left.Pixels = 4;
@@ -1426,9 +1492,9 @@ namespace BossChecklist
 
         public override void Update(GameTime gameTime)
         {
-            visible = Main.playerInventory;
-            if (!visible) RemoveChild(bosslogbutton);
-            else if (!HasChild(bosslogbutton)) Append(bosslogbutton);
+			visible = Main.playerInventory;
+			if (!visible) RemoveChild(bosslogbutton);
+			else if (!HasChild(bosslogbutton)) Append(bosslogbutton);
 
             if (BossChecklist.ToggleBossLog.JustPressed)
             {
@@ -1437,15 +1503,26 @@ namespace BossChecklist
                     PageNum = -1;
                     SubPageNum = 0;
                     BossLogPanel.visible = true;
-                    bossLogPanel.Append(PageOne);
+					bossLogPanel.Append(ToCTab);
+					bossLogPanel.Append(CreditsTab);
+					bossLogPanel.Append(BossTab);
+					bossLogPanel.Append(MiniBossTab);
+					bossLogPanel.Append(EventTab);
+					bossLogPanel.Append(PageOne);
                     bossLogPanel.Append(PageTwo);
                     BookUI.visible = true;
                     UpdateTableofContents();
-                }
+					ResetBookTabs();
+				}
                 else
                 {
                     BossLogPanel.visible = false;
-                    bossLogPanel.RemoveChild(PageOne);
+					bossLogPanel.RemoveChild(ToCTab);
+					bossLogPanel.RemoveChild(CreditsTab);
+					bossLogPanel.RemoveChild(BossTab);
+					bossLogPanel.RemoveChild(MiniBossTab);
+					bossLogPanel.RemoveChild(EventTab);
+					bossLogPanel.RemoveChild(PageOne);
                     bossLogPanel.RemoveChild(PageTwo);
                     BookUI.visible = false;
                 }
@@ -1455,7 +1532,12 @@ namespace BossChecklist
                 if (Main.LocalPlayer.controlInv || Main.mouseItem.type != 0)
                 {
                     BossLogPanel.visible = false;
-                    bossLogPanel.RemoveChild(PageOne);
+					bossLogPanel.RemoveChild(ToCTab);
+					bossLogPanel.RemoveChild(CreditsTab);
+					bossLogPanel.RemoveChild(BossTab);
+					bossLogPanel.RemoveChild(MiniBossTab);
+					bossLogPanel.RemoveChild(EventTab);
+					bossLogPanel.RemoveChild(PageOne);
                     bossLogPanel.RemoveChild(PageTwo);
                     BookUI.visible = false;
                     Main.playerInventory = true;
@@ -1476,41 +1558,34 @@ namespace BossChecklist
             PageNum = -1;
             SubPageNum = 0;
             BossLogPanel.visible = true;
-            bossLogPanel.Append(PageOne);
+			bossLogPanel.Append(ToCTab);
+			bossLogPanel.Append(CreditsTab);
+			bossLogPanel.Append(BossTab);
+			bossLogPanel.Append(MiniBossTab);
+			bossLogPanel.Append(EventTab);
+			bossLogPanel.Append(PageOne);
             bossLogPanel.Append(PageTwo);
             BookUI.visible = true;
             UpdateTableofContents();
+			ResetBookTabs();
 		}
 
-        private void OpenNextBoss(UIMouseEvent evt, UIElement listeningElement)
+		public int FindNext(BossChecklistType entryType)
+		{
+			return BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
+		}
+
+        private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement)
         {
-            for (int b = 0; b < BossChecklist.bossTracker.SortedBosses.Count; b++)
-            {
-                if (!BossChecklist.bossTracker.SortedBosses[b].downed())
-                {
-                    if (PageNum != b)
-                    {
-                        PageNum = b;
-                        SubPageNum = 1;
-                        OpenSpawn(evt, listeningElement);
-                    }
-                    else if (BossLogPanel.visible) PageNum = -1;
-                    break;
-                }
-                // If the final boss page is downed, just redirect to the Table of Contents
-                if (b == BossChecklist.bossTracker.SortedBosses.Count - 1) PageNum = -1;
-            }
-            BossLogPanel.visible = true;
-            bossLogPanel.Append(PageOne);
-            bossLogPanel.Append(PageTwo);
-            BookUI.visible = true;
-            if (PageNum != -1)
-            {
-                SubPageNum = 1;
-                PageOne.RemoveChild(prehardmodeList);
-                OpenSpawn(evt, listeningElement);
-            }
-        }
+			if (listeningElement.Id == "Bosses_Tab") PageNum = FindNext(BossChecklistType.Boss);
+			else if (listeningElement.Id == "MiniBosses_Tab") PageNum = FindNext(BossChecklistType.MiniBoss);
+			else if (listeningElement.Id == "Events_Tab") PageNum = FindNext(BossChecklistType.Event);
+			else if (listeningElement.Id == "Credits_Tab") UpdateCredits();
+			else UpdateTableofContents();
+
+			if (PageNum >= 0) ResetBothPages();
+			ResetBookTabs();
+		}
 		
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement)
 		{
@@ -1594,13 +1669,14 @@ namespace BossChecklist
             }
             else if (listeningElement.Id == "TableOfContents") UpdateTableofContents();
             else if (listeningElement.Id == "Credits") UpdateCredits();
-            ResetPageButtons();
+			ResetPageButtons();
+			ResetBookTabs();
         }
 
         private void OpenRecord(UIMouseEvent evt, UIElement listeningElement)
         {
             SubPageNum = 0;
-            ResetPageTwo();
+            ResetBothPages();
             if (PageNum < 0) return;
         }
 
@@ -1608,11 +1684,15 @@ namespace BossChecklist
         {
             SubPageNum = 1;
 			int TotalRecipes = 0;
-			ResetPageTwo();
+			ResetBothPages();
             if (PageNum < 0) return;
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) return;
-			
-            List<Item> ingredients = new List<Item>();
+			FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
+			info.Top.Pixels = 75;
+			info.Width.Pixels = 300;
+			PageTwo.Append(info);
+
+			List<Item> ingredients = new List<Item>();
             List<int> requiredTiles = new List<int>();
 			string recipeMod = "Vanilla";
             //List<Recipe> recipes = Main.recipe.ToList();
@@ -1643,7 +1723,7 @@ namespace BossChecklist
 				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
                 spawnItemSlot.Height.Pixels = 50;
                 spawnItemSlot.Width.Pixels = 50;
-                spawnItemSlot.Top.Pixels = 125;
+                spawnItemSlot.Top.Pixels = 225;
                 spawnItemSlot.Left.Pixels = 33 + (56 * 2);
                 PageTwo.Append(spawnItemSlot);
 				
@@ -1654,7 +1734,7 @@ namespace BossChecklist
                     LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem);
                     ingList.Height.Pixels = 50;
                     ingList.Width.Pixels = 50;
-                    ingList.Top.Pixels = 125 + (56 * (row + 1));
+                    ingList.Top.Pixels = 225 + (56 * (row + 1));
                     ingList.Left.Pixels = 33 + (56 * col);
                     PageTwo.Append(ingList);
                     col++;
@@ -1674,7 +1754,7 @@ namespace BossChecklist
                     LogItemSlot craftItem = new LogItemSlot(craft, false, "By Hand", ItemSlot.Context.EquipArmorVanity);
                     craftItem.Height.Pixels = 50;
                     craftItem.Width.Pixels = 50;
-                    craftItem.Top.Pixels = 125 + (56 * (row + 2));
+                    craftItem.Top.Pixels = 225 + (56 * (row + 2));
                     craftItem.Left.Pixels = 33;
                     PageTwo.Append(craftItem);
                 }
@@ -1703,7 +1783,7 @@ namespace BossChecklist
                         }
                         tileList.Height.Pixels = 50;
                         tileList.Width.Pixels = 50;
-						tileList.Top.Pixels = 125 + (56 * (row + 2));
+						tileList.Top.Pixels = 225 + (56 * (row + 2));
                         tileList.Left.Pixels = 33 + (56 * l);
                         PageTwo.Append(tileList);
                         if (requiredTiles[l] == 26)
@@ -1725,7 +1805,7 @@ namespace BossChecklist
 				{
 					BossAssistButton PrevItem = new BossAssistButton(BossChecklist.instance.GetTexture("Resources/Prev"), "");
 					PrevItem.Id = "PrevItem";
-					PrevItem.Top.Pixels = 140;
+					PrevItem.Top.Pixels = 240;
 					PrevItem.Left.Pixels = 125;
 					PrevItem.Width.Pixels = 14;
 					PrevItem.Height.Pixels = 20;
@@ -1737,7 +1817,7 @@ namespace BossChecklist
 				{
 					BossAssistButton NextItem = new BossAssistButton(BossChecklist.instance.GetTexture("Resources/Next"), "");
 					NextItem.Id = "NextItem";
-					NextItem.Top.Pixels = 140;
+					NextItem.Top.Pixels = 240;
 					NextItem.Left.Pixels = 203;
 					NextItem.Width.Pixels = 14;
 					NextItem.Height.Pixels = 20;
@@ -1749,7 +1829,7 @@ namespace BossChecklist
 				{
 					BossAssistButton CycleItem = new BossAssistButton(BossChecklist.instance.GetTexture("Resources/Credits"), "Cycle Alt Recipes");
 					CycleItem.Id = "CycleItem_" + TotalRecipes;
-					CycleItem.Top.Pixels = 254;
+					CycleItem.Top.Pixels = 354;
 					CycleItem.Left.Pixels = 274;
 					CycleItem.Width.Pixels = 22;
 					CycleItem.Height.Pixels = 22;
@@ -1765,7 +1845,7 @@ namespace BossChecklist
 
 				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
 				ModdedRecipe.Left.Pixels = 0;
-				ModdedRecipe.Top.Pixels = 90;
+				ModdedRecipe.Top.Pixels = 400;
 				PageTwo.Append(ModdedRecipe);
 			}
         }
@@ -1773,7 +1853,7 @@ namespace BossChecklist
         private void OpenLoot(UIMouseEvent evt, UIElement listeningElement)
         {
             SubPageNum = 2;
-            ResetPageTwo();
+            ResetBothPages();
             if (PageNum < 0) return;
             int row = 0;
             int col = 0;
@@ -1849,7 +1929,7 @@ namespace BossChecklist
         private void OpenCollect(UIMouseEvent evt, UIElement listeningElement)
         {
             SubPageNum = 3;
-            ResetPageTwo();
+            ResetBothPages();
             if (PageNum < 0) return;
             int row = 0;
             int col = 0;
@@ -1898,7 +1978,7 @@ namespace BossChecklist
         public void UpdateTableofContents()
         {
             PageNum = -1;
-            ResetPageTwo();
+            ResetBothPages();
             int nextCheck = 0;
             bool nextCheckBool = false;
 			prehardmodeList.Clear();
@@ -1976,7 +2056,7 @@ namespace BossChecklist
         private void UpdateCredits()
         {
             PageNum = -2;
-            ResetPageTwo();
+            ResetBothPages();
             List<string> optedMods = new List<string>();
             foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
             {
@@ -2047,7 +2127,7 @@ namespace BossChecklist
             else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
         }
 
-        private void ResetPageTwo()
+        private void ResetBothPages()
 		{
 			PageOne.RemoveAllChildren();
 			PageTwo.RemoveAllChildren();
@@ -2061,12 +2141,46 @@ namespace BossChecklist
 			}
         }
 
+		private void ResetBookTabs()
+		{
+			RemoveChild(hardback);
+			bossLogPanel.RemoveChild(ToCTab);
+			bossLogPanel.RemoveChild(BossTab);
+			bossLogPanel.RemoveChild(MiniBossTab);
+			bossLogPanel.RemoveChild(EventTab);
+			bossLogPanel.RemoveChild(CreditsTab);
+			RemoveChild(bossLogPanel);
+			// If its in progression order
+			if (PageNum == -2) CreditsTab.Left.Pixels = -18;
+			else CreditsTab.Left.Pixels = bossLogPanel.Width.Pixels - 18;
+
+			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = -18;
+			else BossTab.Left.Pixels = bossLogPanel.Width.Pixels - 18;
+
+			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = -18;
+			else MiniBossTab.Left.Pixels = bossLogPanel.Width.Pixels - 18;
+
+			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = -18;
+			else EventTab.Left.Pixels = bossLogPanel.Width.Pixels - 18;
+
+			Append(hardback);
+			if (PageNum == -1) hardback.Append(ToCTab);
+			if (PageNum == FindNext(BossChecklistType.Boss)) hardback.Append(BossTab);
+			if (PageNum == FindNext(BossChecklistType.Boss)) hardback.Append(BossTab);
+			if (PageNum == FindNext(BossChecklistType.Boss)) hardback.Append(BossTab);
+			if (PageNum == -2) hardback.Append(BossTab);
+			Append(bossLogPanel);
+			if (PageNum != -1) bossLogPanel.Append(ToCTab);
+			if (PageNum != FindNext(BossChecklistType.Boss)) bossLogPanel.Append(BossTab);
+			if (PageNum != FindNext(BossChecklistType.Boss)) bossLogPanel.Append(BossTab);
+			if (PageNum != FindNext(BossChecklistType.Boss)) bossLogPanel.Append(BossTab);
+			if (PageNum != -2) bossLogPanel.Append(BossTab);
+		}
+
         private void ResetPageButtons()
         {
-            PageOne.RemoveChild(TOCPage);
             PageOne.RemoveChild(PrevPage);
             PageTwo.RemoveChild(NextPage);
-            PageTwo.RemoveChild(CredPage);
             PageTwo.RemoveChild(toolTipButton);
 			PageTwo.RemoveChild(displayRecordButton);
 
@@ -2098,8 +2212,6 @@ namespace BossChecklist
                 PageTwo.Append(NextPage);
                 PageOne.Append(PrevPage);
             }
-            PageOne.Append(TOCPage);
-            PageTwo.Append(CredPage);
         }
 
         private void SwapRecordPage(UIMouseEvent evt, UIElement listeningElement)

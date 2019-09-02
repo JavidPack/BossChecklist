@@ -2,3 +2,9 @@ bin
 obj
 *.user
 App.config
+/BossChecklist.sln
+/.vs/BossChecklist/v15/Server/sqlite3/storage.ide-wal
+/.vs/BossChecklist/v15/Server/sqlite3/storage.ide-shm
+/.vs/BossChecklist/v15/Server/sqlite3/storage.ide
+/.vs/BossChecklist/v15/Server/sqlite3/db.lock
+/.vs/BossChecklist/v15/.suo
