@@ -12,30 +12,25 @@ namespace BossChecklist
 	class BossChecklistWorld : ModWorld
 	{
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
-		public override void Initialize()
-		{
+		public override void Initialize() {
 			HiddenBosses.Clear();
 		}
 
-		public override void Load(TagCompound tag)
-		{
+		public override void Load(TagCompound tag) {
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
-			foreach (var bossName in HiddenBossesList)
-			{
+			foreach (var bossName in HiddenBossesList) {
 				HiddenBosses.Add(bossName);
 			}
 		}
 
-		public override TagCompound Save()
-		{
+		public override TagCompound Save() {
 			var HiddenBossesList = new List<string>(HiddenBosses);
 			return new TagCompound {
 				{"HiddenBossesList", HiddenBossesList}
 			};
 		}
 
-		public override void NetSend(BinaryWriter writer)
-		{
+		public override void NetSend(BinaryWriter writer) {
 			BitsByte flags = new BitsByte();
 			flags[0] = NPC.downedTowerSolar;
 			flags[1] = NPC.downedTowerVortex;
@@ -44,14 +39,12 @@ namespace BossChecklist
 			writer.Write(flags);
 
 			writer.Write(HiddenBosses.Count);
-			foreach (var bossName in HiddenBosses)
-			{
+			foreach (var bossName in HiddenBosses) {
 				writer.Write(bossName);
 			}
 		}
 
-		public override void NetReceive(BinaryReader reader)
-		{
+		public override void NetReceive(BinaryReader reader) {
 			BitsByte flags = reader.ReadByte();
 			NPC.downedTowerSolar = flags[0];
 			NPC.downedTowerVortex = flags[1];
@@ -60,8 +53,7 @@ namespace BossChecklist
 
 			HiddenBosses.Clear();
 			int count = reader.ReadInt32();
-			for (int i = 0; i < count; i++)
-			{
+			for (int i = 0; i < count; i++) {
 				HiddenBosses.Add(reader.ReadString());
 			}
 			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();

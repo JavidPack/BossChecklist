@@ -41,27 +41,24 @@ namespace BossChecklist
 		public string SelectedCheckmarkType { get; set; }
 
 		[Header("[i:3037] [c/ffeb6e:Despawn Messages]")]
-		
+
 		[DefaultValue(true)]
 		[Label("Boss Despawn Messages: Custom")]
-		public bool CDespawnBool
-		{
+		public bool CDespawnBool {
 			get { return DespawnState == 0; }
 			set { if (value) DespawnState = 0; }
 		}
 
 		[DefaultValue(false)]
 		[Label("Boss Despawn Messages: Generic")]
-		public bool GDespawnBool
-		{
+		public bool GDespawnBool {
 			get { return DespawnState == 1; }
 			set { if (value) DespawnState = 1; }
 		}
 
 		[DefaultValue(false)]
 		[Label("Boss Despawn Messages: None")]
-		public bool ODespawnBool
-		{
+		public bool ODespawnBool {
 			get { return DespawnState == 2; }
 			set { if (value) DespawnState = 2; }
 		}
@@ -98,13 +95,11 @@ namespace BossChecklist
 		[Range(0.25f, 1f)]
 		public float OpacityFloat { get; set; }
 
-		public override void OnLoaded()
-		{
+		public override void OnLoaded() {
 			BossChecklist.ClientConfig = this;
 		}
 
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)
-		{
+		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}
 	}
@@ -113,7 +108,7 @@ namespace BossChecklist
 	public class DebugConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
-		
+
 		[Header("[i:149] [c/ffeb6e:Info]")]
 
 		[DefaultValue(false)]
@@ -127,13 +122,11 @@ namespace BossChecklist
 		[DefaultValue("None")]
 		public string ShowTimerOrCounter { get; set; }
 
-		public override void OnLoaded()
-		{
+		public override void OnLoaded() {
 			BossChecklist.DebugConfig = this;
 		}
 
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)
-		{
+		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}
 	}

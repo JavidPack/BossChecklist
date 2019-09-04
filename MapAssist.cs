@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using IL.Terraria.World.Generation; /// To prevent corruption searching lag in the future
+/// To prevent corruption searching lag in the future
 
-using System;
-using Terraria.ModLoader;
-using Terraria.Utilities;
-using ReLogic.Graphics;
 
 /// ADDITION: Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad aboout percentage evil
 /// ADDITION: Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad aboout percentage evil
@@ -34,46 +30,39 @@ using ReLogic.Graphics;
 
 namespace BossChecklist
 {
-    public static class MapAssist
-    {
+	public static class MapAssist
+	{
 		#region [Item Drawing]
 		public static List<Vector2> whitelistPos;
-        public static List<int> whitelistType;
+		public static List<int> whitelistType;
 
-        internal static void FullMapInitialize()
-        {
-            whitelistPos = new List<Vector2>();
-            whitelistType = new List<int>();
+		internal static void FullMapInitialize() {
+			whitelistPos = new List<Vector2>();
+			whitelistType = new List<int>();
 			tilePos = new Vector2();
 			shouldDraw = false;
-        }
+		}
 
-        public static void DrawFullscreenMap()
-        {
-            UpdateMapLocations();
-            DrawIcons();
-        }
+		public static void DrawFullscreenMap() {
+			UpdateMapLocations();
+			DrawIcons();
+		}
 
-        private static void UpdateMapLocations()
-        {
-            whitelistPos.Clear();
-            whitelistType.Clear();
+		private static void UpdateMapLocations() {
+			whitelistPos.Clear();
+			whitelistType.Clear();
 
-            foreach (Item item in Main.item)
-            {
-                if (!item.active) continue;
-                if (IsWhiteListItem(item))
-                {
-                    whitelistPos.Add(item.Center);
-                    whitelistType.Add(item.type);
-                }
-            }
-        }
+			foreach (Item item in Main.item) {
+				if (!item.active) continue;
+				if (IsWhiteListItem(item)) {
+					whitelistPos.Add(item.Center);
+					whitelistType.Add(item.type);
+				}
+			}
+		}
 
-        private static void DrawIcons()
-        {
-			foreach (Vector2 item in whitelistPos)
-            {
+		private static void DrawIcons() {
+			foreach (Vector2 item in whitelistPos) {
 				Texture2D drawTexture = Main.itemTexture[whitelistType[whitelistPos.IndexOf(item)]];
 				Vector2 drawPosition = CalculateDrawPos(new Vector2(item.X / 16, item.Y / 16));
 
@@ -81,37 +70,33 @@ namespace BossChecklist
 				if (WhiteListType(whitelistType[whitelistPos.IndexOf(item)]) == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
 
 				DrawTextureOnMap(drawTexture, drawPosition);
-            }
-        }
+			}
+		}
 
-        private static Vector2 CalculateDrawPos(Vector2 tilePos)
-        {
-            Vector2 halfScreen = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2);
-            Vector2 relativePos = tilePos - Main.mapFullscreenPos;
-            relativePos *= Main.mapFullscreenScale / 16;
-            relativePos = relativePos * 16 + halfScreen;
+		private static Vector2 CalculateDrawPos(Vector2 tilePos) {
+			Vector2 halfScreen = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2);
+			Vector2 relativePos = tilePos - Main.mapFullscreenPos;
+			relativePos *= Main.mapFullscreenScale / 16;
+			relativePos = relativePos * 16 + halfScreen;
 
-            Vector2 drawPosition = new Vector2((int)relativePos.X, (int)relativePos.Y);
-            return drawPosition;
-        }
+			Vector2 drawPosition = new Vector2((int)relativePos.X, (int)relativePos.Y);
+			return drawPosition;
+		}
 
-        private static void DrawTextureOnMap(Texture2D texture, Vector2 drawPosition)
-        {
-            Rectangle drawPos = new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height);
-            Vector2 originLoc = new Vector2(texture.Width / 2, texture.Height / 2);
-            Main.spriteBatch.Draw(texture, drawPos, null, Color.White, 0f, originLoc, SpriteEffects.None, 0f);
-        }
+		private static void DrawTextureOnMap(Texture2D texture, Vector2 drawPosition) {
+			Rectangle drawPos = new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height);
+			Vector2 originLoc = new Vector2(texture.Width / 2, texture.Height / 2);
+			Main.spriteBatch.Draw(texture, drawPos, null, Color.White, 0f, originLoc, SpriteEffects.None, 0f);
+		}
 
-        public static bool IsWhiteListItem(Item item)
-        {
-            if (item.consumable && item.Name == "Treasure Bag" && item.expert) return true;
-            if (item.rare == 9 && item.damage <= 0 && item.Name.Contains("Fragment")) return true;
-            if (item.type == ItemID.ShadowScale || item.type == ItemID.TissueSample) return true;
-            return false;
-        }
+		public static bool IsWhiteListItem(Item item) {
+			if (item.consumable && item.Name == "Treasure Bag" && item.expert) return true;
+			if (item.rare == 9 && item.damage <= 0 && item.Name.Contains("Fragment")) return true;
+			if (item.type == ItemID.ShadowScale || item.type == ItemID.TissueSample) return true;
+			return false;
+		}
 
-		public static int WhiteListType(int type)
-		{
+		public static int WhiteListType(int type) {
 			Item item = new Item();
 			item.SetDefaults(type);
 
@@ -127,8 +112,7 @@ namespace BossChecklist
 		public static bool shouldDraw = false;
 		public static int evilType = 0;
 
-		public static void DrawNearestEvil(Vector2 pos)
-		{
+		public static void DrawNearestEvil(Vector2 pos) {
 			if (pos == new Vector2(0, 0) || evilType == 0) return;
 			Texture2D drawTexture = null;
 			if (evilType == 1) drawTexture = Main.itemTexture[ItemID.CorruptFishingCrate];
@@ -138,8 +122,7 @@ namespace BossChecklist
 			DrawTextureOnMap(drawTexture, drawPosition);
 		}
 
-		public static int ValidEvilTile(int type)
-		{
+		public static int ValidEvilTile(int type) {
 			List<int> validCrimsonTiles = new List<int>()
 			{
 				TileID.CrimsonHardenedSand,
@@ -167,23 +150,19 @@ namespace BossChecklist
 			return 0;
 		}
 
-		public static void LocateNearestEvil()
-		{
+		public static void LocateNearestEvil() {
 			shouldDraw = false;
 			tilePos = new Vector2(0, 0);
 
 			float tileDistance = float.MaxValue;
 			Vector2 nearestTile = new Vector2(0, 0);
 
-			for (int x = (int)(Main.leftWorld / 16); x < (int)(Main.rightWorld / 16); x++)
-			{
-				for (int y = (int)(Main.topWorld / 16); y < (int)(Main.bottomWorld / 16); y++)
-				{
+			for (int x = (int)(Main.leftWorld / 16); x < (int)(Main.rightWorld / 16); x++) {
+				for (int y = (int)(Main.topWorld / 16); y < (int)(Main.bottomWorld / 16); y++) {
 					if (x >= Main.LocalPlayer.position.X) break;
 					if (!Main.tile[x, y].active() || ValidEvilTile(Main.tile[x, y].type) == 0) continue;
 					float currentTileDistance = Vector2.Distance(new Vector2(x, y).ToWorldCoordinates(), Main.LocalPlayer.Center);
-					if (currentTileDistance < tileDistance)
-					{
+					if (currentTileDistance < tileDistance) {
 						tileDistance = currentTileDistance;
 						nearestTile = new Vector2(x, y);
 						evilType = ValidEvilTile(Main.tile[x, y].type);
@@ -191,13 +170,11 @@ namespace BossChecklist
 				}
 			}
 
-			if (tileDistance != float.MaxValue)
-			{
+			if (tileDistance != float.MaxValue) {
 				tilePos = nearestTile;
 				shouldDraw = true;
 			}
-			else
-			{
+			else {
 				shouldDraw = false;
 				tilePos = new Vector2(0, 0);
 				evilType = 0;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -80,7 +79,7 @@ namespace BossChecklist
 				 () => NPC.downedTowerStardust, SetupEventNPCList("Blood Moon"), new List<int>() { }, SetupEventLoot("Lunar Event"), $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
 			// TODO, all other event bosses...Maybe all pillars as 1?
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown},  () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f,"Goblin Army", () => NPC.downedGoblins, SetupEventNPCList("Goblin Army"), new List<int>() {ItemID.GoblinBattleStandard }, SetupEventLoot("Goblin Army"), $"Occurs randomly at dawn once a Shadow Orb or Crimson Heart has been destroyed. Alternatively, spawn with [i:{ItemID.GoblinBattleStandard}]", "BossChecklist/Resources/BossTextures/EventGoblinArmy"), 
+			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f,"Goblin Army", () => NPC.downedGoblins, SetupEventNPCList("Goblin Army"), new List<int>() {ItemID.GoblinBattleStandard }, SetupEventLoot("Goblin Army"), $"Occurs randomly at dawn once a Shadow Orb or Crimson Heart has been destroyed. Alternatively, spawn with [i:{ItemID.GoblinBattleStandard}]", "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.9f, "Ice Queen",  new List<int>() {NPCID.IceQueen },() => NPC.downedChristmasIceQueen, new List<int>() { }, $"Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.6f,"Santa-NK1", new List<int>() { NPCID.SantaNK1},  () => NPC.downedChristmasSantank, new List<int>() { }, $"Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,  Plantera + 0.3f,"Everscream", new List<int>() {NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }, $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
@@ -453,10 +452,8 @@ namespace BossChecklist
 			return new List<int>();
 		}
 
-		internal List<int> SetupEventNPCList(string eventName)
-		{
-			if (eventName == "Blood Moon")
-			{
+		internal List<int> SetupEventNPCList(string eventName) {
+			if (eventName == "Blood Moon") {
 				return new List<int>()
 				{
 					NPCID.BloodZombie,
@@ -475,10 +472,8 @@ namespace BossChecklist
 			return new List<int>();
 		}
 
-		internal List<int> SetupEventLoot(string eventName)
-		{
-			if (eventName == "Blood Moon")
-			{
+		internal List<int> SetupEventLoot(string eventName) {
+			if (eventName == "Blood Moon") {
 				return new List<int>()
 				{
 					ItemID.TopHat,
@@ -489,8 +484,7 @@ namespace BossChecklist
 					ItemID.Bananarang,
 				};
 			}
-			if (eventName == "Goblin Army")
-			{
+			if (eventName == "Goblin Army") {
 				return new List<int>()
 				{
 					ItemID.Harpoon,
@@ -500,8 +494,7 @@ namespace BossChecklist
 					ItemID.ShadowFlameBow,
 				};
 			}
-			if (eventName == "Pirate Invasion")
-			{
+			if (eventName == "Pirate Invasion") {
 				return new List<int>()
 				{
 					ItemID.CoinGun,
@@ -539,8 +532,7 @@ namespace BossChecklist
 					ItemID.GoldenWorkbench,
 				};
 			}
-			if (eventName == "Goblin Army")
-			{
+			if (eventName == "Goblin Army") {
 				return new List<int>()
 				{
 					ItemID.EyeSpring,
@@ -559,8 +551,7 @@ namespace BossChecklist
 					ItemID.PsychoKnife,
 				};
 			}
-			if (eventName == "Pumpkin Moon")
-			{
+			if (eventName == "Pumpkin Moon") {
 				return new List<int>()
 				{
 					ItemID.ScarecrowHat,
@@ -583,8 +574,7 @@ namespace BossChecklist
 					ItemID.SpiderEgg,
 				};
 			}
-			if (eventName == "Frost Moon")
-			{
+			if (eventName == "Frost Moon") {
 				return new List<int>()
 				{
 					ItemID.ElfHat,
@@ -603,8 +593,7 @@ namespace BossChecklist
 					ItemID.ReindeerBells,
 				};
 			}
-			if (eventName == "Martian Madness")
-			{
+			if (eventName == "Martian Madness") {
 				return new List<int>()
 				{
 					ItemID.MartianCostumeMask,
@@ -625,8 +614,7 @@ namespace BossChecklist
 					ItemID.AntiGravityHook,
 				};
 			}
-			if (eventName == "Old One's Army")
-			{
+			if (eventName == "Old One's Army") {
 				return new List<int>()
 				{
 					ItemID.DefenderMedal,
@@ -651,8 +639,7 @@ namespace BossChecklist
                     ItemID.DD2SquireBetsySword, // Flying Dragon
 				};
 			}
-			if (eventName == "Lunar Event")
-			{
+			if (eventName == "Lunar Event") {
 				return new List<int>()
 				{
 					ItemID.FragmentSolar,

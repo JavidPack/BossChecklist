@@ -1,20 +1,16 @@
-﻿using System;
-using Terraria;
-using Terraria.ModLoader;
-using System.Collections.Generic;
-using Terraria.UI;
-using Terraria.DataStructures;
-using BossChecklist.UI;
+﻿using BossChecklist.UI;
 using Microsoft.Xna.Framework;
-using Terraria.UI.Chat;
-using System.Linq;
-using Terraria.GameContent.UI.Chat;
-using System.IO;
-using Terraria.ID;
-using Terraria.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
-using System.Reflection;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Terraria;
+using Terraria.Graphics;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.UI;
+using Terraria.UI.Chat;
 
 // TODO: Kill all npc checklist
 // TODO: Currently have all town npc checklist
@@ -51,12 +47,10 @@ namespace BossChecklist
 		internal static UserInterface BossRadarUIInterface;
 		internal static BossRadarUI BossRadarUI;
 
-		public BossChecklist()
-		{
+		public BossChecklist() {
 		}
 
-		public override void Load()
-		{
+		public override void Load() {
 			instance = this;
 			ToggleChecklistHotKey = RegisterHotKey("Toggle Boss Checklist", "P");
 			ToggleBossLog = RegisterHotKey("Toggle Boss Log", "L");
@@ -67,8 +61,7 @@ namespace BossChecklist
 
 			MapAssist.FullMapInitialize();
 
-			if (!Main.dedServ)
-			{
+			if (!Main.dedServ) {
 				bossChecklistUI = new BossChecklistUI();
 				bossChecklistUI.Activate();
 				bossChecklistInterface = new UserInterface();
@@ -101,8 +94,7 @@ namespace BossChecklist
 			}
 		}
 
-		public override void Unload()
-		{
+		public override void Unload() {
 			instance = null;
 			ToggleChecklistHotKey = null;
 			bossChecklistInterface = null;
@@ -115,8 +107,7 @@ namespace BossChecklist
 			UICheckbox.checkmarkTexture = null;
 		}
 
-		public override void UpdateUI(GameTime gameTime)
-		{
+		public override void UpdateUI(GameTime gameTime) {
 			bossChecklistInterface?.Update(gameTime);
 
 			if (BossLogInterface != null) BossLogInterface.Update(gameTime);
@@ -130,34 +121,27 @@ namespace BossChecklist
 
 		//int lastSeenScreenWidth;
 		//int lastSeenScreenHeight;
-		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
-		{
+		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
 			//if (BossChecklistUI.visible)
 			//{
 			//	layers.RemoveAll(x => x.Name == "Vanilla: Resource Bars" || x.Name == "Vanilla: Map / Minimap");
 			//}
 
 			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-			if (MouseTextIndex != -1)
-			{
+			if (MouseTextIndex != -1) {
 				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
 					"BossChecklist: Boss Checklist",
-					delegate
-					{
-						if (BossChecklistUI.Visible)
-						{
+					delegate {
+						if (BossChecklistUI.Visible) {
 							bossChecklistInterface?.Draw(Main.spriteBatch, new GameTime());
 
-							if (BossChecklistUI.hoverText != "")
-							{
+							if (BossChecklistUI.hoverText != "") {
 								float x = Main.fontMouseText.MeasureString(BossChecklistUI.hoverText).X;
 								Vector2 vector = new Vector2((float)Main.mouseX, (float)Main.mouseY) + new Vector2(16f, 16f);
-								if (vector.Y > (float)(Main.screenHeight - 30))
-								{
+								if (vector.Y > (float)(Main.screenHeight - 30)) {
 									vector.Y = (float)(Main.screenHeight - 30);
 								}
-								if (vector.X > (float)(Main.screenWidth - x - 30))
-								{
+								if (vector.X > (float)(Main.screenWidth - x - 30)) {
 									vector.X = (float)(Main.screenWidth - x - 30);
 								}
 								//Utils.DrawBorderStringFourWay(Main.spriteBatch, Main.fontMouseText, BossChecklistUI.hoverText,
@@ -170,8 +154,7 @@ namespace BossChecklist
 								ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, array,
 									vector, 0f, Vector2.Zero, Vector2.One, out hoveredSnippet/*, -1f, 2f*/);
 
-								if (hoveredSnippet > -1)
-								{
+								if (hoveredSnippet > -1) {
 									array[hoveredSnippet].OnHover();
 									//if (Main.mouseLeft && Main.mouseLeftRelease)
 									//{
@@ -259,10 +242,8 @@ namespace BossChecklist
 		//{
 		//	bossChecklist.Call("AddBoss", "My BossesName", 2.3f, (Func<bool>)(() => MyMod.MyModWorld.downedMyBoss));
 		//}
-		public override void PostSetupContent()
-		{
-			try
-			{
+		public override void PostSetupContent() {
+			try {
 				//thoriumLoaded = ModLoader.GetMod("ThoriumMod") != null;
 				//bluemagicLoaded = ModLoader.GetMod("Bluemagic") != null;
 				//calamityLoaded = ModLoader.GetMod("CalamityMod") != null;
@@ -271,8 +252,7 @@ namespace BossChecklist
 				//sacredToolsLoaded = ModLoader.GetMod("SacredTools") != null;
 				//pumpkingLoaded = ModLoader.GetMod("Pumpking") != null;
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				Logger.Error("BossChecklist PostSetupContent Error: " + e.StackTrace + e.Message);
 			}
 		}
@@ -281,13 +261,10 @@ namespace BossChecklist
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
 		// Merge Notes: AddStatPage added, new AddBoss needed.
-		public override object Call(params object[] args)
-		{
-			try
-			{
+		public override object Call(params object[] args) {
+			try {
 				string message = args[0] as string;
-				if (message == "AddBoss")
-				{
+				if (message == "AddBoss") {
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
@@ -304,8 +281,7 @@ namespace BossChecklist
 					return "Success";
 				}
 				*/
-				else if (message == "AddBossWithInfo")
-				{
+				else if (message == "AddBossWithInfo") {
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
@@ -315,8 +291,7 @@ namespace BossChecklist
 					bossTracker.AddBoss(bossname, bossValue, bossDowned, bossInfo, available);
 					return "Success";
 				}
-				else if (message == "AddMiniBossWithInfo")
-				{
+				else if (message == "AddMiniBossWithInfo") {
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
@@ -325,8 +300,7 @@ namespace BossChecklist
 					bossTracker.AddMiniBoss(bossname, bossValue, bossDowned, bossInfo, available);
 					return "Success";
 				}
-				else if (message == "AddEventWithInfo")
-				{
+				else if (message == "AddEventWithInfo") {
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
@@ -393,20 +367,17 @@ namespace BossChecklist
 					Logger.Error("BossChecklist Call Error: Unknown Message: " + message);
 				}
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				Logger.Error("BossChecklist Call Error: " + e.StackTrace + e.Message);
 			}
 			return "Failure";
 		}
 
-		public override void HandlePacket(BinaryReader reader, int whoAmI)
-		{
+		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			BossChecklistMessageType msgType = (BossChecklistMessageType)reader.ReadByte();
 			Player player;
 			PlayerAssist modPlayer;
-			switch (msgType)
-			{
+			switch (msgType) {
 				// Sent from Client to Server
 				case BossChecklistMessageType.RequestHideBoss:
 					//if (Main.netMode == NetmodeID.MultiplayerClient)

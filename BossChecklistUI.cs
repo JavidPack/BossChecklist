@@ -1,16 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.GameContent.UI.Elements;
-using Terraria.UI;
-using System;
-using System.Collections.Generic;
-using Terraria.ID;
-using Terraria.UI.Chat;
-using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Terraria;
+using Terraria.GameContent.UI.Elements;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.UI;
+using Terraria.UI.Chat;
 
 namespace BossChecklist.UI
 {
@@ -24,8 +22,7 @@ namespace BossChecklist.UI
 		public UIList checklistList;
 
 		float spacing = 8f;
-		public static bool Visible
-		{
+		public static bool Visible {
 			get { return BossChecklist.bossChecklistInterface.CurrentState == BossChecklist.instance.bossChecklistUI; }
 			set { BossChecklist.bossChecklistInterface.SetState(value ? BossChecklist.instance.bossChecklistUI : null); }
 		}
@@ -37,11 +34,9 @@ namespace BossChecklist.UI
 		public static string hoverText = "";
 
 		bool imagesResized;
-		public override void Update(GameTime gameTime)
-		{
+		public override void Update(GameTime gameTime) {
 			base.Update(gameTime);
-			if (!imagesResized)
-			{
+			if (!imagesResized) {
 				Texture2D completedToggle = ResizeImage(Main.itemTexture[ItemID.SuspiciousLookingEye], 32, 32);
 				Texture2D miniBossToggle = ResizeImage(Main.itemTexture[ItemID.CandyCorn], 32, 32);
 				Texture2D eventToggle = ResizeImage(Main.itemTexture[ItemID.SnowGlobe], 32, 32);
@@ -54,8 +49,7 @@ namespace BossChecklist.UI
 			}
 		}
 
-		public override void OnInitialize()
-		{
+		public override void OnInitialize() {
 			checklistPanel = new UIPanel();
 			checklistPanel.SetPadding(10);
 			checklistPanel.Left.Pixels = 0;
@@ -113,37 +107,31 @@ namespace BossChecklist.UI
 			// TODO, game window resize issue
 		}
 
-		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement)
-		{
+		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			showCompleted = !showCompleted;
 			Main.PlaySound(showCompleted ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
-		private void ToggleMiniBossButtonClicked(UIMouseEvent evt, UIElement listeningElement)
-		{
+		private void ToggleMiniBossButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			showMiniBoss = !showMiniBoss;
 			Main.PlaySound(showMiniBoss ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
-		private void ToggleEventButtonClicked(UIMouseEvent evt, UIElement listeningElement)
-		{
+		private void ToggleEventButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			showEvent = !showEvent;
 			Main.PlaySound(showEvent ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
-		private void ToggleHiddenButtonClicked(UIMouseEvent evt, UIElement listeningElement)
-		{
-			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt))
-			{
+		private void ToggleHiddenButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
+			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				BossChecklistWorld.HiddenBosses.Clear();
 				showHidden = false;
 				UpdateCheckboxes();
 
-				if (Main.netMode == NetmodeID.MultiplayerClient)
-				{
+				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)BossChecklistMessageType.RequestClearHidden);
 					packet.Send();
@@ -162,17 +150,13 @@ namespace BossChecklist.UI
 		}
 		public bool CalamityDS => CalamityMod.CalamityWorld.downedDesertScourge;*/
 
-		internal void UpdateCheckboxes()
-		{
+		internal void UpdateCheckboxes() {
 			checklistList.Clear();
 
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses)
-			{
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.name);
-				if (boss.available() && (!boss.hidden || showHidden))
-				{
-					if (showCompleted || !boss.downed())
-					{
+				if (boss.available() && (!boss.hidden || showHidden)) {
+					if (showCompleted || !boss.downed()) {
 						if (boss.type == BossChecklistType.Event && !showEvent)
 							continue;
 						if (boss.type == BossChecklistType.MiniBoss && !showMiniBoss)
@@ -192,12 +176,10 @@ namespace BossChecklist.UI
 			//}
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
+		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			hoverText = "";
 			Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-			if (checklistPanel.ContainsPoint(MousePosition))
-			{
+			if (checklistPanel.ContainsPoint(MousePosition)) {
 				Main.player[Main.myPlayer].mouseInterface = true;
 
 				// Doesn't fully fix problem. Clicks still happen in back to front manner.
@@ -207,37 +189,31 @@ namespace BossChecklist.UI
 		}
 
 		public TextSnippet hoveredTextSnippet;
-		public override void Draw(SpriteBatch spriteBatch)
-		{
+		public override void Draw(SpriteBatch spriteBatch) {
 			base.Draw(spriteBatch);
 
 			// now we can draw after all other drawing.
-			if (hoveredTextSnippet != null)
-			{
+			if (hoveredTextSnippet != null) {
 				hoveredTextSnippet.OnHover();
-				if (Main.mouseLeft && Main.mouseLeftRelease)
-				{
+				if (Main.mouseLeft && Main.mouseLeftRelease) {
 					hoveredTextSnippet.OnClick();
 				}
 				hoveredTextSnippet = null;
 			}
 		}
 
-		internal static void OnScrollWheel_FixHotbarScroll(UIScrollWheelEvent evt, UIElement listeningElement)
-		{
+		internal static void OnScrollWheel_FixHotbarScroll(UIScrollWheelEvent evt, UIElement listeningElement) {
 			Main.LocalPlayer.ScrollHotbar(Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120);
 		}
 
-		private Texture2D ResizeImage(Texture2D texture2D, int desiredWidth, int desiredHeight)
-		{
+		private Texture2D ResizeImage(Texture2D texture2D, int desiredWidth, int desiredHeight) {
 			RenderTarget2D renderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, desiredWidth, desiredHeight);
 			Main.instance.GraphicsDevice.SetRenderTarget(renderTarget);
 			Main.instance.GraphicsDevice.Clear(Color.Transparent);
 			Main.spriteBatch.Begin();
 
 			float scale = 1;
-			if (texture2D.Width > desiredWidth || texture2D.Height > desiredHeight)
-			{
+			if (texture2D.Width > desiredWidth || texture2D.Height > desiredHeight) {
 				if (texture2D.Height > texture2D.Width)
 					scale = (float)desiredWidth / texture2D.Height;
 				else
@@ -261,13 +237,11 @@ namespace BossChecklist.UI
 	internal class HoveredTextSnippetTooltipHack : GlobalItem
 	{
 		const int paddingForBox = 10;
-		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y)
-		{
-			if(BossChecklist.instance.bossChecklistUI.hoveredTextSnippet != null)
-			{
+		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y) {
+			if (BossChecklist.instance.bossChecklistUI.hoveredTextSnippet != null) {
 				var texts = lines.Select(z => z.text);
 				string longestText = texts.ToList().OrderByDescending(z => z.Length).First();
-				int widthForBox = (int)Main.fontMouseText.MeasureString(longestText).X ;
+				int widthForBox = (int)Main.fontMouseText.MeasureString(longestText).X;
 				int heightForBox = (int)texts.ToList().Sum(z => Main.fontMouseText.MeasureString(z).Y);
 
 				Vector2 drawPosForBox = new Vector2(x - paddingForBox, y - paddingForBox);

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.UI;
-using Terraria;
-using Terraria.UI.Chat;
 using Microsoft.Xna.Framework.Input;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI;
+using Terraria.UI.Chat;
 
 namespace BossChecklist.UI
 {
@@ -17,8 +17,7 @@ namespace BossChecklist.UI
 		BossInfo boss;
 		float descriptionHeight = 18;
 
-		public UIBossCheckbox(BossInfo boss)
-		{
+		public UIBossCheckbox(BossInfo boss) {
 			this.boss = boss;
 			Width = StyleDimension.Fill;
 			Height.Pixels = 15;
@@ -37,18 +36,15 @@ namespace BossChecklist.UI
 			OnClick += Box_OnClick;
 		}
 
-		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement)
-		{
-			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt))
-			{
+		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement) {
+			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				boss.hidden = !boss.hidden;
 				if (boss.hidden)
 					BossChecklistWorld.HiddenBosses.Add(boss.name);
 				else
 					BossChecklistWorld.HiddenBosses.Remove(boss.name);
 				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-				if (Main.netMode == NetmodeID.MultiplayerClient)
-				{
+				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)BossChecklistMessageType.RequestHideBoss);
 					packet.Write(boss.name);
@@ -59,11 +55,9 @@ namespace BossChecklist.UI
 			}
 
 			UIBossCheckbox clicked = listeningElement as UIBossCheckbox;
-			foreach (var item in BossChecklist.instance.bossChecklistUI.checklistList._items)
-			{
+			foreach (var item in BossChecklist.instance.bossChecklistUI.checklistList._items) {
 				UIBossCheckbox box = (item as UIBossCheckbox);
-				if (box != clicked)
-				{
+				if (box != clicked) {
 					box.expanded = false;
 					box.Height.Pixels = 15;
 					box.Recalculate();
@@ -75,38 +69,33 @@ namespace BossChecklist.UI
 			Recalculate();
 		}
 
-		public override int CompareTo(object obj)
-		{
+		public override int CompareTo(object obj) {
 			UIBossCheckbox other = obj as UIBossCheckbox;
 			return boss.progression.CompareTo(other.boss.progression);
 		}
 
 		const float infoScaleX = 1f;
 		const float infoScaleY = 1f;
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
+		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			base.DrawSelf(spriteBatch);
 
 			Rectangle hitbox = GetInnerDimensions().ToRectangle();
 			//Main.spriteBatch.Draw(Main.magicPixel, hitbox, Color.Red * 0.6f);
 
-			if (expanded)
-			{
+			if (expanded) {
 				string info = boss.info ?? "No info available";
 				int hoveredSnippet = -1;
 				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);
 
-				for (int i = 0; i < ChatManager.ShadowDirections.Length; i++)
-				{
-					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, Main.fontMouseText, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1, 
+				for (int i = 0; i < ChatManager.ShadowDirections.Length; i++) {
+					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, Main.fontMouseText, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1,
 						Color.Black, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), hitbox.Width - (7 * 2), 1);
 				}
 				Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, Main.fontMouseText, textSnippets,
 					new Vector2(2, 15 + 3) + hitbox.TopLeft(), Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out hoveredSnippet, hitbox.Width - (7 * 2), false);
 
-				if (hoveredSnippet > -1)
-				{
+				if (hoveredSnippet > -1) {
 					// because of draw order, we'll do the hover later.
 					BossChecklist.instance.bossChecklistUI.hoveredTextSnippet = textSnippets[hoveredSnippet];
 					//array[hoveredSnippet].OnHover();
@@ -117,8 +106,7 @@ namespace BossChecklist.UI
 				}
 
 				float newSize = size.Y - hitbox.Y;
-				if (newSize != descriptionHeight)
-				{
+				if (newSize != descriptionHeight) {
 					descriptionHeight = newSize;
 					Height.Pixels = 15 + (2 * 3) + descriptionHeight;
 					Recalculate();

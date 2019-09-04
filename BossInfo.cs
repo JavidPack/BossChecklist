@@ -38,7 +38,7 @@ namespace BossChecklist
 			this.collection = collection;
 			this.loot = loot;
 			this.pageTexture = pageTexture;
-			if(this.pageTexture == null || !Terraria.ModLoader.ModContent.TextureExists(this.pageTexture)) {
+			if (this.pageTexture == null || !Terraria.ModLoader.ModContent.TextureExists(this.pageTexture)) {
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 				BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} missing");
 			}

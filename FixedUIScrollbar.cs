@@ -6,16 +6,14 @@ namespace BossChecklist.UI
 {
 	internal class FixedUIScrollbar : UIScrollbar
 	{
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
+		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			UserInterface temp = UserInterface.ActiveInstance;
 			UserInterface.ActiveInstance = BossChecklist.bossChecklistInterface;
 			base.DrawSelf(spriteBatch);
 			UserInterface.ActiveInstance = temp;
 		}
 
-		public override void MouseDown(UIMouseEvent evt)
-		{
+		public override void MouseDown(UIMouseEvent evt) {
 			UserInterface temp = UserInterface.ActiveInstance;
 			UserInterface.ActiveInstance = BossChecklist.bossChecklistInterface;
 			base.MouseDown(evt);

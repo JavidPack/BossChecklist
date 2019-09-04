@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.ModLoader;
+using System;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
-using System;
-using Terraria.GameContent.UI.Chat;
-using Terraria;
 
 namespace BossChecklist.UI
 {
@@ -19,21 +16,17 @@ namespace BossChecklist.UI
 		//public int spawnItemID;
 
 		private bool selected = false;
-		public bool Selected
-		{
+		public bool Selected {
 			get { return selected; }
-			set
-			{
-				if (value != selected)
-				{
+			set {
+				if (value != selected) {
 					selected = value;
 					SelectedChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
 
-		public UICheckbox(float order, string text, float textScale = 1, bool large = false) : base(text, textScale, large)
-		{
+		public UICheckbox(float order, string text, float textScale = 1, bool large = false) : base(text, textScale, large) {
 			this.order = order;
 			this.Left.Pixels += 20;
 			//TextColor = Color.Blue;
@@ -46,8 +39,7 @@ namespace BossChecklist.UI
 		//	this.Selected = !Selected;
 		//}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
+		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			CalculatedStyle innerDimensions = base.GetInnerDimensions();
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
 
@@ -61,8 +53,7 @@ namespace BossChecklist.UI
 			base.DrawSelf(spriteBatch);
 		}
 
-		public override int CompareTo(object obj)
-		{
+		public override int CompareTo(object obj) {
 			UICheckbox other = obj as UICheckbox;
 			return order.CompareTo(other.order);
 		}

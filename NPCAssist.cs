@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,78 +11,62 @@ using Terraria.ModLoader;
 
 namespace BossChecklist
 {
-    class NPCAssist : GlobalNPC
-    {
-        public override void NPCLoot(NPC npc)
-		{
-			if (npc.type == NPCID.DD2Betsy)
-            {
-                WorldAssist.downedBetsy = true;
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    NetMessage.SendData(MessageID.WorldData); // Immediately inform clients of new world state.
-                }
-            }
+	class NPCAssist : GlobalNPC
+	{
+		public override void NPCLoot(NPC npc) {
+			if (npc.type == NPCID.DD2Betsy) {
+				WorldAssist.downedBetsy = true;
+				if (Main.netMode == NetmodeID.Server) {
+					NetMessage.SendData(MessageID.WorldData); // Immediately inform clients of new world state.
+				}
+			}
 
-            string partName = npc.GetFullNetName().ToString();
-			if (BossChecklist.ClientConfig.PillarMessages)
-			{
-				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust)
-				{
+			string partName = npc.GetFullNetName().ToString();
+			if (BossChecklist.ClientConfig.PillarMessages) {
+				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
 					if (Main.netMode == 0) Main.NewText("The " + npc.GetFullNetName().ToString() + " has been destroyed", Colors.RarityPurple);
 					else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The " + npc.GetFullNetName().ToString() + " has been destroyed"), Colors.RarityPurple);
 				}
 			}
-            if (NPCisLimb(npc) && BossChecklist.ClientConfig.LimbMessages)
-            {
-                if (npc.type == NPCID.SkeletronHand) partName = "Skeletron Hand";
-                if (Main.netMode == 0) Main.NewText("The " + partName + " is down!", Colors.RarityGreen);
-                else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The " + partName + " is down!"), Colors.RarityGreen);
-            }
-            
-            // Setting a record for fastest boss kill, and counting boss kills
-            // Twins check makes sure the other is not around before counting towards the record
-            if (ListedBossNum(npc) != -1)
-			{
-				if (TruelyDead(npc))
-                {
-					if (Main.netMode == NetmodeID.SinglePlayer)
-					{
-						if (npc.playerInteraction[Main.myPlayer])
-						{
+			if (NPCisLimb(npc) && BossChecklist.ClientConfig.LimbMessages) {
+				if (npc.type == NPCID.SkeletronHand) partName = "Skeletron Hand";
+				if (Main.netMode == 0) Main.NewText("The " + partName + " is down!", Colors.RarityGreen);
+				else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The " + partName + " is down!"), Colors.RarityGreen);
+			}
+
+			// Setting a record for fastest boss kill, and counting boss kills
+			// Twins check makes sure the other is not around before counting towards the record
+			if (ListedBossNum(npc) != -1) {
+				if (TruelyDead(npc)) {
+					if (Main.netMode == NetmodeID.SinglePlayer) {
+						if (npc.playerInteraction[Main.myPlayer]) {
 							Player player = Main.player[Main.myPlayer];
 							CheckRecords(npc, player, PlayerAssist.Get(player, mod));
 						}
 					}
-					else
-					{
+					else {
 						CheckRecordsMultiplayer(npc);
 					}
-                }
+				}
 				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(TruelyDead(npc));
-            }
-        }
+			}
+		}
 
 		public override bool InstancePerEntity => true;
 
 		List<Player> StartingPlayers;
-		
-		public override bool PreAI(NPC npc)
-		{
-			if (ListedBossNum(npc) != -1)
-			{
+
+		public override bool PreAI(NPC npc) {
+			if (ListedBossNum(npc) != -1) {
 				int listNum = ListedBossNum(npc);
-				if (StartingPlayers == null)
-				{
+				if (StartingPlayers == null) {
 					// I'll need to have a check in here for Worm bosses
 					StartingPlayers = new List<Player>();
-					foreach (Player player in Main.player)
-					{
+					foreach (Player player in Main.player) {
 						if (player.active) StartingPlayers.Add(player);
 					}
-					
-					foreach (Player player in StartingPlayers)
-					{
+
+					foreach (Player player in StartingPlayers) {
 						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 						modPlayer.MaxHealth[listNum] = 0;
 						modPlayer.RecordTimers[listNum] = 0;
@@ -93,13 +75,10 @@ namespace BossChecklist
 					}
 				}
 
-				if (npc.active)
-				{
-					foreach (Player player in StartingPlayers)
-					{
+				if (npc.active) {
+					foreach (Player player in StartingPlayers) {
 						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-						if (!player.active)
-						{
+						if (!player.active) {
 							StartingPlayers.Remove(player);
 							continue;
 						}
@@ -107,8 +86,7 @@ namespace BossChecklist
 						modPlayer.RecordTimers[listNum]++;
 						modPlayer.DodgeTimer[listNum]++;
 						if (modPlayer.MaxHealth[listNum] == 0) modPlayer.MaxHealth[listNum] = player.statLifeMax2;
-						if (modPlayer.BrinkChecker[listNum] == 0 || (player.statLife < modPlayer.BrinkChecker[listNum] && player.statLife > 0))
-						{
+						if (modPlayer.BrinkChecker[listNum] == 0 || (player.statLife < modPlayer.BrinkChecker[listNum] && player.statLife > 0)) {
 							modPlayer.BrinkChecker[listNum] = player.statLife;
 						}
 					}
@@ -118,8 +96,7 @@ namespace BossChecklist
 			return true;
 		}
 
-		public void CheckRecords(NPC npc, Player player, PlayerAssist modplayer)
-		{
+		public void CheckRecords(NPC npc, Player player, PlayerAssist modplayer) {
 			int recordIndex = ListedBossNum(npc);
 			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
 			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
@@ -149,52 +126,43 @@ namespace BossChecklist
 			// Increase kill count
 			bossStats.kills++;
 
-			if (recordAttempt < currentRecord && currentRecord != 0 && worstRecord <= 0)
-			{
+			if (recordAttempt < currentRecord && currentRecord != 0 && worstRecord <= 0) {
 				// First make the current record the worst record if no worst record has been made and a new record was made
 				bossStats.fightTime2 = currentRecord;
 			}
-			if (recordAttempt < currentRecord || currentRecord <= 0)
-			{
+			if (recordAttempt < currentRecord || currentRecord <= 0) {
 				//The player has beaten their best record, so we have to overwrite the old record with the new one
 				bossStats.fightTime = recordAttempt;
 			}
-			else if (recordAttempt > worstRecord || worstRecord <= 0)
-			{
+			else if (recordAttempt > worstRecord || worstRecord <= 0) {
 				//The player has beaten their worst record, so we have to overwrite the old record with the new one
 				bossStats.fightTime2 = recordAttempt;
 			}
 
-			if (brinkAttempt > currentBrink && currentBrink != 0 && worstBrink <= 0)
-			{
+			if (brinkAttempt > currentBrink && currentBrink != 0 && worstBrink <= 0) {
 				bossStats.brink = currentBrink;
 			}
-			if (brinkAttempt > currentBrink || currentBrink <= 0)
-			{
+			if (brinkAttempt > currentBrink || currentBrink <= 0) {
 				bossStats.brink2 = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
 				bossStats.brinkPercent2 = (int)(newHealth * 100);
 			}
-			else if (brinkAttempt < worstBrink || worstBrink <= 0)
-			{
+			else if (brinkAttempt < worstBrink || worstBrink <= 0) {
 				bossStats.brink = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
 				bossStats.brinkPercent = (int)(newHealth * 100);
 			}
 
-			if (dodgeTimeAttempt > currentDodgeTime || currentDodgeTime < 0)
-			{
+			if (dodgeTimeAttempt > currentDodgeTime || currentDodgeTime < 0) {
 				// There is no "worse record" for this one so just overwrite any better records made
 				bossStats.dodgeTime = dodgeTimeAttempt;
 			}
 
-			if (dodgeAttempt < currentDodges || currentDodges < 0)
-			{
+			if (dodgeAttempt < currentDodges || currentDodges < 0) {
 				bossStats.totalDodges = dodgeAttempt;
 				if (worstDodges == 0) bossStats.totalDodges2 = currentDodges;
 			}
-			else if (dodgeAttempt > worstDodges || worstDodges < 0)
-			{
+			else if (dodgeAttempt > worstDodges || worstDodges < 0) {
 				bossStats.totalDodges2 = dodgeAttempt;
 			}
 
@@ -202,30 +170,25 @@ namespace BossChecklist
 			modplayer.AttackCounter[recordIndex] = 0;
 
 			// If a new record was made, notify the player
-			if ((recordAttempt < currentRecord || currentRecord <= 0) || (brinkAttempt > currentBrink || currentBrink <= 0) || (dodgeAttempt < currentDodges || dodgeAttempt <= 0))
-			{
+			if ((recordAttempt < currentRecord || currentRecord <= 0) || (brinkAttempt > currentBrink || currentBrink <= 0) || (dodgeAttempt < currentDodges || dodgeAttempt <= 0)) {
 				CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 			}
 		}
 
-		public void CheckRecordsMultiplayer(NPC npc)
-		{
+		public void CheckRecordsMultiplayer(NPC npc) {
 			int recordIndex = ListedBossNum(npc);
-			for (int i = 0; i < 255; i++)
-			{
+			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
 
 				if (!player.active || !npc.playerInteraction[i]) continue; // Players must be active AND have interacted with the boss
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				if (Main.netMode == NetmodeID.Server)
-				{
+				if (Main.netMode == NetmodeID.Server) {
 					List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 					BossStats oldRecord = list[recordIndex];
 
 					// Establish the new records for comparing
 
-					BossStats newRecord = new BossStats()
-					{
+					BossStats newRecord = new BossStats() {
 						fightTimeL = modPlayer.RecordTimers[recordIndex],
 						totalDodgesL = modPlayer.AttackCounter[recordIndex],
 						dodgeTimeL = modPlayer.DodgeTimer[recordIndex],
@@ -233,7 +196,7 @@ namespace BossChecklist
 
 						brinkPercentL = (int)(((double)modPlayer.BrinkChecker[recordIndex] / modPlayer.MaxHealth[recordIndex]) * 100),
 					};
-					
+
 					// Compare the records
 
 					//
@@ -245,29 +208,25 @@ namespace BossChecklist
 					RecordID specificRecord = RecordID.None;
 
 					Console.WriteLine(newRecord.fightTimeL + " vs " + oldRecord.fightTime);
-					if ((newRecord.fightTimeL < oldRecord.fightTime && newRecord.fightTimeL > 0) || oldRecord.fightTime <= 0)
-					{
+					if ((newRecord.fightTimeL < oldRecord.fightTime && newRecord.fightTimeL > 0) || oldRecord.fightTime <= 0) {
 						Console.WriteLine("This Fight (" + newRecord.fightTimeL + ") was better than your current best (" + oldRecord.fightTime + ")");
 						specificRecord |= RecordID.ShortestFightTime;
 						oldRecord.fightTime = newRecord.fightTimeL;
 					}
-					if (newRecord.fightTimeL > oldRecord.fightTime2 && newRecord.fightTimeL > 0)
-					{
+					if (newRecord.fightTimeL > oldRecord.fightTime2 && newRecord.fightTimeL > 0) {
 						Console.WriteLine("This Fight (" + newRecord.fightTimeL + ") was worse than your current worst (" + oldRecord.fightTime2 + ")");
 						specificRecord |= RecordID.LongestFightTime;
 						oldRecord.fightTime2 = newRecord.fightTimeL;
 					}
 					oldRecord.fightTimeL = newRecord.fightTimeL;
 
-					if (newRecord.brinkL > oldRecord.brink2 && newRecord.brinkL > 0)
-					{
+					if (newRecord.brinkL > oldRecord.brink2 && newRecord.brinkL > 0) {
 						Console.WriteLine("This Fight (" + newRecord.brink2 + ") was better than your current best (" + oldRecord.brink2 + ")");
 						specificRecord |= RecordID.BestBrink;
 						oldRecord.brink2 = newRecord.brinkL;
 						oldRecord.brinkPercent2 = newRecord.brinkPercentL;
 					}
-					if (newRecord.brinkL < oldRecord.brink && newRecord.brinkL > 0)
-					{
+					if (newRecord.brinkL < oldRecord.brink && newRecord.brinkL > 0) {
 						Console.WriteLine("This Fight (" + newRecord.brink + ") was better than your current best (" + oldRecord.brink + ")");
 						specificRecord |= RecordID.WorstBrink;
 						oldRecord.brink = newRecord.brinkL;
@@ -276,28 +235,25 @@ namespace BossChecklist
 					oldRecord.brinkL = newRecord.brinkL;
 					oldRecord.brinkPercentL = newRecord.brinkPercentL;
 
-					if (newRecord.totalDodgesL < oldRecord.totalDodges && newRecord.totalDodgesL > -1)
-					{
+					if (newRecord.totalDodgesL < oldRecord.totalDodges && newRecord.totalDodgesL > -1) {
 						Console.WriteLine("This Fight (" + newRecord.totalDodgesL + ") was better than your current best (" + oldRecord.totalDodges + ")");
 						specificRecord |= RecordID.LeastHits;
 						oldRecord.totalDodges = newRecord.totalDodgesL;
 					}
-					if (newRecord.totalDodgesL > oldRecord.totalDodges2 && oldRecord.totalDodgesL > -1)
-					{
+					if (newRecord.totalDodgesL > oldRecord.totalDodges2 && oldRecord.totalDodgesL > -1) {
 						Console.WriteLine("This Fight (" + newRecord.totalDodgesL + ") was better than your current best (" + oldRecord.totalDodges2 + ")");
 						specificRecord |= RecordID.MostHits;
 						oldRecord.totalDodges2 = newRecord.totalDodgesL;
 					}
 					oldRecord.totalDodgesL = newRecord.totalDodgesL;
 
-					if (newRecord.dodgeTimeL > oldRecord.dodgeTime && oldRecord.dodgeTimeL > 0)
-					{
+					if (newRecord.dodgeTimeL > oldRecord.dodgeTime && oldRecord.dodgeTimeL > 0) {
 						Console.WriteLine("This Fight (" + newRecord.dodgeTimeL + ") was better than your current best (" + oldRecord.dodgeTime + ")");
 						specificRecord |= RecordID.DodgeTime;
 						oldRecord.dodgeTime = newRecord.dodgeTimeL;
 					}
 					oldRecord.dodgeTimeL = newRecord.dodgeTimeL;
-					
+
 					// Make the packet
 
 					ModPacket packet = mod.GetPacket();
@@ -311,45 +267,38 @@ namespace BossChecklist
 			}
 		}
 
-        public bool NPCisLimb(NPC npcType)
-        {
-            return npcType.type == NPCID.PrimeSaw
-                || npcType.type == NPCID.PrimeLaser
-                || npcType.type == NPCID.PrimeCannon
-                || npcType.type == NPCID.PrimeVice
-                || npcType.type == NPCID.SkeletronHand
-                || npcType.type == NPCID.GolemFistLeft
-                || npcType.type == NPCID.GolemFistRight
-                || npcType.type == NPCID.GolemHead
-                || (npcType.type == NPCID.Retinazer && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Spazmatism && otherBoss.active))
-                || (npcType.type == NPCID.Spazmatism && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Retinazer && otherBoss.active));
-        }
+		public bool NPCisLimb(NPC npcType) {
+			return npcType.type == NPCID.PrimeSaw
+				|| npcType.type == NPCID.PrimeLaser
+				|| npcType.type == NPCID.PrimeCannon
+				|| npcType.type == NPCID.PrimeVice
+				|| npcType.type == NPCID.SkeletronHand
+				|| npcType.type == NPCID.GolemFistLeft
+				|| npcType.type == NPCID.GolemFistRight
+				|| npcType.type == NPCID.GolemHead
+				|| (npcType.type == NPCID.Retinazer && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Spazmatism && otherBoss.active))
+				|| (npcType.type == NPCID.Spazmatism && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Retinazer && otherBoss.active));
+		}
 
-        public static int ListedBossNum(NPC boss)
-        {
-            List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
+		public static int ListedBossNum(NPC boss) {
+			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (boss.type < Main.maxNPCTypes) return BL.FindIndex(x => x.ids.Any(y => y == boss.type));
 			else return BL.FindIndex(x => x.name == boss.FullName && x.source == boss.modNPC.mod.Name && x.ids.Any(y => y == boss.type));
-        }
+		}
 
-        public bool TruelyDead(NPC npc)
-        {
+		public bool TruelyDead(NPC npc) {
 			// Check all multibosses
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
-			if (ListedBossNum(npc) != -1)
-			{
-				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[ListedBossNum(npc)].ids.Count; i++)
-				{
+			if (ListedBossNum(npc) != -1) {
+				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[ListedBossNum(npc)].ids.Count; i++) {
 					if (Main.npc.Any(x => x != npc && x.type == BossChecklist.bossTracker.SortedBosses[ListedBossNum(npc)].ids[i] && x.active)) return false;
 				}
 			}
 			return true;
-        }
-		
-		public override void OnChatButtonClicked(NPC npc, bool firstButton)
-		{
-			if (npc.type == NPCID.Dryad && !firstButton)
-			{
+		}
+
+		public override void OnChatButtonClicked(NPC npc, bool firstButton) {
+			if (npc.type == NPCID.Dryad && !firstButton) {
 				MapAssist.LocateNearestEvil();
 			}
 		}
