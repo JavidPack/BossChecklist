@@ -132,24 +132,28 @@ namespace BossChecklist
             {
                 isBloodMoon = false;
                 EventKey = "The Blood Moon falls past the horizon...";
-            }
-            else if (!Main.snowMoon && isFrostMoon)
+				// TODO: BloodMoon defeated
+			}
+			else if (!Main.snowMoon && isFrostMoon)
             {
                 isFrostMoon = false;
                 EventKey = "The Frost Moon melts as the sun rises...";
-            }
-            else if (!Main.pumpkinMoon && isPumpkinMoon)
+				// TODO: FrostMoon defeated
+			}
+			else if (!Main.pumpkinMoon && isPumpkinMoon)
             {
                 isPumpkinMoon = false;
                 EventKey = "The Pumpkin Moon ends its harvest...";
-            }
-            else if (!Main.eclipse && isEclipse)
+				// TODO: PumpkinMoon defeated
+			}
+			else if (!Main.eclipse && isEclipse)
             {
                 isEclipse = false;
                 EventKey = "The solar eclipse has ended... until next time...";
-            }
+				// TODO: Eclipse defeated
+			}
 
-            if (EventKey != "")
+			if (EventKey != "")
             {
                 if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(EventKey, Colors.RarityGreen);
                 else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(EventKey), Colors.RarityGreen);

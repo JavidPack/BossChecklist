@@ -50,9 +50,9 @@ namespace BossChecklist
 			return new BossInfo(type, progression, "Vanilla", name, ids, downed, () => true, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", info);
 		}
 
-		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem, string info) {
+		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> npcs, List<int> spawnItem, List<int> loot, string info, string image = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
 			// TODO: Event loot? npc? texture?
-			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, new List<int>(), downed, () => true, spawnItem, new List<int>(), new List<int>(), $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina", info);
+			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, npcs, downed, () => true, spawnItem, new List<int>(), loot, image, info);
 		}
 
 		public override string ToString() {
