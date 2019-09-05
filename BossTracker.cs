@@ -598,6 +598,7 @@ namespace BossChecklist
 			if (eventName == "Solar Pillar") {
 				return new List<int>()
 				{
+					NPCID.LunarTowerSolar,
 					NPCID.SolarSolenian,
 					NPCID.SolarSpearman,
 					NPCID.SolarCorite,
@@ -610,6 +611,7 @@ namespace BossChecklist
 			if (eventName == "Vortex Pillar") {
 				return new List<int>()
 				{
+					NPCID.LunarTowerVortex,
 					NPCID.VortexHornet,
 					NPCID.VortexHornetQueen,
 					NPCID.VortexLarva,
@@ -620,6 +622,7 @@ namespace BossChecklist
 			if (eventName == "Nebula Pillar") {
 				return new List<int>()
 				{
+					NPCID.LunarTowerNebula,
 					NPCID.NebulaBeast,
 					NPCID.NebulaBrain,
 					NPCID.NebulaHeadcrab,
@@ -629,6 +632,7 @@ namespace BossChecklist
 			if (eventName == "Stardust Pillar") {
 				return new List<int>()
 				{
+					NPCID.LunarTowerStardust,
 					NPCID.StardustCellBig,
 					NPCID.StardustJellyfishBig,
 					NPCID.StardustSoldier,

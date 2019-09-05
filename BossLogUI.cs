@@ -262,6 +262,10 @@ namespace BossChecklist
 						if (headBoss.name == "Pirate Invasion") invasionIcon = ModContent.GetTexture("Terraria/Extra_11");
 						if (headBoss.name == "Pumpkin Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_12");
 						if (headBoss.name == "Old One's Army") invasionIcon = ModContent.GetTexture("Terraria/Extra_79");
+						if (headBoss.name == "Solar Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerSolar);
+						if (headBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
+						if (headBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
+						if (headBoss.name == "Stardust Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerStardust);
 
 						Rectangle iconpos = new Rectangle(Main.mouseX + 15, Main.mouseY + 15, invasionIcon.Width, invasionIcon.Height);
 						if (invasionIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(invasionIcon, iconpos, maskedHead);
@@ -316,6 +320,10 @@ namespace BossChecklist
 					if (selectedBoss.name == "Pirate Invasion") invasionIcon = ModContent.GetTexture("Terraria/Extra_11");
 					if (selectedBoss.name == "Pumpkin Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_12");
 					if (selectedBoss.name == "Old One's Army") invasionIcon = ModContent.GetTexture("Terraria/Extra_79");
+					if (selectedBoss.name == "Solar Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerSolar);
+					if (selectedBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
+					if (selectedBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
+					if (selectedBoss.name == "Stardust Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerStardust);
 
 					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - invasionIcon.Width - 10, pageRect.Y + 5, invasionIcon.Width, invasionIcon.Height);
 					if (invasionIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(invasionIcon, iconpos, maskedHead);
