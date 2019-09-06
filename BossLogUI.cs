@@ -56,6 +56,18 @@ namespace BossChecklist
 			Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3), innerDimensions.Y - 24);
 
 			base.DrawSelf(spriteBatch);
+
+			// Draw the Boss Log Color
+			if (Id == "OpenUI") {
+				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/Button_BossLog_ColorHover");
+				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
+				if (!IsMouseHovering) {
+					bookCover = BossChecklist.instance.GetTexture("Resources/Button_BossLog_ColorDark");
+					coverColor = new Color(BossChecklist.BossLogConfig.BossLogColor.R, BossChecklist.BossLogConfig.BossLogColor.G, BossChecklist.BossLogConfig.BossLogColor.B, 128);
+				}
+				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), coverColor);
+			}
+
 			if (IsMouseHovering) {
 				BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonType, pos, Color.White);
@@ -239,7 +251,7 @@ namespace BossChecklist
 						int adjustment = 0;
 						for (int h = 0; h < headBoss.ids.Count; h++) {
 							Color maskedHead;
-							if (!headBoss.downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
+							if (!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
 							else maskedHead = Color.White;
 
 							if (BossLogUI.GetBossHead(headBoss.ids[h]) != Main.npcHeadTexture[0]) {
@@ -252,7 +264,7 @@ namespace BossChecklist
 					else {
 						Texture2D invasionIcon = Main.npcHeadTexture[0];
 						Color maskedHead;
-						if (!headBoss.downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
+						if (!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
 						else maskedHead = Color.White;
 
 						if (headBoss.name == "Frost Legion") invasionIcon = ModContent.GetTexture("Terraria/Extra_7");
@@ -266,6 +278,9 @@ namespace BossChecklist
 						if (headBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
 						if (headBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
 						if (headBoss.name == "Stardust Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerStardust);
+						if (headBoss.name == "Blood Moon") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
+						if (headBoss.name == "Solar Eclipse") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
+
 
 						Rectangle iconpos = new Rectangle(Main.mouseX + 15, Main.mouseY + 15, invasionIcon.Width, invasionIcon.Height);
 						if (invasionIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(invasionIcon, iconpos, maskedHead);
@@ -279,7 +294,7 @@ namespace BossChecklist
 					Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (bossTexture.Width / 2), pageRect.Y + (pageRect.Height / 2) - (bossTexture.Height / 2), bossTexture.Width, bossTexture.Height);
 					Rectangle cutRect = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
 					Color masked;
-					if (!selectedBoss.downed() && BossChecklist.ClientConfig.BossSilhouettes) masked = Color.Black;
+					if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) masked = Color.Black;
 					else masked = Color.White;
 					spriteBatch.Draw(bossTexture, posRect, cutRect, masked);
 				}
@@ -296,7 +311,7 @@ namespace BossChecklist
 					int adjustment = 0;
 					for (int h = 0; h < selectedBoss.ids.Count; h++) {
 						Color maskedHead;
-						if (!selectedBoss.downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
+						if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
 						else maskedHead = Color.White;
 
 						if (BossLogUI.GetBossHead(selectedBoss.ids[h]) != Main.npcHeadTexture[0]) {
@@ -310,7 +325,7 @@ namespace BossChecklist
 				else {
 					Texture2D invasionIcon = Main.npcHeadTexture[0];
 					Color maskedHead;
-					if (!selectedBoss.downed() && BossChecklist.ClientConfig.BossSilhouettes) maskedHead = Color.Black;
+					if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
 					else maskedHead = Color.White;
 					
 					if (selectedBoss.name == "Frost Legion") invasionIcon = ModContent.GetTexture("Terraria/Extra_7");
@@ -324,6 +339,8 @@ namespace BossChecklist
 					if (selectedBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
 					if (selectedBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
 					if (selectedBoss.name == "Stardust Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerStardust);
+					if (selectedBoss.name == "Blood Moon") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
+					if (selectedBoss.name == "Solar Eclipse") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
 
 					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - invasionIcon.Width - 10, pageRect.Y + 5, invasionIcon.Width, invasionIcon.Height);
 					if (invasionIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(invasionIcon, iconpos, maskedHead);
@@ -386,8 +403,8 @@ namespace BossChecklist
 				Utils.DrawBorderString(spriteBatch, "Orian34\nSingleplayer beta testing", pos, new Color(49, 210, 162), textScaling);
 
 				// Panini
-				userpos = new Vector2(pageRect.X + 20, pageRect.Y + 320);
-				userselected = new Rectangle(0 + (59 * 4), 0, 59, 58);
+				userpos = new Vector2(pageRect.X + 11, pageRect.Y + 320);
+				userselected = new Rectangle(0 + (59 * 4), 0, 68, 58);
 				spriteBatch.Draw(users, userpos, userselected, Color.White);
 
 				pos = new Vector2(pageRect.X + 85, pageRect.Y + 330);
@@ -957,10 +974,24 @@ namespace BossChecklist
 			if (Id == "TableOfContents_Tab") {
 				Texture2D pages = BossChecklist.instance.GetTexture("Resources/UIBook_Back");
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
-				spriteBatch.Draw(pages, pagePos, Color.White);
+				spriteBatch.Draw(pages, pagePos, BossChecklist.BossLogConfig.BossLogColor);
 			}
-			base.DrawSelf(spriteBatch);
+			if (!Id.Contains("_Tab")) base.DrawSelf(spriteBatch);
+			else {
+				// Tab drawing
+				SpriteEffects effect = SpriteEffects.FlipHorizontally;
+				if (Left.Pixels == (Main.screenWidth / 2) - 400 - 18) effect = SpriteEffects.None;
+
+				Color color = new Color(153, 199, 255);
+				if (Id == "Bosses_Tab") color = new Color(255, 168, 168);
+				else if (Id == "MiniBosses_Tab") color = new Color(153, 253, 119);
+				else if (Id == "Events_Tab") color = new Color(196, 171, 254);
+				else if (Id == "Credits_Tab") color = new Color(218, 175, 133);
+
+				spriteBatch.Draw(book, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width, book.Height), color, 0f, Vector2.Zero, effect, 0f);
+			}
 			if (Id == "Events_Tab") {
+				// Paper Drawing
 				Texture2D pages = BossChecklist.instance.GetTexture("Resources/UIBook_Paper");
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 				spriteBatch.Draw(pages, pagePos, Color.White);
@@ -979,21 +1010,11 @@ namespace BossChecklist
 			}
 
 			if (Id.Contains("_Tab")) {
+				// Tab Icon
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Texture2D texture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-				int offset = -2;
-				if (Left.Pixels == (Main.screenWidth / 2) + 400 - 18) {
-					if (Id == "Bosses_Tab") offset = 2;
-					else if (Id == "MiniBosses_Tab") offset = 3;
-					else if (Id == "Events_Tab") offset = 3;
-					else if (Id == "Credits_Tab") offset = 4;
-				}
-				else {
-					if (Id == "Bosses_Tab") offset = -2;
-					else if (Id == "MiniBosses_Tab") offset = -2;
-					else if (Id == "Events_Tab") offset = -3;
-					else if (Id == "Credits_Tab") offset = -4; 
-				}
+				int offset = -1;
+				if (Left.Pixels == (Main.screenWidth / 2) + 400 - 18) offset = 1;
 				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11 + offset, inner.Y + Height.Pixels / 2 - 11);
 				Rectangle cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
 				if (Id == "Bosses_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
@@ -1024,10 +1045,8 @@ namespace BossChecklist
 			Texture2D checkGrid = BossChecklist.instance.GetTexture("Resources/LogUI_Checks");
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
-			if (BossChecklist.ClientConfig.SelectedCheckmarkType != "Strike-through") {
-				Rectangle source = new Rectangle(72, 0, 22, 20);
-				spriteBatch.Draw(checkGrid, pos, source, Color.White);
-			}
+			Rectangle source = new Rectangle(72, 0, 22, 20);
+			spriteBatch.Draw(checkGrid, pos, source, Color.White);
 
 			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
@@ -1056,17 +1075,17 @@ namespace BossChecklist
 			}
 
 			if (allLoot && allCollect) {
-				Rectangle source = new Rectangle(72, 22, 22, 20);
-				spriteBatch.Draw(checkGrid, pos2, source, Color.White);
+				Rectangle iconType = new Rectangle(72, 22, 22, 20);
+				spriteBatch.Draw(checkGrid, pos2, iconType, Color.White);
 			}
 			else {
 				if (allLoot) {
-					Rectangle source = new Rectangle(24, 22, 22, 20);
-					spriteBatch.Draw(checkGrid, pos2, source, Color.White);
+					Rectangle iconType = new Rectangle(24, 22, 22, 20);
+					spriteBatch.Draw(checkGrid, pos2, iconType, Color.White);
 				}
 				if (allCollect) {
-					Rectangle source = new Rectangle(48, 22, 22, 20);
-					spriteBatch.Draw(checkGrid, pos2, source, Color.White);
+					Rectangle iconType = new Rectangle(48, 22, 22, 20);
+					spriteBatch.Draw(checkGrid, pos2, iconType, Color.White);
 				}
 			}
 
@@ -1075,48 +1094,26 @@ namespace BossChecklist
 
 				Rectangle checkType = new Rectangle(0, 0, 22, 20);
 				Rectangle exType = new Rectangle(0, 0, 22, 20);
-				Texture2D strikeThrough = BA.GetTexture("Resources/Checkbox_Strike");
-
-				if (BossChecklist.ClientConfig.SelectedCheckmarkType == "Strike-through") {
-					if (sortedBosses[Convert.ToInt32(Id)].downed()) {
-						int textWidth = (int)Main.fontMouseText.MeasureString(text).X;
-
-						Rectangle cutRect = new Rectangle(0, 4, 4, 3);
-						Rectangle strikePos = new Rectangle((int)innerDimensions.X, (int)innerDimensions.Y + 6, textWidth, 3);
-						spriteBatch.Draw(strikeThrough, strikePos, cutRect, Color.White);
-
-						// Draw left end
-						cutRect = new Rectangle(0, 0, 4, 3);
-						strikePos = new Rectangle((int)innerDimensions.X - 4, (int)innerDimensions.Y + 6, 4, 3);
-						spriteBatch.Draw(strikeThrough, strikePos, cutRect, Color.White);
-
-						// Draw right end
-						cutRect = new Rectangle(0, 8, 4, 3);
-						strikePos = new Rectangle((int)innerDimensions.X + textWidth, (int)innerDimensions.Y + 6, 4, 3);
-						spriteBatch.Draw(strikeThrough, strikePos, cutRect, Color.White);
-					}
+				
+				if (sortedBosses[Convert.ToInt32(Id)].downed()) {
+					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") checkType = new Rectangle(24, 0, 22, 20);
+					else checkType = new Rectangle(0, 0, 22, 20);
 				}
 				else {
-					if (sortedBosses[Convert.ToInt32(Id)].downed()) {
-						if (BossChecklist.ClientConfig.SelectedCheckmarkType == "X and  ☐") checkType = new Rectangle(24, 0, 22, 20);
-						else checkType = new Rectangle(0, 0, 22, 20);
-					}
-					else {
-						if (BossChecklist.ClientConfig.SelectedCheckmarkType == "✓ and  X") checkType = new Rectangle(24, 0, 22, 20);
-						else checkType = new Rectangle(72, 0, 22, 20);
-						if (nextCheck && BossChecklist.ClientConfig.DrawNextMark) checkType = new Rectangle(48, 0, 22, 20);
-					}
-
-					spriteBatch.Draw(checkGrid, pos, checkType, Color.White);
+					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "✓ and  X") checkType = new Rectangle(24, 0, 22, 20);
+					else checkType = new Rectangle(72, 0, 22, 20);
+					if (nextCheck && BossChecklist.BossLogConfig.DrawNextMark) checkType = new Rectangle(48, 0, 22, 20);
 				}
 
-				if (BossChecklist.ClientConfig.ColoredBossText) {
+				spriteBatch.Draw(checkGrid, pos, checkType, Color.White);
+
+				if (BossChecklist.BossLogConfig.ColoredBossText) {
 					if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
 					else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
 					else if (!IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
 					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
-					if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark) TextColor = new Color(189, 180, 64);
-					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.ClientConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(189, 180, 64);
+					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
 				}
 				else {
 					if (IsMouseHovering) TextColor = new Color(80, 85, 100);
@@ -1331,6 +1328,7 @@ namespace BossChecklist
 		public override void OnInitialize() {
 			Texture2D bookTexture = BossChecklist.instance.GetTexture("Resources/Button_BossLog");
 			bosslogbutton = new BossAssistButton(bookTexture, "Boss Log");
+			bosslogbutton.Id = "OpenUI";
 			bosslogbutton.Width.Set(34, 0f);
 			bosslogbutton.Height.Set(38, 0f);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
@@ -1545,6 +1543,18 @@ namespace BossChecklist
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
+			
+			if (PageNum == -2) CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			else CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+
+			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			else BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+
+			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			else MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+
+			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			else EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
 
 			base.Update(gameTime);
 		}
@@ -1575,7 +1585,7 @@ namespace BossChecklist
 
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
 			// Since it only applies to Boss Icons, the page check is unnecessary
-			if (BossChecklist.ClientConfig.ResetRecordsBool) {
+			if (BossChecklist.BossLogConfig.ResetRecordsBool) {
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.fightTime = -1;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.fightTime2 = -1;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.dodgeTime = -1;
@@ -1992,42 +2002,54 @@ namespace BossChecklist
 				TableOfContents next = new TableOfContents(copiedList[i].progression, copiedList[i].name, nextCheckBool);
 				nextCheckBool = false;
 
+				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
+				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
+				BossChecklistType type = copiedList[i].type;
+
 				if (copiedList[i].progression <= 6f) {
 					if (copiedList[i].downed()) {
-						next.PaddingTop = 5;
-						next.PaddingLeft = 22;
-						next.TextColor = Color.LawnGreen;
-						next.Id = i.ToString();
-						next.OnClick += new MouseEvent(UpdatePage);
-						prehardmodeList.Add(next);
+						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+							next.PaddingTop = 5;
+							next.PaddingLeft = 22;
+							next.TextColor = Color.LawnGreen;
+							next.Id = i.ToString();
+							next.OnClick += new MouseEvent(UpdatePage);
+							prehardmodeList.Add(next);
+						}
 					}
 					else if (!copiedList[i].downed()) {
-						nextCheck++;
-						next.PaddingTop = 5;
-						next.PaddingLeft = 22;
-						next.TextColor = Color.IndianRed;
-						next.Id = i.ToString();
-						next.OnClick += new MouseEvent(UpdatePage);
-						prehardmodeList.Add(next);
+						if ((mbFilter != "Hide" && type == BossChecklistType.MiniBoss) || (eFilter != "Hide" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+							nextCheck++;
+							next.PaddingTop = 5;
+							next.PaddingLeft = 22;
+							next.TextColor = Color.IndianRed;
+							next.Id = i.ToString();
+							next.OnClick += new MouseEvent(UpdatePage);
+							prehardmodeList.Add(next);
+						}
 					}
 				}
 				else {
 					if (copiedList[i].downed()) {
-						next.PaddingTop = 5;
-						next.PaddingLeft = 22;
-						next.TextColor = Color.LawnGreen;
-						next.Id = i.ToString();
-						next.OnClick += new MouseEvent(UpdatePage);
-						hardmodeList.Add(next);
+						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+							next.PaddingTop = 5;
+							next.PaddingLeft = 22;
+							next.TextColor = Color.LawnGreen;
+							next.Id = i.ToString();
+							next.OnClick += new MouseEvent(UpdatePage);
+							hardmodeList.Add(next);
+						}
 					}
 					else if (!copiedList[i].downed()) {
-						nextCheck++;
-						next.PaddingTop = 5;
-						next.PaddingLeft = 22;
-						next.TextColor = Color.IndianRed;
-						next.Id = i.ToString();
-						next.OnClick += new MouseEvent(UpdatePage);
-						hardmodeList.Add(next);
+						if ((mbFilter != "Hide" && type == BossChecklistType.MiniBoss) || (eFilter != "Hide" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+							nextCheck++;
+							next.PaddingTop = 5;
+							next.PaddingLeft = 22;
+							next.TextColor = Color.IndianRed;
+							next.Id = i.ToString();
+							next.OnClick += new MouseEvent(UpdatePage);
+							hardmodeList.Add(next);
+						}
 					}
 				}
 			}
@@ -2157,17 +2179,6 @@ namespace BossChecklist
 
 		private void ResetBookTabs() {
 			// If its in progression order
-			if (PageNum == -2) CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
-
-			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
-
-			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
-
-			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
 		}
 
 		private void ResetPageButtons() {

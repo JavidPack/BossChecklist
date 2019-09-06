@@ -10,7 +10,6 @@ namespace BossChecklist
 {
 	class BossRadarUI : UIState
 	{
-		// TODO: Fix the twins. Twins only shows 1 icon, needs 2.
 		internal static List<int> type;
 
 		internal static List<int> bossHeadIndex;
@@ -170,6 +169,7 @@ namespace BossChecklist
 			if (!whitelistFilled) {
 				List<int> idList = new List<int>();
 				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
+					if (BossChecklist.bossTracker.SortedBosses[i].type == BossChecklistType.Event) continue;
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].ids.Count; j++) {
 						int ID = BossChecklist.bossTracker.SortedBosses[i].ids[j];
 						if (!BlackListedID(ID)) idList.Add(ID);

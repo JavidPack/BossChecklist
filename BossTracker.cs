@@ -71,16 +71,16 @@ namespace BossChecklist
 			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Moonlord, "Moonlord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand },
 			 () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }, $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}"),
 			// Mini Bosses -- Vanilla
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.3f,"Pumpking", new List<int>() {NPCID.Pumpking },
+			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.12f,"Pumpking", new List<int>() {NPCID.Pumpking },
 			 () => NPC.downedHalloweenKing, new List<int>() { }, $"Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.6f,"Mourning Wood", new List<int>() {NPCID.MourningWood },
+			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.11f,"Mourning Wood", new List<int>() {NPCID.MourningWood },
 			 () => NPC.downedHalloweenTree, new List<int>() { }, $"Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]"),
 				// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.9f, "Ice Queen", new List<int>() {NPCID.IceQueen },
+			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.16f, "Ice Queen", new List<int>() {NPCID.IceQueen },
 			 () => NPC.downedChristmasIceQueen, new List<int>() { }, $"Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.6f,"Santa-NK1", new List<int>() { NPCID.SantaNK1},
+			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.15f,"Santa-NK1", new List<int>() { NPCID.SantaNK1},
 			 () => NPC.downedChristmasSantank, new List<int>() { }, $"Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,  Plantera + 0.3f,"Everscream", new List<int>() {NPCID.Everscream },
+			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,  Plantera + 0.14f,"Everscream", new List<int>() {NPCID.Everscream },
 			 () => NPC.downedChristmasTree, new List<int>() { }, $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
 			// Events -- Vanilla
 			BossInfo.MakeVanillaEvent(LunaticCultist + 0.03f, "Nebula Pillar",
@@ -108,10 +108,12 @@ namespace BossChecklist
 			//new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
 			BossInfo.MakeVanillaEvent( EyeOfCthulhu + 0.2f,"Blood Moon",
 			 () => true, SetupEventNPCList("Blood Moon"), new List<int>() {0}, SetupEventLoot("Blood Moon"), $"Randomly occurs on at night, where the moon is not a new moon", "BossChecklist/Resources/BossTextures/EventBloodMoon"),
+			BossInfo.MakeVanillaEvent( SkeletronPrime + 0.2f, "Solar Eclipse",
+			 () => true, SetupEventNPCList("Solar Eclipse"), new List<int>(){ ItemID.SolarTablet }, SetupEventLoot("Solar Eclipse"), $"Spawns randomly on sunrise after a mech boss has been defeated. Can also spawn manually using [i:{ItemID.SolarTablet}]", "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
 			BossInfo.MakeVanillaEvent( Plantera + 0.1f,"Pumpkin Moon",
-			 () => true, SetupEventNPCList("Pumpkin Moon"), new List<int>() {ItemID.PumpkinMoonMedallion}, SetupEventLoot("Pumpkin Moon"), $"Pumpkin medalion, that is all", "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
-			BossInfo.MakeVanillaEvent( Plantera + 0.1f,"Frost Moon",
-			 () => true, SetupEventNPCList("Frost Moon"), new List<int>() {ItemID.NaughtyPresent}, SetupEventLoot("Frost Moon"), $"Something medalion, that is all", "BossChecklist/Resources/BossTextures/EventFrostMoon"),
+			 () => true, SetupEventNPCList("Pumpkin Moon"), new List<int>() {ItemID.PumpkinMoonMedallion}, SetupEventLoot("Pumpkin Moon"), $"Use a [i:{ItemID.PumpkinMoonMedallion}] at night", "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
+			BossInfo.MakeVanillaEvent( Plantera + 0.13f,"Frost Moon",
+			 () => true, SetupEventNPCList("Frost Moon"), new List<int>() {ItemID.NaughtyPresent}, SetupEventLoot("Frost Moon"), $"Use a [i:{ItemID.NaughtyPresent}] at night", "BossChecklist/Resources/BossTextures/EventFrostMoon"),
 			};
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 		}
@@ -551,7 +553,7 @@ namespace BossChecklist
 					NPCID.PirateShip,
 				};
 			}
-			if (eventName == "Pumpking Moon") {
+			if (eventName == "Pumpkin Moon") {
 				return new List<int>()
 				{
 					NPCID.Scarecrow1,

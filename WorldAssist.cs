@@ -52,11 +52,8 @@ namespace BossChecklist
 						}
 						if (!otherValidNPC) {
 							if ((b.type != NPCID.MoonLordHead && b.life >= 0 && CheckRealLife(b.realLife)) || (b.type == NPCID.MoonLordHead && b.life <= 0)) {
-								// Replace with GetClientDespawnMessage()?
-								if (!BossChecklist.ClientConfig.ODespawnBool) {
-									if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(GetDespawnMessage(b), Colors.RarityPurple);
-									else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(GetDespawnMessage(b)), Colors.RarityPurple);
-								}
+								if (Main.netMode == NetmodeID.SinglePlayer && BossChecklist.ClientConfig.DespawnMessageType != "Disabled") Main.NewText(GetDespawnMessage(b), Colors.RarityPurple);
+								else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(GetDespawnMessage(b)), Colors.RarityPurple);
 								ActiveBossesList[NPCAssist.ListedBossNum(b)] = false;
 							}
 						}
@@ -144,7 +141,7 @@ namespace BossChecklist
 				else if (boss.type == NPCID.Retinazer) return "The Twins are no longer after you...";
 				else return boss.FullName + " is no longer after you...";
 			}
-			else if (BossChecklist.ClientConfig.CDespawnBool) {
+			else if (BossChecklist.ClientConfig.DespawnMessageType == "Custom") {
 				if (boss.type == NPCID.KingSlime) return "King Slime leaves in triumph...";
 				else if (boss.type == NPCID.EyeofCthulhu) return "Eye of Cthulhu has disappeared into the night...";
 				else if (boss.type == NPCID.EaterofWorldsHead) return "Eater of Worlds burrows back underground...";

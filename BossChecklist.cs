@@ -38,6 +38,7 @@ namespace BossChecklist
 
 		internal static ClientConfiguration ClientConfig;
 		internal static DebugConfiguration DebugConfig;
+		internal static BossLogConfiguration BossLogConfig;
 		public static List<BossStats>[] ServerCollectedRecords;
 		internal UserInterface BossLogInterface;
 		internal BossLogUI BossLog;
@@ -271,8 +272,7 @@ namespace BossChecklist
 					bossTracker.AddBoss(bossname, bossValue, bossDowned);
 					return "Success";
 				}
-				/* TODO: Decide on new AddBoss. Find use for bossID
-				if (AddType == "AddBoss") {
+				if (message == "AddDespawnMessage") {
 					int bossID = Convert.ToInt32(args[1]);
 					string bossMessage = args[2] as string;
 
@@ -280,7 +280,6 @@ namespace BossChecklist
 					WorldAssist.ModBossMessages.Add(bossMessage);
 					return "Success";
 				}
-				*/
 				else if (message == "AddBossWithInfo") {
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);
