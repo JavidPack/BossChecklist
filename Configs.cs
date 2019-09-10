@@ -43,13 +43,19 @@ namespace BossChecklist
 		public string SelectedCheckmarkType { get; set; }
 
 		[DrawTicks]
-		[Label("Filter mini bosses from list")]
+		[Label("Filter bosses in list")]
+		[OptionStrings(new string[] { "Show", "Hide when completed" })]
+		[DefaultValue("Show")]
+		public string FilterBosses { get; set; }
+
+		[DrawTicks]
+		[Label("Filter mini bosses in list")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterMiniBosses { get; set; }
 
 		[DrawTicks]
-		[Label("Filter events from list")]
+		[Label("Filter events in list")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }

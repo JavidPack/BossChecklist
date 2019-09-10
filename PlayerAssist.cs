@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-// Bug: ItemLists for loot and collections added in with add loot/collect calls do not get added to saved data
+// TODO: Bug?? ItemLists for loot and collections added in with add loot/collect calls do not get added to saved data
 
 namespace BossChecklist
 {
@@ -42,13 +42,13 @@ namespace BossChecklist
 			}
 
 			// For being able to complete records in Multiplayer
+			//int bossCount = BossChecklist.bossTracker.SortedBosses.Count; ????
 			RecordTimers = new List<int>();
-			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
-			BrinkChecker = new List<int>(bossCount);
-			MaxHealth = new List<int>(bossCount);
-			DeathTracker = new List<int>(bossCount);
-			DodgeTimer = new List<int>(bossCount);
-			AttackCounter = new List<int>(bossCount);
+			BrinkChecker = new List<int>();
+			MaxHealth = new List<int>();
+			DeathTracker = new List<int>();
+			DodgeTimer = new List<int>();
+			AttackCounter = new List<int>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				RecordTimers.Add(0);
@@ -110,13 +110,12 @@ namespace BossChecklist
 		}
 
 		public override void OnEnterWorld(Player player) {
-			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
-			RecordTimers = new List<int>(bossCount);
-			BrinkChecker = new List<int>(bossCount);
-			MaxHealth = new List<int>(bossCount);
-			DeathTracker = new List<int>(bossCount);
-			DodgeTimer = new List<int>(bossCount);
-			AttackCounter = new List<int>(bossCount);
+			RecordTimers = new List<int>();
+			BrinkChecker = new List<int>();
+			MaxHealth = new List<int>();
+			DeathTracker = new List<int>();
+			DodgeTimer = new List<int>();
+			AttackCounter = new List<int>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				RecordTimers.Add(0);
@@ -127,6 +126,7 @@ namespace BossChecklist
 				AttackCounter.Add(0);
 			}
 
+			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = mod.GetPacket();
@@ -145,14 +145,6 @@ namespace BossChecklist
 				}
 				packet.Send(); // To server
 			}
-			/*
-            if (isNewPlayer)
-            {
-                // This wont work in MP, but ill fix that later
-                CombatText.NewText(player.getRect(), Color.LightGreen, "Thanks for playing with Shepherd's mods!!", true);
-                isNewPlayer = false;
-            }
-			*/
 			MapAssist.shouldDraw = false;
 			MapAssist.tilePos = new Vector2(0, 0);
 		}

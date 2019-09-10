@@ -59,13 +59,14 @@ namespace BossChecklist
 
 			// Draw the Boss Log Color
 			if (Id == "OpenUI") {
-				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/Button_BossLog_ColorHover");
+				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/LogUI_Button");
+				Rectangle source = new Rectangle(36 * 3, 0, 34, 38);
 				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
 				if (!IsMouseHovering) {
-					bookCover = BossChecklist.instance.GetTexture("Resources/Button_BossLog_ColorDark");
-					coverColor = new Color(BossChecklist.BossLogConfig.BossLogColor.R, BossChecklist.BossLogConfig.BossLogColor.G, BossChecklist.BossLogConfig.BossLogColor.B, 128);
+					source = new Rectangle(36 * 2, 0, 34, 38);
+					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
-				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), coverColor);
+				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), source, coverColor);
 			}
 
 			if (IsMouseHovering) {
@@ -971,8 +972,10 @@ namespace BossChecklist
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			if (!visible || Main.LocalPlayer.dead) return;
 
+			if (BossLogUI.PageNum != -1 && (Id == "filterPanel" || Id == "Filter_Tab")) return;
+
 			if (Id == "TableOfContents_Tab") {
-				Texture2D pages = BossChecklist.instance.GetTexture("Resources/UIBook_Back");
+				Texture2D pages = BossChecklist.instance.GetTexture("Resources/LogUI_Back");
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 				spriteBatch.Draw(pages, pagePos, BossChecklist.BossLogConfig.BossLogColor);
 			}
@@ -980,7 +983,7 @@ namespace BossChecklist
 			else {
 				// Tab drawing
 				SpriteEffects effect = SpriteEffects.FlipHorizontally;
-				if (Left.Pixels == (Main.screenWidth / 2) - 400 - 18) effect = SpriteEffects.None;
+				if (Left.Pixels == (Main.screenWidth / 2) - 400 - 16) effect = SpriteEffects.None;
 
 				Color color = new Color(153, 199, 255);
 				if (Id == "Bosses_Tab") color = new Color(255, 168, 168);
@@ -992,7 +995,7 @@ namespace BossChecklist
 			}
 			if (Id == "Events_Tab") {
 				// Paper Drawing
-				Texture2D pages = BossChecklist.instance.GetTexture("Resources/UIBook_Paper");
+				Texture2D pages = BossChecklist.instance.GetTexture("Resources/LogUI_Paper");
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 				spriteBatch.Draw(pages, pagePos, Color.White);
 			}
@@ -1013,15 +1016,20 @@ namespace BossChecklist
 				// Tab Icon
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Texture2D texture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-				int offset = -1;
-				if (Left.Pixels == (Main.screenWidth / 2) + 400 - 18) offset = 1;
-				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11 + offset, inner.Y + Height.Pixels / 2 - 11);
+				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11, inner.Y + Height.Pixels / 2 - 11);
 				Rectangle cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
 				if (Id == "Bosses_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
 				else if (Id == "MiniBosses_Tab") cut = new Rectangle(1 * 24, 1 * 24, 22, 22);
 				else if (Id == "Events_Tab") cut = new Rectangle(2 * 24, 1 * 24, 22, 22);
 				else if (Id == "Credits_Tab") cut = new Rectangle(3 * 24, 0 * 24, 22, 22);
+				else if (Id == "Filter_Tab") cut = new Rectangle(3 * 24, 1 * 24, 22, 22);
 				spriteBatch.Draw(texture, pos, cut, Color.White);
+			}
+
+			if (Id.Contains("C_") && IsMouseHovering) {
+				if (Id == "C_0") Main.hoverItemName = BossChecklist.BossLogConfig.FilterBosses;
+				if (Id == "C_1") Main.hoverItemName = BossChecklist.BossLogConfig.FilterMiniBosses;
+				if (Id == "C_2") Main.hoverItemName = BossChecklist.BossLogConfig.FilterEvents;
 			}
 		}
 	}
@@ -1303,7 +1311,12 @@ namespace BossChecklist
 
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
+		public BookUI filterPanel;
+		private List<BookUI> filterCheck;
+		private List<BookUI> filterCheckMark;
+		private List<UIText> filterTypes;
 
+		public BookUI FilterTab;
 		public BookUI ToCTab;
 		public BookUI CreditsTab;
 		public BookUI BossTab;
@@ -1326,7 +1339,7 @@ namespace BossChecklist
 		public static bool visible = false;
 
 		public override void OnInitialize() {
-			Texture2D bookTexture = BossChecklist.instance.GetTexture("Resources/Button_BossLog");
+			Texture2D bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36 * 1, 0, 34, 38));
 			bosslogbutton = new BossAssistButton(bookTexture, "Boss Log");
 			bosslogbutton.Id = "OpenUI";
 			bosslogbutton.Width.Set(34, 0f);
@@ -1340,60 +1353,53 @@ namespace BossChecklist
 				false, false, false, false
 			};
 			
-			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			ToCTab.Height.Pixels = 76;
-			ToCTab.Width.Pixels = 36;
-			ToCTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			ToCTab.Width.Pixels = 32;
+			ToCTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 			ToCTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 20;
 			ToCTab.Id = "TableOfContents_Tab";
 			ToCTab.OnClick += new MouseEvent(OpenViaTab);
 
-			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			BossTab.Height.Pixels = 76;
-			BossTab.Width.Pixels = 36;
-			BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			BossTab.Width.Pixels = 32;
+			BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 			BossTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 30 + 76;
 			BossTab.Id = "Bosses_Tab";
 			BossTab.OnClick += new MouseEvent(OpenViaTab);
 
-			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			MiniBossTab.Height.Pixels = 76;
-			MiniBossTab.Width.Pixels = 36;
-			MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			MiniBossTab.Width.Pixels = 32;
+			MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 			MiniBossTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 40 + (76 * 2);
 			MiniBossTab.Id = "MiniBosses_Tab";
 			MiniBossTab.OnClick += new MouseEvent(OpenViaTab);
 
-			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			EventTab.Height.Pixels = 76;
-			EventTab.Width.Pixels = 36;
-			EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			EventTab.Width.Pixels = 32;
+			EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 			EventTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 50 + (76 * 3);
 			EventTab.Id = "Events_Tab";
 			EventTab.OnClick += new MouseEvent(OpenViaTab);
 
-			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/UITab"));
+			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			CreditsTab.Height.Pixels = 76;
-			CreditsTab.Width.Pixels = 36;
-			CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
+			CreditsTab.Width.Pixels = 32;
+			CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 			CreditsTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 60 + (76 * 4);
 			CreditsTab.Id = "Credits_Tab";
 			CreditsTab.OnClick += new MouseEvent(OpenViaTab);
-
+			
 			PageOne = new BossLogPanel { Id = "PageOne" };
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
-			Texture2D prevTexture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-			Rectangle snippet = new Rectangle(0, 0, 22, 22);
-			Texture2D cropTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
-			Color[] data = new Color[snippet.Width * snippet.Height];
-			prevTexture.GetData(0, snippet, data, 0, data.Length);
-			cropTexture.SetData(data);
-			prevTexture = cropTexture;
-
+			Texture2D prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
 			PrevPage = new BossAssistButton(prevTexture, "") { Id = "Previous" };
 			PrevPage.Width.Pixels = 14;
 			PrevPage.Height.Pixels = 20;
@@ -1431,15 +1437,52 @@ namespace BossChecklist
 			pageTwoItemList = new UIList();
 
 			pageTwoScroll = new FixedUIScrollbar();
+			
+			filterPanel = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Filter"));
+			filterPanel.Id = "filterPanel";
+			filterPanel.Height.Pixels = 76;
+			filterPanel.Width.Pixels = 152;
+			filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+			filterPanel.Top.Pixels = (Main.screenHeight / 2) - 250 + 20;
+			
+			FilterTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			FilterTab.Height.Pixels = 76;
+			FilterTab.Width.Pixels = 32;
+			FilterTab.Left.Pixels = 120;
+			FilterTab.Top.Pixels = 0;
+			FilterTab.Id = "Filter_Tab";
+			FilterTab.OnClick += new MouseEvent(ToggleFilterPanel);
+			filterPanel.Append(FilterTab);
 
-			Texture2D nextTexture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-			Rectangle snippet2 = new Rectangle(24, 0, 22, 22);
-			Texture2D cropTexture2 = new Texture2D(Main.graphics.GraphicsDevice, snippet2.Width, snippet2.Height);
-			Color[] data2 = new Color[snippet2.Width * snippet2.Height];
-			nextTexture.GetData(0, snippet2, data2, 0, data2.Length);
-			cropTexture2.SetData(data2);
-			nextTexture = cropTexture2;
+			Texture2D checkCrop = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(0, 0, 22, 20));
+			Texture2D checkBox = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(3 * 24, 0, 22, 20));
+			filterCheckMark = new List<BookUI>();
+			filterCheck = new List<BookUI>();
+			filterTypes = new List<UIText>();
 
+			for (int i = 0; i < 3; i++) {
+				BookUI newCheck = new BookUI(checkCrop);
+				newCheck.Id = "C_" + i;
+				filterCheckMark.Add(newCheck);
+
+				BookUI newCheckBox = new BookUI(checkBox);
+				newCheckBox.Id = "F_" + i;
+				newCheckBox.Top.Pixels = (20 * i) + 5;
+				newCheckBox.Left.Pixels = 100;
+				newCheckBox.OnClick += new MouseEvent(ChangeFilter);
+				newCheckBox.Append(filterCheckMark[i]);
+				filterCheck.Add(newCheckBox);
+
+				string type = "Bosses";
+				if (i == 1) type = "Mini bosses";
+				if (i == 2) type = "Events";
+				UIText bosses = new UIText(type, 0.85f);
+				bosses.Top.Pixels = 10 + (20 * i);
+				bosses.Left.Pixels = 10;
+				filterTypes.Add(bosses);
+			}
+
+			Texture2D nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
 			NextPage = new BossAssistButton(nextTexture, "") { Id = "Next" };
 			NextPage.Width.Pixels = 14;
 			NextPage.Height.Pixels = 20;
@@ -1501,6 +1544,7 @@ namespace BossChecklist
 
 			Append(ToCTab);
 			Append(CreditsTab);
+			Append(filterPanel);
 			Append(BossTab);
 			Append(MiniBossTab);
 			Append(EventTab);
@@ -1515,24 +1559,22 @@ namespace BossChecklist
 			else if (!HasChild(bosslogbutton)) Append(bosslogbutton);
 
 			if (BossChecklist.ToggleBossLog.JustPressed) {
-				if (!BookUI.visible) {
-					PageNum = -1;
-					SubPageNum = 0;
-					BossLogPanel.visible = true;
-					BookUI.visible = true;
-					UpdateTableofContents();
-					ResetBookTabs();
-				}
-				else {
-					BossLogPanel.visible = false;
-					BookUI.visible = false;
-				}
+				PageNum = -1;
+				SubPageNum = 0;
+				BossLogPanel.visible = true;
+				BookUI.visible = true;
+				UpdateTableofContents();
 			}
 			else if (BossLogPanel.visible && BookUI.visible) {
+				// Player opens their inventory to close the UI
 				if (Main.LocalPlayer.controlInv || Main.mouseItem.type != 0) {
 					BossLogPanel.visible = false;
 					BookUI.visible = false;
 					Main.playerInventory = true;
+					filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+					foreach (UIText uitext in filterTypes) {
+						filterPanel.RemoveChild(uitext);
+					}
 				}
 			}
 
@@ -1544,17 +1586,39 @@ namespace BossChecklist
 			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			
-			if (PageNum == -2) CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+			// Updating tabs to proper positions
+			if (PageNum == -2) CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+			else CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+			else BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+			else MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+			else EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+			
+			if (PageNum != -1) {
+				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+				foreach (UIText uitext in filterTypes) {
+					filterPanel.RemoveChild(uitext);
+				}
+			}
 
-			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+			if (filterPanel.HasChild(filterCheck[0])) {
+				Texture2D check = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(0, 0, 22, 20));
+				Texture2D circle = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 0, 22, 20));
+				Texture2D ex = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 0, 22, 20));
 
-			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+				if (BossChecklist.BossLogConfig.FilterBosses == "Show") filterCheckMark[0].SetImage(check);
+				else filterCheckMark[0].SetImage(circle);
 
-			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 18;
-			else EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 18;
+				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") filterCheckMark[1].SetImage(check);
+				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") filterCheckMark[1].SetImage(ex);
+				else filterCheckMark[1].SetImage(circle);
+
+				if (BossChecklist.BossLogConfig.FilterEvents == "Show") filterCheckMark[2].SetImage(check);
+				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") filterCheckMark[2].SetImage(ex);
+				else filterCheckMark[2].SetImage(circle);
+			}
 
 			base.Update(gameTime);
 		}
@@ -1564,14 +1628,53 @@ namespace BossChecklist
 			SubPageNum = 0;
 			BossLogPanel.visible = true;
 			BookUI.visible = true;
+			filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+			foreach (UIText uitext in filterTypes) {
+				filterPanel.RemoveChild(uitext);
+			}
 			UpdateTableofContents();
-			ResetBookTabs();
 		}
 
-		public int FindNext(BossChecklistType entryType) {
-			return BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
+		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
+			if (filterPanel.Left.Pixels != (Main.screenWidth / 2) - 400 + 800 - 16 - 120) {
+				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+				foreach (BookUI uiimage in filterCheck) {
+					filterPanel.RemoveChild(uiimage);
+				}
+				foreach (UIText uitext in filterTypes) {
+					filterPanel.RemoveChild(uitext);
+				}
+			}
+			else {
+				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+				foreach (BookUI uiimage in filterCheck) {
+					filterPanel.Append(uiimage);
+				}
+				foreach (UIText uitext in filterTypes) {
+					filterPanel.Append(uitext);
+				}
+			}
 		}
 
+		public void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
+			string rowID = listeningElement.Id.Substring(2, 1);
+			if (rowID == "0") {
+				if (BossChecklist.BossLogConfig.FilterBosses == "Show") BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
+				else BossChecklist.BossLogConfig.FilterBosses = "Show";
+			}
+			if (rowID == "1") {
+				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
+				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide when completed") BossChecklist.BossLogConfig.FilterMiniBosses = "Hide";
+				else BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
+			}
+			if (rowID == "2") {
+				if (BossChecklist.BossLogConfig.FilterEvents == "Show") BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
+				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide when completed") BossChecklist.BossLogConfig.FilterEvents = "Hide";
+				else BossChecklist.BossLogConfig.FilterEvents = "Show";
+			}
+			UpdateTableofContents();
+		}
+		
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement.Id == "Bosses_Tab") PageNum = FindNext(BossChecklistType.Boss);
 			else if (listeningElement.Id == "MiniBosses_Tab") PageNum = FindNext(BossChecklistType.MiniBoss);
@@ -1580,7 +1683,6 @@ namespace BossChecklist
 			else UpdateTableofContents();
 
 			if (PageNum >= 0) ResetBothPages();
-			ResetBookTabs();
 		}
 
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
@@ -1661,7 +1763,6 @@ namespace BossChecklist
 			else if (listeningElement.Id == "TableOfContents") UpdateTableofContents();
 			else if (listeningElement.Id == "Credits") UpdateCredits();
 			ResetPageButtons();
-			ResetBookTabs();
 		}
 
 		private void OpenRecord(UIMouseEvent evt, UIElement listeningElement) {
@@ -1777,14 +1878,7 @@ namespace BossChecklist
 				}
 
 				if (RecipePageNum > 0) {
-					Texture2D prevTexture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-					Rectangle snippet = new Rectangle(0, 0, 22, 22);
-					Texture2D cropTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
-					Color[] data = new Color[snippet.Width * snippet.Height];
-					prevTexture.GetData(0, snippet, data, 0, data.Length);
-					cropTexture.SetData(data);
-					prevTexture = cropTexture;
-
+					Texture2D prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
 					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "");
 					PrevItem.Id = "PrevItem";
 					PrevItem.Top.Pixels = 240;
@@ -1796,14 +1890,7 @@ namespace BossChecklist
 				}
 
 				if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-					Texture2D nextTexture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-					Rectangle snippet = new Rectangle(24, 0, 22, 22);
-					Texture2D cropTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
-					Color[] data = new Color[snippet.Width * snippet.Height];
-					nextTexture.GetData(0, snippet, data, 0, data.Length);
-					cropTexture.SetData(data);
-					nextTexture = cropTexture;
-
+					Texture2D nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
 					BossAssistButton NextItem = new BossAssistButton(nextTexture, "");
 					NextItem.Id = "NextItem";
 					NextItem.Top.Pixels = 240;
@@ -1815,14 +1902,7 @@ namespace BossChecklist
 				}
 
 				if (TotalRecipes > 1) {
-					Texture2D credTexture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
-					Rectangle snippet = new Rectangle(72, 0, 22, 22);
-					Texture2D cropTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
-					Color[] data = new Color[snippet.Width * snippet.Height];
-					credTexture.GetData(0, snippet, data, 0, data.Length);
-					cropTexture.SetData(data);
-					credTexture = cropTexture;
-
+					Texture2D credTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 0, 22, 22));
 					BossAssistButton CycleItem = new BossAssistButton(credTexture, "Cycle Alt Recipes");
 					CycleItem.Id = "CycleItem_" + TotalRecipes;
 					CycleItem.Top.Pixels = 354;
@@ -2002,13 +2082,14 @@ namespace BossChecklist
 				TableOfContents next = new TableOfContents(copiedList[i].progression, copiedList[i].name, nextCheckBool);
 				nextCheckBool = false;
 
+				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
 				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 				BossChecklistType type = copiedList[i].type;
 
 				if (copiedList[i].progression <= 6f) {
 					if (copiedList[i].downed()) {
-						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
 							next.TextColor = Color.LawnGreen;
@@ -2031,7 +2112,7 @@ namespace BossChecklist
 				}
 				else {
 					if (copiedList[i].downed()) {
-						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
 							next.TextColor = Color.LawnGreen;
@@ -2122,7 +2203,6 @@ namespace BossChecklist
 			PageNum = Convert.ToInt32(listeningElement.Id);
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
-			ResetBookTabs();
 			if (SubPageNum == 0) OpenRecord(evt, listeningElement);
 			else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
 			else if (SubPageNum == 2) {
@@ -2177,10 +2257,6 @@ namespace BossChecklist
 			}
 		}
 
-		private void ResetBookTabs() {
-			// If its in progression order
-		}
-
 		private void ResetPageButtons() {
 			PageOne.RemoveChild(PrevPage);
 			PageTwo.RemoveChild(NextPage);
@@ -2222,6 +2298,8 @@ namespace BossChecklist
 			AltPage[SubPageNum] = !AltPage[SubPageNum];
 		}
 
+		public int FindNext(BossChecklistType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
+
 		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
 
 		public static int[] GetVanillaBossTrophyPos(int item) {
@@ -2243,6 +2321,14 @@ namespace BossChecklist
 			else if (item == ItemID.MoonLordTrophy) return new int[] { 69, 3 };
 			else if (item == ItemID.BossTrophyBetsy) return new int[] { 75, 3 };
 			return new int[] { 0, 0 }; // Default is Eye of Cthulhu
+		}
+
+		public static Texture2D CropTexture(Texture2D texture, Rectangle snippet) {
+			Texture2D croppedTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
+			Color[] data = new Color[snippet.Width * snippet.Height];
+			texture.GetData(0, snippet, data, 0, data.Length);
+			croppedTexture.SetData(data);
+			return croppedTexture;
 		}
 	}
 }
