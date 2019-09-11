@@ -811,11 +811,6 @@ namespace BossChecklist
 					ItemID.MonkStaffT1,
 					ItemID.MonkStaffT2,
 					ItemID.DD2PetGhost,
-					ItemID.BetsyWings,
-					ItemID.DD2BetsyBow, // Aerial Bane
-                    ItemID.MonkStaffT3, // Sky Dragon's Fury
-                    ItemID.ApprenticeStaffT3, // Betsy's Wrath
-                    ItemID.DD2SquireBetsySword, // Flying Dragon
 				};
 			}
 			if (eventName == "Lunar Event") {

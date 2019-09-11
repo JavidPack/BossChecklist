@@ -51,7 +51,8 @@ namespace BossChecklist
 							}
 						}
 						if (!otherValidNPC) {
-							if ((b.type != NPCID.MoonLordHead && b.life >= 0 && CheckRealLife(b.realLife)) || (b.type == NPCID.MoonLordHead && b.life <= 0)) {
+							bool moonLordCheck = (b.type == NPCID.MoonLordHead || b.type == NPCID.MoonLordCore);
+							if ((!moonLordCheck && b.life >= 0 && CheckRealLife(b.realLife)) || (moonLordCheck && b.life <= 0)) {
 								if (Main.netMode == NetmodeID.SinglePlayer && BossChecklist.ClientConfig.DespawnMessageType != "Disabled") Main.NewText(GetDespawnMessage(b), Colors.RarityPurple);
 								else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(GetDespawnMessage(b)), Colors.RarityPurple);
 								ActiveBossesList[NPCAssist.ListedBossNum(b)] = false;
@@ -132,7 +133,8 @@ namespace BossChecklist
 		}
 
 		public string GetDespawnMessage(NPC boss) {
-			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead)) // If any player is active and alive
+			bool moonLordCheck = (boss.type == NPCID.MoonLordHead || boss.type == NPCID.MoonLordCore);
+			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead) && !moonLordCheck) // If any player is active and alive
 			{
 				if (Main.dayTime && (boss.type == NPCID.EyeofCthulhu || boss.type == NPCID.TheDestroyer || boss.type == NPCID.Retinazer || boss.type == NPCID.Spazmatism)) {
 					return boss.FullName + " flees as the sun rises...";

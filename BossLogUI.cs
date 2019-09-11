@@ -983,13 +983,14 @@ namespace BossChecklist
 			else {
 				// Tab drawing
 				SpriteEffects effect = SpriteEffects.FlipHorizontally;
-				if (Left.Pixels == (Main.screenWidth / 2) - 400 - 16) effect = SpriteEffects.None;
+				if (Left.Pixels <= (Main.screenWidth / 2) - 400 - 16) effect = SpriteEffects.None;
 
 				Color color = new Color(153, 199, 255);
 				if (Id == "Bosses_Tab") color = new Color(255, 168, 168);
 				else if (Id == "MiniBosses_Tab") color = new Color(153, 253, 119);
 				else if (Id == "Events_Tab") color = new Color(196, 171, 254);
 				else if (Id == "Credits_Tab") color = new Color(218, 175, 133);
+				color = Color.Tan;
 
 				spriteBatch.Draw(book, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width, book.Height), color, 0f, Vector2.Zero, effect, 0f);
 			}
@@ -1285,7 +1286,7 @@ namespace BossChecklist
 					else {
 						Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-						if (IsMouseHovering) Main.hoverItemName = "Click to view all loot";
+						if (IsMouseHovering) Main.hoverItemName = "Click to view all other loot";
 					}
 				}
 				else if (BossLogUI.SubPageNum == 3) {
@@ -1442,13 +1443,13 @@ namespace BossChecklist
 			filterPanel.Id = "filterPanel";
 			filterPanel.Height.Pixels = 76;
 			filterPanel.Width.Pixels = 152;
-			filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
-			filterPanel.Top.Pixels = (Main.screenHeight / 2) - 250 + 20;
+			filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+			filterPanel.Top.Pixels = (Main.screenHeight / 2) - 250 + 30 + 76;
 			
 			FilterTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			FilterTab.Height.Pixels = 76;
 			FilterTab.Width.Pixels = 32;
-			FilterTab.Left.Pixels = 120;
+			FilterTab.Left.Pixels = 0;
 			FilterTab.Top.Pixels = 0;
 			FilterTab.Id = "Filter_Tab";
 			FilterTab.OnClick += new MouseEvent(ToggleFilterPanel);
@@ -1468,7 +1469,7 @@ namespace BossChecklist
 				BookUI newCheckBox = new BookUI(checkBox);
 				newCheckBox.Id = "F_" + i;
 				newCheckBox.Top.Pixels = (20 * i) + 5;
-				newCheckBox.Left.Pixels = 100;
+				newCheckBox.Left.Pixels = 125;
 				newCheckBox.OnClick += new MouseEvent(ChangeFilter);
 				newCheckBox.Append(filterCheckMark[i]);
 				filterCheck.Add(newCheckBox);
@@ -1478,7 +1479,7 @@ namespace BossChecklist
 				if (i == 2) type = "Events";
 				UIText bosses = new UIText(type, 0.85f);
 				bosses.Top.Pixels = 10 + (20 * i);
-				bosses.Left.Pixels = 10;
+				bosses.Left.Pixels = 35;
 				filterTypes.Add(bosses);
 			}
 
@@ -1571,10 +1572,11 @@ namespace BossChecklist
 					BossLogPanel.visible = false;
 					BookUI.visible = false;
 					Main.playerInventory = true;
-					filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+					filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 					foreach (UIText uitext in filterTypes) {
 						filterPanel.RemoveChild(uitext);
 					}
+					filterPanel.Width.Pixels = 32;
 				}
 			}
 
@@ -1597,10 +1599,11 @@ namespace BossChecklist
 			else EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
 			
 			if (PageNum != -1) {
-				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 				foreach (UIText uitext in filterTypes) {
 					filterPanel.RemoveChild(uitext);
 				}
+				filterPanel.Width.Pixels = 32;
 			}
 
 			if (filterPanel.HasChild(filterCheck[0])) {
@@ -1627,8 +1630,7 @@ namespace BossChecklist
 			PageNum = -1;
 			SubPageNum = 0;
 			BossLogPanel.visible = true;
-			BookUI.visible = true;
-			filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
+			BookUI.visible = true; filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
 			foreach (UIText uitext in filterTypes) {
 				filterPanel.RemoveChild(uitext);
 			}
@@ -1636,23 +1638,25 @@ namespace BossChecklist
 		}
 
 		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
-			if (filterPanel.Left.Pixels != (Main.screenWidth / 2) - 400 + 800 - 16 - 120) {
-				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16 - 120;
-				foreach (BookUI uiimage in filterCheck) {
-					filterPanel.RemoveChild(uiimage);
-				}
-				foreach (UIText uitext in filterTypes) {
-					filterPanel.RemoveChild(uitext);
-				}
-			}
-			else {
-				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+			if (filterPanel.Left.Pixels != (Main.screenWidth / 2) - 400 - 16 - 120) {
+				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16 - 120;
+				filterPanel.Width.Pixels = 152;
 				foreach (BookUI uiimage in filterCheck) {
 					filterPanel.Append(uiimage);
 				}
 				foreach (UIText uitext in filterTypes) {
 					filterPanel.Append(uitext);
 				}
+			}
+			else {
+				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+				foreach (BookUI uiimage in filterCheck) {
+					filterPanel.RemoveChild(uiimage);
+				}
+				foreach (UIText uitext in filterTypes) {
+					filterPanel.RemoveChild(uitext);
+				}
+				filterPanel.Width.Pixels = 32;
 			}
 		}
 
@@ -1987,25 +1991,6 @@ namespace BossChecklist
 						pageTwoItemList.Add(newRow);
 						newRow = new LootRow(row) { Id = "Loot" + row };
 					}
-				}
-			}
-			for (int i = 0; i < shortcut.collection.Count; i++) {
-				Item loot = new Item();
-				loot.SetDefaults(shortcut.collection[i]);
-				
-				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-				LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.type == loot.type), loot.Name, ItemSlot.Context.TrashItem);
-				lootTable.Height.Pixels = 50;
-				lootTable.Width.Pixels = 50;
-				lootTable.Id = "loot_" + i;
-				lootTable.Left.Pixels = (col * 56);
-				newRow.Append(lootTable);
-				col++;
-				if (col == 6 || i == shortcut.loot.Count - 1) {
-					col = 0;
-					row++;
-					pageTwoItemList.Add(newRow);
-					newRow = new LootRow(row) { Id = "Loot" + row };
 				}
 			}
 			if (row > 5) PageTwo.Append(pageTwoScroll);
