@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 
 namespace BossChecklist
@@ -27,6 +28,8 @@ namespace BossChecklist
 		internal static int[] whitelistNPCs;
 
 		internal static bool whitelistFilled = false;
+
+		internal static bool blacklistChanged = false;
 
 		public override void OnInitialize() {
 			type = new List<int>();
@@ -166,25 +169,29 @@ namespace BossChecklist
 		public override void Update(GameTime gameTime) {
 			base.Update(gameTime);
 
-			if (!whitelistFilled) {
+			if (!whitelistFilled || blacklistChanged) {
 				List<int> idList = new List<int>();
 				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
 					if (BossChecklist.bossTracker.SortedBosses[i].type == BossChecklistType.Event) continue;
+					if (BossChecklist.bossTracker.SortedBosses[i].type == BossChecklistType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].npcIDs.Count; j++) {
 						int ID = BossChecklist.bossTracker.SortedBosses[i].npcIDs[j];
-						if (!BlackListedID(ID)) idList.Add(ID);
+						if (!BlackListedID(ID) && BossLogUI.GetBossHead(ID) != Main.npcHeadTexture[0]) idList.Add(ID);
 					}
 				}
 				whitelistNPCs = idList.ToArray();
 				Array.Sort(whitelistNPCs);
 				whitelistFilled = true;
+				blacklistChanged = false;
 			}
 			//do stuff
 			SetDrawPos();
 		}
 
 		private bool BlackListedID(int ID) {
-			if (ID == NPCID.EaterofWorldsBody || ID == NPCID.EaterofWorldsTail) return true;
+			foreach (NPCDefinition npc in BossChecklist.ClientConfig.RadarBlacklist) {
+				if (npc.Type == ID) return true;
+			}
 			return false;
 		}
 

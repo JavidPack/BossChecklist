@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
@@ -128,19 +129,28 @@ namespace BossChecklist
 
 		[Header("[i:3084] [c/ffeb6e:Boss Radar]")]
 
+		[Label("Enable Boss Radar")]
 		[DefaultValue(true)]
-		[Label("Boss Radar")]
-		[Tooltip("If disabled, the configs below have no effect")]
 		public bool BossRadarBool { get; set; }
+		
+		[Label("Whitelist mini bosses")]
+		[Tooltip("Note: This only works properly with mini bosses that have head icons")]
+		[DefaultValue(false)]
+		public bool RadarMiniBosses { get; set; }
 
-		// TODO: Add transparecy value for the Boss Radar arrow
-
-		[DefaultValue(0.75f)]
-		[Label("Radar Opacity -- Currently Unavailable")]
+		[Label("Radar Opacity")]
+		[Tooltip("Amount of transparency with the radar icon")]
 		[Range(0.35f, 0.85f)]
+		[DefaultValue(0.75f)]
 		public float OpacityFloat { get; set; }
 		
+		[Label("Radar Blacklist")]
+		[Tooltip("These NPCs will not be tracked by the radar")]
+		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
+
+		// TODO: Test if updating the blacklist mid-game works
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+			BossRadarUI.blacklistChanged = true;
 			return true;
 		}
 	}
