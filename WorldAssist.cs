@@ -32,8 +32,8 @@ namespace BossChecklist
 				NPC b = Main.npc[n];
 				if (NPCAssist.ListedBossNum(b) != -1) {
 					if (!ActiveBossesList[NPCAssist.ListedBossNum(b)]) {
-						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].ids.Count; i++) {
-							int thisType = BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].ids[i];
+						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs.Count; i++) {
+							int thisType = BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs[i];
 							if (Main.npc.Any(npc => npc.type == thisType && npc.active)) {
 								ActiveBossesList[NPCAssist.ListedBossNum(b)] = true;
 								break;
@@ -43,8 +43,8 @@ namespace BossChecklist
 					else // ActiveBossesList[NPCAssist.ListedBossNum(b)]
 					{
 						bool otherValidNPC = false;
-						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].ids.Count; i++) {
-							int otherType = BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].ids[i];
+						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs.Count; i++) {
+							int otherType = BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs[i];
 							if (Main.npc.Any(npc => npc.type == otherType && npc.active)) {
 								otherValidNPC = true;
 								break;
@@ -70,7 +70,7 @@ namespace BossChecklist
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].loot.Count; j++) {
 						int item = BossChecklist.bossTracker.SortedBosses[i].loot[j];
 						if (Main.LocalPlayer.HasItem(item)) {
-							int BossIndex = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies.FindIndex(boss => boss.bossName == BossChecklist.bossTracker.SortedBosses[i].name && boss.modName == BossChecklist.bossTracker.SortedBosses[i].source);
+							int BossIndex = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies.FindIndex(boss => boss.bossName == BossChecklist.bossTracker.SortedBosses[i].name && boss.modName == BossChecklist.bossTracker.SortedBosses[i].modSource);
 							if (BossIndex == -1) continue;
 							if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].loot.FindIndex(x => x.type == item) == -1) {
 								Item newItem = new Item();
@@ -86,7 +86,7 @@ namespace BossChecklist
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].collection.Count; j++) {
 						int item = BossChecklist.bossTracker.SortedBosses[i].collection[j];
 						if (Main.LocalPlayer.HasItem(item)) {
-							int BossIndex = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies.FindIndex(boss => boss.bossName == BossChecklist.bossTracker.SortedBosses[i].name && boss.modName == BossChecklist.bossTracker.SortedBosses[i].source);
+							int BossIndex = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies.FindIndex(boss => boss.bossName == BossChecklist.bossTracker.SortedBosses[i].name && boss.modName == BossChecklist.bossTracker.SortedBosses[i].modSource);
 							if (BossIndex == -1) continue;
 							if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].collectibles.FindIndex(x => x.type == item) == -1) {
 								Item newItem = new Item();

@@ -250,13 +250,13 @@ namespace BossChecklist
 					if (headBoss.type != BossChecklistType.Event) { 
 
 						int adjustment = 0;
-						for (int h = 0; h < headBoss.ids.Count; h++) {
+						for (int h = 0; h < headBoss.npcIDs.Count; h++) {
 							Color maskedHead;
 							if (!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
 							else maskedHead = Color.White;
 
-							if (BossLogUI.GetBossHead(headBoss.ids[h]) != Main.npcHeadTexture[0]) {
-								Texture2D head = BossLogUI.GetBossHead(headBoss.ids[h]);
+							if (BossLogUI.GetBossHead(headBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
+								Texture2D head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
 								spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * adjustment), Main.mouseY + 15, head.Width, head.Height), maskedHead);
 								adjustment++;
 							}
@@ -299,10 +299,10 @@ namespace BossChecklist
 					else masked = Color.White;
 					spriteBatch.Draw(bossTexture, posRect, cutRect, masked);
 				}
-				else if (selectedBoss.ids.Count > 0) {
-					Main.instance.LoadNPC(selectedBoss.ids[0]);
-					Texture2D NPCTexture = Main.npcTexture[selectedBoss.ids[0]];
-					Rectangle snippet = new Rectangle(0, 0, NPCTexture.Width, NPCTexture.Height / Main.npcFrameCount[selectedBoss.ids[0]]);
+				else if (selectedBoss.npcIDs.Count > 0) {
+					Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
+					Texture2D NPCTexture = Main.npcTexture[selectedBoss.npcIDs[0]];
+					Rectangle snippet = new Rectangle(0, 0, NPCTexture.Width, NPCTexture.Height / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
 					Vector2 bossPos = new Vector2(pageRect.X + (int)((Width.Pixels / 2) - (snippet.Width / 2)), pageRect.Y + (int)((Height.Pixels / 2) - (snippet.Height / 2)));
 					spriteBatch.Draw(NPCTexture, bossPos, snippet, Color.White);
 				}
@@ -310,13 +310,13 @@ namespace BossChecklist
 				if (selectedBoss.type != BossChecklistType.Event) {
 
 					int adjustment = 0;
-					for (int h = 0; h < selectedBoss.ids.Count; h++) {
+					for (int h = 0; h < selectedBoss.npcIDs.Count; h++) {
 						Color maskedHead;
 						if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
 						else maskedHead = Color.White;
 
-						if (BossLogUI.GetBossHead(selectedBoss.ids[h]) != Main.npcHeadTexture[0]) {
-							Texture2D head = BossLogUI.GetBossHead(selectedBoss.ids[h]);
+						if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
+							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
 							Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
 							spriteBatch.Draw(head, headPos, maskedHead);
 							adjustment++;
@@ -426,7 +426,7 @@ namespace BossChecklist
 
 				List<string> optedMods = new List<string>();
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-					if (boss.source != "Vanilla" && boss.source != "Unknown") {
+					if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") {
 						string sourceDisplayName = boss.SourceDisplayName;
 						if (!optedMods.Contains(sourceDisplayName)) {
 							optedMods.Add(sourceDisplayName);
@@ -445,7 +445,7 @@ namespace BossChecklist
 				}
 			}
 
-			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 0 && selectedBoss.source != "Unknown") {
+			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
 				if (selectedBoss.type != BossChecklistType.Event) {
 					// Boss Records Subpage
 					Texture2D achievements = ModContent.GetTexture("Terraria/UI/Achievements");
@@ -734,8 +734,8 @@ namespace BossChecklist
 				else {
 					// TODO: Make boxes for event NPC list. Next to the box, a number appears for how many the player/world has killed (banner count)
 					int offset = 0;
-					for (int i = 0; i < selectedBoss.ids.Count; i++) {
-						int npcID = selectedBoss.ids[i];
+					for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
+						int npcID = selectedBoss.npcIDs[i];
 						Main.instance.LoadNPC(npcID);
 						Texture2D NPCTexture = Main.npcTexture[npcID];
 						Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X, GetInnerDimensions().ToRectangle().Y + offset);
@@ -2133,7 +2133,7 @@ namespace BossChecklist
 			ResetBothPages();
 			List<string> optedMods = new List<string>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.source != "Vanilla" && boss.source != "Unknown") // TODO: find a way to get source mod from old integrations without necessitating mod updates.
+				if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") // TODO: find a way to get source mod from old integrations without necessitating mod updates.
 				{
 					string sourceDisplayName = boss.SourceDisplayName;
 					if (!optedMods.Contains(sourceDisplayName)) {
@@ -2202,7 +2202,7 @@ namespace BossChecklist
 			PageTwo.RemoveAllChildren();
 			ResetPageButtons();
 			if (PageNum >= 0) {
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].source != "Unknown") {
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
 					PageTwo.Append(spawnButton);
 					PageTwo.Append(lootButton);
 					//PageTwo.Append(collectButton);
@@ -2224,7 +2224,7 @@ namespace BossChecklist
 					brokenPanel.Append(brokenDisplay);
 				}
 
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].source == "Unknown" && BossChecklist.bossTracker.SortedBosses[PageNum].ids.Count == 0) {
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown" && BossChecklist.bossTracker.SortedBosses[PageNum].npcIDs.Count == 0) {
 					UIPanel brokenPanel = new UIPanel();
 					brokenPanel.Height.Pixels = 160;
 					brokenPanel.Width.Pixels = 340;
@@ -2251,7 +2251,7 @@ namespace BossChecklist
 			if (PageNum == -2) PageOne.Append(PrevPage);
 			else if (PageNum == -1) PageTwo.Append(NextPage);
 			else {
-				if (SubPageNum != 1 && BossChecklist.bossTracker.SortedBosses[PageNum].source != "Unknown") {
+				if (SubPageNum != 1 && BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
 					toolTipButton = new SubpageButton("");
 					toolTipButton.Width.Pixels = 32;
 					toolTipButton.Height.Pixels = 32;

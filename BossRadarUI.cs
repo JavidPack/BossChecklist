@@ -170,8 +170,8 @@ namespace BossChecklist
 				List<int> idList = new List<int>();
 				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
 					if (BossChecklist.bossTracker.SortedBosses[i].type == BossChecklistType.Event) continue;
-					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].ids.Count; j++) {
-						int ID = BossChecklist.bossTracker.SortedBosses[i].ids[j];
+					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].npcIDs.Count; j++) {
+						int ID = BossChecklist.bossTracker.SortedBosses[i].npcIDs[j];
 						if (!BlackListedID(ID)) idList.Add(ID);
 					}
 				}

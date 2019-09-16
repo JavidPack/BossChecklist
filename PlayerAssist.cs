@@ -26,7 +26,7 @@ namespace BossChecklist
 		public override void Initialize() {
 			AllBossRecords = new List<BossRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				AllBossRecords.Add(new BossRecord(boss.source, boss.name));
+				AllBossRecords.Add(new BossRecord(boss.modSource, boss.name));
 			}
 
 			// Make a new list of collections
@@ -34,9 +34,9 @@ namespace BossChecklist
 			// For each boss added...
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				// 1.) Add a collection for the boss
-				BossTrophies.Add(new BossCollection(boss.source, boss.name));
+				BossTrophies.Add(new BossCollection(boss.modSource, boss.name));
 				// 2.) setup the item list and check off list for the boss
-				int index = BossTrophies.FindIndex(x => x.modName == boss.source && x.bossName == boss.name);
+				int index = BossTrophies.FindIndex(x => x.modName == boss.modSource && x.bossName == boss.name);
 				BossTrophies[index].loot = new List<Item>();
 				BossTrophies[index].collectibles = new List<Item>();
 			}

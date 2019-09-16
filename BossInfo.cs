@@ -7,8 +7,8 @@ namespace BossChecklist
 	internal class BossInfo // Inheritance for Event instead?
 	{
 		internal float progression;
-		internal List<int> ids; // TODO: rename to npcIDs
-		internal string source; // TODO: rename to modSource
+		internal List<int> npcIDs;
+		internal string modSource;
 		internal string name; // TODO: localized name and non localized for mod.call 
 		internal Func<bool> downed;
 
@@ -20,17 +20,16 @@ namespace BossChecklist
 		internal string info;
 		internal Func<bool> available;
 		internal bool hidden;
-		//internal int spawnItemID;
 		internal BossChecklistType type;
 
-		internal string SourceDisplayName => source == "Vanilla" || source == "Unknown" ? source : ModLoader.GetMod(source).DisplayName;
+		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
-		internal BossInfo(BossChecklistType type, float progression, string source, string name, List<int> ids, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info) {
+		internal BossInfo(BossChecklistType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info) {
 			this.type = type;
 			this.progression = progression;
-			this.source = source;
+			this.modSource = modSource;
 			this.name = name;
-			this.ids = ids;
+			this.npcIDs = npcIDs;
 			this.downed = downed;
 			this.available = available ?? (() => true);
 
@@ -46,15 +45,14 @@ namespace BossChecklist
 			this.hidden = false;
 		}
 
-		internal static BossInfo MakeVanillaBoss(BossChecklistType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem, string info) {
-			return new BossInfo(type, progression, "Vanilla", name, ids, downed, () => true, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", info);
+		internal static BossInfo MakeVanillaBoss(BossChecklistType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
+			return new BossInfo(type, progression, "Vanilla", name, ids, downed, () => true, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]));
 		}
 
-		internal static BossInfo MakeVanillaEvent(float progression, string name, List<int> npcs, Func<bool> downed, List<int> spawnItem, List<int> loot, string info, string image = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-			// TODO: Event loot? npc? texture?
-			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, npcs, downed, () => true, spawnItem, new List<int>(), loot, image, info);
+		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem, string image = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
+			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventNPCList(name), image, BossChecklist.bossTracker.SetupEventSpawnDesc(name));
 		}
 
-		public override string ToString() => $"{progression} {name} {source}";
+		public override string ToString() => $"{progression} {name} {modSource}";
 	}
 }
