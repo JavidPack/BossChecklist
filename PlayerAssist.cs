@@ -135,13 +135,13 @@ namespace BossChecklist
 					BossStats stat = AllBossRecords[i].stat;
 					packet.Write(stat.kills);
 					packet.Write(stat.deaths);
-					packet.Write(stat.fightTime);
-					packet.Write(stat.fightTime2);
-					packet.Write(stat.brink2);
-					packet.Write(stat.brink);
-					packet.Write(stat.totalDodges);
-					packet.Write(stat.totalDodges2);
-					packet.Write(stat.dodgeTime);
+					packet.Write(stat.durationBest);
+					packet.Write(stat.durationWorst);
+					packet.Write(stat.healthLossBest);
+					packet.Write(stat.healthLossWorst);
+					packet.Write(stat.hitsTakenBest);
+					packet.Write(stat.hitsTakenWorst);
+					packet.Write(stat.dodgeTimeBest);
 				}
 				packet.Send(); // To server
 			}

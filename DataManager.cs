@@ -7,6 +7,7 @@ using Terraria.ModLoader.IO;
 namespace BossChecklist
 {
 	// TODO: Any way to migrate data from BossAssist save?
+	// TODO: Implement "undo" records feature for boss log.
 	public class BossRecord : TagSerializable
 	{
 		internal string bossName;
@@ -41,25 +42,25 @@ namespace BossChecklist
 		public int kills; // How many times the player has killed the boss
 		public int deaths; // How many times the player has died during a participated boss fight
 
-		public int fightTime = -1; // Quickest time a player has defeated a boss
-		public int fightTime2 = -1; // Slowest time a player has defeated a boss
+		public int durationBest = -1; // Quickest time a player has defeated a boss
+		public int durationWorst = -1; // Slowest time a player has defeated a boss
 
-		public int fightTimeL = -1;
+		public int durationLast = -1;
 
-		public int dodgeTime = -1; // Most time that a player has not been damaged during a boss fight
-		public int totalDodges = -1; // Least amount of times the player has been damaged
-		public int totalDodges2 = -1; // Most amount of times the player has been damaged
+		public int dodgeTimeBest = -1; // Most time that a player has not been damaged during a boss fight
+		public int hitsTakenBest = -1; // Least amount of times the player has been damaged
+		public int hitsTakenWorst = -1; // Most amount of times the player has been damaged
 
-		public int dodgeTimeL = -1;
-		public int totalDodgesL = -1;
+		public int dodgeTimeLast = -1;
+		public int hitsTakenLast = -1;
 
-		public int brink = -1; // Least amount of health a player has had during a boss fight
-		public int brinkPercent = -1; // The above stat in %
-		public int brink2 = -1; // "Highest" lowest amount of health a player has had during a boss fight
-		public int brinkPercent2 = -1; // The above stat in %
+		public int healthLossBest = -1; // "Highest" lowest amount of health a player has had during a boss fight
+		public int healthLossBestPercent = -1; // The above stat in %
+		public int healthLossWorst = -1; // Least amount of health a player has had during a boss fight
+		public int healthLossWorstPercent = -1; // The above stat in %
 
-		public int brinkL = -1;
-		public int brinkPercentL = -1;
+		public int healthLossLast = -1;
+		public int healthLossLastPercent = -1;
 
 		public static Func<TagCompound, BossStats> DESERIALIZER = tag => new BossStats(tag);
 
@@ -67,15 +68,15 @@ namespace BossChecklist
 		private BossStats(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
-			fightTime = tag.Get<int>(nameof(fightTime));
-			fightTime2 = tag.Get<int>(nameof(fightTime2));
-			dodgeTime = tag.Get<int>(nameof(dodgeTime));
-			totalDodges = tag.Get<int>(nameof(totalDodges));
-			totalDodges2 = tag.Get<int>(nameof(totalDodges2));
-			brink = tag.Get<int>(nameof(brink));
-			brinkPercent = tag.Get<int>(nameof(brinkPercent));
-			brink2 = tag.Get<int>(nameof(brink2));
-			brinkPercent2 = tag.Get<int>(nameof(brinkPercent2));
+			durationBest = tag.Get<int>(nameof(durationBest));
+			durationWorst = tag.Get<int>(nameof(durationWorst));
+			dodgeTimeBest = tag.Get<int>(nameof(dodgeTimeBest));
+			hitsTakenBest = tag.Get<int>(nameof(hitsTakenBest));
+			hitsTakenWorst = tag.Get<int>(nameof(hitsTakenWorst));
+			healthLossWorst = tag.Get<int>(nameof(healthLossWorst));
+			healthLossWorstPercent = tag.Get<int>(nameof(healthLossWorstPercent));
+			healthLossBest = tag.Get<int>(nameof(healthLossBest));
+			healthLossBestPercent = tag.Get<int>(nameof(healthLossBestPercent));
 		}
 
 		public TagCompound SerializeData() {
@@ -83,15 +84,15 @@ namespace BossChecklist
 			{
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
-				{ nameof(fightTime), fightTime },
-				{ nameof(fightTime2), fightTime2 },
-				{ nameof(dodgeTime), dodgeTime },
-				{ nameof(totalDodges), totalDodges },
-				{ nameof(totalDodges2), totalDodges2 },
-				{ nameof(brink), brink },
-				{ nameof(brinkPercent), brinkPercent },
-				{ nameof(brink2), brink2 },
-				{ nameof(brinkPercent2), brinkPercent2 }
+				{ nameof(durationBest), durationBest },
+				{ nameof(durationWorst), durationWorst },
+				{ nameof(dodgeTimeBest), dodgeTimeBest },
+				{ nameof(hitsTakenBest), hitsTakenBest },
+				{ nameof(hitsTakenWorst), hitsTakenWorst },
+				{ nameof(healthLossWorst), healthLossWorst },
+				{ nameof(healthLossWorstPercent), healthLossWorstPercent },
+				{ nameof(healthLossBest), healthLossBest },
+				{ nameof(healthLossBestPercent), healthLossBestPercent }
 			};
 		}
 
@@ -102,28 +103,28 @@ namespace BossChecklist
 			kills++;
 
 			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
-				fightTime = reader.ReadInt32();
+				durationBest = reader.ReadInt32();
 				Main.NewText("New Record for Quickest Fight!");
 			}
-			if (brokenRecords.HasFlag(RecordID.LongestFightTime)) fightTime2 = reader.ReadInt32();
-			fightTimeL = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.LongestFightTime)) durationWorst = reader.ReadInt32();
+			durationLast = reader.ReadInt32();
 
 			if (brokenRecords.HasFlag(RecordID.BestBrink)) {
-				brink2 = reader.ReadInt32();
-				brinkPercent2 = reader.ReadInt32();
+				healthLossBest = reader.ReadInt32();
+				healthLossBestPercent = reader.ReadInt32();
 			}
 			if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
-				brink = reader.ReadInt32();
-				brinkPercent = reader.ReadInt32();
+				healthLossWorst = reader.ReadInt32();
+				healthLossWorstPercent = reader.ReadInt32();
 			}
-			brinkL = reader.ReadInt32();
-			brinkPercentL = reader.ReadInt32();
+			healthLossLast = reader.ReadInt32();
+			healthLossLastPercent = reader.ReadInt32();
 
-			if (brokenRecords.HasFlag(RecordID.LeastHits)) totalDodges = reader.ReadInt32();
-			if (brokenRecords.HasFlag(RecordID.MostHits)) totalDodges2 = reader.ReadInt32();
-			totalDodgesL = reader.ReadInt32();
-			if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTime = reader.ReadInt32();
-			dodgeTimeL = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.LeastHits)) hitsTakenBest = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.MostHits)) hitsTakenWorst = reader.ReadInt32();
+			hitsTakenLast = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTimeBest = reader.ReadInt32();
+			dodgeTimeLast = reader.ReadInt32();
 		}
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
@@ -131,26 +132,26 @@ namespace BossChecklist
 			// Kills update by 1 automatically
 			// Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
 
-			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(fightTimeL);
-			if (specificRecord.HasFlag(RecordID.LongestFightTime)) writer.Write(fightTimeL);
-			writer.Write(fightTimeL);
+			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(durationLast);
+			if (specificRecord.HasFlag(RecordID.LongestFightTime)) writer.Write(durationLast);
+			writer.Write(durationLast);
 
 			if (specificRecord.HasFlag(RecordID.BestBrink)) {
-				writer.Write(brinkL);
-				writer.Write(brinkPercentL);
+				writer.Write(healthLossLast);
+				writer.Write(healthLossLastPercent);
 			}
 			if (specificRecord.HasFlag(RecordID.WorstBrink)) {
-				writer.Write(brinkL);
-				writer.Write(brinkPercentL);
+				writer.Write(healthLossLast);
+				writer.Write(healthLossLastPercent);
 			}
-			writer.Write(brinkL);
-			writer.Write(brinkPercentL);
+			writer.Write(healthLossLast);
+			writer.Write(healthLossLastPercent);
 
-			if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(totalDodgesL);
-			if (specificRecord.HasFlag(RecordID.MostHits)) writer.Write(totalDodgesL);
-			writer.Write(totalDodgesL);
-			if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimeL);
-			writer.Write(dodgeTimeL);
+			if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(hitsTakenLast);
+			if (specificRecord.HasFlag(RecordID.MostHits)) writer.Write(hitsTakenLast);
+			writer.Write(hitsTakenLast);
+			if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimeLast);
+			writer.Write(dodgeTimeLast);
 		}
 	}
 

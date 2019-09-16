@@ -100,70 +100,70 @@ namespace BossChecklist
 			int recordIndex = ListedBossNum(npc);
 			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
 			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
-			int currentRecord = bossStats.fightTime;
-			int worstRecord = bossStats.fightTime2;
+			int currentRecord = bossStats.durationBest;
+			int worstRecord = bossStats.durationWorst;
 
-			bossStats.fightTimeL = recordAttempt;
+			bossStats.durationLast = recordAttempt;
 
 			int brinkAttempt = modplayer.BrinkChecker[recordIndex]; // Trying to set a new record
 			int MaxLife = modplayer.MaxHealth[recordIndex];
-			int currentBrink = bossStats.brink2;
-			int worstBrink = bossStats.brink;
+			int currentBrink = bossStats.healthLossBest;
+			int worstBrink = bossStats.healthLossWorst;
 
-			bossStats.brinkL = brinkAttempt;
+			bossStats.healthLossLast = brinkAttempt;
 			double lastHealth = (double)brinkAttempt / (double)MaxLife;
-			bossStats.brinkPercentL = (int)(lastHealth * 100);
+			bossStats.healthLossLastPercent = (int)(lastHealth * 100);
 
 			int dodgeTimeAttempt = modplayer.DodgeTimer[recordIndex];
-			int currentDodgeTime = bossStats.dodgeTime;
+			int currentDodgeTime = bossStats.dodgeTimeBest;
 			int dodgeAttempt = modplayer.AttackCounter[recordIndex];
-			int currentDodges = bossStats.totalDodges;
-			int worstDodges = bossStats.totalDodges2;
+			int currentDodges = bossStats.hitsTakenBest;
+			int worstDodges = bossStats.hitsTakenWorst;
 
-			bossStats.dodgeTimeL = dodgeTimeAttempt;
-			bossStats.totalDodgesL = dodgeAttempt;
+			bossStats.dodgeTimeLast = dodgeTimeAttempt;
+			bossStats.hitsTakenLast = dodgeAttempt;
 
 			// Increase kill count
 			bossStats.kills++;
 
 			if (recordAttempt < currentRecord && currentRecord != 0 && worstRecord <= 0) {
 				// First make the current record the worst record if no worst record has been made and a new record was made
-				bossStats.fightTime2 = currentRecord;
+				bossStats.durationWorst = currentRecord;
 			}
 			if (recordAttempt < currentRecord || currentRecord <= 0) {
 				//The player has beaten their best record, so we have to overwrite the old record with the new one
-				bossStats.fightTime = recordAttempt;
+				bossStats.durationBest = recordAttempt;
 			}
 			else if (recordAttempt > worstRecord || worstRecord <= 0) {
 				//The player has beaten their worst record, so we have to overwrite the old record with the new one
-				bossStats.fightTime2 = recordAttempt;
+				bossStats.durationWorst = recordAttempt;
 			}
 
 			if (brinkAttempt > currentBrink && currentBrink != 0 && worstBrink <= 0) {
-				bossStats.brink = currentBrink;
+				bossStats.healthLossWorst = currentBrink;
 			}
 			if (brinkAttempt > currentBrink || currentBrink <= 0) {
-				bossStats.brink2 = brinkAttempt;
+				bossStats.healthLossBest = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
-				bossStats.brinkPercent2 = (int)(newHealth * 100);
+				bossStats.healthLossBestPercent = (int)(newHealth * 100);
 			}
 			else if (brinkAttempt < worstBrink || worstBrink <= 0) {
-				bossStats.brink = brinkAttempt;
+				bossStats.healthLossWorst = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
-				bossStats.brinkPercent = (int)(newHealth * 100);
+				bossStats.healthLossWorstPercent = (int)(newHealth * 100);
 			}
 
 			if (dodgeTimeAttempt > currentDodgeTime || currentDodgeTime < 0) {
 				// There is no "worse record" for this one so just overwrite any better records made
-				bossStats.dodgeTime = dodgeTimeAttempt;
+				bossStats.dodgeTimeBest = dodgeTimeAttempt;
 			}
 
 			if (dodgeAttempt < currentDodges || currentDodges < 0) {
-				bossStats.totalDodges = dodgeAttempt;
-				if (worstDodges == 0) bossStats.totalDodges2 = currentDodges;
+				bossStats.hitsTakenBest = dodgeAttempt;
+				if (worstDodges == 0) bossStats.hitsTakenWorst = currentDodges;
 			}
 			else if (dodgeAttempt > worstDodges || worstDodges < 0) {
-				bossStats.totalDodges2 = dodgeAttempt;
+				bossStats.hitsTakenWorst = dodgeAttempt;
 			}
 
 			modplayer.DodgeTimer[recordIndex] = 0;
@@ -189,12 +189,12 @@ namespace BossChecklist
 					// Establish the new records for comparing
 
 					BossStats newRecord = new BossStats() {
-						fightTimeL = modPlayer.RecordTimers[recordIndex],
-						totalDodgesL = modPlayer.AttackCounter[recordIndex],
-						dodgeTimeL = modPlayer.DodgeTimer[recordIndex],
-						brinkL = modPlayer.BrinkChecker[recordIndex],
+						durationLast = modPlayer.RecordTimers[recordIndex],
+						hitsTakenLast = modPlayer.AttackCounter[recordIndex],
+						dodgeTimeLast = modPlayer.DodgeTimer[recordIndex],
+						healthLossLast = modPlayer.BrinkChecker[recordIndex],
 
-						brinkPercentL = (int)(((double)modPlayer.BrinkChecker[recordIndex] / modPlayer.MaxHealth[recordIndex]) * 100),
+						healthLossLastPercent = (int)(((double)modPlayer.BrinkChecker[recordIndex] / modPlayer.MaxHealth[recordIndex]) * 100),
 					};
 
 					// Compare the records
@@ -207,52 +207,52 @@ namespace BossChecklist
 
 					RecordID specificRecord = RecordID.None;
 
-					Console.WriteLine(newRecord.fightTimeL + " vs " + oldRecord.fightTime);
-					if ((newRecord.fightTimeL < oldRecord.fightTime && newRecord.fightTimeL > 0) || oldRecord.fightTime <= 0) {
-						Console.WriteLine("This Fight (" + newRecord.fightTimeL + ") was better than your current best (" + oldRecord.fightTime + ")");
+					Console.WriteLine(newRecord.durationLast + " vs " + oldRecord.durationBest);
+					if ((newRecord.durationLast < oldRecord.durationBest && newRecord.durationLast > 0) || oldRecord.durationBest <= 0) {
+						Console.WriteLine("This Fight (" + newRecord.durationLast + ") was better than your current best (" + oldRecord.durationBest + ")");
 						specificRecord |= RecordID.ShortestFightTime;
-						oldRecord.fightTime = newRecord.fightTimeL;
+						oldRecord.durationBest = newRecord.durationLast;
 					}
-					if (newRecord.fightTimeL > oldRecord.fightTime2 && newRecord.fightTimeL > 0) {
-						Console.WriteLine("This Fight (" + newRecord.fightTimeL + ") was worse than your current worst (" + oldRecord.fightTime2 + ")");
+					if (newRecord.durationLast > oldRecord.durationWorst && newRecord.durationLast > 0) {
+						Console.WriteLine("This Fight (" + newRecord.durationLast + ") was worse than your current worst (" + oldRecord.durationWorst + ")");
 						specificRecord |= RecordID.LongestFightTime;
-						oldRecord.fightTime2 = newRecord.fightTimeL;
+						oldRecord.durationWorst = newRecord.durationLast;
 					}
-					oldRecord.fightTimeL = newRecord.fightTimeL;
+					oldRecord.durationLast = newRecord.durationLast;
 
-					if (newRecord.brinkL > oldRecord.brink2 && newRecord.brinkL > 0) {
-						Console.WriteLine("This Fight (" + newRecord.brink2 + ") was better than your current best (" + oldRecord.brink2 + ")");
+					if (newRecord.healthLossLast > oldRecord.healthLossBest && newRecord.healthLossLast > 0) {
+						Console.WriteLine("This Fight (" + newRecord.healthLossBest + ") was better than your current best (" + oldRecord.healthLossBest + ")");
 						specificRecord |= RecordID.BestBrink;
-						oldRecord.brink2 = newRecord.brinkL;
-						oldRecord.brinkPercent2 = newRecord.brinkPercentL;
+						oldRecord.healthLossBest = newRecord.healthLossLast;
+						oldRecord.healthLossBestPercent = newRecord.healthLossLastPercent;
 					}
-					if (newRecord.brinkL < oldRecord.brink && newRecord.brinkL > 0) {
-						Console.WriteLine("This Fight (" + newRecord.brink + ") was better than your current best (" + oldRecord.brink + ")");
+					if (newRecord.healthLossLast < oldRecord.healthLossWorst && newRecord.healthLossLast > 0) {
+						Console.WriteLine("This Fight (" + newRecord.healthLossWorst + ") was better than your current best (" + oldRecord.healthLossWorst + ")");
 						specificRecord |= RecordID.WorstBrink;
-						oldRecord.brink = newRecord.brinkL;
-						oldRecord.brinkPercent = newRecord.brinkPercentL;
+						oldRecord.healthLossWorst = newRecord.healthLossLast;
+						oldRecord.healthLossWorstPercent = newRecord.healthLossLastPercent;
 					}
-					oldRecord.brinkL = newRecord.brinkL;
-					oldRecord.brinkPercentL = newRecord.brinkPercentL;
+					oldRecord.healthLossLast = newRecord.healthLossLast;
+					oldRecord.healthLossLastPercent = newRecord.healthLossLastPercent;
 
-					if (newRecord.totalDodgesL < oldRecord.totalDodges && newRecord.totalDodgesL > -1) {
-						Console.WriteLine("This Fight (" + newRecord.totalDodgesL + ") was better than your current best (" + oldRecord.totalDodges + ")");
+					if (newRecord.hitsTakenLast < oldRecord.hitsTakenBest && newRecord.hitsTakenLast > -1) {
+						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was better than your current best (" + oldRecord.hitsTakenBest + ")");
 						specificRecord |= RecordID.LeastHits;
-						oldRecord.totalDodges = newRecord.totalDodgesL;
+						oldRecord.hitsTakenBest = newRecord.hitsTakenLast;
 					}
-					if (newRecord.totalDodgesL > oldRecord.totalDodges2 && oldRecord.totalDodgesL > -1) {
-						Console.WriteLine("This Fight (" + newRecord.totalDodgesL + ") was better than your current best (" + oldRecord.totalDodges2 + ")");
+					if (newRecord.hitsTakenLast > oldRecord.hitsTakenWorst && oldRecord.hitsTakenLast > -1) {
+						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was better than your current best (" + oldRecord.hitsTakenWorst + ")");
 						specificRecord |= RecordID.MostHits;
-						oldRecord.totalDodges2 = newRecord.totalDodgesL;
+						oldRecord.hitsTakenWorst = newRecord.hitsTakenLast;
 					}
-					oldRecord.totalDodgesL = newRecord.totalDodgesL;
+					oldRecord.hitsTakenLast = newRecord.hitsTakenLast;
 
-					if (newRecord.dodgeTimeL > oldRecord.dodgeTime && oldRecord.dodgeTimeL > 0) {
-						Console.WriteLine("This Fight (" + newRecord.dodgeTimeL + ") was better than your current best (" + oldRecord.dodgeTime + ")");
+					if (newRecord.dodgeTimeLast > oldRecord.dodgeTimeBest && oldRecord.dodgeTimeLast > 0) {
+						Console.WriteLine("This Fight (" + newRecord.dodgeTimeLast + ") was better than your current best (" + oldRecord.dodgeTimeBest + ")");
 						specificRecord |= RecordID.DodgeTime;
-						oldRecord.dodgeTime = newRecord.dodgeTimeL;
+						oldRecord.dodgeTimeBest = newRecord.dodgeTimeLast;
 					}
-					oldRecord.dodgeTimeL = newRecord.dodgeTimeL;
+					oldRecord.dodgeTimeLast = newRecord.dodgeTimeLast;
 
 					// Make the packet
 

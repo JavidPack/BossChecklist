@@ -484,9 +484,9 @@ namespace BossChecklist
 							if (BossLogUI.AltPage[BossLogUI.SubPageNum]) recordType = "Slowest Victory";
 							string finalResult = "";
 
-							int BestRecord = record.fightTime;
-							int WorstRecord = record.fightTime2;
-							int LastRecord = record.fightTimeL;
+							int BestRecord = record.durationBest;
+							int WorstRecord = record.durationWorst;
+							int LastRecord = record.durationLast;
 
 							if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 								achX = 4;
@@ -601,12 +601,12 @@ namespace BossChecklist
 							recordType = "Vitality";
 							if (BossLogUI.AltPage[BossLogUI.SubPageNum]) recordType = "Brink of Death";
 
-							int BestRecord = record.brink2;
-							int BestPercent = record.brinkPercent2;
-							int WorstRecord = record.brink;
-							int WorstPercent = record.brinkPercent;
-							int LastRecord = record.brinkL;
-							int LastPercent = record.brinkPercentL;
+							int BestRecord = record.healthLossBest;
+							int BestPercent = record.healthLossBestPercent;
+							int WorstRecord = record.healthLossWorst;
+							int WorstPercent = record.healthLossWorstPercent;
+							int LastRecord = record.healthLossLast;
+							int LastPercent = record.healthLossLastPercent;
 
 							if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 								achX = 3;
@@ -668,12 +668,12 @@ namespace BossChecklist
 							recordType = "Ninja Reflexes";
 							if (BossLogUI.AltPage[BossLogUI.SubPageNum]) recordType = "Clumsy Fool";
 
-							int timer = record.dodgeTime;
-							int low = record.totalDodges;
-							int high = record.totalDodges2;
-							int last = record.totalDodgesL;
+							int timer = record.dodgeTimeBest;
+							int low = record.hitsTakenBest;
+							int high = record.hitsTakenWorst;
+							int last = record.hitsTakenLast;
 
-							double timer2 = (double)record.dodgeTime / 60;
+							double timer2 = (double)record.dodgeTimeBest / 60;
 							string timerOutput = timer2.ToString("0.##");
 
 							if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
@@ -1692,17 +1692,17 @@ namespace BossChecklist
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
 			// Since it only applies to Boss Icons, the page check is unnecessary
 			if (BossChecklist.BossLogConfig.ResetRecordsBool) {
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.fightTime = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.fightTime2 = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.dodgeTime = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.totalDodges = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.totalDodges2 = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationBest = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationWorst = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.dodgeTimeBest = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.hitsTakenBest = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.hitsTakenWorst = -1;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.kills = 0;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.deaths = 0;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.brink = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.brinkPercent = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.brink2 = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.brinkPercent2 = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossWorst = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossWorstPercent = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossBest = -1;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossBestPercent = -1;
 			}
 			OpenRecord(evt, listeningElement);
 		}

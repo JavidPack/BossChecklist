@@ -412,13 +412,13 @@ namespace BossChecklist
 						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
 						bossStats.kills = reader.ReadInt32();
 						bossStats.deaths = reader.ReadInt32();
-						bossStats.fightTime = reader.ReadInt32();
-						bossStats.fightTime2 = reader.ReadInt32();
-						bossStats.brink2 = reader.ReadInt32();
-						bossStats.brink = reader.ReadInt32();
-						bossStats.totalDodges = reader.ReadInt32();
-						bossStats.totalDodges2 = reader.ReadInt32();
-						bossStats.dodgeTime = reader.ReadInt32();
+						bossStats.durationBest = reader.ReadInt32();
+						bossStats.durationWorst = reader.ReadInt32();
+						bossStats.healthLossBest = reader.ReadInt32();
+						bossStats.healthLossWorst = reader.ReadInt32();
+						bossStats.hitsTakenBest = reader.ReadInt32();
+						bossStats.hitsTakenWorst = reader.ReadInt32();
+						bossStats.dodgeTimeBest = reader.ReadInt32();
 
 						Console.WriteLine("Establishing " + player.name + "'s records for " + bossTracker.SortedBosses[i].name + " to the server");
 					}
