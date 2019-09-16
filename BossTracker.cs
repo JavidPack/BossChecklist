@@ -40,12 +40,12 @@ namespace BossChecklist
 			// Bosses -- Vanilla
 			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, SlimeKing, "King Slime", new List<int>() { NPCID.KingSlime },
 			 () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }, $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain."),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EyeOfCthulhu, "Eye of Cthulhu", new List<int>() { NPCID.EyeofCthulhu }, 
+			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EyeOfCthulhu, "Eye of Cthulhu", new List<int>() { NPCID.EyeofCthulhu },
 			 () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }, $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP\nAchievement : [a:EYE_ON_YOU]"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EaterOfWorlds,"Eater of Worlds",new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail},
-			 () => NPC.downedBoss2,new List<int>() { ItemID.WormFood }, $"Use [i:{ItemID.WormFood}] or [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts or Shadow Orbs"),
+			 () => NPC.downedBoss2,new List<int>() { ItemID.WormFood }, $"Use [i:{ItemID.WormFood}] or break 3 Shadow Orbs"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EaterOfWorlds, "Brain of Cthulhu",new List<int>() { NPCID.BrainofCthulhu },
-			 () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }, $"Use [i:{ItemID.WormFood}] or [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts or Shadow Orbs"), // FIX
+			 () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }, $"Use [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, QueenBee, "Queen Bee", new List<int>() { NPCID.QueenBee },
 			 () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }, $"Use [i:{ItemID.Abeemination}] or break Larva in Jungle"),
 			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Skeletron, "Skeletron", new List<int>() { NPCID.SkeletronHead },
@@ -83,37 +83,37 @@ namespace BossChecklist
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,  Plantera + 0.14f,"Everscream", new List<int>() {NPCID.Everscream },
 			 () => NPC.downedChristmasTree, new List<int>() { }, $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]"),
 			// Events -- Vanilla
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.03f, "Nebula Pillar",
-			 () => NPC.downedTowerNebula, SetupEventNPCList("Nebula Pillar"), new List<int>() { }, SetupEventLoot("Lunar Pillar"), $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.02f, "Vortex Pillar",
-			 () => NPC.downedTowerVortex, SetupEventNPCList("Vortex Pillar"), new List<int>() { }, SetupEventLoot("Lunar Event"), $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			BossInfo.MakeVanillaEvent( LunaticCultist + 0.01f,"Solar Pillar",
-			 () => NPC.downedTowerSolar, SetupEventNPCList("Solar Pillar"), new List<int>() { }, SetupEventLoot("Lunar Event"), $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.04f, "Stardust Pillar",
-			 () => NPC.downedTowerStardust, SetupEventNPCList("Stardust Pillar"), new List<int>() { }, SetupEventLoot("Lunar Event"), $"Kill the Lunatic Cultist outside the dungeon post-Golem"),
+			BossInfo.MakeVanillaEvent(LunaticCultist + 0.03f, "Nebula Pillar", SetupEventNPCList("Nebula Pillar"),
+			 () => NPC.downedTowerNebula, new List<int>() { }, SetupEventLoot("Lunar Event"), SetupEventSpawnDesc("Lunar Event")),
+			BossInfo.MakeVanillaEvent(LunaticCultist + 0.02f, "Vortex Pillar", SetupEventNPCList("Vortex Pillar"),
+			 () => NPC.downedTowerVortex, new List<int>() { }, SetupEventLoot("Lunar Event"), SetupEventSpawnDesc("Lunar Event")),
+			BossInfo.MakeVanillaEvent( LunaticCultist + 0.01f,"Solar Pillar", SetupEventNPCList("Solar Pillar"),
+			 () => NPC.downedTowerSolar, new List<int>() { }, SetupEventLoot("Lunar Event"), SetupEventSpawnDesc("Lunar Event")),
+			BossInfo.MakeVanillaEvent(LunaticCultist + 0.04f, "Stardust Pillar", SetupEventNPCList("Stardust Pillar"),
+			 () => NPC.downedTowerStardust, new List<int>() { }, SetupEventLoot("Lunar Event"), SetupEventSpawnDesc("Lunar Event")),
 				// TODO, all other event bosses...Maybe all pillars as 1?
-			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f,"Goblin Army", 
-			 () => NPC.downedGoblins, SetupEventNPCList("Goblin Army"), new List<int>() {ItemID.GoblinBattleStandard }, SetupEventLoot("Goblin Army"), $"Occurs randomly at dawn once a Shadow Orb or Crimson Heart has been destroyed. Alternatively, spawn with [i:{ItemID.GoblinBattleStandard}]", "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
-			BossInfo.MakeVanillaEvent( WallOfFlesh + 0.6f,"Frost Legion",
-			 () => NPC.downedFrost, SetupEventNPCList("Frost Legion"), new List<int>() { ItemID.SnowGlobe}, SetupEventLoot("Frost Legion"), $"Use [i:{ItemID.SnowGlobe}] to start. Find [i:{ItemID.SnowGlobe}] by opening [i:{ItemID.Present}] while in Hardmode during Christmas season."),
-			BossInfo.MakeVanillaEvent( Golem + 0.4f,"Martian Madness",
-			 () => NPC.downedMartians, SetupEventNPCList("Martian Madness"), new List<int>() { }, SetupEventLoot("Martian Madness"), $"After defeating Golem, find a Martian Probe above ground and let it escape."),
-			BossInfo.MakeVanillaEvent( WallOfFlesh + 0.7f,"Pirate Invasion",
-			 () => NPC.downedPirates, SetupEventNPCList("Pirate Invasion"), new List<int>() { ItemID.PirateMap }, SetupEventLoot("Pirate Invasion"), $"Occurs randomly in Hardmode after an Altar has been destroyed. Alternatively, spawn with [i:{ItemID.PirateMap}]"),
-			BossInfo.MakeVanillaEvent( EaterOfWorlds + 0.5f,"Old One's Army",
-			 () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1 || Terraria.GameContent.Events.DD2Event.DownedInvasionT2 || Terraria.GameContent.Events.DD2Event.DownedInvasionT3, SetupEventNPCList("Old One's Army"), new List<int>() {ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }, SetupEventLoot("Old One's Army"), $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]", "BossChecklist/Resources/BossTextures/EventDD2"), // () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty
+			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f,"Goblin Army",  SetupEventNPCList("Goblin Army"),
+			 () => NPC.downedGoblins, new List<int>() {ItemID.GoblinBattleStandard }, SetupEventLoot("Goblin Army"), SetupEventSpawnDesc("Goblin Army"), "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
+			BossInfo.MakeVanillaEvent( WallOfFlesh + 0.6f,"Frost Legion", SetupEventNPCList("Frost Legion"),
+			 () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe}, SetupEventLoot("Frost Legion"), SetupEventSpawnDesc("Frost Legion")),
+			BossInfo.MakeVanillaEvent( Golem + 0.4f,"Martian Madness", SetupEventNPCList("Martian Madness"),
+			 () => NPC.downedMartians, new List<int>() { }, SetupEventLoot("Martian Madness"), SetupEventSpawnDesc("Martian Madness")),
+			BossInfo.MakeVanillaEvent( WallOfFlesh + 0.7f,"Pirate Invasion", SetupEventNPCList("Pirate Invasion"),
+			 () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }, SetupEventLoot("Pirate Invasion"), SetupEventSpawnDesc("Pirate Invasion")),
+			BossInfo.MakeVanillaEvent( EaterOfWorlds + 0.5f,"Old One's Army", SetupEventNPCList("Old One's Army"),
+			 () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1 || Terraria.GameContent.Events.DD2Event.DownedInvasionT2 || Terraria.GameContent.Events.DD2Event.DownedInvasionT3, new List<int>() {ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }, SetupEventLoot("Old One's Army"), SetupEventSpawnDesc("Old One's Army"), "BossChecklist/Resources/BossTextures/EventDD2"), // () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty
 				// TODO: track bugged DownedInvasionT1 event separately from vanilla somehow.
 			//new BossInfo(BossChecklistType.Event, "Old One's Army 1", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
 			//new BossInfo(BossChecklistType.Event, "Old One's Army 2", TheTwins + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT2,  $"After defeating a mechanical boss, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
 			//new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-			BossInfo.MakeVanillaEvent( EyeOfCthulhu + 0.2f,"Blood Moon",
-			 () => true, SetupEventNPCList("Blood Moon"), new List<int>() {0}, SetupEventLoot("Blood Moon"), $"Randomly occurs on at night, where the moon is not a new moon", "BossChecklist/Resources/BossTextures/EventBloodMoon"),
-			BossInfo.MakeVanillaEvent( SkeletronPrime + 0.2f, "Solar Eclipse",
-			 () => true, SetupEventNPCList("Solar Eclipse"), new List<int>(){ ItemID.SolarTablet }, SetupEventLoot("Solar Eclipse"), $"Spawns randomly on sunrise after a mech boss has been defeated. Can also spawn manually using [i:{ItemID.SolarTablet}]", "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
-			BossInfo.MakeVanillaEvent( Plantera + 0.1f,"Pumpkin Moon",
-			 () => true, SetupEventNPCList("Pumpkin Moon"), new List<int>() {ItemID.PumpkinMoonMedallion}, SetupEventLoot("Pumpkin Moon"), $"Use a [i:{ItemID.PumpkinMoonMedallion}] at night", "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
-			BossInfo.MakeVanillaEvent( Plantera + 0.13f,"Frost Moon",
-			 () => true, SetupEventNPCList("Frost Moon"), new List<int>() {ItemID.NaughtyPresent}, SetupEventLoot("Frost Moon"), $"Use a [i:{ItemID.NaughtyPresent}] at night", "BossChecklist/Resources/BossTextures/EventFrostMoon"),
+			BossInfo.MakeVanillaEvent( EyeOfCthulhu + 0.2f,"Blood Moon", SetupEventNPCList("Blood Moon"),
+			 () => true, new List<int>() {0}, SetupEventLoot("Blood Moon"), SetupEventSpawnDesc("Blood Moon"), "BossChecklist/Resources/BossTextures/EventBloodMoon"),
+			BossInfo.MakeVanillaEvent( SkeletronPrime + 0.2f, "Solar Eclipse", SetupEventNPCList("Solar Eclipse"),
+			 () => true, new List<int>(){ ItemID.SolarTablet }, SetupEventLoot("Solar Eclipse"), SetupEventSpawnDesc("Solar Eclipse"), "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
+			BossInfo.MakeVanillaEvent( Plantera + 0.1f,"Pumpkin Moon", SetupEventNPCList("Pumpkin Moon"),
+			 () => true, new List<int>() {ItemID.PumpkinMoonMedallion}, SetupEventLoot("Pumpkin Moon"), SetupEventSpawnDesc("Pumpkin Moon"), "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
+			BossInfo.MakeVanillaEvent( Plantera + 0.13f,"Frost Moon", SetupEventNPCList("Frost Moon"),
+			 () => true, new List<int>() {ItemID.NaughtyPresent}, SetupEventLoot("Frost Moon"), SetupEventSpawnDesc("Frost Moon"), "BossChecklist/Resources/BossTextures/EventFrostMoon"),
 			};
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 		}
@@ -825,9 +825,23 @@ namespace BossChecklist
 			return new List<int>();
 		}
 
+		internal string SetupEventSpawnDesc(string eventName) {
+			if (eventName == "Blood Moon") return $"Occurs randomly on at night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon.";
+			if (eventName == "Goblin Army") return $"Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:{ItemID.GoblinBattleStandard}]";
+			if (eventName == "Old One's Army") return $"After finding the Tavernkeep, purchase and activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]";
+			if (eventName == "Frost Legion") return $"Use a [i:{ItemID.SnowGlobe}], which can be found by opening [i:{ItemID.Present}], during the Christmas season.";
+			if (eventName == "Solar Eclipse") return $"Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:{ItemID.SolarTablet}]";
+			if (eventName == "Pirate Invasion") return $"Occurs randomly once at least one alter has been destroyed. Can be summoned with a [i:{ItemID.PirateMap}], which can be obtained from killing any enemy in the Ocean biome during Hardmode. ";
+			if (eventName == "Pumpkin Moon") return $"Use a [i:{ItemID.PumpkinMoonMedallion}] at night";
+			if (eventName == "Frost Moon") return $"Use a [i:{ItemID.NaughtyPresent}] at night";
+			if (eventName == "Martian Madness") return $"After defeating Golem, find a Martian Probe above ground and let it escape.";
+			if (eventName == "Lunar Event") return $"Kill the Lunatic Cultist outside the dungeon post-Golem";
+			return "";
+		}
+
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
-			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
+		SortedBosses.Add(new BossInfo(BossChecklistType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
+		SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 		}
 
 		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
