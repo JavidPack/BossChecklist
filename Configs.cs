@@ -8,7 +8,8 @@ namespace BossChecklist
 	public class BossLogConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
-		
+		public override void OnLoaded() => BossChecklist.BossLogConfig = this;
+
 		[Header("[i:149] [c/ffeb6e:Boss Log UI]")]
 
 		[DefaultValue(typeof(Color), "87, 181, 92, 255")]
@@ -44,36 +45,36 @@ namespace BossChecklist
 
 		[DrawTicks]
 		[Label("Filter bosses in list")]
+		[Tooltip("Note: Changing filters within the boss log does save your preferences")]
 		[OptionStrings(new string[] { "Show", "Hide when completed" })]
 		[DefaultValue("Show")]
 		public string FilterBosses { get; set; }
 
 		[DrawTicks]
 		[Label("Filter mini bosses in list")]
+		[Tooltip("Note: Changing filters within the boss log does save your preferences")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterMiniBosses { get; set; }
 
 		[DrawTicks]
 		[Label("Filter events in list")]
+		[Tooltip("Note: Changing filters within the boss log does save your preferences")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
-
-		public override void OnLoaded() {
-			BossChecklist.BossLogConfig = this;
-		}
-
+		
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}
 	}
 
-	[Label("User Interface Configuration")]
+	[Label("Other Features")]
 	public class ClientConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
-		
+		public override void OnLoaded() => BossChecklist.ClientConfig = this;
+
 		[Header("[i:3037] [c/ffeb6e:Despawn Messages]")]
 
 		[DrawTicks]
@@ -134,24 +135,21 @@ namespace BossChecklist
 
 		// TODO: Add transparecy value for the Boss Radar arrow
 
-		[DefaultValue(0.85f)]
+		[DefaultValue(0.75f)]
 		[Label("Radar Opacity -- Currently Unavailable")]
-		[Range(0.25f, 1f)]
+		[Range(0.35f, 0.85f)]
 		public float OpacityFloat { get; set; }
-
-		public override void OnLoaded() {
-			BossChecklist.ClientConfig = this;
-		}
-
+		
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}
 	}
 
-	[Label("Debug Interface Configuration")]
+	[Label("Debug Interface")]
 	public class DebugConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
+		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 
 		[Header("[i:149] [c/ffeb6e:Info]")]
 
@@ -165,11 +163,7 @@ namespace BossChecklist
 		[OptionStrings(new string[] { "None", "RecordTimers", "BrinkChecker", "MaxHealth", "DeathTracker", "DodgeTimer", "AttackCounter" })]
 		[DefaultValue("None")]
 		public string ShowTimerOrCounter { get; set; }
-
-		public override void OnLoaded() {
-			BossChecklist.DebugConfig = this;
-		}
-
+		
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}

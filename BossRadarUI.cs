@@ -249,13 +249,13 @@ namespace BossChecklist
 						Math.Max(drawColor[i].B - 25, 50),
 						Math.Max((byte)(drawColor[i].A * 1.5f), (byte)75));
 				}
-				color *= drawLOS[i] ? 0.75f : 0.5f;
+				color *= drawLOS[i] ? BossChecklist.ClientConfig.OpacityFloat : BossChecklist.ClientConfig.OpacityFloat - 0.25f;
 				spriteBatch.Draw(tex, outputRect, new Rectangle(0, 0, tempWidth, tempHeight), color);
 
 				//draw Arrow
 				Vector2 stupidOffset = drawRotation[i].ToRotationVector2() * 24f;
 				Vector2 drawPosArrow = ldrawPos + stupidOffset;
-				color = drawLOS[i] ? Color.Green * 0.75f : Color.Red * 0.75f;
+				color = drawLOS[i] ? Color.Green * BossChecklist.ClientConfig.OpacityFloat : Color.Red * BossChecklist.ClientConfig.OpacityFloat;
 				color.A = 150;
 				spriteBatch.Draw(arrowTexture, drawPosArrow, null, color, drawRotation[i], arrowTexture.Bounds.Size() / 2, 1f, SpriteEffects.None, 0f);
 			}

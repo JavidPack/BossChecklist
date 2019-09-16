@@ -274,7 +274,7 @@ namespace BossChecklist
 						if (headBoss.name == "Martian Madness") invasionIcon = ModContent.GetTexture("Terraria/Extra_10");
 						if (headBoss.name == "Pirate Invasion") invasionIcon = ModContent.GetTexture("Terraria/Extra_11");
 						if (headBoss.name == "Pumpkin Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_12");
-						if (headBoss.name == "Old One's Army") invasionIcon = ModContent.GetTexture("Terraria/Extra_79");
+						if (headBoss.name == "Old One's Army") invasionIcon = BossLogUI.GetBossHead(NPCID.DD2LanePortal);
 						if (headBoss.name == "Solar Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerSolar);
 						if (headBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
 						if (headBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
@@ -335,7 +335,7 @@ namespace BossChecklist
 					if (selectedBoss.name == "Martian Madness") invasionIcon = ModContent.GetTexture("Terraria/Extra_10");
 					if (selectedBoss.name == "Pirate Invasion") invasionIcon = ModContent.GetTexture("Terraria/Extra_11");
 					if (selectedBoss.name == "Pumpkin Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_12");
-					if (selectedBoss.name == "Old One's Army") invasionIcon = ModContent.GetTexture("Terraria/Extra_79");
+					if (selectedBoss.name == "Old One's Army") invasionIcon = BossLogUI.GetBossHead(NPCID.DD2LanePortal);
 					if (selectedBoss.name == "Solar Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerSolar);
 					if (selectedBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
 					if (selectedBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
