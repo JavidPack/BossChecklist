@@ -12,8 +12,6 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-// TODO: Kill all npc checklist
-// TODO: Currently have all town npc checklist
 namespace BossChecklist
 {
 	internal class BossChecklist : Mod

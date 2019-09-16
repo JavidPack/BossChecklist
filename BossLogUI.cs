@@ -247,7 +247,7 @@ namespace BossChecklist
 
 				if (headNum != -1) {
 					BossInfo headBoss = BossChecklist.bossTracker.SortedBosses[headNum];
-					if (headBoss.type != BossChecklistType.Event) { 
+					if (headBoss.type != BossChecklistType.Event || headBoss.name == "Lunar Event") { 
 
 						int adjustment = 0;
 						for (int h = 0; h < headBoss.npcIDs.Count; h++) {
@@ -307,7 +307,7 @@ namespace BossChecklist
 					spriteBatch.Draw(NPCTexture, bossPos, snippet, Color.White);
 				}
 
-				if (selectedBoss.type != BossChecklistType.Event) {
+				if (selectedBoss.type != BossChecklistType.Event || selectedBoss.name == "Lunar Event") {
 
 					int adjustment = 0;
 					for (int h = 0; h < selectedBoss.npcIDs.Count; h++) {
@@ -733,6 +733,7 @@ namespace BossChecklist
 				}
 				else {
 					// TODO: Make boxes for event NPC list. Next to the box, a number appears for how many the player/world has killed (banner count)
+					/*
 					int offset = 0;
 					for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
 						int npcID = selectedBoss.npcIDs[i];
@@ -743,6 +744,7 @@ namespace BossChecklist
 						spriteBatch.Draw(NPCTexture, pos, snippet, Color.White);
 						offset += NPCTexture.Height / Main.npcFrameCount[npcID];
 					}
+					*/
 				}
 			}
 

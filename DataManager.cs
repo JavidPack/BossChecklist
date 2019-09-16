@@ -6,7 +6,7 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
-	// TODO: Any way to migrate data from BossAssist save?
+	// Migrating data from BossAssist is possible, but is vastly unecessary. Going to be doing a clean slate for merge.
 	// TODO: Implement "undo" records feature for boss log.
 	public class BossRecord : TagSerializable
 	{

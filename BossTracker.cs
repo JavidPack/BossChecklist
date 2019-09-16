@@ -68,20 +68,12 @@ namespace BossChecklist
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Golem + 0.11f, "Martian Saucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => true, new List<int>() { }),
 			
 			// Events -- Vanilla
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.03f, "Nebula Pillar", () => NPC.downedTowerNebula, new List<int>() { }),
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.02f, "Vortex Pillar", () => NPC.downedTowerVortex, new List<int>() { }),
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Solar Pillar", () => NPC.downedTowerSolar, new List<int>() { }),
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.04f, "Stardust Pillar", () => NPC.downedTowerStardust, new List<int>() { }),
-				// TODO, all other event bosses...Maybe all pillars as 1?
+			BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }),
 			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() {ItemID.GoblinBattleStandard }, "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
 			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe }),
 			BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { }),
 			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }),
 			BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }, "BossChecklist/Resources/BossTextures/EventDD2"),
-				// TODO: track bugged DownedInvasionT1 event separately from vanilla somehow.
-				//new BossInfo(BossChecklistType.Event, "Old One's Army 1", EaterOfWorlds + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT1,  $"After finding the Tavernkeep, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-				//new BossInfo(BossChecklistType.Event, "Old One's Army 2", TheTwins + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT2,  $"After defeating a mechanical boss, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
-				//new BossInfo(BossChecklistType.Event, "Old One's Army 3", Golem + 0.5f, () => true, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3,  $"After defeating Golem, activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]"),
 			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => true, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventBloodMoon"),
 			BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => true, new List<int>() { ItemID.SolarTablet }, "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
 			BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => true, new List<int>() { ItemID.PumpkinMoonMedallion }, "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
@@ -569,7 +561,7 @@ namespace BossChecklist
 					NPCID.BrainScrambler
 				};
 			}
-			if (eventName == "Solar Pillar") {
+			if (eventName == "Lunar Event") {
 				return new List<int>()
 				{
 					NPCID.LunarTowerSolar,
@@ -580,32 +572,20 @@ namespace BossChecklist
 					NPCID.SolarCrawltipedeHead,
 					NPCID.SolarDrakomire,
 					NPCID.SolarDrakomireRider,
-				};
-			}
-			if (eventName == "Vortex Pillar") {
-				return new List<int>()
-				{
+
 					NPCID.LunarTowerVortex,
 					NPCID.VortexHornet,
 					NPCID.VortexHornetQueen,
 					NPCID.VortexLarva,
 					NPCID.VortexRifleman,
 					NPCID.VortexSoldier,
-				};
-			}
-			if (eventName == "Nebula Pillar") {
-				return new List<int>()
-				{
+
 					NPCID.LunarTowerNebula,
 					NPCID.NebulaBeast,
 					NPCID.NebulaBrain,
 					NPCID.NebulaHeadcrab,
 					NPCID.NebulaSoldier,
-				};
-			}
-			if (eventName == "Stardust Pillar") {
-				return new List<int>()
-				{
+
 					NPCID.LunarTowerStardust,
 					NPCID.StardustCellBig,
 					NPCID.StardustJellyfishBig,
