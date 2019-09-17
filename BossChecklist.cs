@@ -256,6 +256,34 @@ namespace BossChecklist
 			}
 		}
 
+		public override void AddRecipes() {
+			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
+				int index = bossTracker.SortedBosses.FindIndex(boss => boss.modSource == orphan.modSource && boss.name == orphan.name);
+				if (index != -1) {
+					switch (orphan.type) {
+						case OrphanType.Loot:
+							foreach (int item in orphan.itemValues) {
+								bossTracker.SortedBosses[index].loot.Add(item);
+							}
+							break;
+						case OrphanType.Collection:
+							foreach (int item in orphan.itemValues) {
+								bossTracker.SortedBosses[index].collection.Add(item);
+							}
+							break;
+						case OrphanType.SpawnItem:
+							foreach (int item in orphan.itemValues) {
+								bossTracker.SortedBosses[index].spawnItem.Add(item);
+							}
+							break;
+					}
+				}
+				else {
+					Logger.Error("BossChecklist Call Error: Could not find " + orphan.name + " from " + orphan.modSource + " to add OrphanInfo to.");
+				}
+			}
+		}
+
 		// Messages:
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
@@ -268,14 +296,6 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					bossTracker.AddBoss(bossname, bossValue, bossDowned);
-					return "Success";
-				}
-				if (message == "AddDespawnMessage") {
-					int bossID = Convert.ToInt32(args[1]);
-					string bossMessage = args[2] as string;
-
-					WorldAssist.ModBossTypes.Add(bossID);
-					WorldAssist.ModBossMessages.Add(bossMessage);
 					return "Success";
 				}
 				else if (message == "AddBossWithInfo") {
@@ -312,6 +332,14 @@ namespace BossChecklist
 				//	// Returns List<Tuple<string, float, int, bool>>: Name, value, bosstype(boss, miniboss, event), downed.
 				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
 				//}
+				else if (message == "AddDespawnMessage") {
+					int bossID = Convert.ToInt32(args[1]);
+					string bossMessage = args[2] as string;
+
+					WorldAssist.ModBossTypes.Add(bossID);
+					WorldAssist.ModBossMessages.Add(bossMessage);
+					return "Success";
+				}
 				else if (message == "AddStatPage") {
 					float BossValue = Convert.ToSingle(args[1]);
 
@@ -333,6 +361,28 @@ namespace BossChecklist
 					if (args.Length > 9) BossTexture = args[9].ToString();
 
 					bossTracker.AddBoss(BossValue, BossID, ModName, BossName, BossDowned, BossSpawn, BossCollect, BossLoot, BossTexture);
+					return "Success";
+				}
+				else if (message == "AddToBossLoot") {
+					string modName = args[1].ToString();
+					string bossName = args[2].ToString();
+					List<int> newLoot = args[3] as List<int>;
+
+					bossTracker.AddToBossLoot(modName, bossName, newLoot);
+				}
+				else if (message == "AddToBossCollection") {
+					string modName = args[1].ToString();
+					string bossName = args[2].ToString();
+					List<int> newLoot = args[3] as List<int>;
+
+					bossTracker.AddToBossCollection(modName, bossName, newLoot);
+				}
+				else if (message == "AddToBossSpawnItems") {
+					string modName = args[1].ToString();
+					string bossName = args[2].ToString();
+					List<int> newLoot = args[3] as List<int>;
+
+					bossTracker.AddToBossSpawnItems(modName, bossName, newLoot);
 				}
 				/*
                 // Will be added in later once some fixes are made and features are introduced

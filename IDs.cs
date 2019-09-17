@@ -9,6 +9,13 @@ namespace BossChecklist
 		Event
 	}
 
+	internal enum OrphanType
+	{
+		Loot,
+		Collection,
+		SpawnItem
+	}
+
 	enum BossChecklistMessageType : byte
 	{
 		RequestHideBoss,

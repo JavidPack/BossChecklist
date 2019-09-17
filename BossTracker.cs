@@ -27,12 +27,14 @@ namespace BossChecklist
 		/// All currently loaded bosses/minibosses/events sorted in progression order.
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
+		internal List<OrphanInfo> ExtraData;
 
 		// TODO: OrphanBosses: Boss info added to other bosses when those bosses aren't loaded yet. Log remaining orphans maybe after load.
 
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
 			InitializeVanillaBosses();
+			ExtraData = new List<OrphanInfo>();
 		}
 
 		private void InitializeVanillaBosses() {
@@ -910,31 +912,18 @@ namespace BossChecklist
 				// Adding a boss to each player
 			}
 		}
-		/*
-	Didnt work out as I had hoped, not completely sure why, but probably not even necessary
 
-internal List<int> BagFirst(List<int> loot)
-{
-	int reserve = 0;
-	foreach (int item in loot)
-	{
-		Item i = new Item();
-		i.SetDefaults(item);
-		if (i.expert || i.Name.Contains("Treasure Bag") || (i.type > ItemID.Count && i.modItem.Name.Contains("Treasure Bag")))
-		{
-			reserve = item;
-			break;
+		internal void AddToBossLoot(string modName, string bossName, List<int> lootList) {
+			ExtraData.Add(new OrphanInfo(OrphanType.Loot, modName, bossName, lootList));
 		}
-	}
-	if (reserve != 0)
-	{
-		loot.Remove(reserve);
-		loot.Insert(reserve, 0);
-	}
 
-	return loot;
-}
-*/
+		internal void AddToBossCollection(string modName, string bossName, List<int> collectionList) {
+			ExtraData.Add(new OrphanInfo(OrphanType.Collection, modName, bossName, collectionList));
+		}
+
+		internal void AddToBossSpawnItems(string modName, string bossName, List<int> spawnItems) {
+			ExtraData.Add(new OrphanInfo(OrphanType.SpawnItem, modName, bossName, spawnItems));
+		}
 
 		internal List<int> SortCollectibles(List<int> collection) {
 			// Sorts the Main 3 Collectibles
@@ -973,43 +962,5 @@ internal List<int> BagFirst(List<int> loot)
 
 			return SortedCollectibles;
 		}
-		/*
-
-		internal void AddSpawnItem(int bType, string bSource, List<int> bLoot)
-		{
-			int index = SortedBosses.FindIndex(x => x.id == bType && x.source == bSource);
-			if (index != -1)
-			{
-				foreach (int item in bLoot)
-				{
-					SortedBosses[index].loot.Add(item);
-				}
-			}
-		}
-
-		internal void AddToLootTable(int bType, string bSource, List<int> bLoot)
-        {
-            int index = SortedBosses.FindIndex(x => x.id == bType && x.source == bSource);
-            if (index != -1)
-            {
-                foreach (int item in bLoot)
-                {
-                    SortedBosses[index].loot.Add(item);
-                }
-            }
-        }
-
-        internal void AddToCollection(int bType, string bSource, List<int> bCollect)
-        {
-            int index = SortedBosses.FindIndex(x => x.id == bType && x.source == bSource);
-            if (index != -1)
-            {
-                foreach (int item in bCollect)
-                {
-                    SortedBosses[index].collection.Add(item);
-                }
-            }
-        }
-		*/
 	}
 }
