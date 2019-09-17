@@ -28,6 +28,7 @@ namespace BossChecklist
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
 		internal List<OrphanInfo> ExtraData;
+		internal bool BossesFinalized = false;
 
 		// TODO: OrphanBosses: Boss info added to other bosses when those bosses aren't loaded yet. Log remaining orphans maybe after load.
 
@@ -81,7 +82,11 @@ namespace BossChecklist
 			BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => true, new List<int>() { ItemID.PumpkinMoonMedallion }, "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
 			BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => true, new List<int>() { ItemID.NaughtyPresent }, "BossChecklist/Resources/BossTextures/EventFrostMoon"),
 			};
+		}
+
+		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
+			BossesFinalized = true;
 		}
 
 		internal protected List<int> SetupLoot(int bossNum) {
@@ -876,25 +881,21 @@ namespace BossChecklist
 		}
 
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-		SortedBosses.Add(new BossInfo(BossChecklistType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
-		SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
+			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
 		}
 
 		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
 			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
-			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 		}
 
 		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
 			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
-			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 		}
 
 		// New system is better
 		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture) {
 			if (!ModContent.TextureExists(texture)) texture = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, null, spawn, SortCollectibles(collect), loot, texture, "No info provided"));
-			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("<<Boss Assist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;

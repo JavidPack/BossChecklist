@@ -5,6 +5,7 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
@@ -282,6 +283,7 @@ namespace BossChecklist
 					Logger.Error("BossChecklist Call Error: Could not find " + orphan.name + " from " + orphan.modSource + " to add OrphanInfo to.");
 				}
 			}
+			bossTracker.FinalizeBossData();
 		}
 
 		// Messages:
@@ -289,8 +291,11 @@ namespace BossChecklist
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
 		// Merge Notes: AddStatPage added, new AddBoss needed.
 		public override object Call(params object[] args) {
+			// TODO: Log message when a mod is using an obsolete Call, urging them to update.
 			try {
 				string message = args[0] as string;
+				if (bossTracker.BossesFinalized)
+					throw new Exception($"BossChecklist Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages un until before AddRecipes.");
 				if (message == "AddBoss") {
 					string bossname = args[1] as string;
 					float bossValue = Convert.ToSingle(args[2]);

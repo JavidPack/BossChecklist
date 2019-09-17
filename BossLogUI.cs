@@ -2054,11 +2054,7 @@ namespace BossChecklist
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
 
-			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses.Count);
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				copiedList.Add(boss);
-			}
-			copiedList.Sort((x, y) => x.progression.CompareTo(y.progression));
+			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses);
 
 			/// Readd Evil Opposites, instead fade out/blacken the non valid type
 
