@@ -1217,6 +1217,7 @@ namespace BossChecklist
 								if (Main.mouseLeft) {
 									recordCooldown = 600;
 									displayRecord = false;
+									// TODO: Display records in chat
 									/*if (Main.dedServ)
 									{
 										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.allBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
@@ -1288,7 +1289,7 @@ namespace BossChecklist
 					}
 				}
 				else if (BossLogUI.SubPageNum == 3) {
-
+					// If another tab option comes to light
 				}
 			}
 		}
@@ -1374,9 +1375,9 @@ namespace BossChecklist
 					filterPanel.RemoveChild(uitext);
 				}
 			}
-			UpdateTableofContents();
 			BossLogVisible = show;
-			if(show)
+			UpdateTableofContents();
+			if (show)
 				Main.playerInventory = false;
 		}
 
@@ -1640,6 +1641,7 @@ namespace BossChecklist
 		}
 
 		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			if (filterPanel.Left.Pixels != -400 - 16 - 120) {
 				filterPanel.Left.Pixels = -400 - 16 - 120;
 				filterPanel.Width.Pixels = 152;
@@ -1663,6 +1665,7 @@ namespace BossChecklist
 		}
 
 		public void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			string rowID = listeningElement.Id.Substring(2, 1);
 			if (rowID == "0") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
@@ -1682,6 +1685,7 @@ namespace BossChecklist
 		}
 		
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			if (listeningElement.Id == "Bosses_Tab") PageNum = FindNext(BossChecklistType.Boss);
 			else if (listeningElement.Id == "MiniBosses_Tab") PageNum = FindNext(BossChecklistType.MiniBoss);
 			else if (listeningElement.Id == "Events_Tab") PageNum = FindNext(BossChecklistType.Event);
@@ -1692,6 +1696,7 @@ namespace BossChecklist
 		}
 
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			// Since it only applies to Boss Icons, the page check is unnecessary
 			if (BossChecklist.BossLogConfig.ResetRecordsBool) {
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationBest = -1;
@@ -1710,6 +1715,7 @@ namespace BossChecklist
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			if (listeningElement.Id == "NextItem") {
 				RecipePageNum++;
 				RecipeShown = 0;
@@ -1728,6 +1734,7 @@ namespace BossChecklist
 		}
 
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			pageTwoItemList.Clear();
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
@@ -1772,12 +1779,14 @@ namespace BossChecklist
 		}
 
 		private void OpenRecord(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			SubPageNum = 0;
 			ResetBothPages();
 			if (PageNum < 0) return;
 		}
 
 		private void OpenSpawn(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			SubPageNum = 1;
 			int TotalRecipes = 0;
 			ResetBothPages();
@@ -1932,6 +1941,7 @@ namespace BossChecklist
 		}
 
 		private void OpenLoot(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			SubPageNum = 2;
 			ResetBothPages();
 			if (PageNum < 0) return;
@@ -2001,6 +2011,7 @@ namespace BossChecklist
 		}
 
 		private void OpenCollect(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			SubPageNum = 2;
 			ResetBothPages();
 			if (PageNum < 0) return;
@@ -2047,6 +2058,7 @@ namespace BossChecklist
 		}
 
 		public void UpdateTableofContents() {
+			if (!bossLogVisible) return;
 			PageNum = -1;
 			ResetBothPages();
 			int nextCheck = 0;
@@ -2128,6 +2140,7 @@ namespace BossChecklist
 		}
 
 		private void UpdateCredits() {
+			if (!bossLogVisible) return;
 			PageNum = -2;
 			ResetBothPages();
 			List<string> optedMods = new List<string>();
@@ -2184,6 +2197,7 @@ namespace BossChecklist
 		}
 
 		private void UpdatePage(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			PageNum = Convert.ToInt32(listeningElement.Id);
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
@@ -2197,6 +2211,7 @@ namespace BossChecklist
 		}
 
 		private void ResetBothPages() {
+			if (!bossLogVisible) return;
 			PageOne.RemoveAllChildren();
 			PageTwo.RemoveAllChildren();
 			ResetPageButtons();
@@ -2242,6 +2257,7 @@ namespace BossChecklist
 		}
 
 		private void ResetPageButtons() {
+			if (!bossLogVisible) return;
 			PageOne.RemoveChild(PrevPage);
 			PageTwo.RemoveChild(NextPage);
 			PageTwo.RemoveChild(toolTipButton);
@@ -2275,6 +2291,7 @@ namespace BossChecklist
 		}
 
 		private void SwapRecordPage(UIMouseEvent evt, UIElement listeningElement) {
+			if (!bossLogVisible) return;
 			if (SubPageNum == 2) {
 				if (AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
 				else OpenCollect(evt, listeningElement);
