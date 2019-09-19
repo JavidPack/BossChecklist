@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
@@ -72,10 +73,8 @@ namespace BossChecklist
 						if (Main.LocalPlayer.HasItem(item)) {
 							int BossIndex = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies.FindIndex(boss => boss.bossName == BossChecklist.bossTracker.SortedBosses[i].name && boss.modName == BossChecklist.bossTracker.SortedBosses[i].modSource);
 							if (BossIndex == -1) continue;
-							if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].loot.FindIndex(x => x.type == item) == -1) {
-								Item newItem = new Item();
-								newItem.SetDefaults(item);
-								Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].loot.Add(newItem);
+							if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].loot.FindIndex(x => x.Type == item) == -1) {
+								Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].loot.Add(new ItemDefinition(item));
 							}
 						}
 					}
@@ -88,10 +87,8 @@ namespace BossChecklist
 						if (Main.LocalPlayer.HasItem(item)) {
 							int BossIndex = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies.FindIndex(boss => boss.bossName == BossChecklist.bossTracker.SortedBosses[i].name && boss.modName == BossChecklist.bossTracker.SortedBosses[i].modSource);
 							if (BossIndex == -1) continue;
-							if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].collectibles.FindIndex(x => x.type == item) == -1) {
-								Item newItem = new Item();
-								newItem.SetDefaults(item);
-								Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].collectibles.Add(newItem);
+							if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].collectibles.FindIndex(x => x.Type == item) == -1) {
+								Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[i].collectibles.Add(new ItemDefinition(item));
 							}
 						}
 					}

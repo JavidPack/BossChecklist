@@ -29,9 +29,7 @@ namespace BossChecklist
 		internal List<BossInfo> SortedBosses;
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
-
-		// TODO: OrphanBosses: Boss info added to other bosses when those bosses aren't loaded yet. Log remaining orphans maybe after load.
-
+		
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
 			InitializeVanillaBosses();
@@ -895,7 +893,7 @@ namespace BossChecklist
 		// New system is better
 		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture) {
 			if (!ModContent.TextureExists(texture)) texture = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
-			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, null, spawn, SortCollectibles(collect), loot, texture, "No info provided"));
+			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, null, spawn, collect, loot, texture, "No info provided"));
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("<<Boss Assist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -924,44 +922,6 @@ namespace BossChecklist
 
 		internal void AddToBossSpawnItems(string modName, string bossName, List<int> spawnItems) {
 			ExtraData.Add(new OrphanInfo(OrphanType.SpawnItem, modName, bossName, spawnItems));
-		}
-
-		internal List<int> SortCollectibles(List<int> collection) {
-			// Sorts the Main 3 Collectibles
-			List<int> SortedCollectibles = new List<int>();
-
-			foreach (int item in collection) {
-				Item i = new Item();
-				i.SetDefaults(item);
-				if (i.createTile > 0 && (i.Name.Contains("Trophy")) || (i.type > ItemID.Count && i.modItem.Name.Contains("Trophy"))) {
-					SortedCollectibles.Add(item);
-					break;
-				}
-			}
-			if (SortedCollectibles.Count == 0) SortedCollectibles.Add(-1); // No Trophy
-			foreach (int item in collection) {
-				Item i = new Item();
-				i.SetDefaults(item);
-				if (i.vanity && (i.Name.Contains("Mask")) || (i.type > ItemID.Count && i.modItem.Name.Contains("Mask"))) {
-					SortedCollectibles.Add(item);
-					break;
-				}
-			}
-			if (SortedCollectibles.Count == 1) SortedCollectibles.Add(-1); // No Mask
-			foreach (int item in collection) {
-				Item i = new Item();
-				i.SetDefaults(item);
-				if (i.createTile > 0 && (i.Name.Contains("Music Box")) || (i.type > ItemID.Count && i.modItem.Name.Contains("Music Box"))) {
-					SortedCollectibles.Add(item);
-					break;
-				}
-			}
-			if (SortedCollectibles.Count == 2) SortedCollectibles.Add(-1); // No Music Box
-			foreach (int item in collection) {
-				if (!SortedCollectibles.Contains(item)) SortedCollectibles.Add(item);
-			}
-
-			return SortedCollectibles;
 		}
 	}
 }

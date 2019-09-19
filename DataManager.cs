@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
@@ -161,16 +162,16 @@ namespace BossChecklist
 		internal string bossName;
 
 		// TODO: Use ItemDefinition
-		internal List<Item> loot;
-		internal List<Item> collectibles;
+		internal List<ItemDefinition> loot;
+		internal List<ItemDefinition> collectibles;
 
 		public static Func<TagCompound, BossCollection> DESERIALIZER = tag => new BossCollection(tag);
 
 		private BossCollection(TagCompound tag) {
 			modName = tag.Get<string>(nameof(modName));
 			bossName = tag.Get<string>(nameof(bossName));
-			loot = tag.Get<List<Item>>(nameof(loot));
-			collectibles = tag.Get<List<Item>>(nameof(collectibles));
+			loot = tag.Get<List<ItemDefinition>>(nameof(loot));
+			collectibles = tag.Get<List<ItemDefinition>>(nameof(collectibles));
 		}
 
 		public BossCollection(string mod, string boss) {

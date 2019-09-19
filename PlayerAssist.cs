@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
-
-// TODO: Bug?? ItemLists for loot and collections added in with add loot/collect calls do not get added to saved data
 
 namespace BossChecklist
 {
 	public class PlayerAssist : ModPlayer
 	{
-		public bool isNewPlayer = true;
-
 		public List<BossRecord> AllBossRecords;
 		public List<BossCollection> BossTrophies;
 
@@ -37,12 +34,11 @@ namespace BossChecklist
 				BossTrophies.Add(new BossCollection(boss.modSource, boss.name));
 				// 2.) setup the item list and check off list for the boss
 				int index = BossTrophies.FindIndex(x => x.modName == boss.modSource && x.bossName == boss.name);
-				BossTrophies[index].loot = new List<Item>();
-				BossTrophies[index].collectibles = new List<Item>();
+				BossTrophies[index].loot = new List<ItemDefinition>();
+				BossTrophies[index].collectibles = new List<ItemDefinition>();
 			}
 
 			// For being able to complete records in Multiplayer
-			//int bossCount = BossChecklist.bossTracker.SortedBosses.Count; ????
 			RecordTimers = new List<int>();
 			BrinkChecker = new List<int>();
 			MaxHealth = new List<int>();
@@ -64,8 +60,7 @@ namespace BossChecklist
 			TagCompound saveData = new TagCompound
 			{
 				{ "Records", AllBossRecords },
-				{ "Collection", BossTrophies },
-				{ "NewPlayer", isNewPlayer }
+				{ "Collection", BossTrophies }
 			};
 			return saveData;
 		}
@@ -88,7 +83,6 @@ namespace BossChecklist
 				if (index == -1) BossTrophies.Add(collection);
 				else BossTrophies[index] = collection;
 			}
-			isNewPlayer = tag.Get<bool>("NewPlayer");
 		}
 
 		public override void clientClone(ModPlayer clientClone) {
@@ -97,9 +91,7 @@ namespace BossChecklist
 			clone.AllBossRecords = AllBossRecords;
 		}
 
-		public static PlayerAssist Get(Player player, Mod mod) {
-			return player.GetModPlayer<PlayerAssist>(mod);
-		}
+		public static PlayerAssist Get(Player player, Mod mod) => player.GetModPlayer<PlayerAssist>(mod);
 
 		public override void OnRespawn(Player player) {
 			// This works both in SP and MP because it records within ModPlayer

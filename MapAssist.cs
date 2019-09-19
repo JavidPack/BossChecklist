@@ -3,12 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+
 /// To prevent corruption searching lag in the future
-
-
-/// ADDITION: Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad aboout percentage evil
-/// ADDITION: Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad aboout percentage evil
-/// ADDITION: Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad aboout percentage evil
+/// TODO? Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad about percentage evil
 
 /*
 

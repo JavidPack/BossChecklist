@@ -252,7 +252,7 @@ namespace BossChecklist
 						int adjustment = 0;
 						for (int h = 0; h < headBoss.npcIDs.Count; h++) {
 							Color maskedHead;
-							if (!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
+							if ((!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || headBoss.hidden) maskedHead = Color.Black;
 							else maskedHead = Color.White;
 
 							if (BossLogUI.GetBossHead(headBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
@@ -265,7 +265,7 @@ namespace BossChecklist
 					else {
 						Texture2D invasionIcon = Main.npcHeadTexture[0];
 						Color maskedHead;
-						if (!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
+						if ((!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || headBoss.hidden) maskedHead = Color.Black;
 						else maskedHead = Color.White;
 
 						if (headBoss.name == "Frost Legion") invasionIcon = ModContent.GetTexture("Terraria/Extra_7");
@@ -295,7 +295,7 @@ namespace BossChecklist
 					Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (bossTexture.Width / 2), pageRect.Y + (pageRect.Height / 2) - (bossTexture.Height / 2), bossTexture.Width, bossTexture.Height);
 					Rectangle cutRect = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
 					Color masked;
-					if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) masked = Color.Black;
+					if ((!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || selectedBoss.hidden) masked = Color.Black;
 					else masked = Color.White;
 					spriteBatch.Draw(bossTexture, posRect, cutRect, masked);
 				}
@@ -312,7 +312,7 @@ namespace BossChecklist
 					int adjustment = 0;
 					for (int h = 0; h < selectedBoss.npcIDs.Count; h++) {
 						Color maskedHead;
-						if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
+						if ((!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || selectedBoss.hidden) maskedHead = Color.Black;
 						else maskedHead = Color.White;
 
 						if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
@@ -326,7 +326,7 @@ namespace BossChecklist
 				else {
 					Texture2D invasionIcon = Main.npcHeadTexture[0];
 					Color maskedHead;
-					if (!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) maskedHead = Color.Black;
+					if ((!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || selectedBoss.hidden) maskedHead = Color.Black;
 					else maskedHead = Color.White;
 					
 					if (selectedBoss.name == "Frost Legion") invasionIcon = ModContent.GetTexture("Terraria/Extra_7");
@@ -784,14 +784,14 @@ namespace BossChecklist
 					// PageNum already corresponds with the index of the saved player data
 
 					Texture2D template = ModContent.GetTexture("BossChecklist/Resources/CollectionTemplate");
-					if (validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.type == validItems[2][itemShown[2]])) {
+					if (validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[2][itemShown[2]])) {
 						template = ModContent.GetTexture("BossChecklist/Resources/CollectionTemplate_NoMusicBox");
 					}
 
 					spriteBatch.Draw(template, new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height), Color.White);
 
 					// Draw Mask
-					if (validItems[1][itemShown[1]] > 0 && Collections.collectibles.Any(x => x.type == validItems[1][itemShown[1]])) {
+					if (validItems[1][itemShown[1]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[1][itemShown[1]])) {
 						Texture2D mask;
 						if (validItems[1][itemShown[1]] < ItemID.Count) {
 							Item newItem = new Item();
@@ -806,7 +806,7 @@ namespace BossChecklist
 						spriteBatch.Draw(mask, posRect, cutRect, Color.White);
 					}
 
-					if (validItems[0][itemShown[0]] > 0 && Collections.collectibles.Any(x => x.type == validItems[0][itemShown[0]])) {
+					if (validItems[0][itemShown[0]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[0][itemShown[0]])) {
 						int offsetX = 0;
 						int offsetY = 0;
 						Main.instance.LoadTiles(240);
@@ -855,7 +855,7 @@ namespace BossChecklist
 					}
 
 					// Draw Music Box
-					if (validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.type == validItems[2][itemShown[2]])) {
+					if (validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[2][itemShown[2]])) {
 						int offsetX = 0;
 						int offsetY = 0;
 						Main.instance.LoadTiles(139);
@@ -1067,7 +1067,7 @@ namespace BossChecklist
 			bool allCollect = false;
 
 			foreach (int loot in sortedBosses[index].loot) {
-				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].loot.Any(x => x.type == loot)) {
+				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].loot.Any(x => x.Type == loot)) {
 					allLoot = true;
 				}
 				else if (loot != sortedBosses[index].loot[0]) {
@@ -1076,7 +1076,7 @@ namespace BossChecklist
 				}
 			}
 			foreach (int collectible in sortedBosses[index].collection) {
-				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].collectibles.Any(x => x.type == collectible)) {
+				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].collectibles.Any(x => x.Type == collectible)) {
 					allCollect = true;
 				}
 				else if (collectible != -1 && collectible != 0) {
@@ -1958,7 +1958,7 @@ namespace BossChecklist
 				if (!expertItem.expert || expertItem.Name.Contains("Treasure Bag")) continue;
 				else {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
+					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
 					lootTable.Id = "loot_" + i;
@@ -1980,7 +1980,7 @@ namespace BossChecklist
 				if (loot.expert || loot.Name.Contains("Treasure Bag")) continue;
 				else {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.type == loot.type), loot.Name, ItemSlot.Context.TrashItem);
+					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem);
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
 					lootTable.Id = "loot_" + i;
@@ -2027,7 +2027,7 @@ namespace BossChecklist
 				collectible.SetDefaults(shortcut.collection[i]);
 
 				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
-				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.type == collectible.type), collectible.Name);
+				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name);
 				collectionTable.Height.Pixels = 50;
 				collectionTable.Width.Pixels = 50;
 				collectionTable.Id = "collect_" + i;
@@ -2056,13 +2056,14 @@ namespace BossChecklist
 
 			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses);
 
-			/// Readd Evil Opposites, instead fade out/blacken the non valid type
-
 			for (int i = 0; i < copiedList.Count; i++) {
 				if (!copiedList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 
-				TableOfContents next = new TableOfContents(copiedList[i].progression, copiedList[i].name, nextCheckBool);
+				string bossName = copiedList[i].name;
+				if (copiedList[i].hidden) bossName = "???";
+
+				TableOfContents next = new TableOfContents(copiedList[i].progression, bossName, nextCheckBool);
 				nextCheckBool = false;
 
 				string bFilter = BossChecklist.BossLogConfig.FilterBosses;

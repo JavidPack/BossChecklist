@@ -301,6 +301,7 @@ namespace BossChecklist
 					float bossValue = Convert.ToSingle(args[2]);
 					Func<bool> bossDowned = args[3] as Func<bool>;
 					bossTracker.AddBoss(bossname, bossValue, bossDowned);
+					
 					return "Success";
 				}
 				else if (message == "AddBossWithInfo") {
@@ -389,32 +390,6 @@ namespace BossChecklist
 
 					bossTracker.AddToBossSpawnItems(modName, bossName, newLoot);
 				}
-				/*
-                // Will be added in later once some fixes are made and features are introduced
-
-				//
-                else if (AddType == "AddLoot")
-                {
-                    string ModName = args[1].ToString();
-                    int BossID = Convert.ToInt32(args[2]);
-                    List<int> BossLoot = args[3] as List<int>;
-                    // This list is for adding on to existing bosses loot drops
-                    setup.AddToLootTable(BossID, ModName, BossLoot);
-                }
-                else if (AddType == "AddCollectibles")
-                {
-                    string ModName = args[1].ToString();
-                    int BossID = Convert.ToInt32(args[2]);
-                    List<int> BossCollect = args[3] as List<int>;
-                    // This list is for adding on to existing bosses loot drops
-                    setup.AddToCollection(BossID, ModName, BossCollect);
-                }
-				//
-                else
-                {
-
-                }
-				*/
 				else {
 					Logger.Error("BossChecklist Call Error: Unknown Message: " + message);
 				}
