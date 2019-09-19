@@ -985,7 +985,7 @@ namespace BossChecklist
 			else {
 				// Tab drawing
 				SpriteEffects effect = SpriteEffects.FlipHorizontally;
-				if (Left.Pixels <= (Main.screenWidth / 2) - 400 - 16) effect = SpriteEffects.None;
+				if (Left.Pixels <= 0) effect = SpriteEffects.None;
 
 				Color color = new Color(153, 199, 255);
 				if (Id == "Bosses_Tab") color = new Color(255, 168, 168);
@@ -1359,40 +1359,40 @@ namespace BossChecklist
 			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			ToCTab.Height.Pixels = 76;
 			ToCTab.Width.Pixels = 32;
-			ToCTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			ToCTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 20;
+			ToCTab.Left.Set(-400 - 16, 0.5f);
+			ToCTab.Top.Set(-250 + 20, 0.5f);
 			ToCTab.Id = "TableOfContents_Tab";
 			ToCTab.OnClick += new MouseEvent(OpenViaTab);
 
 			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			BossTab.Height.Pixels = 76;
 			BossTab.Width.Pixels = 32;
-			BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			BossTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 30 + 76;
+			BossTab.Left.Set(-400 - 16, 0.5f);
+			BossTab.Top.Set(-250 + 30 + 76, 0.5f);
 			BossTab.Id = "Bosses_Tab";
 			BossTab.OnClick += new MouseEvent(OpenViaTab);
 
 			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			MiniBossTab.Height.Pixels = 76;
 			MiniBossTab.Width.Pixels = 32;
-			MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			MiniBossTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 40 + (76 * 2);
+			MiniBossTab.Left.Set(-400 - 16, 0.5f);
+			MiniBossTab.Top.Set(-250 + 40 + (76 * 2), 0.5f);
 			MiniBossTab.Id = "MiniBosses_Tab";
 			MiniBossTab.OnClick += new MouseEvent(OpenViaTab);
 
 			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			EventTab.Height.Pixels = 76;
 			EventTab.Width.Pixels = 32;
-			EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			EventTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 50 + (76 * 3);
+			EventTab.Left.Set(-400 - 16, 0.5f);
+			EventTab.Top.Set(-250 + 50 + (76 * 3), 0.5f);
 			EventTab.Id = "Events_Tab";
 			EventTab.OnClick += new MouseEvent(OpenViaTab);
 
 			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			CreditsTab.Height.Pixels = 76;
 			CreditsTab.Width.Pixels = 32;
-			CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			CreditsTab.Top.Pixels = (Main.screenHeight / 2) - 250 + 60 + (76 * 4);
+			CreditsTab.Left.Set(-400 - 16, 0.5f);
+			CreditsTab.Top.Set(-250 + 60 + (76 * 4), 0.5f);
 			CreditsTab.Id = "Credits_Tab";
 			CreditsTab.OnClick += new MouseEvent(OpenViaTab);
 			
@@ -1445,9 +1445,7 @@ namespace BossChecklist
 			filterPanel.Id = "filterPanel";
 			filterPanel.Height.Pixels = 76;
 			filterPanel.Width.Pixels = 152;
-			filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			filterPanel.Top.Pixels = (Main.screenHeight / 2) - 250 + 30 + 76;
-			
+
 			FilterTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			FilterTab.Height.Pixels = 76;
 			FilterTab.Width.Pixels = 32;
@@ -1574,7 +1572,7 @@ namespace BossChecklist
 					BossLogPanel.visible = false;
 					BookUI.visible = false;
 					Main.playerInventory = true;
-					filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+					filterPanel.Left.Pixels = -400 - 16;
 					foreach (UIText uitext in filterTypes) {
 						filterPanel.RemoveChild(uitext);
 					}
@@ -1591,17 +1589,17 @@ namespace BossChecklist
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			
 			// Updating tabs to proper positions
-			if (PageNum == -2) CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			else CreditsTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
-			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			else BossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
-			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			else MiniBossTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
-			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
-			else EventTab.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - 16;
+			if (PageNum == -2) CreditsTab.Left.Pixels = -400 - 16;
+			else CreditsTab.Left.Pixels = -400 + 800 - 16;
+			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = -400 - 16;
+			else BossTab.Left.Pixels = -400 + 800 - 16;
+			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = -400 - 16;
+			else MiniBossTab.Left.Pixels = -400 + 800 - 16;
+			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = -400 - 16;
+			else EventTab.Left.Pixels = -400 + 800 - 16;
 			
 			if (PageNum != -1) {
-				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+				filterPanel.Left.Pixels = -400 - 16;
 				foreach (UIText uitext in filterTypes) {
 					filterPanel.RemoveChild(uitext);
 				}
@@ -1632,7 +1630,8 @@ namespace BossChecklist
 			PageNum = -1;
 			SubPageNum = 0;
 			BossLogPanel.visible = true;
-			BookUI.visible = true; filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+			BookUI.visible = true;
+			filterPanel.Left.Pixels = -400 - 16;
 			foreach (UIText uitext in filterTypes) {
 				filterPanel.RemoveChild(uitext);
 			}
@@ -1640,8 +1639,8 @@ namespace BossChecklist
 		}
 
 		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
-			if (filterPanel.Left.Pixels != (Main.screenWidth / 2) - 400 - 16 - 120) {
-				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16 - 120;
+			if (filterPanel.Left.Pixels != -400 - 16 - 120) {
+				filterPanel.Left.Pixels = -400 - 16 - 120;
 				filterPanel.Width.Pixels = 152;
 				foreach (BookUI uiimage in filterCheck) {
 					filterPanel.Append(uiimage);
@@ -1651,7 +1650,7 @@ namespace BossChecklist
 				}
 			}
 			else {
-				filterPanel.Left.Pixels = (Main.screenWidth / 2) - 400 - 16;
+				filterPanel.Left.Pixels = -400 - 16;
 				foreach (BookUI uiimage in filterCheck) {
 					filterPanel.RemoveChild(uiimage);
 				}
