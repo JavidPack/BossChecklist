@@ -10,6 +10,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -173,14 +174,12 @@ namespace BossChecklist
 
 	internal class BossLogPanel : UIElement
 	{
-		public static bool visible = false;
 		public static int itemTimer = 300;
 		public static int[] itemShown;
 		public static List<int>[] validItems;
 		public static int headNum = -1;
 
 		public override void Draw(SpriteBatch spriteBatch) {
-			if (!visible) return;
 			BossInfo selectedBoss;
 			if (BossLogUI.PageNum >= 0) selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 			else selectedBoss = BossChecklist.bossTracker.SortedBosses[0];
@@ -964,7 +963,6 @@ namespace BossChecklist
 
 	internal class BookUI : UIImage
 	{
-		public static bool visible = false;
 		Texture2D book;
 
 		public BookUI(Texture2D texture) : base(texture) {
@@ -972,8 +970,6 @@ namespace BossChecklist
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
-			if (!visible || Main.LocalPlayer.dead) return;
-
 			if (BossLogUI.PageNum != -1 && (Id == "filterPanel" || Id == "Filter_Tab")) return;
 
 			if (Id == "TableOfContents_Tab") {
@@ -1002,7 +998,7 @@ namespace BossChecklist
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 				spriteBatch.Draw(pages, pagePos, Color.White);
 			}
-			Main.playerInventory = false;
+			//Main.playerInventory = false;
 
 			if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 				// Needed to remove mousetext from outside sources when using the Boss Log
@@ -1339,7 +1335,50 @@ namespace BossChecklist
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool[] AltPage; // Flip between best and worst
-		public static bool visible = false;
+
+		private bool bossLogVisible;
+		public bool BossLogVisible {
+			get { return bossLogVisible; }
+			set {
+				if (value) {
+					Append(ToCTab);
+					Append(CreditsTab);
+					Append(filterPanel);
+					Append(BossTab);
+					Append(MiniBossTab);
+					Append(EventTab);
+					Append(PageOne);
+					Append(PageTwo);
+				}
+				else {
+					RemoveChild(ToCTab);
+					RemoveChild(CreditsTab);
+					RemoveChild(filterPanel);
+					RemoveChild(BossTab);
+					RemoveChild(MiniBossTab);
+					RemoveChild(EventTab);
+					RemoveChild(PageOne);
+					RemoveChild(PageTwo);
+				}
+				bossLogVisible = value;
+			}
+		}
+
+		public void ToggleBossLog(bool show = true, bool resetPage = false) {
+			resetPage = true; // TODO: update other methods to support this.
+			if (resetPage) {
+				PageNum = -1;
+				SubPageNum = 0;
+				filterPanel.Left.Pixels = -400 - 16;
+				foreach (UIText uitext in filterTypes) {
+					filterPanel.RemoveChild(uitext);
+				}
+			}
+			UpdateTableofContents();
+			BossLogVisible = show;
+			if(show)
+				Main.playerInventory = false;
+		}
 
 		public override void OnInitialize() {
 			Texture2D bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36 * 1, 0, 34, 38));
@@ -1349,8 +1388,9 @@ namespace BossChecklist
 			bosslogbutton.Height.Set(38, 0f);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
-			bosslogbutton.OnClick += new MouseEvent(OpenBossLog);
-			
+			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
+			bosslogbutton.OnRightClick += (a, b) => ToggleBossLog(true, true);
+
 			AltPage = new bool[]
 			{
 				false, false, false, false
@@ -1445,6 +1485,8 @@ namespace BossChecklist
 			filterPanel.Id = "filterPanel";
 			filterPanel.Height.Pixels = 76;
 			filterPanel.Width.Pixels = 152;
+			filterPanel.Left.Set(-400 - 16, 0.5f);
+			filterPanel.Top.Set(-250 + 30 + 76, 0.5f);
 
 			FilterTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			FilterTab.Height.Pixels = 76;
@@ -1542,43 +1584,10 @@ namespace BossChecklist
 			displayRecordButton.Height.Pixels = 32;
 			displayRecordButton.Left.Pixels = PageTwo.Width.Pixels - displayRecordButton.Width.Pixels - 30;
 			displayRecordButton.Top.Pixels = 128;
-
-			Append(ToCTab);
-			Append(CreditsTab);
-			Append(filterPanel);
-			Append(BossTab);
-			Append(MiniBossTab);
-			Append(EventTab);
-
-			Append(PageOne);
-			Append(PageTwo);
 		}
 
 		public override void Update(GameTime gameTime) {
-			visible = Main.playerInventory;
-			if (!visible) RemoveChild(bosslogbutton);
-			else if (!HasChild(bosslogbutton)) Append(bosslogbutton);
-
-			if (BossChecklist.ToggleBossLog.JustPressed) {
-				PageNum = -1;
-				SubPageNum = 0;
-				BossLogPanel.visible = true;
-				BookUI.visible = true;
-				UpdateTableofContents();
-			}
-			else if (BossLogPanel.visible && BookUI.visible) {
-				// Player opens their inventory to close the UI
-				if (Main.LocalPlayer.controlInv || Main.mouseItem.type != 0) {
-					BossLogPanel.visible = false;
-					BookUI.visible = false;
-					Main.playerInventory = true;
-					filterPanel.Left.Pixels = -400 - 16;
-					foreach (UIText uitext in filterTypes) {
-						filterPanel.RemoveChild(uitext);
-					}
-					filterPanel.Width.Pixels = 32;
-				}
-			}
+			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
 
 			// We reset the position of the button to make sure it updates with the screen res
 			bosslogbutton.Left.Pixels = Main.screenWidth - bosslogbutton.Width.Pixels - 190;
@@ -1604,6 +1613,10 @@ namespace BossChecklist
 					filterPanel.RemoveChild(uitext);
 				}
 				filterPanel.Width.Pixels = 32;
+				filterPanel.Top.Precent = 5f; // Throw it off screen.
+			}
+			else {
+				filterPanel.Top.Precent = 0.5f;
 			}
 
 			if (filterPanel.HasChild(filterCheck[0])) {
@@ -1624,18 +1637,6 @@ namespace BossChecklist
 			}
 
 			base.Update(gameTime);
-		}
-
-		private void OpenBossLog(UIMouseEvent evt, UIElement listeningElement) {
-			PageNum = -1;
-			SubPageNum = 0;
-			BossLogPanel.visible = true;
-			BookUI.visible = true;
-			filterPanel.Left.Pixels = -400 - 16;
-			foreach (UIText uitext in filterTypes) {
-				filterPanel.RemoveChild(uitext);
-			}
-			UpdateTableofContents();
 		}
 
 		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
