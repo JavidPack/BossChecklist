@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -11,7 +12,11 @@ namespace BossChecklist
 {
 	public class WorldAssist : ModWorld
 	{
-		public static bool downedBetsy;
+		public static bool downedBloodMoon;
+		public static bool downedFrostMoon;
+		public static bool downedPumpkinMoon;
+		public static bool downedSolarEclipse;
+
 		public static List<bool> ActiveBossesList = new List<bool>();
 		public static List<int> ModBossTypes = new List<int>();
 		public static List<string> ModBossMessages = new List<string>();
@@ -104,22 +109,35 @@ namespace BossChecklist
 			if (!Main.bloodMoon && isBloodMoon) {
 				isBloodMoon = false;
 				EventKey = "The Blood Moon falls past the horizon...";
-				// TODO: BloodMoon defeated
+				if (!downedBloodMoon) {
+					downedBloodMoon = true;
+					if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+				}
 			}
 			else if (!Main.snowMoon && isFrostMoon) {
 				isFrostMoon = false;
 				EventKey = "The Frost Moon melts as the sun rises...";
-				// TODO: FrostMoon defeated
+				if (!downedFrostMoon) {
+					downedFrostMoon = true;
+					if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+				}
 			}
 			else if (!Main.pumpkinMoon && isPumpkinMoon) {
 				isPumpkinMoon = false;
 				EventKey = "The Pumpkin Moon ends its harvest...";
-				// TODO: PumpkinMoon defeated
+				if (!downedPumpkinMoon) {
+					downedPumpkinMoon = true;
+					if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+				}
 			}
 			else if (!Main.eclipse && isEclipse) {
 				isEclipse = false;
 				EventKey = "The solar eclipse has ended... until next time...";
-				// TODO: Eclipse defeated
+				if (!downedSolarEclipse) {
+					downedSolarEclipse = true;
+					if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+				}
+				
 			}
 
 			if (EventKey != "") {
@@ -170,8 +188,11 @@ namespace BossChecklist
 		}
 
 		public override void Initialize() {
-			downedBetsy = false;
-		}
+			downedBloodMoon = false;
+			downedFrostMoon = false;
+			downedPumpkinMoon = false;
+			downedSolarEclipse = false;
+	}
 
 		public bool CheckRealLife(int realNPC) {
 			if (realNPC == -1) return true;
@@ -181,19 +202,56 @@ namespace BossChecklist
 
 		public override TagCompound Save() {
 			var downed = new List<string>();
-			if (downedBetsy) {
-				downed.Add("betsy");
-			}
+			if (downedBloodMoon) downed.Add("bloodmoon");
+			if (downedFrostMoon) downed.Add("frostmoon");
+			if (downedPumpkinMoon) downed.Add("pumpkinmoon");
+			if (downedSolarEclipse) downed.Add("solareclipse");
 
-			return new TagCompound
-			{
-				{"downed", downed}
+			return new TagCompound {
+				["downed"] = downed,
 			};
 		}
 
 		public override void Load(TagCompound tag) {
 			var downed = tag.GetList<string>("downed");
-			downedBetsy = downed.Contains("betsy");
+			downedBloodMoon = downed.Contains("bloodmoon");
+			downedFrostMoon = downed.Contains("frostmoon");
+			downedPumpkinMoon = downed.Contains("pumpkinmoon");
+			downedSolarEclipse = downed.Contains("solareclipse");
+		}
+
+		public override void LoadLegacy(BinaryReader reader) {
+			int loadVersion = reader.ReadInt32();
+			if (loadVersion == 0) {
+				BitsByte flags = reader.ReadByte();
+				downedBloodMoon = flags[0];
+				downedFrostMoon = flags[1];
+				downedPumpkinMoon = flags[2];
+				downedSolarEclipse = flags[3];
+			}
+			else {
+				mod.Logger.WarnFormat($"BossChecklist: Unknown loadVersion: {loadVersion}");
+			}
+		}
+
+		public override void NetSend(BinaryWriter writer) {
+			BitsByte flags = new BitsByte();
+			flags[0] = downedBloodMoon;
+			flags[1] = downedFrostMoon;
+			flags[2] = downedPumpkinMoon;
+			flags[3] = downedSolarEclipse;
+			writer.Write(flags);
+			// BitBytes can have up to 8 values.
+			// BitsByte flags2 = reader.ReadByte();
+		}
+
+		public override void NetReceive(BinaryReader reader) {
+			BitsByte flags = reader.ReadByte();
+			downedBloodMoon = flags[0];
+			downedFrostMoon = flags[1];
+			downedPumpkinMoon = flags[2];
+			downedSolarEclipse = flags[3];
+			// BitBytes can have up to 8 values.
 		}
 	}
 }

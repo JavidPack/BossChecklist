@@ -14,13 +14,6 @@ namespace BossChecklist
 	class NPCAssist : GlobalNPC
 	{
 		public override void NPCLoot(NPC npc) {
-			if (npc.type == NPCID.DD2Betsy) {
-				WorldAssist.downedBetsy = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData); // Immediately inform clients of new world state.
-				}
-			}
-
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
