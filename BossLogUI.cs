@@ -14,17 +14,7 @@ using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-// ✓ Kills
-// ✓ Deaths
-// ✓ Fight Duration
-// ✓ Brink/Vitality
-// ✗ Dodge Counter // Counters work, but the recording does not?
-// ✗ Dodge Timer
-
-// Boss victory messages MAY HAVE TO BE serverside configs
-// Rewrite Collection display to show multiple items, and make it automatically find which ones
 // Eater of Worlds STILL not working properly (has to do with InstancePerEntity)
-// Possibly merged all the checkmarks/boxes into one sprite and same for boss log buttons? Just for less clutter within resources
 
 /* Patch Notes:
  *   + Added hidden mask feature. Bosses dont show what they look like until defeated
@@ -246,44 +236,26 @@ namespace BossChecklist
 
 				if (headNum != -1) {
 					BossInfo headBoss = BossChecklist.bossTracker.SortedBosses[headNum];
-					if (headBoss.type != BossChecklistType.Event || headBoss.name == "Lunar Event") { 
-
+					if (headBoss.type != BossChecklistType.Event || headBoss.name == "Lunar Event") {
+						int headsDisplayed = 0;
 						int adjustment = 0;
+						Color maskedHead = BossLogUI.MaskBoss(headBoss);
 						for (int h = 0; h < headBoss.npcIDs.Count; h++) {
-							Color maskedHead;
-							if ((!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || headBoss.hidden) maskedHead = Color.Black;
-							else maskedHead = Color.White;
-
 							if (BossLogUI.GetBossHead(headBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
+								headsDisplayed++;
 								Texture2D head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
 								spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * adjustment), Main.mouseY + 15, head.Width, head.Height), maskedHead);
 								adjustment++;
 							}
 						}
+						Texture2D noHead = Main.npcHeadTexture[0];
+						if (headsDisplayed == 0) spriteBatch.Draw(noHead, new Rectangle(Main.mouseX + 15 + ((noHead.Width + 2) * adjustment), Main.mouseY + 15, noHead.Width, noHead.Height), maskedHead);
 					}
 					else {
-						Texture2D invasionIcon = Main.npcHeadTexture[0];
-						Color maskedHead;
-						if ((!headBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || headBoss.hidden) maskedHead = Color.Black;
-						else maskedHead = Color.White;
-
-						if (headBoss.name == "Frost Legion") invasionIcon = ModContent.GetTexture("Terraria/Extra_7");
-						if (headBoss.name == "Frost Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_8");
-						if (headBoss.name == "Goblin Army") invasionIcon = ModContent.GetTexture("Terraria/Extra_9");
-						if (headBoss.name == "Martian Madness") invasionIcon = ModContent.GetTexture("Terraria/Extra_10");
-						if (headBoss.name == "Pirate Invasion") invasionIcon = ModContent.GetTexture("Terraria/Extra_11");
-						if (headBoss.name == "Pumpkin Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_12");
-						if (headBoss.name == "Old One's Army") invasionIcon = BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-						if (headBoss.name == "Solar Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerSolar);
-						if (headBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
-						if (headBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
-						if (headBoss.name == "Stardust Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerStardust);
-						if (headBoss.name == "Blood Moon") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-						if (headBoss.name == "Solar Eclipse") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
-
-
-						Rectangle iconpos = new Rectangle(Main.mouseX + 15, Main.mouseY + 15, invasionIcon.Width, invasionIcon.Height);
-						if (invasionIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(invasionIcon, iconpos, maskedHead);
+						Color maskedHead = BossLogUI.MaskBoss(headBoss);
+						Texture2D eventIcon = BossLogUI.GetEventIcon(headBoss.name);
+						Rectangle iconpos = new Rectangle(Main.mouseX + 15, Main.mouseY + 15, eventIcon.Width, eventIcon.Height);
+						if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
 					}
 				}
 			}
@@ -293,10 +265,8 @@ namespace BossChecklist
 					Texture2D bossTexture = ModContent.GetTexture(selectedBoss.pageTexture);
 					Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (bossTexture.Width / 2), pageRect.Y + (pageRect.Height / 2) - (bossTexture.Height / 2), bossTexture.Width, bossTexture.Height);
 					Rectangle cutRect = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
-					Color masked;
-					if ((!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || selectedBoss.hidden) masked = Color.Black;
-					else masked = Color.White;
-					spriteBatch.Draw(bossTexture, posRect, cutRect, masked);
+					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
+					spriteBatch.Draw(bossTexture, posRect, cutRect, maskedHead);
 				}
 				else if (selectedBoss.npcIDs.Count > 0) {
 					Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
@@ -307,43 +277,27 @@ namespace BossChecklist
 				}
 
 				if (selectedBoss.type != BossChecklistType.Event || selectedBoss.name == "Lunar Event") {
-
+					int headsDisplayed = 0;
 					int adjustment = 0;
+					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 					for (int h = 0; h < selectedBoss.npcIDs.Count; h++) {
-						Color maskedHead;
-						if ((!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || selectedBoss.hidden) maskedHead = Color.Black;
-						else maskedHead = Color.White;
-
 						if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
+							headsDisplayed++;
 							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
 							Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
 							spriteBatch.Draw(head, headPos, maskedHead);
 							adjustment++;
 						}
 					}
+					Texture2D noHead = Main.npcHeadTexture[0];
+					Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width - 10 - ((noHead.Width + 2) * adjustment), pageRect.Y + 5, noHead.Width, noHead.Height);
+					if (headsDisplayed == 0) spriteBatch.Draw(noHead, noHeadPos, maskedHead);
 				}
 				else {
-					Texture2D invasionIcon = Main.npcHeadTexture[0];
-					Color maskedHead;
-					if ((!selectedBoss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || selectedBoss.hidden) maskedHead = Color.Black;
-					else maskedHead = Color.White;
-					
-					if (selectedBoss.name == "Frost Legion") invasionIcon = ModContent.GetTexture("Terraria/Extra_7");
-					if (selectedBoss.name == "Frost Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_8");
-					if (selectedBoss.name == "Goblin Army") invasionIcon = ModContent.GetTexture("Terraria/Extra_9");
-					if (selectedBoss.name == "Martian Madness") invasionIcon = ModContent.GetTexture("Terraria/Extra_10");
-					if (selectedBoss.name == "Pirate Invasion") invasionIcon = ModContent.GetTexture("Terraria/Extra_11");
-					if (selectedBoss.name == "Pumpkin Moon") invasionIcon = ModContent.GetTexture("Terraria/Extra_12");
-					if (selectedBoss.name == "Old One's Army") invasionIcon = BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-					if (selectedBoss.name == "Solar Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerSolar);
-					if (selectedBoss.name == "Vortex Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerVortex);
-					if (selectedBoss.name == "Nebula Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerNebula);
-					if (selectedBoss.name == "Stardust Pillar") invasionIcon = BossLogUI.GetBossHead(NPCID.LunarTowerStardust);
-					if (selectedBoss.name == "Blood Moon") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-					if (selectedBoss.name == "Solar Eclipse") invasionIcon = BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
-
-					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - invasionIcon.Width - 10, pageRect.Y + 5, invasionIcon.Width, invasionIcon.Height);
-					if (invasionIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(invasionIcon, iconpos, maskedHead);
+					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
+					Texture2D eventIcon = BossLogUI.GetEventIcon(selectedBoss.name);
+					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width - 10, pageRect.Y + 5, eventIcon.Width, eventIcon.Height);
+					if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
 				}
 
 				string sourceDisplayName = $"[c/9696ff:{selectedBoss.SourceDisplayName}]";
@@ -1167,7 +1121,6 @@ namespace BossChecklist
 			}
 			Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, Main.fontMouseText, textSnippets,
 				new Vector2(2, 15 + 3) + hitbox.TopLeft(), Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out hoveredSnippet, hitbox.Width - (7 * 2), false);
-
 		}
 	}
 
@@ -1376,7 +1329,7 @@ namespace BossChecklist
 			}
 			UpdateTableofContents();
 			BossLogVisible = show;
-			if(show)
+			if (show)
 				Main.playerInventory = false;
 		}
 
@@ -1783,10 +1736,27 @@ namespace BossChecklist
 			ResetBothPages();
 			if (PageNum < 0) return;
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) return;
+
+			pageTwoItemList.Clear();
+			pageTwoItemList.Width.Pixels = 320;
+			pageTwoItemList.Height.Pixels = 110;
+			pageTwoItemList.Top.Pixels = 75;
+
+			// TODO: Fix/implement new scroll system for spawn info.
+
 			FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
-			info.Top.Pixels = 75;
 			info.Width.Pixels = 300;
-			PageTwo.Append(info);
+			pageTwoItemList.Add(info);
+
+			pageTwoScroll.SetView(10f, 100f);
+			pageTwoScroll.Top.Pixels = 105;
+			pageTwoScroll.Left.Pixels = -24;
+			pageTwoScroll.Height.Set(-285f, 0.75f);
+			pageTwoScroll.HAlign = 1f;
+
+			PageTwo.Append(pageTwoScroll);
+			PageTwo.Append(pageTwoItemList);
+			pageTwoItemList.SetScrollbar(pageTwoScroll);
 
 			List<Item> ingredients = new List<Item>();
 			List<int> requiredTiles = new List<int>();
@@ -2285,6 +2255,21 @@ namespace BossChecklist
 		public int FindNext(BossChecklistType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
 
 		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
+
+		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
+
+		public static Texture2D GetEventIcon(string name) {
+			if (name == "Frost Legion") return ModContent.GetTexture("Terraria/Extra_7");
+			if (name == "Frost Moon") return ModContent.GetTexture("Terraria/Extra_8");
+			if (name == "Goblin Army") return ModContent.GetTexture("Terraria/Extra_9");
+			if (name == "Martian Madness") return ModContent.GetTexture("Terraria/Extra_10");
+			if (name == "Pirate Invasion") return ModContent.GetTexture("Terraria/Extra_11");
+			if (name == "Pumpkin Moon") return ModContent.GetTexture("Terraria/Extra_12");
+			if (name == "Old One's Army") return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
+			if (name == "Blood Moon") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
+			if (name == "Solar Eclipse") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
+			else return Main.npcHeadTexture[0];
+		}
 
 		public static int[] GetVanillaBossTrophyPos(int item) {
 			if (item == ItemID.EyeofCthulhuTrophy) return new int[] { 0, 0 }; //Position on tile table, times 3
