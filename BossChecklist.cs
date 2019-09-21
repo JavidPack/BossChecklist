@@ -296,40 +296,88 @@ namespace BossChecklist
 				string message = args[0] as string;
 				if (bossTracker.BossesFinalized)
 					throw new Exception($"BossChecklist Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages un until before AddRecipes.");
-				if (message == "AddBoss") {
-					string bossname = args[1] as string;
-					float bossValue = Convert.ToSingle(args[2]);
-					Func<bool> bossDowned = args[3] as Func<bool>;
-					bossTracker.AddBoss(bossname, bossValue, bossDowned);
-					
+				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons
+					if (args.Length < 7) {
+						bossTracker.AddBoss(
+							args[1] as string, // Boss Name
+							Convert.ToSingle(args[2]), // Prog
+							args[3] as Func<bool>, // Downed
+							args.Length > 4 ? args[4] as string : null, // Info
+							args.Length > 5 ? args[5] as Func<bool> : null // Available
+						);
+					}
+					else {
+						bossTracker.AddBoss(
+							Convert.ToSingle(args[1]), // Prog
+							args[2] as List<int>, // IDs
+							args[3] as string, // Mod Name
+							args[4] as string, // Boss Name
+							args[5] as Func<bool>, // Downed
+							args[6] as List<int>, // Spawn Items
+							args[7] as List<int>, // Collection
+							args[8] as List<int>, // Loot
+							args.Length > 9 ? args[9] as string : null, // Texture
+							args.Length > 10 ? args[10] as string : "No info provided", // Info
+							args.Length > 11 ? args[11] as Func<bool> : null, // Available
+							args.Length > 12 ? args[12] as string : "" // Override Icon Texture
+						);
+					}
 					return "Success";
 				}
-				else if (message == "AddBossWithInfo") {
-					string bossname = args[1] as string;
-					float bossValue = Convert.ToSingle(args[2]);
-					Func<bool> bossDowned = args[3] as Func<bool>;
-					string bossInfo = args[4] as string;
-					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
-					// possible? var assembly = Assembly.GetCallingAssembly();
-					bossTracker.AddBoss(bossname, bossValue, bossDowned, bossInfo, available);
+				else if (message == "AddMiniBoss" || message == "AddMiniBossWithInfo") {
+					if (args.Length < 7) {
+						bossTracker.AddMiniBoss(
+							args[1] as string, // MiniBoss Name
+							Convert.ToSingle(args[2]), // Prog
+							args[3] as Func<bool>, // Downed
+							args.Length > 4 ? args[4] as string : null, // Info
+							args.Length > 5 ? args[5] as Func<bool> : null // Available
+						);
+					}
+					else {
+						bossTracker.AddMiniBoss(
+							Convert.ToSingle(args[1]), // Prog
+							args[2] as List<int>, // IDs
+							args[3] as string, // Mod Name
+							args[4] as string, // MiniBoss Name
+							args[5] as Func<bool>, // Downed
+							args[6] as List<int>, // Spawn Items
+							args[7] as List<int>, // Collection
+							args[8] as List<int>, // Loot
+							args.Length > 9 ? args[9] as string : null, // Texture
+							args.Length > 10 ? args[10] as string : "No info provided", // Info
+							args.Length > 11 ? args[11] as Func<bool> : null, // Available
+							args.Length > 12 ? args[12] as string : "" // Override Icon Texture
+						);
+					}
 					return "Success";
 				}
-				else if (message == "AddMiniBossWithInfo") {
-					string bossname = args[1] as string;
-					float bossValue = Convert.ToSingle(args[2]);
-					Func<bool> bossDowned = args[3] as Func<bool>;
-					string bossInfo = args[4] as string;
-					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
-					bossTracker.AddMiniBoss(bossname, bossValue, bossDowned, bossInfo, available);
-					return "Success";
-				}
-				else if (message == "AddEventWithInfo") {
-					string bossname = args[1] as string;
-					float bossValue = Convert.ToSingle(args[2]);
-					Func<bool> bossDowned = args[3] as Func<bool>;
-					string bossInfo = args[4] as string;
-					Func<bool> available = args.Length == 6 ? args[5] as Func<bool> : null;
-					bossTracker.AddEvent(bossname, bossValue, bossDowned, bossInfo, available);
+				else if (message == "AddEvent" || message == "AddEventWithInfo") {
+					if (args.Length < 7) {
+						bossTracker.AddEvent(
+							args[1] as string, // Event Name
+							Convert.ToSingle(args[2]), // Prog
+							args[3] as Func<bool>, // Downed
+							args.Length > 4 ? args[4] as string : null, // Info
+							args.Length > 5 ? args[5] as Func<bool> : null // Available
+						);
+					}
+					else {
+						bossTracker.AddEvent(
+							Convert.ToSingle(args[1]), // Prog
+							args[2] as List<int>, // IDs
+							args[3] as string, // Mod Name
+							args[4] as string, // Event Name
+							args[5] as Func<bool>, // Downed
+							args[6] as List<int>, // Spawn Items
+							args[7] as List<int>, // Collection
+							args[8] as List<int>, // Loot
+							args.Length > 9 ? args[9] as string : null, // Texture
+							args.Length > 10 ? args[10] as string : "No info provided", // Info
+							args.Length > 11 ? args[11] as Func<bool> : null, // Available
+							args.Length > 12 ? args[12] as string : "" // Override Icon Texture
+						);
+					}
 					return "Success";
 				}
 				// TODO
@@ -339,56 +387,30 @@ namespace BossChecklist
 				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
 				//}
 				else if (message == "AddDespawnMessage") {
-					int bossID = Convert.ToInt32(args[1]);
-					string bossMessage = args[2] as string;
-
-					WorldAssist.ModBossTypes.Add(bossID);
-					WorldAssist.ModBossMessages.Add(bossMessage);
-					return "Success";
-				}
-				else if (message == "AddStatPage") {
-					float BossValue = Convert.ToSingle(args[1]);
-
-					List<int> BossID;
-					if (args[2] is List<int>) BossID = args[2] as List<int>;
-					else BossID = new List<int>() { Convert.ToInt32(args[2]) };
-
-					string ModName = args[3].ToString();
-					string BossName = args[4].ToString();
-					Func<bool> BossDowned = args[5] as Func<bool>;
-
-					List<int> BossSpawn;
-					if (args[6] is List<int>) BossSpawn = args[6] as List<int>;
-					else BossSpawn = new List<int>() { Convert.ToInt32(args[6]) };
-
-					List<int> BossCollect = args[7] as List<int>;
-					List<int> BossLoot = args[8] as List<int>;
-					string BossTexture = "";
-					if (args.Length > 9) BossTexture = args[9].ToString();
-
-					bossTracker.AddBoss(BossValue, BossID, ModName, BossName, BossDowned, BossSpawn, BossCollect, BossLoot, BossTexture);
+					WorldAssist.ModBossTypes.Add(Convert.ToInt32(args[1]));
+					WorldAssist.ModBossMessages.Add(args[2] as string);
 					return "Success";
 				}
 				else if (message == "AddToBossLoot") {
-					string modName = args[1].ToString();
-					string bossName = args[2].ToString();
-					List<int> newLoot = args[3] as List<int>;
-
-					bossTracker.AddToBossLoot(modName, bossName, newLoot);
+					bossTracker.AddToBossCollection(
+						args[1].ToString(), // Mod Name
+						args[2].ToString(), // Boss Name
+						args[3] as List<int> // Loot Items List
+					);
 				}
 				else if (message == "AddToBossCollection") {
-					string modName = args[1].ToString();
-					string bossName = args[2].ToString();
-					List<int> newLoot = args[3] as List<int>;
-
-					bossTracker.AddToBossCollection(modName, bossName, newLoot);
+					bossTracker.AddToBossCollection(
+						args[1].ToString(), // Mod Name
+						args[2].ToString(), // Boss Name
+						args[3] as List<int> // Collection Items List
+					);
 				}
 				else if (message == "AddToBossSpawnItems") {
-					string modName = args[1].ToString();
-					string bossName = args[2].ToString();
-					List<int> newLoot = args[3] as List<int>;
-
-					bossTracker.AddToBossSpawnItems(modName, bossName, newLoot);
+					bossTracker.AddToBossSpawnItems(
+						args[1].ToString(), // Mod Name
+						args[2].ToString(), // Boss Name
+						args[3] as List<int> // Spawn Items List
+					);
 				}
 				else {
 					Logger.Error("BossChecklist Call Error: Unknown Message: " + message);

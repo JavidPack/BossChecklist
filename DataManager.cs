@@ -160,8 +160,7 @@ namespace BossChecklist
 	{
 		internal string modName;
 		internal string bossName;
-
-		// TODO: Use ItemDefinition
+		
 		internal List<ItemDefinition> loot;
 		internal List<ItemDefinition> collectibles;
 

@@ -16,6 +16,7 @@ namespace BossChecklist
 		internal List<int> loot;
 		internal List<int> collection;
 		internal string pageTexture;
+		internal string overrideIconTexture;
 
 		internal string info;
 		internal Func<bool> available;
@@ -24,7 +25,7 @@ namespace BossChecklist
 
 		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
-		internal BossInfo(BossChecklistType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info) {
+		internal BossInfo(BossChecklistType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string overrideIconTexture = "") {
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
@@ -39,7 +40,14 @@ namespace BossChecklist
 			this.pageTexture = pageTexture;
 			if (this.pageTexture == null || !Terraria.ModLoader.ModContent.TextureExists(this.pageTexture)) {
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
-				BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} missing");
+				BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
+			}
+			this.overrideIconTexture = overrideIconTexture;
+			if ((this.overrideIconTexture == null || !ModContent.TextureExists(this.pageTexture)) && this.overrideIconTexture != "") {
+				// TODO
+				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
+				this.overrideIconTexture = "Terraria/NPC_Head_0";
+				BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
 			}
 			this.info = info;
 			this.hidden = false;

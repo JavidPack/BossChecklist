@@ -891,9 +891,8 @@ namespace BossChecklist
 		}
 
 		// New system is better
-		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture) {
-			if (!ModContent.TextureExists(texture)) texture = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
-			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, null, spawn, collect, loot, texture, "No info provided"));
+		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("<<Boss Assist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -901,7 +900,47 @@ namespace BossChecklist
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
 			Console.Write(name);
 			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(" to the boss list!");
+			Console.Write(" to the boss log!");
+			Console.WriteLine();
+			Console.ResetColor();
+			if (BossChecklist.ServerCollectedRecords != null) {
+				for (int i = 0; i < 255; i++) {
+					BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
+				}
+				// Adding a boss to each player
+			}
+		}
+
+		internal void AddMiniBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(BossChecklistType.MiniBoss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
+			Console.ForegroundColor = ConsoleColor.DarkYellow;
+			Console.Write("<<Boss Assist>> ");
+			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.Write(source + " has added ");
+			Console.ForegroundColor = ConsoleColor.DarkMagenta;
+			Console.Write(name);
+			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.Write(" to the boss log!");
+			Console.WriteLine();
+			Console.ResetColor();
+			if (BossChecklist.ServerCollectedRecords != null) {
+				for (int i = 0; i < 255; i++) {
+					BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
+				}
+				// Adding a boss to each player
+			}
+		}
+
+		internal void AddEvent(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(BossChecklistType.Event, val, source, name, id, down, available, spawn, collect, loot, texture, info, iconTexture));
+			Console.ForegroundColor = ConsoleColor.DarkYellow;
+			Console.Write("<<Boss Assist>> ");
+			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.Write(source + " has added ");
+			Console.ForegroundColor = ConsoleColor.DarkMagenta;
+			Console.Write(name);
+			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.Write(" to the boss log!");
 			Console.WriteLine();
 			Console.ResetColor();
 			if (BossChecklist.ServerCollectedRecords != null) {
