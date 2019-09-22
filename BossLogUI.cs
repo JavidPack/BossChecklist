@@ -35,6 +35,8 @@ namespace BossChecklist
 	{
 		internal string buttonType;
 		internal Texture2D texture;
+		internal int cycleFrame = 0;
+		internal bool slowDown = true;
 
 		public BossAssistButton(Texture2D texture, string type) : base(texture) {
 			buttonType = type;
@@ -45,7 +47,7 @@ namespace BossChecklist
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 stringAdjust = Main.fontMouseText.MeasureString(buttonType);
 			Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3), innerDimensions.Y - 24);
-
+			
 			base.DrawSelf(spriteBatch);
 
 			// Draw the Boss Log Color
@@ -58,8 +60,22 @@ namespace BossChecklist
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
 				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), source, coverColor);
-			}
 
+				/*
+				TODO? May recycle for later use
+				 
+				slowDown = !slowDown;
+				if (slowDown) cycleFrame++;
+				if (cycleFrame == 19) cycleFrame = 0;
+
+				if (BossLogUI.RecordingStats && !IsMouseHovering) {
+					Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder2");
+					source = new Rectangle(0, 40 * cycleFrame, 34, 38);
+					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
+				}
+				*/
+			}
+			
 			if (IsMouseHovering) {
 				BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonType, pos, Color.White);
@@ -1252,7 +1268,7 @@ namespace BossChecklist
 	class BossLogUI : UIState
 	{
 		public BossAssistButton bosslogbutton;
-		
+
 		public BossLogPanel PageOne;
 		public BossLogPanel PageTwo;
 
@@ -1290,7 +1306,7 @@ namespace BossChecklist
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool[] AltPage; // Flip between best and worst
-
+		
 		private bool bossLogVisible;
 		public bool BossLogVisible {
 			get { return bossLogVisible; }
@@ -1320,7 +1336,7 @@ namespace BossChecklist
 		}
 
 		public void ToggleBossLog(bool show = true, bool resetPage = false) {
-			resetPage = true; // TODO: update other methods to support this.
+			//resetPage = true; // TODO: update other methods to support this.
 			if (resetPage) {
 				PageNum = -1;
 				SubPageNum = 0;
@@ -1335,8 +1351,21 @@ namespace BossChecklist
 				Main.playerInventory = false;
 		}
 
+		public void ToggleRecording() {
+			PlayerAssist myModPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			myModPlayer.RecordingStats = !myModPlayer.RecordingStats;
+			if (myModPlayer.RecordingStats) {
+				Main.NewText("Boss Log records can bet set!", Color.Green);
+				bosslogbutton.SetImage(CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38)));
+			}
+			else {
+				Main.NewText("Boss Log records will NOT change!", Color.Red);
+				bosslogbutton.SetImage(CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38)));
+			}
+		}
+
 		public override void OnInitialize() {
-			Texture2D bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36 * 1, 0, 34, 38));
+			Texture2D bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38));
 			bosslogbutton = new BossAssistButton(bookTexture, "Boss Log");
 			bosslogbutton.Id = "OpenUI";
 			bosslogbutton.Width.Set(34, 0f);
@@ -1344,7 +1373,7 @@ namespace BossChecklist
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
-			bosslogbutton.OnRightClick += (a, b) => ToggleBossLog(true, true);
+			bosslogbutton.OnRightClick += (a, b) => ToggleRecording();
 
 			AltPage = new bool[]
 			{
@@ -2104,8 +2133,8 @@ namespace BossChecklist
 			ResetBothPages();
 			List<string> optedMods = new List<string>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") // TODO: find a way to get source mod from old integrations without necessitating mod updates.
-				{
+				if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") { 
+					// TODO: find a way to get source mod from old integrations without necessitating mod updates.
 					string sourceDisplayName = boss.SourceDisplayName;
 					if (!optedMods.Contains(sourceDisplayName)) {
 						optedMods.Add(sourceDisplayName);

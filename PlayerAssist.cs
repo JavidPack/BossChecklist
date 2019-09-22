@@ -13,6 +13,8 @@ namespace BossChecklist
 		public List<BossRecord> AllBossRecords;
 		public List<BossCollection> BossTrophies;
 
+		public bool RecordingStats;
+
 		public List<int> RecordTimers;
 		public List<int> BrinkChecker;
 		public List<int> MaxHealth;
@@ -21,6 +23,8 @@ namespace BossChecklist
 		public List<int> AttackCounter;
 
 		public override void Initialize() {
+			RecordingStats = true;
+
 			AllBossRecords = new List<BossRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				AllBossRecords.Add(new BossRecord(boss.modSource, boss.name));

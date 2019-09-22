@@ -90,6 +90,7 @@ namespace BossChecklist
 		}
 
 		public void CheckRecords(NPC npc, Player player, PlayerAssist modplayer) {
+			if (!player.GetModPlayer<PlayerAssist>().RecordingStats) return; // RecordingStats must be enabled!
 			int recordIndex = ListedBossNum(npc);
 			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
 			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
@@ -173,7 +174,7 @@ namespace BossChecklist
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
 
-				if (!player.active || !npc.playerInteraction[i]) continue; // Players must be active AND have interacted with the boss
+				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue; // Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				if (Main.netMode == NetmodeID.Server) {
 					List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
@@ -194,7 +195,7 @@ namespace BossChecklist
 
 					//
 					//
-					// TO DO: Make sure to check if the old and new records are -1/0 or "undefined"
+					// TODO: Make sure to check if the old and new records are -1/0 or "undefined"
 					//
 					//
 
