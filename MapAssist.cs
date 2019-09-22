@@ -9,7 +9,7 @@ using Terraria.ID;
 
 /*
 
-	Ye fabled Crash regaurding the Map. Unsure if fixed now but just in case it isnt:
+	Ye fabled Crash regaurding the Map. Unsure if fixed now but just in case it isnt (Seems to happen in Multiplayer):
 	
 	Index was out of range. Must be non-negative and less than the size of the collection.
 	Parameter name: index

@@ -191,14 +191,6 @@ namespace BossChecklist
 						healthLossLastPercent = (int)(((double)modPlayer.BrinkChecker[recordIndex] / modPlayer.MaxHealth[recordIndex]) * 100),
 					};
 
-					// Compare the records
-
-					//
-					//
-					// TODO: Make sure to check if the old and new records are -1/0 or "undefined"
-					//
-					//
-
 					RecordID specificRecord = RecordID.None;
 
 					Console.WriteLine(newRecord.durationLast + " vs " + oldRecord.durationBest);
