@@ -241,9 +241,10 @@ namespace BossChecklist
 						int adjustment = 0;
 						Color maskedHead = BossLogUI.MaskBoss(headBoss);
 						for (int h = 0; h < headBoss.npcIDs.Count; h++) {
-							if (BossLogUI.GetBossHead(headBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
+							Texture2D head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
+							if (headBoss.overrideIconTexture != "") head = ModContent.GetTexture(headBoss.overrideIconTexture);
+							if (head != Main.npcHeadTexture[0]) {
 								headsDisplayed++;
-								Texture2D head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
 								spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * adjustment), Main.mouseY + 15, head.Width, head.Height), maskedHead);
 								adjustment++;
 							}
@@ -253,7 +254,7 @@ namespace BossChecklist
 					}
 					else {
 						Color maskedHead = BossLogUI.MaskBoss(headBoss);
-						Texture2D eventIcon = BossLogUI.GetEventIcon(headBoss.name);
+						Texture2D eventIcon = BossLogUI.GetEventIcon(headBoss);
 						Rectangle iconpos = new Rectangle(Main.mouseX + 15, Main.mouseY + 15, eventIcon.Width, eventIcon.Height);
 						if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
 					}
@@ -281,9 +282,10 @@ namespace BossChecklist
 					int adjustment = 0;
 					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 					for (int h = 0; h < selectedBoss.npcIDs.Count; h++) {
+						Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
+						if (selectedBoss.overrideIconTexture != "") head = ModContent.GetTexture(selectedBoss.overrideIconTexture);
 						if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
 							headsDisplayed++;
-							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
 							Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
 							spriteBatch.Draw(head, headPos, maskedHead);
 							adjustment++;
@@ -295,7 +297,7 @@ namespace BossChecklist
 				}
 				else {
 					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
-					Texture2D eventIcon = BossLogUI.GetEventIcon(selectedBoss.name);
+					Texture2D eventIcon = BossLogUI.GetEventIcon(selectedBoss);
 					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width - 10, pageRect.Y + 5, eventIcon.Width, eventIcon.Height);
 					if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
 				}
@@ -2254,20 +2256,21 @@ namespace BossChecklist
 
 		public int FindNext(BossChecklistType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
 
-		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
-
 		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
 
-		public static Texture2D GetEventIcon(string name) {
-			if (name == "Frost Legion") return ModContent.GetTexture("Terraria/Extra_7");
-			if (name == "Frost Moon") return ModContent.GetTexture("Terraria/Extra_8");
-			if (name == "Goblin Army") return ModContent.GetTexture("Terraria/Extra_9");
-			if (name == "Martian Madness") return ModContent.GetTexture("Terraria/Extra_10");
-			if (name == "Pirate Invasion") return ModContent.GetTexture("Terraria/Extra_11");
-			if (name == "Pumpkin Moon") return ModContent.GetTexture("Terraria/Extra_12");
-			if (name == "Old One's Army") return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-			if (name == "Blood Moon") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-			if (name == "Solar Eclipse") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
+		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
+
+		public static Texture2D GetEventIcon(BossInfo boss) {
+			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") return BossChecklist.instance.GetTexture(boss.overrideIconTexture);
+			if (boss.name == "Frost Legion") return ModContent.GetTexture("Terraria/Extra_7");
+			if (boss.name == "Frost Moon") return ModContent.GetTexture("Terraria/Extra_8");
+			if (boss.name == "Goblin Army") return ModContent.GetTexture("Terraria/Extra_9");
+			if (boss.name == "Martian Madness") return ModContent.GetTexture("Terraria/Extra_10");
+			if (boss.name == "Pirate Invasion") return ModContent.GetTexture("Terraria/Extra_11");
+			if (boss.name == "Pumpkin Moon") return ModContent.GetTexture("Terraria/Extra_12");
+			if (boss.name == "Old One's Army") return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
+			if (boss.name == "Blood Moon") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
+			if (boss.name == "Solar Eclipse") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
 			else return Main.npcHeadTexture[0];
 		}
 
