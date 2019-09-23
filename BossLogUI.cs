@@ -1168,7 +1168,7 @@ namespace BossChecklist
 
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 stringAdjust = Main.fontMouseText.MeasureString(buttonString);
-			Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3) + Width.Pixels / 3, innerDimensions.Y - 10);
+			Vector2 pos = new Vector2(innerDimensions.X + ((Width.Pixels - stringAdjust.X) / 2) - 12, innerDimensions.Y - 10);
 			if (buttonString != "Disclaimer" && buttonString != "recordAlts") {
 				DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonString, pos, Color.Gold);
 			}
@@ -1244,6 +1244,18 @@ namespace BossChecklist
 							if (IsMouseHovering) Main.hoverItemName = "Click to see your 'Best' records" +
 																	"\nRecords are shown as your worst compared to your last fight";
 						}
+					}
+				}
+				else if (BossLogUI.SubPageNum == 1) {
+					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+						Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
+						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
+						if (IsMouseHovering) Main.hoverItemName = "Click to read more info";
+					}
+					else {
+						Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
+						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
+						if (IsMouseHovering) Main.hoverItemName = "Click to view spawn item recipes";
 					}
 				}
 				else if (BossLogUI.SubPageNum == 2) {
@@ -1344,8 +1356,8 @@ namespace BossChecklist
 				foreach (UIText uitext in filterTypes) {
 					filterPanel.RemoveChild(uitext);
 				}
+				UpdateTableofContents();
 			}
-			UpdateTableofContents();
 			BossLogVisible = show;
 			if (show)
 				Main.playerInventory = false;
@@ -1355,11 +1367,11 @@ namespace BossChecklist
 			PlayerAssist myModPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			myModPlayer.RecordingStats = !myModPlayer.RecordingStats;
 			if (myModPlayer.RecordingStats) {
-				Main.NewText("Boss Log records can bet set!", Color.Green);
+				Main.NewText("<Boss Log> New records will be updated!", Color.Green);
 				bosslogbutton.SetImage(CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38)));
 			}
 			else {
-				Main.NewText("Boss Log records will NOT change!", Color.Red);
+				Main.NewText("<Boss Log> New records will NOT update!", Color.Red);
 				bosslogbutton.SetImage(CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38)));
 			}
 		}
@@ -1533,14 +1545,14 @@ namespace BossChecklist
 			recordButton.OnClick += new MouseEvent(OpenRecord);
 			recordButton.OnRightDoubleClick += new MouseEvent(ResetStats);
 
-			spawnButton = new SubpageButton("Spawn Item");
+			spawnButton = new SubpageButton("Spawn Info");
 			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			spawnButton.Height.Pixels = 25;
 			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
 			spawnButton.Top.Pixels = 15;
 			spawnButton.OnClick += new MouseEvent(OpenSpawn);
 
-			lootButton = new SubpageButton("Loot Table");
+			lootButton = new SubpageButton("Loot & Collection");
 			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2 - 16;
@@ -1572,7 +1584,7 @@ namespace BossChecklist
 
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
-
+			
 			// We reset the position of the button to make sure it updates with the screen res
 			bosslogbutton.Left.Pixels = Main.screenWidth - bosslogbutton.Width.Pixels - 190;
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
@@ -1767,168 +1779,173 @@ namespace BossChecklist
 			ResetBothPages();
 			if (PageNum < 0) return;
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) return;
+			if (AltPage[SubPageNum]) { // || BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count == 0
+				pageTwoItemList.Clear();
+				pageTwoItemList.Width.Pixels = 320;
+				pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
+				pageTwoItemList.Top.Pixels = 100;
 
-			pageTwoItemList.Clear();
-			pageTwoItemList.Width.Pixels = 320;
-			pageTwoItemList.Height.Pixels = 110;
-			pageTwoItemList.Top.Pixels = 75;
+				// TODO: Fix/implement new scroll system for spawn info.
 
-			// TODO: Fix/implement new scroll system for spawn info.
+				FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
+				info.Width.Pixels = 300;
+				pageTwoItemList.Add(info);
 
-			FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
-			info.Width.Pixels = 300;
-			pageTwoItemList.Add(info);
+				pageTwoScroll.SetView(10f, 100f);
+				pageTwoScroll.Top.Pixels = 305;
+				pageTwoScroll.Left.Pixels = -24;
+				pageTwoScroll.Height.Set(-285f, 0.75f);
+				pageTwoScroll.HAlign = 1f;
 
-			pageTwoScroll.SetView(10f, 100f);
-			pageTwoScroll.Top.Pixels = 105;
-			pageTwoScroll.Left.Pixels = -24;
-			pageTwoScroll.Height.Set(-285f, 0.75f);
-			pageTwoScroll.HAlign = 1f;
-
-			PageTwo.Append(pageTwoScroll);
-			PageTwo.Append(pageTwoItemList);
-			pageTwoItemList.SetScrollbar(pageTwoScroll);
-
-			List<Item> ingredients = new List<Item>();
-			List<int> requiredTiles = new List<int>();
-			string recipeMod = "Vanilla";
-			//List<Recipe> recipes = Main.recipe.ToList();
-			Item spawn = new Item();
-			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
-				RecipeFinder finder = new RecipeFinder();
-				finder.SetResult(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
-
-				foreach (Recipe recipe in finder.SearchRecipes()) {
-					if (TotalRecipes == RecipeShown) {
-						foreach (Item item in recipe.requiredItem) ingredients.Add(item);
-						foreach (int tile in recipe.requiredTile) {
-							if (tile != -1 && tile != 0) requiredTiles.Add(tile);
-						}
-						if (recipe is ModRecipe modRecipe) {
-							recipeMod = modRecipe.mod.DisplayName;
-						}
-					}
-					TotalRecipes++;
+				//PageTwo.Append(pageTwoScroll);
+				PageTwo.Append(pageTwoItemList);
+				//pageTwoItemList.SetScrollbar(pageTwoScroll);
+			}
+			if (!AltPage[SubPageNum]) { // || BossChecklist.bossTracker.SortedBosses[PageNum].info == "No info provided"
+				List<Item> ingredients = new List<Item>();
+				List<int> requiredTiles = new List<int>();
+				string recipeMod = "Vanilla";
+				//List<Recipe> recipes = Main.recipe.ToList();
+				Item spawn = new Item();
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count == 0) {
+					UIText noItems = new UIText("This boss cannot be spawned from an item.");
 				}
-				spawn.SetDefaults(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
+					RecipeFinder finder = new RecipeFinder();
+					finder.SetResult(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
 
-				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
-				spawnItemSlot.Height.Pixels = 50;
-				spawnItemSlot.Width.Pixels = 50;
-				spawnItemSlot.Top.Pixels = 225;
-				spawnItemSlot.Left.Pixels = 33 + (56 * 2);
-				PageTwo.Append(spawnItemSlot);
-
-				int row = 0;
-				int col = 0;
-				for (int k = 0; k < ingredients.Count; k++) {
-					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem);
-					ingList.Height.Pixels = 50;
-					ingList.Width.Pixels = 50;
-					ingList.Top.Pixels = 225 + (56 * (row + 1));
-					ingList.Left.Pixels = 33 + (56 * col);
-					PageTwo.Append(ingList);
-					col++;
-					if (k == 4 || k == 9) {
-						if (ingList.item.type == 0) break;
-						col = 0;
-						row++;
-					}
-				}
-
-				Item craft = new Item();
-				if (ingredients.Count > 0 && requiredTiles.Count == 0) {
-					craft.SetDefaults(ItemID.PowerGlove);
-
-					LogItemSlot craftItem = new LogItemSlot(craft, false, "By Hand", ItemSlot.Context.EquipArmorVanity);
-					craftItem.Height.Pixels = 50;
-					craftItem.Width.Pixels = 50;
-					craftItem.Top.Pixels = 225 + (56 * (row + 2));
-					craftItem.Left.Pixels = 33;
-					PageTwo.Append(craftItem);
-				}
-				else if (requiredTiles.Count > 0) {
-					for (int l = 0; l < requiredTiles.Count; l++) {
-						if (requiredTiles[l] == -1) break; // Prevents extra empty slots from being created
-						LogItemSlot tileList;
-						if (requiredTiles[l] == 26) {
-							craft.SetDefaults(0);
-							string altarType;
-							if (WorldGen.crimson) altarType = "Crimson Altar";
-							else altarType = "Demon Altar";
-							tileList = new LogItemSlot(craft, false, altarType, ItemSlot.Context.EquipArmorVanity);
-						}
-						else {
-							for (int m = 0; m < ItemLoader.ItemCount; m++) {
-								craft.SetDefaults(m);
-								if (craft.createTile == requiredTiles[l]) break;
+					foreach (Recipe recipe in finder.SearchRecipes()) {
+						if (TotalRecipes == RecipeShown) {
+							foreach (Item item in recipe.requiredItem) ingredients.Add(item);
+							foreach (int tile in recipe.requiredTile) {
+								if (tile != -1 && tile != 0) requiredTiles.Add(tile);
 							}
-							tileList = new LogItemSlot(craft, false, craft.HoverName, ItemSlot.Context.EquipArmorVanity);
+							if (recipe is ModRecipe modRecipe) {
+								recipeMod = modRecipe.mod.DisplayName;
+							}
 						}
-						tileList.Height.Pixels = 50;
-						tileList.Width.Pixels = 50;
-						tileList.Top.Pixels = 225 + (56 * (row + 2));
-						tileList.Left.Pixels = 33 + (56 * l);
-						PageTwo.Append(tileList);
-						if (requiredTiles[l] == 26) {
-							Texture2D altarTexture = BossChecklist.instance.GetTexture("Resources/Demon_Altar");
-							if (WorldGen.crimson) altarTexture = BossChecklist.instance.GetTexture("Resources/Crimson_Altar");
-							UIImage altar = new UIImage(altarTexture);
-							altar.Height.Pixels = 50;
-							altar.Width.Pixels = 50;
-							altar.ImageScale = 0.75f;
-							altar.Top.Pixels = tileList.Top.Pixels + tileList.Height.Pixels / 3 * 0.45f;
-							altar.Left.Pixels = tileList.Left.Pixels + tileList.Width.Pixels / 3 * 0.15f;
-							PageTwo.Append(altar);
+						TotalRecipes++;
+					}
+					spawn.SetDefaults(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
+
+					LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
+					spawnItemSlot.Height.Pixels = 50;
+					spawnItemSlot.Width.Pixels = 50;
+					spawnItemSlot.Top.Pixels = 105;
+					spawnItemSlot.Left.Pixels = 33 + (56 * 2);
+					PageTwo.Append(spawnItemSlot);
+
+					int row = 0;
+					int col = 0;
+					for (int k = 0; k < ingredients.Count; k++) {
+						LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem);
+						ingList.Height.Pixels = 50;
+						ingList.Width.Pixels = 50;
+						ingList.Top.Pixels = 105 + (56 * (row + 1));
+						ingList.Left.Pixels = 33 + (56 * col);
+						PageTwo.Append(ingList);
+						col++;
+						if (k == 4 || k == 9) {
+							if (ingList.item.type == 0) break;
+							col = 0;
+							row++;
 						}
 					}
-				}
 
-				if (RecipePageNum > 0) {
-					Texture2D prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
-					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "");
-					PrevItem.Id = "PrevItem";
-					PrevItem.Top.Pixels = 240;
-					PrevItem.Left.Pixels = 125;
-					PrevItem.Width.Pixels = 14;
-					PrevItem.Height.Pixels = 20;
-					PrevItem.OnClick += new MouseEvent(ChangeSpawnItem);
-					PageTwo.Append(PrevItem);
-				}
+					Item craft = new Item();
+					if (ingredients.Count > 0 && requiredTiles.Count == 0) {
+						craft.SetDefaults(ItemID.PowerGlove);
 
-				if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-					Texture2D nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
-					BossAssistButton NextItem = new BossAssistButton(nextTexture, "");
-					NextItem.Id = "NextItem";
-					NextItem.Top.Pixels = 240;
-					NextItem.Left.Pixels = 203;
-					NextItem.Width.Pixels = 14;
-					NextItem.Height.Pixels = 20;
-					NextItem.OnClick += new MouseEvent(ChangeSpawnItem);
-					PageTwo.Append(NextItem);
-				}
+						LogItemSlot craftItem = new LogItemSlot(craft, false, "By Hand", ItemSlot.Context.EquipArmorVanity);
+						craftItem.Height.Pixels = 50;
+						craftItem.Width.Pixels = 50;
+						craftItem.Top.Pixels = 105 + (56 * (row + 2));
+						craftItem.Left.Pixels = 33;
+						PageTwo.Append(craftItem);
+					}
+					else if (requiredTiles.Count > 0) {
+						for (int l = 0; l < requiredTiles.Count; l++) {
+							if (requiredTiles[l] == -1) break; // Prevents extra empty slots from being created
+							LogItemSlot tileList;
+							if (requiredTiles[l] == 26) {
+								craft.SetDefaults(0);
+								string altarType;
+								if (WorldGen.crimson) altarType = "Crimson Altar";
+								else altarType = "Demon Altar";
+								tileList = new LogItemSlot(craft, false, altarType, ItemSlot.Context.EquipArmorVanity);
+							}
+							else {
+								for (int m = 0; m < ItemLoader.ItemCount; m++) {
+									craft.SetDefaults(m);
+									if (craft.createTile == requiredTiles[l]) break;
+								}
+								tileList = new LogItemSlot(craft, false, craft.HoverName, ItemSlot.Context.EquipArmorVanity);
+							}
+							tileList.Height.Pixels = 50;
+							tileList.Width.Pixels = 50;
+							tileList.Top.Pixels = 105 + (56 * (row + 2));
+							tileList.Left.Pixels = 33 + (56 * l);
+							PageTwo.Append(tileList);
+							if (requiredTiles[l] == 26) {
+								Texture2D altarTexture = BossChecklist.instance.GetTexture("Resources/Demon_Altar");
+								if (WorldGen.crimson) altarTexture = BossChecklist.instance.GetTexture("Resources/Crimson_Altar");
+								UIImage altar = new UIImage(altarTexture);
+								altar.Height.Pixels = 50;
+								altar.Width.Pixels = 50;
+								altar.ImageScale = 0.75f;
+								altar.Top.Pixels = tileList.Top.Pixels + tileList.Height.Pixels / 3 * 0.45f;
+								altar.Left.Pixels = tileList.Left.Pixels + tileList.Width.Pixels / 3 * 0.15f;
+								PageTwo.Append(altar);
+							}
+						}
+					}
 
-				if (TotalRecipes > 1) {
-					Texture2D credTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 0, 22, 22));
-					BossAssistButton CycleItem = new BossAssistButton(credTexture, "Cycle Alt Recipes");
-					CycleItem.Id = "CycleItem_" + TotalRecipes;
-					CycleItem.Top.Pixels = 354;
-					CycleItem.Left.Pixels = 274;
-					CycleItem.Width.Pixels = 22;
-					CycleItem.Height.Pixels = 22;
-					CycleItem.OnClick += new MouseEvent(ChangeSpawnItem);
-					PageTwo.Append(CycleItem);
-				}
+					if (RecipePageNum > 0) {
+						Texture2D prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
+						BossAssistButton PrevItem = new BossAssistButton(prevTexture, "");
+						PrevItem.Id = "PrevItem";
+						PrevItem.Top.Pixels = 120;
+						PrevItem.Left.Pixels = 125;
+						PrevItem.Width.Pixels = 14;
+						PrevItem.Height.Pixels = 20;
+						PrevItem.OnClick += new MouseEvent(ChangeSpawnItem);
+						PageTwo.Append(PrevItem);
+					}
 
-				string recipeMessage = "This item is not craftable.";
-				if (TotalRecipes > 0) {
-					recipeMessage = "Provided by: " + recipeMod;
-				}
+					if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
+						Texture2D nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
+						BossAssistButton NextItem = new BossAssistButton(nextTexture, "");
+						NextItem.Id = "NextItem";
+						NextItem.Top.Pixels = 120;
+						NextItem.Left.Pixels = 203;
+						NextItem.Width.Pixels = 14;
+						NextItem.Height.Pixels = 20;
+						NextItem.OnClick += new MouseEvent(ChangeSpawnItem);
+						PageTwo.Append(NextItem);
+					}
 
-				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
-				ModdedRecipe.Left.Pixels = 0;
-				ModdedRecipe.Top.Pixels = 400;
-				PageTwo.Append(ModdedRecipe);
+					if (TotalRecipes > 1) {
+						Texture2D credTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 0, 22, 22));
+						BossAssistButton CycleItem = new BossAssistButton(credTexture, "Cycle Alt Recipes");
+						CycleItem.Id = "CycleItem_" + TotalRecipes;
+						CycleItem.Top.Pixels = 234;
+						CycleItem.Left.Pixels = 274;
+						CycleItem.Width.Pixels = 22;
+						CycleItem.Height.Pixels = 22;
+						CycleItem.OnClick += new MouseEvent(ChangeSpawnItem);
+						PageTwo.Append(CycleItem);
+					}
+
+					string recipeMessage = "This item is not craftable.";
+					if (TotalRecipes > 0) {
+						recipeMessage = "Recipe from: " + recipeMod;
+					}
+
+					UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
+					ModdedRecipe.Left.Pixels = -5;
+					ModdedRecipe.Top.Pixels = 85;
+					PageTwo.Append(ModdedRecipe);
+				}
 			}
 		}
 
@@ -2079,7 +2096,7 @@ namespace BossChecklist
 							next.PaddingLeft = 22;
 							next.TextColor = Color.LawnGreen;
 							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(UpdatePage);
+							next.OnClick += new MouseEvent(JumpToBossPage);
 							prehardmodeList.Add(next);
 						}
 					}
@@ -2090,7 +2107,7 @@ namespace BossChecklist
 							next.PaddingLeft = 22;
 							next.TextColor = Color.IndianRed;
 							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(UpdatePage);
+							next.OnClick += new MouseEvent(JumpToBossPage);
 							prehardmodeList.Add(next);
 						}
 					}
@@ -2102,7 +2119,7 @@ namespace BossChecklist
 							next.PaddingLeft = 22;
 							next.TextColor = Color.LawnGreen;
 							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(UpdatePage);
+							next.OnClick += new MouseEvent(JumpToBossPage);
 							hardmodeList.Add(next);
 						}
 					}
@@ -2113,7 +2130,7 @@ namespace BossChecklist
 							next.PaddingLeft = 22;
 							next.TextColor = Color.IndianRed;
 							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(UpdatePage);
+							next.OnClick += new MouseEvent(JumpToBossPage);
 							hardmodeList.Add(next);
 						}
 					}
@@ -2184,7 +2201,7 @@ namespace BossChecklist
 			pageTwoItemList.SetScrollbar(pageTwoScroll);
 		}
 
-		private void UpdatePage(UIMouseEvent evt, UIElement listeningElement) {
+		private void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
 			PageNum = Convert.ToInt32(listeningElement.Id);
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
@@ -2251,7 +2268,7 @@ namespace BossChecklist
 			if (PageNum == -2) PageOne.Append(PrevPage);
 			else if (PageNum == -1) PageTwo.Append(NextPage);
 			else {
-				if (SubPageNum != 1 && BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
 					toolTipButton = new SubpageButton("");
 					toolTipButton.Width.Pixels = 32;
 					toolTipButton.Height.Pixels = 32;
@@ -2276,11 +2293,12 @@ namespace BossChecklist
 		}
 
 		private void SwapRecordPage(UIMouseEvent evt, UIElement listeningElement) {
+			AltPage[SubPageNum] = !AltPage[SubPageNum];
 			if (SubPageNum == 2) {
-				if (AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
+				if (!AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
 				else OpenCollect(evt, listeningElement);
 			}
-			AltPage[SubPageNum] = !AltPage[SubPageNum];
+			if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
 		}
 
 		public int FindNext(BossChecklistType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
