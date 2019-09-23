@@ -52,8 +52,8 @@ namespace BossChecklist
 		public override bool PreAI(NPC npc) {
 			if (ListedBossNum(npc) != -1) {
 				int listNum = ListedBossNum(npc);
+				// TODO: Fix multi enemy bosses from resetting the timers/counters and increasing them drastically
 				if (StartingPlayers == null) {
-					// I'll need to have a check in here for Worm bosses
 					StartingPlayers = new List<Player>();
 					foreach (Player player in Main.player) {
 						if (player.active) StartingPlayers.Add(player);

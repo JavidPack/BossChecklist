@@ -60,19 +60,16 @@ namespace BossChecklist
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
 				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), source, coverColor);
-
 				/*
-				TODO? May recycle for later use
+				//TODO? May recycle for later use
 				 
 				slowDown = !slowDown;
 				if (slowDown) cycleFrame++;
 				if (cycleFrame == 19) cycleFrame = 0;
-
-				if (BossLogUI.RecordingStats && !IsMouseHovering) {
-					Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder2");
-					source = new Rectangle(0, 40 * cycleFrame, 34, 38);
-					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
-				}
+				
+				Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder");
+				source = new Rectangle(0, 40 * cycleFrame, 34, 38);
+				spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
 				*/
 			}
 			
@@ -1364,6 +1361,17 @@ namespace BossChecklist
 		}
 
 		public void ToggleRecording() {
+			bool bossIsActive = false;
+			foreach (NPC npc in Main.npc) {
+				if (npc.active && NPCAssist.ListedBossNum(npc) != -1) {
+					bossIsActive = true;
+					break;// If a boss/event is active, record toggling is disabled
+				}
+			}
+			if (bossIsActive) {
+				Main.NewText("<Boss Log> You cannot change this while a boss is active!");
+				return;
+			}
 			PlayerAssist myModPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			myModPlayer.RecordingStats = !myModPlayer.RecordingStats;
 			if (myModPlayer.RecordingStats) {
