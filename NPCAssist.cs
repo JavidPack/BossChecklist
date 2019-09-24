@@ -47,45 +47,30 @@ namespace BossChecklist
 
 		public override bool InstancePerEntity => true;
 
-		List<Player> StartingPlayers;
+		List<Player> StartingPlayers = new List<Player>(); // Created for each NPC
 
 		public override bool PreAI(NPC npc) {
 			if (ListedBossNum(npc) != -1) {
-				int listNum = ListedBossNum(npc);
-				// TODO: Fix multi enemy bosses from resetting the timers/counters and increasing them drastically
-				if (StartingPlayers == null) {
+				int listNum = ListedBossNum(npc);				
+				if (StartingPlayers.Count == 0) {
 					StartingPlayers = new List<Player>();
 					foreach (Player player in Main.player) {
 						if (player.active) StartingPlayers.Add(player);
 					}
-
-					foreach (Player player in StartingPlayers) {
-						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-						modPlayer.MaxHealth[listNum] = 0;
-						modPlayer.RecordTimers[listNum] = 0;
-						modPlayer.BrinkChecker[listNum] = 0;
-						modPlayer.DodgeTimer[listNum] = 0;
-					}
-				}
-
-				if (npc.active) {
-					foreach (Player player in StartingPlayers) {
-						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-						if (!player.active) {
-							StartingPlayers.Remove(player);
-							continue;
-						}
-						if (player.dead) modPlayer.DeathTracker[ListedBossNum(npc)] = 1;
-						modPlayer.RecordTimers[listNum]++;
-						modPlayer.DodgeTimer[listNum]++;
-						if (modPlayer.MaxHealth[listNum] == 0) modPlayer.MaxHealth[listNum] = player.statLifeMax2;
-						if (modPlayer.BrinkChecker[listNum] == 0 || (player.statLife < modPlayer.BrinkChecker[listNum] && player.statLife > 0)) {
-							modPlayer.BrinkChecker[listNum] = player.statLife;
+					
+					if (!WorldAssist.ActiveBossesList[listNum] && npc.active) {
+						WorldAssist.ActiveBossesList[listNum] = true;
+						foreach (Player player in StartingPlayers) {
+							PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
+							modPlayer.MaxHealth[listNum] = 0;
+							modPlayer.RecordTimers[listNum] = 0;
+							modPlayer.BrinkChecker[listNum] = 0;
+							modPlayer.DodgeTimer[listNum] = 0;
 						}
 					}
+					WorldAssist.StartingPlayers[listNum] = StartingPlayers;
 				}
 			}
-
 			return true;
 		}
 

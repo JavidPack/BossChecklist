@@ -18,6 +18,7 @@ namespace BossChecklist
 		public static bool downedSolarEclipse;
 
 		public static List<bool> ActiveBossesList = new List<bool>();
+		public static List<List<Player>> StartingPlayers = new List<List<Player>>();
 		public static List<int> ModBossTypes = new List<int>();
 		public static List<string> ModBossMessages = new List<string>();
 
@@ -33,24 +34,20 @@ namespace BossChecklist
 				while (ActiveBossesList.Count > BL.Count) ActiveBossesList.RemoveAt(ActiveBossesList.Count - 1);
 				while (ActiveBossesList.Count < BL.Count) ActiveBossesList.Add(false);
 			}
-
+			if (StartingPlayers.Count != BL.Count) {
+				while (StartingPlayers.Count > BL.Count) StartingPlayers.RemoveAt(StartingPlayers.Count - 1);
+				while (StartingPlayers.Count < BL.Count) StartingPlayers.Add(new List<Player>());
+			}
+			
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC b = Main.npc[n];
 				if (NPCAssist.ListedBossNum(b) != -1) {
-					if (!ActiveBossesList[NPCAssist.ListedBossNum(b)]) {
-						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs.Count; i++) {
-							int thisType = BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs[i];
-							if (Main.npc.Any(npc => npc.type == thisType && npc.active)) {
-								ActiveBossesList[NPCAssist.ListedBossNum(b)] = true;
-								break;
-							}
-						}
-					}
-					else // ActiveBossesList[NPCAssist.ListedBossNum(b)]
+					int listNum = NPCAssist.ListedBossNum(b);
+					if (ActiveBossesList[listNum])
 					{
 						bool otherValidNPC = false;
-						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs.Count; i++) {
-							int otherType = BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(b)].npcIDs[i];
+						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[listNum].npcIDs.Count; i++) {
+							int otherType = BossChecklist.bossTracker.SortedBosses[listNum].npcIDs[i];
 							if (Main.npc.Any(npc => npc.type == otherType && npc.active)) {
 								otherValidNPC = true;
 								break;
@@ -61,8 +58,27 @@ namespace BossChecklist
 							if ((!moonLordCheck && b.life >= 0 && CheckRealLife(b.realLife)) || (moonLordCheck && b.life <= 0)) {
 								if (Main.netMode == NetmodeID.SinglePlayer && BossChecklist.ClientConfig.DespawnMessageType != "Disabled") Main.NewText(GetDespawnMessage(b), Colors.RarityPurple);
 								else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(GetDespawnMessage(b)), Colors.RarityPurple);
-								ActiveBossesList[NPCAssist.ListedBossNum(b)] = false;
 							}
+							ActiveBossesList[listNum] = false;
+						}
+					}
+				}
+			}
+			
+			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
+				if (ActiveBossesList[listNum]) {
+					foreach (Player player in StartingPlayers[listNum]) {
+						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
+						if (!player.active) {
+							StartingPlayers[listNum].Remove(player);
+							continue;
+						}
+						if (player.dead) modPlayer.DeathTracker[listNum] = 1;
+						modPlayer.RecordTimers[listNum]++;
+						modPlayer.DodgeTimer[listNum]++;
+						if (modPlayer.MaxHealth[listNum] == 0) modPlayer.MaxHealth[listNum] = player.statLifeMax2;
+						if (modPlayer.BrinkChecker[listNum] == 0 || (player.statLife < modPlayer.BrinkChecker[listNum] && player.statLife > 0)) {
+							modPlayer.BrinkChecker[listNum] = player.statLife;
 						}
 					}
 				}
