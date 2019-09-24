@@ -1310,7 +1310,7 @@ namespace BossChecklist
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 		public FixedUIScrollbar pageTwoScroll;
 
-		public static int PageNum = 0; // Selected Boss Page
+		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
 		public static int SubPageNum = 0; // Selected Topic Tab (Loot, Stats, etc.)
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
@@ -1346,6 +1346,7 @@ namespace BossChecklist
 
 		public void ToggleBossLog(bool show = true, bool resetPage = false) {
 			//resetPage = true; // TODO: update other methods to support this.
+			if (PageNum == -3) resetPage = true;
 			if (resetPage) {
 				PageNum = -1;
 				SubPageNum = 0;
@@ -1786,7 +1787,6 @@ namespace BossChecklist
 			int TotalRecipes = 0;
 			ResetBothPages();
 			if (PageNum < 0) return;
-			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) return;
 			if (AltPage[SubPageNum]) { // || BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count == 0
 				pageTwoItemList.Clear();
 				pageTwoItemList.Width.Pixels = 320;
@@ -1810,6 +1810,28 @@ namespace BossChecklist
 				//pageTwoItemList.SetScrollbar(pageTwoScroll);
 			}
 			if (!AltPage[SubPageNum]) { // || BossChecklist.bossTracker.SortedBosses[PageNum].info == "No info provided"
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) {
+					pageTwoItemList.Clear();
+					pageTwoItemList.Width.Pixels = 320;
+					pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
+					pageTwoItemList.Top.Pixels = 100;
+
+					// TODO: Fix/implement new scroll system for spawn info.
+
+					FittedTextPanel info = new FittedTextPanel("This boss cannot be summoned with any items.");
+					info.Width.Pixels = 300;
+					pageTwoItemList.Add(info);
+
+					pageTwoScroll.SetView(10f, 100f);
+					pageTwoScroll.Top.Pixels = 305;
+					pageTwoScroll.Left.Pixels = -24;
+					pageTwoScroll.Height.Set(-285f, 0.75f);
+					pageTwoScroll.HAlign = 1f;
+
+					//PageTwo.Append(pageTwoScroll);
+					PageTwo.Append(pageTwoItemList);
+					return;
+				}
 				List<Item> ingredients = new List<Item>();
 				List<int> requiredTiles = new List<int>();
 				string recipeMod = "Vanilla";
@@ -2276,22 +2298,27 @@ namespace BossChecklist
 			if (PageNum == -2) PageOne.Append(PrevPage);
 			else if (PageNum == -1) PageTwo.Append(NextPage);
 			else {
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
-					toolTipButton = new SubpageButton("");
-					toolTipButton.Width.Pixels = 32;
-					toolTipButton.Height.Pixels = 32;
-					toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
-					toolTipButton.Top.Pixels = 86;
-					toolTipButton.OnClick += new MouseEvent(SwapRecordPage);
-					PageTwo.Append(toolTipButton);
-					if (SubPageNum == 0) {
-						displayRecordButton = new SubpageButton("");
-						displayRecordButton.Width.Pixels = 32;
-						displayRecordButton.Height.Pixels = 32;
-						displayRecordButton.Left.Pixels = PageTwo.Width.Pixels - displayRecordButton.Width.Pixels - 30;
-						displayRecordButton.Top.Pixels = 128;
-						displayRecordButton.Id = "Display Records";
-						PageTwo.Append(displayRecordButton);
+				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
+				if (boss.modSource != "Unknown") {
+					bool eventCheck = SubPageNum == 0 && boss.type == BossChecklistType.Event;
+					if (!eventCheck) {
+						toolTipButton = new SubpageButton("");
+						toolTipButton.Width.Pixels = 32;
+						toolTipButton.Height.Pixels = 32;
+						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
+						toolTipButton.Top.Pixels = 86;
+						toolTipButton.OnClick += new MouseEvent(SwapRecordPage);
+						PageTwo.Append(toolTipButton);
+
+						if (SubPageNum == 0) {
+							displayRecordButton = new SubpageButton("");
+							displayRecordButton.Width.Pixels = 32;
+							displayRecordButton.Height.Pixels = 32;
+							displayRecordButton.Left.Pixels = PageTwo.Width.Pixels - displayRecordButton.Width.Pixels - 30;
+							displayRecordButton.Top.Pixels = 128;
+							displayRecordButton.Id = "Display Records";
+							PageTwo.Append(displayRecordButton);
+						}
 					}
 				}
 

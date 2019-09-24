@@ -80,6 +80,16 @@ namespace BossChecklist
 			BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => true, new List<int>() { ItemID.PumpkinMoonMedallion }, "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
 			BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => true, new List<int>() { ItemID.NaughtyPresent }, "BossChecklist/Resources/BossTextures/EventFrostMoon"),
 			};
+
+			/* TODO: Add manual textures for the following NPCs/Events
+				- Goblin Army (Make a better one)
+				- Frost Legion
+				- Pirates
+				- Solar Eclipse
+				- Frost Moon
+				- Martian Madness
+				- Lunar Event
+			*/
 		}
 
 		internal void FinalizeBossData() {
@@ -137,6 +147,15 @@ namespace BossChecklist
 					ItemID.LesserHealingPotion
 				};
 			}
+			if (bossNum == NPCID.DD2DarkMageT3) {
+				return new List<int>()
+				{
+					ItemID.WarTable,
+					ItemID.WarTableBanner,
+					ItemID.DD2PetDragon,
+					ItemID.DD2PetGato,
+				};
+			}
 			if (bossNum == NPCID.QueenBee) {
 				return new List<int>()
 				{
@@ -182,6 +201,17 @@ namespace BossChecklist
 					ItemID.HealingPotion
 				};
 			}
+			if (bossNum == NPCID.PirateShip) {
+				return new List<int>()
+				{
+					ItemID.CoinGun,
+					ItemID.LuckyCoin,
+					ItemID.DiscountCard,
+					ItemID.PirateStaff,
+					ItemID.GoldRing,
+					ItemID.Cutlass,
+				};
+			}
 			if (bossNum == NPCID.Retinazer) {
 				return new List<int>()
 				{
@@ -212,6 +242,21 @@ namespace BossChecklist
 					ItemID.GreaterHealingPotion
 				};
 			}
+			if (bossNum == NPCID.DD2OgreT3) {
+				return new List<int>()
+				{
+					ItemID.ApprenticeScarf,
+					ItemID.SquireShield,
+					ItemID.HuntressBuckler,
+					ItemID.MonkBelt,
+					ItemID.BookStaff,
+					ItemID.DD2PhoenixBow,
+					ItemID.DD2SquireDemonSword,
+					ItemID.MonkStaffT1,
+					ItemID.MonkStaffT2,
+					ItemID.DD2PetGhost,
+				};
+			}
 			if (bossNum == NPCID.Plantera) {
 				return new List<int>()
 				{
@@ -232,6 +277,55 @@ namespace BossChecklist
 					ItemID.GreaterHealingPotion
 				};
 			}
+			if (bossNum == NPCID.MourningWood) {
+				return new List<int>()
+				{
+					ItemID.SpookyWood,
+					ItemID.CursedSapling,
+					ItemID.SpookyTwig,
+					ItemID.SpookyHook,
+					ItemID.NecromanticScroll,
+					ItemID.StakeLauncher,
+				};
+			}
+			if (bossNum == NPCID.Pumpking) {
+				return new List<int>()
+				{
+					ItemID.TheHorsemansBlade,
+					ItemID.BatScepter,
+					ItemID.BlackFairyDust,
+					ItemID.SpiderEgg,
+					ItemID.RavenStaff,
+					ItemID.CandyCornRifle,
+					ItemID.JackOLanternLauncher,
+				};
+			}
+			if (bossNum == NPCID.Everscream) {
+				return new List<int>()
+				{
+					ItemID.ChristmasTreeSword,
+					ItemID.ChristmasHook,
+					ItemID.Razorpine,
+					ItemID.FestiveWings,
+				};
+			}
+			if (bossNum == NPCID.SantaNK1) {
+				return new List<int>()
+				{
+					ItemID.EldMelter,
+					ItemID.ChainGun,
+				};
+			}
+			if (bossNum == NPCID.IceQueen) {
+				return new List<int>()
+				{
+					ItemID.SnowmanCannon,
+					ItemID.NorthPole,
+					ItemID.BlizzardStaff,
+					ItemID.BabyGrinchMischiefWhistle,
+					ItemID.ReindeerBells,
+				};
+			}
 			if (bossNum == NPCID.Golem) {
 				return new List<int>()
 				{
@@ -247,6 +341,21 @@ namespace BossChecklist
 					ItemID.GolemFist,
 					ItemID.BeetleHusk,
 					ItemID.GreaterHealingPotion
+				};
+			}
+			if (bossNum == NPCID.MartianSaucer) {
+				return new List<int>()
+				{
+					ItemID.Xenopopper,
+					ItemID.XenoStaff,
+					ItemID.LaserMachinegun,
+					ItemID.LaserDrill,
+					ItemID.ElectrosphereLauncher,
+					ItemID.ChargedBlasterCannon,
+					ItemID.InfluxWaver,
+					ItemID.CosmicCarKey,
+					ItemID.AntiGravityHook,
+					ItemID.GreaterHealingPotion,
 				};
 			}
 			if (bossNum == NPCID.DD2Betsy) {
@@ -338,6 +447,14 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss3
 				};
 			}
+			if (bossNum == NPCID.BrainofCthulhu) {
+				return new List<int>()
+				{
+					ItemID.BossMaskDarkMage,
+					ItemID.BossTrophyDarkmage,
+					ItemID.MusicBoxDD2
+				};
+			}
 			if (bossNum == NPCID.QueenBee) {
 				return new List<int>()
 				{
@@ -360,6 +477,13 @@ namespace BossChecklist
 					ItemID.WallofFleshTrophy,
 					ItemID.FleshMask,
 					ItemID.MusicBoxBoss2
+				};
+			}
+			if (bossNum == NPCID.PirateShip) {
+				return new List<int>()
+				{
+					ItemID.FlyingDutchmanTrophy,
+					ItemID.MusicBoxPirates
 				};
 			}
 			if (bossNum == NPCID.Retinazer) {
@@ -387,6 +511,14 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss1
 				};
 			}
+			if (bossNum == NPCID.DD2OgreT3) {
+				return new List<int>()
+				{
+					ItemID.BossMaskOgre,
+					ItemID.BossTrophyOgre,
+					ItemID.MusicBoxDD2
+				};
+			}
 			if (bossNum == NPCID.Plantera) {
 				return new List<int>()
 				{
@@ -395,12 +527,54 @@ namespace BossChecklist
 					ItemID.MusicBoxPlantera
 				};
 			}
+			if (bossNum == NPCID.MourningWood) {
+				return new List<int>()
+				{
+					ItemID.MourningWoodTrophy,
+					ItemID.MusicBoxPumpkinMoon
+				};
+			}
+			if (bossNum == NPCID.Pumpking) {
+				return new List<int>()
+				{
+					ItemID.PumpkingTrophy,
+					ItemID.MusicBoxPumpkinMoon
+				};
+			}
+			if (bossNum == NPCID.Everscream) {
+				return new List<int>()
+				{
+					ItemID.EverscreamTrophy,
+					ItemID.MusicBoxFrostMoon
+				};
+			}
+			if (bossNum == NPCID.SantaNK1) {
+				return new List<int>()
+				{
+					ItemID.SantaNK1Trophy,
+					ItemID.MusicBoxFrostMoon
+				};
+			}
+			if (bossNum == NPCID.IceQueen) {
+				return new List<int>()
+				{
+					ItemID.IceQueenTrophy,
+					ItemID.MusicBoxFrostMoon
+				};
+			}
 			if (bossNum == NPCID.Golem) {
 				return new List<int>()
 				{
 					ItemID.GolemTrophy,
 					ItemID.GolemMask,
 					ItemID.MusicBoxBoss5
+				};
+			}
+			if (bossNum == NPCID.MartianSaucer) {
+				return new List<int>()
+				{
+					ItemID.MartianSaucerTrophy,
+					ItemID.MusicBoxMartians
 				};
 			}
 			if (bossNum == NPCID.DD2Betsy) {
@@ -668,7 +842,7 @@ namespace BossChecklist
 					ItemID.GoldenWorkbench,
 				};
 			}
-			if (eventName == "Goblin Army") {
+			if (eventName == "Solar Eclipse") {
 				return new List<int>()
 				{
 					ItemID.EyeSpring,
@@ -805,6 +979,11 @@ namespace BossChecklist
 			if (npcID == NPCID.IceQueen) return $"Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]";
 			if (npcID == NPCID.SantaNK1) return $"Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]";
 			if (npcID == NPCID.Everscream) return $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]";
+
+			if (npcID == NPCID.PirateShip) return "Appears during a Pirate Invasion!";
+			if (npcID == NPCID.DD2OgreT3) return "Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event!";
+			if (npcID == NPCID.DD2DarkMageT3) return "Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event!";
+			if (npcID == NPCID.MartianSaucer) return "Appears during Martian Madness!";
 
 			return "";
 		}
