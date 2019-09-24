@@ -294,7 +294,7 @@ namespace BossChecklist
 					int headsDisplayed = 0;
 					int adjustment = 0;
 					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
-					for (int h = 0; h < selectedBoss.npcIDs.Count; h++) {
+					for (int h = selectedBoss.npcIDs.Count - 1; h > -1; h--) {
 						Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
 						if (selectedBoss.overrideIconTexture != "") head = ModContent.GetTexture(selectedBoss.overrideIconTexture);
 						if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {

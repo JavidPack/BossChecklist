@@ -69,11 +69,11 @@ namespace BossChecklist
 			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Golem + 0.11f, "Martian Saucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => true, new List<int>() { }),
 			
 			// Events -- Vanilla
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }),
+			BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventLunarEvent"),
 			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() {ItemID.GoblinBattleStandard }, "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
-			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe }),
-			BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { }),
-			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }),
+			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe }, "BossChecklist/Resources/BossTextures/EventFrostLegion"),
+			BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventMartianMadness"),
+			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }, "BossChecklist/Resources/BossTextures/EventPirateInvasion"),
 			BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }, "BossChecklist/Resources/BossTextures/EventDD2"),
 			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => true, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventBloodMoon"),
 			BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => true, new List<int>() { ItemID.SolarTablet }, "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
