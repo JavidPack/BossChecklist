@@ -60,9 +60,16 @@ namespace BossChecklist
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
 				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), source, coverColor);
+
+				// Border Selection
+				PlayerAssist myPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				Texture2D border = BossLogUI.CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
+				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
+				else if (!myPlayer.RecordingStats) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
+
 				/*
 				//TODO? May recycle for later use
-				 
+				
 				slowDown = !slowDown;
 				if (slowDown) cycleFrame++;
 				if (cycleFrame == 19) cycleFrame = 0;
@@ -190,12 +197,7 @@ namespace BossChecklist
 			if (BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2 && BossLogUI.AltPage[BossLogUI.SubPageNum] && Id == "PageTwo") // PageTwo check to prevent the timer from counting down twice (once for each page)
 			{
 				if (validItems == null) {
-					validItems = new List<int>[]
-					{
-						new List<int>(),
-						new List<int>(),
-						new List<int>()
-					};
+					validItems = new List<int>[] { new List<int>(), new List<int>(), new List<int>() };
 					foreach (int type in selectedBoss.collection) {
 						if (type != -1) {
 							Item newItem = new Item();
@@ -208,14 +210,8 @@ namespace BossChecklist
 					if (validItems[0].Count == 0) validItems[0].Add(0);
 					if (validItems[1].Count == 0) validItems[1].Add(0);
 					if (validItems[2].Count == 0) validItems[2].Add(0);
-					itemShown = new int[]
-					{
-						0,
-						0,
-						0
-					};
+					itemShown = new int[] { 0, 0, 0 };
 				}
-
 				if (itemTimer <= 0) {
 					itemTimer = 300;
 					for (int i = 0; i < itemShown.Length; i++) {
@@ -233,7 +229,6 @@ namespace BossChecklist
 				// Needed to remove mousetext from outside sources when using the Boss Log
 				Main.player[Main.myPlayer].mouseInterface = true;
 				Main.mouseText = true;
-
 				// Item icons such as hovering over a bed will not appear
 				Main.LocalPlayer.showItemIcon = false;
 				Main.LocalPlayer.showItemIcon2 = -1;
@@ -718,7 +713,6 @@ namespace BossChecklist
 
 			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 1) {
 				// Spawn Item Subpage
-				/// Should I implement a text based spawn page?
 			}
 
 			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2) {
@@ -1357,8 +1351,10 @@ namespace BossChecklist
 				UpdateTableofContents();
 			}
 			BossLogVisible = show;
-			if (show)
+			if (show) {
 				Main.playerInventory = false;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes rainbow glow
+			}
 		}
 
 		public void ToggleRecording() {
@@ -1375,14 +1371,8 @@ namespace BossChecklist
 			}
 			PlayerAssist myModPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			myModPlayer.RecordingStats = !myModPlayer.RecordingStats;
-			if (myModPlayer.RecordingStats) {
-				Main.NewText("<Boss Log> New records will be updated!", Color.Green);
-				bosslogbutton.SetImage(CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38)));
-			}
-			else {
-				Main.NewText("<Boss Log> New records will NOT update!", Color.Red);
-				bosslogbutton.SetImage(CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38)));
-			}
+			if (myModPlayer.RecordingStats) Main.NewText("<Boss Log> New records will be updated!", Color.Green);
+			else Main.NewText("<Boss Log> New records will NOT update!", Color.Red);
 		}
 
 		public override void OnInitialize() {

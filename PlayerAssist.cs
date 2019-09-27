@@ -10,10 +10,11 @@ namespace BossChecklist
 {
 	public class PlayerAssist : ModPlayer
 	{
+		public bool hasOpenedTheBossLog;
+		public bool RecordingStats;
+
 		public List<BossRecord> AllBossRecords;
 		public List<BossCollection> BossTrophies;
-
-		public bool RecordingStats;
 
 		public List<int> RecordTimers;
 		public List<int> BrinkChecker;
@@ -23,6 +24,7 @@ namespace BossChecklist
 		public List<int> AttackCounter;
 
 		public override void Initialize() {
+			hasOpenedTheBossLog = false;
 			RecordingStats = true;
 
 			AllBossRecords = new List<BossRecord>();
@@ -63,6 +65,7 @@ namespace BossChecklist
 		public override TagCompound Save() {
 			TagCompound saveData = new TagCompound
 			{
+				{ "BossLogPrompt", hasOpenedTheBossLog },
 				{ "Records", AllBossRecords },
 				{ "Collection", BossTrophies }
 			};
@@ -87,10 +90,13 @@ namespace BossChecklist
 				if (index == -1) BossTrophies.Add(collection);
 				else BossTrophies[index] = collection;
 			}
+
+			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt");
 		}
 
 		public override void clientClone(ModPlayer clientClone) {
 			PlayerAssist clone = clientClone as PlayerAssist;
+			clone.hasOpenedTheBossLog = hasOpenedTheBossLog;
 			clone.BossTrophies = BossTrophies;
 			clone.AllBossRecords = AllBossRecords;
 		}
