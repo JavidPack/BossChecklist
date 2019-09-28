@@ -119,13 +119,13 @@ namespace BossChecklist
 			var backup2 = Main.inventoryBack7Texture;
 
 			if (Main.expertMode) Main.inventoryBack6Texture = Main.inventoryBack15Texture;
-			else Main.inventoryBack6Texture = BossChecklist.instance.GetTexture("Resources/ExpertOnly");
+			else Main.inventoryBack6Texture = BossChecklist.instance.GetTexture("Resources/Extra_ExpertOnly");
 
 			BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 
 			if (Id.Contains("loot_") && hasItem) {
 				Main.inventoryBack7Texture = Main.inventoryBack3Texture;
-				Main.inventoryBack6Texture = BossChecklist.instance.GetTexture("Resources/ExpertCollected");
+				Main.inventoryBack6Texture = BossChecklist.instance.GetTexture("Resources/Extra_ExpertCollected");
 			}
 
 			if (Id.Contains("collect_") && hasItem) {
@@ -331,7 +331,7 @@ namespace BossChecklist
 				Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 				Utils.DrawBorderString(spriteBatch, "Special thanks to:", pos, Color.IndianRed);
 
-				Texture2D users = BossChecklist.instance.GetTexture("Resources/CreditUsers");
+				Texture2D users = BossChecklist.instance.GetTexture("Resources/Extra_CreditUsers");
 				float textScaling = 0.75f;
 
 				// Jopojelly
@@ -719,7 +719,7 @@ namespace BossChecklist
 				if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 					// Loot Table Subpage
 					Main.instance.LoadTiles(237);
-					Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/treasureBag");
+					Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
 					for (int i = 0; i < selectedBoss.loot.Count; i++) {
 						Item bagItem = new Item();
 						bagItem.SetDefaults(selectedBoss.loot[i]);
@@ -742,18 +742,38 @@ namespace BossChecklist
 				else {
 					// Collectibles Subpage
 					BossCollection Collections = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
+					bool hasTrophy = validItems[0][itemShown[0]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[0][itemShown[0]]);
+					bool hasMask = validItems[1][itemShown[1]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[1][itemShown[1]]);
+					bool hasMusicBox = validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[2][itemShown[2]]);
 
 					// PageNum already corresponds with the index of the saved player data
 
-					Texture2D template = ModContent.GetTexture("BossChecklist/Resources/CollectionTemplate");
-					if (validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[2][itemShown[2]])) {
-						template = ModContent.GetTexture("BossChecklist/Resources/CollectionTemplate_NoMusicBox");
+					Texture2D template = ModContent.GetTexture("BossChecklist/Resources/Extra_CollectionTemplate");
+					Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height);
+					spriteBatch.Draw(template, ctRect, Color.White);
+					if (!hasMusicBox) {
+						Main.instance.LoadTiles(139);
+						Texture2D musicBox = Main.tileTexture[139];
+
+						int offsetX = 0;
+						int offsetY = 0;
+
+						for (int i = 0; i < 4; i++) {
+							Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16), pageRect.Y + 160 + (offsetY * 16), 16, 16);
+							Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
+
+							spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
+
+							offsetX++;
+							if (i == 1) {
+								offsetX = 0;
+								offsetY++;
+							}
+						}
 					}
 
-					spriteBatch.Draw(template, new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height), Color.White);
-
-					// Draw Mask
-					if (validItems[1][itemShown[1]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[1][itemShown[1]])) {
+					// Draw Masks
+					if (hasMask) {
 						Texture2D mask;
 						if (validItems[1][itemShown[1]] < ItemID.Count) {
 							Item newItem = new Item();
@@ -768,13 +788,15 @@ namespace BossChecklist
 						spriteBatch.Draw(mask, posRect, cutRect, Color.White);
 					}
 
-					if (validItems[0][itemShown[0]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[0][itemShown[0]])) {
+					// Draw Trophies
+					if (hasTrophy) {
 						int offsetX = 0;
 						int offsetY = 0;
-						Main.instance.LoadTiles(240);
-						Texture2D trophy = Main.tileTexture[240];
 
 						if (validItems[0][itemShown[0]] < ItemID.Count) {
+							Main.instance.LoadTiles(TileID.Painting3X3);
+							Texture2D trophy = Main.tileTexture[TileID.Painting3X3];
+
 							offsetX = BossLogUI.GetVanillaBossTrophyPos(validItems[0][itemShown[0]])[0];
 							offsetY = BossLogUI.GetVanillaBossTrophyPos(validItems[0][itemShown[0]])[1];
 
@@ -796,7 +818,7 @@ namespace BossChecklist
 						}
 						else {
 							Main.instance.LoadTiles(ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile);
-							trophy = Main.tileTexture[ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile];
+							Texture2D trophy = Main.tileTexture[ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile];
 
 							offsetX = 0;
 							offsetY = 0;
@@ -816,14 +838,15 @@ namespace BossChecklist
 						}
 					}
 
-					// Draw Music Box
-					if (validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[2][itemShown[2]])) {
+					// Draw Music Boxes
+					if (hasMusicBox) {
 						int offsetX = 0;
 						int offsetY = 0;
-						Main.instance.LoadTiles(139);
-						Texture2D musicBox = Main.tileTexture[139];
 
 						if (selectedBoss.collection[2] < ItemID.Count) {
+							Main.instance.LoadTiles(TileID.Painting3X3);
+							Texture2D musicBox = Main.tileTexture[TileID.Painting3X3];
+
 							if (selectedBoss.collection[2] == ItemID.MusicBoxBoss1) {
 								if (Main.music[MusicID.Boss1].IsPlaying) offsetX = 2;
 								offsetY = 10;
@@ -861,8 +884,8 @@ namespace BossChecklist
 							int backupY = offsetY;
 
 							for (int i = 0; i < 4; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16) - (backupX * 16), pageRect.Y + 158 + (offsetY * 16) - (backupY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetX * 18, (offsetY * 18) - 2, 16, 16);
+								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16) - (backupX * 16), pageRect.Y + 160 + (offsetY * 16) - (backupY * 16), 16, 16);
+								Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
 
 								spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
 
@@ -875,11 +898,11 @@ namespace BossChecklist
 						}
 						else {
 							Main.instance.LoadTiles(ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile);
-							musicBox = Main.tileTexture[ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile];
+							Texture2D musicBox = Main.tileTexture[ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile];
 
 							for (int i = 0; i < 4; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16), pageRect.Y + 158 + (offsetY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetX * 18, (offsetY * 18) - 2, 16, 16);
+								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16), pageRect.Y + 160 + (offsetY * 16), 16, 16);
+								Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
 
 								spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
 
@@ -1907,8 +1930,8 @@ namespace BossChecklist
 							tileList.Left.Pixels = 33 + (56 * l);
 							PageTwo.Append(tileList);
 							if (requiredTiles[l] == 26) {
-								Texture2D altarTexture = BossChecklist.instance.GetTexture("Resources/Demon_Altar");
-								if (WorldGen.crimson) altarTexture = BossChecklist.instance.GetTexture("Resources/Crimson_Altar");
+								Texture2D altarTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/Extra_Altars"), new Rectangle(0, 0, 48, 34));
+								if (WorldGen.crimson) altarTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/Extra_Altars"), new Rectangle(0, 36, 48, 34));
 								UIImage altar = new UIImage(altarTexture);
 								altar.Height.Pixels = 50;
 								altar.Width.Pixels = 50;

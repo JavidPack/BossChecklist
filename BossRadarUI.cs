@@ -38,7 +38,7 @@ namespace BossChecklist
 			drawRotation = new List<float>();
 			drawLOS = new List<bool>();
 			drawColor = new List<Color>();
-			arrowTexture = BossChecklist.instance.GetTexture("Resources/RadarArrow");
+			arrowTexture = BossChecklist.instance.GetTexture("Resources/Extra_RadarArrow");
 		}
 
 		private bool SetDrawPos() {
