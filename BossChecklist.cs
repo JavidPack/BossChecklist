@@ -70,16 +70,6 @@ namespace BossChecklist
 				UICheckbox.checkmarkTexture = GetTexture("checkMark");
 			}
 
-			if (Main.netMode == NetmodeID.Server) {
-				ServerCollectedRecords = new List<BossStats>[255];
-				for (int i = 0; i < 255; i++) {
-					ServerCollectedRecords[i] = new List<BossStats>();
-					for (int j = 0; j < bossTracker.SortedBosses.Count; j++) {
-						ServerCollectedRecords[i].Add(new BossStats());
-					}
-				}
-			}
-
 			if (!Main.dedServ) {
 				BossLog = new BossLogUI();
 				BossLog.Activate();

@@ -38,47 +38,46 @@ namespace BossChecklist
 
 		private void InitializeVanillaBosses() {
 			SortedBosses = new List<BossInfo> {
-			// Bosses -- Vanilla
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, KingSlime, "King Slime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EyeOfCthulhu, "Eye of Cthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EaterOfWorlds,"Eater of Worlds", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail}, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EaterOfWorlds, "Brain of Cthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, QueenBee, "Queen Bee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Skeletron, "Skeletron", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, WallOfFlesh, "Wall of Flesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, TheTwins, "The Twins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, TheDestroyer, "The Destroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, SkeletronPrime, "Skeletron Prime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Plantera, "Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Golem, "Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Golem + 0.5f, "Betsy", new List<int>() { NPCID.DD2Betsy }, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3, new List<int>() { ItemID.DD2ElderCrystal }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, DukeFishron, "Duke Fishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, LunaticCultist, "Lunatic Cultist", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Moonlord, "Moonlord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
-			// Mini Bosses -- Vanilla
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.12f, "Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.11f, "Mourning Wood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
-				// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.16f, "Ice Queen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.15f, "Santa-NK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.14f, "Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
-				// Mothron??
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, WallOfFlesh + 0.71f, "Flying Dutchman", new List<int>() { NPCID.PirateShip }, () => true, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, SkeletronPrime + 0.5f, "Ogre", new List<int>() { NPCID.DD2OgreT3 }, () => true, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, EaterOfWorlds + 0.51f, "Dark Mage", new List<int>() { NPCID.DD2DarkMageT3 }, () => true, new List<int>() { }),
-			BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Golem + 0.11f, "Martian Saucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => true, new List<int>() { }),
+				// Bosses -- Vanilla
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, KingSlime, "King Slime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EyeOfCthulhu, "Eye of Cthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EaterOfWorlds,"Eater of Worlds", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail}, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, EaterOfWorlds, "Brain of Cthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, QueenBee, "Queen Bee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Skeletron, "Skeletron", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, WallOfFlesh, "Wall of Flesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, TheTwins, "The Twins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, TheDestroyer, "The Destroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, SkeletronPrime, "Skeletron Prime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Plantera, "Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Golem, "Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Golem + 0.5f, "Betsy", new List<int>() { NPCID.DD2Betsy }, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3, new List<int>() { ItemID.DD2ElderCrystal }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, DukeFishron, "Duke Fishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, LunaticCultist, "Lunatic Cultist", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(BossChecklistType.Boss, Moonlord, "Moonlord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
 			
-			// Events -- Vanilla
-			BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventLunarEvent"),
-			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() {ItemID.GoblinBattleStandard }, "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
-			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe }, "BossChecklist/Resources/BossTextures/EventFrostLegion"),
-			BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventMartianMadness"),
-			BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }, "BossChecklist/Resources/BossTextures/EventPirateInvasion"),
-			BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }, "BossChecklist/Resources/BossTextures/EventDD2"),
-			BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => true, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventBloodMoon"),
-			BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => true, new List<int>() { ItemID.SolarTablet }, "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
-			BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => true, new List<int>() { ItemID.PumpkinMoonMedallion }, "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
-			BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => true, new List<int>() { ItemID.NaughtyPresent }, "BossChecklist/Resources/BossTextures/EventFrostMoon"),
+				// Minibosses and Events -- Vanilla
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => true, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventBloodMoon"),
+					// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() {ItemID.GoblinBattleStandard }, "BossChecklist/Resources/BossTextures/EventGoblinArmy"),
+				BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }, "BossChecklist/Resources/BossTextures/EventDD2"),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, EaterOfWorlds + 0.51f, "Dark Mage", new List<int>() { NPCID.DD2DarkMageT3 }, () => true, new List<int>() { }),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, SkeletronPrime + 0.5f, "Ogre", new List<int>() { NPCID.DD2OgreT3 }, () => true, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe }, "BossChecklist/Resources/BossTextures/EventFrostLegion"),
+				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }, "BossChecklist/Resources/BossTextures/EventPirateInvasion"),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, WallOfFlesh + 0.71f, "Flying Dutchman", new List<int>() { NPCID.PirateShip }, () => true, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => true, new List<int>() { ItemID.SolarTablet }, "BossChecklist/Resources/BossTextures/EventSolarEclipse"),
+					// BossInfo for Mothron?? If so, we'll need a boss head icon
+				BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => true, new List<int>() { ItemID.PumpkinMoonMedallion }, "BossChecklist/Resources/BossTextures/EventPumpkinMoon"),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.11f, "Mourning Wood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.12f, "Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => true, new List<int>() { ItemID.NaughtyPresent }, "BossChecklist/Resources/BossTextures/EventFrostMoon"),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.14f, "Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.15f, "Santa-NK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Plantera + 0.16f, "Ice Queen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventMartianMadness"),
+					BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss, Golem + 0.11f, "Martian Saucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => true, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }, "BossChecklist/Resources/BossTextures/EventLunarEvent"),
 			};
 
 			/* TODO: Add manual textures for the following NPCs/Events
@@ -94,6 +93,16 @@ namespace BossChecklist
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 			BossesFinalized = true;
+			
+			if (Main.netMode == NetmodeID.Server) {
+				BossChecklist.ServerCollectedRecords = new List<BossStats>[255];
+				for (int i = 0; i < 255; i++) {
+					BossChecklist.ServerCollectedRecords[i] = new List<BossStats>();
+					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses.Count; j++) {
+						BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
+					}
+				}
+			}
 		}
 
 		internal protected List<int> SetupLoot(int bossNum) {
@@ -1072,7 +1081,7 @@ namespace BossChecklist
 		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
 			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.Write("<<Boss Assist>> ");
+			Console.Write("<<Boss Checklist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
 			Console.Write(source + " has added ");
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -1081,12 +1090,6 @@ namespace BossChecklist
 			Console.Write(" to the boss log!");
 			Console.WriteLine();
 			Console.ResetColor();
-			if (BossChecklist.ServerCollectedRecords != null) {
-				for (int i = 0; i < 255; i++) {
-					BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
-				}
-				// Adding a boss to each player
-			}
 		}
 
 		internal void AddMiniBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
@@ -1101,12 +1104,6 @@ namespace BossChecklist
 			Console.Write(" to the boss log!");
 			Console.WriteLine();
 			Console.ResetColor();
-			if (BossChecklist.ServerCollectedRecords != null) {
-				for (int i = 0; i < 255; i++) {
-					BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
-				}
-				// Adding a boss to each player
-			}
 		}
 
 		internal void AddEvent(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
@@ -1121,12 +1118,6 @@ namespace BossChecklist
 			Console.Write(" to the boss log!");
 			Console.WriteLine();
 			Console.ResetColor();
-			if (BossChecklist.ServerCollectedRecords != null) {
-				for (int i = 0; i < 255; i++) {
-					BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
-				}
-				// Adding a boss to each player
-			}
 		}
 
 		internal void AddToBossLoot(string modName, string bossName, List<int> lootList) {

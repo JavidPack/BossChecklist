@@ -76,6 +76,9 @@ namespace BossChecklist
 
 		public void CheckRecords(NPC npc, Player player, PlayerAssist modplayer) {
 			if (!player.GetModPlayer<PlayerAssist>().RecordingStats) return; // RecordingStats must be enabled!
+
+			bool newRecordSet = false;
+
 			int recordIndex = ListedBossNum(npc);
 			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
 			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
@@ -112,6 +115,7 @@ namespace BossChecklist
 			if (recordAttempt < currentRecord || currentRecord <= 0) {
 				//The player has beaten their best record, so we have to overwrite the old record with the new one
 				bossStats.durationBest = recordAttempt;
+				newRecordSet = true;
 			}
 			else if (recordAttempt > worstRecord || worstRecord <= 0) {
 				//The player has beaten their worst record, so we have to overwrite the old record with the new one
@@ -125,6 +129,7 @@ namespace BossChecklist
 				bossStats.healthLossBest = brinkAttempt;
 				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
 				bossStats.healthLossBestPercent = (int)(newHealth * 100);
+				newRecordSet = true;
 			}
 			else if (brinkAttempt < worstBrink || worstBrink <= 0) {
 				bossStats.healthLossWorst = brinkAttempt;
@@ -137,9 +142,10 @@ namespace BossChecklist
 				bossStats.dodgeTimeBest = dodgeTimeAttempt;
 			}
 
-			if (dodgeAttempt < currentDodges || currentDodges < 0) {
+			if (dodgeAttempt < currentDodges || currentDodges <= 0) {
 				bossStats.hitsTakenBest = dodgeAttempt;
 				if (worstDodges == 0) bossStats.hitsTakenWorst = currentDodges;
+				newRecordSet = true;
 			}
 			else if (dodgeAttempt > worstDodges || worstDodges < 0) {
 				bossStats.hitsTakenWorst = dodgeAttempt;
@@ -149,15 +155,14 @@ namespace BossChecklist
 			modplayer.AttackCounter[recordIndex] = 0;
 
 			// If a new record was made, notify the player
-			if ((recordAttempt < currentRecord || currentRecord <= 0) || (brinkAttempt > currentBrink || currentBrink <= 0) || (dodgeAttempt < currentDodges || dodgeAttempt <= 0)) {
-				CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-			}
+			if (newRecordSet) CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 		}
 
 		public void CheckRecordsMultiplayer(NPC npc) {
 			int recordIndex = ListedBossNum(npc);
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
+				bool newRecordSet = false;
 
 				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue; // Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
@@ -183,6 +188,7 @@ namespace BossChecklist
 						Console.WriteLine("This Fight (" + newRecord.durationLast + ") was better than your current best (" + oldRecord.durationBest + ")");
 						specificRecord |= RecordID.ShortestFightTime;
 						oldRecord.durationBest = newRecord.durationLast;
+						newRecordSet = true;
 					}
 					if (newRecord.durationLast > oldRecord.durationWorst && newRecord.durationLast > 0) {
 						Console.WriteLine("This Fight (" + newRecord.durationLast + ") was worse than your current worst (" + oldRecord.durationWorst + ")");
@@ -196,9 +202,10 @@ namespace BossChecklist
 						specificRecord |= RecordID.BestBrink;
 						oldRecord.healthLossBest = newRecord.healthLossLast;
 						oldRecord.healthLossBestPercent = newRecord.healthLossLastPercent;
+						newRecordSet = true;
 					}
 					if (newRecord.healthLossLast < oldRecord.healthLossWorst && newRecord.healthLossLast > 0) {
-						Console.WriteLine("This Fight (" + newRecord.healthLossWorst + ") was better than your current best (" + oldRecord.healthLossWorst + ")");
+						Console.WriteLine("This Fight (" + newRecord.healthLossWorst + ") was worse than your current best (" + oldRecord.healthLossWorst + ")");
 						specificRecord |= RecordID.WorstBrink;
 						oldRecord.healthLossWorst = newRecord.healthLossLast;
 						oldRecord.healthLossWorstPercent = newRecord.healthLossLastPercent;
@@ -210,9 +217,10 @@ namespace BossChecklist
 						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was better than your current best (" + oldRecord.hitsTakenBest + ")");
 						specificRecord |= RecordID.LeastHits;
 						oldRecord.hitsTakenBest = newRecord.hitsTakenLast;
+						newRecordSet = true;
 					}
 					if (newRecord.hitsTakenLast > oldRecord.hitsTakenWorst && oldRecord.hitsTakenLast > -1) {
-						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was better than your current best (" + oldRecord.hitsTakenWorst + ")");
+						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was worst than your current best (" + oldRecord.hitsTakenWorst + ")");
 						specificRecord |= RecordID.MostHits;
 						oldRecord.hitsTakenWorst = newRecord.hitsTakenLast;
 					}
@@ -234,6 +242,7 @@ namespace BossChecklist
 
 					// ORDER MATTERS
 					packet.Send(toClient: i);
+					if (newRecordSet) CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 				}
 			}
 		}
