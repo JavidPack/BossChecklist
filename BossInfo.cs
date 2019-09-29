@@ -39,15 +39,14 @@ namespace BossChecklist
 			this.loot = loot;
 			this.pageTexture = pageTexture;
 			if (this.pageTexture == null || !Terraria.ModLoader.ModContent.TextureExists(this.pageTexture)) {
-				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 				BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
+				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
 			this.overrideIconTexture = overrideIconTexture;
 			if ((this.overrideIconTexture == null || !ModContent.TextureExists(this.pageTexture)) && this.overrideIconTexture != "") {
-				
 				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
-				this.overrideIconTexture = "Terraria/NPC_Head_0";
 				BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
+				this.overrideIconTexture = "Terraria/NPC_Head_0";
 			}
 			this.info = info;
 			this.hidden = false;

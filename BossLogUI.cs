@@ -114,12 +114,11 @@ namespace BossChecklist
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			float oldScale = Main.inventoryScale;
 			Main.inventoryScale = scale;
-			Rectangle rectangle = GetDimensions().ToRectangle();
+			Rectangle rectangle = GetInnerDimensions().ToRectangle();
 			var backup = Main.inventoryBack6Texture;
 			var backup2 = Main.inventoryBack7Texture;
 
-			if (Main.expertMode) Main.inventoryBack6Texture = Main.inventoryBack15Texture;
-			else Main.inventoryBack6Texture = BossChecklist.instance.GetTexture("Resources/Extra_ExpertOnly");
+			Main.inventoryBack6Texture = Main.inventoryBack15Texture;
 
 			BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 
@@ -131,7 +130,7 @@ namespace BossChecklist
 			if (Id.Contains("collect_") && hasItem) {
 				Main.inventoryBack7Texture = Main.inventoryBack3Texture;
 			}
-
+			
 			// Prevents empty collectible slots from being drawn
 			if (!Id.Contains("collect_") || item.type != 0) {
 				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
@@ -140,16 +139,42 @@ namespace BossChecklist
 			Main.inventoryBack6Texture = backup;
 			Main.inventoryBack7Texture = backup2;
 
+			if (hoverText == "Crimson Altar" || hoverText == "Demon Altar") {
+				Main.instance.LoadTiles(TileID.DemonAltar);
+				int offsetX = 0;
+				int offsetY = 0;
+				int offsetSrc = 0;
+				if (hoverText == "Crimson Altar") offsetSrc = 3;
+				for (int i = 0; i < 6; i++) {
+					Vector2 pos = new Vector2(rectangle.X + (rectangle.Width / 2) - (24 * 0.75f) + (16 * offsetX * 0.75f), rectangle.Y + (rectangle.Height / 2) - (16 * 0.75f) + (16 * offsetY * 0.75f));
+					Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
+					spriteBatch.Draw(Main.tileTexture[TileID.DemonAltar], pos, src, Color.White, 0f, Vector2.Zero, 0.75f, SpriteEffects.None, 0f);
+
+					offsetX++;
+					if (offsetX == 3) {
+						offsetX = 0;
+						offsetY++;
+					}
+				}
+			}
+
 			Texture2D checkMark = BossChecklist.instance.GetTexture("Resources/LogUI_Checks");
-			if (hasItem && item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_"))) {
-				Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
-				Rectangle source = new Rectangle(0, 0, 22, 20);
-				spriteBatch.Draw(checkMark, rect, source, Color.White);
+			Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
+			Rectangle source = new Rectangle(0, 0, 22, 20);
+			if (item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_"))) {
+				if (!Main.expertMode && (item.expert || item.expertOnly)) {
+					source = new Rectangle(24, 0, 22, 20);
+					spriteBatch.Draw(checkMark, rect, source, Color.White);
+				}
+				else if (hasItem) spriteBatch.Draw(checkMark, rect, source, Color.White);
 			}
 
 			if (IsMouseHovering) {
 				if (hoverText != "By Hand") {
-					if (item.type != 0 || hoverText != "") {
+					if (item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_")) && !Main.expertMode && (item.expert || item.expertOnly)) {
+						Main.hoverItemName = "This item is only obtainable in Expert Mode";
+					}
+					else if (item.type != 0 || hoverText != "") {
 						Color newcolor = ItemRarity.GetColor(item.rare);
 						float num3 = (float)(int)Main.mouseTextColor / 255f;
 						if (item.expert || item.expertOnly) {
@@ -696,6 +721,7 @@ namespace BossChecklist
 				}
 				else {
 					// TODO: Make boxes for event NPC list. Next to the box, a number appears for how many the player/world has killed (banner count)
+					// It would be better to have this in a UIList within BossLogUI
 					/*
 					int offset = 0;
 					for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
@@ -1829,8 +1855,6 @@ namespace BossChecklist
 					pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
 					pageTwoItemList.Top.Pixels = 100;
 
-					// TODO: Fix/implement new scroll system for spawn info.
-
 					FittedTextPanel info = new FittedTextPanel("This boss cannot be summoned with any items.");
 					info.Width.Pixels = 300;
 					pageTwoItemList.Add(info);
@@ -1929,17 +1953,6 @@ namespace BossChecklist
 							tileList.Top.Pixels = 105 + (56 * (row + 2));
 							tileList.Left.Pixels = 33 + (56 * l);
 							PageTwo.Append(tileList);
-							if (requiredTiles[l] == 26) {
-								Texture2D altarTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/Extra_Altars"), new Rectangle(0, 0, 48, 34));
-								if (WorldGen.crimson) altarTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/Extra_Altars"), new Rectangle(0, 36, 48, 34));
-								UIImage altar = new UIImage(altarTexture);
-								altar.Height.Pixels = 50;
-								altar.Width.Pixels = 50;
-								altar.ImageScale = 0.75f;
-								altar.Top.Pixels = tileList.Top.Pixels + tileList.Height.Pixels / 3 * 0.45f;
-								altar.Left.Pixels = tileList.Left.Pixels + tileList.Width.Pixels / 3 * 0.15f;
-								PageTwo.Append(altar);
-							}
 						}
 					}
 

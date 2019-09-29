@@ -112,6 +112,7 @@ namespace BossChecklist
 		}
 
 		public override void OnEnterWorld(Player player) {
+			BossLogUI.PageNum = -3;
 			RecordTimers = new List<int>();
 			BrinkChecker = new List<int>();
 			MaxHealth = new List<int>();
