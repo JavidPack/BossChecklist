@@ -1135,8 +1135,8 @@ namespace BossChecklist
 					else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
 					else if (!IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
 					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
-					if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(189, 180, 64);
-					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = Main.DiscoColor;
 				}
 				else {
 					if (IsMouseHovering) TextColor = new Color(80, 85, 100);
@@ -2166,7 +2166,7 @@ namespace BossChecklist
 						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
-							next.TextColor = Color.LawnGreen;
+							next.TextColor = Colors.RarityGreen;
 							next.Id = i.ToString();
 							next.OnClick += new MouseEvent(JumpToBossPage);
 							prehardmodeList.Add(next);
@@ -2177,7 +2177,8 @@ namespace BossChecklist
 							nextCheck++;
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
-							next.TextColor = Color.IndianRed;
+							next.TextColor = Colors.RarityRed;
+							if (!copiedList[i].available()) next.TextColor = Color.SlateGray;
 							next.Id = i.ToString();
 							next.OnClick += new MouseEvent(JumpToBossPage);
 							prehardmodeList.Add(next);
@@ -2189,7 +2190,7 @@ namespace BossChecklist
 						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
-							next.TextColor = Color.LawnGreen;
+							next.TextColor = Colors.RarityGreen;
 							next.Id = i.ToString();
 							next.OnClick += new MouseEvent(JumpToBossPage);
 							hardmodeList.Add(next);
@@ -2200,7 +2201,8 @@ namespace BossChecklist
 							nextCheck++;
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
-							next.TextColor = Color.IndianRed;
+							next.TextColor = Colors.RarityRed;
+							if (!copiedList[i].available()) next.TextColor = Color.SlateGray;
 							next.Id = i.ToString();
 							next.OnClick += new MouseEvent(JumpToBossPage);
 							hardmodeList.Add(next);
