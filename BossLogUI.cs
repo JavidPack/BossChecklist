@@ -162,11 +162,11 @@ namespace BossChecklist
 			Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
 			Rectangle source = new Rectangle(0, 0, 22, 20);
 			if (item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_"))) {
-				if (!Main.expertMode && (item.expert || item.expertOnly)) {
+				if (hasItem) spriteBatch.Draw(checkMark, rect, source, Color.White); // hasItem first priority
+				else if (!Main.expertMode && (item.expert || item.expertOnly)) {
 					source = new Rectangle(24, 0, 22, 20);
 					spriteBatch.Draw(checkMark, rect, source, Color.White);
 				}
-				else if (hasItem) spriteBatch.Draw(checkMark, rect, source, Color.White);
 			}
 
 			if (IsMouseHovering) {
@@ -1288,7 +1288,7 @@ namespace BossChecklist
 				}
 				else if (BossLogUI.SubPageNum == 1) {
 					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-						Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
+						Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
 						if (IsMouseHovering) Main.hoverItemName = "Click to read more info";
 					}
