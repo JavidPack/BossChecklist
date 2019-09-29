@@ -1143,11 +1143,21 @@ namespace BossChecklist
 					else TextColor = new Color(140, 145, 160);
 				}
 
-				if ((WorldGen.crimson && sortedBosses[Convert.ToInt32(Id)].name == "Eater of Worlds")
-				|| (!WorldGen.crimson && sortedBosses[Convert.ToInt32(Id)].name == "Brain of Cthulhu")
-				|| !sortedBosses[Convert.ToInt32(Id)].available()) {
-					if (sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = new Color(105, 125, 105);
-					else TextColor = new Color(125, 105, 105);
+				if (!sortedBosses[Convert.ToInt32(Id)].available() && !sortedBosses[Convert.ToInt32(Id)].downed()) {
+					TextColor = Color.SlateGray;
+					Vector2 stringAdjust = Main.fontMouseText.MeasureString(text);
+					for (int i = 0; i < stringAdjust.X + 4; i++) {
+						Texture2D strike = BossChecklist.instance.GetTexture("Resources/LogUI_Checks_Strike");
+						Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
+						Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
+						if (i == 0) {
+							strikeSrc = new Rectangle(0, 0, 4, 3);
+						}
+						else if (i == stringAdjust.X + 3) {
+							strikeSrc = new Rectangle(0, 8, 4, 3);
+						}
+						spriteBatch.Draw(strike, strikePos, strikeSrc, Color.White);
+					}
 				}
 
 				if (IsMouseHovering) BossLogPanel.headNum = Convert.ToInt32(Id);
@@ -2149,6 +2159,8 @@ namespace BossChecklist
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 				BossChecklistType type = copiedList[i].type;
 
+				// TODO? next.OnRightClick strike through bosses? Not entirely sure of use.
+
 				if (copiedList[i].progression <= 6f) {
 					if (copiedList[i].downed()) {
 						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
@@ -2362,7 +2374,7 @@ namespace BossChecklist
 
 		public int FindNext(BossChecklistType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
 
-		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
+		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && (BossChecklist.BossLogConfig.BossSilhouettes || !boss.available())) || boss.hidden) ? Color.Black : Color.White;
 
 		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
 
