@@ -217,7 +217,10 @@ namespace BossChecklist
 		public override void Draw(SpriteBatch spriteBatch) {
 			BossInfo selectedBoss;
 			if (BossLogUI.PageNum >= 0) selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-			else selectedBoss = BossChecklist.bossTracker.SortedBosses[0];
+			else {
+				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(boss => boss.modSource == "Vanilla" && boss.name == "King Slime");
+				selectedBoss = BossChecklist.bossTracker.SortedBosses[index];
+			}
 
 			if (BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2 && BossLogUI.AltPage[BossLogUI.SubPageNum] && Id == "PageTwo") // PageTwo check to prevent the timer from counting down twice (once for each page)
 			{
@@ -248,6 +251,7 @@ namespace BossChecklist
 			}
 
 			base.Draw(spriteBatch);
+			if (selectedBoss.modSource == "Unknown" && Id == "PageTwo") return; // Prevents drawings on the page if the boss has no info
 			Rectangle pageRect = GetInnerDimensions().ToRectangle();
 			
 			if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
@@ -1789,10 +1793,7 @@ namespace BossChecklist
 				else {
 					if (SubPageNum == 0) OpenRecord(evt, listeningElement);
 					else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
-					else if (SubPageNum == 2) {
-						if (!AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
-						else OpenCollect(evt, listeningElement);
-					}
+					else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
 					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 				}
 			}
@@ -1803,10 +1804,7 @@ namespace BossChecklist
 				if (PageNum != -2) {
 					if (SubPageNum == 0) OpenRecord(evt, listeningElement);
 					else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
-					else if (SubPageNum == 2) {
-						if (!AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
-						else OpenCollect(evt, listeningElement);
-					}
+					else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
 					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 				}
 			}
@@ -1833,7 +1831,8 @@ namespace BossChecklist
 				pageTwoItemList.Top.Pixels = 100;
 
 				// TODO: Fix/implement new scroll system for spawn info.
-
+				
+				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].modSource == "Unknown") return;
 				FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
 				info.Width.Pixels = 300;
 				pageTwoItemList.Add(info);
@@ -1855,6 +1854,7 @@ namespace BossChecklist
 					pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
 					pageTwoItemList.Top.Pixels = 100;
 
+					if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].modSource == "Unknown") return;
 					FittedTextPanel info = new FittedTextPanel("This boss cannot be summoned with any items.");
 					info.Width.Pixels = 300;
 					pageTwoItemList.Add(info);
@@ -2007,6 +2007,10 @@ namespace BossChecklist
 
 		private void OpenLoot(UIMouseEvent evt, UIElement listeningElement) {
 			SubPageNum = 2;
+			if (AltPage[SubPageNum]) {
+				OpenCollect(evt, listeningElement);
+				return;
+			}
 			ResetBothPages();
 			if (PageNum < 0) return;
 			int row = 0;
@@ -2263,10 +2267,7 @@ namespace BossChecklist
 			ResetPageButtons();
 			if (SubPageNum == 0) OpenRecord(evt, listeningElement);
 			else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
-			else if (SubPageNum == 2) {
-				if (!AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
-				else OpenCollect(evt, listeningElement);
-			}
+			else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
 			//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 		}
 
@@ -2355,10 +2356,7 @@ namespace BossChecklist
 
 		private void SwapRecordPage(UIMouseEvent evt, UIElement listeningElement) {
 			AltPage[SubPageNum] = !AltPage[SubPageNum];
-			if (SubPageNum == 2) {
-				if (!AltPage[SubPageNum]) OpenLoot(evt, listeningElement);
-				else OpenCollect(evt, listeningElement);
-			}
+			if (SubPageNum == 2) OpenLoot(evt, listeningElement);
 			if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
 		}
 

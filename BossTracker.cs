@@ -463,6 +463,14 @@ namespace BossChecklist
 					ItemID.MusicBoxDD2
 				};
 			}
+			if (bossNum == NPCID.DD2DarkMageT3) {
+				return new List<int>()
+				{
+					ItemID.BossMaskDarkMage,
+					ItemID.BossTrophyDarkmage,
+					ItemID.MusicBoxDD2
+				};
+			}
 			if (bossNum == NPCID.QueenBee) {
 				return new List<int>()
 				{
