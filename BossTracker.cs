@@ -1088,44 +1088,31 @@ namespace BossChecklist
 		// New system is better
 		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
 			SortedBosses.Add(new BossInfo(BossChecklistType.Boss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
-			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.Write("<<Boss Checklist>> ");
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(source + " has added ");
-			Console.ForegroundColor = ConsoleColor.DarkMagenta;
-			Console.Write(name);
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(" to the boss log!");
-			Console.WriteLine();
-			Console.ResetColor();
+			LogNewBoss(source, name);
 		}
 
 		internal void AddMiniBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
 			SortedBosses.Add(new BossInfo(BossChecklistType.MiniBoss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
-			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.Write("<<Boss Assist>> ");
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(source + " has added ");
-			Console.ForegroundColor = ConsoleColor.DarkMagenta;
-			Console.Write(name);
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(" to the boss log!");
-			Console.WriteLine();
-			Console.ResetColor();
+			LogNewBoss(source, name);
 		}
 
 		internal void AddEvent(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
 			SortedBosses.Add(new BossInfo(BossChecklistType.Event, val, source, name, id, down, available, spawn, collect, loot, texture, info, iconTexture));
+			LogNewBoss(source, name);
+		}
+
+		internal void LogNewBoss(string mod, string name) {
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.Write("<<Boss Assist>> ");
+			Console.Write("<<Boss Checklist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(source + " has added ");
+			Console.Write(mod + " has added ");
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
 			Console.Write(name);
 			Console.ForegroundColor = ConsoleColor.DarkGray;
 			Console.Write(" to the boss log!");
 			Console.WriteLine();
 			Console.ResetColor();
+			BossChecklist.instance.Logger.Info(name + " has been added to the Boss Log!");
 		}
 
 		internal void AddToBossLoot(string modName, string bossName, List<int> lootList) {

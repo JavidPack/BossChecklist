@@ -281,7 +281,7 @@ namespace BossChecklist
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
 		// Merge Notes: AddStatPage added, new AddBoss needed.
 		public override object Call(params object[] args) {
-			// TODO: Log message when a mod is using an obsolete Call, urging them to update.
+			// Logs messages when a mod is not using an updated call for the boss log, urging them to update.
 			try {
 				string message = args[0] as string;
 				if (bossTracker.BossesFinalized)
@@ -295,6 +295,7 @@ namespace BossChecklist
 							args.Length > 4 ? args[4] as string : null, // Info
 							args.Length > 5 ? args[5] as Func<bool> : null // Available
 						);
+						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
 					}
 					else {
 						bossTracker.AddBoss(
@@ -323,6 +324,7 @@ namespace BossChecklist
 							args.Length > 4 ? args[4] as string : null, // Info
 							args.Length > 5 ? args[5] as Func<bool> : null // Available
 						);
+						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
 					}
 					else {
 						bossTracker.AddMiniBoss(
@@ -351,6 +353,7 @@ namespace BossChecklist
 							args.Length > 4 ? args[4] as string : null, // Info
 							args.Length > 5 ? args[5] as Func<bool> : null // Available
 						);
+						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
 					}
 					else {
 						bossTracker.AddEvent(

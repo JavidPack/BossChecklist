@@ -1131,12 +1131,12 @@ namespace BossChecklist
 				spriteBatch.Draw(checkGrid, pos, checkType, Color.White);
 
 				if (BossChecklist.BossLogConfig.ColoredBossText) {
-					if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
-					else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
-					else if (!IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
-					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
-					if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
-					else if (!IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = Main.DiscoColor;
+					if (IsMouseHovering) TextColor = TextColor = Color.SkyBlue;
+					//if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
+					//else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
+					else if (!sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					else if (sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
+					else if (!sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
 				}
 				else {
 					if (IsMouseHovering) TextColor = new Color(80, 85, 100);
