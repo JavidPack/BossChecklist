@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Terraria;
 using Terraria.ModLoader.Config;
 
 namespace BossChecklist
@@ -148,9 +149,11 @@ namespace BossChecklist
 		[Tooltip("These NPCs will not be tracked by the radar")]
 		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
 
-		// TODO: Test if updating the blacklist mid-game works
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+		public override void OnChanged() {
 			BossRadarUI.blacklistChanged = true;
+		}
+
+		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}
 	}

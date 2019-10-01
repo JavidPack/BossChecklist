@@ -72,15 +72,15 @@ namespace BossChecklist
 		internal OrphanType type;
 		internal string modSource;
 		internal string name;
-		internal List<int> itemValues;
+		internal List<int> values;
 
 		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
-		internal OrphanInfo(OrphanType type, string modSource, string name, List<int> itemValues) {
+		internal OrphanInfo(OrphanType type, string modSource, string name, List<int> values) {
 			this.type = type;
 			this.modSource = modSource;
 			this.name = name;
-			this.itemValues = itemValues;
+			this.values = values;
 		}
 	}
 }

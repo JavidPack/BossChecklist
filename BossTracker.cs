@@ -1126,5 +1126,9 @@ namespace BossChecklist
 		internal void AddToBossSpawnItems(string modName, string bossName, List<int> spawnItems) {
 			ExtraData.Add(new OrphanInfo(OrphanType.SpawnItem, modName, bossName, spawnItems));
 		}
+		
+		internal void AddToEventNPCs(string modName, string eventName, List<int> npcIDs) {
+			ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, modName, eventName, npcIDs));
+		}
 	}
 }

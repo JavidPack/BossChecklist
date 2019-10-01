@@ -65,6 +65,7 @@ namespace BossChecklist
 				}
 			}
 			
+			// TODO: Needs packeting?
 			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
 				if (ActiveBossesList[listNum]) {
 					foreach (Player player in StartingPlayers[listNum]) {

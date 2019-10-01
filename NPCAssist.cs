@@ -34,11 +34,11 @@ namespace BossChecklist
 					if (Main.netMode == NetmodeID.SinglePlayer) {
 						if (npc.playerInteraction[Main.myPlayer]) {
 							Player player = Main.player[Main.myPlayer];
-							CheckRecords(npc, player, PlayerAssist.Get(player, mod));
+							CheckRecords(npc, ListedBossNum(npc));
 						}
 					}
 					else {
-						CheckRecordsMultiplayer(npc);
+						CheckRecordsMultiplayer(npc, ListedBossNum(npc));
 					}
 				}
 				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(TruelyDead(npc));
@@ -74,12 +74,13 @@ namespace BossChecklist
 			return true;
 		}
 
-		public void CheckRecords(NPC npc, Player player, PlayerAssist modplayer) {
-			if (!player.GetModPlayer<PlayerAssist>().RecordingStats) return; // RecordingStats must be enabled!
+		public void CheckRecords(NPC npc, int recordIndex) {
+			Player player = Main.LocalPlayer;
+			PlayerAssist modplayer = PlayerAssist.Get(player, mod);
+			if (!modplayer.RecordingStats) return; // RecordingStats must be enabled!
 
 			bool newRecordSet = false;
 
-			int recordIndex = ListedBossNum(npc);
 			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
 			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
 			int currentRecord = bossStats.durationBest;
@@ -155,17 +156,19 @@ namespace BossChecklist
 			modplayer.AttackCounter[recordIndex] = 0;
 
 			// If a new record was made, notify the player
-			if (newRecordSet) CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
+			if (newRecordSet) {
+				CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
+				modplayer.hasNewRecord[recordIndex] = true;
+			}
 		}
 
-		public void CheckRecordsMultiplayer(NPC npc) {
-			int recordIndex = ListedBossNum(npc);
+		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
+				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				bool newRecordSet = false;
 
-				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue; // Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
+				if (!player.active || !npc.playerInteraction[i] || !modPlayer.RecordingStats) continue; // Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (Main.netMode == NetmodeID.Server) {
 					List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 					BossStats oldRecord = list[recordIndex];
@@ -242,7 +245,11 @@ namespace BossChecklist
 
 					// ORDER MATTERS
 					packet.Send(toClient: i);
-					if (newRecordSet) CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
+					if (newRecordSet) {
+						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
+						// TODO: Needs packeting?
+						modPlayer.hasNewRecord[recordIndex] = true;
+					}
 				}
 			}
 		}

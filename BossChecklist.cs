@@ -253,18 +253,25 @@ namespace BossChecklist
 				if (index != -1) {
 					switch (orphan.type) {
 						case OrphanType.Loot:
-							foreach (int item in orphan.itemValues) {
+							foreach (int item in orphan.values) {
 								bossTracker.SortedBosses[index].loot.Add(item);
 							}
 							break;
 						case OrphanType.Collection:
-							foreach (int item in orphan.itemValues) {
+							foreach (int item in orphan.values) {
 								bossTracker.SortedBosses[index].collection.Add(item);
 							}
 							break;
 						case OrphanType.SpawnItem:
-							foreach (int item in orphan.itemValues) {
+							foreach (int item in orphan.values) {
 								bossTracker.SortedBosses[index].spawnItem.Add(item);
+							}
+							break;
+						case OrphanType.EventNPC:
+							if (bossTracker.SortedBosses[index].type == BossChecklistType.Event) {
+								foreach (int npcid in orphan.values) {
+									bossTracker.SortedBosses[index].npcIDs.Add(npcid);
+								}
 							}
 							break;
 					}
@@ -491,7 +498,4 @@ namespace BossChecklist
 			}
 		}
 	}
-
-
 }
-

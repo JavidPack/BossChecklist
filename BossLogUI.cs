@@ -66,18 +66,16 @@ namespace BossChecklist
 				Texture2D border = BossLogUI.CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
 				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
 				else if (!myPlayer.RecordingStats) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
+				
+				if (myPlayer.hasNewRecord.Any(x => x == true)) {
+					slowDown = !slowDown;
+					if (slowDown) cycleFrame++;
+					if (cycleFrame >= 19) cycleFrame = 0;
 
-				/*
-				//TODO? May recycle for later use
-				
-				slowDown = !slowDown;
-				if (slowDown) cycleFrame++;
-				if (cycleFrame == 19) cycleFrame = 0;
-				
-				Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder");
-				source = new Rectangle(0, 40 * cycleFrame, 34, 38);
-				spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
-				*/
+					Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder");
+					source = new Rectangle(0, 40 * cycleFrame, 34, 38);
+					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
+				}
 			}
 			
 			if (IsMouseHovering) {
@@ -1417,6 +1415,7 @@ namespace BossChecklist
 			if (show) {
 				Main.playerInventory = false;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes rainbow glow
+				if (PageNum >= 0 && SubPageNum == 0) Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[PageNum] = false;
 			}
 		}
 
@@ -2224,8 +2223,7 @@ namespace BossChecklist
 			ResetBothPages();
 			List<string> optedMods = new List<string>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") { 
-					// TODO: find a way to get source mod from old integrations without necessitating mod updates.
+				if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") {
 					string sourceDisplayName = boss.SourceDisplayName;
 					if (!optedMods.Contains(sourceDisplayName)) {
 						optedMods.Add(sourceDisplayName);
@@ -2290,6 +2288,7 @@ namespace BossChecklist
 			PageTwo.RemoveAllChildren();
 			ResetPageButtons();
 			if (PageNum >= 0) {
+				if (SubPageNum == 0) Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[PageNum] = false;
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
 					PageTwo.Append(spawnButton);
 					PageTwo.Append(lootButton);

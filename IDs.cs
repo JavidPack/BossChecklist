@@ -13,7 +13,8 @@ namespace BossChecklist
 	{
 		Loot,
 		Collection,
-		SpawnItem
+		SpawnItem,
+		EventNPC
 	}
 
 	enum BossChecklistMessageType : byte

@@ -103,8 +103,6 @@ namespace BossChecklist.UI
 			// Checklistlist populated when the panel is shown: UpdateCheckboxes()
 
 			Append(checklistPanel);
-
-			// TODO, game window resize issue
 		}
 
 		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement) {

@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 
-/// To prevent corruption searching lag in the future
-/// TODO? Batby suggests a map icon of the nearest corruption/crimson when you talk to the dryad about percentage evil
-
 /*
-
 	Ye fabled Crash regaurding the Map. Unsure if fixed now but just in case it isnt (Seems to happen in Multiplayer):
 	
 	Index was out of range. Must be non-negative and less than the size of the collection.
@@ -22,7 +18,6 @@ using Terraria.ID;
 	   at Terraria.Main.DrawMap()
 	   at Terraria.Main.do_Draw(GameTime gameTime)
 	   at Terraria.Main.DoDraw(GameTime gameTime)
-
 */
 
 namespace BossChecklist
