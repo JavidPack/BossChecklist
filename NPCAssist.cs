@@ -76,7 +76,7 @@ namespace BossChecklist
 
 		public void CheckRecords(NPC npc, int recordIndex) {
 			Player player = Main.LocalPlayer;
-			PlayerAssist modplayer = PlayerAssist.Get(player, mod);
+			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
 			if (!modplayer.RecordingStats) return; // RecordingStats must be enabled!
 
 			bool newRecordSet = false;

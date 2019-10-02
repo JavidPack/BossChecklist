@@ -104,8 +104,6 @@ namespace BossChecklist
 			clone.AllBossRecords = AllBossRecords;
 		}
 
-		public static PlayerAssist Get(Player player, Mod mod) => player.GetModPlayer<PlayerAssist>(mod);
-
 		public override void OnRespawn(Player player) {
 			// This works both in SP and MP because it records within ModPlayer
 			for (int i = 0; i < DeathTracker.Count; i++) {

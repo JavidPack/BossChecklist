@@ -4,7 +4,7 @@ using System;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-namespace BossChecklist.UI
+namespace BossChecklist.UIElements
 {
 	class UICheckbox : UIText
 	{

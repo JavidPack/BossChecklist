@@ -2,7 +2,7 @@
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-namespace BossChecklist.UI
+namespace BossChecklist.UIElements
 {
 	internal class FixedUIScrollbar : UIScrollbar
 	{

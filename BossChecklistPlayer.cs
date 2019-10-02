@@ -1,4 +1,4 @@
-﻿using BossChecklist.UI;
+﻿using BossChecklist.UIElements;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;

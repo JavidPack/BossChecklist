@@ -1,4 +1,4 @@
-﻿using BossChecklist.UI;
+﻿using BossChecklist.UIElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -66,8 +66,8 @@ namespace BossChecklist
 				bossChecklistUI.Activate();
 				bossChecklistInterface = new UserInterface();
 
-				UICheckbox.checkboxTexture = GetTexture("checkBox");
-				UICheckbox.checkmarkTexture = GetTexture("checkMark");
+				UICheckbox.checkboxTexture = GetTexture("UIElements/checkBox");
+				UICheckbox.checkmarkTexture = GetTexture("UIElements/checkMark");
 			}
 
 			if (!Main.dedServ) {

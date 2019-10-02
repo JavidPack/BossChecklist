@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-namespace BossChecklist.UI
+namespace BossChecklist.UIElements
 {
 	class BossChecklistUI : UIState
 	{

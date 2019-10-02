@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 
-namespace BossChecklist
+namespace BossChecklist.UIElements
 {
 	internal class UIHoverImageButton : UIImageButton
 	{
