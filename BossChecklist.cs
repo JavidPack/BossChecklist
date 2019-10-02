@@ -21,8 +21,13 @@ namespace BossChecklist
 		internal static BossTracker bossTracker;
 		internal static ModHotKey ToggleChecklistHotKey;
 		public static ModHotKey ToggleBossLog;
+
 		internal static UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
+		internal UserInterface BossLogInterface;
+		internal BossLogUI BossLog;
+		internal static UserInterface BossRadarUIInterface;
+		internal BossRadarUI BossRadarUI;
 
 		// Mods that have been added manually
 		internal bool vanillaLoaded = true;
@@ -39,13 +44,8 @@ namespace BossChecklist
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
 		public static List<BossStats>[] ServerCollectedRecords;
-		internal UserInterface BossLogInterface;
-		internal BossLogUI BossLog;
 		//Zoom level, (for UIs)
 		public static Vector2 ZoomFactor; //0f == fully zoomed out, 1f == fully zoomed in
-
-		internal static UserInterface BossRadarUIInterface;
-		internal static BossRadarUI BossRadarUI;
 
 		public BossChecklist() {
 		}
@@ -68,9 +68,7 @@ namespace BossChecklist
 
 				UICheckbox.checkboxTexture = GetTexture("UIElements/checkBox");
 				UICheckbox.checkmarkTexture = GetTexture("UIElements/checkMark");
-			}
 
-			if (!Main.dedServ) {
 				BossLog = new BossLogUI();
 				BossLog.Activate();
 				BossLogInterface = new UserInterface();
@@ -91,6 +89,7 @@ namespace BossChecklist
 			bossTracker = null;
 			ToggleBossLog = null;
 			ServerCollectedRecords = null;
+			BossRadarUIInterface = null;
 			BossRadarUI.arrowTexture = null;
 
 			UICheckbox.checkboxTexture = null;
@@ -99,9 +98,8 @@ namespace BossChecklist
 
 		public override void UpdateUI(GameTime gameTime) {
 			bossChecklistInterface?.Update(gameTime);
-
-			if (BossLogInterface != null) BossLogInterface.Update(gameTime);
-			BossRadarUI.Update(gameTime);
+			BossLogInterface?.Update(gameTime);
+			BossRadarUI?.Update(gameTime);
 		}
 
 		public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
@@ -217,13 +215,6 @@ namespace BossChecklist
 				);
 			}
 			#endregion
-		}
-
-		public override void PostDrawFullscreenMap(ref string mouseText) {
-			MapAssist.DrawFullscreenMap();
-			if (MapAssist.shouldDraw) {
-				MapAssist.DrawNearestEvil(MapAssist.tilePos);
-			}
 		}
 
 		// An alternative approach to the weak reference approach is to do the following in YOUR mod in PostSetupContent

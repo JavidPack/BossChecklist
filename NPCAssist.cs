@@ -165,10 +165,11 @@ namespace BossChecklist
 		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
+
+				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
+				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				bool newRecordSet = false;
-
-				if (!player.active || !npc.playerInteraction[i] || !modPlayer.RecordingStats) continue; // Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (Main.netMode == NetmodeID.Server) {
 					List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 					BossStats oldRecord = list[recordIndex];
@@ -282,12 +283,6 @@ namespace BossChecklist
 				}
 			}
 			return true;
-		}
-
-		public override void OnChatButtonClicked(NPC npc, bool firstButton) {
-			if (npc.type == NPCID.Dryad && !firstButton) {
-				MapAssist.LocateNearestEvil();
-			}
 		}
 	}
 }

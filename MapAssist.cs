@@ -31,8 +31,6 @@ namespace BossChecklist
 		internal static void FullMapInitialize() {
 			whitelistPos = new List<Vector2>();
 			whitelistType = new List<int>();
-			tilePos = new Vector2();
-			shouldDraw = false;
 		}
 
 		public static void DrawFullscreenMap() {
@@ -96,81 +94,6 @@ namespace BossChecklist
 			if (item.rare == 9 && item.damage <= 0 && item.Name.Contains("Fragment")) return 1;
 			if (item.type == ItemID.ShadowScale || item.type == ItemID.TissueSample) return 2;
 			return -1;
-		}
-		#endregion
-
-		#region EvilFinder
-		public static Vector2 tilePos;
-		public static bool shouldDraw = false;
-		public static int evilType = 0;
-
-		public static void DrawNearestEvil(Vector2 pos) {
-			if (pos == new Vector2(0, 0) || evilType == 0) return;
-			Texture2D drawTexture = null;
-			if (evilType == 1) drawTexture = Main.itemTexture[ItemID.CorruptFishingCrate];
-			else if (evilType == 2) drawTexture = Main.itemTexture[ItemID.CrimsonFishingCrate];
-			Vector2 drawPosition = CalculateDrawPos(pos);
-
-			DrawTextureOnMap(drawTexture, drawPosition);
-		}
-
-		public static int ValidEvilTile(int type) {
-			List<int> validCrimsonTiles = new List<int>()
-			{
-				TileID.CrimsonHardenedSand,
-				TileID.Crimsand,
-				TileID.CrimsonSandstone,
-				TileID.Crimstone,
-				TileID.CrimtaneThorns,
-				TileID.FleshIce,
-				TileID.FleshGrass
-			};
-
-			List<int> validCorruptionTiles = new List<int>()
-			{
-				TileID.Ebonstone,
-				TileID.Ebonsand,
-				TileID.CorruptGrass,
-				TileID.CorruptIce,
-				TileID.CorruptHardenedSand,
-				TileID.CorruptThorns,
-				TileID.CorruptSandstone,
-			};
-
-			if (validCorruptionTiles.Contains(type)) return 1;
-			if (validCrimsonTiles.Contains(type)) return 2;
-			return 0;
-		}
-
-		public static void LocateNearestEvil() {
-			shouldDraw = false;
-			tilePos = new Vector2(0, 0);
-
-			float tileDistance = float.MaxValue;
-			Vector2 nearestTile = new Vector2(0, 0);
-
-			for (int x = (int)(Main.leftWorld / 16); x < (int)(Main.rightWorld / 16); x++) {
-				for (int y = (int)(Main.topWorld / 16); y < (int)(Main.bottomWorld / 16); y++) {
-					if (x >= Main.LocalPlayer.position.X) break;
-					if (!Main.tile[x, y].active() || ValidEvilTile(Main.tile[x, y].type) == 0) continue;
-					float currentTileDistance = Vector2.Distance(new Vector2(x, y).ToWorldCoordinates(), Main.LocalPlayer.Center);
-					if (currentTileDistance < tileDistance) {
-						tileDistance = currentTileDistance;
-						nearestTile = new Vector2(x, y);
-						evilType = ValidEvilTile(Main.tile[x, y].type);
-					}
-				}
-			}
-
-			if (tileDistance != float.MaxValue) {
-				tilePos = nearestTile;
-				shouldDraw = true;
-			}
-			else {
-				shouldDraw = false;
-				tilePos = new Vector2(0, 0);
-				evilType = 0;
-			}
 		}
 		#endregion
 	}
