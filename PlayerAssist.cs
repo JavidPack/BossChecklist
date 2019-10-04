@@ -151,8 +151,6 @@ namespace BossChecklist
 				}
 				packet.Send(); // To server
 			}
-			MapAssist.shouldDraw = false;
-			MapAssist.tilePos = new Vector2(0, 0);
 		}
 
 		public override void OnHitByNPC(NPC npc, int damage, bool crit) {

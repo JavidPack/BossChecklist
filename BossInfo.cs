@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Localization;
 
 namespace BossChecklist
 {
@@ -10,7 +11,7 @@ namespace BossChecklist
 		internal float progression;
 		internal List<int> npcIDs;
 		internal string modSource;
-		internal string name; // TODO: localized name and non localized for mod.call 
+		internal string name;
 		internal Func<bool> downed;
 
 		internal List<int> spawnItem;
@@ -30,16 +31,15 @@ namespace BossChecklist
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
-			this.name = name;
+			this.name = name.StartsWith("$") ? Language.GetTextValue(name.Substring(1)) : name;
 			this.npcIDs = npcIDs;
 			this.downed = downed;
 			this.available = available ?? (() => true);
-
 			this.spawnItem = spawnItem;
 			this.collection = collection;
 			this.loot = loot;
 			this.pageTexture = pageTexture;
-			if (this.pageTexture == null || !Terraria.ModLoader.ModContent.TextureExists(this.pageTexture)) {
+			if (this.pageTexture == null || !ModContent.TextureExists(this.pageTexture)) {
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}

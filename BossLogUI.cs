@@ -1333,6 +1333,7 @@ namespace BossChecklist
 	{
 		public BossAssistButton bosslogbutton;
 
+		public BossLogPanel BookArea;
 		public BossLogPanel PageOne;
 		public BossLogPanel PageTwo;
 
@@ -1384,6 +1385,7 @@ namespace BossChecklist
 					Append(EventTab);
 					Append(PageOne);
 					Append(PageTwo);
+					Append(BookArea);
 				}
 				else {
 					RemoveChild(ToCTab);
@@ -1394,6 +1396,7 @@ namespace BossChecklist
 					RemoveChild(EventTab);
 					RemoveChild(PageOne);
 					RemoveChild(PageTwo);
+					RemoveChild(BookArea);
 				}
 				bossLogVisible = value;
 			}
@@ -1492,7 +1495,12 @@ namespace BossChecklist
 			CreditsTab.Top.Set(-250 + 60 + (76 * 4), 0.5f);
 			CreditsTab.Id = "Credits_Tab";
 			CreditsTab.OnClick += new MouseEvent(OpenViaTab);
-			
+
+			BookArea.Width.Pixels = 800;
+			BookArea.Height.Pixels = 478;
+			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
+			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
+
 			PageOne = new BossLogPanel { Id = "PageOne" };
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
@@ -1649,6 +1657,8 @@ namespace BossChecklist
 			// We reset the position of the button to make sure it updates with the screen res
 			bosslogbutton.Left.Pixels = Main.screenWidth - bosslogbutton.Width.Pixels - 190;
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
+			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
+			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
