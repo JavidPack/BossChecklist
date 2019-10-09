@@ -1496,6 +1496,7 @@ namespace BossChecklist
 			CreditsTab.Id = "Credits_Tab";
 			CreditsTab.OnClick += new MouseEvent(OpenViaTab);
 
+			BookArea = new BossLogPanel();
 			BookArea.Width.Pixels = 800;
 			BookArea.Height.Pixels = 478;
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;

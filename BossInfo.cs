@@ -60,8 +60,8 @@ namespace BossChecklist
 			return new BossInfo(type, progression, "Vanilla", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]));
 		}
 
-		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem, string image = "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), image, BossChecklist.bossTracker.SetupEventSpawnDesc(name));
+		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
+			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";
