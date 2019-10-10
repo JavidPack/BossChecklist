@@ -82,8 +82,6 @@ namespace BossChecklist
 
 			/* TODO: Add manual textures for the following NPCs/Events
 				- Goblin Army (Make a better one)
-				- DD2 (Add more to it?)
-				- Frost Legion
 				- Pirates
 				- Pumpkin Moon (Make a better one)
 			*/
