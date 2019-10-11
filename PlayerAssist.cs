@@ -136,7 +136,7 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = mod.GetPacket();
-				packet.Write((byte)BossChecklistMessageType.SendRecordsToServer);
+				packet.Write((byte)PacketMessageType.SendRecordsToServer);
 				for (int i = 0; i < bossCount; i++) {
 					BossStats stat = AllBossRecords[i].stat;
 					packet.Write(stat.kills);

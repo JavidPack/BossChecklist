@@ -23,9 +23,9 @@ namespace BossChecklist.UIElements
 			Height.Pixels = 15;
 
 			checkbox = new UICheckbox(boss.progression, boss.name, 1f, false);
-			if (boss.type == BossChecklistType.Event)
+			if (boss.type == EntryType.Event)
 				checkbox.TextColor = Color.MediumPurple;
-			if (boss.type == BossChecklistType.MiniBoss)
+			if (boss.type == EntryType.MiniBoss)
 				checkbox.TextColor = Color.CornflowerBlue;
 			if (boss.hidden)
 				checkbox.TextColor = Color.DarkGreen;
@@ -46,7 +46,7 @@ namespace BossChecklist.UIElements
 				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)BossChecklistMessageType.RequestHideBoss);
+					packet.Write((byte)PacketMessageType.RequestHideBoss);
 					packet.Write(boss.name);
 					packet.Write(boss.hidden);
 					packet.Send();

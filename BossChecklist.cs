@@ -259,7 +259,7 @@ namespace BossChecklist
 							}
 							break;
 						case OrphanType.EventNPC:
-							if (bossTracker.SortedBosses[index].type == BossChecklistType.Event) {
+							if (bossTracker.SortedBosses[index].type == EntryType.Event) {
 								foreach (int npcid in orphan.values) {
 									bossTracker.SortedBosses[index].npcIDs.Add(npcid);
 								}
@@ -414,12 +414,12 @@ namespace BossChecklist
 		}
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
-			BossChecklistMessageType msgType = (BossChecklistMessageType)reader.ReadByte();
+			PacketMessageType msgType = (PacketMessageType)reader.ReadByte();
 			Player player;
 			PlayerAssist modPlayer;
 			switch (msgType) {
 				// Sent from Client to Server
-				case BossChecklistMessageType.RequestHideBoss:
+				case PacketMessageType.RequestHideBoss:
 					//if (Main.netMode == NetmodeID.MultiplayerClient)
 					//{
 					//	Main.NewText("Huh? RequestHideBoss on client?");
@@ -435,7 +435,7 @@ namespace BossChecklist
 					//else
 					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
 					break;
-				case BossChecklistMessageType.RequestClearHidden:
+				case PacketMessageType.RequestClearHidden:
 					//if (Main.netMode == NetmodeID.MultiplayerClient)
 					//{
 					//	Main.NewText("Huh? RequestClearHidden on client?");
@@ -446,7 +446,7 @@ namespace BossChecklist
 					//else
 					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
 					break;
-				case BossChecklistMessageType.SendRecordsToServer:
+				case PacketMessageType.SendRecordsToServer:
 					player = Main.player[whoAmI];
 					Console.WriteLine("Receiving boss records from the joined player + " + player.name + "!");
 					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
@@ -464,7 +464,7 @@ namespace BossChecklist
 						Console.WriteLine("Establishing " + player.name + "'s records for " + bossTracker.SortedBosses[i].name + " to the server");
 					}
 					break;
-				case BossChecklistMessageType.RecordUpdate:
+				case PacketMessageType.RecordUpdate:
 					player = Main.LocalPlayer;
 					modPlayer = player.GetModPlayer<PlayerAssist>();
 					//Server just sent us information about what boss just got killed and its records shall be updated

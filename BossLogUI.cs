@@ -271,7 +271,7 @@ namespace BossChecklist
 
 				if (headNum != -1) {
 					BossInfo headBoss = BossChecklist.bossTracker.SortedBosses[headNum];
-					if (headBoss.type != BossChecklistType.Event || headBoss.name == "Lunar Event") {
+					if (headBoss.type != EntryType.Event || headBoss.name == "Lunar Event") {
 						int headsDisplayed = 0;
 						int adjustment = 0;
 						Color maskedHead = BossLogUI.MaskBoss(headBoss);
@@ -312,7 +312,7 @@ namespace BossChecklist
 					spriteBatch.Draw(NPCTexture, bossPos, snippet, Color.White);
 				}
 
-				if (selectedBoss.type != BossChecklistType.Event || selectedBoss.name == "Lunar Event") {
+				if (selectedBoss.type != EntryType.Event || selectedBoss.name == "Lunar Event") {
 					int headsDisplayed = 0;
 					int adjustment = 0;
 					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
@@ -336,12 +336,10 @@ namespace BossChecklist
 					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width - 10, pageRect.Y + 5, eventIcon.Width, eventIcon.Height);
 					if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
 				}
-
-				string sourceDisplayName = $"[c/9696ff:{selectedBoss.SourceDisplayName}]";
+				
 				string isDefeated = "";
-
-				if (selectedBoss.downed()) isDefeated = "[c/d3ffb5:Defeated in " + Main.worldName + "]";
-				else isDefeated = "[c/ffccc8:Undefeated in " + Main.worldName + "]";
+				if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:Defeated in {Main.worldName}]";
+				else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:Undefeated in {Main.worldName} ]";
 
 				Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 				Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
@@ -350,7 +348,7 @@ namespace BossChecklist
 				Utils.DrawBorderString(spriteBatch, isDefeated, pos, Color.White);
 
 				pos = new Vector2(pageRect.X + 5, pageRect.Y + 55);
-				Utils.DrawBorderString(spriteBatch, sourceDisplayName, pos, Color.White);
+				Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 			}
 
 			if (Id == "PageOne" && BossLogUI.PageNum == -2) {
@@ -436,7 +434,7 @@ namespace BossChecklist
 			}
 
 			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
-				if (selectedBoss.type != BossChecklistType.Event) {
+				if (selectedBoss.type != EntryType.Event) {
 					// Boss Records Subpage
 					Texture2D achievements = ModContent.GetTexture("Terraria/UI/Achievements");
 					BossStats record = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat;
@@ -724,18 +722,50 @@ namespace BossChecklist
 				else {
 					// TODO: Make boxes for event NPC list. Next to the box, a number appears for how many the player/world has killed (banner count)
 					// It would be better to have this in a UIList within BossLogUI
-					/*
 					int offset = 0;
+					int offsetY = 0;
+					int npcNum = 0;
 					for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
 						int npcID = selectedBoss.npcIDs[i];
+						int init = Item.NPCtoBanner(npcID) + 21;
+						if (init <= 21) continue;
+							
 						Main.instance.LoadNPC(npcID);
-						Texture2D NPCTexture = Main.npcTexture[npcID];
-						Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X, GetInnerDimensions().ToRectangle().Y + offset);
-						Rectangle snippet = new Rectangle(0, 0, NPCTexture.Width, NPCTexture.Height / Main.npcFrameCount[npcID]);
-						spriteBatch.Draw(NPCTexture, pos, snippet, Color.White);
-						offset += NPCTexture.Height / Main.npcFrameCount[npcID];
+						Texture2D banner = Main.tileTexture[TileID.Banners];
+						
+						int jump = 0;
+						if (init >= 222) {
+							jump = 6;
+							init -= 222;
+						}
+						else if (init >= 111) {
+							jump = 3;
+							init -= 111;
+						}
+
+						Color faded = new Color(128, 128, 128, 128);
+						if (NPC.killCount[Item.NPCtoBanner(npcID)] >= 50) faded = Color.White;
+
+						for (int j = 0; j < 3; j++) {
+							Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
+							Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
+							spriteBatch.Draw(banner, pos, rect, faded);
+
+							if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
+								if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
+									Main.hoverItemName = NPC.killCount[Item.NPCtoBanner(npcID)].ToString();
+								}
+							}
+							if (j == 2) {
+								offset += 25;
+								if (npcNum % 13 == 0 & npcNum != 0) {
+									offset = 0;
+									offsetY += 64;
+								}
+								npcNum++;
+							}
+						}
 					}
-					*/
 				}
 			}
 
@@ -746,7 +776,6 @@ namespace BossChecklist
 			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2) {
 				if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 					// Loot Table Subpage
-					Main.instance.LoadTiles(237);
 					Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
 					for (int i = 0; i < selectedBoss.loot.Count; i++) {
 						Item bagItem = new Item();
@@ -780,7 +809,7 @@ namespace BossChecklist
 					Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height);
 					spriteBatch.Draw(template, ctRect, Color.White);
 					if (!hasMusicBox) {
-						Main.instance.LoadTiles(139);
+						Main.instance.LoadTiles(TileID.MusicBoxes);
 						Texture2D musicBox = Main.tileTexture[139];
 
 						int offsetX = 0;
@@ -845,8 +874,9 @@ namespace BossChecklist
 							}
 						}
 						else {
-							Main.instance.LoadTiles(ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile);
-							Texture2D trophy = Main.tileTexture[ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile];
+							int selectedTile = ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile;
+							Main.instance.LoadTiles(selectedTile);
+							Texture2D trophy = Main.tileTexture[selectedTile];
 
 							offsetX = 0;
 							offsetY = 0;
@@ -925,8 +955,9 @@ namespace BossChecklist
 							}
 						}
 						else {
-							Main.instance.LoadTiles(ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile);
-							Texture2D musicBox = Main.tileTexture[ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile];
+							int selectedTile = ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile;
+							Main.instance.LoadTiles(selectedTile);
+							Texture2D musicBox = Main.tileTexture[selectedTile];
 
 							for (int i = 0; i < 4; i++) {
 								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16), pageRect.Y + 160 + (offsetY * 16), 16, 16);
@@ -1212,7 +1243,7 @@ namespace BossChecklist
 
 			if (buttonString == "Boss Records" || buttonString == "Kill Count") {
 				buttonString = "Kill Count";
-				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type == BossChecklistType.Event) buttonString = "Kill Count";
+				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type == EntryType.Event) buttonString = "Kill Count";
 				else buttonString = "Boss Records";
 			}
 			BackgroundColor = Color.Brown;
@@ -1668,11 +1699,11 @@ namespace BossChecklist
 			// Updating tabs to proper positions
 			if (PageNum == -2) CreditsTab.Left.Pixels = -400 - 16;
 			else CreditsTab.Left.Pixels = -400 + 800 - 16;
-			if (PageNum >= FindNext(BossChecklistType.Boss) || PageNum == -2) BossTab.Left.Pixels = -400 - 16;
+			if (PageNum >= FindNext(EntryType.Boss) || PageNum == -2) BossTab.Left.Pixels = -400 - 16;
 			else BossTab.Left.Pixels = -400 + 800 - 16;
-			if (PageNum >= FindNext(BossChecklistType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = -400 - 16;
+			if (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2) MiniBossTab.Left.Pixels = -400 - 16;
 			else MiniBossTab.Left.Pixels = -400 + 800 - 16;
-			if (PageNum >= FindNext(BossChecklistType.Event) || PageNum == -2) EventTab.Left.Pixels = -400 - 16;
+			if (PageNum >= FindNext(EntryType.Event) || PageNum == -2) EventTab.Left.Pixels = -400 - 16;
 			else EventTab.Left.Pixels = -400 + 800 - 16;
 			
 			if (PageNum != -1) {
@@ -1750,9 +1781,9 @@ namespace BossChecklist
 		}
 		
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement.Id == "Bosses_Tab") PageNum = FindNext(BossChecklistType.Boss);
-			else if (listeningElement.Id == "MiniBosses_Tab") PageNum = FindNext(BossChecklistType.MiniBoss);
-			else if (listeningElement.Id == "Events_Tab") PageNum = FindNext(BossChecklistType.Event);
+			if (listeningElement.Id == "Bosses_Tab") PageNum = FindNext(EntryType.Boss);
+			else if (listeningElement.Id == "MiniBosses_Tab") PageNum = FindNext(EntryType.MiniBoss);
+			else if (listeningElement.Id == "Events_Tab") PageNum = FindNext(EntryType.Event);
 			else if (listeningElement.Id == "Credits_Tab") UpdateCredits();
 			else UpdateTableofContents();
 
@@ -1852,7 +1883,7 @@ namespace BossChecklist
 
 				// TODO: Fix/implement new scroll system for spawn info.
 				
-				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].modSource == "Unknown") return;
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
 				FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
 				info.Width.Pixels = 300;
 				pageTwoItemList.Add(info);
@@ -1874,7 +1905,7 @@ namespace BossChecklist
 					pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
 					pageTwoItemList.Top.Pixels = 100;
 
-					if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].modSource == "Unknown") return;
+					if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
 					FittedTextPanel info = new FittedTextPanel("This boss cannot be summoned with any items.");
 					info.Width.Pixels = 300;
 					pageTwoItemList.Add(info);
@@ -2167,13 +2198,13 @@ namespace BossChecklist
 				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
 				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
-				BossChecklistType type = copiedList[i].type;
+				EntryType type = copiedList[i].type;
 
 				// TODO? next.OnRightClick strike through bosses? Not entirely sure of use.
 
 				if (copiedList[i].progression <= 6f) {
 					if (copiedList[i].downed()) {
-						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
+						if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter != "Hide when completed")) {
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
 							next.TextColor = Colors.RarityGreen;
@@ -2183,7 +2214,7 @@ namespace BossChecklist
 						}
 					}
 					else if (!copiedList[i].downed()) {
-						if ((mbFilter != "Hide" && type == BossChecklistType.MiniBoss) || (eFilter != "Hide" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+						if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
 							nextCheck++;
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
@@ -2197,7 +2228,7 @@ namespace BossChecklist
 				}
 				else {
 					if (copiedList[i].downed()) {
-						if ((mbFilter == "Show" && type == BossChecklistType.MiniBoss) || (eFilter == "Show" && type == BossChecklistType.Event) || (type == BossChecklistType.Boss && bFilter != "Hide when completed")) {
+						if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter != "Hide when completed")) {
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
 							next.TextColor = Colors.RarityGreen;
@@ -2207,7 +2238,7 @@ namespace BossChecklist
 						}
 					}
 					else if (!copiedList[i].downed()) {
-						if ((mbFilter != "Hide" && type == BossChecklistType.MiniBoss) || (eFilter != "Hide" && type == BossChecklistType.Event) || type == BossChecklistType.Boss) {
+						if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
 							nextCheck++;
 							next.PaddingTop = 5;
 							next.PaddingLeft = 22;
@@ -2351,7 +2382,7 @@ namespace BossChecklist
 			else {
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown") {
-					bool eventCheck = SubPageNum == 0 && boss.type == BossChecklistType.Event;
+					bool eventCheck = SubPageNum == 0 && boss.type == EntryType.Event;
 					if (!eventCheck) {
 						toolTipButton = new SubpageButton("");
 						toolTipButton.Width.Pixels = 32;
@@ -2384,7 +2415,7 @@ namespace BossChecklist
 			if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
 		}
 
-		public int FindNext(BossChecklistType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
+		public int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
 
 		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && (BossChecklist.BossLogConfig.BossSilhouettes || !boss.available())) || boss.hidden) ? Color.Black : Color.White;
 

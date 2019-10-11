@@ -23,11 +23,11 @@ namespace BossChecklist
 		internal string info;
 		internal Func<bool> available;
 		internal bool hidden;
-		internal BossChecklistType type;
+		internal EntryType type;
 
 		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
-		internal BossInfo(BossChecklistType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string overrideIconTexture = "") {
+		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string overrideIconTexture = "") {
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
@@ -53,7 +53,7 @@ namespace BossChecklist
 			this.hidden = false;
 		}
 
-		internal static BossInfo MakeVanillaBoss(BossChecklistType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
+		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			Func<bool> avail = () => true;
 			if (name == "Eater of Worlds") avail = () => !WorldGen.crimson;
 			else if (name == "Brain of Cthulhu") avail = () => WorldGen.crimson;
@@ -61,7 +61,7 @@ namespace BossChecklist
 		}
 
 		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
-			return new BossInfo(BossChecklistType.Event, progression, "Vanilla", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
+			return new BossInfo(EntryType.Event, progression, "Vanilla", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";

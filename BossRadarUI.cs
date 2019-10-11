@@ -172,8 +172,8 @@ namespace BossChecklist
 			if (!whitelistFilled || blacklistChanged) {
 				List<int> idList = new List<int>();
 				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
-					if (BossChecklist.bossTracker.SortedBosses[i].type == BossChecklistType.Event) continue;
-					if (BossChecklist.bossTracker.SortedBosses[i].type == BossChecklistType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
+					if (BossChecklist.bossTracker.SortedBosses[i].type == EntryType.Event) continue;
+					if (BossChecklist.bossTracker.SortedBosses[i].type == EntryType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].npcIDs.Count; j++) {
 						int ID = BossChecklist.bossTracker.SortedBosses[i].npcIDs[j];
 						if (!BlackListedID(ID) && BossLogUI.GetBossHead(ID) != Main.npcHeadTexture[0]) idList.Add(ID);

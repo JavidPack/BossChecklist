@@ -2,7 +2,7 @@
 
 namespace BossChecklist
 {
-	internal enum BossChecklistType
+	internal enum EntryType
 	{
 		Boss,
 		MiniBoss,
@@ -17,7 +17,7 @@ namespace BossChecklist
 		EventNPC
 	}
 
-	enum BossChecklistMessageType : byte
+	enum PacketMessageType : byte
 	{
 		RequestHideBoss,
 		RequestClearHidden,

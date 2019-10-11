@@ -131,7 +131,7 @@ namespace BossChecklist.UIElements
 
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)BossChecklistMessageType.RequestClearHidden);
+					packet.Write((byte)PacketMessageType.RequestClearHidden);
 					packet.Send();
 				}
 				Main.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
@@ -155,9 +155,9 @@ namespace BossChecklist.UIElements
 				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.name);
 				if (boss.available() && (!boss.hidden || showHidden)) {
 					if (showCompleted || !boss.downed()) {
-						if (boss.type == BossChecklistType.Event && !showEvent)
+						if (boss.type == EntryType.Event && !showEvent)
 							continue;
-						if (boss.type == BossChecklistType.MiniBoss && !showMiniBoss)
+						if (boss.type == EntryType.MiniBoss && !showMiniBoss)
 							continue;
 						UIBossCheckbox box = new UIBossCheckbox(boss);
 						checklistList.Add(box);

@@ -240,7 +240,7 @@ namespace BossChecklist
 					// Make the packet
 
 					ModPacket packet = mod.GetPacket();
-					packet.Write((byte)BossChecklistMessageType.RecordUpdate);
+					packet.Write((byte)PacketMessageType.RecordUpdate);
 					packet.Write((int)recordIndex);
 					newRecord.NetSend(packet, specificRecord);
 
