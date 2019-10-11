@@ -731,6 +731,7 @@ namespace BossChecklist
 						if (init <= 21) continue;
 							
 						Main.instance.LoadNPC(npcID);
+						Main.instance.LoadTiles(TileID.Banners);
 						Texture2D banner = Main.tileTexture[TileID.Banners];
 						
 						int jump = 0;
@@ -753,7 +754,7 @@ namespace BossChecklist
 
 							if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
 								if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-									Main.hoverItemName = NPC.killCount[Item.NPCtoBanner(npcID)].ToString();
+									Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}";
 								}
 							}
 							if (j == 2) {
