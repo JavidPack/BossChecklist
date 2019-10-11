@@ -720,50 +720,85 @@ namespace BossChecklist
 					}
 				}
 				else {
-					// TODO: Make boxes for event NPC list. Next to the box, a number appears for how many the player/world has killed (banner count)
-					// It would be better to have this in a UIList within BossLogUI
 					int offset = 0;
 					int offsetY = 0;
 					int npcNum = 0;
 					for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
 						int npcID = selectedBoss.npcIDs[i];
-						int init = Item.NPCtoBanner(npcID) + 21;
-						if (init <= 21) continue;
-							
-						Main.instance.LoadNPC(npcID);
-						Main.instance.LoadTiles(TileID.Banners);
-						Texture2D banner = Main.tileTexture[TileID.Banners];
-						
-						int jump = 0;
-						if (init >= 222) {
-							jump = 6;
-							init -= 222;
-						}
-						else if (init >= 111) {
-							jump = 3;
-							init -= 111;
-						}
+						if (npcID < NPCID.Count) {
+							int init = Item.NPCtoBanner(npcID) + 21;
+							if (init <= 21) continue;
 
-						Color faded = new Color(128, 128, 128, 128);
-						if (NPC.killCount[Item.NPCtoBanner(npcID)] >= 50) faded = Color.White;
+							Main.instance.LoadNPC(npcID);
+							Main.instance.LoadTiles(TileID.Banners);
+							Texture2D banner = Main.tileTexture[TileID.Banners];
 
-						for (int j = 0; j < 3; j++) {
-							Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
-							Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
-							spriteBatch.Draw(banner, pos, rect, faded);
+							int jump = 0;
+							if (init >= 222) {
+								jump = 6;
+								init -= 222;
+							}
+							else if (init >= 111) {
+								jump = 3;
+								init -= 111;
+							}
 
-							if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
-								if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-									Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}";
+							Color faded = new Color(128, 128, 128, 128);
+							if (NPC.killCount[Item.NPCtoBanner(npcID)] >= 50) faded = Color.White;
+
+							for (int j = 0; j < 3; j++) {
+								Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
+								Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
+								spriteBatch.Draw(banner, pos, rect, faded);
+
+								if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
+									if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
+										Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}";
+									}
+								}
+								if (j == 2) {
+									offset += 25;
+									if (npcNum % 13 == 0 & npcNum != 0) {
+										offset = 0;
+										offsetY += 64;
+									}
+									npcNum++;
 								}
 							}
-							if (j == 2) {
-								offset += 25;
-								if (npcNum % 13 == 0 & npcNum != 0) {
-									offset = 0;
-									offsetY += 64;
+						}
+						else { // Its a modded NPC
+							Main.instance.LoadNPC(npcID);
+
+							Item newItem = new Item();
+							newItem.SetDefaults(NPCLoader.GetNPC(npcID).bannerItem);
+
+							Main.instance.LoadTiles(newItem.createTile);
+							Texture2D banner = Main.tileTexture[newItem.createTile];
+
+							int bannerID = NPCLoader.GetNPC(npcID).banner;
+							string source = NPCLoader.GetNPC(npcID).mod.DisplayName;
+
+							Color faded = new Color(128, 128, 128, 128);
+							if (NPC.killCount[bannerID] >= 50) faded = Color.White;
+
+							for (int j = 0; j < 3; j++) {
+								Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
+								Rectangle rect = new Rectangle(0, j * 18, 16, 16);
+								spriteBatch.Draw(banner, pos, rect, faded);
+
+								if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
+									if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
+										Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}\n[{source}]";
+									}
 								}
-								npcNum++;
+								if (j == 2) {
+									offset += 25;
+									if (npcNum % 13 == 0 & npcNum != 0) {
+										offset = 0;
+										offsetY += 64;
+									}
+									npcNum++;
+								}
 							}
 						}
 					}

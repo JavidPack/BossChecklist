@@ -403,6 +403,13 @@ namespace BossChecklist
 						args[3] as List<int> // Spawn Items List
 					);
 				}
+				else if (message == "AddToEventNPCs") {
+					bossTracker.AddToEventNPCs(
+						args[1].ToString(), // Mod Name
+						args[2].ToString(), // Event Name
+						args[3] as List<int> // Enemy IDs List
+					);
+				}
 				else {
 					Logger.Error("BossChecklist Call Error: Unknown Message: " + message);
 				}
