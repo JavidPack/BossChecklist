@@ -129,10 +129,8 @@ namespace BossChecklist
 				Main.inventoryBack7Texture = Main.inventoryBack3Texture;
 			}
 			
-			// Prevents empty collectible slots from being drawn
-			if (!Id.Contains("collect_") || item.type != 0) {
-				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
-			}
+			// Prevents empty slots from being drawn
+			if (item.type != 0) ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 
 			Main.inventoryBack6Texture = backup;
 			Main.inventoryBack7Texture = backup2;
@@ -835,9 +833,14 @@ namespace BossChecklist
 				else {
 					// Collectibles Subpage
 					BossCollection Collections = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
-					bool hasTrophy = validItems[0][itemShown[0]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[0][itemShown[0]]);
-					bool hasMask = validItems[1][itemShown[1]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[1][itemShown[1]]);
-					bool hasMusicBox = validItems[2][itemShown[2]] > 0 && Collections.collectibles.Any(x => x.Type == validItems[2][itemShown[2]]);
+					
+					int selectedTrophy = validItems[0][itemShown[0]];
+					int selectedMask = validItems[1][itemShown[1]];
+					int selectedMusicBox = validItems[2][itemShown[2]];
+
+					bool hasTrophy = selectedTrophy > 0 && Collections.collectibles.Any(x => x.Type == selectedTrophy);
+					bool hasMask = selectedMask > 0 && Collections.collectibles.Any(x => x.Type == selectedMask);
+					bool hasMusicBox = selectedMusicBox > 0 && Collections.collectibles.Any(x => x.Type == selectedMusicBox);
 
 					// PageNum already corresponds with the index of the saved player data
 
@@ -868,12 +871,12 @@ namespace BossChecklist
 					// Draw Masks
 					if (hasMask) {
 						Texture2D mask;
-						if (validItems[1][itemShown[1]] < ItemID.Count) {
+						if (selectedMask < ItemID.Count) {
 							Item newItem = new Item();
-							newItem.SetDefaults(validItems[1][itemShown[1]]);
+							newItem.SetDefaults(selectedMask);
 							mask = ModContent.GetTexture("Terraria/Armor_Head_" + newItem.headSlot);
 						}
-						else mask = ModContent.GetTexture(ItemLoader.GetItem(validItems[1][itemShown[1]]).Texture + "_Head");
+						else mask = ModContent.GetTexture(ItemLoader.GetItem(selectedMask).Texture + "_Head");
 
 						int frameCut = mask.Height / 24;
 						Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (mask.Width / 2) - 8, pageRect.Y + (pageRect.Height / 2) - (frameCut / 2) - 86, mask.Width, frameCut);
@@ -886,12 +889,12 @@ namespace BossChecklist
 						int offsetX = 0;
 						int offsetY = 0;
 
-						if (validItems[0][itemShown[0]] < ItemID.Count) {
+						if (selectedTrophy < ItemID.Count) {
 							Main.instance.LoadTiles(TileID.Painting3X3);
 							Texture2D trophy = Main.tileTexture[TileID.Painting3X3];
 
-							offsetX = BossLogUI.GetVanillaBossTrophyPos(validItems[0][itemShown[0]])[0];
-							offsetY = BossLogUI.GetVanillaBossTrophyPos(validItems[0][itemShown[0]])[1];
+							offsetX = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[0];
+							offsetY = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[1];
 
 							int backupX = offsetX;
 							int backupY = offsetY;
@@ -910,7 +913,7 @@ namespace BossChecklist
 							}
 						}
 						else {
-							int selectedTile = ItemLoader.GetItem(validItems[0][itemShown[0]]).item.createTile;
+							int selectedTile = ItemLoader.GetItem(selectedTrophy).item.createTile;
 							Main.instance.LoadTiles(selectedTile);
 							Texture2D trophy = Main.tileTexture[selectedTile];
 
@@ -937,11 +940,11 @@ namespace BossChecklist
 						int offsetX = 0;
 						int offsetY = 0;
 
-						if (selectedBoss.collection[2] < ItemID.Count) {
-							Main.instance.LoadTiles(TileID.Painting3X3);
-							Texture2D musicBox = Main.tileTexture[TileID.Painting3X3];
+						if (selectedMusicBox < ItemID.Count) {//
+							Main.instance.LoadTiles(TileID.MusicBoxes);
+							Texture2D musicBox = Main.tileTexture[TileID.MusicBoxes];
 
-							if (selectedBoss.collection[2] == ItemID.MusicBoxBoss1) {
+							if (selectedMusicBox == ItemID.MusicBoxBoss1) {
 								if (Main.music[MusicID.Boss1].IsPlaying) offsetX = 2;
 								offsetY = 10;
 							}
@@ -949,27 +952,27 @@ namespace BossChecklist
 								if (Main.music[MusicID.Boss2].IsPlaying) offsetX = 2;
 								offsetY = 20;
 							}
-							else if (selectedBoss.collection[2] == ItemID.MusicBoxBoss3) {
+							else if (selectedMusicBox == ItemID.MusicBoxBoss3) {
 								if (Main.music[MusicID.Boss3].IsPlaying) offsetX = 2;
 								offsetY = 24;
 							}
-							else if (selectedBoss.collection[2] == ItemID.MusicBoxBoss4) {
+							else if (selectedMusicBox == ItemID.MusicBoxBoss4) {
 								if (Main.music[MusicID.Boss4].IsPlaying) offsetX = 2;
 								offsetY = 32;
 							}
-							else if (selectedBoss.collection[2] == ItemID.MusicBoxBoss5) {
+							else if (selectedMusicBox == ItemID.MusicBoxBoss5) {
 								if (Main.music[MusicID.Boss5].IsPlaying) offsetX = 2;
 								offsetY = 48;
 							}
-							else if (selectedBoss.collection[2] == ItemID.MusicBoxPlantera) {
+							else if (selectedMusicBox == ItemID.MusicBoxPlantera) {
 								if (Main.music[MusicID.Plantera].IsPlaying) offsetX = 2;
 								offsetY = 46;
 							}
-							else if (selectedBoss.collection[2] == ItemID.MusicBoxDD2) {
+							else if (selectedMusicBox == ItemID.MusicBoxDD2) {
 								if (Main.music[MusicID.OldOnesArmy].IsPlaying) offsetX = 2;
 								offsetY = 78;
 							}
-							else if (selectedBoss.collection[2] == ItemID.MusicBoxLunarBoss) {
+							else if (selectedMusicBox == ItemID.MusicBoxLunarBoss) {
 								if (Main.music[MusicID.LunarBoss].IsPlaying) offsetX = 2;
 								offsetY = 64;
 							}
@@ -991,7 +994,7 @@ namespace BossChecklist
 							}
 						}
 						else {
-							int selectedTile = ItemLoader.GetItem(selectedBoss.collection[2]).item.createTile;
+							int selectedTile = ItemLoader.GetItem(selectedMusicBox).item.createTile;
 							Main.instance.LoadTiles(selectedTile);
 							Texture2D musicBox = Main.tileTexture[selectedTile];
 
@@ -2288,10 +2291,12 @@ namespace BossChecklist
 				}
 			}
 
-			if (prehardmodeList.Count > 14) PageOne.Append(scrollOne);
+			scrollOne.Left.Pixels = -18;
+			scrollOne.HAlign = 1f;
+			if (prehardmodeList.Count > 13) PageOne.Append(scrollOne);
 			PageOne.Append(prehardmodeList);
 			prehardmodeList.SetScrollbar(scrollOne);
-			if (hardmodeList.Count > 14) PageTwo.Append(scrollTwo);
+			if (hardmodeList.Count > 13) PageTwo.Append(scrollTwo);
 			PageTwo.Append(hardmodeList);
 			hardmodeList.SetScrollbar(scrollTwo);
 		}
@@ -2484,11 +2489,20 @@ namespace BossChecklist
 			else if (item == ItemID.SpazmatismTrophy) return new int[] { 27, 0 };
 			else if (item == ItemID.PlanteraTrophy) return new int[] { 30, 0 };
 			else if (item == ItemID.GolemTrophy) return new int[] { 33, 0 };
+			else if (item == ItemID.MourningWoodTrophy) return new int[] { 0, 3 };
+			else if (item == ItemID.PumpkingTrophy) return new int[] { 3, 3 };
+			else if (item == ItemID.IceQueenTrophy) return new int[] { 6, 3 };
+			else if (item == ItemID.SantaNK1Trophy) return new int[] { 9, 3 };
+			else if (item == ItemID.EverscreamTrophy) return new int[] { 12, 3 };
 			else if (item == ItemID.KingSlimeTrophy) return new int[] { 54, 3 };
 			else if (item == ItemID.DukeFishronTrophy) return new int[] { 57, 3 };
 			else if (item == ItemID.AncientCultistTrophy) return new int[] { 60, 3 };
+			else if (item == ItemID.MartianSaucerTrophy) return new int[] { 63, 3 };
+			else if (item == ItemID.FlyingDutchmanTrophy) return new int[] { 66, 3 };
 			else if (item == ItemID.MoonLordTrophy) return new int[] { 69, 3 };
+			else if (item == ItemID.BossTrophyDarkmage) return new int[] { 72, 3 };
 			else if (item == ItemID.BossTrophyBetsy) return new int[] { 75, 3 };
+			else if (item == ItemID.BossTrophyOgre) return new int[] { 78, 3 };
 			return new int[] { 0, 0 }; // Default is Eye of Cthulhu
 		}
 

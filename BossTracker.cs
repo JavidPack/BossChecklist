@@ -1030,6 +1030,15 @@ namespace BossChecklist
 			if (eventName == "Old One's Army") {
 				return new List<int>() {
 					ItemID.MusicBoxDD2,
+					//Betsy
+					ItemID.BossTrophyBetsy,
+					ItemID.BossMaskBetsy,
+					//Ogre
+					ItemID.BossMaskOgre,
+					ItemID.BossTrophyOgre,
+					//Dark Mage
+					ItemID.BossMaskDarkMage,
+					ItemID.BossTrophyDarkmage,
 				};
 			}
 			if (eventName == "Frost Legion") {
@@ -1045,21 +1054,28 @@ namespace BossChecklist
 			if (eventName == "Pirate Invasion") {
 				return new List<int>() {
 					ItemID.MusicBoxPirates,
+					ItemID.FlyingDutchmanTrophy
 				};
 			}
 			if (eventName == "Pumpkin Moon") {
 				return new List<int>() {
-					ItemID.MusicBoxPumpkinMoon,
+					ItemID.MourningWoodTrophy,
+					ItemID.PumpkingTrophy,
+					ItemID.MusicBoxPumpkinMoon
 				};
 			}
 			if (eventName == "Frost Moon") {
 				return new List<int>() {
-					ItemID.MusicBoxFrostMoon,
+					ItemID.EverscreamTrophy,
+					ItemID.SantaNK1Trophy,
+					ItemID.IceQueenTrophy,
+					ItemID.MusicBoxFrostMoon
 				};
 			}
 			if (eventName == "Martian Madness") {
 				return new List<int>() {
 					ItemID.MusicBoxMartians,
+					ItemID.MartianSaucerTrophy
 				};
 			}
 			if (eventName == "Lunar Event") {
