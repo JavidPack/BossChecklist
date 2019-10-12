@@ -720,8 +720,8 @@ namespace BossChecklist
 				else {
 					int offset = 0;
 					int offsetY = 0;
-					int npcNum = 0;
 					for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
+						if (offset == 0 && offsetY == 5) break; // For now, we stop drawing any banners that exceed the books limit (might have to reimplement as a UIList for scrolling purposes)
 						int npcID = selectedBoss.npcIDs[i];
 						if (npcID < NPCID.Count) {
 							int init = Item.NPCtoBanner(npcID) + 21;
@@ -756,11 +756,10 @@ namespace BossChecklist
 								}
 								if (j == 2) {
 									offset += 25;
-									if (npcNum % 13 == 0 & npcNum != 0) {
+									if (offset == 14 * 25) {
 										offset = 0;
 										offsetY += 64;
 									}
-									npcNum++;
 								}
 							}
 						}
@@ -791,11 +790,10 @@ namespace BossChecklist
 								}
 								if (j == 2) {
 									offset += 25;
-									if (npcNum % 13 == 0 & npcNum != 0) {
+									if (offset == 14 * 25) {
 										offset = 0;
 										offsetY += 64;
 									}
-									npcNum++;
 								}
 							}
 						}
@@ -940,7 +938,7 @@ namespace BossChecklist
 						int offsetX = 0;
 						int offsetY = 0;
 
-						if (selectedMusicBox < ItemID.Count) {//
+						if (selectedMusicBox < ItemID.Count) {
 							Main.instance.LoadTiles(TileID.MusicBoxes);
 							Texture2D musicBox = Main.tileTexture[TileID.MusicBoxes];
 
@@ -2290,9 +2288,7 @@ namespace BossChecklist
 					}
 				}
 			}
-
-			scrollOne.Left.Pixels = -18;
-			scrollOne.HAlign = 1f;
+			
 			if (prehardmodeList.Count > 13) PageOne.Append(scrollOne);
 			PageOne.Append(prehardmodeList);
 			prehardmodeList.SetScrollbar(scrollOne);

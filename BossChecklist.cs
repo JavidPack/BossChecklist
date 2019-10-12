@@ -382,32 +382,12 @@ namespace BossChecklist
 					WorldAssist.ModBossMessages.Add(args[2] as string);
 					return "Success";
 				}
-				else if (message == "AddToBossLoot") {
-					bossTracker.AddToBossCollection(
+				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
+					bossTracker.AddOrphanData(
+						args[0].ToString(), // OrphanType
 						args[1].ToString(), // Mod Name
 						args[2].ToString(), // Boss Name
-						args[3] as List<int> // Loot Items List
-					);
-				}
-				else if (message == "AddToBossCollection") {
-					bossTracker.AddToBossCollection(
-						args[1].ToString(), // Mod Name
-						args[2].ToString(), // Boss Name
-						args[3] as List<int> // Collection Items List
-					);
-				}
-				else if (message == "AddToBossSpawnItems") {
-					bossTracker.AddToBossSpawnItems(
-						args[1].ToString(), // Mod Name
-						args[2].ToString(), // Boss Name
-						args[3] as List<int> // Spawn Items List
-					);
-				}
-				else if (message == "AddToEventNPCs") {
-					bossTracker.AddToEventNPCs(
-						args[1].ToString(), // Mod Name
-						args[2].ToString(), // Event Name
-						args[3] as List<int> // Enemy IDs List
+						args[3] as List<int> // ID List
 					);
 				}
 				else {

@@ -1128,20 +1128,12 @@ namespace BossChecklist
 			BossChecklist.instance.Logger.Info(name + " has been added to the Boss Log!");
 		}
 
-		internal void AddToBossLoot(string modName, string bossName, List<int> lootList) {
-			ExtraData.Add(new OrphanInfo(OrphanType.Loot, modName, bossName, lootList));
-		}
-
-		internal void AddToBossCollection(string modName, string bossName, List<int> collectionList) {
-			ExtraData.Add(new OrphanInfo(OrphanType.Collection, modName, bossName, collectionList));
-		}
-
-		internal void AddToBossSpawnItems(string modName, string bossName, List<int> spawnItems) {
-			ExtraData.Add(new OrphanInfo(OrphanType.SpawnItem, modName, bossName, spawnItems));
-		}
-		
-		internal void AddToEventNPCs(string modName, string eventName, List<int> npcIDs) {
-			ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, modName, eventName, npcIDs));
+		internal void AddOrphanData(string type, string modName, string bossName, List<int> ids) {
+			OrphanType orphanType = OrphanType.Loot;
+			if (type == "AddToBossCollection") orphanType = OrphanType.Collection;
+			else if (type == "AddToBossSpawnItems") orphanType = OrphanType.SpawnItem;
+			else if (type == "AddToEventNPCs") orphanType = OrphanType.EventNPC;
+			ExtraData.Add(new OrphanInfo(orphanType, modName, bossName, ids));
 		}
 	}
 }
