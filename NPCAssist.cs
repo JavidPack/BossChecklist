@@ -158,7 +158,7 @@ namespace BossChecklist
 			// If a new record was made, notify the player
 			if (newRecordSet) {
 				CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-				modplayer.hasNewRecord[recordIndex] = true;
+				modplayer.hasNewRecord = true;
 			}
 		}
 
@@ -169,7 +169,6 @@ namespace BossChecklist
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				bool newRecordSet = false;
 				if (Main.netMode == NetmodeID.Server) {
 					List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 					BossStats oldRecord = list[recordIndex];
@@ -192,7 +191,6 @@ namespace BossChecklist
 						Console.WriteLine("This Fight (" + newRecord.durationLast + ") was better than your current best (" + oldRecord.durationBest + ")");
 						specificRecord |= RecordID.ShortestFightTime;
 						oldRecord.durationBest = newRecord.durationLast;
-						newRecordSet = true;
 					}
 					if (newRecord.durationLast > oldRecord.durationWorst && newRecord.durationLast > 0) {
 						Console.WriteLine("This Fight (" + newRecord.durationLast + ") was worse than your current worst (" + oldRecord.durationWorst + ")");
@@ -206,7 +204,6 @@ namespace BossChecklist
 						specificRecord |= RecordID.BestBrink;
 						oldRecord.healthLossBest = newRecord.healthLossLast;
 						oldRecord.healthLossBestPercent = newRecord.healthLossLastPercent;
-						newRecordSet = true;
 					}
 					if (newRecord.healthLossLast < oldRecord.healthLossWorst && newRecord.healthLossLast > 0) {
 						Console.WriteLine("This Fight (" + newRecord.healthLossWorst + ") was worse than your current best (" + oldRecord.healthLossWorst + ")");
@@ -221,7 +218,6 @@ namespace BossChecklist
 						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was better than your current best (" + oldRecord.hitsTakenBest + ")");
 						specificRecord |= RecordID.LeastHits;
 						oldRecord.hitsTakenBest = newRecord.hitsTakenLast;
-						newRecordSet = true;
 					}
 					if (newRecord.hitsTakenLast > oldRecord.hitsTakenWorst && oldRecord.hitsTakenLast > -1) {
 						Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was worst than your current best (" + oldRecord.hitsTakenWorst + ")");
@@ -238,7 +234,6 @@ namespace BossChecklist
 					oldRecord.dodgeTimeLast = newRecord.dodgeTimeLast;
 
 					// Make the packet
-
 					ModPacket packet = mod.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
 					packet.Write((int)recordIndex);
@@ -246,11 +241,6 @@ namespace BossChecklist
 
 					// ORDER MATTERS
 					packet.Send(toClient: i);
-					if (newRecordSet) {
-						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-						// TODO: Needs packeting?
-						modPlayer.hasNewRecord[recordIndex] = true;
-					}
 				}
 			}
 		}

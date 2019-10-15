@@ -982,7 +982,7 @@ namespace BossChecklist
 			if (npcID == NPCID.SkeletronPrime) return $"Use [i:{ItemID.MechanicalSkull}] at night to spawn";
 			if (npcID == NPCID.Plantera) return $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated";
 			if (npcID == NPCID.Golem) return $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar";
-			if (npcID == NPCID.DD2Betsy) return "Fight during Old One's Army Tier 3";
+			if (npcID == NPCID.DD2Betsy) return "Spawns on Wave 7, the final wave, of Old One's Army Tier 3";
 			if (npcID == NPCID.DukeFishron) return $"Fish in ocean using the [i:{ItemID.TruffleWorm}] bait";
 			if (npcID == NPCID.CultistBoss) return $"Kill the cultists outside the dungeon post-Golem";
 			if (npcID == NPCID.MoonLordHead) return $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}";
@@ -993,25 +993,25 @@ namespace BossChecklist
 			if (npcID == NPCID.SantaNK1) return $"Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]";
 			if (npcID == NPCID.Everscream) return $"Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:{ItemID.NaughtyPresent}]";
 
-			if (npcID == NPCID.PirateShip) return "Appears during a Pirate Invasion!";
-			if (npcID == NPCID.DD2OgreT3) return "Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event!";
-			if (npcID == NPCID.DD2DarkMageT3) return "Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event!";
-			if (npcID == NPCID.MartianSaucer) return "Appears during Martian Madness!";
+			if (npcID == NPCID.PirateShip) return $"Occasionally appears during a Pirate Invasion! Start Pirate Invasion with [i:{ItemID.PirateMap}]";
+			if (npcID == NPCID.DD2OgreT3) return $"Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:{ItemID.DD2ElderCrystalStand}] and [i:{ItemID.DD2ElderCrystal}]";
+			if (npcID == NPCID.DD2DarkMageT3) return $"Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:{ItemID.DD2ElderCrystalStand}] and [i:{ItemID.DD2ElderCrystal}]";
+			if (npcID == NPCID.MartianSaucer) return "Occasionally appears during Martian Madness! Start Martian Madness by being detected by an alien probe.";
 
 			return "";
 		}
 
 		internal string SetupEventSpawnDesc(string eventName) {
-			if (eventName == "Blood Moon") return $"Occurs randomly on at night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon.";
-			if (eventName == "Goblin Army") return $"Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:{ItemID.GoblinBattleStandard}]";
-			if (eventName == "Old One's Army") return $"After finding the Tavernkeep, purchase and activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]";
-			if (eventName == "Frost Legion") return $"Use a [i:{ItemID.SnowGlobe}], which can be found by opening [i:{ItemID.Present}], during the Christmas season.";
-			if (eventName == "Solar Eclipse") return $"Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:{ItemID.SolarTablet}]";
-			if (eventName == "Pirate Invasion") return $"Occurs randomly once at least one alter has been destroyed. Can be summoned with a [i:{ItemID.PirateMap}], which can be obtained from killing any enemy in the Ocean biome during Hardmode. ";
-			if (eventName == "Pumpkin Moon") return $"Use a [i:{ItemID.PumpkinMoonMedallion}] at night";
-			if (eventName == "Frost Moon") return $"Use a [i:{ItemID.NaughtyPresent}] at night";
-			if (eventName == "Martian Madness") return $"After defeating Golem, find a Martian Probe above ground and allow it escape.";
-			if (eventName == "Lunar Event") return $"To summon, kill the Lunatic Cultist outside the dungeon post-Golem";
+			if (eventName == "Blood Moon") return $"Occurs randomly at the start of night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.";
+			if (eventName == "Goblin Army") return $"Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:{ItemID.GoblinBattleStandard}]. Lasts until enough enemies are defeated.";
+			if (eventName == "Old One's Army") return $"After finding the Tavernkeep, purchase and activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]. Lasts until all waves are cleared.";
+			if (eventName == "Frost Legion") return $"Use a [i:{ItemID.SnowGlobe}], which can be found by opening [i:{ItemID.Present}], during the Christmas season. Lasts until enough enemies are defeated.";
+			if (eventName == "Solar Eclipse") return $"Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:{ItemID.SolarTablet}]. Lasts until nightfall.";
+			if (eventName == "Pirate Invasion") return $"Occurs randomly once at least one altar has been destroyed. Can be summoned with a [i:{ItemID.PirateMap}], which can be obtained from killing any enemy in the Ocean biome during Hardmode. Lasts until enough enemies are defeated.";
+			if (eventName == "Pumpkin Moon") return $"Summoned with a [i:{ItemID.PumpkinMoonMedallion}] at night. Lasts until sunrise.";
+			if (eventName == "Frost Moon") return $"Summoned with a [i:{ItemID.NaughtyPresent}] at night. Lasts until sunrise.";
+			if (eventName == "Martian Madness") return $"After defeating Golem, find a Martian Probe above ground and allow it to find you and escape. Lasts until enough enemies are defeated.";
+			if (eventName == "Lunar Event") return $"Defeat the Lunatic Cultist found outside the dungeon. Each pillar spawns in its own area within the world. Lasts until all 4 pillars are destroyed.";
 			return "";
 		}
 

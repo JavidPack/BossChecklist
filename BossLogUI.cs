@@ -67,7 +67,7 @@ namespace BossChecklist
 				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
 				else if (!myPlayer.RecordingStats) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
 				
-				if (myPlayer.hasNewRecord.Any(x => x == true)) {
+				if (myPlayer.hasNewRecord) {
 					slowDown = !slowDown;
 					if (slowDown) cycleFrame++;
 					if (cycleFrame >= 19) cycleFrame = 0;
@@ -130,7 +130,8 @@ namespace BossChecklist
 			}
 			
 			// Prevents empty slots from being drawn
-			if (item.type != 0) ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
+			if (item.type != 0 || hoverText == "Demon Altar" || hoverText == "Crimson Altar")
+				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 
 			Main.inventoryBack6Texture = backup;
 			Main.inventoryBack7Texture = backup2;
@@ -754,13 +755,11 @@ namespace BossChecklist
 										Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}";
 									}
 								}
-								if (j == 2) {
-									offset += 25;
-									if (offset == 14 * 25) {
-										offset = 0;
-										offsetY += 64;
-									}
-								}
+							}
+							offset += 25;
+							if (offset == 14 * 25) {
+								offset = 0;
+								offsetY += 64;
 							}
 						}
 						else { // Its a modded NPC
@@ -788,13 +787,11 @@ namespace BossChecklist
 										Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}\n[{source}]";
 									}
 								}
-								if (j == 2) {
-									offset += 25;
-									if (offset == 14 * 25) {
-										offset = 0;
-										offsetY += 64;
-									}
-								}
+							}
+							offset += 25;
+							if (offset == 14 * 25) {
+								offset = 0;
+								offsetY += 64;
 							}
 						}
 					}
@@ -1239,18 +1236,22 @@ namespace BossChecklist
 	internal class FittedTextPanel : UITextPanel<string>
 	{
 		string text;
+		string empty;
 		public FittedTextPanel(string text, float textScale = 1, bool large = false) : base(text, textScale, large) {
 			this.text = text;
+			this.empty = text;
 		}
 
 		const float infoScaleX = 1f;
 		const float infoScaleY = 1f;
 		public override void Draw(SpriteBatch spriteBatch) {
+			
+			text = "";
 			Rectangle hitbox = new Rectangle((int)GetInnerDimensions().X, (int)GetInnerDimensions().Y, (int)Width.Pixels, 100);
 
 			string info = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].info ?? "No info available";
 			int hoveredSnippet = -1;
-			TextSnippet[] textSnippets = ChatManager.ParseMessage(text, Color.White).ToArray();
+			TextSnippet[] textSnippets = ChatManager.ParseMessage(empty, Color.White).ToArray();
 			ChatManager.ConvertNormalSnippets(textSnippets);
 
 			for (int i = 0; i < ChatManager.ShadowDirections.Length; i++) {
@@ -1432,7 +1433,6 @@ namespace BossChecklist
 		public FixedUIScrollbar scrollTwo;
 
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
-		public FixedUIScrollbar pageTwoScroll;
 
 		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
 		public static int SubPageNum = 0; // Selected Topic Tab (Loot, Stats, etc.)
@@ -1471,7 +1471,6 @@ namespace BossChecklist
 		}
 
 		public void ToggleBossLog(bool show = true, bool resetPage = false) {
-			//resetPage = true; // TODO: update other methods to support this.
 			if (PageNum == -3) resetPage = true;
 			if (resetPage) {
 				PageNum = -1;
@@ -1486,16 +1485,17 @@ namespace BossChecklist
 			if (show) {
 				Main.playerInventory = false;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes rainbow glow
-				if (PageNum >= 0 && SubPageNum == 0) Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[PageNum] = false;
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord = false; // if (PageNum >= 0 && SubPageNum == 0) ??
 			}
 		}
 
 		public void ToggleRecording() {
 			bool bossIsActive = false;
 			foreach (NPC npc in Main.npc) {
-				if (npc.active && NPCAssist.ListedBossNum(npc) != -1) {
+				int listed = NPCAssist.ListedBossNum(npc);
+				if (npc.active && listed != -1 && BossChecklist.bossTracker.SortedBosses[listed].type != EntryType.Event) {
 					bossIsActive = true;
-					break;// If a boss/event is active, record toggling is disabled
+					break; // If a boss/miniboss is active, record toggling is disabled (event data is always recorded)
 				}
 			}
 			if (bossIsActive) {
@@ -1505,7 +1505,10 @@ namespace BossChecklist
 			PlayerAssist myModPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			myModPlayer.RecordingStats = !myModPlayer.RecordingStats;
 			if (myModPlayer.RecordingStats) Main.NewText("<Boss Log> New records will be updated!", Color.Green);
-			else Main.NewText("<Boss Log> New records will NOT update!", Color.Red);
+			else {
+				Main.NewText("<Boss Log> New records will NOT update!", Color.Red);
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord = false;
+			}
 		}
 
 		public override void OnInitialize() {
@@ -1612,8 +1615,6 @@ namespace BossChecklist
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			pageTwoItemList = new UIList();
-
-			pageTwoScroll = new FixedUIScrollbar();
 			
 			filterPanel = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Filter"));
 			filterPanel.Id = "filterPanel";
@@ -1828,7 +1829,6 @@ namespace BossChecklist
 		}
 
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
-			// Since it only applies to Boss Icons, the page check is unnecessary
 			if (BossChecklist.BossLogConfig.ResetRecordsBool) {
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationBest = -1;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationWorst = -1;
@@ -1856,7 +1856,6 @@ namespace BossChecklist
 			}
 			else if (listeningElement.Id.Contains("CycleItem")) {
 				int index = listeningElement.Id.IndexOf('_');
-				// if (index != -1) Main.NewText(listeningElement.Id.Substring(index + 1));
 				if (RecipeShown == Convert.ToInt32(listeningElement.Id.Substring(index + 1)) - 1) RecipeShown = 0;
 				else RecipeShown++;
 			}
@@ -1869,7 +1868,6 @@ namespace BossChecklist
 			hardmodeList.Clear();
 			PageOne.RemoveChild(scrollOne);
 			PageTwo.RemoveChild(scrollTwo);
-			PageTwo.RemoveChild(pageTwoScroll);
 			RecipeShown = 0;
 			RecipePageNum = 0;
 			BossLogPanel.validItems = null;
@@ -1912,32 +1910,26 @@ namespace BossChecklist
 			int TotalRecipes = 0;
 			ResetBothPages();
 			if (PageNum < 0) return;
-			if (AltPage[SubPageNum]) { // || BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count == 0
-				pageTwoItemList.Clear();
-				pageTwoItemList.Width.Pixels = 320;
-				pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
-				pageTwoItemList.Top.Pixels = 100;
-
-				// TODO: Fix/implement new scroll system for spawn info.
+			pageTwoItemList.Clear();
+			if (AltPage[SubPageNum]) { // Items within spawnItem List
+				// TODO: @Jopojelly Fix/implement new scroll system for spawn info that also fits itself into the page size.
 				
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
-				FittedTextPanel info = new FittedTextPanel(BossChecklist.bossTracker.SortedBosses[PageNum].info);
-				info.Width.Pixels = 300;
-				pageTwoItemList.Add(info);
-
-				pageTwoScroll.SetView(10f, 100f);
-				pageTwoScroll.Top.Pixels = 305;
-				pageTwoScroll.Left.Pixels = -24;
-				pageTwoScroll.Height.Set(-285f, 0.75f);
-				pageTwoScroll.HAlign = 1f;
-
-				//PageTwo.Append(pageTwoScroll);
-				PageTwo.Append(pageTwoItemList);
-				//pageTwoItemList.SetScrollbar(pageTwoScroll);
+				string infoText = BossChecklist.bossTracker.SortedBosses[PageNum].info;
+				
+				// Current code is mostly done in FittedTextPanel.Draw
+				FittedTextPanel infoLines = new FittedTextPanel(infoText);
+				infoLines.Left.Pixels = 0;
+				infoLines.Top.Pixels = 75;
+				infoLines.Width.Pixels = 300;
+				infoLines.MaxWidth.Pixels = 300;
+				infoLines.Height.Pixels = PageTwo.Height.Pixels - 150;
+				infoLines.MaxHeight.Pixels = PageTwo.Height.Pixels - 150;
+				infoLines.OverflowHidden = true;
+				PageTwo.Append(infoLines);
 			}
-			if (!AltPage[SubPageNum]) { // || BossChecklist.bossTracker.SortedBosses[PageNum].info == "No info provided"
+			else { // Spawn info text
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) {
-					pageTwoItemList.Clear();
 					pageTwoItemList.Width.Pixels = 320;
 					pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
 					pageTwoItemList.Top.Pixels = 100;
@@ -1947,13 +1939,13 @@ namespace BossChecklist
 					info.Width.Pixels = 300;
 					pageTwoItemList.Add(info);
 
-					pageTwoScroll.SetView(10f, 100f);
-					pageTwoScroll.Top.Pixels = 305;
-					pageTwoScroll.Left.Pixels = -24;
-					pageTwoScroll.Height.Set(-285f, 0.75f);
-					pageTwoScroll.HAlign = 1f;
+					scrollTwo.SetView(10f, 100f);
+					scrollTwo.Top.Pixels = 305;
+					scrollTwo.Left.Pixels = -24;
+					scrollTwo.Height.Set(-285f, 0.75f);
+					scrollTwo.HAlign = 1f;
 
-					//PageTwo.Append(pageTwoScroll);
+					//PageTwo.Append(scrollTwo);
 					PageTwo.Append(pageTwoItemList);
 					return;
 				}
@@ -1962,9 +1954,6 @@ namespace BossChecklist
 				string recipeMod = "Vanilla";
 				//List<Recipe> recipes = Main.recipe.ToList();
 				Item spawn = new Item();
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count == 0) {
-					UIText noItems = new UIText("This boss cannot be spawned from an item.");
-				}
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
 					RecipeFinder finder = new RecipeFinder();
 					finder.SetResult(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
@@ -2109,11 +2098,11 @@ namespace BossChecklist
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
 
-			pageTwoScroll.SetView(10f, 1000f);
-			pageTwoScroll.Top.Pixels = 125;
-			pageTwoScroll.Left.Pixels = -18;
-			pageTwoScroll.Height.Set(-88f, 0.75f);
-			pageTwoScroll.HAlign = 1f;
+			scrollTwo.SetView(10f, 1000f);
+			scrollTwo.Top.Pixels = 125;
+			scrollTwo.Left.Pixels = -18;
+			scrollTwo.Height.Set(-88f, 0.75f);
+			scrollTwo.HAlign = 1f;
 
 			pageTwoItemList.Clear();
 			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
@@ -2161,9 +2150,9 @@ namespace BossChecklist
 					}
 				}
 			}
-			if (row > 5) PageTwo.Append(pageTwoScroll);
+			if (row > 5) PageTwo.Append(scrollTwo);
 			PageTwo.Append(pageTwoItemList);
-			pageTwoItemList.SetScrollbar(pageTwoScroll);
+			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
 		private void OpenCollect(UIMouseEvent evt, UIElement listeningElement) {
@@ -2178,11 +2167,11 @@ namespace BossChecklist
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 240 - 75;
 
-			pageTwoScroll.SetView(10f, 1000f);
-			pageTwoScroll.Top.Pixels = 250;
-			pageTwoScroll.Left.Pixels = -18;
-			pageTwoScroll.Height.Set(-220f, 0.75f);
-			pageTwoScroll.HAlign = 1f;
+			scrollTwo.SetView(10f, 1000f);
+			scrollTwo.Top.Pixels = 250;
+			scrollTwo.Left.Pixels = -18;
+			scrollTwo.Height.Set(-220f, 0.75f);
+			scrollTwo.HAlign = 1f;
 
 			pageTwoItemList.Clear();
 			LootRow newRow = new LootRow(0) { Id = "Collect0" };
@@ -2207,9 +2196,9 @@ namespace BossChecklist
 					newRow = new LootRow(row) { Id = "Collect" + row };
 				}
 			}
-			if (row > 3) PageTwo.Append(pageTwoScroll);
+			if (row > 3) PageTwo.Append(scrollTwo);
 			PageTwo.Append(pageTwoItemList);
-			pageTwoItemList.SetScrollbar(pageTwoScroll);
+			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
 		public void UpdateTableofContents() {
@@ -2236,55 +2225,27 @@ namespace BossChecklist
 				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 				EntryType type = copiedList[i].type;
-
+				
+				next.PaddingTop = 5;
+				next.PaddingLeft = 22;
+				next.Id = i.ToString();
+				next.OnClick += new MouseEvent(JumpToBossPage);
 				// TODO? next.OnRightClick strike through bosses? Not entirely sure of use.
 
-				if (copiedList[i].progression <= 6f) {
-					if (copiedList[i].downed()) {
-						if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter != "Hide when completed")) {
-							next.PaddingTop = 5;
-							next.PaddingLeft = 22;
-							next.TextColor = Colors.RarityGreen;
-							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(JumpToBossPage);
-							prehardmodeList.Add(next);
-						}
-					}
-					else if (!copiedList[i].downed()) {
-						if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
-							nextCheck++;
-							next.PaddingTop = 5;
-							next.PaddingLeft = 22;
-							next.TextColor = Colors.RarityRed;
-							if (!copiedList[i].available()) next.TextColor = Color.SlateGray;
-							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(JumpToBossPage);
-							prehardmodeList.Add(next);
-						}
+				if (copiedList[i].downed()) {
+					next.TextColor = Colors.RarityGreen;
+					if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter != "Hide when completed")) {
+						if (copiedList[i].progression <= 6f) prehardmodeList.Add(next);
+						else hardmodeList.Add(next);
 					}
 				}
 				else {
-					if (copiedList[i].downed()) {
-						if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter != "Hide when completed")) {
-							next.PaddingTop = 5;
-							next.PaddingLeft = 22;
-							next.TextColor = Colors.RarityGreen;
-							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(JumpToBossPage);
-							hardmodeList.Add(next);
-						}
-					}
-					else if (!copiedList[i].downed()) {
-						if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
-							nextCheck++;
-							next.PaddingTop = 5;
-							next.PaddingLeft = 22;
-							next.TextColor = Colors.RarityRed;
-							if (!copiedList[i].available()) next.TextColor = Color.SlateGray;
-							next.Id = i.ToString();
-							next.OnClick += new MouseEvent(JumpToBossPage);
-							hardmodeList.Add(next);
-						}
+					nextCheck++;
+					next.TextColor = Colors.RarityRed;
+					if (!copiedList[i].available()) next.TextColor = Color.SlateGray;
+					if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
+						if (copiedList[i].progression <= 6f) prehardmodeList.Add(next);
+						else hardmodeList.Add(next);
 					}
 				}
 			}
@@ -2315,11 +2276,11 @@ namespace BossChecklist
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 66;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 75 - 80;
 
-			pageTwoScroll.SetView(10f, 1000f);
-			pageTwoScroll.Top.Pixels = 90;
-			pageTwoScroll.Left.Pixels = -24;
-			pageTwoScroll.Height.Set(-60f, 0.75f);
-			pageTwoScroll.HAlign = 1f;
+			scrollTwo.SetView(10f, 1000f);
+			scrollTwo.Top.Pixels = 90;
+			scrollTwo.Left.Pixels = -24;
+			scrollTwo.Height.Set(-60f, 0.75f);
+			scrollTwo.HAlign = 1f;
 
 			pageTwoItemList.Clear();
 
@@ -2347,9 +2308,9 @@ namespace BossChecklist
 				};
 				pageTwoItemList.Add(noModListed);
 			}
-			if (optedMods.Count > 11) PageTwo.Append(pageTwoScroll);
+			if (optedMods.Count > 11) PageTwo.Append(scrollTwo);
 			PageTwo.Append(pageTwoItemList);
-			pageTwoItemList.SetScrollbar(pageTwoScroll);
+			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
 		private void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
@@ -2365,9 +2326,23 @@ namespace BossChecklist
 		private void ResetBothPages() {
 			PageOne.RemoveAllChildren();
 			PageTwo.RemoveAllChildren();
+
+			scrollOne = new FixedUIScrollbar();
+			scrollOne.SetView(100f, 1000f);
+			scrollOne.Top.Pixels = 50f;
+			scrollOne.Left.Pixels = -18;
+			scrollOne.Height.Set(-24f, 0.75f);
+			scrollOne.HAlign = 1f;
+
+			scrollTwo = new FixedUIScrollbar();
+			scrollTwo.SetView(100f, 1000f);
+			scrollTwo.Top.Pixels = 50f;
+			scrollTwo.Left.Pixels = -28;
+			scrollTwo.Height.Set(-24f, 0.75f);
+			scrollTwo.HAlign = 1f;
+
 			ResetPageButtons();
 			if (PageNum >= 0) {
-				if (SubPageNum == 0) Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[PageNum] = false;
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
 					PageTwo.Append(spawnButton);
 					PageTwo.Append(lootButton);
@@ -2440,7 +2415,6 @@ namespace BossChecklist
 						}
 					}
 				}
-
 				PageTwo.Append(NextPage);
 				PageOne.Append(PrevPage);
 			}

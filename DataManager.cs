@@ -96,15 +96,15 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetRecieve(BinaryReader reader) {
+		internal void NetRecieve(BinaryReader reader, bool playerRecord) {
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
-
+			bool newRecord = false;
 			//RecordID.Kills will just be increased by 1 automatically
 			kills++;
 
 			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
 				durationBest = reader.ReadInt32();
-				Main.NewText("New Record for Quickest Fight!");
+				newRecord = true;
 			}
 			if (brokenRecords.HasFlag(RecordID.LongestFightTime)) durationWorst = reader.ReadInt32();
 			durationLast = reader.ReadInt32();
@@ -112,6 +112,7 @@ namespace BossChecklist
 			if (brokenRecords.HasFlag(RecordID.BestBrink)) {
 				healthLossBest = reader.ReadInt32();
 				healthLossBestPercent = reader.ReadInt32();
+				newRecord = true;
 			}
 			if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
 				healthLossWorst = reader.ReadInt32();
@@ -120,11 +121,16 @@ namespace BossChecklist
 			healthLossLast = reader.ReadInt32();
 			healthLossLastPercent = reader.ReadInt32();
 
-			if (brokenRecords.HasFlag(RecordID.LeastHits)) hitsTakenBest = reader.ReadInt32();
+			if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+				hitsTakenBest = reader.ReadInt32();
+				newRecord = true;
+			}
 			if (brokenRecords.HasFlag(RecordID.MostHits)) hitsTakenWorst = reader.ReadInt32();
 			hitsTakenLast = reader.ReadInt32();
 			if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTimeBest = reader.ReadInt32();
 			dodgeTimeLast = reader.ReadInt32();
+
+			if (newRecord) playerRecord = true;
 		}
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {

@@ -384,9 +384,9 @@ namespace BossChecklist
 				}
 				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
 					bossTracker.AddOrphanData(
-						args[0].ToString(), // OrphanType
-						args[1].ToString(), // Mod Name
-						args[2].ToString(), // Boss Name
+						message, // OrphanType
+						args[1] as string, // Mod Name
+						args[2] as string, // Boss Name
 						args[3] as List<int> // ID List
 					);
 				}
@@ -459,7 +459,10 @@ namespace BossChecklist
 					int npcPos = reader.ReadInt32();
 
 					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat;
-					specificRecord.NetRecieve(reader);
+					specificRecord.NetRecieve(reader, modPlayer.hasNewRecord);
+					if (modPlayer.hasNewRecord) {
+						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
+					}
 
 					//Ill need to update the serverrecords too so they can be used later
 

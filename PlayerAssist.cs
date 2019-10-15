@@ -12,7 +12,7 @@ namespace BossChecklist
 	{
 		public bool hasOpenedTheBossLog;
 		public bool RecordingStats;
-		public List<bool> hasNewRecord;
+		public bool hasNewRecord;
 
 		public List<BossRecord> AllBossRecords;
 		public List<BossCollection> BossTrophies;
@@ -27,6 +27,7 @@ namespace BossChecklist
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
 			RecordingStats = true;
+			hasNewRecord = false;
 
 			AllBossRecords = new List<BossRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
@@ -52,7 +53,6 @@ namespace BossChecklist
 			DeathTracker = new List<int>();
 			DodgeTimer = new List<int>();
 			AttackCounter = new List<int>();
-			hasNewRecord = new List<bool>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				RecordTimers.Add(0);
@@ -61,7 +61,6 @@ namespace BossChecklist
 				DeathTracker.Add(0);
 				DodgeTimer.Add(0);
 				AttackCounter.Add(0);
-				hasNewRecord.Add(false);
 			}
 		}
 
@@ -120,7 +119,6 @@ namespace BossChecklist
 			DeathTracker = new List<int>();
 			DodgeTimer = new List<int>();
 			AttackCounter = new List<int>();
-			hasNewRecord = new List<bool>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				RecordTimers.Add(0);
@@ -129,7 +127,6 @@ namespace BossChecklist
 				DeathTracker.Add(0);
 				DodgeTimer.Add(0);
 				AttackCounter.Add(0);
-				hasNewRecord.Add(false);
 			}
 
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
