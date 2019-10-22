@@ -17,43 +17,43 @@ namespace BossChecklist
 		public static bool downedPumpkinMoon;
 		public static bool downedSolarEclipse;
 
-		public static List<bool> ActiveBossesList = new List<bool>();
-		public static List<List<Player>> StartingPlayers = new List<List<Player>>();
-		public static List<int> ModBossTypes = new List<int>();
-		public static List<string> ModBossMessages = new List<string>();
+		public static List<bool> ActiveBossesList;
+		public static List<List<Player>> StartingPlayers;
+		public static List<int> ModBossTypes;
+		public static List<string> ModBossMessages;
 
 		string EventKey = "";
 		bool isBloodMoon = false;
 		bool isPumpkinMoon = false;
 		bool isFrostMoon = false;
 		bool isEclipse = false;
+		
+		public override void Initialize() {
+			downedBloodMoon = false;
+			downedFrostMoon = false;
+			downedPumpkinMoon = false;
+			downedSolarEclipse = false;
+
+			ModBossTypes = new List<int>();
+			ModBossMessages = new List<string>();
+
+			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
+			ActiveBossesList = new List<bool>();
+			StartingPlayers = new List<List<Player>>();
+			for (int i = 0; i < BL.Count; i++) {
+				ActiveBossesList.Add(false);
+				StartingPlayers.Add(new List<Player>());
+			}
+		}
 
 		public override void PreUpdate() {
-			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
-			if (ActiveBossesList.Count != BL.Count) {
-				while (ActiveBossesList.Count > BL.Count) ActiveBossesList.RemoveAt(ActiveBossesList.Count - 1);
-				while (ActiveBossesList.Count < BL.Count) ActiveBossesList.Add(false);
-			}
-			if (StartingPlayers.Count != BL.Count) {
-				while (StartingPlayers.Count > BL.Count) StartingPlayers.RemoveAt(StartingPlayers.Count - 1);
-				while (StartingPlayers.Count < BL.Count) StartingPlayers.Add(new List<Player>());
-			}
-			
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC b = Main.npc[n];
-				if (NPCAssist.ListedBossNum(b) != -1) {
-					int listNum = NPCAssist.ListedBossNum(b);
-					if (ActiveBossesList[listNum])
-					{
-						bool otherValidNPC = false;
-						for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[listNum].npcIDs.Count; i++) {
-							int otherType = BossChecklist.bossTracker.SortedBosses[listNum].npcIDs[i];
-							if (Main.npc.Any(npc => npc.type == otherType && npc.active)) {
-								otherValidNPC = true;
-								break;
-							}
-						}
-						if (!otherValidNPC) {
+				int listNum = NPCAssist.ListedBossNum(b);
+				if (listNum != -1) {
+					if (b.active) ActiveBossesList[listNum] = true;
+					else if (ActiveBossesList[listNum]) {
+						if (NPCAssist.TruelyDead(b)) {
 							bool moonLordCheck = (b.type == NPCID.MoonLordHead || b.type == NPCID.MoonLordCore);
 							if ((!moonLordCheck && b.life >= 0 && CheckRealLife(b.realLife)) || (moonLordCheck && b.life <= 0)) {
 								if (Main.netMode == NetmodeID.SinglePlayer && BossChecklist.ClientConfig.DespawnMessageType != "Disabled") Main.NewText(GetDespawnMessage(b), Colors.RarityPurple);
@@ -65,22 +65,15 @@ namespace BossChecklist
 				}
 			}
 			
-			// TODO: Needs packeting?
 			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
-				if (ActiveBossesList[listNum]) {
+				if (!ActiveBossesList[listNum]) {
+					foreach (Player player in Main.player) {
+						if (player.active) StartingPlayers[listNum].Add(player);
+					}
+				}
+				else {
 					foreach (Player player in StartingPlayers[listNum]) {
-						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-						if (!player.active) {
-							StartingPlayers[listNum].Remove(player);
-							continue;
-						}
-						if (player.dead) modPlayer.DeathTracker[listNum] = 1;
-						modPlayer.RecordTimers[listNum]++;
-						modPlayer.DodgeTimer[listNum]++;
-						if (modPlayer.MaxHealth[listNum] == 0) modPlayer.MaxHealth[listNum] = player.statLifeMax2;
-						if (modPlayer.BrinkChecker[listNum] == 0 || (player.statLife < modPlayer.BrinkChecker[listNum] && player.statLife > 0)) {
-							modPlayer.BrinkChecker[listNum] = player.statLife;
-						}
+						if (!player.active) StartingPlayers[listNum].Remove(player);
 					}
 				}
 			}
@@ -197,19 +190,11 @@ namespace BossChecklist
 						if (boss.type == ModBossTypes[i]) return ModBossMessages[i];
 						// If a mod has submitted a custom despawn message, it will display here
 					}
-					return boss.FullName + " has killed every player!";
-					// Otherwise it defaults to this
+					return boss.FullName + " has killed every player!"; // Otherwise it defaults to this
 				}
 			}
 			else return boss.FullName + " has killed every player!";
 		}
-
-		public override void Initialize() {
-			downedBloodMoon = false;
-			downedFrostMoon = false;
-			downedPumpkinMoon = false;
-			downedSolarEclipse = false;
-	}
 
 		public bool CheckRealLife(int realNPC) {
 			if (realNPC == -1) return true;

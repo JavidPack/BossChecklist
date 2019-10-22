@@ -19,11 +19,6 @@ namespace BossChecklist
 		[Tooltip("Choose the color of your Boss Log!")]
 		public Color BossLogColor { get; set; }
 
-		[DefaultValue(false)]
-		[Label("Reset Records Option")]
-		[Tooltip("Allows you to reset you records for bosses by double right-clicking the boss records button")]
-		public bool ResetRecordsBool { get; set; }
-
 		[DefaultValue(true)]
 		[Label("Check Next Boss")]
 		[Tooltip("Puts a circle in the checkbox to indicate it is the next undefeated boss to fight")]
@@ -165,18 +160,25 @@ namespace BossChecklist
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 
 		[Header("[i:149] [c/ffeb6e:Info]")]
+		
+		[DefaultValue(false)]
+		[Label("Reset Records Option")]
+		[Tooltip("Reset records with a boss by double right-clicking the boss records button of the selected boss page")]
+		public bool ResetRecordsBool { get; set; }
+
+		[DefaultValue(false)]
+		[Label("Reset Loot/Collection")]
+		[Tooltip("Remove a selected item from your saved loot/collection by double ricght-clicking the selected item slot")]
+		public bool RemoveItemFromList { get; set; }
 
 		[DefaultValue(false)]
 		[Label("Truely Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
-
-		[DrawTicks]
-		[Label("Show record timers and counters")]
-		[OptionStrings(new string[] { "None", "RecordTimers", "BrinkChecker", "MaxHealth", "DeathTracker", "DodgeTimer", "AttackCounter" })]
-		[DefaultValue("None")]
-		public string ShowTimerOrCounter { get; set; }
 		
+		[Label("Show record timers and counters of selected NPC")]
+		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
+
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}

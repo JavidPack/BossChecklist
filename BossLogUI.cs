@@ -10,16 +10,15 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-// Eater of Worlds STILL not working properly (has to do with InstancePerEntity)
-
 /* Patch Notes:
  *   + Added hidden mask feature. Bosses dont show what they look like until defeated
  *   + Upgraded the spawn item tab to contain multiple items and all their recipes (You do not have to change your call, it still works with a singular int)
- *   + Added the ability to display records in chat <<<<<<<<<<<<<<<<<<< FINISH THIS <<<<<<<<<<<<<<<<<<<
+ *   + //TODO: Added the ability to display records in chat <<<<<<<<<<<<<<<<<<< FINISH THIS <<<<<<<<<<<<<<<<<<<
  *   + Records now work in Multiplayer!
  *   + Fixed limb messages giving the wrong name in MultiPlayer
  *   + Boss Log now hides itself when if you are dead. Thats where the respawn timer should be.
@@ -130,7 +129,7 @@ namespace BossChecklist
 			}
 			
 			// Prevents empty slots from being drawn
-			if (item.type != 0 || hoverText == "Demon Altar" || hoverText == "Crimson Altar")
+			if (item.type != 0 || hoverText == "Demon Altar" || hoverText == "Crimson Altar" || Id.Contains("ingredient_"))
 				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 
 			Main.inventoryBack6Texture = backup;
@@ -342,12 +341,12 @@ namespace BossChecklist
 
 				Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 				Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
-
+				
 				pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
-				Utils.DrawBorderString(spriteBatch, isDefeated, pos, Color.White);
+				Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
 				pos = new Vector2(pageRect.X + 5, pageRect.Y + 55);
-				Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
+				Utils.DrawBorderString(spriteBatch, isDefeated, pos, Color.White);
 			}
 
 			if (Id == "PageOne" && BossLogUI.PageNum == -2) {
@@ -1829,20 +1828,41 @@ namespace BossChecklist
 		}
 
 		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
-			if (BossChecklist.BossLogConfig.ResetRecordsBool) {
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationBest = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.durationWorst = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.dodgeTimeBest = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.hitsTakenBest = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.hitsTakenWorst = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.kills = 0;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.deaths = 0;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossWorst = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossWorstPercent = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossBest = -1;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat.healthLossBestPercent = -1;
+			if (BossChecklist.DebugConfig.ResetRecordsBool) {
+				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat;
+				stats.durationBest = -1;
+				stats.durationWorst = -1;
+				stats.dodgeTimeBest = -1;
+				stats.hitsTakenBest = -1;
+				stats.hitsTakenWorst = -1;
+				stats.kills = 0;
+				stats.deaths = 0;
+				stats.healthLossWorst = -1;
+				stats.healthLossWorstPercent = -1;
+				stats.healthLossBest = -1;
+				stats.healthLossBestPercent = -1;
+				OpenRecord(evt, listeningElement);
 			}
-			OpenRecord(evt, listeningElement);
+		}
+
+		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
+			if (BossChecklist.DebugConfig.RemoveItemFromList) {
+				string ID = listeningElement.Id;
+				if (ID.Contains("collect_")) {
+					int itemType = Convert.ToInt32(listeningElement.Id.Substring(8));
+					List<ItemDefinition> collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum].collectibles;
+					int index = collection.FindIndex(x => x.Type == itemType);
+					collection.RemoveAt(index);
+					OpenCollect(evt, listeningElement);
+				}
+				else if (ID.Contains("loot_")) {
+					int itemType = Convert.ToInt32(listeningElement.Id.Substring(5));
+					List<ItemDefinition> collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum].loot;
+					int index = collection.FindIndex(x => x.Type == itemType);
+					collection.RemoveAt(index);
+					OpenLoot(evt, listeningElement);
+				}
+			}
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
@@ -1983,6 +2003,7 @@ namespace BossChecklist
 					int col = 0;
 					for (int k = 0; k < ingredients.Count; k++) {
 						LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem);
+						ingList.Id = "ingredient_" + k;
 						ingList.Height.Pixels = 50;
 						ingList.Width.Pixels = 50;
 						ingList.Top.Pixels = 105 + (56 * (row + 1));
@@ -2070,9 +2091,7 @@ namespace BossChecklist
 					}
 
 					string recipeMessage = "This item is not craftable.";
-					if (TotalRecipes > 0) {
-						recipeMessage = "Recipe from: " + recipeMod;
-					}
+					if (TotalRecipes > 0) recipeMessage = "Recipe from: " + recipeMod;
 
 					UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
 					ModdedRecipe.Left.Pixels = -5;
@@ -2116,8 +2135,9 @@ namespace BossChecklist
 					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
-					lootTable.Id = "loot_" + i;
+					lootTable.Id = "loot_" + expertItem.type;
 					lootTable.Left.Pixels = (col * 56);
+					lootTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
 					newRow.Append(lootTable);
 					col++;
 					if (col == 6 || i == shortcut.loot.Count - 1) {
@@ -2138,8 +2158,9 @@ namespace BossChecklist
 					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem);
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
-					lootTable.Id = "loot_" + i;
+					lootTable.Id = "loot_" + loot.type;
 					lootTable.Left.Pixels = (col * 56);
+					lootTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
 					newRow.Append(lootTable);
 					col++;
 					if (col == 6 || i == shortcut.loot.Count - 1) {
@@ -2185,8 +2206,9 @@ namespace BossChecklist
 				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name);
 				collectionTable.Height.Pixels = 50;
 				collectionTable.Width.Pixels = 50;
-				collectionTable.Id = "collect_" + i;
+				collectionTable.Id = "collect_" + collectible.type;
 				collectionTable.Left.Pixels = (56 * (col));
+				collectionTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
 				newRow.Append(collectionTable);
 				col++;
 				if (col == 6 || i == shortcut.collection.Count - 1) {

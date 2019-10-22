@@ -191,23 +191,16 @@ namespace BossChecklist
 			if (PlayerChatIndex != -1) {
 				layers.Insert(PlayerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Debug Timers and Counters",
 					delegate {
-						if (Main.LocalPlayer.difficulty != 2) {
-							string calc = "";
-							List<int> list;
-							PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-							if (DebugConfig.ShowTimerOrCounter == "RecordTimers") list = playerAssist.RecordTimers;
-							else if (DebugConfig.ShowTimerOrCounter == "BrinkChecker") list = playerAssist.BrinkChecker;
-							else if (DebugConfig.ShowTimerOrCounter == "MaxHealth") list = playerAssist.MaxHealth;
-							else if (DebugConfig.ShowTimerOrCounter == "DeathTracker") list = playerAssist.DeathTracker;
-							else if (DebugConfig.ShowTimerOrCounter == "DodgeTimer") list = playerAssist.DodgeTimer;
-							else if (DebugConfig.ShowTimerOrCounter == "AttackCounter") list = playerAssist.AttackCounter;
-							if (DebugConfig.ShowTimerOrCounter != "None") {
-								foreach (int timer in playerAssist.RecordTimers) {
-									calc += timer + ", ";
-								}
-								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, DebugConfig.ShowTimerOrCounter, new Vector2(20, Main.screenHeight - 50), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
-								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, calc, new Vector2(20, Main.screenHeight - 25), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
-							}
+						PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						int ConfigIndex = NPCAssist.ListedBossNum(DebugConfig.ShowTimerOrCounter.Type, DebugConfig.ShowTimerOrCounter.mod);
+						if (ConfigIndex != -1) {
+							string textKingSlime = $"{bossTracker.SortedBosses[ConfigIndex].name} (#{ConfigIndex + 1})" +
+												$"\nTime: {playerAssist.RecordTimers[ConfigIndex]}" +
+												$"\nDodge Timer: {playerAssist.DodgeTimer[ConfigIndex]}" +
+												$"\nTimes Hit: {playerAssist.AttackCounter[ConfigIndex]}" +
+												$"\nLowest Health: {playerAssist.BrinkChecker[ConfigIndex]} / {playerAssist.MaxHealth[ConfigIndex]}" +
+												$"\nDeaths: {playerAssist.DeathTracker[ConfigIndex]}";
+							DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
 						}
 						return true;
 					},

@@ -28,8 +28,7 @@ namespace BossChecklist
 		}
 
 		public TagCompound SerializeData() {
-			return new TagCompound
-			{
+			return new TagCompound {
 				{ nameof(bossName), bossName },
 				{ nameof(modName), modName },
 				{ nameof(stat), stat }
@@ -80,8 +79,7 @@ namespace BossChecklist
 		}
 
 		public TagCompound SerializeData() {
-			return new TagCompound
-			{
+			return new TagCompound {
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
 				{ nameof(durationBest), durationBest },
@@ -184,8 +182,7 @@ namespace BossChecklist
 		}
 
 		public TagCompound SerializeData() {
-			return new TagCompound
-			{
+			return new TagCompound {
 				{ nameof(modName), modName },
 				{ nameof(bossName), bossName },
 				{ nameof(loot), loot },
