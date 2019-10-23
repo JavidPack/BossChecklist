@@ -14,6 +14,8 @@ namespace BossChecklist
 	class NPCAssist : GlobalNPC
 	{
 		public override void NPCLoot(NPC npc) {
+			if (Main.gameMenu) return;		
+   
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
