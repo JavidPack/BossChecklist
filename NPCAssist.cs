@@ -14,7 +14,7 @@ namespace BossChecklist
 	class NPCAssist : GlobalNPC
 	{
 		public override void NPCLoot(NPC npc) {
-			if (Main.gameMenu) return;		
+			if (!Main.dedServ && Main.gameMenu) return;		
    
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
