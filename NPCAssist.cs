@@ -14,6 +14,7 @@ namespace BossChecklist
 	class NPCAssist : GlobalNPC
 	{
 		public override void NPCLoot(NPC npc) {
+			if (!Main.dedServ && Main.gameMenu) return;
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
@@ -43,6 +44,7 @@ namespace BossChecklist
 		List<Player> StartingPlayers = new List<Player>(); // Created for each NPC
 
 		public override bool PreAI(NPC npc) {
+			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) return true; // Checks for multi-segmented bosses?
 			int listNum = ListedBossNum(npc);
 			if (listNum != -1 && StartingPlayers.Count == 0) {
 				StartingPlayers = new List<Player>();
@@ -156,7 +158,7 @@ namespace BossChecklist
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
+				List<BossStats> list = BossChecklist.ServerCollectedRecords[i]; //TODO: pretty sure I have to update this
 				BossStats oldRecord = list[recordIndex];
 
 				// Establish the new records for comparing

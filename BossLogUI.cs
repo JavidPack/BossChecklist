@@ -9,6 +9,7 @@ using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI;
@@ -18,7 +19,6 @@ using Terraria.UI.Chat;
 /* Patch Notes:
  *   + Added hidden mask feature. Bosses dont show what they look like until defeated
  *   + Upgraded the spawn item tab to contain multiple items and all their recipes (You do not have to change your call, it still works with a singular int)
- *   + //TODO: Added the ability to display records in chat <<<<<<<<<<<<<<<<<<< FINISH THIS <<<<<<<<<<<<<<<<<<<
  *   + Records now work in Multiplayer!
  *   + Fixed limb messages giving the wrong name in MultiPlayer
  *   + Boss Log now hides itself when if you are dead. Thats where the respawn timer should be.
@@ -1299,55 +1299,33 @@ namespace BossChecklist
 			if (buttonString == "") {
 				if (BossLogUI.SubPageNum == 0) {
 					if (Id == "Display Records") {
+						if (Main.netMode != NetmodeID.MultiplayerClient) return; // The button only appears in Multiplayer
 						Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
 						if (IsMouseHovering) {
 							Main.hoverItemName = "Left-click to display your current records";
 							if (displayLastArray[3] != "") Main.hoverItemName += "\nRight-click to display the records of your last fight";
-							if (displayRecord && recordCooldown == 0) {
+							if (Main.mouseLeftRelease && Main.mouseRightRelease) displayRecord = true;
+							else if (displayRecord && recordCooldown == 0) {
 								if (Main.mouseLeft) {
 									recordCooldown = 600;
 									displayRecord = false;
-									/*if (Main.dedServ)
-									{
-										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.allBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
-										if (displayArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[0]), new Color(138, 210, 137));
-										if (displayArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[1]), new Color(138, 210, 137));
-										if (displayArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[2]), new Color(138, 210, 137));
-										if (displayArray[3] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[3]), new Color(138, 210, 137));
-									}
-									else*/
-									{
-										Main.NewText("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]", new Color(82, 175, 82));
-										if (displayArray[0] != "") Main.NewText(displayArray[0], new Color(138, 210, 137));
-										if (displayArray[1] != "") Main.NewText(displayArray[1], new Color(138, 210, 137));
-										if (displayArray[2] != "") Main.NewText(displayArray[2], new Color(138, 210, 137));
-										if (displayArray[3] != "") Main.NewText(displayArray[3], new Color(138, 210, 137));
-									}
+
+									NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
+									if (displayArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[0]), new Color(138, 210, 137));
+									if (displayArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[1]), new Color(138, 210, 137));
+									if (displayArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[2]), new Color(138, 210, 137));
+									if (displayArray[3] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[3]), new Color(138, 210, 137));
 								}
 								else if (Main.mouseRight && displayLastArray[3] != "") {
 									recordCooldown = 600;
 									displayRecord = false;
-									/*if (Main.dedServ)
-									{
-										NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.bossTracker.allBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
-										if (displayLastArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[0]), new Color(138, 210, 137));
-										if (displayLastArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[1]), new Color(138, 210, 137));
-										if (displayLastArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[2]), new Color(138, 210, 137));
-										if (displayLastArray[3] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[3]), new Color(138, 210, 137));
-									}
-									else*/
-									{
-										Main.NewText("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]", new Color(82, 175, 82));
-										Main.NewText(displayLastArray[0], new Color(138, 210, 137));
-										Main.NewText(displayLastArray[1], new Color(138, 210, 137));
-										Main.NewText(displayLastArray[2], new Color(138, 210, 137));
-										Main.NewText(displayLastArray[3], new Color(138, 210, 137));
-									}
+									NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
+									if (displayLastArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[0]), new Color(138, 210, 137));
+									if (displayLastArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[1]), new Color(138, 210, 137));
+									if (displayLastArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[2]), new Color(138, 210, 137));
+									if (displayLastArray[3] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[3]), new Color(138, 210, 137));
 								}
-							}
-							else if (Main.mouseLeftRelease && Main.mouseRightRelease) {
-								displayRecord = true;
 							}
 						}
 					}
@@ -1355,14 +1333,14 @@ namespace BossChecklist
 						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 							Rectangle exclamCut = new Rectangle(34 * 3, 0, 32, 32);
 							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Click to see your 'Worst' records" +
-																	"\nRecords are shown as your best compared to your last fight";
+							if (IsMouseHovering) Main.hoverItemName = "Records are shown as your best compared to your last fight" +
+																	"\nClick to see your 'Worst' records";
 						}
 						else {
 							Rectangle exclamCut = new Rectangle(0, 0, 32, 32);
 							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Click to see your 'Best' records" +
-																	"\nRecords are shown as your worst compared to your last fight";
+							if (IsMouseHovering) Main.hoverItemName = "Records are shown as your worst compared to your last fight" +
+																	"\nClick to see your 'Best' records";
 						}
 					}
 				}
@@ -1842,7 +1820,26 @@ namespace BossChecklist
 				stats.healthLossBest = -1;
 				stats.healthLossBestPercent = -1;
 				OpenRecord(evt, listeningElement);
+				
+				if (Main.netMode == NetmodeID.MultiplayerClient) {
+					BossStats newRecord = new BossStats() {
+						durationLast = -1,
+						hitsTakenLast = -1,
+						dodgeTimeLast = -1,
+						healthLossLast = -1,
+						healthLossLastPercent = -1,
+					};
+
+					RecordID specificRecord = RecordID.ResetAll;
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)PacketMessageType.RecordUpdate);
+					packet.Write((int)PageNum);
+					newRecord.NetSend(packet, specificRecord);
+					
+					packet.Send(toClient: Main.LocalPlayer.whoAmI);
+				}
 			}
+			// TODO: Make ResetStats and RemoveItem work in MP
 		}
 
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
@@ -2426,7 +2423,7 @@ namespace BossChecklist
 						toolTipButton.OnClick += new MouseEvent(SwapRecordPage);
 						PageTwo.Append(toolTipButton);
 
-						if (SubPageNum == 0) {
+						if (SubPageNum == 0 && Main.netMode == NetmodeID.MultiplayerClient) {
 							displayRecordButton = new SubpageButton("");
 							displayRecordButton.Width.Pixels = 32;
 							displayRecordButton.Height.Pixels = 32;

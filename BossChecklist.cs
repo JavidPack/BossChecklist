@@ -457,7 +457,7 @@ namespace BossChecklist
 						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 					}
 
-					//Ill need to update the serverrecords too so they can be used later
+					//TODO: need to update the serverrecords too so they can be used later
 
 					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].kills + " / " + ServerCollectedRecords[Main.myPlayer][0].deaths);
 					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].fightTime.ToString());

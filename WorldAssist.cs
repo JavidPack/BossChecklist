@@ -51,7 +51,10 @@ namespace BossChecklist
 				NPC b = Main.npc[n];
 				int listNum = NPCAssist.ListedBossNum(b);
 				if (listNum != -1) {
-					if (b.active) ActiveBossesList[listNum] = true;
+					if (b.active) {
+						ActiveBossesList[listNum] = true;
+						if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+					}
 					else if (ActiveBossesList[listNum]) {
 						if (NPCAssist.TruelyDead(b)) {
 							bool moonLordCheck = (b.type == NPCID.MoonLordHead || b.type == NPCID.MoonLordCore);
@@ -60,6 +63,7 @@ namespace BossChecklist
 								else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(GetDespawnMessage(b)), Colors.RarityPurple);
 							}
 							ActiveBossesList[listNum] = false;
+							if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 						}
 					}
 				}

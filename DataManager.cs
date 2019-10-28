@@ -96,39 +96,62 @@ namespace BossChecklist
 
 		internal void NetRecieve(BinaryReader reader, bool playerRecord) {
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
-			bool newRecord = false;
-			//RecordID.Kills will just be increased by 1 automatically
-			kills++;
+			if (!brokenRecords.HasFlag(RecordID.ResetAll)) {
+				bool newRecord = false;
+				//RecordID.Kills will just be increased by 1 automatically
+				kills++;
 
-			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
-				durationBest = reader.ReadInt32();
-				newRecord = true;
-			}
-			if (brokenRecords.HasFlag(RecordID.LongestFightTime)) durationWorst = reader.ReadInt32();
-			durationLast = reader.ReadInt32();
+				if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+					durationBest = reader.ReadInt32();
+					newRecord = true;
+				}
+				if (brokenRecords.HasFlag(RecordID.LongestFightTime)) durationWorst = reader.ReadInt32();
+				durationLast = reader.ReadInt32();
 
-			if (brokenRecords.HasFlag(RecordID.BestBrink)) {
-				healthLossBest = reader.ReadInt32();
-				healthLossBestPercent = reader.ReadInt32();
-				newRecord = true;
-			}
-			if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
-				healthLossWorst = reader.ReadInt32();
-				healthLossWorstPercent = reader.ReadInt32();
-			}
-			healthLossLast = reader.ReadInt32();
-			healthLossLastPercent = reader.ReadInt32();
+				if (brokenRecords.HasFlag(RecordID.BestBrink)) {
+					healthLossBest = reader.ReadInt32();
+					healthLossBestPercent = reader.ReadInt32();
+					newRecord = true;
+				}
+				if (brokenRecords.HasFlag(RecordID.WorstBrink)) {
+					healthLossWorst = reader.ReadInt32();
+					healthLossWorstPercent = reader.ReadInt32();
+				}
+				healthLossLast = reader.ReadInt32();
+				healthLossLastPercent = reader.ReadInt32();
 
-			if (brokenRecords.HasFlag(RecordID.LeastHits)) {
-				hitsTakenBest = reader.ReadInt32();
-				newRecord = true;
-			}
-			if (brokenRecords.HasFlag(RecordID.MostHits)) hitsTakenWorst = reader.ReadInt32();
-			hitsTakenLast = reader.ReadInt32();
-			if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTimeBest = reader.ReadInt32();
-			dodgeTimeLast = reader.ReadInt32();
+				if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+					hitsTakenBest = reader.ReadInt32();
+					newRecord = true;
+				}
+				if (brokenRecords.HasFlag(RecordID.MostHits)) hitsTakenWorst = reader.ReadInt32();
+				hitsTakenLast = reader.ReadInt32();
+				if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTimeBest = reader.ReadInt32();
+				dodgeTimeLast = reader.ReadInt32();
 
-			if (newRecord) playerRecord = true;
+				if (newRecord) playerRecord = true;
+			}
+			else {
+				kills = 0;
+				deaths = 0;
+
+				durationBest = -1;
+				durationWorst = -1;
+				durationLast = -1;
+
+				hitsTakenBest = -1;
+				hitsTakenWorst = -1;
+				dodgeTimeLast = -1;
+				dodgeTimeBest = -1;
+				hitsTakenLast = -1;
+
+				healthLossBest = -1;
+				healthLossWorst = -1;
+				healthLossBestPercent = -1;
+				healthLossWorstPercent = -1;
+				healthLossLast = -1;
+				healthLossLastPercent = -1;
+			}
 		}
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
@@ -136,26 +159,28 @@ namespace BossChecklist
 			// Kills update by 1 automatically
 			// Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
 
-			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(durationLast);
-			if (specificRecord.HasFlag(RecordID.LongestFightTime)) writer.Write(durationLast);
-			writer.Write(durationLast);
+			if (!specificRecord.HasFlag(RecordID.ResetAll)) {
+				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(durationLast);
+				if (specificRecord.HasFlag(RecordID.LongestFightTime)) writer.Write(durationLast);
+				writer.Write(durationLast);
 
-			if (specificRecord.HasFlag(RecordID.BestBrink)) {
+				if (specificRecord.HasFlag(RecordID.BestBrink)) {
+					writer.Write(healthLossLast);
+					writer.Write(healthLossLastPercent);
+				}
+				if (specificRecord.HasFlag(RecordID.WorstBrink)) {
+					writer.Write(healthLossLast);
+					writer.Write(healthLossLastPercent);
+				}
 				writer.Write(healthLossLast);
 				writer.Write(healthLossLastPercent);
-			}
-			if (specificRecord.HasFlag(RecordID.WorstBrink)) {
-				writer.Write(healthLossLast);
-				writer.Write(healthLossLastPercent);
-			}
-			writer.Write(healthLossLast);
-			writer.Write(healthLossLastPercent);
 
-			if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(hitsTakenLast);
-			if (specificRecord.HasFlag(RecordID.MostHits)) writer.Write(hitsTakenLast);
-			writer.Write(hitsTakenLast);
-			if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimeLast);
-			writer.Write(dodgeTimeLast);
+				if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(hitsTakenLast);
+				if (specificRecord.HasFlag(RecordID.MostHits)) writer.Write(hitsTakenLast);
+				writer.Write(hitsTakenLast);
+				if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimeLast);
+				writer.Write(dodgeTimeLast);
+			}
 		}
 	}
 

@@ -45,6 +45,7 @@ namespace BossChecklist
 		LastDodgeTime = 4096,
 		LastHits = 8192,
 		LastBrink = 16384,
-		LastBrinkPercent = 32768
+		LastBrinkPercent = 32768,
+		ResetAll = 65536
 	}
 }

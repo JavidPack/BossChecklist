@@ -167,7 +167,6 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdate() {
-			//TODO: Mulitplayer isnt working. ModPacket it. (I think sending that many mod packets is bad though... is their another way?)
 			for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 				if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
 				else if (WorldAssist.StartingPlayers[listNum].Contains(player)) {
@@ -175,10 +174,10 @@ namespace BossChecklist
 						WorldAssist.StartingPlayers[listNum].Remove(player);
 						continue;
 					}
+					
 					if (player.dead) DeathTracker[listNum] = 1;
 					RecordTimers[listNum]++;
 					DodgeTimer[listNum]++;
-					if (MaxHealth[listNum] == 0) MaxHealth[listNum] = player.statLifeMax2;
 					if (BrinkChecker[listNum] == 0 || (player.statLife < BrinkChecker[listNum] && player.statLife > 0)) {
 						BrinkChecker[listNum] = player.statLife;
 					}
