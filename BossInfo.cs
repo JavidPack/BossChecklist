@@ -88,19 +88,4 @@ namespace BossChecklist
 			this.values = values;
 		}
 	}
-
-	internal class DespawnMessage
-	{
-		internal int bossType;
-		internal string message;
-		internal bool isTranslation;
-		internal bool dayDespawner;
-
-		internal DespawnMessage(int bossType, string message, bool isTranslation, bool dayDespawner = false) {
-			this.bossType = bossType;
-			this.message = message;
-			this.isTranslation = isTranslation;
-			this.dayDespawner = dayDespawner;
-		}
-	}
 }

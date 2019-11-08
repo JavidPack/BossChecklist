@@ -28,15 +28,12 @@ namespace BossChecklist
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
 		internal List<OrphanInfo> ExtraData;
-		internal List<DespawnMessage> ModMessages;
-		internal List<DespawnMessage> FinalizedDespawnMessages;
 		internal bool BossesFinalized = false;
 		
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
 			InitializeVanillaBosses();
 			ExtraData = new List<OrphanInfo>();
-			ModMessages = new List<DespawnMessage>();
 		}
 
 		private void InitializeVanillaBosses() {
@@ -1137,10 +1134,6 @@ namespace BossChecklist
 			else if (type == "AddToBossSpawnItems") orphanType = OrphanType.SpawnItem;
 			else if (type == "AddToEventNPCs") orphanType = OrphanType.EventNPC;
 			ExtraData.Add(new OrphanInfo(orphanType, modName, bossName, ids));
-		}
-
-		internal void AddDespawnMessage(int type, string message, bool translation, bool dayDespawner) {
-			ModMessages.Add(new DespawnMessage(type, message, translation, dayDespawner));
 		}
 	}
 }
