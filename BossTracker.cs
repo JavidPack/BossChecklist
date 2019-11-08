@@ -28,33 +28,36 @@ namespace BossChecklist
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
 		internal List<OrphanInfo> ExtraData;
+		internal List<DespawnMessage> ModMessages;
+		internal List<DespawnMessage> FinalizedDespawnMessages;
 		internal bool BossesFinalized = false;
 		
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
 			InitializeVanillaBosses();
 			ExtraData = new List<OrphanInfo>();
+			ModMessages = new List<DespawnMessage>();
 		}
 
 		private void InitializeVanillaBosses() {
 			SortedBosses = new List<BossInfo> {
 				// Bosses -- Vanilla
-				BossInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "King Slime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "Eye of Cthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds,"Eater of Worlds", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail}, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "Brain of Cthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "Queen Bee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "Skeletron", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "Wall of Flesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "The Twins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "The Destroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "Skeletron Prime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "Betsy", new List<int>() { NPCID.DD2Betsy }, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3, new List<int>() { ItemID.DD2ElderCrystal }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "Duke Fishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "Lunatic Cultist", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Moonlord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "King Slime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }, "Mods.BossChecklist.BossVictory.KingSlime"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "Eye of Cthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }, "Mods.BossChecklist.BossVictory.EyeofCthulhu"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds,"Eater of Worlds", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }, "Mods.BossChecklist.BossVictory.EaterofWorlds"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "Brain of Cthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }, "Mods.BossChecklist.BossVictory.BrainofCthulhu"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "Queen Bee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }, "Mods.BossChecklist.BossVictory.QueenBee"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "Skeletron", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }, "Mods.BossChecklist.BossVictory.Skeletron"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "Wall of Flesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }, "Mods.BossChecklist.BossVictory.WallofFlesh"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "The Twins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }, "Mods.BossChecklist.BossVictory.Twins"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "The Destroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }, "Mods.BossChecklist.BossVictory.TheDestroyer"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "Skeletron Prime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }, "Mods.BossChecklist.BossVictory.SkeletronPrime"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }, "Mods.BossChecklist.BossVictory.Plantera"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }, "Mods.BossChecklist.BossVictory.Golem"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "Betsy", new List<int>() { NPCID.DD2Betsy }, () => Terraria.GameContent.Events.DD2Event.DownedInvasionT3, new List<int>() { ItemID.DD2ElderCrystal }), // No despawn message due to being in an event
+				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "Duke Fishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }, "Mods.BossChecklist.BossVictory.DukeFishron"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "Lunatic Cultist", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }, "Mods.BossChecklist.BossVictory.LunaticCultist"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Moonlord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }, "Mods.BossChecklist.BossVictory.MoonLord"),
 			
 				// Minibosses and Events -- Vanilla
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => true, new List<int>() { }),
@@ -1099,18 +1102,18 @@ namespace BossChecklist
 		}
 
 		// New system is better
-		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
-			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
+		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source, name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source, name);
 		}
 
-		internal void AddMiniBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source, name, id, down, available, spawn, collect, loot, texture, info));
+		internal void AddMiniBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source, name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source, name);
 		}
 
-		internal void AddEvent(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, Func<bool> available, string iconTexture) {
-			SortedBosses.Add(new BossInfo(EntryType.Event, val, source, name, id, down, available, spawn, collect, loot, texture, info, iconTexture));
+		internal void AddEvent(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(EntryType.Event, val, source, name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source, name);
 		}
 
@@ -1134,6 +1137,10 @@ namespace BossChecklist
 			else if (type == "AddToBossSpawnItems") orphanType = OrphanType.SpawnItem;
 			else if (type == "AddToEventNPCs") orphanType = OrphanType.EventNPC;
 			ExtraData.Add(new OrphanInfo(orphanType, modName, bossName, ids));
+		}
+
+		internal void AddDespawnMessage(int type, string message, bool translation, bool dayDespawner) {
+			ModMessages.Add(new DespawnMessage(type, message, translation, dayDespawner));
 		}
 	}
 }

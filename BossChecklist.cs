@@ -300,8 +300,9 @@ namespace BossChecklist
 							args[8] as List<int>, // Loot
 							args.Length > 9 ? args[9] as string : null, // Texture
 							args.Length > 10 ? args[10] as string : "No info provided", // Info
-							args.Length > 11 ? args[11] as Func<bool> : null, // Available
-							args.Length > 12 ? args[12] as string : "" // Override Icon Texture
+							args.Length > 11 ? args[11] as string : "", // Despawn Message
+							args.Length > 12 ? args[12] as Func<bool> : null, // Available
+							args.Length > 13 ? args[13] as string : "" // Override Icon Texture
 						);
 					}
 					return "Success";
@@ -329,8 +330,9 @@ namespace BossChecklist
 							args[8] as List<int>, // Loot
 							args.Length > 9 ? args[9] as string : null, // Texture
 							args.Length > 10 ? args[10] as string : "No info provided", // Info
-							args.Length > 11 ? args[11] as Func<bool> : null, // Available
-							args.Length > 12 ? args[12] as string : "" // Override Icon Texture
+							args.Length > 11 ? args[11] as string : "", // Despawn Message
+							args.Length > 12 ? args[12] as Func<bool> : null, // Available
+							args.Length > 13 ? args[13] as string : "" // Override Icon Texture
 						);
 					}
 					return "Success";
@@ -358,8 +360,9 @@ namespace BossChecklist
 							args[8] as List<int>, // Loot
 							args.Length > 9 ? args[9] as string : null, // Texture
 							args.Length > 10 ? args[10] as string : "No info provided", // Info
-							args.Length > 11 ? args[11] as Func<bool> : null, // Available
-							args.Length > 12 ? args[12] as string : "" // Override Icon Texture
+							args.Length > 11 ? args[11] as string : "", // Despawn Message
+							args.Length > 12 ? args[12] as Func<bool> : null, // Available
+							args.Length > 13 ? args[13] as string : "" // Override Icon Texture
 						);
 					}
 					return "Success";
@@ -370,12 +373,6 @@ namespace BossChecklist
 				//	// Returns List<Tuple<string, float, int, bool>>: Name, value, bosstype(boss, miniboss, event), downed.
 				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
 				//}
-				else if (message == "AddDespawnMessage") {
-					WorldAssist.ModBossTypes.Add(Convert.ToInt32(args[1]));
-					WorldAssist.ModBossMessages.Add(args[2] as string);
-					if (args.Length > 3 && Convert.ToBoolean(args[3])) WorldAssist.DayDespawners.Add(Convert.ToInt32(args[1]));
-					return "Success";
-				}
 				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
 					bossTracker.AddOrphanData(
 						message, // OrphanType

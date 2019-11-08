@@ -17,6 +17,7 @@ namespace BossChecklist
 		internal List<int> spawnItem;
 		internal List<int> loot;
 		internal List<int> collection;
+		internal string despawnMessage;
 		internal string pageTexture;
 		internal string overrideIconTexture;
 
@@ -27,7 +28,7 @@ namespace BossChecklist
 
 		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
-		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string overrideIconTexture = "") {
+		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string despawnMessage = "", string overrideIconTexture = "") {
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
@@ -38,6 +39,10 @@ namespace BossChecklist
 			this.spawnItem = spawnItem;
 			this.collection = collection;
 			this.loot = loot;
+			this.despawnMessage = despawnMessage;
+			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
+				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
+			}
 			this.pageTexture = pageTexture;
 			if (this.pageTexture == null || !ModContent.TextureExists(this.pageTexture)) {
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
@@ -53,11 +58,11 @@ namespace BossChecklist
 			this.hidden = false;
 		}
 
-		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
+		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem, string despawnMessage = "") {
 			Func<bool> avail = () => true;
 			if (name == "Eater of Worlds") avail = () => !WorldGen.crimson;
 			else if (name == "Brain of Cthulhu") avail = () => WorldGen.crimson;
-			return new BossInfo(type, progression, "Vanilla", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]));
+			return new BossInfo(type, progression, "Vanilla", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]), despawnMessage);
 		}
 
 		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
@@ -81,6 +86,21 @@ namespace BossChecklist
 			this.modSource = modSource;
 			this.name = name;
 			this.values = values;
+		}
+	}
+
+	internal class DespawnMessage
+	{
+		internal int bossType;
+		internal string message;
+		internal bool isTranslation;
+		internal bool dayDespawner;
+
+		internal DespawnMessage(int bossType, string message, bool isTranslation, bool dayDespawner = false) {
+			this.bossType = bossType;
+			this.message = message;
+			this.isTranslation = isTranslation;
+			this.dayDespawner = dayDespawner;
 		}
 	}
 }

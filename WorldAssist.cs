@@ -19,8 +19,6 @@ namespace BossChecklist
 
 		public static List<bool> ActiveBossesList;
 		public static List<List<Player>> StartingPlayers;
-		public static List<int> ModBossTypes;
-		public static List<string> ModBossMessages;
 		public static List<int> DayDespawners;
 
 		string EventKey = "";
@@ -34,16 +32,13 @@ namespace BossChecklist
 			downedFrostMoon = false;
 			downedPumpkinMoon = false;
 			downedSolarEclipse = false;
-
-			ModBossTypes = new List<int>();
-			ModBossMessages = new List<string>();
+			
 			DayDespawners = new List<int>() { //Skeletron and Skeletron Prime are not added because they kill the player before despawning
 				NPCID.EyeofCthulhu,
 				NPCID.Retinazer,
 				NPCID.Spazmatism,
 				NPCID.TheDestroyer,
 			};
-
 
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			ActiveBossesList = new List<bool>();
@@ -177,37 +172,14 @@ namespace BossChecklist
 
 		public string GetDespawnMessage(NPC boss) {
 			bool moonLordCheck = (boss.type == NPCID.MoonLordHead || boss.type == NPCID.MoonLordCore);
-			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead) && !moonLordCheck) // If any player is active and alive
-			{
-				//todo: Despawns during day list that mod calls can add to
-				if (Main.dayTime && DayDespawners.Contains(boss.type)) {
-					return "Mods.BossChecklist.BossDespawn.Day";
-				}
+			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead) && !moonLordCheck) { // If any player is active and alive
+				if (Main.dayTime && DayDespawners.Contains(boss.type)) return "Mods.BossChecklist.BossDespawn.Day";
 				else if (boss.type == NPCID.WallofFlesh) return "Mods.BossChecklist.BossVictory.WallofFlesh";
 				else return "Mods.BossChecklist.BossDespawn.Generic";
 			}
 			else if (BossChecklist.ClientConfig.DespawnMessageType == "Custom") {
-				if (boss.type == NPCID.KingSlime) return "Mods.BossChecklist.BossVictory.KingSlime";
-				else if (boss.type == NPCID.EyeofCthulhu) return "Mods.BossChecklist.BossVictory.EyeofCthulhu";
-				else if (boss.type == NPCID.EaterofWorldsHead) return "Mods.BossChecklist.BossVictory.EaterofWorlds";
-				else if (boss.type == NPCID.BrainofCthulhu) return "Mods.BossChecklist.BossVictory.BrainofCthulhu";
-				else if (boss.type == NPCID.QueenBee) return "Mods.BossChecklist.BossVictory.QueenBee";
-				else if (boss.type == NPCID.SkeletronHead) return "Mods.BossChecklist.BossVictory.Skeletron";
-				else if (boss.type == NPCID.WallofFlesh) return "Mods.BossChecklist.BossVictory.WallofFlesh";
-				else if (boss.type == NPCID.Retinazer || boss.type == NPCID.Spazmatism) return "Mods.BossChecklist.BossVictory.Twins";
-				else if (boss.type == NPCID.TheDestroyer) return "Mods.BossChecklist.BossVictory.TheDestroyer";
-				else if (boss.type == NPCID.SkeletronPrime) return "Mods.BossChecklist.BossVictory.SkeletronPrime";
-				else if (boss.type == NPCID.Plantera) return "Mods.BossChecklist.BossVictory.Plantera";
-				else if (boss.type == NPCID.Golem) return "Mods.BossChecklist.BossVictory.Golem";
-				else if (boss.type == NPCID.DukeFishron) return "Mods.BossChecklist.BossVictory.DukeFishron";
-				else if (boss.type == NPCID.CultistBoss) return "Mods.BossChecklist.BossVictory.LunaticCultist";
-				else if (boss.type == NPCID.MoonLordCore) return "Mods.BossChecklist.BossVictory.MoonLord";
-
-				for (int i = 0; i < ModBossTypes.Count; i++) {
-					//TODO: Update mod despawn messages
-					if (boss.type == ModBossTypes[i]) return ModBossMessages[i]; // If a mod has submitted a custom despawn message, it will display here
-				}
-				return "Mods.BossChecklist.BossVictory.Generic"; // Otherwise it defaults to this
+				// Check already accounted for to get to this point
+				return BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(boss)].despawnMessage;
 			}
 			else return "Mods.BossChecklist.BossVictory.Generic";
 		}
