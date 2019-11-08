@@ -373,6 +373,7 @@ namespace BossChecklist
 				else if (message == "AddDespawnMessage") {
 					WorldAssist.ModBossTypes.Add(Convert.ToInt32(args[1]));
 					WorldAssist.ModBossMessages.Add(args[2] as string);
+					if (args.Length > 3 && Convert.ToBoolean(args[3])) WorldAssist.DayDespawners.Add(Convert.ToInt32(args[1]));
 					return "Success";
 				}
 				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
