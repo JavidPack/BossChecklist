@@ -457,12 +457,23 @@ namespace BossChecklist
 						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 					}
 
-					//TODO: need to update the serverrecords too so they can be used later
+					//Update the serverrecords too so they can be used later
 
-					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].kills + " / " + ServerCollectedRecords[Main.myPlayer][0].deaths);
-					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].fightTime.ToString());
-					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].brink + "(" + ServerCollectedRecords[Main.myPlayer][0].brinkPercent + ")");
-					//Main.NewText(ServerCollectedRecords[Main.myPlayer][0].totalDodges + "(" + ServerCollectedRecords[Main.myPlayer][0].dodgeTime + ")");
+					ModPacket packet = GetPacket();
+					packet.Write((byte)PacketMessageType.SendRecordsToServer);
+					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
+						BossStats stat = modPlayer.AllBossRecords[i].stat;
+						packet.Write(stat.kills);
+						packet.Write(stat.deaths);
+						packet.Write(stat.durationBest);
+						packet.Write(stat.durationWorst);
+						packet.Write(stat.healthLossBest);
+						packet.Write(stat.healthLossWorst);
+						packet.Write(stat.hitsTakenBest);
+						packet.Write(stat.hitsTakenWorst);
+						packet.Write(stat.dodgeTimeBest);
+					}
+					packet.Send(); // To server			
 
 					// ORDER MATTERS FOR reader
 					break;

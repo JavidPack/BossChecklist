@@ -158,7 +158,7 @@ namespace BossChecklist
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				List<BossStats> list = BossChecklist.ServerCollectedRecords[i]; //TODO: pretty sure I have to update this
+				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 				BossStats oldRecord = list[recordIndex];
 
 				// Establish the new records for comparing

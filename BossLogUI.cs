@@ -2249,7 +2249,7 @@ namespace BossChecklist
 				next.PaddingLeft = 22;
 				next.Id = i.ToString();
 				next.OnClick += new MouseEvent(JumpToBossPage);
-				// TODO? next.OnRightClick strike through bosses? Not entirely sure of use.
+				next.OnRightClick += new MouseEvent(StrikeThrough);
 
 				if (copiedList[i].downed()) {
 					next.TextColor = Colors.RarityGreen;
@@ -2340,6 +2340,10 @@ namespace BossChecklist
 			else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
 			else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
 			//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
+		}
+
+		private void StrikeThrough(UIMouseEvent evt, UIElement listeningElement) {
+			// TODO? next.OnRightClick strike through bosses? Not entirely sure of use.
 		}
 
 		private void ResetBothPages() {
