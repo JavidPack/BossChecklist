@@ -48,13 +48,13 @@ namespace BossChecklist
 			Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3), innerDimensions.Y - 24);
 			
 			base.DrawSelf(spriteBatch);
-
+			
 			// Draw the Boss Log Color
 			if (Id == "OpenUI") {
 				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/LogUI_Button");
 				Rectangle source = new Rectangle(36 * 3, 0, 34, 38);
 				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
-				if (!IsMouseHovering) {
+				if (!IsMouseHovering && !BossLogUI.dragging) {
 					source = new Rectangle(36 * 2, 0, 34, 38);
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
@@ -75,9 +75,12 @@ namespace BossChecklist
 					source = new Rectangle(0, 40 * cycleFrame, 34, 38);
 					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
 				}
+
+				// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
+				if (BossLogUI.dragging) spriteBatch.Draw(texture, innerDimensions.ToRectangle(), Color.White);
 			}
 			
-			if (IsMouseHovering) {
+			if (IsMouseHovering && !BossLogUI.dragging) {
 				BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonType, pos, Color.White);
 				else {
@@ -1416,6 +1419,9 @@ namespace BossChecklist
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool[] AltPage; // Flip between best and worst
+		public static bool dragging = false;
+		private bool heldDown = false;
+		private int holdTimer = 20;
 		
 		private bool bossLogVisible;
 		public bool BossLogVisible {
@@ -1497,7 +1503,7 @@ namespace BossChecklist
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
-			bosslogbutton.OnRightClick += (a, b) => ToggleRecording();
+			bosslogbutton.OnRightMouseDown += new MouseEvent(HoldingDown);
 
 			AltPage = new bool[]
 			{
@@ -1698,12 +1704,12 @@ namespace BossChecklist
 			displayRecordButton.Top.Pixels = 128;
 		}
 
+		public void HoldingDown(UIMouseEvent evt, UIElement listeningElement) => heldDown = true;
+
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
 			
 			// We reset the position of the button to make sure it updates with the screen res
-			bosslogbutton.Left.Pixels = Main.screenWidth - bosslogbutton.Width.Pixels - 190;
-			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
 			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
@@ -1711,6 +1717,46 @@ namespace BossChecklist
 			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			
+			if (heldDown) {
+				if (holdTimer > 0) {
+					holdTimer--;
+					if (!dragging && Main.mouseRightRelease) {
+						ToggleRecording();
+						holdTimer = 15;
+						heldDown = false;
+					}
+				}
+				else {
+					if (!dragging) dragging = true;
+					if (dragging) {
+						if (Main.mouseRightRelease) {
+							BossChecklist.BossLogConfig.BossLogPos = new Vector2((float)(bosslogbutton.Left.Pixels / Main.screenWidth), (float)(bosslogbutton.Top.Pixels / Main.screenHeight));
+							holdTimer = 15;
+							dragging = false;
+							heldDown = false;
+						}
+					}
+				}
+			}
+
+			if (dragging) {
+				bosslogbutton.Left.Pixels = Main.mouseX - (bosslogbutton.Width.Pixels / 2);
+				bosslogbutton.Top.Pixels = Main.mouseY - (bosslogbutton.Height.Pixels / 2);
+
+				if (bosslogbutton.Left.Pixels < 0) bosslogbutton.Left.Pixels = 0;
+				if (bosslogbutton.Top.Pixels < 0) bosslogbutton.Top.Pixels = 0;
+
+				if (bosslogbutton.Left.Pixels + (bosslogbutton.Width.Pixels / 2) > Main.screenWidth)
+					bosslogbutton.Left.Pixels = Main.screenWidth - bosslogbutton.Width.Pixels;
+				if (bosslogbutton.Top.Pixels + (bosslogbutton.Height.Pixels / 2) > Main.screenWidth)
+					bosslogbutton.Top.Pixels = Main.screenWidth - bosslogbutton.Height.Pixels;
+			}
+			else {
+				Vector2 configVec = BossChecklist.BossLogConfig.BossLogPos;
+				bosslogbutton.Left.Pixels = configVec.X * Main.screenWidth;
+				bosslogbutton.Top.Pixels = configVec.Y * Main.screenHeight;
+			}
+
 			// Updating tabs to proper positions
 			if (PageNum == -2) CreditsTab.Left.Pixels = -400 - 16;
 			else CreditsTab.Left.Pixels = -400 + 800 - 16;

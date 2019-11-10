@@ -19,6 +19,11 @@ namespace BossChecklist
 		[Tooltip("Choose the color of your Boss Log!")]
 		public Color BossLogColor { get; set; }
 
+		[DefaultValue(typeof(Vector2), "0.8833333, 0.954769")]
+		[Label("Button Position")]
+		[Tooltip("Hold right click to move the button wherever you like with ease!")]
+		public Vector2 BossLogPos { get; set; }
+
 		[DefaultValue(true)]
 		[Label("Check Next Boss")]
 		[Tooltip("Puts a circle in the checkbox to indicate it is the next undefeated boss to fight")]
