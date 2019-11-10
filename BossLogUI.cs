@@ -1503,7 +1503,7 @@ namespace BossChecklist
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
-			bosslogbutton.OnRightMouseDown += new MouseEvent(HoldingDown);
+			bosslogbutton.OnRightMouseDown += (a, b) => heldDown = true;
 
 			AltPage = new bool[]
 			{
@@ -1664,22 +1664,22 @@ namespace BossChecklist
 			recordButton.Height.Pixels = 25;
 			recordButton.Left.Pixels = 0;
 			recordButton.Top.Pixels = 15;
-			recordButton.OnClick += new MouseEvent(OpenRecord);
-			recordButton.OnRightDoubleClick += new MouseEvent(ResetStats);
+			recordButton.OnClick += (a, b) => OpenRecord();
+			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
 
 			spawnButton = new SubpageButton("Spawn Info");
 			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			spawnButton.Height.Pixels = 25;
 			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
 			spawnButton.Top.Pixels = 15;
-			spawnButton.OnClick += new MouseEvent(OpenSpawn);
+			spawnButton.OnClick += (a, b) => OpenSpawn();
 
 			lootButton = new SubpageButton("Loot & Collection");
 			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2 - 16;
 			lootButton.Top.Pixels = 50;
-			lootButton.OnClick += new MouseEvent(OpenLoot);
+			lootButton.OnClick += (a, b) => OpenLoot();
 
 			/*
             collectButton = new SubpageButton("Collectibles");
@@ -1695,7 +1695,7 @@ namespace BossChecklist
 			toolTipButton.Height.Pixels = 32;
 			toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 			toolTipButton.Top.Pixels = 100;
-			toolTipButton.OnClick += new MouseEvent(SwapRecordPage);
+			toolTipButton.OnClick += (a, b) => SwapRecordPage();
 
 			displayRecordButton = new SubpageButton("Display Records");
 			displayRecordButton.Width.Pixels = 32;
@@ -1703,8 +1703,6 @@ namespace BossChecklist
 			displayRecordButton.Left.Pixels = PageTwo.Width.Pixels - displayRecordButton.Width.Pixels - 30;
 			displayRecordButton.Top.Pixels = 128;
 		}
-
-		public void HoldingDown(UIMouseEvent evt, UIElement listeningElement) => heldDown = true;
 
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
@@ -1851,7 +1849,7 @@ namespace BossChecklist
 			if (PageNum >= 0) ResetBothPages();
 		}
 
-		private void ResetStats(UIMouseEvent evt, UIElement listeningElement) {
+		private void ResetStats() {
 			if (BossChecklist.DebugConfig.ResetRecordsBool) {
 				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat;
 				stats.durationBest = -1;
@@ -1865,7 +1863,7 @@ namespace BossChecklist
 				stats.healthLossWorstPercent = -1;
 				stats.healthLossBest = -1;
 				stats.healthLossBestPercent = -1;
-				OpenRecord(evt, listeningElement);
+				OpenRecord();
 				
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					BossStats newRecord = new BossStats() {
@@ -1896,14 +1894,14 @@ namespace BossChecklist
 					List<ItemDefinition> collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum].collectibles;
 					int index = collection.FindIndex(x => x.Type == itemType);
 					collection.RemoveAt(index);
-					OpenCollect(evt, listeningElement);
+					OpenCollect();
 				}
 				else if (ID.Contains("loot_")) {
 					int itemType = Convert.ToInt32(listeningElement.Id.Substring(5));
 					List<ItemDefinition> collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum].loot;
 					int index = collection.FindIndex(x => x.Type == itemType);
 					collection.RemoveAt(index);
-					OpenLoot(evt, listeningElement);
+					OpenLoot();
 				}
 			}
 		}
@@ -1922,7 +1920,7 @@ namespace BossChecklist
 				if (RecipeShown == Convert.ToInt32(listeningElement.Id.Substring(index + 1)) - 1) RecipeShown = 0;
 				else RecipeShown++;
 			}
-			OpenSpawn(evt, listeningElement);
+			OpenSpawn();
 		}
 
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
@@ -1940,9 +1938,9 @@ namespace BossChecklist
 				else if (PageNum == -2) PageNum = BossChecklist.bossTracker.SortedBosses.Count - 1;
 				if (PageNum == -1) UpdateTableofContents();
 				else {
-					if (SubPageNum == 0) OpenRecord(evt, listeningElement);
-					else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
-					else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
+					if (SubPageNum == 0) OpenRecord();
+					else if (SubPageNum == 1) OpenSpawn();
+					else if (SubPageNum == 2) OpenLoot();
 					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 				}
 			}
@@ -1951,9 +1949,9 @@ namespace BossChecklist
 				else UpdateCredits();
 
 				if (PageNum != -2) {
-					if (SubPageNum == 0) OpenRecord(evt, listeningElement);
-					else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
-					else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
+					if (SubPageNum == 0) OpenRecord();
+					else if (SubPageNum == 1) OpenSpawn();
+					else if (SubPageNum == 2) OpenLoot();
 					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 				}
 			}
@@ -1962,13 +1960,13 @@ namespace BossChecklist
 			ResetPageButtons();
 		}
 
-		private void OpenRecord(UIMouseEvent evt, UIElement listeningElement) {
+		private void OpenRecord() {
 			SubPageNum = 0;
 			ResetBothPages();
 			if (PageNum < 0) return;
 		}
 
-		private void OpenSpawn(UIMouseEvent evt, UIElement listeningElement) {
+		private void OpenSpawn() {
 			SubPageNum = 1;
 			int TotalRecipes = 0;
 			ResetBothPages();
@@ -2144,10 +2142,10 @@ namespace BossChecklist
 			}
 		}
 
-		private void OpenLoot(UIMouseEvent evt, UIElement listeningElement) {
+		private void OpenLoot() {
 			SubPageNum = 2;
 			if (AltPage[SubPageNum]) {
-				OpenCollect(evt, listeningElement);
+				OpenCollect();
 				return;
 			}
 			ResetBothPages();
@@ -2219,7 +2217,7 @@ namespace BossChecklist
 			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
-		private void OpenCollect(UIMouseEvent evt, UIElement listeningElement) {
+		private void OpenCollect() {
 			SubPageNum = 2;
 			ResetBothPages();
 			if (PageNum < 0) return;
@@ -2382,9 +2380,9 @@ namespace BossChecklist
 			PageNum = Convert.ToInt32(listeningElement.Id);
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
-			if (SubPageNum == 0) OpenRecord(evt, listeningElement);
-			else if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
-			else if (SubPageNum == 2) OpenLoot(evt, listeningElement);
+			if (SubPageNum == 0) OpenRecord();
+			else if (SubPageNum == 1) OpenSpawn();
+			else if (SubPageNum == 2) OpenLoot();
 			//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 		}
 
@@ -2470,7 +2468,7 @@ namespace BossChecklist
 						toolTipButton.Height.Pixels = 32;
 						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 						toolTipButton.Top.Pixels = 86;
-						toolTipButton.OnClick += new MouseEvent(SwapRecordPage);
+						toolTipButton.OnClick += (a, b) => SwapRecordPage();
 						PageTwo.Append(toolTipButton);
 
 						if (SubPageNum == 0 && Main.netMode == NetmodeID.MultiplayerClient) {
@@ -2489,10 +2487,10 @@ namespace BossChecklist
 			}
 		}
 
-		private void SwapRecordPage(UIMouseEvent evt, UIElement listeningElement) {
+		private void SwapRecordPage() {
 			AltPage[SubPageNum] = !AltPage[SubPageNum];
-			if (SubPageNum == 2) OpenLoot(evt, listeningElement);
-			if (SubPageNum == 1) OpenSpawn(evt, listeningElement);
+			if (SubPageNum == 2) OpenLoot();
+			if (SubPageNum == 1) OpenSpawn();
 		}
 
 		public int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
