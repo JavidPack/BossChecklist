@@ -55,11 +55,11 @@ namespace BossChecklist
 				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "Duke Fishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }, "Mods.BossChecklist.BossVictory.DukeFishron"),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "Lunatic Cultist", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }, "Mods.BossChecklist.BossVictory.LunaticCultist"),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Moonlord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }, "Mods.BossChecklist.BossVictory.MoonLord"),
-			
+				
 				// Minibosses and Events -- Vanilla
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => true, new List<int>() { }),
 					// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() {ItemID.GoblinBattleStandard }),
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard }),
 				BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }),
 					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, EaterOfWorlds + 0.51f, "Dark Mage", new List<int>() { NPCID.DD2DarkMageT3 }, () => true, new List<int>() { }),
 					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, SkeletronPrime + 0.5f, "Ogre", new List<int>() { NPCID.DD2OgreT3 }, () => true, new List<int>() { }),
@@ -79,12 +79,6 @@ namespace BossChecklist
 					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Golem + 0.11f, "Martian Saucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => true, new List<int>() { }),
 				BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }),
 			};
-
-			/* TODO: Add manual textures for the following NPCs/Events
-				- Goblin Army (Make a better one)
-				- Pirates
-				- Pumpkin Moon (Make a better one)
-			*/
 		}
 
 		internal void FinalizeBossData() {
