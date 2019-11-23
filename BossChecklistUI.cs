@@ -236,7 +236,7 @@ namespace BossChecklist.UIElements
 	{
 		const int paddingForBox = 10;
 		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y) {
-			if (BossChecklist.instance.bossChecklistUI.hoveredTextSnippet != null) {
+			if (BossChecklist.instance.bossChecklistUI.hoveredTextSnippet != null || BossChecklist.instance.BossLog.hoveredTextSnippet != null) {
 				var texts = lines.Select(z => z.text);
 				string longestText = texts.ToList().OrderByDescending(z => z.Length).First();
 				int widthForBox = (int)Main.fontMouseText.MeasureString(longestText).X;

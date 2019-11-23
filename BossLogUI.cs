@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BossChecklist.UIElements;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
@@ -1348,6 +1349,7 @@ namespace BossChecklist
 					}
 				}
 				else if (BossLogUI.SubPageNum == 1) {
+					/*
 					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 						Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
@@ -1358,6 +1360,7 @@ namespace BossChecklist
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
 						if (IsMouseHovering) Main.hoverItemName = "Click to view spawn item recipes";
 					}
+					*/
 				}
 				else if (BossLogUI.SubPageNum == 2) {
 					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
@@ -1797,6 +1800,19 @@ namespace BossChecklist
 			base.Update(gameTime);
 		}
 
+		public TextSnippet hoveredTextSnippet;
+		public override void Draw(SpriteBatch spriteBatch) {
+			base.Draw(spriteBatch);
+
+			if (hoveredTextSnippet != null) {
+				hoveredTextSnippet.OnHover();
+				if (Main.mouseLeft && Main.mouseLeftRelease) {
+					hoveredTextSnippet.OnClick();
+				}
+				hoveredTextSnippet = null;
+			}
+		}
+
 		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
 			if (filterPanel.Left.Pixels != -400 - 16 - 120) {
 				filterPanel.Left.Pixels = -400 - 16 - 120;
@@ -1972,12 +1988,29 @@ namespace BossChecklist
 			ResetBothPages();
 			if (PageNum < 0) return;
 			pageTwoItemList.Clear();
-			if (AltPage[SubPageNum]) { // Items within spawnItem List
+			//if (AltPage[SubPageNum]) { // Items within spawnItem List
 				// TODO: @Jopojelly Fix/implement new scroll system for spawn info that also fits itself into the page size.
 				
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
 				string infoText = BossChecklist.bossTracker.SortedBosses[PageNum].info;
-				
+
+				var message = new UIMessageBox(infoText);
+				message.Width.Set(-45f, 1f);
+				message.Height.Set(-310f, 1f);
+				message.Top.Set(270f, 0f);
+				message.Left.Set(-10f, 0f);
+				message.PaddingRight = 30;
+				PageTwo.Append(message);
+
+				var uIScrollbar = new Terraria.ModLoader.UI.Elements.FixedUIScrollbar(BossChecklist.instance.BossLogInterface);
+				uIScrollbar.SetView(100f, 1000f);
+				uIScrollbar.Top.Set(280f, 0f);
+				uIScrollbar.Height.Set(-330f, 1f);
+				uIScrollbar.Left.Set(-60, 0f);
+				uIScrollbar.HAlign = 1f;
+				PageTwo.Append(uIScrollbar);
+				message.SetScrollbar(uIScrollbar);
+
 				// Current code is mostly done in FittedTextPanel.Draw
 				FittedTextPanel infoLines = new FittedTextPanel(infoText);
 				infoLines.Left.Pixels = 0;
@@ -1987,9 +2020,9 @@ namespace BossChecklist
 				infoLines.Height.Pixels = PageTwo.Height.Pixels - 150;
 				infoLines.MaxHeight.Pixels = PageTwo.Height.Pixels - 150;
 				infoLines.OverflowHidden = true;
-				PageTwo.Append(infoLines);
-			}
-			else { // Spawn info text
+				//PageTwo.Append(infoLines);
+			//}
+			//else { // Spawn info text
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) {
 					pageTwoItemList.Width.Pixels = 320;
 					pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 100;
@@ -2139,7 +2172,7 @@ namespace BossChecklist
 					ModdedRecipe.Top.Pixels = 85;
 					PageTwo.Append(ModdedRecipe);
 				}
-			}
+			//}
 		}
 
 		private void OpenLoot() {
