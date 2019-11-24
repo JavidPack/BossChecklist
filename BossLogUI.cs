@@ -1063,9 +1063,9 @@ namespace BossChecklist
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
-			if (BossLogUI.PageNum != -1 && (Id == "filterPanel" || Id == "Filter_Tab")) return;
+			if (BossLogUI.PageNum != -1 && (Id == "filterPanel" || Id == "Filters_Tab")) return;
 
-			if (Id == "TableOfContents_Tab") {
+			if (Id == "Table of Contents_Tab") {
 				Texture2D pages = BossChecklist.instance.GetTexture("Resources/LogUI_Back");
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 				spriteBatch.Draw(pages, pagePos, BossChecklist.BossLogConfig.BossLogColor);
@@ -1077,15 +1077,15 @@ namespace BossChecklist
 				if (Left.Pixels <= 0) effect = SpriteEffects.None;
 
 				Color color = new Color(153, 199, 255);
-				if (Id == "Bosses_Tab") color = new Color(255, 168, 168);
-				else if (Id == "MiniBosses_Tab") color = new Color(153, 253, 119);
-				else if (Id == "Events_Tab") color = new Color(196, 171, 254);
+				if (Id == "Boss_Tab") color = new Color(255, 168, 168);
+				else if (Id == "Miniboss_Tab") color = new Color(153, 253, 119);
+				else if (Id == "Event_Tab") color = new Color(196, 171, 254);
 				else if (Id == "Credits_Tab") color = new Color(218, 175, 133);
 				color = Color.Tan;
 
 				spriteBatch.Draw(book, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width, book.Height), color, 0f, Vector2.Zero, effect, 0f);
 			}
-			if (Id == "Events_Tab") {
+			if (Id == "Event_Tab") {
 				// Paper Drawing
 				Texture2D pages = BossChecklist.instance.GetTexture("Resources/LogUI_Paper");
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
@@ -1110,12 +1110,21 @@ namespace BossChecklist
 				Texture2D texture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
 				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11, inner.Y + Height.Pixels / 2 - 11);
 				Rectangle cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
-				if (Id == "Bosses_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
-				else if (Id == "MiniBosses_Tab") cut = new Rectangle(1 * 24, 1 * 24, 22, 22);
-				else if (Id == "Events_Tab") cut = new Rectangle(2 * 24, 1 * 24, 22, 22);
+				if (Id == "Boss_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
+				else if (Id == "Miniboss_Tab") cut = new Rectangle(1 * 24, 1 * 24, 22, 22);
+				else if (Id == "Event_Tab") cut = new Rectangle(2 * 24, 1 * 24, 22, 22);
 				else if (Id == "Credits_Tab") cut = new Rectangle(3 * 24, 0 * 24, 22, 22);
-				else if (Id == "Filter_Tab") cut = new Rectangle(3 * 24, 1 * 24, 22, 22);
+				else if (Id == "Filters_Tab") cut = new Rectangle(3 * 24, 1 * 24, 22, 22);
 				spriteBatch.Draw(texture, pos, cut, Color.White);
+				if (IsMouseHovering) {
+					string tabMessage = "Jump to ";
+					if (Id == "Filters_Tab") tabMessage = "Toggle ";
+					else if (Id.ToLower().Contains("boss") || Id.ToLower().Contains("event")) {
+						tabMessage += "next ";
+					}
+					tabMessage += Id.Substring(0, Id.Length - 4);
+					Main.hoverItemName = tabMessage;
+				}
 			}
 
 			if (Id.Contains("C_") && IsMouseHovering) {
@@ -1529,7 +1538,7 @@ namespace BossChecklist
 			ToCTab.Width.Pixels = 32;
 			ToCTab.Left.Set(-400 - 16, 0.5f);
 			ToCTab.Top.Set(-250 + 20, 0.5f);
-			ToCTab.Id = "TableOfContents_Tab";
+			ToCTab.Id = "Table of Contents_Tab";
 			ToCTab.OnClick += new MouseEvent(OpenViaTab);
 
 			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
@@ -1537,7 +1546,7 @@ namespace BossChecklist
 			BossTab.Width.Pixels = 32;
 			BossTab.Left.Set(-400 - 16, 0.5f);
 			BossTab.Top.Set(-250 + 30 + 76, 0.5f);
-			BossTab.Id = "Bosses_Tab";
+			BossTab.Id = "Boss_Tab";
 			BossTab.OnClick += new MouseEvent(OpenViaTab);
 
 			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
@@ -1545,7 +1554,7 @@ namespace BossChecklist
 			MiniBossTab.Width.Pixels = 32;
 			MiniBossTab.Left.Set(-400 - 16, 0.5f);
 			MiniBossTab.Top.Set(-250 + 40 + (76 * 2), 0.5f);
-			MiniBossTab.Id = "MiniBosses_Tab";
+			MiniBossTab.Id = "Miniboss_Tab";
 			MiniBossTab.OnClick += new MouseEvent(OpenViaTab);
 
 			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
@@ -1553,7 +1562,7 @@ namespace BossChecklist
 			EventTab.Width.Pixels = 32;
 			EventTab.Left.Set(-400 - 16, 0.5f);
 			EventTab.Top.Set(-250 + 50 + (76 * 3), 0.5f);
-			EventTab.Id = "Events_Tab";
+			EventTab.Id = "Event_Tab";
 			EventTab.OnClick += new MouseEvent(OpenViaTab);
 
 			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
@@ -1625,7 +1634,7 @@ namespace BossChecklist
 			FilterTab.Width.Pixels = 32;
 			FilterTab.Left.Pixels = 0;
 			FilterTab.Top.Pixels = 0;
-			FilterTab.Id = "Filter_Tab";
+			FilterTab.Id = "Filters_Tab";
 			FilterTab.OnClick += new MouseEvent(ToggleFilterPanel);
 			filterPanel.Append(FilterTab);
 
@@ -1867,9 +1876,9 @@ namespace BossChecklist
 		}
 		
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement.Id == "Bosses_Tab") PageNum = FindNext(EntryType.Boss);
-			else if (listeningElement.Id == "MiniBosses_Tab") PageNum = FindNext(EntryType.MiniBoss);
-			else if (listeningElement.Id == "Events_Tab") PageNum = FindNext(EntryType.Event);
+			if (listeningElement.Id == "Boss_Tab") PageNum = FindNext(EntryType.Boss);
+			else if (listeningElement.Id == "Miniboss_Tab") PageNum = FindNext(EntryType.MiniBoss);
+			else if (listeningElement.Id == "Event_Tab") PageNum = FindNext(EntryType.Event);
 			else if (listeningElement.Id == "Credits_Tab") UpdateCredits();
 			else UpdateTableofContents();
 
@@ -1982,8 +1991,6 @@ namespace BossChecklist
 					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
 				}
 			}
-			else if (listeningElement.Id == "TableOfContents") UpdateTableofContents();
-			else if (listeningElement.Id == "Credits") UpdateCredits();
 			ResetPageButtons();
 		}
 
