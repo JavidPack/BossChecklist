@@ -40,6 +40,7 @@ namespace BossChecklist
 
 			writer.Write(HiddenBosses.Count);
 			foreach (var bossName in HiddenBosses) {
+				// TODO: bossName could differ on clients depending on current language if modder supplies localization.
 				writer.Write(bossName);
 			}
 		}

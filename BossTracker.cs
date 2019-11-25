@@ -1080,6 +1080,7 @@ namespace BossChecklist
 			return new List<int>();
 		}
 
+		// Old version compatibility methods
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
 			SortedBosses.Add(new BossInfo(EntryType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), new List<int>(), null, bossInfo));
 		}
@@ -1093,19 +1094,19 @@ namespace BossChecklist
 		}
 
 		// New system is better
-		internal void AddBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
-			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source, name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
-			LogNewBoss(source, name);
+		internal void AddBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
+			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddMiniBoss(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source, name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
-			LogNewBoss(source, name);
+		internal void AddMiniBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
+			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddEvent(float val, List<int> id, string source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
-			SortedBosses.Add(new BossInfo(EntryType.Event, val, source, name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
-			LogNewBoss(source, name);
+		internal void AddEvent(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+			SortedBosses.Add(new BossInfo(EntryType.Event, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
+			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
 		internal void LogNewBoss(string mod, string name) {

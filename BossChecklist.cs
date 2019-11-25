@@ -273,18 +273,20 @@ namespace BossChecklist
 		// Merge Notes: AddStatPage added, new AddBoss needed.
 		public override object Call(params object[] args) {
 			// Logs messages when a mod is not using an updated call for the boss log, urging them to update.
+			int argsLength = args.Length; // Simplify code by resizing args.
+			Array.Resize(ref args, 15);
 			try {
 				string message = args[0] as string;
 				if (bossTracker.BossesFinalized)
 					throw new Exception($"BossChecklist Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages un until before AddRecipes.");
 				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons
-					if (args.Length < 7) {
+					if (argsLength < 7) {
 						bossTracker.AddBoss(
 							args[1] as string, // Boss Name
 							Convert.ToSingle(args[2]), // Prog
 							args[3] as Func<bool>, // Downed
-							args.Length > 4 ? args[4] as string : null, // Info
-							args.Length > 5 ? args[5] as Func<bool> : null // Available
+							args[4] as string, // Info
+							args[5] as Func<bool> // Available
 						);
 						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
 					}
@@ -292,29 +294,29 @@ namespace BossChecklist
 						bossTracker.AddBoss(
 							Convert.ToSingle(args[1]), // Prog
 							args[2] as List<int>, // IDs
-							args[3] as string, // Mod Name
+							args[3] as Mod, // Mod
 							args[4] as string, // Boss Name
 							args[5] as Func<bool>, // Downed
 							args[6] as List<int>, // Spawn Items
 							args[7] as List<int>, // Collection
 							args[8] as List<int>, // Loot
-							args.Length > 9 ? args[9] as string : null, // Texture
-							args.Length > 10 ? args[10] as string : "No info provided", // Info
-							args.Length > 11 ? args[11] as string : "", // Despawn Message
-							args.Length > 12 ? args[12] as Func<bool> : null, // Available
-							args.Length > 13 ? args[13] as string : "" // Override Icon Texture
+							args[9] as string, // Texture
+							argsLength > 10 ? args[10] as string : "No info provided", // Info
+							argsLength > 11 ? args[11] as string : "", // Despawn Message
+							args[12] as Func<bool>, // Available
+							argsLength > 13 ? args[13] as string : "" // Override Icon Texture
 						);
 					}
 					return "Success";
 				}
 				else if (message == "AddMiniBoss" || message == "AddMiniBossWithInfo") {
-					if (args.Length < 7) {
+					if (argsLength < 7) {
 						bossTracker.AddMiniBoss(
 							args[1] as string, // MiniBoss Name
 							Convert.ToSingle(args[2]), // Prog
 							args[3] as Func<bool>, // Downed
-							args.Length > 4 ? args[4] as string : null, // Info
-							args.Length > 5 ? args[5] as Func<bool> : null // Available
+							args[4] as string, // Info
+							args[5] as Func<bool> // Available
 						);
 						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
 					}
@@ -322,29 +324,29 @@ namespace BossChecklist
 						bossTracker.AddMiniBoss(
 							Convert.ToSingle(args[1]), // Prog
 							args[2] as List<int>, // IDs
-							args[3] as string, // Mod Name
+							args[3] as Mod, // Mod
 							args[4] as string, // MiniBoss Name
 							args[5] as Func<bool>, // Downed
 							args[6] as List<int>, // Spawn Items
 							args[7] as List<int>, // Collection
 							args[8] as List<int>, // Loot
-							args.Length > 9 ? args[9] as string : null, // Texture
-							args.Length > 10 ? args[10] as string : "No info provided", // Info
-							args.Length > 11 ? args[11] as string : "", // Despawn Message
-							args.Length > 12 ? args[12] as Func<bool> : null, // Available
-							args.Length > 13 ? args[13] as string : "" // Override Icon Texture
+							args[9] as string, // Texture
+							argsLength > 10 ? args[10] as string : "No info provided", // Info
+							argsLength > 11 ? args[11] as string : "", // Despawn Message
+							args[12] as Func<bool>, // Available
+							argsLength > 13 ? args[13] as string : "" // Override Icon Texture
 						);
 					}
 					return "Success";
 				}
 				else if (message == "AddEvent" || message == "AddEventWithInfo") {
-					if (args.Length < 7) {
+					if (argsLength < 7) {
 						bossTracker.AddEvent(
 							args[1] as string, // Event Name
 							Convert.ToSingle(args[2]), // Prog
 							args[3] as Func<bool>, // Downed
-							args.Length > 4 ? args[4] as string : null, // Info
-							args.Length > 5 ? args[5] as Func<bool> : null // Available
+							args[4] as string, // Info
+							args[5] as Func<bool> // Available
 						);
 						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
 					}
@@ -352,17 +354,17 @@ namespace BossChecklist
 						bossTracker.AddEvent(
 							Convert.ToSingle(args[1]), // Prog
 							args[2] as List<int>, // IDs
-							args[3] as string, // Mod Name
+							args[3] as Mod, // Mod
 							args[4] as string, // Event Name
 							args[5] as Func<bool>, // Downed
 							args[6] as List<int>, // Spawn Items
 							args[7] as List<int>, // Collection
 							args[8] as List<int>, // Loot
-							args.Length > 9 ? args[9] as string : null, // Texture
-							args.Length > 10 ? args[10] as string : "No info provided", // Info
-							args.Length > 11 ? args[11] as string : "", // Despawn Message
-							args.Length > 12 ? args[12] as Func<bool> : null, // Available
-							args.Length > 13 ? args[13] as string : "" // Override Icon Texture
+							args[9] as string, // Texture
+							argsLength > 10 ? args[10] as string : "No info provided", // Info
+							argsLength > 11 ? args[11] as string : "", // Despawn Message
+							args[12] as Func<bool>, // Available
+							argsLength > 13 ? args[13] as string : "" // Override Icon Texture
 						);
 					}
 					return "Success";
