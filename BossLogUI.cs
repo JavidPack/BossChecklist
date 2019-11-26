@@ -2011,18 +2011,18 @@ namespace BossChecklist
 			string infoText = BossChecklist.bossTracker.SortedBosses[PageNum].info;
 
 			var message = new UIMessageBox(infoText);
-			message.Width.Set(-20f, 1f);
+			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
 			message.Left.Set(-10f, 0f);
-			message.PaddingRight = 30;
+			//message.PaddingRight = 30;
 			PageTwo.Append(message);
 
 			scrollTwo = new FixedUIScrollbar();
 			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Set(95f, 0f);
-			scrollTwo.Height.Set(-390f, 1f);
-			scrollTwo.Left.Set(-40, 0f);
+			scrollTwo.Top.Set(91f, 0f);
+			scrollTwo.Height.Set(-382f, 1f);
+			scrollTwo.Left.Set(-20, 0f);
 			scrollTwo.HAlign = 1f;
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
