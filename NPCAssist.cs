@@ -14,6 +14,30 @@ namespace BossChecklist
 	class NPCAssist : GlobalNPC
 	{
 		public override void NPCLoot(NPC npc) {
+			if ((npc.type == NPCID.DD2DarkMageT1 || npc.type == NPCID.DD2DarkMageT3) && !WorldAssist.downedDarkMage) {
+				WorldAssist.downedDarkMage = true;
+				if (Main.netMode == NetmodeID.Server) {
+					NetMessage.SendData(MessageID.WorldData);
+				}
+			}
+			if ((npc.type == NPCID.DD2OgreT2 || npc.type == NPCID.DD2OgreT3) && !WorldAssist.downedOgre) {
+				WorldAssist.downedOgre = true;
+				if (Main.netMode == NetmodeID.Server) {
+					NetMessage.SendData(MessageID.WorldData);
+				}
+			}
+			if (npc.type == NPCID.PirateShip && !WorldAssist.downedFlyingDutchman) {
+				WorldAssist.downedFlyingDutchman = true;
+				if (Main.netMode == NetmodeID.Server) {
+					NetMessage.SendData(MessageID.WorldData);
+				}
+			}
+			if (npc.type == NPCID.MartianSaucerCore && !WorldAssist.downedMartianSaucer) {
+				WorldAssist.downedMartianSaucer = true;
+				if (Main.netMode == NetmodeID.Server) {
+					NetMessage.SendData(MessageID.WorldData);
+				}
+			}
 			if (!Main.dedServ && Main.gameMenu) return;
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {

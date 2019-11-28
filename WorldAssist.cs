@@ -17,6 +17,11 @@ namespace BossChecklist
 		public static bool downedPumpkinMoon;
 		public static bool downedSolarEclipse;
 
+		public static bool downedDarkMage;
+		public static bool downedOgre;
+		public static bool downedFlyingDutchman;
+		public static bool downedMartianSaucer;
+		
 		public static List<bool> ActiveBossesList;
 		public static List<List<Player>> StartingPlayers;
 		public static List<int> DayDespawners;
@@ -32,7 +37,12 @@ namespace BossChecklist
 			downedFrostMoon = false;
 			downedPumpkinMoon = false;
 			downedSolarEclipse = false;
-			
+
+			downedDarkMage = false;
+			downedOgre = false;
+			downedFlyingDutchman = false;
+			downedMartianSaucer = false;
+
 			DayDespawners = new List<int>() { //Skeletron and Skeletron Prime are not added because they kill the player before despawning
 				NPCID.EyeofCthulhu,
 				NPCID.Retinazer,
@@ -225,14 +235,21 @@ namespace BossChecklist
 		}
 
 		public override void NetSend(BinaryWriter writer) {
+			// BitBytes can have up to 8 values.
+			// BitsByte flags2 = reader.ReadByte();
 			BitsByte flags = new BitsByte();
 			flags[0] = downedBloodMoon;
 			flags[1] = downedFrostMoon;
 			flags[2] = downedPumpkinMoon;
 			flags[3] = downedSolarEclipse;
 			writer.Write(flags);
-			// BitBytes can have up to 8 values.
-			// BitsByte flags2 = reader.ReadByte();
+
+			BitsByte flags2 = new BitsByte();
+			flags2[0] = downedDarkMage;
+			flags2[1] = downedOgre;
+			flags2[2] = downedFlyingDutchman;
+			flags2[3] = downedMartianSaucer;
+			writer.Write(flags2);
 		}
 
 		public override void NetReceive(BinaryReader reader) {
