@@ -1151,8 +1151,7 @@ namespace BossChecklist
 		public override void Draw(SpriteBatch spriteBatch) {
 			base.Draw(spriteBatch);
 
-			BossChecklist BA = BossChecklist.instance;
-			Texture2D checkGrid = BA.GetTexture("Resources/LogUI_Checks");
+			Texture2D checkGrid = BossChecklist.instance.GetTexture("Resources/LogUI_Checks");
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
 			Rectangle source = new Rectangle(72, 0, 22, 20);
@@ -1162,12 +1161,11 @@ namespace BossChecklist
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 			int index = sortedBosses.FindIndex(x => x.progression == order);
 
-			PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			bool allLoot = false;
 			bool allCollect = false;
 
 			foreach (int loot in sortedBosses[index].loot) {
-				if (modplayer.BossTrophies[index].loot.Any(x => x.Type == loot)) {
+				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].loot.Any(x => x.Type == loot)) {
 					allLoot = true;
 				}
 				else if (loot != sortedBosses[index].loot[0]) {
@@ -1176,7 +1174,7 @@ namespace BossChecklist
 				}
 			}
 			foreach (int collectible in sortedBosses[index].collection) {
-				if (modplayer.BossTrophies[index].collectibles.Any(x => x.Type == collectible)) {
+				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].collectibles.Any(x => x.Type == collectible)) {
 					allCollect = true;
 				}
 				else if (collectible != -1 && collectible != 0) {
@@ -1201,6 +1199,8 @@ namespace BossChecklist
 			}
 
 			if (order != -1f) {
+				BossChecklist BA = BossChecklist.instance;
+
 				Rectangle checkType = new Rectangle(0, 0, 22, 20);
 				Rectangle exType = new Rectangle(0, 0, 22, 20);
 				
@@ -1233,7 +1233,7 @@ namespace BossChecklist
 					TextColor = Color.SlateGray;
 					Vector2 stringAdjust = Main.fontMouseText.MeasureString(text);
 					for (int i = 0; i < stringAdjust.X + 4; i++) {
-						Texture2D strike = BA.GetTexture("Resources/LogUI_Checks_Strike");
+						Texture2D strike = BossChecklist.instance.GetTexture("Resources/LogUI_Checks_Strike");
 						Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
 						Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
 						if (i == 0) {
@@ -1763,7 +1763,6 @@ namespace BossChecklist
 			if (dragging) {
 				bosslogbutton.Left.Pixels = Main.mouseX - (bosslogbutton.Width.Pixels / 2);
 				bosslogbutton.Top.Pixels = Main.mouseY - (bosslogbutton.Height.Pixels / 2);
-				bosslogbutton.Recalculate();
 
 				if (bosslogbutton.Left.Pixels < 0) bosslogbutton.Left.Pixels = 0;
 				if (bosslogbutton.Top.Pixels < 0) bosslogbutton.Top.Pixels = 0;
@@ -1777,7 +1776,6 @@ namespace BossChecklist
 				Vector2 configVec = BossChecklist.BossLogConfig.BossLogPos;
 				bosslogbutton.Left.Pixels = configVec.X * Main.screenWidth;
 				bosslogbutton.Top.Pixels = configVec.Y * Main.screenHeight;
-				bosslogbutton.Recalculate();
 			}
 
 			// Updating tabs to proper positions
@@ -2013,18 +2011,18 @@ namespace BossChecklist
 			string infoText = BossChecklist.bossTracker.SortedBosses[PageNum].info;
 
 			var message = new UIMessageBox(infoText);
-			message.Width.Set(-40f, 1f);
+			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
 			message.Left.Set(-10f, 0f);
-			message.PaddingRight = 30;
+			//message.PaddingRight = 30;
 			PageTwo.Append(message);
 
 			scrollTwo = new FixedUIScrollbar();
 			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Set(95f, 0f);
-			scrollTwo.Height.Set(-390f, 1f);
-			scrollTwo.Left.Set(-22, 0f);
+			scrollTwo.Top.Set(91f, 0f);
+			scrollTwo.Height.Set(-382f, 1f);
+			scrollTwo.Left.Set(-20, 0f);
 			scrollTwo.HAlign = 1f;
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
@@ -2451,26 +2449,26 @@ namespace BossChecklist
 
 			ResetPageButtons();
 			if (PageNum >= 0) {
-				PageTwo.Append(spawnButton);
-				PageTwo.Append(lootButton);
-				//PageTwo.Append(collectButton);
-				PageTwo.Append(recordButton);
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
+					PageTwo.Append(spawnButton);
+					PageTwo.Append(lootButton);
+					//PageTwo.Append(collectButton);
+					PageTwo.Append(recordButton);
+				}
+				else {
+					UIPanel brokenPanel = new UIPanel();
+					brokenPanel.Height.Pixels = 160;
+					brokenPanel.Width.Pixels = 340;
+					brokenPanel.Top.Pixels = 150;
+					brokenPanel.Left.Pixels = 3;
+					PageTwo.Append(brokenPanel);
 
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") {
-				
-					UIPanel brokenPanel2 = new UIPanel();
-					brokenPanel2.Height.Pixels = 160;
-					brokenPanel2.Width.Pixels = 340;
-					brokenPanel2.Top.Pixels = 150;
-					brokenPanel2.Left.Pixels = 3;
-					PageTwo.Append(brokenPanel2);
-
-					FittedTextPanel brokenDisplay2 = new FittedTextPanel("Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.");
-					brokenDisplay2.Height.Pixels = 200;
-					brokenDisplay2.Width.Pixels = 340;
-					brokenDisplay2.Top.Pixels = -12;
-					brokenDisplay2.Left.Pixels = -15;
-					brokenPanel2.Append(brokenDisplay2);
+					FittedTextPanel brokenDisplay = new FittedTextPanel("Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.");
+					brokenDisplay.Height.Pixels = 200;
+					brokenDisplay.Width.Pixels = 340;
+					brokenDisplay.Top.Pixels = -12;
+					brokenDisplay.Left.Pixels = -15;
+					brokenPanel.Append(brokenDisplay);
 				}
 
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown" && BossChecklist.bossTracker.SortedBosses[PageNum].npcIDs.Count == 0) {
