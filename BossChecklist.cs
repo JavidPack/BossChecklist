@@ -107,6 +107,10 @@ namespace BossChecklist
 			ZoomFactor = Transform.Zoom - (Vector2.UnitX + Vector2.UnitY);
 		}
 
+		public override void PostDrawFullscreenMap(ref string mouseText) {
+			MapAssist.DrawFullscreenMap();
+		}
+
 		//int lastSeenScreenWidth;
 		//int lastSeenScreenHeight;
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {

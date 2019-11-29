@@ -166,22 +166,27 @@ namespace BossChecklist
 
 		[Header("[i:149] [c/ffeb6e:Info]")]
 		
+		// TODO: Fix for MP
 		[DefaultValue(false)]
 		[Label("Reset Records Option")]
-		[Tooltip("Reset records with a boss by double right-clicking the boss records button of the selected boss page")]
+		[Tooltip("Reset records with a boss by double right-clicking the boss records button of the selected boss page\nNOTE: This debug feature only works in singleplayer currently!")]
 		public bool ResetRecordsBool { get; set; }
 
+		/* TODO: Next update?
 		[DefaultValue(false)]
 		[Label("Reset Loot/Collection")]
-		[Tooltip("Remove a selected item from your saved loot/collection by double ricght-clicking the selected item slot")]
+		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot")]
 		public bool RemoveItemFromList { get; set; }
+		*/
 
 		[DefaultValue(false)]
 		[Label("Truely Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
 		
+		// TODO: Get timers and counters to properly visualize itself in Multiplayer
 		[Label("Show record timers and counters of selected NPC")]
+		[Tooltip("NOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {

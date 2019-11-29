@@ -1886,7 +1886,7 @@ namespace BossChecklist
 		}
 
 		private void ResetStats() {
-			if (BossChecklist.DebugConfig.ResetRecordsBool) {
+			if (BossChecklist.DebugConfig.ResetRecordsBool && Main.netMode == NetmodeID.SinglePlayer) {
 				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat;
 				stats.durationBest = -1;
 				stats.durationWorst = -1;
@@ -1901,6 +1901,7 @@ namespace BossChecklist
 				stats.healthLossBestPercent = -1;
 				OpenRecord();
 				
+				/*
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					BossStats newRecord = new BossStats() {
 						durationLast = -1,
@@ -1918,11 +1919,13 @@ namespace BossChecklist
 					
 					packet.Send(toClient: Main.LocalPlayer.whoAmI);
 				}
+				*/
 			}
 			// TODO: Make ResetStats and RemoveItem work in MP
 		}
 
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
+			/*
 			if (BossChecklist.DebugConfig.RemoveItemFromList) {
 				string ID = listeningElement.Id;
 				if (ID.Contains("collect_")) {
@@ -1940,6 +1943,7 @@ namespace BossChecklist
 					OpenLoot();
 				}
 			}
+			*/
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
