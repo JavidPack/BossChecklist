@@ -1472,9 +1472,6 @@ namespace BossChecklist
 					RemoveChild(PageTwo);
 					RemoveChild(BookArea);
 				}
-				if (SubPageNum == 0) OpenRecord();
-				else if (SubPageNum == 1) OpenSpawn();
-				else if (SubPageNum == 2) OpenLoot();
 				bossLogVisible = value;
 			}
 		}
@@ -1489,6 +1486,15 @@ namespace BossChecklist
 					filterPanel.RemoveChild(uitext);
 				}
 				UpdateTableofContents();
+			}
+			else {
+				if (PageNum == -1) UpdateTableofContents();
+				else if (PageNum == -2) UpdateCredits();
+				else {
+					if (SubPageNum == 0) OpenRecord();
+					else if (SubPageNum == 1) OpenSpawn();
+					else if (SubPageNum == 2) OpenLoot();
+				}
 			}
 			BossLogVisible = show;
 			if (show) {
@@ -1529,7 +1535,7 @@ namespace BossChecklist
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
-			bosslogbutton.OnRightMouseDown += (a, b) => heldDown = true;
+			bosslogbutton.OnRightClick += (a, b) => ToggleRecording();
 
 			AltPage = new bool[]
 			{
