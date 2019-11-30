@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -180,6 +179,35 @@ namespace BossChecklist
 					DodgeTimer[listNum]++;
 					if (BrinkChecker[listNum] == 0 || (player.statLife < BrinkChecker[listNum] && player.statLife > 0)) {
 						BrinkChecker[listNum] = player.statLife;
+					}
+				}
+			}
+
+			// Loot and Collections Updating
+			if (Main.myPlayer == player.whoAmI) {
+				List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
+				for (int i = 0; i < BossList.Count; i++) {
+					// Loot Collections
+					for (int j = 0; j < BossList[i].loot.Count; j++) {
+						int item = BossList[i].loot[j];
+						if (player.HasItem(item)) {
+							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].name && boss.modName == BossList[i].modSource);
+							if (BossIndex == -1) continue;
+							if (BossTrophies[BossIndex].loot.FindIndex(x => x.Type == item) == -1) {
+								BossTrophies[BossIndex].loot.Add(new ItemDefinition(item));
+							}
+						}
+					}
+					// Boss Collections
+					for (int j = 0; j < BossList[i].collection.Count; j++) {
+						int item = BossList[i].collection[j];
+						if (player.HasItem(item)) {
+							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].name && boss.modName == BossList[i].modSource);
+							if (BossIndex == -1) continue;
+							if (BossTrophies[BossIndex].collectibles.FindIndex(x => x.Type == item) == -1) {
+								BossTrophies[BossIndex].collectibles.Add(new ItemDefinition(item));
+							}
+						}
 					}
 				}
 			}

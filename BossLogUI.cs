@@ -1472,6 +1472,9 @@ namespace BossChecklist
 					RemoveChild(PageTwo);
 					RemoveChild(BookArea);
 				}
+				if (SubPageNum == 0) OpenRecord();
+				else if (SubPageNum == 1) OpenSpawn();
+				else if (SubPageNum == 2) OpenLoot();
 				bossLogVisible = value;
 			}
 		}

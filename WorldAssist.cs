@@ -5,7 +5,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
@@ -101,38 +100,6 @@ namespace BossChecklist
 		}
 
 		public override void PostUpdate() {
-			if (Main.netMode != NetmodeID.Server) {
-				List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				// Loot Collections
-				for (int i = 0; i < BossList.Count; i++) {
-					for (int j = 0; j < BossList[i].loot.Count; j++) {
-						int item = BossList[i].loot[j];
-						if (Main.LocalPlayer.HasItem(item)) {
-							int BossIndex = modPlayer.BossTrophies.FindIndex(boss => boss.bossName == BossList[i].name && boss.modName == BossList[i].modSource);
-							if (BossIndex == -1) continue;
-							if (modPlayer.BossTrophies[i].loot.FindIndex(x => x.Type == item) == -1) {
-								modPlayer.BossTrophies[i].loot.Add(new ItemDefinition(item));
-							}
-						}
-					}
-				}
-
-				// Boss Collections
-				for (int i = 0; i < BossList.Count; i++) {
-					for (int j = 0; j < BossList[i].collection.Count; j++) {
-						int item = BossList[i].collection[j];
-						if (Main.LocalPlayer.HasItem(item)) {
-							int BossIndex = modPlayer.BossTrophies.FindIndex(boss => boss.bossName == BossList[i].name && boss.modName == BossList[i].modSource);
-							if (BossIndex == -1) continue;
-							if (modPlayer.BossTrophies[i].collectibles.FindIndex(x => x.Type == item) == -1) {
-								modPlayer.BossTrophies[i].collectibles.Add(new ItemDefinition(item));
-							}
-						}
-					}
-				}
-			}
-
 			// Event Ending Messages
 			if (Main.bloodMoon) isBloodMoon = true;
 			if (Main.snowMoon) isFrostMoon = true;
