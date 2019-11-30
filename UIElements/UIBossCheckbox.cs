@@ -40,14 +40,14 @@ namespace BossChecklist.UIElements
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				boss.hidden = !boss.hidden;
 				if (boss.hidden)
-					BossChecklistWorld.HiddenBosses.Add(boss.name);
+					BossChecklistWorld.HiddenBosses.Add(boss.internalName);
 				else
-					BossChecklistWorld.HiddenBosses.Remove(boss.name);
+					BossChecklistWorld.HiddenBosses.Remove(boss.internalName);
 				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RequestHideBoss);
-					packet.Write(boss.name);
+					packet.Write(boss.internalName);
 					packet.Write(boss.hidden);
 					packet.Send();
 				}

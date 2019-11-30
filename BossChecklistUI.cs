@@ -152,7 +152,7 @@ namespace BossChecklist.UIElements
 			checklistList.Clear();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.name);
+				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.internalName);
 				if (boss.available() && (!boss.hidden || showHidden)) {
 					if (showCompleted || !boss.downed()) {
 						if (boss.type == EntryType.Event && !showEvent)

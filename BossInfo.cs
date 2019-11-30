@@ -12,6 +12,7 @@ namespace BossChecklist
 		internal List<int> npcIDs;
 		internal string modSource;
 		internal string name;
+		internal string internalName; // This localization-ignoring string is used for cross mod queries and networking
 		internal Func<bool> downed;
 
 		internal List<int> spawnItem;
@@ -32,6 +33,7 @@ namespace BossChecklist
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
+			this.internalName = name;
 			this.name = name.StartsWith("$") ? Language.GetTextValue(name.Substring(1)) : name;
 			this.npcIDs = npcIDs;
 			this.downed = downed;

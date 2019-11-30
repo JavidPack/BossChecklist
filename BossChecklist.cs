@@ -408,12 +408,12 @@ namespace BossChecklist
 					//{
 					//	Main.NewText("Huh? RequestHideBoss on client?");
 					//}
-					string bossName = reader.ReadString();
+					string bossInternalName = reader.ReadString();
 					bool hide = reader.ReadBoolean();
 					if (hide)
-						BossChecklistWorld.HiddenBosses.Add(bossName);
+						BossChecklistWorld.HiddenBosses.Add(bossInternalName);
 					else
-						BossChecklistWorld.HiddenBosses.Remove(bossName);
+						BossChecklistWorld.HiddenBosses.Remove(bossInternalName);
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else
