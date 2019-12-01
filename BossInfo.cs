@@ -33,7 +33,8 @@ namespace BossChecklist
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
-			this.internalName = name;
+			// TODO: vanilla translation keys aren't always suitable: $LegacyInterface.84. We may need to just pass in another string.
+			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
 			this.name = name.StartsWith("$") ? Language.GetTextValue(name.Substring(1)) : name;
 			this.npcIDs = npcIDs;
 			this.downed = downed;

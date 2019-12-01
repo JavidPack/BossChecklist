@@ -215,7 +215,7 @@ namespace BossChecklist
 			BossInfo selectedBoss;
 			if (BossLogUI.PageNum >= 0) selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 			else {
-				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(boss => boss.modSource == "Vanilla" && boss.name == "King Slime");
+				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(boss => boss.modSource == "Vanilla" && boss.internalName == "KingSlime");
 				selectedBoss = BossChecklist.bossTracker.SortedBosses[index];
 			}
 
