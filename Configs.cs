@@ -195,6 +195,7 @@ namespace BossChecklist
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
 		public override void OnChanged() {
+			if (Terraria.ModLoader.ModLoader.GetMod("BossChecklist") != null) return;
 			foreach (NPC npc in Main.npc) {
 				if (!npc.active) continue;
 				int listed = NPCAssist.ListedBossNum(npc);
