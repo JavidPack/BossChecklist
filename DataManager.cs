@@ -11,26 +11,22 @@ namespace BossChecklist
 	public class BossRecord : TagSerializable
 	{
 		internal string bossName;
-		internal string modName;
 		internal BossStats stat = new BossStats();
 
 		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
 
 		private BossRecord(TagCompound tag) {
-			modName = tag.Get<string>(nameof(modName));
 			bossName = tag.Get<string>(nameof(bossName));
 			stat = tag.Get<BossStats>(nameof(stat));
 		}
 
-		public BossRecord(string mod, string boss) {
-			modName = mod;
+		public BossRecord(string boss) {
 			bossName = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
 				{ nameof(bossName), bossName },
-				{ nameof(modName), modName },
 				{ nameof(stat), stat }
 			};
 		}
@@ -186,7 +182,6 @@ namespace BossChecklist
 
 	public class BossCollection : TagSerializable
 	{
-		internal string modName;
 		internal string bossName;
 		
 		internal List<ItemDefinition> loot;
@@ -195,20 +190,17 @@ namespace BossChecklist
 		public static Func<TagCompound, BossCollection> DESERIALIZER = tag => new BossCollection(tag);
 
 		private BossCollection(TagCompound tag) {
-			modName = tag.Get<string>(nameof(modName));
 			bossName = tag.Get<string>(nameof(bossName));
 			loot = tag.Get<List<ItemDefinition>>(nameof(loot));
 			collectibles = tag.Get<List<ItemDefinition>>(nameof(collectibles));
 		}
 
-		public BossCollection(string mod, string boss) {
-			modName = mod;
+		public BossCollection(string boss) {
 			bossName = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(modName), modName },
 				{ nameof(bossName), bossName },
 				{ nameof(loot), loot },
 				{ nameof(collectibles), collectibles },

@@ -237,7 +237,7 @@ namespace BossChecklist
 
 		public override void AddRecipes() {
 			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
-				int index = bossTracker.SortedBosses.FindIndex(boss => boss.modSource == orphan.modSource && boss.internalName == orphan.name);
+				int index = bossTracker.SortedBosses.FindIndex(boss => boss.internalName == orphan.name);
 				if (index != -1) {
 					switch (orphan.type) {
 						case OrphanType.Loot:

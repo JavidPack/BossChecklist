@@ -30,17 +30,68 @@ using Terraria.UI.Chat;
 
 namespace BossChecklist
 {
-	// "Open UI" buttons
 	internal class BossAssistButton : UIImageButton
 	{
 		internal string buttonType;
 		internal Texture2D texture;
 		internal int cycleFrame = 0;
 		internal bool slowDown = true;
+		private Vector2 offset;
+		public static bool dragging;
 
 		public BossAssistButton(Texture2D texture, string type) : base(texture) {
 			buttonType = type;
 			this.texture = texture;
+		}
+
+		private void DragStart(UIMouseEvent evt) {
+			offset = new Vector2(evt.MousePosition.X - Left.Pixels, evt.MousePosition.Y - Top.Pixels);
+			dragging = true;
+		}
+
+		private void DragEnd(UIMouseEvent evt) {
+			Vector2 end = evt.MousePosition;
+			dragging = false;
+
+			Left.Set(end.X - offset.X, 0f);
+			Top.Set(end.Y - offset.Y, 0f);
+			BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
+
+			Recalculate();
+		}
+
+		public override void RightMouseDown(UIMouseEvent evt) {
+			base.RightMouseDown(evt);
+			if (Id == "OpenUI") DragStart(evt);
+		}
+
+		public override void RightMouseUp(UIMouseEvent evt) {
+			base.RightMouseUp(evt);
+			if (Id == "OpenUI") DragEnd(evt);
+		}
+
+		public override void Update(GameTime gameTime) {
+			base.Update(gameTime);
+			if (Id != "OpenUI") return;
+			if (ContainsPoint(Main.MouseScreen)) Main.LocalPlayer.mouseInterface = true;
+
+			if (dragging) {
+				Left.Set(Main.mouseX - offset.X, 0f);
+				Top.Set(Main.mouseY - offset.Y, 0f);
+				Recalculate();
+			}
+			else {
+				Vector2 configVec = BossChecklist.BossLogConfig.BossLogPos;
+				Left.Pixels = configVec.X;
+				Top.Pixels = configVec.Y;
+			}
+
+			var parentSpace = Parent.GetDimensions().ToRectangle();
+			if (!GetDimensions().ToRectangle().Intersects(parentSpace)) {
+				Left.Pixels = Utils.Clamp(Left.Pixels, 0, parentSpace.Right - Width.Pixels);
+				Top.Pixels = Utils.Clamp(Top.Pixels, 0, parentSpace.Bottom - Height.Pixels);
+				Recalculate();
+			}
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
@@ -55,7 +106,7 @@ namespace BossChecklist
 				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/LogUI_Button");
 				Rectangle source = new Rectangle(36 * 3, 0, 34, 38);
 				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
-				if (!IsMouseHovering && !BossLogUI.dragging) {
+				if (!IsMouseHovering && !dragging) {
 					source = new Rectangle(36 * 2, 0, 34, 38);
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
@@ -65,7 +116,7 @@ namespace BossChecklist
 				PlayerAssist myPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				Texture2D border = BossLogUI.CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
 				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
-				else if (!myPlayer.RecordingStats) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
+				else if (!BossChecklist.DebugConfig.RecordingStats) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
 				
 				if (myPlayer.hasNewRecord) {
 					slowDown = !slowDown;
@@ -78,10 +129,10 @@ namespace BossChecklist
 				}
 
 				// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
-				if (BossLogUI.dragging) spriteBatch.Draw(texture, innerDimensions.ToRectangle(), Color.White);
+				if (dragging) spriteBatch.Draw(texture, innerDimensions.ToRectangle(), Color.White);
 			}
 			
-			if (IsMouseHovering && !BossLogUI.dragging) {
+			if (IsMouseHovering && !dragging) {
 				BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonType, pos, Color.White);
 				else Main.hoverItemName = buttonType;
@@ -178,7 +229,7 @@ namespace BossChecklist
 							newcolor = new Color((byte)(Main.DiscoR * num3), (byte)(Main.DiscoG * num3), (byte)(Main.DiscoB * num3), Main.mouseTextColor);
 						}
 						Main.HoverItem = item;
-						Main.hoverItemName = "[c/" + newcolor.Hex3() + ":" + hoverText + "]";
+						Main.hoverItemName = $"[c/{newcolor.Hex3()}: {hoverText}]";
 					}
 				}
 				else Main.hoverItemName = hoverText;
@@ -1442,9 +1493,6 @@ namespace BossChecklist
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool[] AltPage; // Flip between best and worst
-		public static bool dragging = false;
-		private bool heldDown = false;
-		private int holdTimer = 20;
 		
 		private bool bossLogVisible;
 		public bool BossLogVisible {
@@ -1504,28 +1552,6 @@ namespace BossChecklist
 			}
 		}
 
-		public void ToggleRecording() {
-			bool bossIsActive = false;
-			foreach (NPC npc in Main.npc) {
-				int listed = NPCAssist.ListedBossNum(npc);
-				if (npc.active && listed != -1 && BossChecklist.bossTracker.SortedBosses[listed].type != EntryType.Event) {
-					bossIsActive = true;
-					break; // If a boss/miniboss is active, record toggling is disabled (event data is always recorded)
-				}
-			}
-			if (bossIsActive) {
-				Main.NewText("<Boss Log> You cannot change this while a boss is active!");
-				return;
-			}
-			PlayerAssist myModPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			myModPlayer.RecordingStats = !myModPlayer.RecordingStats;
-			if (myModPlayer.RecordingStats) Main.NewText("<Boss Log> New records will be updated!", Color.Green);
-			else {
-				Main.NewText("<Boss Log> New records will NOT update!", Color.Red);
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord = false;
-			}
-		}
-
 		public override void OnInitialize() {
 			Texture2D bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38));
 			bosslogbutton = new BossAssistButton(bookTexture, "Boss Log");
@@ -1535,7 +1561,6 @@ namespace BossChecklist
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
-			bosslogbutton.OnRightClick += (a, b) => ToggleRecording();
 
 			AltPage = new bool[]
 			{
@@ -1747,46 +1772,6 @@ namespace BossChecklist
 			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			
-			if (heldDown) {
-				if (holdTimer > 0) {
-					holdTimer--;
-					if (!dragging && Main.mouseRightRelease) {
-						ToggleRecording();
-						holdTimer = 15;
-						heldDown = false;
-					}
-				}
-				else {
-					if (!dragging) dragging = true;
-					if (dragging) {
-						if (Main.mouseRightRelease) {
-							BossChecklist.BossLogConfig.BossLogPos = new Vector2((float)(bosslogbutton.Left.Pixels / Main.screenWidth), (float)(bosslogbutton.Top.Pixels / Main.screenHeight));
-							holdTimer = 15;
-							dragging = false;
-							heldDown = false;
-						}
-					}
-				}
-			}
-
-			if (dragging) {
-				bosslogbutton.Left.Pixels = Main.mouseX - (bosslogbutton.Width.Pixels / 2);
-				bosslogbutton.Top.Pixels = Main.mouseY - (bosslogbutton.Height.Pixels / 2);
-
-				if (bosslogbutton.Left.Pixels < 0) bosslogbutton.Left.Pixels = 0;
-				if (bosslogbutton.Top.Pixels < 0) bosslogbutton.Top.Pixels = 0;
-
-				if (bosslogbutton.Left.Pixels + (bosslogbutton.Width.Pixels / 2) > Main.screenWidth)
-					bosslogbutton.Left.Pixels = Main.screenWidth - bosslogbutton.Width.Pixels;
-				if (bosslogbutton.Top.Pixels + (bosslogbutton.Height.Pixels / 2) > Main.screenWidth)
-					bosslogbutton.Top.Pixels = Main.screenWidth - bosslogbutton.Height.Pixels;
-			}
-			else {
-				Vector2 configVec = BossChecklist.BossLogConfig.BossLogPos;
-				bosslogbutton.Left.Pixels = configVec.X * Main.screenWidth;
-				bosslogbutton.Top.Pixels = configVec.Y * Main.screenHeight;
-			}
-
 			// Updating tabs to proper positions
 			if (PageNum == -2) CreditsTab.Left.Pixels = -400 - 16;
 			else CreditsTab.Left.Pixels = -400 + 800 - 16;

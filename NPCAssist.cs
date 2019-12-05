@@ -93,7 +93,7 @@ namespace BossChecklist
 		public void CheckRecords(NPC npc, int recordIndex) {
 			Player player = Main.LocalPlayer;
 			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
-			if (!modplayer.RecordingStats || !npc.playerInteraction[Main.myPlayer]) return; // RecordingStats must be enabled!
+			if (!BossChecklist.DebugConfig.RecordingStats || !npc.playerInteraction[Main.myPlayer]) return; // RecordingStats must be enabled!
 
 			bool newRecordSet = false;
 
@@ -180,7 +180,7 @@ namespace BossChecklist
 				Player player = Main.player[i];
 
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				if (!player.active || !npc.playerInteraction[i] || !player.GetModPlayer<PlayerAssist>().RecordingStats) continue;
+				if (!player.active || !npc.playerInteraction[i] || !BossChecklist.DebugConfig.RecordingStats) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 				BossStats oldRecord = list[recordIndex];
@@ -272,7 +272,8 @@ namespace BossChecklist
 		public static int ListedBossNum(NPC boss) {
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (boss.type < NPCID.Count) return BL.FindIndex(x => x.npcIDs.Any(y => y == boss.type));
-			else return BL.FindIndex(x => x.name == boss.FullName && x.modSource == boss.modNPC.mod.Name && x.npcIDs.Any(y => y == boss.type));
+			else return BL.FindIndex(x => x.modSource == boss.modNPC.mod.Name && x.npcIDs.Any(y => y == boss.type));
+			
 		}
 
 		public static int ListedBossNum(int type, string modSource) {

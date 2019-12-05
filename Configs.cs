@@ -19,7 +19,7 @@ namespace BossChecklist
 		[Tooltip("Choose the color of your Boss Log!")]
 		public Color BossLogColor { get; set; }
 
-		[DefaultValue(typeof(Vector2), "0.8833333, 0.954769")]
+		[DefaultValue(typeof(Vector2), "1560, 100")]
 		[Label("Button Position")]
 		[Tooltip("Hold right click to move the button wherever you like with ease!")]
 		public Vector2 BossLogPos { get; set; }
@@ -165,7 +165,12 @@ namespace BossChecklist
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 
 		[Header("[i:149] [c/ffeb6e:Info]")]
-		
+
+		[DefaultValue(true)]
+		[Label("Enable Record-Making")]
+		[Tooltip("Being able to set new records can be enabled/disabled with this option.")]
+		public bool RecordingStats { get; set; }
+
 		// TODO: Fix for MP
 		[DefaultValue(false)]
 		[Label("Reset Records Option")]
@@ -188,6 +193,17 @@ namespace BossChecklist
 		[Label("Show record timers and counters of selected NPC")]
 		[Tooltip("NOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
+
+		public override void OnChanged() {
+			foreach (NPC npc in Main.npc) {
+				if (!npc.active) continue;
+				int listed = NPCAssist.ListedBossNum(npc);
+				if (listed != -1 && BossChecklist.bossTracker.SortedBosses[listed].type != EntryType.Event) {
+					Main.NewText("You cannot change this while a boss is active!");
+					RecordingStats = !RecordingStats; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+				}
+			}
+		}
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;

@@ -10,7 +10,6 @@ namespace BossChecklist
 	public class PlayerAssist : ModPlayer
 	{
 		public bool hasOpenedTheBossLog;
-		public bool RecordingStats;
 		public bool hasNewRecord;
 
 		public List<BossRecord> AllBossRecords;
@@ -25,12 +24,11 @@ namespace BossChecklist
 
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
-			RecordingStats = true;
 			hasNewRecord = false;
 
 			AllBossRecords = new List<BossRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				AllBossRecords.Add(new BossRecord(boss.modSource, boss.name));
+				AllBossRecords.Add(new BossRecord(boss.internalName));
 			}
 
 			// Make a new list of collections
@@ -38,9 +36,9 @@ namespace BossChecklist
 			// For each boss added...
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				// 1.) Add a collection for the boss
-				BossTrophies.Add(new BossCollection(boss.modSource, boss.name));
+				BossTrophies.Add(new BossCollection(boss.internalName));
 				// 2.) setup the item list and check off list for the boss
-				int index = BossTrophies.FindIndex(x => x.modName == boss.modSource && x.bossName == boss.name);
+				int index = BossTrophies.FindIndex(x => x.bossName == boss.internalName);
 				BossTrophies[index].loot = new List<ItemDefinition>();
 				BossTrophies[index].collectibles = new List<ItemDefinition>();
 			}
@@ -77,7 +75,7 @@ namespace BossChecklist
 			// Add new bosses to the list, and place existing ones accordingly
 			List<BossRecord> TempRecordStorage = tag.Get<List<BossRecord>>("Records");
 			foreach (BossRecord record in TempRecordStorage) {
-				int index = AllBossRecords.FindIndex(x => x.modName == record.modName && x.bossName == record.bossName);
+				int index = AllBossRecords.FindIndex(x => x.bossName == record.bossName);
 				if (index == -1) AllBossRecords.Add(record);
 				else AllBossRecords[index] = record;
 			}
@@ -87,7 +85,7 @@ namespace BossChecklist
 
 			List<BossCollection> AddedCollections = new List<BossCollection>();
 			foreach (BossCollection collection in TempCollectionStorage) {
-				int index = BossTrophies.FindIndex(x => x.modName == collection.modName && x.bossName == collection.bossName);
+				int index = BossTrophies.FindIndex(x => x.bossName == collection.bossName);
 				if (index == -1) BossTrophies.Add(collection);
 				else BossTrophies[index] = collection;
 			}
@@ -191,7 +189,7 @@ namespace BossChecklist
 					for (int j = 0; j < BossList[i].loot.Count; j++) {
 						int item = BossList[i].loot[j];
 						if (player.HasItem(item)) {
-							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].name && boss.modName == BossList[i].modSource);
+							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].internalName);
 							if (BossIndex == -1) continue;
 							if (BossTrophies[BossIndex].loot.FindIndex(x => x.Type == item) == -1) {
 								BossTrophies[BossIndex].loot.Add(new ItemDefinition(item));
@@ -202,7 +200,7 @@ namespace BossChecklist
 					for (int j = 0; j < BossList[i].collection.Count; j++) {
 						int item = BossList[i].collection[j];
 						if (player.HasItem(item)) {
-							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].name && boss.modName == BossList[i].modSource);
+							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].internalName);
 							if (BossIndex == -1) continue;
 							if (BossTrophies[BossIndex].collectibles.FindIndex(x => x.Type == item) == -1) {
 								BossTrophies[BossIndex].collectibles.Add(new ItemDefinition(item));
