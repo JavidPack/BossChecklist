@@ -965,20 +965,20 @@ namespace BossChecklist
 
 		internal string SetupSpawnDesc(int npcID) {
 			if (npcID == NPCID.KingSlime) return $"Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain.";
-			if (npcID == NPCID.EyeofCthulhu) return $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP";
-			if (npcID == NPCID.BrainofCthulhu) return $"Use [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts";
-			if (npcID == NPCID.EaterofWorldsHead) return $"Use [i:{ItemID.WormFood}] or break 3 Shadow Orbs";
-			if (npcID == NPCID.QueenBee) return $"Use [i:{ItemID.Abeemination}] or break a Bee Hive's Larva found in the jungle";
-			if (npcID == NPCID.SkeletronHead) return $"Visit dungeon and talk to the old man at night or kill the Clothier with [i:{ItemID.ClothierVoodooDoll}] at night";
+			if (npcID == NPCID.EyeofCthulhu) return $"Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP.";
+			if (npcID == NPCID.BrainofCthulhu) return $"Use [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts in a crimson chasm.";
+			if (npcID == NPCID.EaterofWorldsHead) return $"Use [i:{ItemID.WormFood}] or break 3 Shadow Orbs in a corruption chasm.";
+			if (npcID == NPCID.QueenBee) return $"Use [i:{ItemID.Abeemination}] or break a Bee Hive's Larva found in the jungle.";
+			if (npcID == NPCID.SkeletronHead) return $"Visit the dungeon and talk to the old man at night or kill the Clothier with [i:{ItemID.ClothierVoodooDoll}] at night.";
 			if (npcID == NPCID.WallofFlesh) return $"Spawn by throwing [i:{ItemID.GuideVoodooDoll}] into lava in the Underworld. [c/FF0000:Starts Hardmode!]";
 			if (npcID == NPCID.Retinazer) return $"10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Alternatively, Use [i:{ItemID.MechanicalEye}] at night to spawn.";
-			if (npcID == NPCID.TheDestroyer) return $"10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:{ItemID.MechanicalWorm}] at night to spawn";
-			if (npcID == NPCID.SkeletronPrime) return $"10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:{ItemID.MechanicalSkull}] at night to spawn";
-			if (npcID == NPCID.Plantera) return $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated";
-			if (npcID == NPCID.Golem) return $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar, found deep in the Jungle Temple";
-			if (npcID == NPCID.DD2Betsy) return "Spawns on Wave 7, the final wave, of Old One's Army (Tier 3)";
-			if (npcID == NPCID.DukeFishron) return $"Fish in ocean using the [i:{ItemID.TruffleWorm}] as bait";
-			if (npcID == NPCID.CultistBoss) return $"Kill the 4 cultists outside the dungeon post-Golem";
+			if (npcID == NPCID.TheDestroyer) return $"10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:{ItemID.MechanicalWorm}] at night to spawn.";
+			if (npcID == NPCID.SkeletronPrime) return $"10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:{ItemID.MechanicalSkull}] at night to spawn.";
+			if (npcID == NPCID.Plantera) return $"Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated.";
+			if (npcID == NPCID.Golem) return $"Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar, found deep in the Jungle Temple.";
+			if (npcID == NPCID.DD2Betsy) return "Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).";
+			if (npcID == NPCID.DukeFishron) return $"Fish in ocean using the [i:{ItemID.TruffleWorm}] as bait.";
+			if (npcID == NPCID.CultistBoss) return $"Kill the 4 cultists outside the dungeon after defeating Golem.";
 			if (npcID == NPCID.MoonLordHead) return $"Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}";
 
 			if (npcID == NPCID.Pumpking) return $"Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:{ItemID.PumpkinMoonMedallion}]";
