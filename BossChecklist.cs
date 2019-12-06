@@ -440,7 +440,7 @@ namespace BossChecklist
 					break;
 				case PacketMessageType.SendRecordsToServer:
 					player = Main.player[whoAmI];
-					Console.WriteLine("Receiving boss records from the joined player + " + player.name + "!");
+					Console.WriteLine($"Receiving boss records from the joined player {player.name}!");
 					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
 						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
 						bossStats.kills = reader.ReadInt32();
@@ -453,8 +453,9 @@ namespace BossChecklist
 						bossStats.hitsTakenWorst = reader.ReadInt32();
 						bossStats.dodgeTimeBest = reader.ReadInt32();
 
-						Console.WriteLine("Establishing " + player.name + "'s records for " + bossTracker.SortedBosses[i].name + " to the server");
+						Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
 					}
+					Console.WriteLine($"Record data established for player {player.name}.");
 					break;
 				case PacketMessageType.RecordUpdate:
 					player = Main.LocalPlayer;
@@ -485,7 +486,7 @@ namespace BossChecklist
 						packet.Write(stat.hitsTakenWorst);
 						packet.Write(stat.dodgeTimeBest);
 					}
-					packet.Send(); // To server			
+					packet.Send(); // To server
 
 					// ORDER MATTERS FOR reader
 					break;

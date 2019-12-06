@@ -200,25 +200,25 @@ namespace BossChecklist
 
 				Console.WriteLine(newRecord.durationLast + " vs " + oldRecord.durationBest);
 				if ((newRecord.durationLast < oldRecord.durationBest && newRecord.durationLast > 0) || oldRecord.durationBest <= 0) {
-					Console.WriteLine("This Fight (" + newRecord.durationLast + ") was better than your current best (" + oldRecord.durationBest + ")");
+					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationLast} (Previous Record: {oldRecord.durationBest})");
 					specificRecord |= RecordID.ShortestFightTime;
 					oldRecord.durationBest = newRecord.durationLast;
 				}
 				if (newRecord.durationLast > oldRecord.durationWorst && newRecord.durationLast > 0) {
-					Console.WriteLine("This Fight (" + newRecord.durationLast + ") was worse than your current worst (" + oldRecord.durationWorst + ")");
+					Console.WriteLine($"{player.name} did worse than before for DURATION: {newRecord.durationLast} (Previous Record: {oldRecord.durationWorst})");
 					specificRecord |= RecordID.LongestFightTime;
 					oldRecord.durationWorst = newRecord.durationLast;
 				}
 				oldRecord.durationLast = newRecord.durationLast;
 
 				if (newRecord.healthLossLast > oldRecord.healthLossBest && newRecord.healthLossLast > 0) {
-					Console.WriteLine("This Fight (" + newRecord.healthLossBest + ") was better than your current best (" + oldRecord.healthLossBest + ")");
+					Console.WriteLine($"{player.name} set a new record for BEST HEALTH: {newRecord.healthLossLast} (Previous Record: {oldRecord.healthLossBest})");
 					specificRecord |= RecordID.BestBrink;
 					oldRecord.healthLossBest = newRecord.healthLossLast;
 					oldRecord.healthLossBestPercent = newRecord.healthLossLastPercent;
 				}
 				if (newRecord.healthLossLast < oldRecord.healthLossWorst && newRecord.healthLossLast > 0) {
-					Console.WriteLine("This Fight (" + newRecord.healthLossWorst + ") was worse than your current best (" + oldRecord.healthLossWorst + ")");
+					Console.WriteLine($"{player.name} did worse than before for BEST HEALTH: {newRecord.healthLossLast} (Previous Record: {oldRecord.healthLossWorst})");
 					specificRecord |= RecordID.WorstBrink;
 					oldRecord.healthLossWorst = newRecord.healthLossLast;
 					oldRecord.healthLossWorstPercent = newRecord.healthLossLastPercent;
@@ -227,19 +227,19 @@ namespace BossChecklist
 				oldRecord.healthLossLastPercent = newRecord.healthLossLastPercent;
 
 				if (newRecord.hitsTakenLast < oldRecord.hitsTakenBest && newRecord.hitsTakenLast > -1) {
-					Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was better than your current best (" + oldRecord.hitsTakenBest + ")");
+					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenLast} (Previous Record: {oldRecord.hitsTakenBest})");
 					specificRecord |= RecordID.LeastHits;
 					oldRecord.hitsTakenBest = newRecord.hitsTakenLast;
 				}
 				if (newRecord.hitsTakenLast > oldRecord.hitsTakenWorst && oldRecord.hitsTakenLast > -1) {
-					Console.WriteLine("This Fight (" + newRecord.hitsTakenLast + ") was worst than your current best (" + oldRecord.hitsTakenWorst + ")");
+					Console.WriteLine($"{player.name} did worse than before for HITS TAKEN: {newRecord.hitsTakenLast} (Previous Record: {oldRecord.hitsTakenWorst})");
 					specificRecord |= RecordID.MostHits;
 					oldRecord.hitsTakenWorst = newRecord.hitsTakenLast;
 				}
 				oldRecord.hitsTakenLast = newRecord.hitsTakenLast;
 
 				if (newRecord.dodgeTimeLast > oldRecord.dodgeTimeBest && oldRecord.dodgeTimeLast > 0) {
-					Console.WriteLine("This Fight (" + newRecord.dodgeTimeLast + ") was better than your current best (" + oldRecord.dodgeTimeBest + ")");
+					Console.WriteLine($"{player.name} set a new record for BEST DODGE TIME: {newRecord.dodgeTimeLast} (Previous Record: {oldRecord.dodgeTimeBest})");
 					specificRecord |= RecordID.DodgeTime;
 					oldRecord.dodgeTimeBest = newRecord.dodgeTimeLast;
 				}
