@@ -2361,6 +2361,8 @@ namespace BossChecklist
 			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses);
 
 			for (int i = 0; i < copiedList.Count; i++) {
+				if (copiedList[i].hidden) continue;
+				if (!copiedList[i].available() && BossChecklist.BossLogConfig.HideUnavailable) continue;
 				if (!copiedList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 

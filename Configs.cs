@@ -39,7 +39,12 @@ namespace BossChecklist
 		[Label("Boss Silhouettes")]
 		[Tooltip("Masks the images of bosses when they have not been defeated.")]
 		public bool BossSilhouettes { get; set; }
-		
+
+		[DefaultValue(true)]
+		[Label("Hide unavailable bosses")]
+		[Tooltip("Unavailable bosses will be removed from the list")]
+		public bool HideUnavailable { get; set; }
+
 		[DrawTicks]
 		[Label("Checklist Markings Type")]
 		[OptionStrings(new string[] { "✓ and  ☐", "✓ and  X", "X and  ☐" })]
