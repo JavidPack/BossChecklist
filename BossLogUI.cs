@@ -1245,9 +1245,14 @@ namespace BossChecklist
 
 			bool allLoot = false;
 			bool allCollect = false;
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
 			foreach (int loot in sortedBosses[index].loot) {
-				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].loot.Any(x => x.Type == loot)) {
+				if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
+					if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow)) continue;
+					else if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds)) continue;
+				}
+				if (modPlayer.BossTrophies[index].loot.Any(x => x.Type == loot)) {
 					allLoot = true;
 				}
 				else if (loot != sortedBosses[index].loot[0]) {
@@ -1256,7 +1261,7 @@ namespace BossChecklist
 				}
 			}
 			foreach (int collectible in sortedBosses[index].collection) {
-				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[index].collectibles.Any(x => x.Type == collectible)) {
+				if (modPlayer.BossTrophies[index].collectibles.Any(x => x.Type == collectible)) {
 					allCollect = true;
 				}
 				else if (collectible != -1 && collectible != 0) {
@@ -2265,6 +2270,14 @@ namespace BossChecklist
 			for (int i = 0; i < shortcut.loot.Count; i++) {
 				Item loot = new Item();
 				loot.SetDefaults(shortcut.loot[i]);
+				if (shortcut.npcIDs[0] < NPCID.Count) {
+					if (WorldGen.crimson) {
+						if (loot.type == ItemID.DemoniteOre || loot.type == ItemID.CorruptSeeds || loot.type == ItemID.UnholyArrow) continue;
+					}
+					else {
+						if (loot.type == ItemID.CrimtaneOre || loot.type == ItemID.CrimsonSeeds) continue;
+					}
+				}
 
 				if (loot.expert || loot.Name.Contains("Treasure Bag")) continue;
 				else {

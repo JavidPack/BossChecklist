@@ -118,8 +118,10 @@ namespace BossChecklist
 					ItemID.EyeOfCthulhuBossBag,
 					ItemID.EoCShield,
 					ItemID.DemoniteOre,
+					ItemID.CrimtaneOre,
 					ItemID.UnholyArrow,
 					ItemID.CorruptSeeds,
+					ItemID.CrimsonSeeds,
 					ItemID.Binoculars,
 					ItemID.LesserHealingPotion
 				};
