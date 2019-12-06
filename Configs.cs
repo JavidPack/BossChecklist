@@ -19,7 +19,8 @@ namespace BossChecklist
 		[Tooltip("Choose the color of your Boss Log!")]
 		public Color BossLogColor { get; set; }
 
-		[DefaultValue(typeof(Vector2), "1560, 100")]
+		[DefaultValue(typeof(Vector2), "-270, -50")]
+		[Range(-1920f, 0f)]
 		[Label("Button Position")]
 		[Tooltip("Hold right click to move the button wherever you like with ease!")]
 		public Vector2 BossLogPos { get; set; }

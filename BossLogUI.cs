@@ -45,7 +45,8 @@ namespace BossChecklist
 		}
 
 		private void DragStart(UIMouseEvent evt) {
-			offset = new Vector2(evt.MousePosition.X - Left.Pixels, evt.MousePosition.Y - Top.Pixels);
+			var dimensions = GetDimensions().ToRectangle();
+			offset = new Vector2(evt.MousePosition.X - dimensions.Left, evt.MousePosition.Y - dimensions.Top);
 			dragging = true;
 		}
 
@@ -53,8 +54,8 @@ namespace BossChecklist
 			Vector2 end = evt.MousePosition;
 			dragging = false;
 
-			Left.Set(end.X - offset.X, 0f);
-			Top.Set(end.Y - offset.Y, 0f);
+			Left.Set(end.X - Main.screenWidth - offset.X, 1f);
+			Top.Set(end.Y - Main.screenHeight - offset.Y, 1f);
 
 			Recalculate();
 			BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
@@ -76,20 +77,20 @@ namespace BossChecklist
 			if (ContainsPoint(Main.MouseScreen)) Main.LocalPlayer.mouseInterface = true;
 
 			if (dragging) {
-				Left.Set(Main.mouseX - offset.X, 0f);
-				Top.Set(Main.mouseY - offset.Y, 0f);
+				Left.Set(Main.mouseX - Main.screenWidth - offset.X, 1f);
+				Top.Set(Main.mouseY - Main.screenHeight - offset.Y, 1f);
 				Recalculate();
 			}
 			else {
 				Vector2 configVec = BossChecklist.BossLogConfig.BossLogPos;
-				Left.Pixels = configVec.X;
-				Top.Pixels = configVec.Y;
+				Left.Set(configVec.X, 1f);
+				Top.Set(configVec.Y, 1f);
 			}
 
 			var parentSpace = Parent.GetDimensions().ToRectangle();
-			if (!GetDimensions().ToRectangle().Intersects(parentSpace)) {
-				Left.Pixels = Utils.Clamp(Left.Pixels, 0, parentSpace.Right - Width.Pixels);
-				Top.Pixels = Utils.Clamp(Top.Pixels, 0, parentSpace.Bottom - Height.Pixels);
+			if (!GetDimensions().ToRectangle().Contains(parentSpace)) {
+				Left.Pixels = Utils.Clamp(Left.Pixels, -parentSpace.Right, -Width.Pixels);
+				Top.Pixels = Utils.Clamp(Top.Pixels, -parentSpace.Bottom,  -Height.Pixels);
 				Recalculate();
 				BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
 			}
@@ -322,7 +323,7 @@ namespace BossChecklist
 
 				if (headNum != -1) {
 					BossInfo headBoss = BossChecklist.bossTracker.SortedBosses[headNum];
-					if (headBoss.type != EntryType.Event || headBoss.name == "Lunar Event") {
+					if (headBoss.type != EntryType.Event || headBoss.internalName == "Lunar Event") {
 						int headsDisplayed = 0;
 						int adjustment = 0;
 						Color maskedHead = BossLogUI.MaskBoss(headBoss);
@@ -364,7 +365,7 @@ namespace BossChecklist
 					spriteBatch.Draw(NPCTexture, bossPos, snippet, maskedBoss);
 				}
 
-				if (selectedBoss.type != EntryType.Event || selectedBoss.name == "Lunar Event") {
+				if (selectedBoss.type != EntryType.Event || selectedBoss.internalName == "Lunar Event") {
 					int headsDisplayed = 0;
 					int adjustment = 0;
 					Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
@@ -2573,15 +2574,15 @@ namespace BossChecklist
 
 		public static Texture2D GetEventIcon(BossInfo boss) {
 			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") return BossChecklist.instance.GetTexture(boss.overrideIconTexture);
-			if (boss.name == "Frost Legion") return ModContent.GetTexture("Terraria/Extra_7");
-			if (boss.name == "Frost Moon") return ModContent.GetTexture("Terraria/Extra_8");
-			if (boss.name == "Goblin Army") return ModContent.GetTexture("Terraria/Extra_9");
-			if (boss.name == "Martian Madness") return ModContent.GetTexture("Terraria/Extra_10");
-			if (boss.name == "Pirate Invasion") return ModContent.GetTexture("Terraria/Extra_11");
-			if (boss.name == "Pumpkin Moon") return ModContent.GetTexture("Terraria/Extra_12");
-			if (boss.name == "Old One's Army") return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-			if (boss.name == "Blood Moon") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-			if (boss.name == "Solar Eclipse") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
+			if (boss.internalName == "Frost Legion") return ModContent.GetTexture("Terraria/Extra_7");
+			if (boss.internalName == "Frost Moon") return ModContent.GetTexture("Terraria/Extra_8");
+			if (boss.internalName == "Goblin Army") return ModContent.GetTexture("Terraria/Extra_9");
+			if (boss.internalName == "Martian Madness") return ModContent.GetTexture("Terraria/Extra_10");
+			if (boss.internalName == "Pirate Invasion") return ModContent.GetTexture("Terraria/Extra_11");
+			if (boss.internalName == "Pumpkin Moon") return ModContent.GetTexture("Terraria/Extra_12");
+			if (boss.internalName == "Old One's Army") return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
+			if (boss.internalName == "Blood Moon") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
+			if (boss.internalName == "Solar Eclipse") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
 			else return Main.npcHeadTexture[0];
 		}
 

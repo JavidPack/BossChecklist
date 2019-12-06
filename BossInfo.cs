@@ -11,8 +11,9 @@ namespace BossChecklist
 		internal float progression;
 		internal List<int> npcIDs;
 		internal string modSource;
-		internal string name;
-		internal string internalName; // This localization-ignoring string is used for cross mod queries and networking
+		internal string name; // display name
+		internal string internalName; // This should be unique per mod.
+		internal string Key => modSource + " " + internalName; // This localization-ignoring string is used for cross mod queries and networking, is totally unique.
 		internal Func<bool> downed;
 
 		internal List<int> spawnItem;
@@ -33,7 +34,6 @@ namespace BossChecklist
 			this.type = type;
 			this.progression = progression;
 			this.modSource = modSource;
-			// TODO: vanilla translation keys aren't always suitable: $LegacyInterface.84. We may need to just pass in another string.
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
 			this.name = name.StartsWith("$") ? Language.GetTextValue(name.Substring(1)) : name;
 			this.npcIDs = npcIDs;
@@ -61,10 +61,16 @@ namespace BossChecklist
 			this.hidden = false;
 		}
 
+		// Workaround for vanilla events with illogical translation keys.
+		internal BossInfo WithCustomTranslationKey(string translationKey) {
+			this.name = Language.GetTextValue(translationKey.Substring(1));
+			return this;
+		}
+
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem, string despawnMessage = "") {
 			Func<bool> avail = () => true;
-			if (name == "Eater of Worlds") avail = () => !WorldGen.crimson;
-			else if (name == "Brain of Cthulhu") avail = () => WorldGen.crimson;
+			if (name == "$NPCName.EaterofWorldsHead") avail = () => !WorldGen.crimson;
+			else if (name == "$NPCName.BrainofCthulhu") avail = () => WorldGen.crimson;
 			return new BossInfo(type, progression, "Vanilla", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]), despawnMessage);
 		}
 
@@ -79,15 +85,16 @@ namespace BossChecklist
 	{
 		internal OrphanType type;
 		internal string modSource;
-		internal string name;
+		internal string internalName;
+		internal string Key => modSource + " " + internalName;
 		internal List<int> values;
 
 		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
-		internal OrphanInfo(OrphanType type, string modSource, string name, List<int> values) {
+		internal OrphanInfo(OrphanType type, string modSource, string internalName, List<int> values) {
 			this.type = type;
 			this.modSource = modSource;
-			this.name = name;
+			this.internalName = internalName;
 			this.values = values;
 		}
 	}

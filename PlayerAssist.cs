@@ -28,7 +28,7 @@ namespace BossChecklist
 
 			AllBossRecords = new List<BossRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				AllBossRecords.Add(new BossRecord(boss.internalName));
+				AllBossRecords.Add(new BossRecord(boss.Key));
 			}
 
 			// Make a new list of collections
@@ -36,9 +36,9 @@ namespace BossChecklist
 			// For each boss added...
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				// 1.) Add a collection for the boss
-				BossTrophies.Add(new BossCollection(boss.internalName));
+				BossTrophies.Add(new BossCollection(boss.Key));
 				// 2.) setup the item list and check off list for the boss
-				int index = BossTrophies.FindIndex(x => x.bossName == boss.internalName);
+				int index = BossTrophies.FindIndex(x => x.bossName == boss.Key);
 				BossTrophies[index].loot = new List<ItemDefinition>();
 				BossTrophies[index].collectibles = new List<ItemDefinition>();
 			}
@@ -189,7 +189,7 @@ namespace BossChecklist
 					for (int j = 0; j < BossList[i].loot.Count; j++) {
 						int item = BossList[i].loot[j];
 						if (player.HasItem(item)) {
-							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].internalName);
+							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].Key);
 							if (BossIndex == -1) continue;
 							if (BossTrophies[BossIndex].loot.FindIndex(x => x.Type == item) == -1) {
 								BossTrophies[BossIndex].loot.Add(new ItemDefinition(item));
@@ -200,7 +200,7 @@ namespace BossChecklist
 					for (int j = 0; j < BossList[i].collection.Count; j++) {
 						int item = BossList[i].collection[j];
 						if (player.HasItem(item)) {
-							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].internalName);
+							int BossIndex = BossTrophies.FindIndex(boss => boss.bossName == BossList[i].Key);
 							if (BossIndex == -1) continue;
 							if (BossTrophies[BossIndex].collectibles.FindIndex(x => x.Type == item) == -1) {
 								BossTrophies[BossIndex].collectibles.Add(new ItemDefinition(item));

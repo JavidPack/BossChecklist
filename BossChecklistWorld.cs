@@ -18,8 +18,8 @@ namespace BossChecklist
 
 		public override void Load(TagCompound tag) {
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
-			foreach (var bossInternalName in HiddenBossesList) {
-				HiddenBosses.Add(bossInternalName);
+			foreach (var bossKey in HiddenBossesList) {
+				HiddenBosses.Add(bossKey);
 			}
 		}
 
@@ -39,8 +39,8 @@ namespace BossChecklist
 			writer.Write(flags);
 
 			writer.Write(HiddenBosses.Count);
-			foreach (var bossInternalName in HiddenBosses) {
-				writer.Write(bossInternalName);
+			foreach (var bossKey in HiddenBosses) {
+				writer.Write(bossKey);
 			}
 		}
 

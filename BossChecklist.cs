@@ -111,6 +111,10 @@ namespace BossChecklist
 			MapAssist.DrawFullscreenMap();
 		}
 
+		private string[] LayersToHideWhenChecklistVisible = new string[] {
+			"Vanilla: Map / Minimap", "Vanilla: Resource Bars"
+		};
+
 		//int lastSeenScreenWidth;
 		//int lastSeenScreenHeight;
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
@@ -160,6 +164,10 @@ namespace BossChecklist
 					InterfaceScaleType.UI)
 				);
 			}
+			// This doesn't work perfectly.
+			//if (BossChecklistUI.Visible) {
+			//	layers.RemoveAll(x => LayersToHideWhenChecklistVisible.Contains(x.Name));
+			//}
 			if (MouseTextIndex != -1) {
 				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
 					delegate {
@@ -237,7 +245,7 @@ namespace BossChecklist
 
 		public override void AddRecipes() {
 			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
-				int index = bossTracker.SortedBosses.FindIndex(boss => boss.internalName == orphan.name);
+				int index = bossTracker.SortedBosses.FindIndex(boss => boss.Key == orphan.Key);
 				if (index != -1) {
 					switch (orphan.type) {
 						case OrphanType.Loot:
@@ -265,7 +273,7 @@ namespace BossChecklist
 					}
 				}
 				else {
-					Logger.Error("BossChecklist Call Error: Could not find " + orphan.name + " from " + orphan.modSource + " to add OrphanInfo to.");
+					Logger.Error("BossChecklist Call Error: Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
 				}
 			}
 			bossTracker.FinalizeBossData();
@@ -408,12 +416,12 @@ namespace BossChecklist
 					//{
 					//	Main.NewText("Huh? RequestHideBoss on client?");
 					//}
-					string bossInternalName = reader.ReadString();
+					string bossKey = reader.ReadString();
 					bool hide = reader.ReadBoolean();
 					if (hide)
-						BossChecklistWorld.HiddenBosses.Add(bossInternalName);
+						BossChecklistWorld.HiddenBosses.Add(bossKey);
 					else
-						BossChecklistWorld.HiddenBosses.Remove(bossInternalName);
+						BossChecklistWorld.HiddenBosses.Remove(bossKey);
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else

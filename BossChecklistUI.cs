@@ -47,6 +47,7 @@ namespace BossChecklist.UIElements
 				toggleHiddenButton.SetImage(showHiddenToggle);
 				imagesResized = true;
 			}
+			BossChecklist.instance.bossChecklistUI.checklistPanel.Left.Pixels = Main.playerInventory ? -200 : 0;
 		}
 
 		public override void OnInitialize() {
@@ -152,7 +153,7 @@ namespace BossChecklist.UIElements
 			checklistList.Clear();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.internalName);
+				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.Key);
 				if (boss.available() && (!boss.hidden || showHidden)) {
 					if (showCompleted || !boss.downed()) {
 						if (boss.type == EntryType.Event && !showEvent)
