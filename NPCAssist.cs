@@ -274,12 +274,12 @@ namespace BossChecklist
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (boss.type < NPCID.Count) {
 				int index = BL.FindIndex(x => x.npcIDs.Any(y => y == boss.type));
-				if (skipEventCheck && BL[index].type == EntryType.Event) return -1;
+				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) return -1;
 				return index;
 			}
 			else {
 				int index = BL.FindIndex(x => x.modSource == boss.modNPC.mod.Name && x.npcIDs.Any(y => y == boss.type));
-				if (skipEventCheck && BL[index].type == EntryType.Event) return -1;
+				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) return -1;
 				return index;
 			}
 		}
