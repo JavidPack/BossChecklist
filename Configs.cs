@@ -205,7 +205,7 @@ namespace BossChecklist
 			foreach (NPC npc in Main.npc) {
 				if (!npc.active) continue;
 				int listed = NPCAssist.ListedBossNum(npc);
-				if (listed != -1 && BossChecklist.bossTracker.SortedBosses[listed].type != EntryType.Event) {
+				if (listed != -1) {
 					Main.NewText("You cannot change this while a boss is active!");
 					RecordingStats = !RecordingStats; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 				}

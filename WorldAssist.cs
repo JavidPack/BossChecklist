@@ -52,7 +52,7 @@ namespace BossChecklist
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			ActiveBossesList = new List<bool>();
 			StartingPlayers = new List<List<Player>>();
-			for (int i = 0; i < BL.Count; i++) {
+			for (int i = 0; i < BL.Count; i++) { // Includes events, even though they wont be accounted for
 				ActiveBossesList.Add(false);
 				StartingPlayers.Add(new List<Player>());
 			}
