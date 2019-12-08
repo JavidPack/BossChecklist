@@ -796,7 +796,12 @@ namespace BossChecklist
 							}
 
 							Color faded = new Color(128, 128, 128, 128);
-							if (NPC.killCount[Item.NPCtoBanner(npcID)] >= 50) faded = Color.White;
+							int bannerID = Item.NPCtoBanner(npcID);
+							if (bannerID > 0 && !NPCID.Sets.ExcludedFromDeathTally[NPCID.FromNetId(npcID)]) {
+								int bannerItem = Item.BannerToItem(bannerID);
+								if (NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem]) faded = Color.White;
+							}
+							else continue;
 
 							for (int j = 0; j < 3; j++) {
 								Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
@@ -805,7 +810,9 @@ namespace BossChecklist
 
 								if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
 									if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-										Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}";
+										string killcount = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}";
+										if (NPC.killCount[Item.NPCtoBanner(npcID)] < ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]) killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+										Main.hoverItemName = killcount;
 									}
 								}
 							}
