@@ -22,7 +22,7 @@ namespace BossChecklist
 		[DefaultValue(typeof(Vector2), "-270, -50")]
 		[Range(-1920f, 0f)]
 		[Label("Button Position")]
-		[Tooltip("Hold right click to move the button wherever you like with ease!")]
+		[Tooltip("Hold right click in-game to move the button wherever you like with ease!\nPosition is measured from bottom right corner of screen")]
 		public Vector2 BossLogPos { get; set; }
 
 		[DefaultValue(true)]
