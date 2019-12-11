@@ -36,12 +36,12 @@ namespace BossChecklist
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
 			this.name = name.StartsWith("$") ? Language.GetTextValue(name.Substring(1)) : name;
-			this.npcIDs = npcIDs;
+			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
 			this.available = available ?? (() => true);
-			this.spawnItem = spawnItem;
-			this.collection = collection;
-			this.loot = loot;
+			this.spawnItem = spawnItem ?? new List<int>();
+			this.collection = collection ?? new List<int>();
+			this.loot = loot ?? new List<int>();
 			this.despawnMessage = despawnMessage;
 			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";

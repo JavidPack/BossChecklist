@@ -305,13 +305,13 @@ namespace BossChecklist
 					else {
 						bossTracker.AddBoss(
 							Convert.ToSingle(args[1]), // Prog
-							args[2] as List<int>, // IDs
+							args[2] is List<int> ? args[2] as List<int> : (args[2] is int ? new List<int>() { Convert.ToInt32(args[2]) } : null), // IDs
 							args[3] as Mod, // Mod
 							args[4] as string, // Boss Name
 							args[5] as Func<bool>, // Downed
-							args[6] as List<int>, // Spawn Items
-							args[7] as List<int>, // Collection
-							args[8] as List<int>, // Loot
+							args[6] is List<int> ? args[6] as List<int> : (args[6] is int ? new List<int>() { Convert.ToInt32(args[6]) } : null), // Spawn Items
+							args[7] is List<int> ? args[7] as List<int> : (args[7] is int ? new List<int>() { Convert.ToInt32(args[7]) } : null), // Collection
+							args[8] is List<int> ? args[8] as List<int> : (args[8] is int ? new List<int>() { Convert.ToInt32(args[8]) } : null), // Loot
 							args[9] as string, // Texture
 							argsLength > 10 ? args[10] as string : "No info provided", // Info
 							argsLength > 11 ? args[11] as string : "", // Despawn Message
@@ -335,13 +335,13 @@ namespace BossChecklist
 					else {
 						bossTracker.AddMiniBoss(
 							Convert.ToSingle(args[1]), // Prog
-							args[2] as List<int>, // IDs
+							args[2] is List<int> ? args[2] as List<int> : (args[2] is int ? new List<int>() { Convert.ToInt32(args[2]) } : null), // IDs
 							args[3] as Mod, // Mod
 							args[4] as string, // MiniBoss Name
 							args[5] as Func<bool>, // Downed
-							args[6] as List<int>, // Spawn Items
-							args[7] as List<int>, // Collection
-							args[8] as List<int>, // Loot
+							args[6] is List<int> ? args[6] as List<int> : (args[6] is int ? new List<int>() { Convert.ToInt32(args[6]) } : null), // Spawn Items
+							args[7] is List<int> ? args[7] as List<int> : (args[7] is int ? new List<int>() { Convert.ToInt32(args[7]) } : null), // Collection
+							args[8] is List<int> ? args[8] as List<int> : (args[8] is int ? new List<int>() { Convert.ToInt32(args[8]) } : null), // Loot
 							args[9] as string, // Texture
 							argsLength > 10 ? args[10] as string : "No info provided", // Info
 							argsLength > 11 ? args[11] as string : "", // Despawn Message
@@ -365,13 +365,13 @@ namespace BossChecklist
 					else {
 						bossTracker.AddEvent(
 							Convert.ToSingle(args[1]), // Prog
-							args[2] as List<int>, // IDs
+							args[2] is List<int> ? args[2] as List<int> : (args[2] is int ? new List<int>() { Convert.ToInt32(args[2]) } : null), // IDs
 							args[3] as Mod, // Mod
 							args[4] as string, // Event Name
 							args[5] as Func<bool>, // Downed
-							args[6] as List<int>, // Spawn Items
-							args[7] as List<int>, // Collection
-							args[8] as List<int>, // Loot
+							args[6] is List<int> ? args[6] as List<int> : (args[6] is int ? new List<int>() { Convert.ToInt32(args[6]) } : null), // Spawn Items
+							args[7] is List<int> ? args[7] as List<int> : (args[7] is int ? new List<int>() { Convert.ToInt32(args[7]) } : null), // Collection
+							args[8] is List<int> ? args[8] as List<int> : (args[8] is int ? new List<int>() { Convert.ToInt32(args[8]) } : null), // Loot
 							args[9] as string, // Texture
 							argsLength > 10 ? args[10] as string : "No info provided", // Info
 							argsLength > 11 ? args[11] as string : "", // Despawn Message
