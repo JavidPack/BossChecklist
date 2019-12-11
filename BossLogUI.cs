@@ -5,6 +5,7 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Elements;
@@ -59,6 +60,17 @@ namespace BossChecklist
 
 			Recalculate();
 			BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
+			SaveConfig(BossChecklist.BossLogConfig);
+		}
+
+		private void SaveConfig(BossLogConfiguration bossLogConfig) {
+			// in-game ModConfig saving from mod code is not supported yet in tmodloader, and subject to change, so we need to be extra careful.
+			// This code only supports client configs, and doesn't call onchanged. It also doesn't support ReloadRequired or anything else.
+			MethodInfo saveMethodInfo = typeof(ConfigManager).GetMethod("Save", BindingFlags.Static | BindingFlags.NonPublic);
+			if (saveMethodInfo != null)
+				saveMethodInfo.Invoke(null, new object[] { bossLogConfig });
+			else
+				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
 		}
 
 		public override void RightMouseDown(UIMouseEvent evt) {
