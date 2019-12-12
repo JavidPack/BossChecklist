@@ -5,7 +5,6 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Elements;
@@ -13,7 +12,6 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -60,17 +58,7 @@ namespace BossChecklist
 
 			Recalculate();
 			BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
-			SaveConfig(BossChecklist.BossLogConfig);
-		}
-
-		private void SaveConfig(BossLogConfiguration bossLogConfig) {
-			// in-game ModConfig saving from mod code is not supported yet in tmodloader, and subject to change, so we need to be extra careful.
-			// This code only supports client configs, and doesn't call onchanged. It also doesn't support ReloadRequired or anything else.
-			MethodInfo saveMethodInfo = typeof(ConfigManager).GetMethod("Save", BindingFlags.Static | BindingFlags.NonPublic);
-			if (saveMethodInfo != null)
-				saveMethodInfo.Invoke(null, new object[] { bossLogConfig });
-			else
-				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 		}
 
 		public override void RightMouseDown(UIMouseEvent evt) {
@@ -1900,7 +1888,7 @@ namespace BossChecklist
 			}
 		}
 
-		public void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
+		private void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
 			string rowID = listeningElement.Id.Substring(2, 1);
 			if (rowID == "0") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
@@ -1916,9 +1904,10 @@ namespace BossChecklist
 				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide when completed") BossChecklist.BossLogConfig.FilterEvents = "Hide";
 				else BossChecklist.BossLogConfig.FilterEvents = "Show";
 			}
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			UpdateTableofContents();
 		}
-		
+
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
 			if (!BookUI.DrawTab(listeningElement.Id)) return;
 			if (listeningElement.Id == "ToCFilter_Tab" && PageNum == -1) {

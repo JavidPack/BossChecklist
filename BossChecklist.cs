@@ -5,11 +5,12 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -100,6 +101,16 @@ namespace BossChecklist
 			bossChecklistInterface?.Update(gameTime);
 			BossLogInterface?.Update(gameTime);
 			BossRadarUI?.Update(gameTime);
+		}
+
+		internal static void SaveConfig(BossLogConfiguration bossLogConfig) {
+			// in-game ModConfig saving from mod code is not supported yet in tmodloader, and subject to change, so we need to be extra careful.
+			// This code only supports client configs, and doesn't call onchanged. It also doesn't support ReloadRequired or anything else.
+			MethodInfo saveMethodInfo = typeof(ConfigManager).GetMethod("Save", BindingFlags.Static | BindingFlags.NonPublic);
+			if (saveMethodInfo != null)
+				saveMethodInfo.Invoke(null, new object[] { bossLogConfig });
+			else
+				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
 		}
 
 		public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
