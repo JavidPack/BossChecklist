@@ -35,14 +35,14 @@ namespace BossChecklist
 			this.progression = progression;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
-			this.name = name.StartsWith("$") ? Language.GetTextValue(name.Substring(1)) : name;
+			this.name = GetTextFromPossibleTranslationKey(name);
 			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
 			this.available = available ?? (() => true);
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
 			this.loot = loot ?? new List<int>();
-			this.despawnMessage = despawnMessage;
+			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
 			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
 			}
@@ -57,8 +57,11 @@ namespace BossChecklist
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
 				this.overrideIconTexture = "Terraria/NPC_Head_0";
 			}
-			this.info = info;
+			this.info = GetTextFromPossibleTranslationKey(info);
 			this.hidden = false;
+
+			// Local Functions
+			string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
 		}
 
 		// Workaround for vanilla events with illogical translation keys.

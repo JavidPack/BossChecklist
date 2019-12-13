@@ -256,35 +256,27 @@ namespace BossChecklist
 
 		public override void AddRecipes() {
 			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
-				int index = bossTracker.SortedBosses.FindIndex(boss => boss.Key == orphan.Key);
-				if (index != -1) {
+				BossInfo bossInfo = bossTracker.SortedBosses.Find(boss => boss.Key == orphan.Key);
+				if (bossInfo != null) {
 					switch (orphan.type) {
 						case OrphanType.Loot:
-							foreach (int item in orphan.values) {
-								bossTracker.SortedBosses[index].loot.Add(item);
-							}
+							bossInfo.loot.AddRange(orphan.values);
 							break;
 						case OrphanType.Collection:
-							foreach (int item in orphan.values) {
-								bossTracker.SortedBosses[index].collection.Add(item);
-							}
+							bossInfo.collection.AddRange(orphan.values);
 							break;
 						case OrphanType.SpawnItem:
-							foreach (int item in orphan.values) {
-								bossTracker.SortedBosses[index].spawnItem.Add(item);
-							}
+							bossInfo.spawnItem.AddRange(orphan.values);
 							break;
 						case OrphanType.EventNPC:
-							if (bossTracker.SortedBosses[index].type == EntryType.Event) {
-								foreach (int npcid in orphan.values) {
-									bossTracker.SortedBosses[index].npcIDs.Add(npcid);
-								}
+							if (bossInfo.type == EntryType.Event) {
+								bossInfo.npcIDs.AddRange(orphan.values);
 							}
 							break;
 					}
 				}
 				else {
-					Logger.Error("BossChecklist Call Error: Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
+					Logger.Info("Call Error: Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
 				}
 			}
 			bossTracker.FinalizeBossData();
@@ -301,7 +293,7 @@ namespace BossChecklist
 			try {
 				string message = args[0] as string;
 				if (bossTracker.BossesFinalized)
-					throw new Exception($"BossChecklist Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages un until before AddRecipes.");
+					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
 				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons
 					if (argsLength < 7) {
 						bossTracker.AddBoss(
@@ -316,13 +308,13 @@ namespace BossChecklist
 					else {
 						bossTracker.AddBoss(
 							Convert.ToSingle(args[1]), // Prog
-							args[2] is List<int> ? args[2] as List<int> : (args[2] is int ? new List<int>() { Convert.ToInt32(args[2]) } : null), // IDs
+							InterpretObjectAsListOfInt(args[2]), // IDs
 							args[3] as Mod, // Mod
 							args[4] as string, // Boss Name
 							args[5] as Func<bool>, // Downed
-							args[6] is List<int> ? args[6] as List<int> : (args[6] is int ? new List<int>() { Convert.ToInt32(args[6]) } : null), // Spawn Items
-							args[7] is List<int> ? args[7] as List<int> : (args[7] is int ? new List<int>() { Convert.ToInt32(args[7]) } : null), // Collection
-							args[8] is List<int> ? args[8] as List<int> : (args[8] is int ? new List<int>() { Convert.ToInt32(args[8]) } : null), // Loot
+							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							InterpretObjectAsListOfInt(args[7]), // Collection
+							InterpretObjectAsListOfInt(args[8]), // Loot
 							args[9] as string, // Texture
 							argsLength > 10 ? args[10] as string : "No info provided", // Info
 							argsLength > 11 ? args[11] as string : "", // Despawn Message
@@ -346,13 +338,13 @@ namespace BossChecklist
 					else {
 						bossTracker.AddMiniBoss(
 							Convert.ToSingle(args[1]), // Prog
-							args[2] is List<int> ? args[2] as List<int> : (args[2] is int ? new List<int>() { Convert.ToInt32(args[2]) } : null), // IDs
+							InterpretObjectAsListOfInt(args[2]), // IDs
 							args[3] as Mod, // Mod
 							args[4] as string, // MiniBoss Name
 							args[5] as Func<bool>, // Downed
-							args[6] is List<int> ? args[6] as List<int> : (args[6] is int ? new List<int>() { Convert.ToInt32(args[6]) } : null), // Spawn Items
-							args[7] is List<int> ? args[7] as List<int> : (args[7] is int ? new List<int>() { Convert.ToInt32(args[7]) } : null), // Collection
-							args[8] is List<int> ? args[8] as List<int> : (args[8] is int ? new List<int>() { Convert.ToInt32(args[8]) } : null), // Loot
+							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							InterpretObjectAsListOfInt(args[7]), // Collection
+							InterpretObjectAsListOfInt(args[8]), // Loot
 							args[9] as string, // Texture
 							argsLength > 10 ? args[10] as string : "No info provided", // Info
 							argsLength > 11 ? args[11] as string : "", // Despawn Message
@@ -376,13 +368,13 @@ namespace BossChecklist
 					else {
 						bossTracker.AddEvent(
 							Convert.ToSingle(args[1]), // Prog
-							args[2] is List<int> ? args[2] as List<int> : (args[2] is int ? new List<int>() { Convert.ToInt32(args[2]) } : null), // IDs
+							InterpretObjectAsListOfInt(args[2]), // IDs
 							args[3] as Mod, // Mod
 							args[4] as string, // Event Name
 							args[5] as Func<bool>, // Downed
-							args[6] is List<int> ? args[6] as List<int> : (args[6] is int ? new List<int>() { Convert.ToInt32(args[6]) } : null), // Spawn Items
-							args[7] is List<int> ? args[7] as List<int> : (args[7] is int ? new List<int>() { Convert.ToInt32(args[7]) } : null), // Collection
-							args[8] is List<int> ? args[8] as List<int> : (args[8] is int ? new List<int>() { Convert.ToInt32(args[8]) } : null), // Loot
+							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							InterpretObjectAsListOfInt(args[7]), // Collection
+							InterpretObjectAsListOfInt(args[8]), // Loot
 							args[9] as string, // Texture
 							argsLength > 10 ? args[10] as string : "No info provided", // Info
 							argsLength > 11 ? args[11] as string : "", // Despawn Message
@@ -403,17 +395,20 @@ namespace BossChecklist
 						message, // OrphanType
 						args[1] as string, // Mod Name
 						args[2] as string, // Boss Name
-						args[3] as List<int> // ID List
+						InterpretObjectAsListOfInt(args[3]) // ID List
 					);
 				}
 				else {
-					Logger.Error("BossChecklist Call Error: Unknown Message: " + message);
+					Logger.Error("Call Error: Unknown Message: " + message);
 				}
 			}
 			catch (Exception e) {
-				Logger.Error("BossChecklist Call Error: " + e.StackTrace + e.Message);
+				Logger.Error("Call Error: " + e.StackTrace + e.Message);
 			}
 			return "Failure";
+
+			// Local functions.
+			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
 		}
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
