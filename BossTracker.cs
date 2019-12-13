@@ -1096,17 +1096,17 @@ namespace BossChecklist
 		}
 
 		// New system is better
-		internal void AddBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+		internal void AddBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
 			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddMiniBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+		internal void AddMiniBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
 			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddEvent(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string texture, string info, string despawnMessage, Func<bool> available, string iconTexture) {
+		internal void AddEvent(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
 			SortedBosses.Add(new BossInfo(EntryType.Event, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
