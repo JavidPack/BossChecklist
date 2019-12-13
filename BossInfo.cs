@@ -47,10 +47,9 @@ namespace BossChecklist
 			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
 			}
-			this.pageTexture = pageTexture ?? "";
-			if (!ModContent.TextureExists(this.pageTexture) && this.pageTexture != "") {
+			this.pageTexture = pageTexture ?? $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
+			if (!ModContent.TextureExists(this.pageTexture) && this.pageTexture != $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
-				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
 			this.overrideIconTexture = overrideIconTexture ?? "";
 			if (!ModContent.TextureExists(this.pageTexture) && this.overrideIconTexture != "") {
