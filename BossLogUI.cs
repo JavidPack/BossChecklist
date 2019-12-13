@@ -1294,11 +1294,12 @@ namespace BossChecklist
 
 			if (order != -1f) {
 				BossChecklist BA = BossChecklist.instance;
+				int pagenum = Convert.ToInt32(Id);
 
 				Rectangle checkType = new Rectangle(0, 0, 22, 20);
 				Rectangle exType = new Rectangle(0, 0, 22, 20);
 				
-				if (sortedBosses[Convert.ToInt32(Id)].downed()) {
+				if (sortedBosses[pagenum].downed()) {
 					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") checkType = new Rectangle(24, 0, 22, 20);
 					else checkType = new Rectangle(0, 0, 22, 20);
 				}
@@ -1314,16 +1315,16 @@ namespace BossChecklist
 					if (IsMouseHovering) TextColor = TextColor = Color.SkyBlue;
 					//if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
 					//else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
-					else if (!sortedBosses[Convert.ToInt32(Id)].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
-					else if (sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityGreen;
-					else if (!sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Colors.RarityRed;
+					else if (!sortedBosses[pagenum].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					else if (sortedBosses[pagenum].downed()) TextColor = Colors.RarityGreen;
+					else if (!sortedBosses[pagenum].downed()) TextColor = Colors.RarityRed;
 				}
 				else {
 					if (IsMouseHovering) TextColor = new Color(80, 85, 100);
 					else TextColor = new Color(140, 145, 160);
 				}
 
-				if (!sortedBosses[Convert.ToInt32(Id)].available() && !sortedBosses[Convert.ToInt32(Id)].downed()) {
+				if ((!sortedBosses[pagenum].available() && !sortedBosses[pagenum].downed()) || sortedBosses[pagenum].hidden) {
 					TextColor = Color.SlateGray;
 					Vector2 stringAdjust = Main.fontMouseText.MeasureString(text);
 					for (int i = 0; i < stringAdjust.X + 4; i++) {
@@ -2369,13 +2370,12 @@ namespace BossChecklist
 			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses);
 
 			for (int i = 0; i < copiedList.Count; i++) {
-				if (copiedList[i].hidden) continue;
-				if (!copiedList[i].available() && BossChecklist.BossLogConfig.HideUnavailable) continue;
+				if ((!copiedList[i].available() || copiedList[i].hidden) && BossChecklist.BossLogConfig.HideUnavailable) continue;
 				if (!copiedList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 
 				string bossName = copiedList[i].name;
-				if (copiedList[i].hidden) bossName = "???";
+				if (!copiedList[i].available() && !copiedList[i].downed()) bossName = "???";
 
 				TableOfContents next = new TableOfContents(copiedList[i].progression, bossName, nextCheckBool);
 				nextCheckBool = false;
@@ -2483,7 +2483,9 @@ namespace BossChecklist
 		}
 
 		private void StrikeThrough(UIMouseEvent evt, UIElement listeningElement) {
-			// TODO? next.OnRightClick strike through bosses? Not entirely sure of use.
+			int pg = Convert.ToInt32(listeningElement.Id);
+			BossChecklist.bossTracker.SortedBosses[pg].hidden = !BossChecklist.bossTracker.SortedBosses[pg].hidden;
+			if (BossChecklist.BossLogConfig.HideUnavailable) UpdateTableofContents();
 		}
 
 		private void ResetBothPages() {
