@@ -315,11 +315,11 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Loot
-							argsLength > 10 ? args[10] as string : "No info provided", // Info
-							argsLength > 11 ? args[11] as string : "", // Despawn Message
-							args[9] as string, // Texture
-							argsLength > 13 ? args[13] as string : "", // Override Icon Texture
-							args[12] as Func<bool> // Available
+							args[9] as string, // Info
+							args[10] as string, // Despawn Message
+							args[11] as string, // Texture
+							args[12] as string, // Override Icon Texture
+							args[13] as Func<bool> // Available
 						);
 					}
 					return "Success";
@@ -345,11 +345,11 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Loot
-							argsLength > 10 ? args[10] as string : "No info provided", // Info
-							argsLength > 11 ? args[11] as string : "", // Despawn Message
-							args[9] as string, // Texture
-							argsLength > 13 ? args[13] as string : "", // Override Icon Texture
-							args[12] as Func<bool> // Available
+							args[9] as string, // Info
+							args[10] as string, // Despawn Message
+							args[11] as string, // Texture
+							args[12] as string, // Override Icon Texture
+							args[13] as Func<bool> // Available
 						);
 					}
 					return "Success";
@@ -375,11 +375,11 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Loot
-							argsLength > 10 ? args[10] as string : "No info provided", // Info
-							argsLength > 11 ? args[11] as string : "", // Despawn Message
-							args[9] as string, // Texture
-							argsLength > 13 ? args[13] as string : "", // Override Icon Texture
-							args[12] as Func<bool> // Available
+							args[9] as string, // Info
+							args[10] as string, // Despawn Message
+							args[11] as string, // Texture
+							args[12] as string, // Override Icon Texture
+							args[13] as Func<bool> // Available
 						);
 					}
 					return "Success";

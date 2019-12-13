@@ -38,26 +38,28 @@ namespace BossChecklist
 			this.name = GetTextFromPossibleTranslationKey(name);
 			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
-			this.available = available ?? (() => true);
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
 			this.loot = loot ?? new List<int>();
+			this.info = info ?? "";
+			if (this.info != "") this.info = GetTextFromPossibleTranslationKey(info);
 			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
 			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
 			}
-			this.pageTexture = pageTexture;
-			if (this.pageTexture == null || !ModContent.TextureExists(this.pageTexture)) {
+			this.pageTexture = pageTexture ?? "";
+			if (!ModContent.TextureExists(this.pageTexture) && this.pageTexture != "") {
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
-			this.overrideIconTexture = overrideIconTexture;
-			if ((this.overrideIconTexture == null || !ModContent.TextureExists(this.pageTexture)) && this.overrideIconTexture != "") {
+			this.overrideIconTexture = overrideIconTexture ?? "";
+			if (!ModContent.TextureExists(this.pageTexture) && this.overrideIconTexture != "") {
 				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
 				this.overrideIconTexture = "Terraria/NPC_Head_0";
 			}
-			this.info = GetTextFromPossibleTranslationKey(info);
+			this.available = available ?? (() => true);
+
 			this.hidden = false;
 
 			// Local Functions
