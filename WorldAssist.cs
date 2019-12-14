@@ -69,14 +69,14 @@ namespace BossChecklist
 					}
 					else if (ActiveBossesList[listNum]) {
 						if (NPCAssist.TruelyDead(b)) {
-							bool moonLordCheck = (b.type == NPCID.MoonLordHead || b.type == NPCID.MoonLordCore);
-							if ((!moonLordCheck && b.life >= 0 && CheckRealLife(b.realLife)) || (moonLordCheck && b.life <= 0)) {
+							string message = GetDespawnMessage(b, listNum);
+							if (message != "") {
 								if (Main.netMode == NetmodeID.SinglePlayer) {
 									if (BossChecklist.ClientConfig.DespawnMessageType != "Disabled") {
-										Main.NewText(NetworkText.FromKey(GetDespawnMessage(b), b.FullName), Colors.RarityPurple);
+										Main.NewText(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
 									}
 								}
-								else NetMessage.BroadcastChatMessage(NetworkText.FromKey(GetDespawnMessage(b), b.FullName), Colors.RarityPurple);
+								else NetMessage.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
 							}
 							ActiveBossesList[listNum] = false;
 							if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
@@ -147,12 +147,14 @@ namespace BossChecklist
 			}
 		}
 
-		public string GetDespawnMessage(NPC boss) {
-			bool moonLordCheck = (boss.type == NPCID.MoonLordHead || boss.type == NPCID.MoonLordCore);
-			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead) && !moonLordCheck) { // If any player is active and alive
-				if (Main.dayTime && DayDespawners.Contains(boss.type)) return "Mods.BossChecklist.BossDespawn.Day";
-				else if (boss.type == NPCID.WallofFlesh) return "Mods.BossChecklist.BossVictory.WallofFlesh";
-				else return "Mods.BossChecklist.BossDespawn.Generic";
+		public string GetDespawnMessage(NPC boss, int listnum) {
+			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead)) { // If any player is active and alive
+				if (Main.npc.Any(x => x.life > 0 && BossChecklist.bossTracker.SortedBosses[listnum].npcIDs.IndexOf(x.type) != -1)) { // If boss is still active
+					if (Main.dayTime && DayDespawners.Contains(boss.type)) return "Mods.BossChecklist.BossDespawn.Day";
+					else if (boss.type == NPCID.WallofFlesh) return "Mods.BossChecklist.BossVictory.WallofFlesh";
+					else return "Mods.BossChecklist.BossDespawn.Generic";
+				}
+				else return "";
 			}
 			else if (BossChecklist.ClientConfig.DespawnMessageType == "Custom") {
 				// Check already accounted for to get to this point
