@@ -40,11 +40,6 @@ namespace BossChecklist
 		[Tooltip("Masks the images of bosses when they have not been defeated.")]
 		public bool BossSilhouettes { get; set; }
 
-		[DefaultValue(true)]
-		[Label("Hide unavailable bosses")]
-		[Tooltip("Unavailable bosses will be removed from the list")]
-		public bool HideUnavailable { get; set; }
-
 		[DrawTicks]
 		[Label("Checklist Markings Type")]
 		[OptionStrings(new string[] { "✓ and  ☐", "✓ and  X", "X and  ☐" })]
@@ -71,7 +66,10 @@ namespace BossChecklist
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
-		
+
+		[Label("Hidden Boss List")]
+		public HiddenBossConfig HiddenBosses { get; set; } = new HiddenBossConfig();
+
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}
@@ -216,4 +214,35 @@ namespace BossChecklist
 			return true;
 		}
 	}
+
+	[SeparatePage]
+	public class HiddenBossConfig
+	{
+		[DefaultValue(false)]
+		[Label("Show unavailable and hidden bosses")]
+		[Tooltip("Unavailable and hidden bosses will be shown/removed from the Boss Log's table of contents.")]
+		public bool HideUnavailable { get; set; }
+
+		[DefaultValue(false)]
+		[Label("Hide Unsupported Bosses")]
+		[Tooltip("Bosses that have not fully integrated will be shown/removed from the Boss Log's table of contents.")]
+		public bool HideUnsupported { get; set; }
+
+		[Label("Bosses marked as hidden")]
+		public List<NPCDefinition> HiddenList { get; set; } = new List<NPCDefinition>();
+		
+		//[Label("Hidden bosses not fully intergrated into the Boss Log")]
+		//public List<string> HiddenListByName { get; set; } = new List<string>();
+
+		public override bool Equals(object obj) {
+			if (obj is HiddenBossConfig other)
+				return HideUnavailable == other.HideUnavailable && HideUnsupported && HiddenList == other.HiddenList;
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode() {
+			return new { HideUnavailable, HideUnsupported, HiddenList }.GetHashCode();
+		}
+	}
+
 }

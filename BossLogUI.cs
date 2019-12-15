@@ -12,6 +12,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -1517,8 +1518,7 @@ namespace BossChecklist
 		private List<BookUI> filterCheck;
 		private List<BookUI> filterCheckMark;
 		private List<UIText> filterTypes;
-
-		public BookUI FilterTab;
+		
 		public BookUI ToCTab;
 		public BookUI CreditsTab;
 		public BookUI BossTab;
@@ -1849,6 +1849,18 @@ namespace BossChecklist
 			}
 
 			base.Update(gameTime);
+
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				HiddenBossConfig HiddenBosses = BossChecklist.BossLogConfig.HiddenBosses;
+				if (boss.npcIDs.Count == 0) {
+					if (HiddenBosses.HideUnsupported) boss.hidden = true;
+					continue;
+				}
+				if (HiddenBosses.HiddenList.Any(x => x.Type == boss.npcIDs[0])) { //|| HiddenBosses.HiddenListByName.Any(x => x == boss.name)
+					boss.hidden = true;
+				}
+				else boss.hidden = false;
+			}
 		}
 
 		public TextSnippet hoveredTextSnippet;
@@ -2370,7 +2382,7 @@ namespace BossChecklist
 			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses);
 
 			for (int i = 0; i < copiedList.Count; i++) {
-				if ((!copiedList[i].available() || copiedList[i].hidden) && BossChecklist.BossLogConfig.HideUnavailable) continue;
+				if ((!copiedList[i].available() || copiedList[i].hidden) && BossChecklist.BossLogConfig.HiddenBosses.HideUnavailable) continue;
 				if (!copiedList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 
@@ -2484,8 +2496,17 @@ namespace BossChecklist
 
 		private void StrikeThrough(UIMouseEvent evt, UIElement listeningElement) {
 			int pg = Convert.ToInt32(listeningElement.Id);
-			BossChecklist.bossTracker.SortedBosses[pg].hidden = !BossChecklist.bossTracker.SortedBosses[pg].hidden;
-			if (BossChecklist.BossLogConfig.HideUnavailable) UpdateTableofContents();
+			BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[pg];
+			HiddenBossConfig HiddenBosses = BossChecklist.BossLogConfig.HiddenBosses;
+			if (pgBoss.npcIDs.Count == 0) {
+				Main.NewText($"{pgBoss.name} cannot be hidden due to it not being fully integrated into the Boss Log. Unsupported bosses can be manually hidden from the configs.", Color.Orange);
+				return;
+			}
+			int hiddenBossIndex = HiddenBosses.HiddenList.FindIndex(x => x.Type == pgBoss.npcIDs[0]);
+			if (hiddenBossIndex == -1) HiddenBosses.HiddenList.Add(new NPCDefinition(pgBoss.npcIDs[0]));
+			else HiddenBosses.HiddenList.RemoveAt(hiddenBossIndex);
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+			if (HiddenBosses.HideUnavailable) UpdateTableofContents();
 		}
 
 		private void ResetBothPages() {

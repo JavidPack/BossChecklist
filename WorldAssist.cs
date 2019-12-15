@@ -73,7 +73,7 @@ namespace BossChecklist
 							if (message != "") {
 								if (Main.netMode == NetmodeID.SinglePlayer) {
 									if (BossChecklist.ClientConfig.DespawnMessageType != "Disabled") {
-										Main.NewText(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
+										Main.NewText(Language.GetTextValue(message, b.FullName), Colors.RarityPurple);
 									}
 								}
 								else NetMessage.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
