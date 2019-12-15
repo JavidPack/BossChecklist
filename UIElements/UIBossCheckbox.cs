@@ -44,6 +44,7 @@ namespace BossChecklist.UIElements
 				else
 					BossChecklistWorld.HiddenBosses.Remove(boss.Key);
 				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+				if (BossChecklist.BossLogConfig.HideUnavailable) BossChecklist.instance.BossLog.UpdateTableofContents();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RequestHideBoss);
