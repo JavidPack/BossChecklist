@@ -1,6 +1,7 @@
 ﻿using BossChecklist.UIElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
@@ -2388,7 +2389,6 @@ namespace BossChecklist
 				next.PaddingLeft = 22;
 				next.Id = i.ToString();
 				next.OnClick += new MouseEvent(JumpToBossPage);
-				next.OnRightClick += new MouseEvent(StrikeThrough);
 
 				if (copiedList[i].downed()) {
 					next.TextColor = Colors.RarityGreen;
@@ -2473,30 +2473,28 @@ namespace BossChecklist
 
 		private void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
 			PageNum = Convert.ToInt32(listeningElement.Id);
+			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
+				BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
+				pgBoss.hidden = !pgBoss.hidden;
+				if (pgBoss.hidden) BossChecklistWorld.HiddenBosses.Add(pgBoss.Key);
+				else BossChecklistWorld.HiddenBosses.Remove(pgBoss.Key);
+				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+				UpdateTableofContents();
+				if (Main.netMode == NetmodeID.MultiplayerClient) {
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)PacketMessageType.RequestHideBoss);
+					packet.Write(pgBoss.Key);
+					packet.Write(pgBoss.hidden);
+					packet.Send();
+				}
+				return;
+			}
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
 			if (SubPageNum == 0) OpenRecord();
 			else if (SubPageNum == 1) OpenSpawn();
 			else if (SubPageNum == 2) OpenLoot();
 			//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
-		}
-
-		private void StrikeThrough(UIMouseEvent evt, UIElement listeningElement) {
-			int pg = Convert.ToInt32(listeningElement.Id);
-			BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[pg];
-
-			pgBoss.hidden = !pgBoss.hidden;
-			if (pgBoss.hidden) BossChecklistWorld.HiddenBosses.Add(pgBoss.Key);
-			else BossChecklistWorld.HiddenBosses.Remove(pgBoss.Key);
-			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-			UpdateTableofContents();
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.RequestHideBoss);
-				packet.Write(pgBoss.Key);
-				packet.Write(pgBoss.hidden);
-				packet.Send();
-			}
 		}
 
 		private void ResetBothPages() {
