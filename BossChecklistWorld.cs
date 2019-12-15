@@ -57,6 +57,7 @@ namespace BossChecklist
 				HiddenBosses.Add(reader.ReadString());
 			}
 			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+			if (BossChecklist.BossLogConfig.HideUnavailable) BossChecklist.instance.BossLog.UpdateTableofContents();
 		}
 	}
 }

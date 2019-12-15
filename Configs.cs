@@ -67,8 +67,8 @@ namespace BossChecklist
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
 
-		[DefaultValue(false)]
-		[Label("Show unavailable and hidden bosses")]
+		[DefaultValue(true)]
+		[Label("Hide unavailable and hidden bosses")]
 		[Tooltip("Unavailable and hidden bosses will be shown/removed from the Boss Log's table of contents.")]
 		public bool HideUnavailable { get; set; }
 

@@ -2489,7 +2489,14 @@ namespace BossChecklist
 			if (pgBoss.hidden) BossChecklistWorld.HiddenBosses.Add(pgBoss.Key);
 			else BossChecklistWorld.HiddenBosses.Remove(pgBoss.Key);
 			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-			if (BossChecklist.BossLogConfig.HideUnavailable) UpdateTableofContents();
+			UpdateTableofContents();
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.RequestHideBoss);
+				packet.Write(pgBoss.Key);
+				packet.Write(pgBoss.hidden);
+				packet.Send();
+			}
 		}
 
 		private void ResetBothPages() {
