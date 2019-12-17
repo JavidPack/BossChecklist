@@ -204,7 +204,7 @@ namespace BossChecklist
 		[Label("Show record timers and counters of selected NPC")]
 		[Tooltip("NOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
-
+		
 		public override void OnChanged() {
 			if (Terraria.ModLoader.ModLoader.GetMod("BossChecklist") != null) return;
 			foreach (NPC npc in Main.npc) {
@@ -212,7 +212,10 @@ namespace BossChecklist
 				int listed = NPCAssist.ListedBossNum(npc);
 				if (listed != -1) {
 					Main.NewText("You cannot change this while a boss is active!");
-					RecordingStats = !RecordingStats; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+					RecordingStats = false; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+					//TODO?: Currently forces false if anything is changed while a boss is active
+					//Previously was forced to !RecordingStats, but this could allow the player to trick the configs using another variable to change
+					// allowing records to start in the middle of a boss fight. This MAY need to change on a future update.
 				}
 			}
 		}

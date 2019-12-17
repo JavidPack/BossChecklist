@@ -198,8 +198,7 @@ namespace BossChecklist
 				};
 
 				RecordID specificRecord = RecordID.None;
-
-				Console.WriteLine(newRecord.durationLast + " vs " + oldRecord.durationBest);
+				
 				if ((newRecord.durationLast < oldRecord.durationBest && newRecord.durationLast > 0) || oldRecord.durationBest <= 0) {
 					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationLast} (Previous Record: {oldRecord.durationBest})");
 					specificRecord |= RecordID.ShortestFightTime;
