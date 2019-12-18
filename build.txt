@@ -1,5 +1,5 @@
 ﻿author = SheepishShepherd, jopojelly
-version = 1.0.1
+version = 1.0.2
 displayName = Boss Checklist
 homepage = http://forums.terraria.org/index.php?threads/boss-checklist-in-game-progression-checklist.50668/
 hideCode = false

@@ -28,7 +28,7 @@ namespace BossChecklist
 		internal bool hidden;
 		internal EntryType type;
 
-		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
+		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
 		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string despawnMessage = "", string overrideIconTexture = "") {
 			this.type = type;
@@ -49,13 +49,13 @@ namespace BossChecklist
 			}
 			this.pageTexture = pageTexture ?? $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			if (!ModContent.TextureExists(this.pageTexture) && this.pageTexture != $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
+				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
 			this.overrideIconTexture = overrideIconTexture ?? "";
 			if (!ModContent.TextureExists(this.pageTexture) && this.overrideIconTexture != "") {
 				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
-				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
+				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
 				this.overrideIconTexture = "Terraria/NPC_Head_0";
 			}
 			this.available = available ?? (() => true);
@@ -73,11 +73,11 @@ namespace BossChecklist
 			Func<bool> avail = () => true;
 			if (name == "$NPCName.EaterofWorldsHead") avail = () => !WorldGen.crimson;
 			else if (name == "$NPCName.BrainofCthulhu") avail = () => WorldGen.crimson;
-			return new BossInfo(type, progression, "Vanilla", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]), despawnMessage);
+			return new BossInfo(type, progression, "Terraria", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]), despawnMessage);
 		}
 
 		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
-			return new BossInfo(EntryType.Event, progression, "Vanilla", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
+			return new BossInfo(EntryType.Event, progression, "Terraria", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";
@@ -91,7 +91,7 @@ namespace BossChecklist
 		internal string Key => modSource + " " + internalName;
 		internal List<int> values;
 
-		internal string SourceDisplayName => modSource == "Vanilla" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
+		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
 		internal OrphanInfo(OrphanType type, string modSource, string internalName, List<int> values) {
 			this.type = type;

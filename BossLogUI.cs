@@ -269,7 +269,7 @@ namespace BossChecklist
 			BossInfo selectedBoss;
 			if (BossLogUI.PageNum >= 0) selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 			else {
-				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(boss => boss.modSource == "Vanilla" && boss.internalName == "KingSlime");
+				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(boss => boss.modSource == "Terraria" && boss.internalName == "KingSlime");
 				selectedBoss = BossChecklist.bossTracker.SortedBosses[index];
 			}
 
@@ -468,7 +468,7 @@ namespace BossChecklist
 
 				List<string> optedMods = new List<string>();
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-					if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") {
+					if (boss.modSource != "Terraria" && boss.modSource != "Unknown") {
 						string sourceDisplayName = boss.SourceDisplayName;
 						if (!optedMods.Contains(sourceDisplayName)) {
 							optedMods.Add(sourceDisplayName);
@@ -2100,7 +2100,7 @@ namespace BossChecklist
 			}
 			List<Item> ingredients = new List<Item>();
 			List<int> requiredTiles = new List<int>();
-			string recipeMod = "Vanilla";
+			string recipeMod = "Terraria";
 			//List<Recipe> recipes = Main.recipe.ToList();
 			Item spawn = new Item();
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
@@ -2428,7 +2428,7 @@ namespace BossChecklist
 			ResetBothPages();
 			List<string> optedMods = new List<string>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.modSource != "Vanilla" && boss.modSource != "Unknown") {
+				if (boss.modSource != "Terraria" && boss.modSource != "Unknown") {
 					string sourceDisplayName = boss.SourceDisplayName;
 					if (!optedMods.Contains(sourceDisplayName)) {
 						optedMods.Add(sourceDisplayName);
