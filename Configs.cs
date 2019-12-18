@@ -182,10 +182,9 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		[Label("Disable Record-Making")]
 		[Tooltip("Being able to set new records can be disabled with this option.\nThis cannot be changed during boss fights.")]
-		public bool RecordsEnabled {
+		public bool RecordingDisabled {
 			get { return recording; }
 			set {
-				if (Terraria.ModLoader.ModLoader.GetMod("BossChecklist") == null) return;
 				foreach (NPC npc in Main.npc) {
 					if (!npc.active) continue;
 					if (NPCAssist.ListedBossNum(npc) != -1) {
@@ -193,7 +192,7 @@ namespace BossChecklist
 						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 					}
 				}
-				recording = !recording;
+				recording = value;
 			}
 		}
 
