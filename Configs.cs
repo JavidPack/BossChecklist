@@ -175,12 +175,27 @@ namespace BossChecklist
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 
+		private bool recording;
+
 		[Header("[i:149] [c/ffeb6e:Info]")]
 
-		[DefaultValue(true)]
-		[Label("Enable Record-Making")]
-		[Tooltip("Being able to set new records can be enabled/disabled with this option.")]
-		public bool RecordingStats { get; set; }
+		[DefaultValue(false)]
+		[Label("Disable Record-Making")]
+		[Tooltip("Being able to set new records can be disabled with this option.")]
+		public bool RecordsDisabled {
+			get { return recording; }
+			set {
+				if (Terraria.ModLoader.ModLoader.GetMod("BossChecklist") == null) return;
+				foreach (NPC npc in Main.npc) {
+					if (!npc.active) continue;
+					if (NPCAssist.ListedBossNum(npc) != -1) {
+						Main.NewText("You cannot change this while a boss is active!");
+						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+					}
+				}
+				recording = !recording;
+			}
+		}
 
 		// TODO: Fix for MP
 		[DefaultValue(false)]
@@ -204,21 +219,6 @@ namespace BossChecklist
 		[Label("Show record timers and counters of selected NPC")]
 		[Tooltip("NOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
-		
-		public override void OnChanged() {
-			if (Terraria.ModLoader.ModLoader.GetMod("BossChecklist") != null) return;
-			foreach (NPC npc in Main.npc) {
-				if (!npc.active) continue;
-				int listed = NPCAssist.ListedBossNum(npc);
-				if (listed != -1) {
-					Main.NewText("You cannot change this while a boss is active!");
-					RecordingStats = false; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
-					//TODO?: Currently forces false if anything is changed while a boss is active
-					//Previously was forced to !RecordingStats, but this could allow the player to trick the configs using another variable to change
-					// allowing records to start in the middle of a boss fight. This MAY need to change on a future update.
-				}
-			}
-		}
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;

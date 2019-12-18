@@ -119,7 +119,7 @@ namespace BossChecklist
 				PlayerAssist myPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				Texture2D border = BossLogUI.CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
 				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
-				else if (!BossChecklist.DebugConfig.RecordingStats) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
+				else if (BossChecklist.DebugConfig.RecordsDisabled) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
 				
 				if (myPlayer.hasNewRecord) {
 					slowDown = !slowDown;
