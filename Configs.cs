@@ -181,7 +181,7 @@ namespace BossChecklist
 
 		[DefaultValue(false)]
 		[Label("Disable Record-Making")]
-		[Tooltip("Being able to set new records can be disabled with this option.")]
+		[Tooltip("Being able to set new records can be disabled with this option.\nThis cannot be changed during boss fights.")]
 		public bool RecordsEnabled {
 			get { return recording; }
 			set {
@@ -189,7 +189,7 @@ namespace BossChecklist
 				foreach (NPC npc in Main.npc) {
 					if (!npc.active) continue;
 					if (NPCAssist.ListedBossNum(npc) != -1) {
-						Main.NewText("You cannot change this while a boss is active!");
+						Main.NewText("You cannot change this while a boss is active!", Color.Orange);
 						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 					}
 				}
