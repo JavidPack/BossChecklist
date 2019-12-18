@@ -84,6 +84,7 @@ namespace BossChecklist
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 			BossesFinalized = true;
+			BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
 			
 			if (Main.netMode == NetmodeID.Server) {
 				BossChecklist.ServerCollectedRecords = new List<BossStats>[255];

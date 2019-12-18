@@ -303,7 +303,7 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
-						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
+						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
 					}
 					else {
 						bossTracker.AddBoss(
@@ -333,7 +333,7 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
-						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
+						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
 					}
 					else {
 						bossTracker.AddMiniBoss(
@@ -363,7 +363,7 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
-						Logger.Warn(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Update mod call with proper information.");
+						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
 					}
 					else {
 						bossTracker.AddEvent(
