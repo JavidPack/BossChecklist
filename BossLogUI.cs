@@ -2268,7 +2268,7 @@ namespace BossChecklist
 					lootTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
 					newRow.Append(lootTable);
 					col++;
-					if (col == 6 || i == shortcut.loot.Count - 1) {
+					if (col == 6) {
 						col = 0;
 						row++;
 						pageTwoItemList.Add(newRow);
@@ -2299,13 +2299,19 @@ namespace BossChecklist
 					lootTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
 					newRow.Append(lootTable);
 					col++;
-					if (col == 6 || i == shortcut.loot.Count - 1) {
+					if (col == 6) {
 						col = 0;
 						row++;
 						pageTwoItemList.Add(newRow);
 						newRow = new LootRow(row) { Id = "Loot" + row };
 					}
 				}
+			}
+			if (col != 0) {
+				col = 0;
+				row++;
+				pageTwoItemList.Add(newRow);
+				newRow = new LootRow(row) { Id = "Loot" + row };
 			}
 			if (row > 5) PageTwo.Append(scrollTwo);
 			PageTwo.Append(pageTwoItemList);

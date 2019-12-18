@@ -1,10 +1,9 @@
 ﻿author = SheepishShepherd, jopojelly
-version = 1.0
+version = 1.0.1
 displayName = Boss Checklist
 homepage = http://forums.terraria.org/index.php?threads/boss-checklist-in-game-progression-checklist.50668/
 hideCode = false
 hideResources = false
 includeSource = true
 includePDB = true
-notworkingside = Client
 buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config, lib\*, .gitignore, .git\*
