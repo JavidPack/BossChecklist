@@ -255,6 +255,7 @@ namespace BossChecklist
 		}
 
 		public override void AddRecipes() {
+			bossTracker.FinalizeLocalization();
 			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
 				BossInfo bossInfo = bossTracker.SortedBosses.Find(boss => boss.Key == orphan.Key);
 				if (bossInfo != null) {
@@ -276,7 +277,7 @@ namespace BossChecklist
 					}
 				}
 				else {
-					Logger.Info("Call Error: Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
+					Logger.Info("Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
 				}
 			}
 			bossTracker.FinalizeBossData();
@@ -303,6 +304,7 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
+						bossTracker.AnyModHasOldCall = true;
 						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
 					}
 					else {
@@ -333,6 +335,7 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
+						bossTracker.AnyModHasOldCall = true;
 						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
 					}
 					else {
@@ -363,6 +366,7 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
+						bossTracker.AnyModHasOldCall = true;
 						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
 					}
 					else {

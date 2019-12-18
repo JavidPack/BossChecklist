@@ -35,14 +35,14 @@ namespace BossChecklist
 			this.progression = progression;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
-			this.name = GetTextFromPossibleTranslationKey(name);
+			this.name = name;
 			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
 			this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
-			if (this.info != "") this.info = GetTextFromPossibleTranslationKey(info);
+			if (this.info != "") this.info = info;
 			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
 			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
@@ -50,6 +50,7 @@ namespace BossChecklist
 			this.pageTexture = pageTexture ?? $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			if (!ModContent.TextureExists(this.pageTexture) && this.pageTexture != $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
 				if (SourceDisplayName != "Vanilla" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
+				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
 			this.overrideIconTexture = overrideIconTexture ?? "";
 			if (!ModContent.TextureExists(this.pageTexture) && this.overrideIconTexture != "") {
@@ -60,9 +61,6 @@ namespace BossChecklist
 			this.available = available ?? (() => true);
 
 			this.hidden = false;
-
-			// Local Functions
-			string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
 		}
 
 		// Workaround for vanilla events with illogical translation keys.

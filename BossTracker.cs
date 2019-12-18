@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BossChecklist
@@ -29,7 +30,8 @@ namespace BossChecklist
 		internal List<BossInfo> SortedBosses;
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
-		
+		internal bool AnyModHasOldCall = false;
+
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
 			InitializeVanillaBosses();
@@ -81,10 +83,22 @@ namespace BossChecklist
 			};
 		}
 
+		internal void FinalizeLocalization() {
+			// Modded Localization keys are initialized before AddRecipes, so we need to do this late.
+			foreach (var boss in SortedBosses) {
+				boss.name = GetTextFromPossibleTranslationKey(boss.name);
+				boss.info = GetTextFromPossibleTranslationKey(boss.info);
+			}
+
+			// Local Functions
+			string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
+		}
+
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 			BossesFinalized = true;
-			BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
+			if(AnyModHasOldCall)
+				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
 			
 			if (Main.netMode == NetmodeID.Server) {
 				BossChecklist.ServerCollectedRecords = new List<BossStats>[255];

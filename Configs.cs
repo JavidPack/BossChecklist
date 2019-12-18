@@ -144,7 +144,7 @@ namespace BossChecklist
 		[Label("Enable Boss Radar")]
 		[DefaultValue(true)]
 		public bool BossRadarBool { get; set; }
-		
+
 		[Label("Whitelist mini bosses")]
 		[Tooltip("Note: This only works properly with mini bosses that have head icons")]
 		[DefaultValue(false)]
@@ -155,7 +155,7 @@ namespace BossChecklist
 		[Range(0.35f, 0.85f)]
 		[DefaultValue(0.75f)]
 		public float OpacityFloat { get; set; }
-		
+
 		[Label("Radar Blacklist")]
 		[Tooltip("These NPCs will not be tracked by the radar")]
 		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
@@ -185,13 +185,14 @@ namespace BossChecklist
 		public bool RecordingDisabled {
 			get { return recording; }
 			set {
-				foreach (NPC npc in Main.npc) {
-					if (!npc.active) continue;
-					if (NPCAssist.ListedBossNum(npc) != -1) {
-						Main.NewText("You cannot change this while a boss is active!", Color.Orange);
-						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+				if (!Main.gameMenu)
+					foreach (NPC npc in Main.npc) {
+						if (!npc.active) continue;
+						if (NPCAssist.ListedBossNum(npc) != -1) {
+							Main.NewText("You cannot change this while a boss is active!", Color.Orange);
+							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+						}
 					}
-				}
 				recording = value;
 			}
 		}
@@ -213,7 +214,7 @@ namespace BossChecklist
 		[Label("Truely Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
-		
+
 		// TODO: Get timers and counters to properly visualize itself in Multiplayer
 		[Label("Show record timers and counters of selected NPC")]
 		[Tooltip("NOTE: This debug feature only works in singleplayer currently!")]
