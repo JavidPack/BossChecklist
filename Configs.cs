@@ -182,7 +182,7 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		[Label("Disable Record-Making")]
 		[Tooltip("Being able to set new records can be disabled with this option.")]
-		public bool RecordsDisabled {
+		public bool RecordsEnabled {
 			get { return recording; }
 			set {
 				if (Terraria.ModLoader.ModLoader.GetMod("BossChecklist") == null) return;

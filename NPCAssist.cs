@@ -94,7 +94,7 @@ namespace BossChecklist
 		public void CheckRecords(NPC npc, int recordIndex) {
 			Player player = Main.LocalPlayer;
 			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
-			if (BossChecklist.DebugConfig.RecordsDisabled || !npc.playerInteraction[Main.myPlayer]) return; // RecordingStats must be enabled!
+			if (!BossChecklist.DebugConfig.RecordsEnabled || !npc.playerInteraction[Main.myPlayer]) return; // RecordingStats must be enabled!
 
 			bool newRecordSet = false;
 
@@ -181,7 +181,7 @@ namespace BossChecklist
 				Player player = Main.player[i];
 
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				if (!player.active || !npc.playerInteraction[i] || BossChecklist.DebugConfig.RecordsDisabled) continue;
+				if (!player.active || !npc.playerInteraction[i] || !BossChecklist.DebugConfig.RecordsEnabled) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 				BossStats oldRecord = list[recordIndex];
