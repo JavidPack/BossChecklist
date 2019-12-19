@@ -89,7 +89,7 @@ namespace BossChecklist
 				if (listNum != -1) {
 					if (b.active) {
 						ActiveBossesList[listNum] = true;
-						if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+						// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 					}
 					else if (ActiveBossesList[listNum]) {
 						if (NPCAssist.TruelyDead(b)) {
@@ -103,7 +103,7 @@ namespace BossChecklist
 								else NetMessage.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
 							}
 							ActiveBossesList[listNum] = false;
-							if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+							// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 						}
 					}
 				}
