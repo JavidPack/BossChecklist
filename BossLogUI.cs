@@ -2478,13 +2478,13 @@ namespace BossChecklist
 			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
-		private void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
+		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
 			PageNum = Convert.ToInt32(listeningElement.Id);
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				pgBoss.hidden = !pgBoss.hidden;
-				if (pgBoss.hidden) BossChecklistWorld.HiddenBosses.Add(pgBoss.Key);
-				else BossChecklistWorld.HiddenBosses.Remove(pgBoss.Key);
+				if (pgBoss.hidden) WorldAssist.HiddenBosses.Add(pgBoss.Key);
+				else WorldAssist.HiddenBosses.Remove(pgBoss.Key);
 				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
 				UpdateTableofContents();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {

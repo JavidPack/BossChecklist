@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -13,6 +14,7 @@ namespace BossChecklist.UIElements
 	class UIBossCheckbox : UIElement
 	{
 		internal UICheckbox checkbox;
+		internal UIHoverImageButton moreInfo;
 		internal bool expanded;
 		BossInfo boss;
 		float descriptionHeight = 18;
@@ -33,16 +35,30 @@ namespace BossChecklist.UIElements
 			//checkbox.spawnItemID = boss.spawnItemID;
 			Append(checkbox);
 
+			moreInfo = new UIHoverImageButton(ModContent.GetTexture("BossChecklist/UIElements/info"), "More Info");
+			moreInfo.Left.Set(-24, 1f);
+			moreInfo.SetVisibility(1f, 0.7f);
+			moreInfo.OnClick += MoreInfo_OnClick;
+			int index = BossChecklist.bossTracker.SortedBosses.IndexOf(boss);
+			moreInfo.Id = index.ToString();
+
 			OnClick += Box_OnClick;
 		}
 
+		private void MoreInfo_OnClick(UIMouseEvent evt, UIElement listeningElement) {
+			BossChecklist.instance.BossLog.ToggleBossLog(true);
+			BossChecklist.instance.BossLog.JumpToBossPage(evt, listeningElement);
+		}
+
 		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement) {
+			if (evt.Target == moreInfo)
+				return;
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				boss.hidden = !boss.hidden;
 				if (boss.hidden)
-					BossChecklistWorld.HiddenBosses.Add(boss.Key);
+					WorldAssist.HiddenBosses.Add(boss.Key);
 				else
-					BossChecklistWorld.HiddenBosses.Remove(boss.Key);
+					WorldAssist.HiddenBosses.Remove(boss.Key);
 				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
 				if (BossChecklist.BossLogConfig.HideUnavailable) BossChecklist.instance.BossLog.UpdateTableofContents();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -60,12 +76,14 @@ namespace BossChecklist.UIElements
 				UIBossCheckbox box = (item as UIBossCheckbox);
 				if (box != clicked) {
 					box.expanded = false;
+					box.AddOrRemoveChild(box.moreInfo, box.expanded);
 					box.Height.Pixels = 15;
 					box.Recalculate();
 				}
 			}
 
 			expanded = !expanded;
+			this.AddOrRemoveChild(moreInfo, expanded);
 			Height.Pixels = expanded ? 15 + descriptionHeight : 15;
 			Recalculate();
 		}

@@ -429,9 +429,9 @@ namespace BossChecklist
 					string bossKey = reader.ReadString();
 					bool hide = reader.ReadBoolean();
 					if (hide)
-						BossChecklistWorld.HiddenBosses.Add(bossKey);
+						WorldAssist.HiddenBosses.Add(bossKey);
 					else
-						BossChecklistWorld.HiddenBosses.Remove(bossKey);
+						WorldAssist.HiddenBosses.Remove(bossKey);
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else
@@ -442,7 +442,7 @@ namespace BossChecklist
 					//{
 					//	Main.NewText("Huh? RequestClearHidden on client?");
 					//}
-					BossChecklistWorld.HiddenBosses.Clear();
+					WorldAssist.HiddenBosses.Clear();
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else

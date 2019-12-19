@@ -126,7 +126,7 @@ namespace BossChecklist.UIElements
 
 		private void ToggleHiddenButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-				BossChecklistWorld.HiddenBosses.Clear();
+				WorldAssist.HiddenBosses.Clear();
 				showHidden = false;
 				UpdateCheckboxes();
 
@@ -153,7 +153,7 @@ namespace BossChecklist.UIElements
 			checklistList.Clear();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				boss.hidden = BossChecklistWorld.HiddenBosses.Contains(boss.Key);
+				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
 				if (boss.available() && (!boss.hidden || showHidden)) {
 					if (showCompleted || !boss.downed()) {
 						if (boss.type == EntryType.Event && !showEvent)

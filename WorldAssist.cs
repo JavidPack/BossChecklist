@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -11,6 +12,8 @@ namespace BossChecklist
 {
 	public class WorldAssist : ModWorld
 	{
+		public static HashSet<string> HiddenBosses = new HashSet<string>();
+
 		public static bool downedBloodMoon;
 		public static bool downedFrostMoon;
 		public static bool downedPumpkinMoon;
@@ -20,7 +23,10 @@ namespace BossChecklist
 		public static bool downedOgre;
 		public static bool downedFlyingDutchman;
 		public static bool downedMartianSaucer;
-		
+
+		public static bool downedInvasionT2Ours;
+		public static bool downedInvasionT3Ours;
+
 		public static List<bool> ActiveBossesList;
 		public static List<List<Player>> StartingPlayers;
 		public static List<int> DayDespawners;
@@ -30,8 +36,23 @@ namespace BossChecklist
 		bool isPumpkinMoon = false;
 		bool isFrostMoon = false;
 		bool isEclipse = false;
-		
+
+		public override bool Autoload(ref string name) {
+			On.Terraria.GameContent.Events.DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
+			return base.Autoload(ref name);
+		}
+
+		private void DD2Event_WinInvasionInternal(On.Terraria.GameContent.Events.DD2Event.orig_WinInvasionInternal orig) {
+			orig();
+			if (DD2Event.OngoingDifficulty == 2)
+				downedInvasionT2Ours = true;
+			if (DD2Event.OngoingDifficulty == 3)
+				downedInvasionT3Ours = true;
+		}
+
 		public override void Initialize() {
+			HiddenBosses.Clear();
+
 			downedBloodMoon = false;
 			downedFrostMoon = false;
 			downedPumpkinMoon = false;
@@ -41,6 +62,9 @@ namespace BossChecklist
 			downedOgre = false;
 			downedFlyingDutchman = false;
 			downedMartianSaucer = false;
+
+			downedInvasionT2Ours = false;
+			downedInvasionT3Ours = false;
 
 			DayDespawners = new List<int>() { //Skeletron and Skeletron Prime are not added because they kill the player before despawning
 				NPCID.EyeofCthulhu,
@@ -84,7 +108,7 @@ namespace BossChecklist
 					}
 				}
 			}
-			
+
 			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
 				if (!ActiveBossesList[listNum]) {
 					foreach (Player player in Main.player) {
@@ -170,37 +194,42 @@ namespace BossChecklist
 		}
 
 		public override TagCompound Save() {
+			var HiddenBossesList = new List<string>(HiddenBosses);
 			var downed = new List<string>();
 			if (downedBloodMoon) downed.Add("bloodmoon");
 			if (downedFrostMoon) downed.Add("frostmoon");
 			if (downedPumpkinMoon) downed.Add("pumpkinmoon");
 			if (downedSolarEclipse) downed.Add("solareclipse");
+			if (downedDarkMage) downed.Add("darkmage");
+			if (downedOgre) downed.Add("ogre");
+			if (downedFlyingDutchman) downed.Add("flyingdutchman");
+			if (downedMartianSaucer) downed.Add("martiansaucer");
+			if (downedInvasionT2Ours) downed.Add("invasionT2Ours");
+			if (downedInvasionT3Ours) downed.Add("invasionT3Ours");
 
 			return new TagCompound {
 				["downed"] = downed,
+				["HiddenBossesList"] =	HiddenBossesList
 			};
 		}
 
 		public override void Load(TagCompound tag) {
+			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
+			foreach (var bossKey in HiddenBossesList) {
+				HiddenBosses.Add(bossKey);
+			}
+
 			var downed = tag.GetList<string>("downed");
 			downedBloodMoon = downed.Contains("bloodmoon");
 			downedFrostMoon = downed.Contains("frostmoon");
 			downedPumpkinMoon = downed.Contains("pumpkinmoon");
 			downedSolarEclipse = downed.Contains("solareclipse");
-		}
-
-		public override void LoadLegacy(BinaryReader reader) {
-			int loadVersion = reader.ReadInt32();
-			if (loadVersion == 0) {
-				BitsByte flags = reader.ReadByte();
-				downedBloodMoon = flags[0];
-				downedFrostMoon = flags[1];
-				downedPumpkinMoon = flags[2];
-				downedSolarEclipse = flags[3];
-			}
-			else {
-				mod.Logger.WarnFormat($"BossChecklist: Unknown loadVersion: {loadVersion}");
-			}
+			downedDarkMage = downed.Contains("darkmage");
+			downedOgre = downed.Contains("ogre");
+			downedFlyingDutchman = downed.Contains("flyingdutchman");
+			downedMartianSaucer = downed.Contains("martiansaucer");
+			downedInvasionT2Ours = downed.Contains("invasionT2Ours");
+			downedInvasionT3Ours = downed.Contains("invasionT3Ours");
 		}
 
 		public override void NetSend(BinaryWriter writer) {
@@ -211,14 +240,26 @@ namespace BossChecklist
 			flags[1] = downedFrostMoon;
 			flags[2] = downedPumpkinMoon;
 			flags[3] = downedSolarEclipse;
+			flags[4] = downedDarkMage;
+			flags[5] = downedOgre;
+			flags[6] = downedFlyingDutchman;
+			flags[7] = downedMartianSaucer;
 			writer.Write(flags);
 
-			BitsByte flags2 = new BitsByte();
-			flags2[0] = downedDarkMage;
-			flags2[1] = downedOgre;
-			flags2[2] = downedFlyingDutchman;
-			flags2[3] = downedMartianSaucer;
-			writer.Write(flags2);
+			// Vanilla doesn't sync these values, so we will.
+			flags = new BitsByte();
+			flags[0] = NPC.downedTowerSolar;
+			flags[1] = NPC.downedTowerVortex;
+			flags[2] = NPC.downedTowerNebula;
+			flags[3] = NPC.downedTowerStardust;
+			flags[4] = downedInvasionT2Ours;
+			flags[5] = downedInvasionT3Ours;
+			writer.Write(flags);
+
+			writer.Write(HiddenBosses.Count);
+			foreach (var bossKey in HiddenBosses) {
+				writer.Write(bossKey);
+			}
 		}
 
 		public override void NetReceive(BinaryReader reader) {
@@ -227,7 +268,26 @@ namespace BossChecklist
 			downedFrostMoon = flags[1];
 			downedPumpkinMoon = flags[2];
 			downedSolarEclipse = flags[3];
-			// BitBytes can have up to 8 values.
+			downedDarkMage = flags[4];
+			downedOgre = flags[5];
+			downedFlyingDutchman = flags[6];
+			downedMartianSaucer = flags[7];
+
+			flags = reader.ReadByte();
+			NPC.downedTowerSolar = flags[0];
+			NPC.downedTowerVortex = flags[1];
+			NPC.downedTowerNebula = flags[2];
+			NPC.downedTowerStardust = flags[3];
+			downedInvasionT2Ours = flags[4];
+			downedInvasionT3Ours = flags[5];
+
+			HiddenBosses.Clear();
+			int count = reader.ReadInt32();
+			for (int i = 0; i < count; i++) {
+				HiddenBosses.Add(reader.ReadString());
+			}
+			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+			if (BossChecklist.BossLogConfig.HideUnavailable) BossChecklist.instance.BossLog.UpdateTableofContents();
 		}
 	}
 }
