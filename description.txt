@@ -1,4 +1,4 @@
-﻿Boss Checklist lets you view a boss checklist while playing so you can progress through bosses as you can handle them. 
+Boss Checklist lets you view a boss checklist while playing so you can progress through bosses as you can handle them. 
 
 Toggle the checklist with the hotkey assigned to it in the settings. Visit Settings->Controls->Keybindings to set or check the current hotkey
 
