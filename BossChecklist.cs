@@ -92,7 +92,9 @@ namespace BossChecklist
 			ServerCollectedRecords = null;
 			BossRadarUIInterface = null;
 			BossRadarUI.arrowTexture = null;
-
+			ClientConfig = null;
+			DebugConfig = null;
+			BossLogConfig = null;
 			UICheckbox.checkboxTexture = null;
 			UICheckbox.checkmarkTexture = null;
 		}
