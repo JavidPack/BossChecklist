@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
@@ -866,25 +867,23 @@ namespace BossChecklist
 			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2) {
 				if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 					// Loot Table Subpage
-					Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
+					Texture2D bag = Main.itemTexture[ItemID.SoulofMight];
+					Rectangle sourceRect = new Rectangle();
 					for (int i = 0; i < selectedBoss.loot.Count; i++) {
 						Item bagItem = new Item();
 						bagItem.SetDefaults(selectedBoss.loot[i]);
 						if (bagItem.expert && bagItem.Name.Contains("Treasure Bag")) {
-							if (bagItem.type < ItemID.Count) {
-								bag = ModContent.GetTexture("Terraria/Item_" + bagItem.type);
-							}
-							else {
-								bag = ModContent.GetTexture(ItemLoader.GetItem(bagItem.type).Texture);
-								break;
-							}
+							bag = Main.itemTexture[ItemID.SoulofMight];
+							DrawAnimation drawAnim = Main.itemAnimations[ItemID.SoulofMight];
+							if (drawAnim != null) sourceRect = drawAnim.GetFrame(bag);
+							else sourceRect = bag.Bounds;
+							break;
+							//if (bagItem.type < ItemID.Count) bag = ModContent.GetTexture("Terraria/Item_" + bagItem.type);
+							//else bag = ModContent.GetTexture(ItemLoader.GetItem(bagItem.type).Texture);
 						}
 					}
-
-					for (int i = 0; i < 7; i++) {
-						Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 20 - (bag.Width / 2), pageRect.Y + 88, bag.Width, bag.Height);
-						spriteBatch.Draw(bag, posRect, Color.White);
-					}
+					Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 20 - (bag.Width / 2), pageRect.Y + 88, sourceRect.Width, sourceRect.Height);
+					spriteBatch.Draw(bag, posRect, sourceRect, Color.White);
 				}
 				else {
 					// Collectibles Subpage
