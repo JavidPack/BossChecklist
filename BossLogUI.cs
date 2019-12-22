@@ -867,14 +867,14 @@ namespace BossChecklist
 			if (Id == "PageTwo" && BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2) {
 				if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 					// Loot Table Subpage
-					Texture2D bag = Main.itemTexture[ItemID.SoulofMight];
-					Rectangle sourceRect = new Rectangle();
+					Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
+					Rectangle sourceRect = bag.Bounds;
 					for (int i = 0; i < selectedBoss.loot.Count; i++) {
 						Item bagItem = new Item();
 						bagItem.SetDefaults(selectedBoss.loot[i]);
 						if (bagItem.expert && bagItem.Name.Contains("Treasure Bag")) {
-							bag = Main.itemTexture[ItemID.SoulofMight];
-							DrawAnimation drawAnim = Main.itemAnimations[ItemID.SoulofMight];
+							bag = Main.itemTexture[bagItem.type];
+							DrawAnimation drawAnim = Main.itemAnimations[bagItem.type];
 							if (drawAnim != null) sourceRect = drawAnim.GetFrame(bag);
 							else sourceRect = bag.Bounds;
 							break;
