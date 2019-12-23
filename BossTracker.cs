@@ -28,6 +28,7 @@ namespace BossChecklist
 		/// All currently loaded bosses/minibosses/events sorted in progression order.
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
+		internal bool[] BossCache; 
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
 		internal bool AnyModHasOldCall = false;
@@ -108,6 +109,11 @@ namespace BossChecklist
 						BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
 					}
 				}
+			}
+
+			BossCache = new bool[NPCLoader.NPCCount];
+			foreach (var boss in SortedBosses) {
+				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}
 		}
 

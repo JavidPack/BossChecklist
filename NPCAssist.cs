@@ -270,6 +270,8 @@ namespace BossChecklist
 		}
 
 		public static int ListedBossNum(NPC boss, bool skipEventCheck = true) { // Skipcheck incase we need it to account for events
+			if (!BossChecklist.bossTracker.BossCache[boss.type]) return -1;
+			
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (boss.type < NPCID.Count) {
 				int index = BL.FindIndex(x => x.npcIDs.Any(y => y == boss.type));
