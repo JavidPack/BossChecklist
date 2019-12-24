@@ -111,13 +111,13 @@ namespace BossChecklist
 
 			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
 				if (!ActiveBossesList[listNum]) {
-					foreach (Player player in Main.player) {
-						if (player.active) StartingPlayers[listNum].Add(player);
+					for (int i = 0; i < Main.maxPlayers; i++) {
+						if (Main.player[i].active && !StartingPlayers[listNum].Contains(Main.player[i])) StartingPlayers[listNum].Add(Main.player[i]);
 					}
 				}
 				else {
-					foreach (Player player in StartingPlayers[listNum]) {
-						if (!player.active) StartingPlayers[listNum].Remove(player);
+					for (int i = 0; i < StartingPlayers[listNum].Count; i++){
+						if (!StartingPlayers[listNum][i].active) StartingPlayers[listNum].Remove(StartingPlayers[listNum][i]);
 					}
 				}
 			}
