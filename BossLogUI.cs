@@ -18,17 +18,6 @@ using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-/* Patch Notes:
- *   + Added hidden mask feature. Bosses dont show what they look like until defeated
- *   + Upgraded the spawn item tab to contain multiple items and all their recipes (You do not have to change your call, it still works with a singular int)
- *   + Records now work in Multiplayer!
- *   + Fixed limb messages giving the wrong name in MultiPlayer
- *   + Boss Log now hides itself when if you are dead. Thats where the respawn timer should be.
- *   + Boss Log Pages now supports multiple boss types and now checks for all boss types to be inactive for records
- *   + Bosses with multiple IDs now show all corresponding head icons within the Boss Log
- *   + Boss Collection display now shows all possible trophies/masks/music boxes for ALL bosses now
- */
-
 namespace BossChecklist
 {
 	internal class BossAssistButton : UIImageButton
@@ -1248,30 +1237,35 @@ namespace BossChecklist
 
 			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
-			int index = sortedBosses.FindIndex(x => x.progression == order);
+			int index = sortedBosses.FindIndex(x => x.progression == order && x.name == text); // name check, for when progression matches
 
 			bool allLoot = false;
 			bool allCollect = false;
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
 			foreach (int loot in sortedBosses[index].loot) {
+				if (loot == 0 || loot == -1) continue;
 				if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
 					if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow)) continue;
 					else if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds)) continue;
 				}
-				if (modPlayer.BossTrophies[index].loot.Any(x => x.Type == loot)) {
-					allLoot = true;
-				}
-				else if (loot != sortedBosses[index].loot[0]) {
-					allLoot = false;
-					break;
+				int indexLoot = modPlayer.BossTrophies[index].loot.FindIndex(x => x.Type == loot);
+				if (indexLoot != -1) allLoot = true;
+				else { // Item not obtained
+					Item newItem = new Item();
+					newItem.SetDefaults(loot);
+					if (newItem.expert && !Main.expertMode) continue;
+					else {
+						allLoot = false;
+						break;
+					}
 				}
 			}
 			foreach (int collectible in sortedBosses[index].collection) {
-				if (modPlayer.BossTrophies[index].collectibles.Any(x => x.Type == collectible)) {
-					allCollect = true;
-				}
-				else if (collectible != -1 && collectible != 0) {
+				if (collectible == 0 || collectible == -1) continue;
+				int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
+				if (indexCollect != -1) allCollect = true;
+				else {
 					allCollect = false;
 					break;
 				}
@@ -2582,6 +2576,7 @@ namespace BossChecklist
 						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 						toolTipButton.Top.Pixels = 86;
 						toolTipButton.OnClick += (a, b) => SwapRecordPage();
+
 						if (SubPageNum != 1) PageTwo.Append(toolTipButton);
 
 						if (SubPageNum == 0 && Main.netMode == NetmodeID.MultiplayerClient) {
