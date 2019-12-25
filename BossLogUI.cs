@@ -385,8 +385,11 @@ namespace BossChecklist
 				if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:Defeated in {Main.worldName}]";
 				else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:Undefeated in {Main.worldName} ]";
 
+				string entry = selectedBoss.name;
+				if (BossChecklist.DebugConfig.ShowInternalNames) entry = selectedBoss.internalName;
+
 				Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-				Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
+				Utils.DrawBorderString(spriteBatch, entry, pos, Color.Goldenrod);
 				
 				pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
 				Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
@@ -1234,10 +1237,10 @@ namespace BossChecklist
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
 			Rectangle source = new Rectangle(72, 0, 22, 20);
 			spriteBatch.Draw(checkGrid, pos, source, Color.White);
-
+						 
 			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
-			int index = sortedBosses.FindIndex(x => x.progression == order && x.name == text); // name check, for when progression matches
+			int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == text || x.internalName == text)); // name check, for when progression matches
 
 			bool allLoot = false;
 			bool allCollect = false;
@@ -2375,7 +2378,8 @@ namespace BossChecklist
 				if (nextCheck == 1) nextCheckBool = true;
 
 				string bossName = copiedList[i].name;
-				if (!copiedList[i].available() && !copiedList[i].downed()) bossName = "???";
+				if (BossChecklist.DebugConfig.ShowInternalNames) bossName = copiedList[i].internalName;
+				else if (!copiedList[i].available() && !copiedList[i].downed()) bossName = "???";
 
 				TableOfContents next = new TableOfContents(copiedList[i].progression, bossName, nextCheckBool);
 				nextCheckBool = false;

@@ -211,6 +211,11 @@ namespace BossChecklist
 		*/
 
 		[DefaultValue(false)]
+		[Label("Show Internal Names")]
+		[Tooltip("Replaces boss names with their internal names.\nGood for mod developers who need it for cross-mod content.")]
+		public bool ShowInternalNames { get; set; }
+
+		[DefaultValue(false)]
 		[Label("Truely Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
