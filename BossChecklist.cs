@@ -260,7 +260,7 @@ namespace BossChecklist
 			bossTracker.FinalizeLocalization();
 			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
 				BossInfo bossInfo = bossTracker.SortedBosses.Find(boss => boss.Key == orphan.Key);
-				if (bossInfo != null) {
+				if (bossInfo != null && orphan.values != null) {
 					switch (orphan.type) {
 						case OrphanType.Loot:
 							bossInfo.loot.AddRange(orphan.values);
