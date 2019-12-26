@@ -65,23 +65,17 @@ namespace BossChecklist
 		}
 
 		public override bool InstancePerEntity => true;
-		
-		List<Player> StartingPlayers = new List<Player>(); // Created for each NPC
+		//bool[] StartingPlayers; // Created for each NPC
 
 		public override bool PreAI(NPC npc) {
 			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) return true; // Checks for multi-segmented bosses?
 			int listNum = ListedBossNum(npc);
-			if (listNum != -1 && StartingPlayers.Count == 0) {
-				StartingPlayers = new List<Player>();
-				foreach (Player player in Main.player) {
-					if (player.active) StartingPlayers.Add(player);
-				}
-				//TODO: Fix ghost bosses from the following code below? (Index out of bounds range warning while in MP?)
+			if (listNum != -1) {
 				if (!WorldAssist.ActiveBossesList[listNum]) {
-					//WorldAssist.ActiveBossesList[listNum] = true; (New system introduced, but might be better to have this)
-					foreach (Player player in StartingPlayers) {
-						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-						modPlayer.MaxHealth[listNum] = player.statLifeMax;
+					for (int j = 0; j < Main.maxPlayers; j++) {
+						if (!Main.player[j].active) continue;
+						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
+						modPlayer.MaxHealth[listNum] = Main.player[j].statLifeMax;
 						modPlayer.RecordTimers[listNum] = 0;
 						modPlayer.BrinkChecker[listNum] = 0;
 						modPlayer.DodgeTimer[listNum] = 0;

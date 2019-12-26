@@ -28,7 +28,7 @@ namespace BossChecklist
 		public static bool downedInvasionT3Ours;
 
 		public static List<bool> ActiveBossesList;
-		public static List<List<Player>> StartingPlayers;
+		public static List<bool[]> StartingPlayers;
 		public static List<int> DayDespawners;
 
 		string EventKey = "";
@@ -75,10 +75,10 @@ namespace BossChecklist
 
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			ActiveBossesList = new List<bool>();
-			StartingPlayers = new List<List<Player>>();
+			StartingPlayers = new List<bool[]>();
 			for (int i = 0; i < BL.Count; i++) { // Includes events, even though they wont be accounted for
 				ActiveBossesList.Add(false);
-				StartingPlayers.Add(new List<Player>());
+				StartingPlayers.Add(new bool[Main.maxPlayers]);
 			}
 		}
 
@@ -112,12 +112,12 @@ namespace BossChecklist
 			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
 				if (!ActiveBossesList[listNum]) {
 					for (int i = 0; i < Main.maxPlayers; i++) {
-						if (Main.player[i].active && !StartingPlayers[listNum].Contains(Main.player[i])) StartingPlayers[listNum].Add(Main.player[i]);
+						if (Main.player[i].active) StartingPlayers[listNum][i] = true;
 					}
 				}
 				else {
-					for (int i = 0; i < StartingPlayers[listNum].Count; i++){
-						if (!StartingPlayers[listNum][i].active) StartingPlayers[listNum].Remove(StartingPlayers[listNum][i]);
+					for (int i = 0; i < Main.maxPlayers; i++) {
+						if (!Main.player[i].active) StartingPlayers[listNum][i] = false;
 					}
 				}
 			}

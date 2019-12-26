@@ -166,12 +166,7 @@ namespace BossChecklist
 		public override void PreUpdate() {
 			for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 				if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
-				else if (WorldAssist.StartingPlayers[listNum].Contains(player)) {
-					if (!player.active) {
-						WorldAssist.StartingPlayers[listNum].Remove(player);
-						continue;
-					}
-					
+				else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {					
 					if (player.dead) DeathTracker[listNum] = 1;
 					RecordTimers[listNum]++;
 					DodgeTimer[listNum]++;
