@@ -88,6 +88,10 @@ namespace BossChecklist
 				int listNum = NPCAssist.ListedBossNum(b);
 				if (listNum != -1) {
 					if (b.active) {
+						for (int i = 0; i < Main.maxPlayers; i++) {
+							if (!ActiveBossesList[listNum]) StartingPlayers[listNum][i] = Main.player[i].active;
+							else if (!Main.player[i].active) StartingPlayers[listNum][i] = false;
+						}
 						ActiveBossesList[listNum] = true;
 						// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 					}
@@ -105,19 +109,6 @@ namespace BossChecklist
 							ActiveBossesList[listNum] = false;
 							// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 						}
-					}
-				}
-			}
-
-			for (int listNum = 0; listNum < ActiveBossesList.Count; listNum++) {
-				if (!ActiveBossesList[listNum]) {
-					for (int i = 0; i < Main.maxPlayers; i++) {
-						if (Main.player[i].active) StartingPlayers[listNum][i] = true;
-					}
-				}
-				else {
-					for (int i = 0; i < Main.maxPlayers; i++) {
-						if (!Main.player[i].active) StartingPlayers[listNum][i] = false;
 					}
 				}
 			}
