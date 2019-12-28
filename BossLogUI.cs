@@ -897,7 +897,7 @@ namespace BossChecklist
 					
 					// Draw Music Boxes
 					Main.instance.LoadTiles(TileID.MusicBoxes);
-					Texture2D musicBox = Main.tileTexture[139];
+					Texture2D musicBox = Main.tileTexture[TileID.MusicBoxes];
 
 					int offsetX = 0;
 					int offsetY = 0;

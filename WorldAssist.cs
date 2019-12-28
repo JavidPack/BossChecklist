@@ -278,7 +278,7 @@ namespace BossChecklist
 				HiddenBosses.Add(reader.ReadString());
 			}
 			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-			if (BossChecklist.BossLogConfig.HideUnavailable) BossChecklist.instance.BossLog.UpdateTableofContents();
+			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) BossChecklist.instance.BossLog.UpdateTableofContents();
 		}
 	}
 }
