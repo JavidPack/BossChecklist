@@ -2039,7 +2039,11 @@ namespace BossChecklist
 
 				foreach (Recipe recipe in finder.SearchRecipes()) {
 					if (TotalRecipes == RecipeShown) {
-						foreach (Item item in recipe.requiredItem) ingredients.Add(item);
+						foreach (Item item in recipe.requiredItem) {
+							Item clone = item.Clone();
+							OverrideForGroups(recipe, clone);
+							ingredients.Add(clone);
+						}
 						foreach (int tile in recipe.requiredTile) {
 							if (tile != -1 && tile != 0) requiredTiles.Add(tile);
 						}
@@ -2641,6 +2645,32 @@ namespace BossChecklist
 			texture.GetData(0, snippet, data, 0, data.Length);
 			croppedTexture.SetData(data);
 			return croppedTexture;
+		}
+
+		public static void OverrideForGroups(Recipe recipe, Item item) {
+			// This method taken from RecipeBrowser with permission.
+			string nameOverride;
+			if (recipe.ProcessGroupsForText(item.type, out nameOverride)) {
+				//Main.toolTip.name = name;
+			}
+			if (recipe.anyIronBar && item.type == 22) {
+				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(22);
+			}
+			else if (recipe.anyWood && item.type == 9) {
+				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(9);
+			}
+			else if (recipe.anySand && item.type == 169) {
+				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(169);
+			}
+			else if (recipe.anyFragment && item.type == 3458) {
+				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.51");
+			}
+			else if (recipe.anyPressurePlate && item.type == 542) {
+				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.38");
+			}
+			if (nameOverride != "") {
+				item.SetNameOverride(nameOverride);
+			}
 		}
 	}
 }
