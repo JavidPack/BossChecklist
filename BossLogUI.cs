@@ -894,27 +894,39 @@ namespace BossChecklist
 					Texture2D template = ModContent.GetTexture("BossChecklist/Resources/Extra_CollectionTemplate");
 					Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height);
 					spriteBatch.Draw(template, ctRect, Color.White);
-					if (!hasMusicBox) {
-						Main.instance.LoadTiles(TileID.MusicBoxes);
-						Texture2D musicBox = Main.tileTexture[139];
+					
+					// Draw Music Boxes
+					Main.instance.LoadTiles(TileID.MusicBoxes);
+					Texture2D musicBox = Main.tileTexture[139];
 
-						int offsetX = 0;
-						int offsetY = 0;
-
-						for (int i = 0; i < 4; i++) {
-							Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16), pageRect.Y + 160 + (offsetY * 16), 16, 16);
-							Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
-
-							spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
-
-							offsetX++;
-							if (i == 1) {
-								offsetX = 0;
-								offsetY++;
-							}
+					int offsetX = 0;
+					int offsetY = 0;
+					
+					if (hasMusicBox) {
+						if (selectedMusicBox < ItemID.Count) offsetY = BossLogUI.GetVanillaMusicBoxPos(selectedMusicBox);
+						else {
+							int selectedTile = ItemLoader.GetItem(selectedMusicBox).item.createTile;
+							Main.instance.LoadTiles(selectedTile);
+							musicBox = Main.tileTexture[selectedTile];
 						}
 					}
 
+					int backupX = offsetX;
+					int backupY = offsetY;
+
+					for (int i = 0; i < 4; i++) {
+						Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16) - (backupX * 16), pageRect.Y + 160 + (offsetY * 16) - (backupY * 16), 16, 16);
+						Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
+
+						spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
+
+						offsetX++;
+						if (i == 1) {
+							offsetX = 0;
+							offsetY++;
+						}
+					}
+					
 					// Draw Masks
 					if (hasMask) {
 						Texture2D mask;
@@ -933,29 +945,29 @@ namespace BossChecklist
 
 					// Draw Trophies
 					if (hasTrophy) {
-						int offsetX = 0;
-						int offsetY = 0;
+						int offsetTrophyX = 0;
+						int offsetTrophyY = 0;
 
 						if (selectedTrophy < ItemID.Count) {
 							Main.instance.LoadTiles(TileID.Painting3X3);
 							Texture2D trophy = Main.tileTexture[TileID.Painting3X3];
 
-							offsetX = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[0];
-							offsetY = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[1];
+							offsetTrophyX = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[0];
+							offsetTrophyY = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[1];
 
-							int backupX = offsetX;
-							int backupY = offsetY;
+							int backupTrophyX = offsetTrophyX;
+							int backupTrophyY = offsetTrophyY;
 
 							for (int i = 0; i < 9; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetX * 16) - (backupX * 16), pageRect.Y + 126 + (offsetY * 16) - (backupY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
+								Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetTrophyX * 16) - (backupTrophyX * 16), pageRect.Y + 126 + (offsetTrophyY * 16) - (backupTrophyY * 16), 16, 16);
+								Rectangle cutRect = new Rectangle(offsetTrophyX * 18, offsetTrophyY * 18, 16, 16);
 
 								spriteBatch.Draw(trophy, posRect, cutRect, Color.White);
 
-								offsetX++;
+								offsetTrophyX++;
 								if (i == 2 || i == 5) {
-									offsetX = backupX;
-									offsetY++;
+									offsetTrophyX = backupTrophyX;
+									offsetTrophyY++;
 								}
 							}
 						}
@@ -964,97 +976,19 @@ namespace BossChecklist
 							Main.instance.LoadTiles(selectedTile);
 							Texture2D trophy = Main.tileTexture[selectedTile];
 
-							offsetX = 0;
-							offsetY = 0;
+							offsetTrophyX = 0;
+							offsetTrophyY = 0;
 
 							for (int i = 0; i < 9; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetX * 16), pageRect.Y + 126 + (offsetY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
+								Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetTrophyX * 16), pageRect.Y + 126 + (offsetTrophyY * 16), 16, 16);
+								Rectangle cutRect = new Rectangle(offsetTrophyX * 18, offsetTrophyY * 18, 16, 16);
 
 								spriteBatch.Draw(trophy, posRect, cutRect, Color.White);
 
-								offsetX++;
+								offsetTrophyX++;
 								if (i == 2 || i == 5) {
-									offsetX = 0;
-									offsetY++;
-								}
-							}
-						}
-					}
-
-					// Draw Music Boxes
-					if (hasMusicBox) {
-						int offsetX = 0;
-						int offsetY = 0;
-
-						if (selectedMusicBox < ItemID.Count) {
-							Main.instance.LoadTiles(TileID.MusicBoxes);
-							Texture2D musicBox = Main.tileTexture[TileID.MusicBoxes];
-
-							if (selectedMusicBox == ItemID.MusicBoxBoss1) {
-								if (Main.music[MusicID.Boss1].IsPlaying) offsetX = 2;
-								offsetY = 10;
-							}
-							else if (selectedBoss.collection.Any(x => x == ItemID.MusicBoxBoss2)) {
-								if (Main.music[MusicID.Boss2].IsPlaying) offsetX = 2;
-								offsetY = 20;
-							}
-							else if (selectedMusicBox == ItemID.MusicBoxBoss3) {
-								if (Main.music[MusicID.Boss3].IsPlaying) offsetX = 2;
-								offsetY = 24;
-							}
-							else if (selectedMusicBox == ItemID.MusicBoxBoss4) {
-								if (Main.music[MusicID.Boss4].IsPlaying) offsetX = 2;
-								offsetY = 32;
-							}
-							else if (selectedMusicBox == ItemID.MusicBoxBoss5) {
-								if (Main.music[MusicID.Boss5].IsPlaying) offsetX = 2;
-								offsetY = 48;
-							}
-							else if (selectedMusicBox == ItemID.MusicBoxPlantera) {
-								if (Main.music[MusicID.Plantera].IsPlaying) offsetX = 2;
-								offsetY = 46;
-							}
-							else if (selectedMusicBox == ItemID.MusicBoxDD2) {
-								if (Main.music[MusicID.OldOnesArmy].IsPlaying) offsetX = 2;
-								offsetY = 78;
-							}
-							else if (selectedMusicBox == ItemID.MusicBoxLunarBoss) {
-								if (Main.music[MusicID.LunarBoss].IsPlaying) offsetX = 2;
-								offsetY = 64;
-							}
-
-							int backupX = offsetX;
-							int backupY = offsetY;
-
-							for (int i = 0; i < 4; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16) - (backupX * 16), pageRect.Y + 160 + (offsetY * 16) - (backupY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
-
-								spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
-
-								offsetX++;
-								if (i == 1) {
-									offsetX = backupX;
-									offsetY++;
-								}
-							}
-						}
-						else {
-							int selectedTile = ItemLoader.GetItem(selectedMusicBox).item.createTile;
-							Main.instance.LoadTiles(selectedTile);
-							Texture2D musicBox = Main.tileTexture[selectedTile];
-
-							for (int i = 0; i < 4; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16), pageRect.Y + 160 + (offsetY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
-
-								spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
-
-								offsetX++;
-								if (i == 1) {
-									offsetX = 0;
-									offsetY++;
+									offsetTrophyX = 0;
+									offsetTrophyY++;
 								}
 							}
 						}
@@ -2653,6 +2587,52 @@ namespace BossChecklist
 			else if (item == ItemID.BossTrophyBetsy) return new int[] { 75, 3 };
 			else if (item == ItemID.BossTrophyOgre) return new int[] { 78, 3 };
 			return new int[] { 0, 0 }; // Default is Eye of Cthulhu
+		}
+
+		public static int GetVanillaMusicBoxPos(int item) {
+			switch (item) {
+				case ItemID.MusicBoxOverworldDay: return 0;
+				case ItemID.MusicBoxEerie: return 2;
+				case ItemID.MusicBoxNight: return 4;
+				case ItemID.MusicBoxTitle: return 6;
+				case ItemID.MusicBoxUnderground: return 8;
+				case ItemID.MusicBoxBoss1: return 10;
+				case ItemID.MusicBoxJungle: return 12;
+				case ItemID.MusicBoxCorruption: return 14;
+				case ItemID.MusicBoxUndergroundCorruption: return 16;
+				case ItemID.MusicBoxTheHallow: return 18;
+				case ItemID.MusicBoxBoss2: return 20;
+				case ItemID.MusicBoxUndergroundHallow: return 22;
+				case ItemID.MusicBoxBoss3: return 24;
+				case ItemID.MusicBoxSnow: return 26;
+				case ItemID.MusicBoxSpace: return 28;
+				case ItemID.MusicBoxCrimson: return 30;
+				case ItemID.MusicBoxBoss4: return 32;
+				case ItemID.MusicBoxAltOverworldDay: return 34;
+				case ItemID.MusicBoxRain: return 36;
+				case ItemID.MusicBoxIce: return 38;
+				case ItemID.MusicBoxDesert: return 40;
+				case ItemID.MusicBoxOcean: return 42;
+				case ItemID.MusicBoxDungeon: return 44;
+				case ItemID.MusicBoxPlantera: return 46;
+				case ItemID.MusicBoxBoss5: return 48;
+				case ItemID.MusicBoxTemple: return 50;
+				case ItemID.MusicBoxEclipse: return 52;
+				case ItemID.MusicBoxMushrooms: return 54;
+				case ItemID.MusicBoxPumpkinMoon: return 56;
+				case ItemID.MusicBoxAltUnderground: return 58;
+				case ItemID.MusicBoxFrostMoon: return 60;
+				case ItemID.MusicBoxUndergroundCrimson: return 62;
+				case ItemID.MusicBoxLunarBoss: return 64;
+				case ItemID.MusicBoxMartians: return 66;
+				case ItemID.MusicBoxPirates: return 68;
+				case ItemID.MusicBoxHell: return 70;
+				case ItemID.MusicBoxTowers: return 72;
+				case ItemID.MusicBoxGoblins: return 74;
+				case ItemID.MusicBoxSandstorm: return 76;
+				case ItemID.MusicBoxDD2: return 78;
+				default: return 0;
+			}
 		}
 
 		public static Texture2D CropTexture(Texture2D texture, Rectangle snippet) {
