@@ -340,20 +340,27 @@ namespace BossChecklist
 			}
 
 			if (Id == "PageOne" && BossLogUI.PageNum >= 0) {
+				Texture2D bossTexture = null;
+				Rectangle bossSourceRectangle = new Rectangle();
 				if (selectedBoss.pageTexture != "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-					Texture2D bossTexture = ModContent.GetTexture(selectedBoss.pageTexture);
-					Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (bossTexture.Width / 2), pageRect.Y + (pageRect.Height / 2) - (bossTexture.Height / 2), bossTexture.Width, bossTexture.Height);
-					Rectangle cutRect = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
-					Color maskedBoss = BossLogUI.MaskBoss(selectedBoss);
-					spriteBatch.Draw(bossTexture, posRect, cutRect, maskedBoss);
+					bossTexture = ModContent.GetTexture(selectedBoss.pageTexture);
+					bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
 				}
 				else if (selectedBoss.npcIDs.Count > 0) {
 					Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
-					Texture2D NPCTexture = Main.npcTexture[selectedBoss.npcIDs[0]];
-					Rectangle snippet = new Rectangle(0, 0, NPCTexture.Width, NPCTexture.Height / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
-					Vector2 bossPos = new Vector2(pageRect.X + (int)((Width.Pixels / 2) - (snippet.Width / 2)), pageRect.Y + (int)((Height.Pixels / 2) - (snippet.Height / 2)));
+					bossTexture = Main.npcTexture[selectedBoss.npcIDs[0]];
+					bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
+				}
+				if (bossTexture != null) {
+					float drawScale = 1f;
+					float xScale = (float)pageRect.Width / bossTexture.Width;
+					// TODO: pageRect.Height might be too much, we might want to trim off the top a bit
+					float yScale = (float)pageRect.Height / bossTexture.Height;
+					if (xScale < 1 || yScale < 1) {
+						drawScale = xScale < yScale ? xScale : yScale;
+					}
 					Color maskedBoss = BossLogUI.MaskBoss(selectedBoss);
-					spriteBatch.Draw(NPCTexture, bossPos, snippet, maskedBoss);
+					spriteBatch.Draw(bossTexture, pageRect.Center(), bossSourceRectangle, maskedBoss, 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
 				}
 
 				if (selectedBoss.type != EntryType.Event || selectedBoss.internalName == "Lunar Event") {
