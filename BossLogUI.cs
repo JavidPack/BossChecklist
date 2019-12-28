@@ -81,7 +81,7 @@ namespace BossChecklist
 			var parentSpace = Parent.GetDimensions().ToRectangle();
 			if (!GetDimensions().ToRectangle().Contains(parentSpace)) {
 				Left.Pixels = Utils.Clamp(Left.Pixels, -parentSpace.Right, -Width.Pixels);
-				Top.Pixels = Utils.Clamp(Top.Pixels, -parentSpace.Bottom,  -Height.Pixels);
+				Top.Pixels = Utils.Clamp(Top.Pixels, -parentSpace.Bottom, -Height.Pixels);
 				Recalculate();
 				BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
 			}
@@ -91,9 +91,9 @@ namespace BossChecklist
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 stringAdjust = Main.fontMouseText.MeasureString(buttonType);
 			Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3), innerDimensions.Y - 24);
-			
+
 			base.DrawSelf(spriteBatch);
-			
+
 			// Draw the Boss Log Color
 			if (Id == "OpenUI") {
 				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/LogUI_Button");
@@ -110,7 +110,7 @@ namespace BossChecklist
 				Texture2D border = BossLogUI.CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
 				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
 				else if (BossChecklist.DebugConfig.RecordingDisabled) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
-				
+
 				if (myPlayer.hasNewRecord) {
 					slowDown = !slowDown;
 					if (slowDown) cycleFrame++;
@@ -124,7 +124,7 @@ namespace BossChecklist
 				// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
 				if (dragging) spriteBatch.Draw(texture, innerDimensions.ToRectangle(), Color.White);
 			}
-			
+
 			if (IsMouseHovering && !dragging) {
 				BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonType, pos, Color.White);
@@ -172,7 +172,7 @@ namespace BossChecklist
 			if (Id.Contains("collect_") && hasItem) {
 				Main.inventoryBack7Texture = Main.inventoryBack3Texture;
 			}
-			
+
 			// Prevents empty slots from being drawn
 			if (item.type != 0 || hoverText == "Demon Altar" || hoverText == "Crimson Altar" || Id.Contains("ingredient_"))
 				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
@@ -294,7 +294,7 @@ namespace BossChecklist
 			base.Draw(spriteBatch);
 			if (selectedBoss.modSource == "Unknown" && Id == "PageTwo") return; // Prevents drawings on the page if the boss has no info
 			Rectangle pageRect = GetInnerDimensions().ToRectangle();
-			
+
 			if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 				// Needed to remove mousetext from outside sources when using the Boss Log
 				Main.player[Main.myPlayer].mouseInterface = true;
@@ -380,7 +380,7 @@ namespace BossChecklist
 					Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width - 10, pageRect.Y + 5, eventIcon.Width, eventIcon.Height);
 					if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
 				}
-				
+
 				string isDefeated = "";
 				if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:Defeated in {Main.worldName}]";
 				else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:Undefeated in {Main.worldName} ]";
@@ -390,7 +390,7 @@ namespace BossChecklist
 
 				Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 				Utils.DrawBorderString(spriteBatch, entry, pos, Color.Goldenrod);
-				
+
 				pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
 				Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
@@ -880,7 +880,7 @@ namespace BossChecklist
 				else {
 					// Collectibles Subpage
 					BossCollection Collections = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
-					
+
 					int selectedTrophy = validItems[0][itemShown[0]];
 					int selectedMask = validItems[1][itemShown[1]];
 					int selectedMusicBox = validItems[2][itemShown[2]];
@@ -894,14 +894,14 @@ namespace BossChecklist
 					Texture2D template = ModContent.GetTexture("BossChecklist/Resources/Extra_CollectionTemplate");
 					Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height);
 					spriteBatch.Draw(template, ctRect, Color.White);
-					
+
 					// Draw Music Boxes
 					Main.instance.LoadTiles(TileID.MusicBoxes);
 					Texture2D musicBox = Main.tileTexture[TileID.MusicBoxes];
 
 					int offsetX = 0;
 					int offsetY = 0;
-					
+
 					if (hasMusicBox) {
 						if (selectedMusicBox < ItemID.Count) offsetY = BossLogUI.GetVanillaMusicBoxPos(selectedMusicBox);
 						else {
@@ -926,7 +926,7 @@ namespace BossChecklist
 							offsetY++;
 						}
 					}
-					
+
 					// Draw Masks
 					if (hasMask) {
 						Texture2D mask;
@@ -944,53 +944,43 @@ namespace BossChecklist
 					}
 
 					// Draw Trophies
-					if (hasTrophy) {
-						int offsetTrophyX = 0;
-						int offsetTrophyY = 0;
+					int offsetTrophyX = 0;
+					int offsetTrophyY = 0;
+					int backupTrophyX = 0;
+					int backupTrophyY = 0;
 
+					Texture2D trophy;
+
+					if (hasTrophy) {
 						if (selectedTrophy < ItemID.Count) {
 							Main.instance.LoadTiles(TileID.Painting3X3);
-							Texture2D trophy = Main.tileTexture[TileID.Painting3X3];
-
+							trophy = Main.tileTexture[TileID.Painting3X3];
 							offsetTrophyX = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[0];
 							offsetTrophyY = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[1];
-
-							int backupTrophyX = offsetTrophyX;
-							int backupTrophyY = offsetTrophyY;
-
-							for (int i = 0; i < 9; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetTrophyX * 16) - (backupTrophyX * 16), pageRect.Y + 126 + (offsetTrophyY * 16) - (backupTrophyY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetTrophyX * 18, offsetTrophyY * 18, 16, 16);
-
-								spriteBatch.Draw(trophy, posRect, cutRect, Color.White);
-
-								offsetTrophyX++;
-								if (i == 2 || i == 5) {
-									offsetTrophyX = backupTrophyX;
-									offsetTrophyY++;
-								}
-							}
+							backupTrophyX = offsetTrophyX;
+							backupTrophyY = offsetTrophyY;
 						}
 						else {
 							int selectedTile = ItemLoader.GetItem(selectedTrophy).item.createTile;
 							Main.instance.LoadTiles(selectedTile);
-							Texture2D trophy = Main.tileTexture[selectedTile];
+							trophy = Main.tileTexture[selectedTile];
+						}
+					}
+					else {
+						Main.instance.LoadTiles(TileID.WeaponsRack);
+						trophy = Main.tileTexture[TileID.WeaponsRack];
+					}
 
-							offsetTrophyX = 0;
-							offsetTrophyY = 0;
+					for (int i = 0; i < 9; i++) {
+						Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetTrophyX * 16) - (backupTrophyX * 16), pageRect.Y + 126 + (offsetTrophyY * 16) - (backupTrophyY * 16), 16, 16);
+						Rectangle cutRect = new Rectangle(offsetTrophyX * 18, offsetTrophyY * 18, 16, 16);
 
-							for (int i = 0; i < 9; i++) {
-								Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetTrophyX * 16), pageRect.Y + 126 + (offsetTrophyY * 16), 16, 16);
-								Rectangle cutRect = new Rectangle(offsetTrophyX * 18, offsetTrophyY * 18, 16, 16);
+						spriteBatch.Draw(trophy, posRect, cutRect, Color.White);
 
-								spriteBatch.Draw(trophy, posRect, cutRect, Color.White);
-
-								offsetTrophyX++;
-								if (i == 2 || i == 5) {
-									offsetTrophyX = 0;
-									offsetTrophyY++;
-								}
-							}
+						offsetTrophyX++;
+						if (i == 2 || i == 5) {
+							offsetTrophyX = backupTrophyX;
+							offsetTrophyY++;
 						}
 					}
 				}
@@ -1024,7 +1014,7 @@ namespace BossChecklist
 			base.MouseDown(evt);
 			UserInterface.ActiveInstance = temp;
 		}
-		
+
 		public override void ScrollWheel(UIScrollWheelEvent evt) {
 			//Main.NewText(evt.ScrollWheelValue);
 			base.ScrollWheel(evt);
@@ -1106,7 +1096,7 @@ namespace BossChecklist
 				Texture2D texture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
 				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11, inner.Y + Height.Pixels / 2 - 11);
 				Rectangle cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
-				
+
 				if (Id == "Boss_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
 				else if (Id == "Miniboss_Tab") cut = new Rectangle(1 * 24, 1 * 24, 22, 22);
 				else if (Id == "Event_Tab") cut = new Rectangle(2 * 24, 1 * 24, 22, 22);
@@ -1171,7 +1161,7 @@ namespace BossChecklist
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
 			Rectangle source = new Rectangle(72, 0, 22, 20);
 			spriteBatch.Draw(checkGrid, pos, source, Color.White);
-						 
+
 			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 			int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == text || x.internalName == text)); // name check, for when progression matches
@@ -1229,7 +1219,7 @@ namespace BossChecklist
 
 				Rectangle checkType = new Rectangle(0, 0, 22, 20);
 				Rectangle exType = new Rectangle(0, 0, 22, 20);
-				
+
 				if (sortedBosses[pagenum].downed()) {
 					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") checkType = new Rectangle(24, 0, 22, 20);
 					else checkType = new Rectangle(0, 0, 22, 20);
@@ -1294,7 +1284,7 @@ namespace BossChecklist
 		const float infoScaleX = 1f;
 		const float infoScaleY = 1f;
 		public override void Draw(SpriteBatch spriteBatch) {
-			
+
 			text = "";
 			Rectangle hitbox = new Rectangle((int)GetInnerDimensions().X, (int)GetInnerDimensions().Y, (int)Width.Pixels, 100);
 
@@ -1448,7 +1438,7 @@ namespace BossChecklist
 		private List<BookUI> filterCheck;
 		private List<BookUI> filterCheckMark;
 		private List<UIText> filterTypes;
-		
+
 		public BookUI ToCTab;
 		public BookUI CreditsTab;
 		public BookUI BossTab;
@@ -1467,7 +1457,7 @@ namespace BossChecklist
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool[] AltPage; // Flip between best and worst
-		
+
 		private bool bossLogVisible;
 		public bool BossLogVisible {
 			get { return bossLogVisible; }
@@ -1541,7 +1531,7 @@ namespace BossChecklist
 			{
 				false, false, false, false
 			};
-			
+
 			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
 			ToCTab.Height.Pixels = 76;
 			ToCTab.Width.Pixels = 32;
@@ -1630,7 +1620,7 @@ namespace BossChecklist
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			pageTwoItemList = new UIList();
-			
+
 			filterPanel = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Filter"));
 			filterPanel.Id = "filterPanel";
 			filterPanel.Height.Pixels = 76;
@@ -1729,7 +1719,7 @@ namespace BossChecklist
 
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
-			
+
 			// We reset the position of the button to make sure it updates with the screen res
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
 			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
@@ -1737,7 +1727,7 @@ namespace BossChecklist
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-			
+
 			// Updating tabs to proper positions
 			if (PageNum == -2) CreditsTab.Left.Pixels = -400 - 16;
 			else CreditsTab.Left.Pixels = -400 + 800 - 16;
@@ -1747,7 +1737,7 @@ namespace BossChecklist
 			else MiniBossTab.Left.Pixels = -400 + 800 - 16;
 			if (PageNum >= FindNext(EntryType.Event) || PageNum == -2) EventTab.Left.Pixels = -400 - 16;
 			else EventTab.Left.Pixels = -400 + 800 - 16;
-			
+
 			if (PageNum != -1) {
 				ToCTab.Left.Set(-400 - 16, 0.5f);
 				filterPanel.Left.Set(-400 - 16 + ToCTab.Width.Pixels, 0.5f);
@@ -1874,7 +1864,7 @@ namespace BossChecklist
 				stats.healthLossBest = -1;
 				stats.healthLossBestPercent = -1;
 				OpenRecord();
-				
+
 				/*
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					BossStats newRecord = new BossStats() {
@@ -1984,7 +1974,7 @@ namespace BossChecklist
 			ResetBothPages();
 			if (PageNum < 0) return;
 			pageTwoItemList.Clear();
-				
+
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
 			string infoText = BossChecklist.bossTracker.SortedBosses[PageNum].info;
 
@@ -2326,7 +2316,7 @@ namespace BossChecklist
 				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 				EntryType type = copiedList[i].type;
-				
+
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22;
 				next.Id = i.ToString();
@@ -2349,7 +2339,7 @@ namespace BossChecklist
 					}
 				}
 			}
-			
+
 			if (prehardmodeList.Count > 13) PageOne.Append(scrollOne);
 			PageOne.Append(prehardmodeList);
 			prehardmodeList.SetScrollbar(scrollOne);
