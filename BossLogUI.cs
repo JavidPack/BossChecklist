@@ -96,20 +96,18 @@ namespace BossChecklist
 
 			// Draw the Boss Log Color
 			if (Id == "OpenUI") {
-				Texture2D bookCover = BossChecklist.instance.GetTexture("Resources/LogUI_Button");
-				Rectangle source = new Rectangle(36 * 3, 0, 34, 38);
+				Texture2D cover = BossLogUI.colorTexture;
 				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
 				if (!IsMouseHovering && !dragging) {
-					source = new Rectangle(36 * 2, 0, 34, 38);
+					cover = BossLogUI.fadedTexture;
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
 				}
-				spriteBatch.Draw(bookCover, innerDimensions.ToRectangle(), source, coverColor);
+				spriteBatch.Draw(cover, innerDimensions.ToRectangle(), coverColor);
 
 				// Border Selection
 				PlayerAssist myPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				Texture2D border = BossLogUI.CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
-				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Main.DiscoColor);
-				else if (BossChecklist.DebugConfig.RecordingDisabled) spriteBatch.Draw(border, innerDimensions.ToRectangle(), Color.IndianRed);
+				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(BossLogUI.borderTexture, innerDimensions.ToRectangle(), Main.DiscoColor);
+				else if (BossChecklist.DebugConfig.RecordingDisabled) spriteBatch.Draw(BossLogUI.borderTexture, innerDimensions.ToRectangle(), Color.IndianRed);
 
 				if (myPlayer.hasNewRecord) {
 					slowDown = !slowDown;
@@ -117,8 +115,8 @@ namespace BossChecklist
 					if (cycleFrame >= 19) cycleFrame = 0;
 
 					Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder");
-					source = new Rectangle(0, 40 * cycleFrame, 34, 38);
-					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, Color.White);
+					Rectangle source = new Rectangle(0, 40 * cycleFrame, 34, 38);
+					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, BossChecklist.BossLogConfig.BossLogColor);
 				}
 
 				// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
@@ -198,16 +196,11 @@ namespace BossChecklist
 					}
 				}
 			}
-
-			Texture2D checkMark = BossChecklist.instance.GetTexture("Resources/LogUI_Checks");
+			
 			Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
-			Rectangle source = new Rectangle(0, 0, 22, 20);
 			if (item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_"))) {
-				if (hasItem) spriteBatch.Draw(checkMark, rect, source, Color.White); // hasItem first priority
-				else if (!Main.expertMode && (item.expert || item.expertOnly)) {
-					source = new Rectangle(24, 0, 22, 20);
-					spriteBatch.Draw(checkMark, rect, source, Color.White);
-				}
+				if (hasItem) spriteBatch.Draw(BossLogUI.checkMarkTexture, rect, Color.White); // hasItem first priority
+				else if (!Main.expertMode && (item.expert || item.expertOnly)) spriteBatch.Draw(BossLogUI.xTexture, rect, Color.White);
 			}
 
 			if (IsMouseHovering) {
@@ -1100,18 +1093,17 @@ namespace BossChecklist
 			if (Id.Contains("_Tab")) {
 				// Tab Icon
 				Rectangle inner = GetInnerDimensions().ToRectangle();
-				Texture2D texture = BossChecklist.instance.GetTexture("Resources/LogUI_Nav");
+				Texture2D texture = BossLogUI.tocTexture;
 				Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11, inner.Y + Height.Pixels / 2 - 11);
-				Rectangle cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
 
-				if (Id == "Boss_Tab") cut = new Rectangle(0 * 24, 1 * 24, 22, 22);
-				else if (Id == "Miniboss_Tab") cut = new Rectangle(1 * 24, 1 * 24, 22, 22);
-				else if (Id == "Event_Tab") cut = new Rectangle(2 * 24, 1 * 24, 22, 22);
-				else if (Id == "Credits_Tab") cut = new Rectangle(3 * 24, 0 * 24, 22, 22);
-				else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum == -1) cut = new Rectangle(3 * 24, 1 * 24, 22, 22);
-				else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum != -1) cut = new Rectangle(2 * 24, 0 * 24, 22, 22);
+				if (Id == "Boss_Tab") texture = BossLogUI.bossNavTexture;
+				else if (Id == "Miniboss_Tab") texture = BossLogUI.minibossNavTexture;
+				else if (Id == "Event_Tab") texture = BossLogUI.eventNavTexture;
+				else if (Id == "Credits_Tab") texture = BossLogUI.credTexture;
+				else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum == -1) texture = BossLogUI.filterTexture;
+				else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum != -1) texture = BossLogUI.tocTexture;
 
-				if (DrawTab(Id)) spriteBatch.Draw(texture, pos, cut, Color.White);
+				if (DrawTab(Id)) spriteBatch.Draw(texture, pos, Color.White);
 				else return;
 
 				if (IsMouseHovering) {
@@ -1163,13 +1155,10 @@ namespace BossChecklist
 		public override void Draw(SpriteBatch spriteBatch) {
 			base.Draw(spriteBatch);
 
-			Texture2D checkGrid = BossChecklist.instance.GetTexture("Resources/LogUI_Checks");
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
-			Rectangle source = new Rectangle(72, 0, 22, 20);
-			spriteBatch.Draw(checkGrid, pos, source, Color.White);
+			spriteBatch.Draw(BossLogUI.checkboxTexture, pos, Color.White);
 
-			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 			int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == text || x.internalName == text)); // name check, for when progression matches
 
@@ -1204,40 +1193,29 @@ namespace BossChecklist
 					break;
 				}
 			}
+			
+			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 
-			if (allLoot && allCollect) {
-				Rectangle iconType = new Rectangle(72, 22, 22, 20);
-				spriteBatch.Draw(checkGrid, pos2, iconType, Color.White);
-			}
-			else {
-				if (allLoot) {
-					Rectangle iconType = new Rectangle(24, 22, 22, 20);
-					spriteBatch.Draw(checkGrid, pos2, iconType, Color.White);
-				}
-				if (allCollect) {
-					Rectangle iconType = new Rectangle(48, 22, 22, 20);
-					spriteBatch.Draw(checkGrid, pos2, iconType, Color.White);
-				}
-			}
+			if (allLoot && allCollect) spriteBatch.Draw(BossLogUI.goldChestTexture, pos2, Color.White);
+			else if (allLoot) spriteBatch.Draw(BossLogUI.chestTexture, pos2, Color.White);
+			else if (allCollect) spriteBatch.Draw(BossLogUI.starTexture, pos2, Color.White);
 
 			if (order != -1f) {
 				BossChecklist BA = BossChecklist.instance;
 				int pagenum = Convert.ToInt32(Id);
-
-				Rectangle checkType = new Rectangle(0, 0, 22, 20);
-				Rectangle exType = new Rectangle(0, 0, 22, 20);
+				Texture2D checkGrid = BossLogUI.checkboxTexture;
 
 				if (sortedBosses[pagenum].downed()) {
-					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") checkType = new Rectangle(24, 0, 22, 20);
-					else checkType = new Rectangle(0, 0, 22, 20);
+					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") checkGrid = BossLogUI.xTexture;
+					else checkGrid = BossLogUI.checkMarkTexture;
 				}
 				else {
-					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "✓ and  X") checkType = new Rectangle(24, 0, 22, 20);
-					else checkType = new Rectangle(72, 0, 22, 20);
-					if (nextCheck && BossChecklist.BossLogConfig.DrawNextMark) checkType = new Rectangle(48, 0, 22, 20);
+					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "✓ and  X") checkGrid = BossLogUI.xTexture;
+					else checkGrid = BossLogUI.checkboxTexture;
+					if (nextCheck && BossChecklist.BossLogConfig.DrawNextMark) checkGrid = BossLogUI.circleTexture;
 				}
 
-				spriteBatch.Draw(checkGrid, pos, checkType, Color.White);
+				spriteBatch.Draw(checkGrid, pos, Color.White);
 
 				if (BossChecklist.BossLogConfig.ColoredBossText) {
 					if (IsMouseHovering) TextColor = TextColor = Color.SkyBlue;
@@ -1459,6 +1437,29 @@ namespace BossChecklist
 
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
+		// Cropped Textures
+		public static Texture2D bookTexture;
+		public static Texture2D borderTexture;
+		public static Texture2D fadedTexture;
+		public static Texture2D colorTexture;
+		public static Texture2D prevTexture;
+		public static Texture2D nextTexture;
+		public static Texture2D tocTexture;
+		public static Texture2D credTexture;
+		public static Texture2D bossNavTexture;
+		public static Texture2D minibossNavTexture;
+		public static Texture2D eventNavTexture;
+		public static Texture2D filterTexture;
+		public static Texture2D checkMarkTexture;
+		public static Texture2D xTexture;
+		public static Texture2D circleTexture;
+		public static Texture2D checkboxTexture;
+		//public static Texture2D silverStarTexture; // unused
+		public static Texture2D chestTexture;
+		public static Texture2D starTexture;
+		public static Texture2D goldChestTexture;
+
+
 		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
 		public static int SubPageNum = 0; // Selected Topic Tab (Loot, Stats, etc.)
 		public static int RecipePageNum = 0;
@@ -1525,7 +1526,31 @@ namespace BossChecklist
 		}
 
 		public override void OnInitialize() {
-			Texture2D bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38));
+			// Book Button
+			bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38));
+			borderTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
+			fadedTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(72, 0, 34, 38));
+			colorTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(108, 0, 34, 38));
+
+			// Nav
+			prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
+			nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
+			tocTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(48, 0, 22, 22));
+			credTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 0, 22, 22));
+			bossNavTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 24, 22, 22));
+			minibossNavTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 24, 22, 22));
+			eventNavTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(48, 24, 22, 22));
+			filterTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 24, 22, 22));
+
+			// Checks
+			checkMarkTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(0, 0, 22, 20));
+			xTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 0, 22, 20));
+			circleTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 0, 22, 20));
+			checkboxTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(72, 0, 22, 20));
+			chestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 22, 22, 20));
+			starTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 22, 22, 20));
+			goldChestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(72, 22, 22, 20));
+
 			bosslogbutton = new BossAssistButton(bookTexture, "Boss Log");
 			bosslogbutton.Id = "OpenUI";
 			bosslogbutton.Width.Set(34, 0f);
@@ -1590,8 +1615,7 @@ namespace BossChecklist
 			PageOne.Height.Pixels = 480;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-
-			Texture2D prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
+			
 			PrevPage = new BossAssistButton(prevTexture, "") { Id = "Previous" };
 			PrevPage.Width.Pixels = 14;
 			PrevPage.Height.Pixels = 20;
@@ -1635,18 +1659,16 @@ namespace BossChecklist
 			filterPanel.Left.Set(-400 - 16, 0.5f);
 			filterPanel.Top.Set(-250 + 20, 0.5f);
 
-			Texture2D checkCrop = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(0, 0, 22, 20));
-			Texture2D checkBox = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(3 * 24, 0, 22, 20));
 			filterCheckMark = new List<BookUI>();
 			filterCheck = new List<BookUI>();
 			filterTypes = new List<UIText>();
 
 			for (int i = 0; i < 3; i++) {
-				BookUI newCheck = new BookUI(checkCrop);
+				BookUI newCheck = new BookUI(checkMarkTexture);
 				newCheck.Id = "C_" + i;
 				filterCheckMark.Add(newCheck);
 
-				BookUI newCheckBox = new BookUI(checkBox);
+				BookUI newCheckBox = new BookUI(checkboxTexture);
 				newCheckBox.Id = "F_" + i;
 				newCheckBox.Top.Pixels = (20 * i) + 5;
 				newCheckBox.Left.Pixels = 5;
@@ -1663,7 +1685,6 @@ namespace BossChecklist
 				filterTypes.Add(bosses);
 			}
 
-			Texture2D nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
 			NextPage = new BossAssistButton(nextTexture, "") { Id = "Next" };
 			NextPage.Width.Pixels = 14;
 			NextPage.Height.Pixels = 20;
@@ -1759,20 +1780,16 @@ namespace BossChecklist
 			}
 
 			if (filterPanel.HasChild(filterCheck[0])) {
-				Texture2D check = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(0, 0, 22, 20));
-				Texture2D circle = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 0, 22, 20));
-				Texture2D ex = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 0, 22, 20));
+				if (BossChecklist.BossLogConfig.FilterBosses == "Show") filterCheckMark[0].SetImage(checkMarkTexture);
+				else filterCheckMark[0].SetImage(circleTexture);
 
-				if (BossChecklist.BossLogConfig.FilterBosses == "Show") filterCheckMark[0].SetImage(check);
-				else filterCheckMark[0].SetImage(circle);
+				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") filterCheckMark[1].SetImage(checkMarkTexture);
+				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") filterCheckMark[1].SetImage(xTexture);
+				else filterCheckMark[1].SetImage(circleTexture);
 
-				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") filterCheckMark[1].SetImage(check);
-				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") filterCheckMark[1].SetImage(ex);
-				else filterCheckMark[1].SetImage(circle);
-
-				if (BossChecklist.BossLogConfig.FilterEvents == "Show") filterCheckMark[2].SetImage(check);
-				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") filterCheckMark[2].SetImage(ex);
-				else filterCheckMark[2].SetImage(circle);
+				if (BossChecklist.BossLogConfig.FilterEvents == "Show") filterCheckMark[2].SetImage(checkMarkTexture);
+				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") filterCheckMark[2].SetImage(xTexture);
+				else filterCheckMark[2].SetImage(circleTexture);
 			}
 
 			base.Update(gameTime);
@@ -2115,7 +2132,6 @@ namespace BossChecklist
 				}
 
 				if (RecipePageNum > 0) {
-					Texture2D prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
 					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "");
 					PrevItem.Id = "PrevItem";
 					PrevItem.Top.Pixels = 245;
@@ -2127,7 +2143,6 @@ namespace BossChecklist
 				}
 
 				if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-					Texture2D nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
 					BossAssistButton NextItem = new BossAssistButton(nextTexture, "");
 					NextItem.Id = "NextItem";
 					NextItem.Top.Pixels = 245;
@@ -2139,8 +2154,7 @@ namespace BossChecklist
 				}
 
 				if (TotalRecipes > 1) {
-					Texture2D credTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(48, 0, 22, 22));
-					BossAssistButton CycleItem = new BossAssistButton(credTexture, "Cycle alternative recipes");
+					BossAssistButton CycleItem = new BossAssistButton(tocTexture, "Cycle alternative recipes");
 					CycleItem.Id = "CycleItem_" + TotalRecipes;
 					CycleItem.Top.Pixels = 245;
 					CycleItem.Left.Pixels = 40;
