@@ -42,22 +42,23 @@ namespace BossChecklist
 			whitelistPos.Clear();
 			whitelistType.Clear();
 
-			foreach (Item item in Main.item) {
-				if (!item.active) continue;
-				if (IsWhiteListItem(item)) {
-					whitelistPos.Add(item.Center);
-					whitelistType.Add(item.type);
+			for (int i = 0; i < Main.maxItems; i++) {
+				if (!Main.item[i].active) continue;
+				if (IsWhiteListItem(Main.item[i])) {
+					whitelistPos.Add(Main.item[i].Center);
+					whitelistType.Add(Main.item[i].type);
 				}
 			}
 		}
 
 		private static void DrawIcons() {
-			foreach (Vector2 item in whitelistPos) {
-				Texture2D drawTexture = Main.itemTexture[whitelistType[whitelistPos.IndexOf(item)]];
-				Vector2 drawPosition = CalculateDrawPos(new Vector2(item.X / 16, item.Y / 16));
+			for (int v = 0; v < whitelistPos.Count; v++) {
+				Texture2D drawTexture = Main.itemTexture[whitelistType[whitelistPos.IndexOf(whitelistPos[v])]];
+				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));
 
-				if (WhiteListType(whitelistType[whitelistPos.IndexOf(item)]) == 1 && !BossChecklist.ClientConfig.FragmentsBool) continue;
-				if (WhiteListType(whitelistType[whitelistPos.IndexOf(item)]) == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
+				int type = WhiteListType(whitelistType[whitelistPos.IndexOf(whitelistPos[v])]);
+				if (type == 1 && !BossChecklist.ClientConfig.FragmentsBool) continue;
+				if (type == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
 
 				DrawTextureOnMap(drawTexture, drawPosition);
 			}
