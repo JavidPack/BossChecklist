@@ -2573,46 +2573,50 @@ namespace BossChecklist
 
 		public static Texture2D GetEventIcon(BossInfo boss) {
 			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") return BossChecklist.instance.GetTexture(boss.overrideIconTexture);
-			if (boss.internalName == "Frost Legion") return ModContent.GetTexture("Terraria/Extra_7");
-			if (boss.internalName == "Frost Moon") return ModContent.GetTexture("Terraria/Extra_8");
-			if (boss.internalName == "Goblin Army") return ModContent.GetTexture("Terraria/Extra_9");
-			if (boss.internalName == "Martian Madness") return ModContent.GetTexture("Terraria/Extra_10");
-			if (boss.internalName == "Pirate Invasion") return ModContent.GetTexture("Terraria/Extra_11");
-			if (boss.internalName == "Pumpkin Moon") return ModContent.GetTexture("Terraria/Extra_12");
-			if (boss.internalName == "Old One's Army") return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-			if (boss.internalName == "Blood Moon") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-			if (boss.internalName == "Solar Eclipse") return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
-			else return Main.npcHeadTexture[0];
+			switch (boss.internalName) {
+				case "Frost Legion": return ModContent.GetTexture("Terraria/Extra_7");
+				case "Frost Moon": return ModContent.GetTexture("Terraria/Extra_8");
+				case "Goblin Army": return ModContent.GetTexture("Terraria/Extra_9");
+				case "Martian Madness": return ModContent.GetTexture("Terraria/Extra_10");
+				case "Pirate Invasion": return ModContent.GetTexture("Terraria/Extra_11");
+				case "Pumpkin Moon": return ModContent.GetTexture("Terraria/Extra_12");
+				case "Old One's Army": return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
+				case "Blood Moon": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
+				case "Solar Eclipse": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
+				default: return Main.npcHeadTexture[0];
+			}
 		}
 
 		public static int[] GetVanillaBossTrophyPos(int item) {
-			if (item == ItemID.EyeofCthulhuTrophy) return new int[] { 0, 0 }; //Position on tile table, times 3
-			else if (item == ItemID.EaterofWorldsTrophy) return new int[] { 3, 0 };
-			else if (item == ItemID.BrainofCthulhuTrophy) return new int[] { 6, 0 };
-			else if (item == ItemID.SkeletronTrophy) return new int[] { 9, 0 };
-			else if (item == ItemID.QueenBeeTrophy) return new int[] { 12, 0 };
-			else if (item == ItemID.WallofFleshTrophy) return new int[] { 15, 0 };
-			else if (item == ItemID.DestroyerTrophy) return new int[] { 18, 0 };
-			else if (item == ItemID.SkeletronPrimeTrophy) return new int[] { 21, 0 };
-			else if (item == ItemID.RetinazerTrophy) return new int[] { 24, 0 };
-			else if (item == ItemID.SpazmatismTrophy) return new int[] { 27, 0 };
-			else if (item == ItemID.PlanteraTrophy) return new int[] { 30, 0 };
-			else if (item == ItemID.GolemTrophy) return new int[] { 33, 0 };
-			else if (item == ItemID.MourningWoodTrophy) return new int[] { 0, 3 };
-			else if (item == ItemID.PumpkingTrophy) return new int[] { 3, 3 };
-			else if (item == ItemID.IceQueenTrophy) return new int[] { 6, 3 };
-			else if (item == ItemID.SantaNK1Trophy) return new int[] { 9, 3 };
-			else if (item == ItemID.EverscreamTrophy) return new int[] { 12, 3 };
-			else if (item == ItemID.KingSlimeTrophy) return new int[] { 54, 3 };
-			else if (item == ItemID.DukeFishronTrophy) return new int[] { 57, 3 };
-			else if (item == ItemID.AncientCultistTrophy) return new int[] { 60, 3 };
-			else if (item == ItemID.MartianSaucerTrophy) return new int[] { 63, 3 };
-			else if (item == ItemID.FlyingDutchmanTrophy) return new int[] { 66, 3 };
-			else if (item == ItemID.MoonLordTrophy) return new int[] { 69, 3 };
-			else if (item == ItemID.BossTrophyDarkmage) return new int[] { 72, 3 };
-			else if (item == ItemID.BossTrophyBetsy) return new int[] { 75, 3 };
-			else if (item == ItemID.BossTrophyOgre) return new int[] { 78, 3 };
-			return new int[] { 0, 0 }; // Default is Eye of Cthulhu
+			switch (item) {
+				case ItemID.EyeofCthulhuTrophy: return new int[] { 0, 0 };
+				case ItemID.EaterofWorldsTrophy: return new int[] { 3, 0 };
+				case ItemID.BrainofCthulhuTrophy: return new int[] { 6, 0 };
+				case ItemID.SkeletronTrophy: return new int[] { 9, 0 };
+				case ItemID.QueenBeeTrophy: return new int[] { 12, 0 };
+				case ItemID.WallofFleshTrophy: return new int[] { 15, 0 };
+				case ItemID.DestroyerTrophy: return new int[] { 18, 0 };
+				case ItemID.SkeletronPrimeTrophy: return new int[] { 21, 0 };
+				case ItemID.RetinazerTrophy: return new int[] { 24, 0 };
+				case ItemID.SpazmatismTrophy: return new int[] { 27, 0 };
+				case ItemID.PlanteraTrophy: return new int[] { 30, 0 };
+				case ItemID.GolemTrophy: return new int[] { 33, 0 };
+				case ItemID.MourningWoodTrophy: return new int[] { 0, 3 };
+				case ItemID.PumpkingTrophy: return new int[] { 3, 3 };
+				case ItemID.IceQueenTrophy: return new int[] { 6, 3 };
+				case ItemID.SantaNK1Trophy: return new int[] { 9, 3 };
+				case ItemID.EverscreamTrophy: return new int[] { 12, 3 };
+				case ItemID.KingSlimeTrophy: return new int[] { 54, 3 };
+				case ItemID.DukeFishronTrophy: return new int[] { 57, 3 };
+				case ItemID.AncientCultistTrophy: return new int[] { 60, 3 };
+				case ItemID.MartianSaucerTrophy: return new int[] { 63, 3 };
+				case ItemID.FlyingDutchmanTrophy: return new int[] { 66, 3 };
+				case ItemID.MoonLordTrophy: return new int[] { 69, 3 };
+				case ItemID.BossTrophyDarkmage: return new int[] { 72, 3 };
+				case ItemID.BossTrophyBetsy: return new int[] { 75, 3 };
+				case ItemID.BossTrophyOgre: return new int[] { 78, 3 };
+				default: return new int[] { 0, 0 }; // Default is Eye of Cthulhu
+			}
 		}
 
 		public static int GetVanillaMusicBoxPos(int item) {
