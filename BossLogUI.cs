@@ -346,9 +346,9 @@ namespace BossChecklist
 				}
 				if (bossTexture != null) {
 					float drawScale = 1f;
-					float xScale = (float)pageRect.Width / bossTexture.Width;
+					float xScale = (float)pageRect.Width / bossSourceRectangle.Width;
 					// TODO: pageRect.Height might be too much, we might want to trim off the top a bit
-					float yScale = (float)pageRect.Height / bossTexture.Height;
+					float yScale = (float)pageRect.Height / bossSourceRectangle.Height;
 					if (xScale < 1 || yScale < 1) {
 						drawScale = xScale < yScale ? xScale : yScale;
 					}
