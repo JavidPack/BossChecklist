@@ -1403,8 +1403,7 @@ namespace BossChecklist
 		}
 	}
 
-	class BossLogUI : UIState
-	{
+	class BossLogUI : UIState {
 		public BossAssistButton bosslogbutton;
 
 		public BossLogPanel BookArea;
@@ -1509,7 +1508,7 @@ namespace BossChecklist
 				}
 				UpdateTableofContents();
 			}
-			else ResetBothPages();
+			else UpdateSubPage(SubPageNum);
 			BossLogVisible = show;
 			if (show) {
 				Main.playerInventory = false;
@@ -1608,7 +1607,7 @@ namespace BossChecklist
 			PageOne.Height.Pixels = 480;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-			
+
 			PrevPage = new BossAssistButton(prevTexture, "") { Id = "Previous" };
 			PrevPage.Width.Pixels = 14;
 			PrevPage.Height.Pixels = 20;
@@ -1698,7 +1697,7 @@ namespace BossChecklist
 			recordButton.Height.Pixels = 25;
 			recordButton.Left.Pixels = 0;
 			recordButton.Top.Pixels = 15;
-			recordButton.OnClick += (a, b) => OpenRecord();
+			recordButton.OnClick += (a, b) => UpdateSubPage(0);
 			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
 
 			spawnButton = new SubpageButton("Spawn Info");
@@ -1706,14 +1705,14 @@ namespace BossChecklist
 			spawnButton.Height.Pixels = 25;
 			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
 			spawnButton.Top.Pixels = 15;
-			spawnButton.OnClick += (a, b) => OpenSpawn();
+			spawnButton.OnClick += (a, b) => UpdateSubPage(1);
 
 			lootButton = new SubpageButton("Loot & Collection");
 			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2 - 16;
 			lootButton.Top.Pixels = 50;
-			lootButton.OnClick += (a, b) => OpenLoot();
+			lootButton.OnClick += (a, b) => UpdateSubPage(2);
 
 			toolTipButton = new SubpageButton("Disclaimer");
 			toolTipButton.Width.Pixels = 32;
@@ -1848,7 +1847,10 @@ namespace BossChecklist
 			else if (listeningElement.Id == "Event_Tab") PageNum = FindNext(EntryType.Event);
 			else if (listeningElement.Id == "Credits_Tab") UpdateCredits();
 			else UpdateTableofContents();
-			ResetBothPages();
+			if (PageNum >= 0) {
+				ResetBothPages();
+				UpdateSubPage(SubPageNum);
+			}
 		}
 
 		private void ResetStats() {
@@ -1968,16 +1970,17 @@ namespace BossChecklist
 				}
 			}
 			ResetBothPages();
+			UpdateSubPage(SubPageNum);
 		}
 
 		private void OpenRecord() {
-			SubPageNum = 0;
+			ResetBothPages();
 			if (PageNum < 0) return;
 			// Incase we want to put any UI stuff on these pages
 		}
 
 		private void OpenSpawn() {
-			SubPageNum = 1;
+			ResetBothPages();
 			int TotalRecipes = 0;
 			if (PageNum < 0) return;
 			pageTwoItemList.Clear();
@@ -2158,7 +2161,7 @@ namespace BossChecklist
 		}
 
 		private void OpenLoot() {
-			SubPageNum = 2;
+			ResetBothPages();
 			if (AltPage[SubPageNum]) {
 				OpenCollect();
 				return;
@@ -2246,7 +2249,7 @@ namespace BossChecklist
 		}
 
 		private void OpenCollect() {
-			SubPageNum = 2;
+			ResetBothPages();
 			if (PageNum < 0) return;
 			int row = 0;
 			int col = 0;
@@ -2293,6 +2296,7 @@ namespace BossChecklist
 
 		public void UpdateTableofContents() {
 			PageNum = -1;
+			ResetBothPages();
 			int nextCheck = 0;
 			bool nextCheckBool = false;
 			prehardmodeList.Clear();
@@ -2351,6 +2355,7 @@ namespace BossChecklist
 
 		private void UpdateCredits() {
 			PageNum = -2;
+			ResetBothPages();
 			List<string> optedMods = new List<string>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				if (boss.modSource != "Terraria" && boss.modSource != "Unknown") {
@@ -2421,7 +2426,9 @@ namespace BossChecklist
 				}
 				return;
 			}
-			ResetBothPages();
+			PageOne.RemoveAllChildren();
+			ResetPageButtons();
+			UpdateSubPage(SubPageNum);
 		}
 
 		private void ResetBothPages() {
@@ -2520,6 +2527,10 @@ namespace BossChecklist
 				PageTwo.Append(NextPage);
 				PageOne.Append(PrevPage);
 			}
+		}
+
+		public void UpdateSubPage(int subpage){
+			SubPageNum = subpage;
 			if (PageNum == -1) UpdateTableofContents(); // Handle new page
 			else if (PageNum == -2) UpdateCredits();
 			else {
