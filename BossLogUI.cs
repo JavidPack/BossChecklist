@@ -1301,6 +1301,7 @@ namespace BossChecklist
 		}
 
 		public override void Draw(SpriteBatch spriteBatch) {
+			if (BossLogUI.PageNum < 0) return;
 			if (recordCooldown > 0) recordCooldown--;
 
 			if (buttonString == "Boss Records" || buttonString == "Kill Count") {
@@ -1508,15 +1509,7 @@ namespace BossChecklist
 				}
 				UpdateTableofContents();
 			}
-			else {
-				if (PageNum == -1) UpdateTableofContents();
-				else if (PageNum == -2) UpdateCredits();
-				else {
-					if (SubPageNum == 0) OpenRecord();
-					else if (SubPageNum == 1) OpenSpawn();
-					else if (SubPageNum == 2) OpenLoot();
-				}
-			}
+			else ResetBothPages();
 			BossLogVisible = show;
 			if (show) {
 				Main.playerInventory = false;
@@ -1722,15 +1715,6 @@ namespace BossChecklist
 			lootButton.Top.Pixels = 50;
 			lootButton.OnClick += (a, b) => OpenLoot();
 
-			/*
-            collectButton = new SubpageButton("Collectibles");
-            collectButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
-            collectButton.Height.Pixels = 25;
-            collectButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
-            collectButton.Top.Pixels = 50;
-            collectButton.OnClick += new MouseEvent(OpenCollect);
-			*/
-
 			toolTipButton = new SubpageButton("Disclaimer");
 			toolTipButton.Width.Pixels = 32;
 			toolTipButton.Height.Pixels = 32;
@@ -1864,13 +1848,7 @@ namespace BossChecklist
 			else if (listeningElement.Id == "Event_Tab") PageNum = FindNext(EntryType.Event);
 			else if (listeningElement.Id == "Credits_Tab") UpdateCredits();
 			else UpdateTableofContents();
-
-			if (PageNum >= 0) {
-				ResetBothPages();
-				if (SubPageNum == 0) OpenRecord();
-				else if (SubPageNum == 1) OpenSpawn();
-				else if (SubPageNum == 2) OpenLoot();
-			}
+			ResetBothPages();
 		}
 
 		private void ResetStats() {
@@ -1961,41 +1939,46 @@ namespace BossChecklist
 			RecipePageNum = 0;
 			BossLogPanel.validItems = null;
 
-			if (listeningElement.Id == "Previous") {
-				if (PageNum > -1) PageNum--;
-				else if (PageNum == -2) PageNum = BossChecklist.bossTracker.SortedBosses.Count - 1;
-				if (PageNum == -1) UpdateTableofContents();
-				else {
-					if (SubPageNum == 0) OpenRecord();
-					else if (SubPageNum == 1) OpenSpawn();
-					else if (SubPageNum == 2) OpenLoot();
-					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
-				}
+			// Move to next/prev
+			List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
+			if (listeningElement.Id == "Next") {
+				if (PageNum < BossList.Count - 1) PageNum++;
+				else PageNum = -2;
 			}
-			else if (listeningElement.Id == "Next") {
-				if (PageNum != BossChecklist.bossTracker.SortedBosses.Count - 1) PageNum++;
-				else UpdateCredits();
+			else { // button is previous
+				if (PageNum >= 0) PageNum--;
+				else PageNum = BossList.Count - 1;
+			}
 
-				if (PageNum != -2) {
-					if (SubPageNum == 0) OpenRecord();
-					else if (SubPageNum == 1) OpenSpawn();
-					else if (SubPageNum == 2) OpenLoot();
-					//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
+			// If the page is hidden or unavailable, keep moving till its not or until page is at either end
+			if (PageNum >= 0 && (BossList[PageNum].hidden || !BossList[PageNum].available())) {
+				while (PageNum >= 0) {
+					BossInfo currentBoss = BossList[PageNum];
+					if (!currentBoss.hidden && currentBoss.available()) {
+						break;
+					}
+					if (listeningElement.Id == "Next") {
+						if (PageNum < BossList.Count - 1) PageNum++;
+						else PageNum = -2;
+					}
+					else { // button is previous
+						if (PageNum >= 0) PageNum--;
+						else PageNum = BossList.Count - 1;
+					}
 				}
 			}
-			ResetPageButtons();
+			ResetBothPages();
 		}
 
 		private void OpenRecord() {
 			SubPageNum = 0;
-			ResetBothPages();
 			if (PageNum < 0) return;
+			// Incase we want to put any UI stuff on these pages
 		}
 
 		private void OpenSpawn() {
 			SubPageNum = 1;
 			int TotalRecipes = 0;
-			ResetBothPages();
 			if (PageNum < 0) return;
 			pageTwoItemList.Clear();
 
@@ -2180,7 +2163,6 @@ namespace BossChecklist
 				OpenCollect();
 				return;
 			}
-			ResetBothPages();
 			if (PageNum < 0) return;
 			int row = 0;
 			int col = 0;
@@ -2265,7 +2247,6 @@ namespace BossChecklist
 
 		private void OpenCollect() {
 			SubPageNum = 2;
-			ResetBothPages();
 			if (PageNum < 0) return;
 			int row = 0;
 			int col = 0;
@@ -2312,7 +2293,6 @@ namespace BossChecklist
 
 		public void UpdateTableofContents() {
 			PageNum = -1;
-			ResetBothPages();
 			int nextCheck = 0;
 			bool nextCheckBool = false;
 			prehardmodeList.Clear();
@@ -2371,7 +2351,6 @@ namespace BossChecklist
 
 		private void UpdateCredits() {
 			PageNum = -2;
-			ResetBothPages();
 			List<string> optedMods = new List<string>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				if (boss.modSource != "Terraria" && boss.modSource != "Unknown") {
@@ -2442,12 +2421,7 @@ namespace BossChecklist
 				}
 				return;
 			}
-			PageOne.RemoveAllChildren();
-			ResetPageButtons();
-			if (SubPageNum == 0) OpenRecord();
-			else if (SubPageNum == 1) OpenSpawn();
-			else if (SubPageNum == 2) OpenLoot();
-			//else if (SubPageNum == 3) OpenCollect(evt, listeningElement);
+			ResetBothPages();
 		}
 
 		private void ResetBothPages() {
@@ -2545,6 +2519,13 @@ namespace BossChecklist
 				}
 				PageTwo.Append(NextPage);
 				PageOne.Append(PrevPage);
+			}
+			if (PageNum == -1) UpdateTableofContents(); // Handle new page
+			else if (PageNum == -2) UpdateCredits();
+			else {
+				if (SubPageNum == 0) OpenRecord();
+				else if (SubPageNum == 1) OpenSpawn();
+				else if (SubPageNum == 2) OpenLoot();
 			}
 		}
 
