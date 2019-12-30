@@ -15,6 +15,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.UI;
+using Terraria.ObjectData;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -260,6 +261,7 @@ namespace BossChecklist
 						if (type != -1) {
 							Item newItem = new Item();
 							newItem.SetDefaults(type);
+
 							if (newItem.Name.Contains("Trophy") && newItem.createTile > 0) validItems[0].Add(type);
 							if (newItem.Name.Contains("Mask") && newItem.vanity) validItems[1].Add(type);
 							if (newItem.Name.Contains("Music Box") && newItem.createTile > 0) validItems[2].Add(type);
@@ -886,6 +888,16 @@ namespace BossChecklist
 						bool hasTrophy = selectedTrophy > 0 && Collections.collectibles.Any(x => x.Type == selectedTrophy);
 						bool hasMask = selectedMask > 0 && Collections.collectibles.Any(x => x.Type == selectedMask);
 						bool hasMusicBox = selectedMusicBox > 0 && Collections.collectibles.Any(x => x.Type == selectedMusicBox);
+						
+						int styleX = 0; // x coordinate of tile style
+						int styleY = 0; // Y coordinate of tile style
+						int top = 0; // top-left corner of tile style
+						int left = 0; // top-left corner of tile style
+						int width = 0;
+						int height = 0;
+
+						int offsetX = 0; // Offsets for multi-tiles
+						int offsetY = 0;
 
 						// PageNum already corresponds with the index of the saved player data
 
@@ -894,35 +906,48 @@ namespace BossChecklist
 						spriteBatch.Draw(template, ctRect, Color.White);
 
 						// Draw Music Boxes
-						Main.instance.LoadTiles(TileID.MusicBoxes);
-						Texture2D musicBox = Main.tileTexture[TileID.MusicBoxes];
+						Texture2D musicBoxTexture;
+						Item musicBoxItem = new Item();
+						musicBoxItem.SetDefaults(ItemID.MusicBoxOverworldDay);
+						if (hasMusicBox) musicBoxItem.SetDefaults(selectedMusicBox);
 
-						int offsetX = 0;
-						int offsetY = 0;
+						int musicBoxStyle = musicBoxItem.placeStyle;
+						int musicBoxTileType = musicBoxItem.createTile;
 
-						if (hasMusicBox) {
-							if (selectedMusicBox < ItemID.Count) offsetY = BossLogUI.GetVanillaMusicBoxPos(selectedMusicBox);
-							else {
-								int selectedTile = ItemLoader.GetItem(selectedMusicBox).item.createTile;
-								Main.instance.LoadTiles(selectedTile);
-								musicBox = Main.tileTexture[selectedTile];
+						Main.instance.LoadTiles(musicBoxTileType);
+						musicBoxTexture = Main.tileTexture[musicBoxTileType];
+
+						if (musicBoxItem.createTile > 0) {
+							TileObjectData data = TileObjectData.GetTileData(musicBoxTileType, musicBoxStyle);
+
+							width = data.CoordinateWidth;
+							height = data.CoordinateHeights[0];
+							if (data.StyleWrapLimit > 0) {
+								styleX = (musicBoxStyle % data.StyleWrapLimit) * data.CoordinateFullWidth;
+								styleY = (musicBoxStyle / data.StyleWrapLimit) * data.CoordinateFullHeight;
 							}
+							else {
+								styleY = musicBoxStyle * (height + 2) * data.Height;
+							}
+							left = styleX;
+							top = styleY;
 						}
 
-						int backupX = offsetX;
-						int backupY = offsetY;
-
+						offsetX = 0;
+						offsetY = 0;
+						
 						for (int i = 0; i < 4; i++) {
-							Rectangle posRect = new Rectangle(pageRect.X + 210 + (offsetX * 16) - (backupX * 16), pageRect.Y + 160 + (offsetY * 16) - (backupY * 16), 16, 16);
-							Rectangle cutRect = new Rectangle(offsetX * 18, offsetY * 18, 16, 16);
-
-							spriteBatch.Draw(musicBox, posRect, cutRect, Color.White);
-
-							offsetX++;
-							if (i == 1) {
+							if (i != 0 && i % 2 == 0) {
+								styleX = left;
+								styleY += 18;
 								offsetX = 0;
 								offsetY++;
 							}
+							Rectangle posRect = new Rectangle(pageRect.X + 210 + styleX - left - (2 * offsetX), pageRect.Y + 160 + styleY - top - (2 * offsetY), 16, 16);
+							Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
+							spriteBatch.Draw(musicBoxTexture, posRect, cutRect, Color.White);
+							styleX += 18;
+							offsetX++;
 						}
 
 						// Draw Masks
@@ -942,44 +967,50 @@ namespace BossChecklist
 						}
 
 						// Draw Trophies
-						int offsetTrophyX = 0;
-						int offsetTrophyY = 0;
-						int backupTrophyX = 0;
-						int backupTrophyY = 0;
+						styleX = styleY = top = left = width = height = 0;
 
-						Texture2D trophy;
+						Texture2D trophyTexture;
+						Item trophyItem = new Item();
+						trophyItem.SetDefaults(ItemID.WeaponRack);
+						if (hasTrophy) trophyItem.SetDefaults(selectedTrophy);
 
-						if (hasTrophy) {
-							if (selectedTrophy < ItemID.Count) {
-								Main.instance.LoadTiles(TileID.Painting3X3);
-								trophy = Main.tileTexture[TileID.Painting3X3];
-								offsetTrophyX = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[0];
-								offsetTrophyY = BossLogUI.GetVanillaBossTrophyPos(selectedTrophy)[1];
-								backupTrophyX = offsetTrophyX;
-								backupTrophyY = offsetTrophyY;
+						int trophyStyle = trophyItem.placeStyle;
+						int trophyTileType = trophyItem.createTile;
+
+						Main.instance.LoadTiles(trophyTileType);
+						trophyTexture = Main.tileTexture[trophyTileType];
+
+						if (trophyItem.createTile > 0) {
+							TileObjectData data = TileObjectData.GetTileData(trophyTileType, trophyStyle);
+							
+							width = data.CoordinateWidth;
+							height = data.CoordinateHeights[0];
+							if (data.StyleWrapLimit > 0) {
+								styleX = (trophyStyle % data.StyleWrapLimit) * data.CoordinateFullWidth;
+								styleY = (trophyStyle / data.StyleWrapLimit) * data.CoordinateFullHeight;
 							}
 							else {
-								int selectedTile = ItemLoader.GetItem(selectedTrophy).item.createTile;
-								Main.instance.LoadTiles(selectedTile);
-								trophy = Main.tileTexture[selectedTile];
+								styleY = trophyStyle * (height + 2) * data.Height;
 							}
+							left = styleX;
+							top = styleY;
 						}
-						else {
-							Main.instance.LoadTiles(TileID.WeaponsRack);
-							trophy = Main.tileTexture[TileID.WeaponsRack];
-						}
+
+						offsetX = 0;
+						offsetY = 0;
 
 						for (int i = 0; i < 9; i++) {
-							Rectangle posRect = new Rectangle(pageRect.X + 98 + (offsetTrophyX * 16) - (backupTrophyX * 16), pageRect.Y + 126 + (offsetTrophyY * 16) - (backupTrophyY * 16), 16, 16);
-							Rectangle cutRect = new Rectangle(offsetTrophyX * 18, offsetTrophyY * 18, 16, 16);
-
-							spriteBatch.Draw(trophy, posRect, cutRect, Color.White);
-
-							offsetTrophyX++;
-							if (i == 2 || i == 5) {
-								offsetTrophyX = backupTrophyX;
-								offsetTrophyY++;
+							if (i != 0 && i % 3 == 0) {
+								styleX = left;
+								styleY += 18;
+								offsetX = 0;
+								offsetY++;
 							}
+							Rectangle posRect = new Rectangle(pageRect.X + 98 + styleX - left - (2 * offsetX), pageRect.Y + 126 + styleY - top - (2 * offsetY), width, height);
+							Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
+							spriteBatch.Draw(trophyTexture, posRect, cutRect, Color.White);
+							styleX += 18;
+							offsetX++;
 						}
 					}
 				}
@@ -2584,84 +2615,6 @@ namespace BossChecklist
 				case "Blood Moon": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
 				case "Solar Eclipse": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
 				default: return Main.npcHeadTexture[0];
-			}
-		}
-
-		public static int[] GetVanillaBossTrophyPos(int item) {
-			switch (item) {
-				case ItemID.EyeofCthulhuTrophy: return new int[] { 0, 0 };
-				case ItemID.EaterofWorldsTrophy: return new int[] { 3, 0 };
-				case ItemID.BrainofCthulhuTrophy: return new int[] { 6, 0 };
-				case ItemID.SkeletronTrophy: return new int[] { 9, 0 };
-				case ItemID.QueenBeeTrophy: return new int[] { 12, 0 };
-				case ItemID.WallofFleshTrophy: return new int[] { 15, 0 };
-				case ItemID.DestroyerTrophy: return new int[] { 18, 0 };
-				case ItemID.SkeletronPrimeTrophy: return new int[] { 21, 0 };
-				case ItemID.RetinazerTrophy: return new int[] { 24, 0 };
-				case ItemID.SpazmatismTrophy: return new int[] { 27, 0 };
-				case ItemID.PlanteraTrophy: return new int[] { 30, 0 };
-				case ItemID.GolemTrophy: return new int[] { 33, 0 };
-				case ItemID.MourningWoodTrophy: return new int[] { 0, 3 };
-				case ItemID.PumpkingTrophy: return new int[] { 3, 3 };
-				case ItemID.IceQueenTrophy: return new int[] { 6, 3 };
-				case ItemID.SantaNK1Trophy: return new int[] { 9, 3 };
-				case ItemID.EverscreamTrophy: return new int[] { 12, 3 };
-				case ItemID.KingSlimeTrophy: return new int[] { 54, 3 };
-				case ItemID.DukeFishronTrophy: return new int[] { 57, 3 };
-				case ItemID.AncientCultistTrophy: return new int[] { 60, 3 };
-				case ItemID.MartianSaucerTrophy: return new int[] { 63, 3 };
-				case ItemID.FlyingDutchmanTrophy: return new int[] { 66, 3 };
-				case ItemID.MoonLordTrophy: return new int[] { 69, 3 };
-				case ItemID.BossTrophyDarkmage: return new int[] { 72, 3 };
-				case ItemID.BossTrophyBetsy: return new int[] { 75, 3 };
-				case ItemID.BossTrophyOgre: return new int[] { 78, 3 };
-				default: return new int[] { 0, 0 }; // Default is Eye of Cthulhu
-			}
-		}
-
-		public static int GetVanillaMusicBoxPos(int item) {
-			switch (item) {
-				case ItemID.MusicBoxOverworldDay: return 0;
-				case ItemID.MusicBoxEerie: return 2;
-				case ItemID.MusicBoxNight: return 4;
-				case ItemID.MusicBoxTitle: return 6;
-				case ItemID.MusicBoxUnderground: return 8;
-				case ItemID.MusicBoxBoss1: return 10;
-				case ItemID.MusicBoxJungle: return 12;
-				case ItemID.MusicBoxCorruption: return 14;
-				case ItemID.MusicBoxUndergroundCorruption: return 16;
-				case ItemID.MusicBoxTheHallow: return 18;
-				case ItemID.MusicBoxBoss2: return 20;
-				case ItemID.MusicBoxUndergroundHallow: return 22;
-				case ItemID.MusicBoxBoss3: return 24;
-				case ItemID.MusicBoxSnow: return 26;
-				case ItemID.MusicBoxSpace: return 28;
-				case ItemID.MusicBoxCrimson: return 30;
-				case ItemID.MusicBoxBoss4: return 32;
-				case ItemID.MusicBoxAltOverworldDay: return 34;
-				case ItemID.MusicBoxRain: return 36;
-				case ItemID.MusicBoxIce: return 38;
-				case ItemID.MusicBoxDesert: return 40;
-				case ItemID.MusicBoxOcean: return 42;
-				case ItemID.MusicBoxDungeon: return 44;
-				case ItemID.MusicBoxPlantera: return 46;
-				case ItemID.MusicBoxBoss5: return 48;
-				case ItemID.MusicBoxTemple: return 50;
-				case ItemID.MusicBoxEclipse: return 52;
-				case ItemID.MusicBoxMushrooms: return 54;
-				case ItemID.MusicBoxPumpkinMoon: return 56;
-				case ItemID.MusicBoxAltUnderground: return 58;
-				case ItemID.MusicBoxFrostMoon: return 60;
-				case ItemID.MusicBoxUndergroundCrimson: return 62;
-				case ItemID.MusicBoxLunarBoss: return 64;
-				case ItemID.MusicBoxMartians: return 66;
-				case ItemID.MusicBoxPirates: return 68;
-				case ItemID.MusicBoxHell: return 70;
-				case ItemID.MusicBoxTowers: return 72;
-				case ItemID.MusicBoxGoblins: return 74;
-				case ItemID.MusicBoxSandstorm: return 76;
-				case ItemID.MusicBoxDD2: return 78;
-				default: return 0;
 			}
 		}
 
