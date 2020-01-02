@@ -94,7 +94,7 @@ namespace BossChecklist
 				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) setup.Add(CollectionType.MusicBox);
 				else if (temp.createTile > 0) {
 					TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
-					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall) {
+					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
 						setup.Add(CollectionType.Trophy);
 					}
 					else setup.Add(CollectionType.Generic);
