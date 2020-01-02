@@ -17,6 +17,14 @@ namespace BossChecklist
 		EventNPC
 	}
 
+	internal enum CollectionType
+	{
+		Generic,
+		Trophy,
+		Mask,
+		MusicBox
+	}
+
 	enum PacketMessageType : byte
 	{
 		RequestHideBoss,

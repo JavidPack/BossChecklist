@@ -216,6 +216,11 @@ namespace BossChecklist
 		public bool ShowInternalNames { get; set; }
 
 		[DefaultValue(false)]
+		[Label("Show Auto-detected Collection Type")]
+		[Tooltip("This will show what items our system has found as a trophy, mask, or music box on the collection page.")]
+		public bool ShowCollectionType { get; set; }
+
+		[DefaultValue(false)]
 		[Label("Truely Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }

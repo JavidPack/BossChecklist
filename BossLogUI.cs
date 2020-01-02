@@ -204,6 +204,22 @@ namespace BossChecklist
 				else if (!Main.expertMode && (item.expert || item.expertOnly)) spriteBatch.Draw(BossLogUI.xTexture, rect, Color.White);
 			}
 
+			if (Id.Contains("collect_") && BossChecklist.DebugConfig.ShowCollectionType) {
+				string showType = "";
+				BossInfo boss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
+				int index = boss.collection.FindIndex(x => x == item.type);
+				CollectionType type = boss.collectType[index];
+				if (type == CollectionType.Trophy) showType = "Trophy";
+				else if (type == CollectionType.MusicBox) showType = "Music";
+				else if (type == CollectionType.Mask) showType = "Mask";
+
+				if (showType != "") {
+					Vector2 measure = Main.fontMouseText.MeasureString(showType);
+					Vector2 pos = new Vector2(rectangle.X + (Width.Pixels / 2) - (measure.X * 0.8f / 2), rectangle.Top);
+					Utils.DrawBorderString(spriteBatch, showType, pos, Colors.RarityAmber, 0.8f);
+				}
+			}
+
 			if (IsMouseHovering) {
 				if (hoverText != "By Hand") {
 					if (item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_")) && !Main.expertMode && (item.expert || item.expertOnly)) {
@@ -246,7 +262,7 @@ namespace BossChecklist
 	{
 		public static int itemTimer = 300;
 		public static int[] itemShown;
-		public static List<int>[] validItems;
+		public static List<List<int>> validItems;
 		public static int headNum = -1;
 
 		public override void Draw(SpriteBatch spriteBatch) {
@@ -256,16 +272,13 @@ namespace BossChecklist
 			{
 				selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 				if (validItems == null) {
-					validItems = new List<int>[] { new List<int>(), new List<int>(), new List<int>() };
-					foreach (int type in selectedBoss.collection) {
-						if (type != -1) {
-							Item newItem = new Item();
-							newItem.SetDefaults(type);
-
-							if (newItem.Name.Contains("Trophy") && newItem.createTile > 0) validItems[0].Add(type);
-							if (newItem.Name.Contains("Mask") && newItem.vanity) validItems[1].Add(type);
-							if (newItem.Name.Contains("Music Box") && newItem.createTile > 0) validItems[2].Add(type);
-						}
+					validItems = new List<List<int>> { new List<int>(), new List<int>(), new List<int>() };
+					for (int i = 0; i < selectedBoss.collection.Count; i++) {
+						int item = selectedBoss.collection[i];
+						CollectionType type = selectedBoss.collectType[i];
+						if (type == CollectionType.Trophy) validItems[0].Add(item);
+						if (type == CollectionType.Mask) validItems[1].Add(item);
+						if (type == CollectionType.MusicBox) validItems[2].Add(item);
 					}
 					if (validItems[0].Count == 0) validItems[0].Add(0);
 					if (validItems[1].Count == 0) validItems[1].Add(0);
@@ -2324,7 +2337,7 @@ namespace BossChecklist
 				collectible.SetDefaults(shortcut.collection[i]);
 
 				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
-				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name);
+				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name);   
 				collectionTable.Height.Pixels = 50;
 				collectionTable.Width.Pixels = 50;
 				collectionTable.Id = "collect_" + collectible.type;

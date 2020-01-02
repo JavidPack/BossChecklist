@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using Terraria.ObjectData;
 
 namespace BossChecklist
 {
@@ -19,6 +21,8 @@ namespace BossChecklist
 		internal List<int> spawnItem;
 		internal List<int> loot;
 		internal List<int> collection;
+		internal List<CollectionType> collectType;
+
 		internal string despawnMessage;
 		internal string pageTexture;
 		internal string overrideIconTexture;
@@ -40,6 +44,7 @@ namespace BossChecklist
 			this.downed = downed;
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
+			this.collectType = SetupCollectionTypes(collection);
 			this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
 			if (this.info != "") this.info = info;
@@ -78,6 +83,25 @@ namespace BossChecklist
 
 		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
 			return new BossInfo(EntryType.Event, progression, "Terraria", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
+		}
+
+		internal List<CollectionType> SetupCollectionTypes(List<int> collection) {
+			List<CollectionType> setup = new List<CollectionType>();
+			foreach (int type in collection) {
+				Item temp = new Item();
+				temp.SetDefaults(type);
+				if (temp.headSlot > 0 && temp.vanity) setup.Add(CollectionType.Mask);
+				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) setup.Add(CollectionType.MusicBox);
+				else if (temp.createTile > 0) {
+					TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
+					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall) {
+						setup.Add(CollectionType.Trophy);
+					}
+					else setup.Add(CollectionType.Generic);
+				}
+				else setup.Add(CollectionType.Generic);
+			}
+			return setup;
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";

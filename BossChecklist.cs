@@ -30,6 +30,50 @@ namespace BossChecklist
 		internal static UserInterface BossRadarUIInterface;
 		internal BossRadarUI BossRadarUI;
 
+		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
+			ItemID.MusicBoxOverworldDay,
+			ItemID.MusicBoxAltOverworldDay,
+			ItemID.MusicBoxNight,
+			ItemID.MusicBoxRain,
+			ItemID.MusicBoxSnow,
+			ItemID.MusicBoxIce,
+			ItemID.MusicBoxDesert,
+			ItemID.MusicBoxOcean,
+			ItemID.MusicBoxSpace,
+			ItemID.MusicBoxUnderground,
+			ItemID.MusicBoxAltUnderground,
+			ItemID.MusicBoxMushrooms,
+			ItemID.MusicBoxJungle,
+			ItemID.MusicBoxCorruption,
+			ItemID.MusicBoxUndergroundCorruption,
+			ItemID.MusicBoxCrimson,
+			ItemID.MusicBoxUndergroundCrimson,
+			ItemID.MusicBoxTheHallow,
+			ItemID.MusicBoxUndergroundHallow,
+			ItemID.MusicBoxHell,
+			ItemID.MusicBoxDungeon,
+			ItemID.MusicBoxTemple,
+			ItemID.MusicBoxBoss1,
+			ItemID.MusicBoxBoss2,
+			ItemID.MusicBoxBoss3,
+			ItemID.MusicBoxBoss4,
+			ItemID.MusicBoxBoss5,
+			ItemID.MusicBoxPlantera,
+			ItemID.MusicBoxEerie,
+			ItemID.MusicBoxEclipse,
+			ItemID.MusicBoxGoblins,
+			ItemID.MusicBoxPirates,
+			ItemID.MusicBoxMartians,
+			ItemID.MusicBoxPumpkinMoon,
+			ItemID.MusicBoxFrostMoon,
+			ItemID.MusicBoxTowers,
+			ItemID.MusicBoxLunarBoss,
+			ItemID.MusicBoxSandstorm,
+			ItemID.MusicBoxDD2,
+			ItemID.MusicBoxTitle
+		};
+		public static Dictionary<int, int> itemToMusicReference;
+
 		// Mods that have been added manually
 		internal bool vanillaLoaded = true;
 		//internal bool thoriumLoaded;
@@ -57,6 +101,9 @@ namespace BossChecklist
 			ToggleBossLog = RegisterHotKey("Toggle Boss Log", "L");
 
 			tremorLoaded = ModLoader.GetMod("Tremor") != null;
+
+			FieldInfo itemToMusicField = typeof(SoundLoader).GetField("itemToMusic", BindingFlags.Static | BindingFlags.NonPublic);
+			itemToMusicReference = (Dictionary<int, int>)itemToMusicField.GetValue(null);
 
 			bossTracker = new BossTracker();
 
@@ -114,7 +161,7 @@ namespace BossChecklist
 			else
 				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
 		}
-
+		
 		public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
 			//this is needed for Boss Radar, so it takes the range at which to draw the icon properly
 			ZoomFactor = Transform.Zoom - (Vector2.UnitX + Vector2.UnitY);
