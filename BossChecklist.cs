@@ -161,7 +161,7 @@ namespace BossChecklist
 			else
 				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
 		}
-		
+
 		public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
 			//this is needed for Boss Radar, so it takes the range at which to draw the icon properly
 			ZoomFactor = Transform.Zoom - (Vector2.UnitX + Vector2.UnitY);
@@ -354,7 +354,7 @@ namespace BossChecklist
 							args[5] as Func<bool> // Available
 						);
 						bossTracker.AnyModHasOldCall = true;
-						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
+						AddToOldCalls(message, args[1] as string);
 					}
 					else {
 						bossTracker.AddBoss(
@@ -385,7 +385,7 @@ namespace BossChecklist
 							args[5] as Func<bool> // Available
 						);
 						bossTracker.AnyModHasOldCall = true;
-						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
+						AddToOldCalls(message, args[1] as string);
 					}
 					else {
 						bossTracker.AddMiniBoss(
@@ -416,7 +416,7 @@ namespace BossChecklist
 							args[5] as Func<bool> // Available
 						);
 						bossTracker.AnyModHasOldCall = true;
-						Logger.Info(message + " call for " + args[1] as string + " is not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience.");
+						AddToOldCalls(message, args[1] as string);
 					}
 					else {
 						bossTracker.AddEvent(
@@ -462,6 +462,14 @@ namespace BossChecklist
 
 			// Local functions.
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
+
+			void AddToOldCalls(string message, string name) {
+				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)
+				List<string> oldCallsList;
+				if (!bossTracker.OldCalls.TryGetValue(message, out oldCallsList))
+					bossTracker.OldCalls.Add(message, oldCallsList = new List<string>());
+				oldCallsList.Add(name);
+			}
 		}
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {

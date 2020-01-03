@@ -32,6 +32,7 @@ namespace BossChecklist
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
 		internal bool AnyModHasOldCall = false;
+		internal Dictionary<string, List<string>> OldCalls = new Dictionary<string, List<string>>();
 
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
@@ -98,8 +99,13 @@ namespace BossChecklist
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
 			BossesFinalized = true;
-			if(AnyModHasOldCall)
+			if (AnyModHasOldCall) {
+				foreach (var oldCall in OldCalls) {
+					BossChecklist.instance.Logger.Info(oldCall.Key + " calls for the following are not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience: " + string.Join(", ", oldCall.Value));
+				}
+				OldCalls.Clear();
 				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
+			}
 			
 			if (Main.netMode == NetmodeID.Server) {
 				BossChecklist.ServerCollectedRecords = new List<BossStats>[255];
