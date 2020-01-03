@@ -44,7 +44,7 @@ namespace BossChecklist
 			this.downed = downed;
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
-			this.collectType = SetupCollectionTypes(collection);
+			this.collectType = SetupCollectionTypes(this.collection);
 			this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
 			if (this.info != "") this.info = info;

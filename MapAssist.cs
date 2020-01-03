@@ -4,22 +4,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 
-/*
-	Ye fabled Crash regaurding the Map. Unsure if fixed now but just in case it isnt (Seems to happen in Multiplayer):
-	
-	Index was out of range. Must be non-negative and less than the size of the collection.
-	Parameter name: index
-	   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
-	   at System.Collections.Generic.List`1.get_Item(Int32 index)
-	   at BossAssist.MapAssist.DrawIcons() in C:\Users\TurtleShark's Bros\Documents\My Games\Terraria\ModLoader\Mod Sources\BossAssist\BossLogUI.cs:line 86
-	   at BossAssist.MapAssist.DrawFullscreenMap() in C:\Users\TurtleShark's Bros\Documents\My Games\Terraria\ModLoader\Mod Sources\BossAssist\BossLogUI.cs:line 78
-	   at BossAssist.BossAssist.PostDrawFullscreenMap(String& mouseText) in C:\Users\TurtleShark's Bros\Documents\My Games\Terraria\ModLoader\Mod Sources\BossAssist\DataManager.cs:line 157
-	   at Terraria.ModLoader.ModHooks.PostDrawFullscreenMap(String& mouseText)
-	   at Terraria.Main.DrawMap()
-	   at Terraria.Main.do_Draw(GameTime gameTime)
-	   at Terraria.Main.DoDraw(GameTime gameTime)
-*/
-
 namespace BossChecklist
 {
 	public static class MapAssist
