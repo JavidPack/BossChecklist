@@ -128,71 +128,19 @@ namespace BossChecklist
 				BossRadarUIInterface = new UserInterface();
 				BossRadarUIInterface.SetState(BossRadarUI);
 			}
-			
-            ModTranslation spawnInfos = CreateTranslation("BossSpawnInfo.KingSlime");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "使用 [i:{ItemID.SlimeCrown}]，在地图外侧的两个六分之一（最左边或最右边）范围内随机刷新，或者在史莱姆雨期间杀死150个史莱姆");
-            spawnInfos.SetDefault("Use [i:{ItemID.SlimeCrown}], randomly in outer 3rds of map, or kill 150 slimes during slime rain.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.EoC");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在夜晚使用 [i:{ItemID.SuspiciousLookingEye}]，当最大生命值大于等于200时在每个夜晚有1/3的几率生成");
-            spawnInfos.SetDefault("Use [i:{ItemID.SuspiciousLookingEye}] at night, or 1/3 chance nightly if over 200 HP.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.BoC");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在猩红之地使用 [i:{ItemID.BloodySpine}] 或在猩红之地的洞穴中破坏3个猩红之心");
-            spawnInfos.SetDefault("Use [i:{ItemID.BloodySpine}] or break 3 Crimson Hearts in a crimson chasm.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.EoW");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在腐化之地使用 [i:{ItemID.WormFood}] 或在腐化之地的裂缝中破坏3个腐化之球");
-            spawnInfos.SetDefault("Use [i:{ItemID.WormFood}] or break 3 Shadow Orbs in a corruption chasm.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.QueenBee");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在丛林中使用 [i:{ItemID.Abeemination}] 或破坏地下丛林中蜂巢的幼虫");
-            spawnInfos.SetDefault("Use [i:{ItemID.Abeemination}] or break a Bee Hive's Larva found in the jungle.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.Skeletron");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在夜晚造访地牢并与老人谈话或通过装备 [i:{ItemID.ClothierVoodooDoll}] 在夜晚杀死裁缝");
-            spawnInfos.SetDefault("Visit the dungeon and talk to the old man at night or kill the Clothier with [i:{ItemID.ClothierVoodooDoll}] at night.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.WoF");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "通过将 [i:{ItemID.GuideVoodooDoll}] 投入地狱中炙热的岩浆 [c/FF0000:这将开启困难模式(肉山后)世界！]");
-            spawnInfos.SetDefault("Spawn by throwing [i:{ItemID.GuideVoodooDoll}] into lava in the Underworld. [c/FF0000:Starts Hardmode!]");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.TheTwins");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在击败任何一个机械Boss前，已敲烂至少一个祭坛的每个夜晚有10%的几率生成。或在夜晚使用 [i:{ItemID.MechanicalEye}] 以召唤");
-            spawnInfos.SetDefault("10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Alternatively, Use [i:{ItemID.MechanicalEye}] at night to spawn.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.Destroyer");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在击败任何一个机械Boss前，已敲烂至少一个祭坛的每个夜晚有10%的几率生成。或在夜晚使用 [i:{ItemID.MechanicalWorm}] 以召唤");
-            spawnInfos.SetDefault("10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:{ItemID.MechanicalWorm}] at night to spawn.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.SkeletronPrime");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在击败任何一个机械Boss前，已敲烂至少一个祭坛的每个夜晚有10%的几率生成。或在夜晚使用 [i:{ItemID.MechanicalSkull}] 以召唤");
-            spawnInfos.SetDefault("10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:{ItemID.MechanicalSkull}] at night to spawn.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.Plantera");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在所有3个机械Boss被击败后的地下丛林，破坏世纪之花球茎(不是灯泡!)以召唤"); // "不是灯泡!" is a translation joke. Terraria used to translate "Bulb"(茎) like "light bulb"(灯泡) in Chinese.
-            spawnInfos.SetDefault("Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.Golem");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在神庙祭坛中使用 [i:{ItemID.LihzahrdPowerCell}] ，这将在丛林神庙的深处被找到");
-            spawnInfos.SetDefault("Use [i:{ItemID.LihzahrdPowerCell}] on Lihzahrd Altar, found deep in the Jungle Temple.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.DD2Betsy");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "在三级旧日军团入侵的第7波——最后一波生成");
-            spawnInfos.SetDefault("Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.DukeFishron");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "使用 [i:{ItemID.TruffleWorm}] 作为鱼饵在大海中钓出");
-            spawnInfos.SetDefault("Fish in ocean using the [i:{ItemID.TruffleWorm}] as bait.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.Cultist");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "杀死在击败石巨人后出现在地牢门前的4个信徒");
-            spawnInfos.SetDefault("Kill the 4 cultists outside the dungeon after defeating Golem.");
-            AddTranslation(spawnInfos);
-			spawnInfos = CreateTranslation("BossSpawnInfo.MoonLord");
-            spawnInfos.AddTranslation(GameCulture.Chinese, "使用 [i:{ItemID.CelestialSigil}] 或杀死所有 {(BossChecklist.tremorLoaded ? 5 : 4)} 个天界塔。" + {(BossChecklist.tremorLoaded ? "[c/FF0000:开启震颤模式！]" : "")}");
-            spawnInfos.SetDefault("Use [i:{ItemID.CelestialSigil}] or defeat all {(BossChecklist.tremorLoaded ? 5 : 4)} pillars. " + {(BossChecklist.tremorLoaded ? "[c/FF0000:Starts Tremode!]" : "")}");
-            AddTranslation(spawnInfos);
+
+			/*
+			// Fix some translation keys automatically -- TODO
+			FieldInfo translationsField = typeof(Mod).GetField("translations", BindingFlags.Instance | BindingFlags.NonPublic);
+			var translations = (Dictionary<string, ModTranslation>)translationsField?.GetValue(this);
+			if (translations != null) {
+				foreach (var translation in translations) {
+					if (translation.Value.GetDefault().Contains("ItemID.")) {
+						ItemID.Search.GetId()
+					}
+				}
+			}
+			*/
 		}
 
 		public override void Unload() {

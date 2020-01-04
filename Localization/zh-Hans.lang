@@ -24,3 +24,32 @@ EventEnd.BloodMoon=猩红之月重回地平线之下...
 EventEnd.FrostMoon=寒霜之月在日光中被融化了...
 EventEnd.PumpkinMoon=南瓜月停止了它“疯狂的丰收”...
 EventEnd.SolarEclipse=日食已经结束了...直到下一次...
+
+BossSpawnInfo.KingSlime=使用 [i:560]，在地图外侧的两个六分之一（最左边或最右边）范围内随机刷新，或者在史莱姆雨期间杀死150个史莱姆
+BossSpawnInfo.EyeofCthulhu=在夜晚使用 [i:43]，当最大生命值大于等于200时在每个夜晚有1/3的几率生成
+BossSpawnInfo.EaterofWorldsHead=在腐化之地使用 [i:70] 或在腐化之地的裂缝中破坏3个腐化之球
+BossSpawnInfo.BrainofCthulhu=在猩红之地使用 [i:1331] 或在猩红之地的洞穴中破坏3个猩红之心
+BossSpawnInfo.QueenBee=在丛林中使用 [i:1133] 或破坏地下丛林中蜂巢的幼虫
+BossSpawnInfo.SkeletronHead=在夜晚造访地牢并与老人谈话或通过装备 [i:1307] 在夜晚杀死裁缝
+BossSpawnInfo.WallofFlesh=通过将 [i:267] 投入地狱中炙热的岩浆 [c/FF0000:这将开启困难模式(肉山后)世界！]
+BossSpawnInfo.TheTwins=在击败任何一个机械Boss前，已敲烂至少一个祭坛的每个夜晚有10%的几率生成。或在夜晚使用 [i:544] 以召唤
+BossSpawnInfo.TheDestroyer=在击败任何一个机械Boss前，已敲烂至少一个祭坛的每个夜晚有10%的几率生成。或在夜晚使用 [i:556] 以召唤
+BossSpawnInfo.SkeletronPrime=在击败任何一个机械Boss前，已敲烂至少一个祭坛的每个夜晚有10%的几率生成。或在夜晚使用 [i:557] 以召唤
+BossSpawnInfo.Plantera=在所有3个机械Boss被击败后的地下丛林，破坏世纪之花球茎(不是灯泡!)以召唤
+BossSpawnInfo.Golem=在神庙祭坛中使用 [i:1293] ，这将在丛林神庙的深处被找到
+BossSpawnInfo.DD2Betsy=在三级旧日军团入侵的第7波——最后一波生成
+BossSpawnInfo.DukeFishron=使用 [i:2673] 作为鱼饵在大海中钓出
+BossSpawnInfo.CultistBoss=杀死在击败石巨人后出现在地牢门前的4个信徒
+BossSpawnInfo.MoonLordHead=使用 [i:3601] 或杀死所有 4 个天界塔
+BossSpawnInfo.MoonLordHead_Tremor=使用 [i:3601] 或杀死所有 5 个天界塔。[c/FF0000:开启震颤模式！]
+
+# BossSpawnInfo.Pumpking=
+# BossSpawnInfo.MourningWood=
+# BossSpawnInfo.IceQueen=
+# BossSpawnInfo.SantaNK1=
+# BossSpawnInfo.Everscream=
+
+# BossSpawnInfo.PirateShip=
+# BossSpawnInfo.DD2OgreT3=
+# BossSpawnInfo.DD2DarkMageT3=
+# BossSpawnInfo.MartianSaucer=

@@ -22,3 +22,32 @@ EventEnd.BloodMoon=The Blood Moon falls past the horizon...
 EventEnd.FrostMoon=The Frost Moon melts as the sun rises...
 EventEnd.PumpkinMoon=The Pumpkin Moon ends its harvest...
 EventEnd.SolarEclipse=The solar eclipse has ended... until next time...
+
+BossSpawnInfo.KingSlime=Use [i:560], randomly in outer 3rds of map, or kill 150 slimes during slime rain.
+BossSpawnInfo.EyeofCthulhu=Use [i:43] at night, or 1/3 chance nightly if over 200 HP.
+BossSpawnInfo.EaterofWorldsHead=Use [i:70] or break 3 Shadow Orbs in a corruption chasm.
+BossSpawnInfo.BrainofCthulhu=Use [i:1331] or break 3 Crimson Hearts in a crimson chasm.
+BossSpawnInfo.QueenBee=Use [i:1133] or break a Bee Hive's Larva found in the jungle.
+BossSpawnInfo.SkeletronHead=Visit the dungeon and talk to the old man at night or kill the Clothier with [i:1307] at night.
+BossSpawnInfo.WallofFlesh=Spawn by throwing [i:267] into lava in the Underworld. [c/FF0000:Starts Hardmode!]
+BossSpawnInfo.TheTwins=10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Alternatively, Use [i:544] at night to spawn.
+BossSpawnInfo.TheDestroyer=10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:556] at night to spawn.
+BossSpawnInfo.SkeletronPrime=10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:557] at night to spawn.
+BossSpawnInfo.Plantera=Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated.
+BossSpawnInfo.Golem=Use [i:1293] on Lihzahrd Altar, found deep in the Jungle Temple.
+BossSpawnInfo.DD2Betsy=Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).
+BossSpawnInfo.DukeFishron=Fish in ocean using the [i:2673] as bait.
+BossSpawnInfo.CultistBoss=Kill the 4 cultists outside the dungeon after defeating Golem.
+BossSpawnInfo.MoonLordHead=Use [i:3601] or defeat all 4 pillars.
+BossSpawnInfo.MoonLordHead_Tremor=Use [i:3601] or defeat all 5 pillars. [c/FF0000:Starts Tremode!]
+
+BossSpawnInfo.Pumpking=Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
+BossSpawnInfo.MourningWood=Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
+BossSpawnInfo.IceQueen=Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:1958]
+BossSpawnInfo.SantaNK1=Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:1958]
+BossSpawnInfo.Everscream=Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:1958]
+
+BossSpawnInfo.PirateShip=Occasionally appears during a Pirate Invasion! Start Pirate Invasion with [i:1315]
+BossSpawnInfo.DD2OgreT3=Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
+BossSpawnInfo.DD2DarkMageT3=Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
+BossSpawnInfo.MartianSaucer=Occasionally appears during Martian Madness! Start Martian Madness by being detected by an alien probe.
