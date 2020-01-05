@@ -1207,6 +1207,7 @@ namespace BossChecklist
 
 			bool allLoot = false;
 			bool allCollect = false;
+			bool condCollect = false;
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
 			foreach (int loot in sortedBosses[index].loot) {
@@ -1227,19 +1228,24 @@ namespace BossChecklist
 					}
 				}
 			}
-			foreach (int collectible in sortedBosses[index].collection) {
-				if (collectible == 0 || collectible == -1) continue;
-				int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
-				if (indexCollect != -1) allCollect = true;
-				else {
-					allCollect = false;
-					break;
+			if (sortedBosses[index].collection.Count == 0 || sortedBosses[index].collection.All(x => x == 0 || x == -1)) {
+				condCollect = true;
+			}
+			else {
+				foreach (int collectible in sortedBosses[index].collection) {
+					if (collectible == -1 || collectible == 0) continue;
+					int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
+					if (indexCollect != -1) allCollect = true;
+					else {
+						allCollect = false;
+						break;
+					}
 				}
 			}
-			
+
 			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
 
-			if (allLoot && allCollect) spriteBatch.Draw(BossLogUI.goldChestTexture, pos2, Color.White);
+			if (allLoot && (allCollect || condCollect)) spriteBatch.Draw(BossLogUI.goldChestTexture, pos2, Color.White);
 			else if (allLoot) spriteBatch.Draw(BossLogUI.chestTexture, pos2, Color.White);
 			else if (allCollect) spriteBatch.Draw(BossLogUI.starTexture, pos2, Color.White);
 
