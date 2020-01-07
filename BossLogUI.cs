@@ -90,7 +90,8 @@ namespace BossChecklist
 
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			CalculatedStyle innerDimensions = GetInnerDimensions();
-			Vector2 stringAdjust = Main.fontMouseText.MeasureString(buttonType);
+			string translated = Language.GetTextValue(buttonType);
+			Vector2 stringAdjust = Main.fontMouseText.MeasureString(translated);
 			Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3), innerDimensions.Y - 24);
 
 			base.DrawSelf(spriteBatch);
@@ -126,7 +127,7 @@ namespace BossChecklist
 
 			if (IsMouseHovering && !dragging) {
 				BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
-				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonType, pos, Color.White);
+				if (!Id.Contains("CycleItem")) DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, translated, pos, Color.White);
 				else Main.hoverItemName = buttonType;
 			}
 			if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) Main.player[Main.myPlayer].mouseInterface = true;
@@ -172,19 +173,23 @@ namespace BossChecklist
 				Main.inventoryBack7Texture = Main.inventoryBack3Texture;
 			}
 
+			string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
+			string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
+
 			// Prevents empty slots from being drawn
-			if (item.type != 0 || hoverText == "Demon Altar" || hoverText == "Crimson Altar" || Id.Contains("ingredient_"))
+			if (item.type != 0 || hoverText == demonAltar || hoverText == crimsonAltar || Id.Contains("ingredient_")) {
 				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
+			}
 
 			Main.inventoryBack6Texture = backup;
 			Main.inventoryBack7Texture = backup2;
 
-			if (hoverText == "Crimson Altar" || hoverText == "Demon Altar") {
+			if (hoverText == crimsonAltar || hoverText == demonAltar) {
 				Main.instance.LoadTiles(TileID.DemonAltar);
 				int offsetX = 0;
 				int offsetY = 0;
 				int offsetSrc = 0;
-				if (hoverText == "Crimson Altar") offsetSrc = 3;
+				if (hoverText == crimsonAltar) offsetSrc = 3;
 				for (int i = 0; i < 6; i++) {
 					Vector2 pos = new Vector2(rectangle.X + (rectangle.Width / 2) - (24 * 0.64f) + (16 * offsetX * 0.64f) - 3, rectangle.Y + (rectangle.Height / 2) - (16 * 0.64f) + (16 * offsetY * 0.64f) - 3);
 					Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
@@ -221,7 +226,7 @@ namespace BossChecklist
 			}
 
 			if (IsMouseHovering) {
-				if (hoverText != "By Hand") {
+				if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
 					if (item.type != 0 && (Id.Contains("loot_") || Id.Contains("collect_")) && !Main.expertMode && (item.expert || item.expertOnly)) {
 						Main.hoverItemName = "This item is only obtainable in Expert Mode";
 					}
@@ -314,8 +319,8 @@ namespace BossChecklist
 
 			if (BossLogUI.PageNum == -1) { // Table of Contents
 				Vector2 pos = new Vector2(GetInnerDimensions().X + 19, GetInnerDimensions().Y + 15);
-				if (Id == "PageOne") Utils.DrawBorderStringBig(spriteBatch, "Pre-Hardmode", pos, Colors.RarityAmber, 0.6f);
-				else if (Id == "PageTwo") Utils.DrawBorderStringBig(spriteBatch, "Hardmode", pos, Colors.RarityAmber, 0.6f);
+				if (Id == "PageOne") Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode"), pos, Colors.RarityAmber, 0.6f);
+				else if (Id == "PageTwo") Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode"), pos, Colors.RarityAmber, 0.6f);
 
 				if (!IsMouseHovering) headNum = -1;
 
@@ -348,55 +353,60 @@ namespace BossChecklist
 			else if (BossLogUI.PageNum == -2) { // Mod Developers Credits
 				if (Id == "PageOne") {
 					// Credits Page
-					Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-					Utils.DrawBorderString(spriteBatch, "Special thanks to:", pos, Color.IndianRed);
+					Vector2 stringPos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
+					Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs"), stringPos, Color.IndianRed);
 
 					Texture2D users = BossChecklist.instance.GetTexture("Resources/Extra_CreditUsers");
 					float textScaling = 0.75f;
-
-					// Jopojelly
-					Vector2 userpos = new Vector2(pageRect.X + 20, pageRect.Y + 40);
+					
+					string username = "Jopojelly";
+					Vector2 userpos = new Vector2(pageRect.X + 100, pageRect.Y + 75);
 					Rectangle userselected = new Rectangle(0 + (59 * 1), 0, 59, 58);
 					spriteBatch.Draw(users, userpos, userselected, Color.White);
 
-					pos = new Vector2(pageRect.X + 85, pageRect.Y + 50);
-					Utils.DrawBorderString(spriteBatch, "Jopojelly\nOriginal creator of Boss Checklist!", pos, Color.CornflowerBlue, textScaling);
+					Vector2 stringAdjust = Main.fontMouseText.MeasureString(username);
+					stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+					Utils.DrawBorderString(spriteBatch, username, stringPos, Color.CornflowerBlue, textScaling);
 
-					// SheepishShepherd
-					userpos = new Vector2(pageRect.X + 20, pageRect.Y + 110);
+					username = "Sheepish Shepherd";
+					userpos = new Vector2(pageRect.X + 200, pageRect.Y + 75);
 					userselected = new Rectangle(0 + (59 * 0), 0, 59, 58);
 					spriteBatch.Draw(users, userpos, userselected, Color.White);
 
-					pos = new Vector2(pageRect.X + 85, pageRect.Y + 120);
-					Utils.DrawBorderString(spriteBatch, "Sheepish Shepherd\nBoss log UI and other boss features code", pos, Color.Goldenrod, textScaling);
+					stringAdjust = Main.fontMouseText.MeasureString(username);
+					stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+					Utils.DrawBorderString(spriteBatch, username, stringPos, Color.Goldenrod, textScaling);
 
-					// direwolf420
-					userpos = new Vector2(pageRect.X + 20, pageRect.Y + 180);
+					username = "direwolf420";
+					userpos = new Vector2(pageRect.X + 50, pageRect.Y + 180);
 					userselected = new Rectangle(0 + (59 * 3), 0, 59, 58);
 					spriteBatch.Draw(users, userpos, userselected, Color.White);
 
-					pos = new Vector2(pageRect.X + 85, pageRect.Y + 190);
-					Utils.DrawBorderString(spriteBatch, "direwolf420\nBoss radar and multiplayer compatability code", pos, Color.Tomato, textScaling);
+					stringAdjust = Main.fontMouseText.MeasureString(username);
+					stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+					Utils.DrawBorderString(spriteBatch, username, stringPos, Color.Tomato, textScaling);
 
-					// Orian
-					userpos = new Vector2(pageRect.X + 20, pageRect.Y + 250);
+					username = "Orian";
+					userpos = new Vector2(pageRect.X + 150, pageRect.Y + 180);
 					userselected = new Rectangle(0 + (59 * 2), 0, 59, 58);
 					spriteBatch.Draw(users, userpos, userselected, Color.White);
 
-					pos = new Vector2(pageRect.X + 85, pageRect.Y + 260);
-					Utils.DrawBorderString(spriteBatch, "Orian34\nSingleplayer beta testing", pos, new Color(49, 210, 162), textScaling);
+					stringAdjust = Main.fontMouseText.MeasureString(username);
+					stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+					Utils.DrawBorderString(spriteBatch, username, stringPos, new Color(49, 210, 162), textScaling);
 
-					// Panini
-					userpos = new Vector2(pageRect.X + 11, pageRect.Y + 320);
+					username = "Panini";
+					userpos = new Vector2(pageRect.X + 241, pageRect.Y + 180);
 					userselected = new Rectangle(0 + (59 * 4), 0, 68, 58);
 					spriteBatch.Draw(users, userpos, userselected, Color.White);
 
-					pos = new Vector2(pageRect.X + 85, pageRect.Y + 330);
-					Utils.DrawBorderString(spriteBatch, "Panini\nMultiplayer/Server beta testing", pos, Color.HotPink, textScaling);
+					stringAdjust = Main.fontMouseText.MeasureString(username);
+					stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+					Utils.DrawBorderString(spriteBatch, username, stringPos, Color.HotPink, textScaling);
 
 					// "Spriters"
-					pos = new Vector2(pageRect.X + 20, pageRect.Y + 390);
-					Utils.DrawBorderString(spriteBatch, "...and thank you RiverOaken for an amazing book sprite!", pos, Color.MediumPurple, textScaling);
+					stringPos = new Vector2(pageRect.X + 20, pageRect.Y + 390);
+					Utils.DrawBorderString(spriteBatch, "...and thank you RiverOaken for an amazing book sprite!", stringPos, Color.MediumPurple, textScaling);
 
 					/*
 					pos = new Vector2(pageRect.X + 5, pageRect.Y + 270);
@@ -414,15 +424,12 @@ namespace BossChecklist
 							}
 						}
 					}
-
-					int adjustment = 0;
-
+					
 					if (optedMods.Count != 0) {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 5);
-						Utils.DrawBorderString(spriteBatch, "Thanks to all the mods who opted in!", pos, Color.LightSkyBlue); adjustment += 35;
-
-						pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + adjustment);
-						Utils.DrawBorderString(spriteBatch, "[This list only contains loaded mods]", pos, Color.LightBlue);
+						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods"), pos, Color.LightSkyBlue);
+						pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 35);
+						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice"), pos, Color.LightBlue);
 					}
 				}
 			}
@@ -478,8 +485,8 @@ namespace BossChecklist
 					}
 
 					string isDefeated = "";
-					if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:Defeated in {Main.worldName}]";
-					else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:Undefeated in {Main.worldName} ]";
+					if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}]";
+					else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}]";
 
 					string entry = selectedBoss.name;
 					if (BossChecklist.DebugConfig.ShowInternalNames) entry = selectedBoss.internalName;
@@ -506,7 +513,7 @@ namespace BossChecklist
 
 						for (int i = 0; i < 4; i++) { // 4 Records total
 							if (i == 0) {
-								recordType = "Kill Death Ratio";
+								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
 
 								int killTimes = record.kills;
 								int deathTimes = record.deaths;
@@ -520,15 +527,14 @@ namespace BossChecklist
 									achY = 8;
 								}
 
-								if (killTimes == 0 && deathTimes == 0) recordNumbers = "Unchallenged!";
-								else recordNumbers = killTimes + " kills / " + deathTimes + " deaths";
+								if (killTimes == 0 && deathTimes == 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+								else recordNumbers = $"{killTimes} {Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills")} / {deathTimes} {Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths")}";
 
 								SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 								SubpageButton.displayLastArray[i] = "Victories: " + killTimes;
 							}
 							else if (i == 1) {
-								recordType = "Quickest Victory";
-								if (BossLogUI.AltPage[BossLogUI.SubPageNum]) recordType = "Slowest Victory";
+								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Duration");
 								string finalResult = "";
 
 								int BestRecord = record.durationBest;
@@ -584,7 +590,7 @@ namespace BossChecklist
 										recordNumbers = finalResult;
 									}
 									else {
-										recordNumbers = "No record!";
+										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 									}
 								}
@@ -639,14 +645,13 @@ namespace BossChecklist
 										recordNumbers = finalResult;
 									}
 									else {
-										recordNumbers = "No record!";
+										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 									}
 								}
 							}
 							else if (i == 2) {
-								recordType = "Vitality";
-								if (BossLogUI.AltPage[BossLogUI.SubPageNum]) recordType = "Brink of Death";
+								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Health");
 
 								int BestRecord = record.healthLossBest;
 								int BestPercent = record.healthLossBestPercent;
@@ -676,7 +681,7 @@ namespace BossChecklist
 										recordNumbers = finalResult;
 									}
 									else {
-										recordNumbers = "No record!";
+										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 									}
 
@@ -704,7 +709,7 @@ namespace BossChecklist
 										recordNumbers = finalResult;
 									}
 									else {
-										recordNumbers = "No record!";
+										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 									}
 
@@ -712,8 +717,7 @@ namespace BossChecklist
 								}
 							}
 							else if (i == 3) {
-								recordType = "Ninja Reflexes";
-								if (BossLogUI.AltPage[BossLogUI.SubPageNum]) recordType = "Clumsy Fool";
+								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
 
 								int timer = record.dodgeTimeBest;
 								int low = record.hitsTakenBest;
@@ -733,7 +737,7 @@ namespace BossChecklist
 										spriteBatch.Draw(text, exclam, Color.White);
 									}
 
-									if (timer <= 0 || low < 0) recordNumbers = "No record!";
+									if (timer <= 0 || low < 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 									else recordNumbers = low + " (" + timerOutput + "s)";
 									SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 
@@ -753,7 +757,7 @@ namespace BossChecklist
 										spriteBatch.Draw(text, exclam, Color.White);
 									}
 
-									if (high < 0) recordNumbers = "No record!";
+									if (high < 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 									else recordNumbers = high + " (" + timerOutput + "s)";
 									SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
 
@@ -1353,19 +1357,19 @@ namespace BossChecklist
 			if (BossLogUI.PageNum < 0) return;
 			if (recordCooldown > 0) recordCooldown--;
 
-			if (buttonString == "Boss Records" || buttonString == "Kill Count") {
-				buttonString = "Kill Count";
-				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type == EntryType.Event) buttonString = "Kill Count";
-				else buttonString = "Boss Records";
+			if (buttonString == "Mods.BossChecklist.BossLog.DrawnText.Records" || buttonString == "LegacyInterface.101") {
+				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type == EntryType.Event) buttonString = "LegacyInterface.101"; // Kill Count
+				else buttonString = "Mods.BossChecklist.BossLog.DrawnText.Records";
 			}
 			BackgroundColor = Color.Brown;
 			base.DrawSelf(spriteBatch);
 
 			CalculatedStyle innerDimensions = GetInnerDimensions();
-			Vector2 stringAdjust = Main.fontMouseText.MeasureString(buttonString);
+			string translated = Language.GetTextValue(buttonString);
+			Vector2 stringAdjust = Main.fontMouseText.MeasureString(translated);
 			Vector2 pos = new Vector2(innerDimensions.X + ((Width.Pixels - stringAdjust.X) / 2) - 12, innerDimensions.Y - 10);
 			if (buttonString != "Disclaimer" && buttonString != "recordAlts") {
-				DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, buttonString, pos, Color.Gold);
+				DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, translated, pos, Color.Gold);
 			}
 
 			Texture2D text = ModContent.GetTexture("Terraria/UI/Achievement_Categories");
@@ -1611,7 +1615,7 @@ namespace BossChecklist
 				ItemID.BossBagBetsy
 			};
 
-			bosslogbutton = new BossAssistButton(bookTexture, "Boss Log");
+			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog");
 			bosslogbutton.Id = "OpenUI";
 			bosslogbutton.Width.Set(34, 0f);
 			bosslogbutton.Height.Set(38, 0f);
@@ -1760,7 +1764,7 @@ namespace BossChecklist
 			hardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			hardmodeList.PaddingTop = 5;
 
-			recordButton = new SubpageButton("Boss Records");
+			recordButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.Records");
 			recordButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			recordButton.Height.Pixels = 25;
 			recordButton.Left.Pixels = 0;
@@ -1768,14 +1772,14 @@ namespace BossChecklist
 			recordButton.OnClick += (a, b) => UpdateSubPage(0);
 			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
 
-			spawnButton = new SubpageButton("Spawn Info");
+			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
 			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			spawnButton.Height.Pixels = 25;
 			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
 			spawnButton.Top.Pixels = 15;
 			spawnButton.OnClick += (a, b) => UpdateSubPage(1);
 
-			lootButton = new SubpageButton("Loot & Collection");
+			lootButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.LootCollect");
 			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2 - 16;
@@ -2087,10 +2091,10 @@ namespace BossChecklist
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) {
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
 				string type = "";
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].type == EntryType.MiniBoss) type = "miniboss";
-				else if (BossChecklist.bossTracker.SortedBosses[PageNum].type == EntryType.Event) type = "event";
-				else type = "boss";
-				UIText info = new UIText($"This {type} has no summon item.");
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].type == EntryType.MiniBoss) type = "MiniBoss";
+				else if (BossChecklist.bossTracker.SortedBosses[PageNum].type == EntryType.Event) type = "Event";
+				else type = "Boss";
+				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (Main.fontMouseText.MeasureString(info.Text).X / 2) - 20;
 				info.Top.Pixels = 300;
 				PageTwo.Append(info);
@@ -2152,7 +2156,7 @@ namespace BossChecklist
 				if (ingredients.Count > 0 && requiredTiles.Count == 0) {
 					craft.SetDefaults(ItemID.PowerGlove);
 
-					LogItemSlot craftItem = new LogItemSlot(craft, false, "By Hand", ItemSlot.Context.EquipArmorVanity, 0.85f);
+					LogItemSlot craftItem = new LogItemSlot(craft, false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
 					craftItem.Height.Pixels = 50;
 					craftItem.Width.Pixels = 50;
 					craftItem.Top.Pixels = 240 + (48 * (row + 2));
@@ -2166,8 +2170,8 @@ namespace BossChecklist
 						if (requiredTiles[l] == 26) {
 							craft.SetDefaults(0);
 							string altarType;
-							if (WorldGen.crimson) altarType = "Crimson Altar";
-							else altarType = "Demon Altar";
+							if (WorldGen.crimson) altarType = Language.GetTextValue("MapObject.CrimsonAltar");
+							else altarType = Language.GetTextValue("MapObject.DemonAltar");
 							tileList = new LogItemSlot(craft, false, altarType, ItemSlot.Context.EquipArmorVanity, 0.85f);
 						}
 						else {
@@ -2218,8 +2222,8 @@ namespace BossChecklist
 					PageTwo.Append(CycleItem);
 				}
 
-				string recipeMessage = "This item is not craftable.";
-				if (TotalRecipes > 0) recipeMessage = "Recipe from: " + recipeMod;
+				string recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Noncraftable");
+				if (TotalRecipes > 0) recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.RecipeFrom", recipeMod);
 
 				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
 				ModdedRecipe.Left.Pixels = -5;
