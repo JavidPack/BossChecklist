@@ -6,75 +6,72 @@ using Terraria.ModLoader.Config;
 
 namespace BossChecklist
 {
-	[Label("Boss Log Customization")]
+	[Label("$Mods.BossChecklist.Configs.Title.BossLogCustomization")]
 	public class BossLogConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.BossLogConfig = this;
 
-		[Header("[i:149] [c/ffeb6e:Boss Log UI]")]
+		[Header("$Mods.BossChecklist.Configs.Header.BossLogUI")]
 
 		[DefaultValue(typeof(Color), "87, 181, 92, 255")]
-		[Label("Boss Log Color")]
-		[Tooltip("Choose the color of your Boss Log!")]
+		[Label("$Mods.BossChecklist.Configs.Label.BossLogColor")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossLogColor")]
 		public Color BossLogColor { get; set; }
 
 		[DefaultValue(typeof(Vector2), "-270, -50")]
 		[Range(-1920f, 0f)]
-		[Label("Button Position")]
-		[Tooltip("Hold right click in-game to move the button wherever you like with ease!\nPosition is measured from bottom right corner of screen")]
+		[Label("$Mods.BossChecklist.Configs.Label.BossLogPos")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossLogPos")]
 		public Vector2 BossLogPos { get; set; }
 
 		[DefaultValue(true)]
-		[Label("Check Next Boss")]
-		[Tooltip("Puts a circle in the checkbox to indicate it is the next undefeated boss to fight")]
+		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
 		public bool DrawNextMark { get; set; }
 
 		[DefaultValue(true)]
-		[Label("Colored Boss Text")]
-		[Tooltip("The boss text in the table of contents will be green when defeated and red when not.\nIf next check is enabled, the next boss will be yellow.")]
+		[Label("$Mods.BossChecklist.Configs.Label.ColoredBossText")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ColoredBossText")]
 		public bool ColoredBossText { get; set; }
 
 		[DefaultValue(true)]
-		[Label("Boss Silhouettes")]
-		[Tooltip("Masks the images of bosses when they have not been defeated.")]
+		[Label("$Mods.BossChecklist.Configs.Label.BossSilhouettes")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossSilhouettes")]
 		public bool BossSilhouettes { get; set; }
 
 		[DrawTicks]
-		[Label("Checklist Markings Type")]
-		[OptionStrings(new string[] { "✓ and  ☐", "✓ and  X", "X and  ☐" })]
-		[DefaultValue("✓ and  ☐")]
+		[Label("$Mods.BossChecklist.Configs.Label.SelectedCheckmarkType")]
+		[OptionStrings(new string[] { "✓  ☐", "✓  X", "X  ☐" })]
+		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 
 		[DrawTicks]
-		[Label("Filter bosses in list")]
-		[Tooltip("Note: Changing filters within the boss log does save your preferences")]
+		[Label("$Mods.BossChecklist.Configs.Label.FilterBosses")]
 		[OptionStrings(new string[] { "Show", "Hide when completed" })]
 		[DefaultValue("Show")]
 		public string FilterBosses { get; set; }
 
 		[DrawTicks]
-		[Label("Filter mini bosses in list")]
-		[Tooltip("Note: Changing filters within the boss log does save your preferences")]
+		[Label("$Mods.BossChecklist.Configs.Label.FilterMiniBosses")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterMiniBosses { get; set; }
 
 		[DrawTicks]
-		[Label("Filter events in list")]
-		[Tooltip("Note: Changing filters within the boss log does save your preferences")]
+		[Label("$Mods.BossChecklist.Configs.Label.FilterEvents")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
 
 		[DefaultValue(true)]
-		[Label("Hide unavailable and hidden bosses")]
-		[Tooltip("Unavailable and hidden bosses will be shown/removed from the Boss Log's table of contents.")]
+		[Label("$Mods.BossChecklist.Configs.Label.HideUnavailable")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnavailable")]
 		public bool HideUnavailable { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Hide Unsupported Bosses")]
-		[Tooltip("Bosses that have not fully integrated will be shown/removed from the Boss Log's table of contents.")]
+		[Label("$Mods.BossChecklist.Configs.Label.HideUnsupported")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnsupported")]
 		public bool HideUnsupported { get; set; }
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
@@ -82,17 +79,18 @@ namespace BossChecklist
 		}
 	}
 
-	[Label("Other Features")]
+	[Label("$Mods.BossChecklist.Configs.Title.OtherFeatures")]
 	public class ClientConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.ClientConfig = this;
 
-		[Header("[i:3037] [c/ffeb6e:Despawn Messages]")]
+		[Header("$Mods.BossChecklist.Configs.Header.ChatMessages")]
 
 		[DrawTicks]
-		[Label("Boss Despawn Messages")]
-		[OptionStrings(new string[] { "Custom", "Generic", "Disabled" })]
+		[Label("$Mods.BossChecklist.Configs.Label.DespawnMessageType")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DespawnMessageType")]
+		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
 		[DefaultValue("Generic")]
 		public string DespawnMessageType { get; set; }
 
@@ -120,44 +118,48 @@ namespace BossChecklist
 		*/
 
 		[DefaultValue(true)]
-		[Label("Pillar Defeated Messages")]
-		[Tooltip("The Lunar Pillars will send defeated messages in chat")]
+		[Label("$Mods.BossChecklist.Configs.Label.PillarMessages")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.PillarMessages")]
 		public bool PillarMessages { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Segment Defeated Messages")]
-		[Tooltip("Multi-segmented bosses will send messages when a segment is defeated")]
+		[Label("$Mods.BossChecklist.Configs.Label.LimbMessages")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LimbMessages")]
 		public bool LimbMessages { get; set; }
 
-		[Header("[i:893] [c/ffeb6e:Item Map Detection]")]
+		[Header("$Mods.BossChecklist.Configs.Header.ItemMapDetection")]
 
 		[DefaultValue(true)]
-		[Label("Fragments display on map")]
+		[Label("$Mods.BossChecklist.Configs.Label.TreasureBags")]
+		public bool TreasureBagsBool { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.Fragments")]
 		public bool FragmentsBool { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Shadow Scales and Tissue Samples display on map")]
+		[Label("$Mods.BossChecklist.Configs.Label.Scales")]
 		public bool ScalesBool { get; set; }
 
-		[Header("[i:3084] [c/ffeb6e:Boss Radar]")]
+		[Header("$Mods.BossChecklist.Configs.Header.BossRadar")]
 
-		[Label("Enable Boss Radar")]
+		[Label("$Mods.BossChecklist.Configs.Label.BossRadar")]
 		[DefaultValue(true)]
 		public bool BossRadarBool { get; set; }
 
-		[Label("Whitelist mini bosses")]
-		[Tooltip("Note: This only works properly with mini bosses that have head icons")]
+		[Label("$Mods.BossChecklist.Configs.Label.RadarMiniBosses")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.RadarMiniBosses")]
 		[DefaultValue(false)]
 		public bool RadarMiniBosses { get; set; }
 
-		[Label("Radar Opacity")]
-		[Tooltip("Amount of transparency with the radar icon")]
+		[Label("$Mods.BossChecklist.Configs.Label.RadarOpacity")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.RadarOpacity")]
 		[Range(0.35f, 0.85f)]
 		[DefaultValue(0.75f)]
 		public float OpacityFloat { get; set; }
 
-		[Label("Radar Blacklist")]
-		[Tooltip("These NPCs will not be tracked by the radar")]
+		[Label("$Mods.BossChecklist.Configs.Label.RadarBlacklist")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.RadarBlacklist")]
 		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
 
 		public override void OnChanged() {
@@ -169,7 +171,7 @@ namespace BossChecklist
 		}
 	}
 
-	[Label("Debug Interface")]
+	[Label("$Mods.BossChecklist.Configs.Title.Debug")]
 	public class DebugConfiguration : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
@@ -177,11 +179,11 @@ namespace BossChecklist
 
 		private bool recording;
 
-		[Header("[i:149] [c/ffeb6e:Info]")]
+		[Header("$Mods.BossChecklist.Configs.Header.Debug")]
 
 		[DefaultValue(false)]
 		[Label("Disable Record-Making")]
-		[Tooltip("Being able to set new records can be disabled with this option.\nThis cannot be changed during boss fights.")]
+		[Tooltip("Being able to set new records can be disabled with this option.\nThis cannot be changed during boss fights")]
 		public bool RecordingDisabled {
 			get { return recording; }
 			set {
@@ -212,12 +214,12 @@ namespace BossChecklist
 
 		[DefaultValue(false)]
 		[Label("Show Internal Names")]
-		[Tooltip("Replaces boss names with their internal names.\nGood for mod developers who need it for cross-mod content.")]
+		[Tooltip("Replaces boss names with their internal names.\nGood for mod developers who need it for cross-mod content")]
 		public bool ShowInternalNames { get; set; }
 
 		[DefaultValue(false)]
 		[Label("Show Auto-detected Collection Type")]
-		[Tooltip("This will show what items our system has found as a trophy, mask, or music box on the collection page.")]
+		[Tooltip("This will show what items our system has found as a trophy, mask, or music box on the collection page")]
 		public bool ShowCollectionType { get; set; }
 
 		[DefaultValue(false)]

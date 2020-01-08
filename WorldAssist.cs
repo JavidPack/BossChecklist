@@ -171,7 +171,7 @@ namespace BossChecklist
 				}
 				else return "";
 			}
-			else if (BossChecklist.ClientConfig.DespawnMessageType == "Custom") {
+			else if (BossChecklist.ClientConfig.DespawnMessageType == "Unique") {
 				// Check already accounted for to get to this point
 				return BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(boss)].despawnMessage;
 			}

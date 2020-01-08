@@ -1179,9 +1179,9 @@ namespace BossChecklist
 			}
 
 			if (Id.Contains("C_") && IsMouseHovering) {
-				if (Id == "C_0") Main.hoverItemName = BossChecklist.BossLogConfig.FilterBosses;
-				if (Id == "C_1") Main.hoverItemName = BossChecklist.BossLogConfig.FilterMiniBosses;
-				if (Id == "C_2") Main.hoverItemName = BossChecklist.BossLogConfig.FilterEvents;
+				if (Id == "C_0") Main.hoverItemName = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}");
+				if (Id == "C_1") Main.hoverItemName = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}");
+				if (Id == "C_2") Main.hoverItemName = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}");
 			}
 		}
 	}
@@ -1374,6 +1374,8 @@ namespace BossChecklist
 
 			Texture2D text = ModContent.GetTexture("Terraria/UI/Achievement_Categories");
 			Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 32, 32);
+
+			// TODO: Better UI for Multiplayer records (also save records made in world on to world)
 
 			if (buttonString == "") {
 				if (BossLogUI.SubPageNum == 0) {
