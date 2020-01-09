@@ -259,7 +259,7 @@ namespace BossChecklist.UIElements
 							int successfulIndex = -1;
 							int index = 0;
 							while (index < currentLine[l].Text.Length && !filled) {
-								if (currentLine[l].Text[index] == ' ' || isChinese(currentLine[l].Text[index]) {
+								if (currentLine[l].Text[index] == ' ' || isChinese(currentLine[l].Text[index])) {
 									if (ChatManager.GetStringSize(font, currentLine[l].Text.Substring(0, index), Vector2.One).X < toFill)
 										successfulIndex = index;
 									else {
@@ -324,9 +324,9 @@ namespace BossChecklist.UIElements
 			}
 			return finalList;
 		}
-		public static bool isChinese(char a)
-        {
-            return a >= 0x4E00 && a <= 0x9FA5;
-        }
+
+		public static bool isChinese(char a) {
+			return a >= 0x4E00 && a <= 0x9FA5;
+		}
 	}
 }
