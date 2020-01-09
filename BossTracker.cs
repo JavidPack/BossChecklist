@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -1124,18 +1125,26 @@ namespace BossChecklist
 
 		// New system is better
 		internal void AddBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
+			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
 			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
 		internal void AddMiniBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
+			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
 			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
 		internal void AddEvent(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, List<int> loot, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
+			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
 			SortedBosses.Add(new BossInfo(EntryType.Event, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, loot, texture, info, despawnMessage, iconTexture));
 			LogNewBoss(source?.Name ?? "Unknown", name);
+		}
+
+		internal void EnsureBossIsNotDuplicate(string mod, string bossname) {
+			if (SortedBosses.Any(x=> x.Key == $"{mod} {bossname}"))
+				throw new Exception($"The boss '{bossname}' from the mod '{mod}' has already been added. Check your code for duplicate entries or typos.");
 		}
 
 		internal void LogNewBoss(string mod, string name) {
