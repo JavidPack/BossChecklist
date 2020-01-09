@@ -1,0 +1,8 @@
+zh-Hans 86
+ru-RU 134
+pt-BR 134
+pl-PL 134
+it-IT 134
+fr-FR 134
+es-ES 134
+de-DE 134
