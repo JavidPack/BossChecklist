@@ -1232,7 +1232,7 @@ namespace BossChecklist
 					}
 				}
 			}
-			if (sortedBosses[index].collection.Count == 0 || sortedBosses[index].collection.All(x => x == 0 || x == -1)) {
+			if (sortedBosses[index].collection.Count == 0 || sortedBosses[index].collection.All(x => x <= 0)) {
 				condCollect = true;
 			}
 			else {
@@ -1458,7 +1458,8 @@ namespace BossChecklist
 		}
 	}
 
-	class BossLogUI : UIState {
+	class BossLogUI : UIState
+	{
 		public BossAssistButton bosslogbutton;
 
 		public BossLogPanel BookArea;
@@ -1567,6 +1568,7 @@ namespace BossChecklist
 			else UpdateSubPage(SubPageNum);
 			BossLogVisible = show;
 			if (show) {
+				// TODO: Small fix to update hidden list on open
 				Main.playerInventory = false;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes rainbow glow
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord = false; // if (PageNum >= 0 && SubPageNum == 0) ??
@@ -2059,8 +2061,9 @@ namespace BossChecklist
 			if (PageNum < 0) return;
 			pageTwoItemList.Clear();
 
-			if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
-			string infoText = BossChecklist.bossTracker.SortedBosses[PageNum].info;
+			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
+			if (boss.modSource == "Unknown") return;
+			string infoText = boss.info;
 
 			var message = new UIMessageBox(infoText);
 			message.Width.Set(-34f, 1f);
@@ -2090,11 +2093,11 @@ namespace BossChecklist
 			infoLines.OverflowHidden = true;
 			//PageTwo.Append(infoLines);
 
-			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count < 1) {
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown") return;
+			if (boss.spawnItem.Count < 1 || boss.spawnItem.All(x => x <= 0)) {
+				if (boss.modSource == "Unknown") return;
 				string type = "";
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].type == EntryType.MiniBoss) type = "MiniBoss";
-				else if (BossChecklist.bossTracker.SortedBosses[PageNum].type == EntryType.Event) type = "Event";
+				if (boss.type == EntryType.MiniBoss) type = "MiniBoss";
+				else if (boss.type == EntryType.Event) type = "Event";
 				else type = "Boss";
 				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (Main.fontMouseText.MeasureString(info.Text).X / 2) - 20;
@@ -2109,7 +2112,7 @@ namespace BossChecklist
 			Item spawn = new Item();
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
 				RecipeFinder finder = new RecipeFinder();
-				finder.SetResult(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
+				finder.SetResult(boss.spawnItem[RecipePageNum]);
 
 				foreach (Recipe recipe in finder.SearchRecipes()) {
 					if (TotalRecipes == RecipeShown) {
@@ -2127,7 +2130,7 @@ namespace BossChecklist
 					}
 					TotalRecipes++;
 				}
-				spawn.SetDefaults(BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum]);
+				spawn.SetDefaults(boss.spawnItem[RecipePageNum]);
 
 				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
 				spawnItemSlot.Height.Pixels = 50;
@@ -2604,7 +2607,7 @@ namespace BossChecklist
 			}
 		}
 
-		public void UpdateSubPage(int subpage){
+		public void UpdateSubPage(int subpage) {
 			SubPageNum = subpage;
 			if (PageNum == -1) UpdateTableofContents(); // Handle new page
 			else if (PageNum == -2) UpdateCredits();
