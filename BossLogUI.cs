@@ -111,7 +111,7 @@ namespace BossChecklist
 				if (!myPlayer.hasOpenedTheBossLog) spriteBatch.Draw(BossLogUI.borderTexture, innerDimensions.ToRectangle(), Main.DiscoColor);
 				else if (BossChecklist.DebugConfig.RecordingDisabled) spriteBatch.Draw(BossLogUI.borderTexture, innerDimensions.ToRectangle(), Color.IndianRed);
 
-				if (myPlayer.hasNewRecord) {
+				if (myPlayer.hasNewRecord.Any(x => x == true)) {
 					slowDown = !slowDown;
 					if (slowDown) cycleFrame++;
 					if (cycleFrame >= 19) cycleFrame = 0;
@@ -504,8 +504,10 @@ namespace BossChecklist
 					if (selectedBoss.type != EntryType.Event) {
 						// Boss Records Subpage
 						Texture2D achievements = ModContent.GetTexture("Terraria/UI/Achievements");
-						BossStats record = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[BossLogUI.PageNum].stat;
+						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						BossStats record = modPlayer.AllBossRecords[BossLogUI.PageNum].stat;
 
+						bool[] isNewRecord = new bool[4];
 						string recordType = "";
 						string recordNumbers = "";
 						int achX = 0;
@@ -546,9 +548,7 @@ namespace BossChecklist
 									achY = 9;
 
 									if (LastRecord == BestRecord && LastRecord != -1) {
-										Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
-										Rectangle exclam = new Rectangle((int)GetInnerDimensions().X + 232, (int)GetInnerDimensions().Y + 180, text.Width, text.Height);
-										spriteBatch.Draw(text, exclam, Color.White);
+										isNewRecord[i] = true;
 									}
 
 									if (BestRecord > 0) {
@@ -575,7 +575,7 @@ namespace BossChecklist
 
 										SubpageButton.displayArray[i] = recordType + ": " + finalResult;
 
-										if (LastRecord == BestRecord) {
+										if (LastRecord != BestRecord) {
 											string lastFight = "";
 											if (recordMin2 > 0) lastFight += recordMin2 + "m " + recSec2 + "s";
 											else lastFight += rec2 + "s";
@@ -599,9 +599,7 @@ namespace BossChecklist
 									achY = 5;
 
 									if (LastRecord == WorstRecord && LastRecord != -1) {
-										Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
-										Rectangle exclam = new Rectangle((int)GetInnerDimensions().X + 232, (int)GetInnerDimensions().Y + 180, text.Width, text.Height);
-										spriteBatch.Draw(text, exclam, Color.White);
+										isNewRecord[i] = true;
 									}
 
 									if (WorstRecord > 0) {
@@ -664,9 +662,7 @@ namespace BossChecklist
 									achX = 3;
 									achY = 0;
 									if (LastRecord == BestRecord && LastRecord != -1) {
-										Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
-										Rectangle exclam = new Rectangle((int)GetInnerDimensions().X + 182, (int)GetInnerDimensions().Y + 255, text.Width, text.Height);
-										spriteBatch.Draw(text, exclam, Color.White);
+										isNewRecord[i] = true;
 									}
 
 									string finalResult = "";
@@ -692,9 +688,7 @@ namespace BossChecklist
 									achY = 7;
 
 									if (LastRecord == WorstRecord && LastRecord != -1) {
-										Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
-										Rectangle exclam = new Rectangle((int)GetInnerDimensions().X + 182, (int)GetInnerDimensions().Y + 255, text.Width, text.Height);
-										spriteBatch.Draw(text, exclam, Color.White);
+										isNewRecord[i] = true;
 									}
 
 									string finalResult = "";
@@ -732,9 +726,7 @@ namespace BossChecklist
 									achY = 7;
 
 									if (last == low && last != -1) {
-										Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
-										Rectangle exclam = new Rectangle((int)GetInnerDimensions().X + 225, (int)GetInnerDimensions().Y + 332, text.Width, text.Height);
-										spriteBatch.Draw(text, exclam, Color.White);
+										isNewRecord[i] = true;
 									}
 
 									if (timer <= 0 || low < 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
@@ -752,9 +744,7 @@ namespace BossChecklist
 									achY = 2;
 
 									if (last == high && last != -1) {
-										Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
-										Rectangle exclam = new Rectangle((int)GetInnerDimensions().X + 225, (int)GetInnerDimensions().Y + 332, text.Width, text.Height);
-										spriteBatch.Draw(text, exclam, Color.White);
+										isNewRecord[i] = true;
 									}
 
 									if (high < 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
@@ -772,6 +762,12 @@ namespace BossChecklist
 							Rectangle posRect = new Rectangle(pageRect.X, pageRect.Y + 100 + (75 * i), 64, 64);
 							Rectangle cutRect = new Rectangle(66 * achX, 66 * achY, 64, 64);
 							spriteBatch.Draw(achievements, posRect, cutRect, Color.White);
+							
+							if (isNewRecord[i] && modPlayer.hasNewRecord[BossLogUI.PageNum]) {
+								Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
+								Rectangle exclam = new Rectangle(pageRect.X + 59, pageRect.Y + 96 + (75 * i), 9, 24);
+								spriteBatch.Draw(text, exclam, Color.White);
+							}
 
 							Vector2 stringAdjust = Main.fontMouseText.MeasureString(recordType);
 							Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + 110 + i * 75);
@@ -1277,6 +1273,7 @@ namespace BossChecklist
 					else if (!sortedBosses[pagenum].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
 					else if (sortedBosses[pagenum].downed()) TextColor = Colors.RarityGreen;
 					else if (!sortedBosses[pagenum].downed()) TextColor = Colors.RarityRed;
+					if (modPlayer.hasNewRecord[pagenum]) TextColor = Main.DiscoColor;
 				}
 				else {
 					if (IsMouseHovering) TextColor = new Color(80, 85, 100);
@@ -1571,7 +1568,6 @@ namespace BossChecklist
 				// TODO: Small fix to update hidden list on open
 				Main.playerInventory = false;
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes rainbow glow
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord = false; // if (PageNum >= 0 && SubPageNum == 0) ??
 			}
 		}
 
@@ -1850,7 +1846,7 @@ namespace BossChecklist
 				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") filterCheckMark[2].SetImage(xTexture);
 				else filterCheckMark[2].SetImage(circleTexture);
 			}
-
+			
 			base.Update(gameTime);
 		}
 
@@ -1914,6 +1910,13 @@ namespace BossChecklist
 
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
 			if (!BookUI.DrawTab(listeningElement.Id)) return;
+
+			// Reset new record
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (PageNum >= 0 && modPlayer.hasNewRecord[PageNum]) {
+				modPlayer.hasNewRecord[PageNum] = false;
+			}
+
 			if (listeningElement.Id == "ToCFilter_Tab" && PageNum == -1) {
 				ToggleFilterPanel(evt, listeningElement);
 				return;
@@ -2008,6 +2011,11 @@ namespace BossChecklist
 		}
 
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
+			// Reset new record
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (PageNum >= 0 && modPlayer.hasNewRecord[PageNum]) {
+				modPlayer.hasNewRecord[PageNum] = false;
+			}
 			pageTwoItemList.Clear();
 			prehardmodeList.Clear();
 			hardmodeList.Clear();

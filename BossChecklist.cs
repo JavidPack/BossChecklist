@@ -545,8 +545,8 @@ namespace BossChecklist
 					int npcPos = reader.ReadInt32();
 
 					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat;
-					specificRecord.NetRecieve(reader, modPlayer.hasNewRecord);
-					if (modPlayer.hasNewRecord) {
+					specificRecord.NetRecieve(reader, modPlayer.hasNewRecord[npcPos]);
+					if (modPlayer.hasNewRecord[npcPos]) {
 						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 					}
 

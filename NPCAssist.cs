@@ -166,7 +166,7 @@ namespace BossChecklist
 			// If a new record was made, notify the player
 			if (newRecordSet) {
 				CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-				modplayer.hasNewRecord = true;
+				modplayer.hasNewRecord[ListedBossNum(npc)] = true;
 			}
 		}
 
