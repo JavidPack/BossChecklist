@@ -7,8 +7,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-// Dodge counter not working properly
-
 namespace BossChecklist
 {
 	class NPCAssist : GlobalNPC
@@ -42,21 +40,21 @@ namespace BossChecklist
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
-					if (Main.netMode == 0) Main.NewText("The " + npc.GetFullNetName().ToString() + " has been destroyed", Colors.RarityPurple);
-					else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The " + npc.GetFullNetName().ToString() + " has been destroyed"), Colors.RarityPurple);
+					if (Main.netMode == 0) Main.NewText(Language.GetTextValue("Mods.BossChecklist.BossDefeated.Tower", npc.GetFullNetName().ToString()), Colors.RarityPurple);
+					else NetMessage.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.BossDefeated.Tower", npc.GetFullNetName().ToString()), Colors.RarityPurple);
 				}
 			}
 			if (NPCisLimb(npc) && BossChecklist.ClientConfig.LimbMessages) {
 				if (npc.type == NPCID.SkeletronHand) partName = "Skeletron Hand";
-				if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText("The " + partName + " is down!", Colors.RarityGreen);
-				else NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The " + partName + " is down!"), Colors.RarityGreen);
+				if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(Language.GetTextValue("Mods.BossChecklist.BossDefeated.Limb", partName), Colors.RarityGreen);
+				else NetMessage.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.BossDefeated.Limb", partName), Colors.RarityGreen);
 			}
 
 			// Setting a record for fastest boss kill, and counting boss kills
 			// Twins check makes sure the other is not around before counting towards the record
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				if (TruelyDead(npc)) {
+				if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled && TruelyDead(npc)) {
 					if (Main.netMode == NetmodeID.SinglePlayer) CheckRecords(npc, index);
 					else if (Main.netMode == NetmodeID.Server) CheckRecordsMultiplayer(npc, index);
 				}
@@ -65,7 +63,6 @@ namespace BossChecklist
 		}
 
 		public override bool InstancePerEntity => true;
-		//bool[] StartingPlayers; // Created for each NPC
 
 		public override bool PreAI(NPC npc) {
 			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) return true; // Checks for multi-segmented bosses?
@@ -88,7 +85,7 @@ namespace BossChecklist
 		public void CheckRecords(NPC npc, int recordIndex) {
 			Player player = Main.LocalPlayer;
 			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
-			if (BossChecklist.DebugConfig.RecordingDisabled || !npc.playerInteraction[Main.myPlayer]) return; // RecordingStats must be enabled!
+			if (!npc.playerInteraction[Main.myPlayer]) return; // Player must have contributed to the boss fight
 
 			bool newRecordSet = false;
 
@@ -175,7 +172,7 @@ namespace BossChecklist
 				Player player = Main.player[i];
 
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				if (!player.active || !npc.playerInteraction[i] || BossChecklist.DebugConfig.RecordingDisabled) continue;
+				if (!player.active || !npc.playerInteraction[i]) continue;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 				BossStats oldRecord = list[recordIndex];

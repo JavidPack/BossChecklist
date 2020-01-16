@@ -257,19 +257,25 @@ namespace BossChecklist
 					InterfaceScaleType.UI)
 				);
 			}
-			int InventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Death Text"));
-			if (InventoryIndex != -1) {
-				layers.Insert(InventoryIndex, new LegacyGameInterfaceLayer("BossChecklist: Respawn Timer",
-					delegate {
-						if (Main.LocalPlayer.dead && Main.LocalPlayer.difficulty != 2) {
-							if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) Main.PlaySound(25);
-							string timer = (Main.LocalPlayer.respawnTimer / 60 + 1).ToString();
-							DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontDeathText, timer, new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 - 75), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
-						}
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
+			if (ClientConfig.RespawnTimerEnabled) {
+				int InventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Death Text"));
+				if (InventoryIndex != -1) {
+					layers.Insert(InventoryIndex, new LegacyGameInterfaceLayer("BossChecklist: Respawn Timer",
+						delegate {
+							if (Main.LocalPlayer.dead && Main.LocalPlayer.difficulty != 2) {
+								if (ClientConfig.TimerSounds) {
+									if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) Main.PlaySound(25);
+								}
+								string timer = (Main.LocalPlayer.respawnTimer / 60 + 1).ToString();
+								Vector2 screenPos = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 - 75);
+								Color deathColor = Main.player[Main.myPlayer].GetDeathAlpha(Color.Transparent);
+								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontDeathText, timer, screenPos, deathColor);
+							}
+							return true;
+						},
+						InterfaceScaleType.UI)
+					);
+				}
 			}
 			#region DEBUG
 			int PlayerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));

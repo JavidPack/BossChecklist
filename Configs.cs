@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
 namespace BossChecklist
@@ -34,6 +35,11 @@ namespace BossChecklist
 		[Label("$Mods.BossChecklist.Configs.Label.ColoredBossText")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ColoredBossText")]
 		public bool ColoredBossText { get; set; }
+
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.CountDownedBosses")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CountDownedBosses")]
+		public bool CountDownedBosses { get; set; }
 
 		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.BossSilhouettes")]
@@ -94,29 +100,6 @@ namespace BossChecklist
 		[DefaultValue("Generic")]
 		public string DespawnMessageType { get; set; }
 
-		/* EXAMPLE RADIO BUTTON
-		[DefaultValue(true)]
-		[Label("Boss Despawn Messages: Custom")]
-		public bool CDespawnBool {
-			get { return DespawnState == 0; }
-			set { if (value) DespawnState = 0; }
-		}
-
-		[DefaultValue(false)]
-		[Label("Boss Despawn Messages: Generic")]
-		public bool GDespawnBool {
-			get { return DespawnState == 1; }
-			set { if (value) DespawnState = 1; }
-		}
-
-		[DefaultValue(false)]
-		[Label("Boss Despawn Messages: None")]
-		public bool ODespawnBool {
-			get { return DespawnState == 2; }
-			set { if (value) DespawnState = 2; }
-		}
-		*/
-
 		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.PillarMessages")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.PillarMessages")]
@@ -126,6 +109,15 @@ namespace BossChecklist
 		[Label("$Mods.BossChecklist.Configs.Label.LimbMessages")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LimbMessages")]
 		public bool LimbMessages { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.RespawnTimer")]
+		public bool RespawnTimerEnabled { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.TimerSounds")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.TimerSounds")]
+		public bool TimerSounds { get; set; }
 
 		[Header("$Mods.BossChecklist.Configs.Header.ItemMapDetection")]
 
@@ -176,41 +168,25 @@ namespace BossChecklist
 	{
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
-
-		private bool recording;
+		
+		private int processRecord = 0;
+		private bool nrEnabled;
+		private bool rtEnabled;
 
 		[Header("$Mods.BossChecklist.Configs.Header.Debug")]
 
-		[DefaultValue(false)]
-		[Label("Disable Record-Making")]
-		[Tooltip("Being able to set new records can be disabled with this option.\nThis cannot be changed during boss fights")]
-		public bool RecordingDisabled {
-			get { return recording; }
-			set {
-				if (!Main.gameMenu)
-					foreach (NPC npc in Main.npc) {
-						if (!npc.active) continue;
-						if (NPCAssist.ListedBossNum(npc) != -1) {
-							Main.NewText("You cannot change this while a boss is active!", Color.Orange);
-							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
-						}
-					}
-				recording = value;
-			}
-		}
-
 		// TODO: Fix for MP
+		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
 		[Label("Reset Records Option")]
-		[Tooltip("Reset records with a boss by double right-clicking the boss records button of the selected boss page\nNOTE: This debug feature only works in singleplayer currently!")]
+		[Tooltip("Reset records with a boss by double right-clicking the 'Records' button of the selected boss page\nNOTE: This debug feature only works in singleplayer currently!")]
 		public bool ResetRecordsBool { get; set; }
 
-		/* TODO: Next update?
+		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
 		[Label("Reset Loot/Collection")]
-		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot")]
-		public bool RemoveItemFromList { get; set; }
-		*/
+		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot\nClear the entire loot/collection list by double right-clicking the 'Loot / Collection' button\nHold Alt for either of these to apply the effect to ALL bosses\nNOTE: This debug feature only works in singleplayer currently!")]
+		public bool ResetLootItems { get; set; }
 
 		[DefaultValue(false)]
 		[Label("Show Internal Names")]
@@ -227,9 +203,50 @@ namespace BossChecklist
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
 
+		[BackgroundColor(55, 85, 120)]
+		[DefaultValue(false)]
+		[Label("Disable new records from being recorded to the boss log")]
+		public bool NewRecordsDisabled {
+			get { return processRecord == 1 && nrEnabled; }
+			set {
+				if (!Main.gameMenu) {
+					for (int i = 0; i < Main.maxNPCs; i++) {
+						if (!Main.npc[i].active) continue;
+						if (NPCAssist.ListedBossNum(Main.npc[i]) != -1) {
+							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
+							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+						}
+					}
+				}
+				if (value) processRecord = 1;
+				nrEnabled = value;
+			}
+		}
+
+		[BackgroundColor(55, 85, 120)]
+		[DefaultValue(false)]
+		[Label("Disable records from being tracked entirely")]
+		public bool RecordTrackingDisabled {
+			get { return processRecord == 2 && rtEnabled; }
+			set {
+				if (!Main.gameMenu) {
+					for (int i = 0; i < Main.maxNPCs; i++) {
+						if (!Main.npc[i].active) continue;
+						if (NPCAssist.ListedBossNum(Main.npc[i]) != -1) {
+							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
+							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+						}
+					}
+				}
+				if (value) processRecord = 2;
+				rtEnabled = value;
+			}
+		}
+
 		// TODO: Get timers and counters to properly visualize itself in Multiplayer
+		[BackgroundColor(55, 85, 120)]
 		[Label("Show record timers and counters of selected NPC")]
-		[Tooltip("NOTE: This debug feature only works in singleplayer currently!")]
+		[Tooltip("This will only show if Record Tracking is NOT disabled\nNOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {

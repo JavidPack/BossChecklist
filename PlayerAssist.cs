@@ -101,14 +101,6 @@ namespace BossChecklist
 			clone.AllBossRecords = AllBossRecords;
 		}
 
-		public override void OnRespawn(Player player) {
-			// This works both in SP and MP because it records within ModPlayer
-			for (int i = 0; i < DeathTracker.Count; i++) {
-				if (DeathTracker[i] == 1) AllBossRecords[i].stat.deaths++;
-				DeathTracker[i] = 0;
-			}
-		}
-
 		public override void OnEnterWorld(Player player) {
 			BossLogUI.PageNum = -3;
 			RecordTimers = new List<int>();
@@ -148,31 +140,47 @@ namespace BossChecklist
 			}
 		}
 
+		public override void OnRespawn(Player player) {
+			// This works both in SP and MP because it records within ModPlayer
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				for (int i = 0; i < DeathTracker.Count; i++) {
+					if (DeathTracker[i] == 1) AllBossRecords[i].stat.deaths++;
+					DeathTracker[i] = 0;
+				}
+			}
+		}
+
 		public override void OnHitByNPC(NPC npc, int damage, bool crit) {
-			for (int i = 0; i < Main.maxNPCs; i++) {
-				if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
-				AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
-				DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				for (int i = 0; i < Main.maxNPCs; i++) {
+					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
+					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
+					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
+				}
 			}
 		}
 
 		public override void OnHitByProjectile(Projectile proj, int damage, bool crit) {
-			for (int i = 0; i < Main.maxNPCs; i++) {
-				if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
-				AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
-				DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				for (int i = 0; i < Main.maxNPCs; i++) {
+					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
+					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
+					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
+				}
 			}
 		}
 
 		public override void PreUpdate() {
-			for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
-				if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
-				else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {					
-					if (player.dead) DeathTracker[listNum] = 1;
-					RecordTimers[listNum]++;
-					DodgeTimer[listNum]++;
-					if (BrinkChecker[listNum] == 0 || (player.statLife < BrinkChecker[listNum] && player.statLife > 0)) {
-						BrinkChecker[listNum] = player.statLife;
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
+					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
+					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
+						if (player.dead) DeathTracker[listNum] = 1;
+						RecordTimers[listNum]++;
+						DodgeTimer[listNum]++;
+						if (BrinkChecker[listNum] == 0 || (player.statLife < BrinkChecker[listNum] && player.statLife > 0)) {
+							BrinkChecker[listNum] = player.statLife;
+						}
 					}
 				}
 			}

@@ -1,9 +1,5 @@
 # Translation by: 
-# BossDespawn.Generic={0} is no longer after you...
-# BossDespawn.Day={0} flees as the sun rises...
-# BossDespawn.Generic={0} is no longer after you...
-# BossDespawn.Generic={0} is no longer after you...
-# BossDespawn.Day={0} flees as the sun rises...
+
 # BossDespawn.Generic={0} is no longer after you...
 # BossDespawn.Day={0} flees as the sun rises...
 
@@ -28,6 +24,8 @@
 # EventEnd.FrostMoon=The Frost Moon melts as the sun rises...
 # EventEnd.PumpkinMoon=The Pumpkin Moon ends its harvest...
 # EventEnd.SolarEclipse=The solar eclipse has ended... until next time...
+# BossDefeated.Tower=The {0} has been destroyed!
+# BossDefeated.Limb=The {0} is down!
 
 # BossSpawnInfo.KingSlime=Use [i:560], randomly in outer 3rds of map, or kill 150 slimes during slime rain.
 # BossSpawnInfo.EyeofCthulhu=Use [i:43] at night, or 1/3 chance nightly if over 200 HP.
@@ -64,12 +62,9 @@
 # BossLog.HoverText.JumpBoss=Jump to next boss:\n{0}
 # BossLog.HoverText.JumpMini=Jump to next mini boss:\n{0}
 # BossLog.HoverText.JumpEvent=Jump to next event:\n{0}
-# BossLog.HoverText.ShowingBest=Records are shown as your best compared to your last fight
-# BossLog.HoverText.ShowingWorst=Records are shown as your worst compared to your last fight
-# BossLog.HoverText.ClickToSeeBest=Click to see your best records
-# BossLog.HoverText.ClickToSeeWorst=Click to see your worst records
 # BossLog.HoverText.ViewCollect=Click to view collectibles only
 # BossLog.HoverText.ViewLoot=Click to view all loot
+# BossLog.HoverText.ItemIsExpertOnly=This item is only obtainable in expert mode
 
 # BossLog.DrawnText.PreHardmode=Pre-hardmode
 # BossLog.DrawnText.Hardmode=Hardmode
@@ -88,6 +83,9 @@
 # BossLog.DrawnText.NoSpawnBoss=This boss has no spawn item
 # BossLog.DrawnText.NoSpawnMiniBoss=This mini boss has no spawn item
 # BossLog.DrawnText.NoSpawnEvent=This event has no spawn item
+# BossLog.DrawnText.NotImplemented=The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
+# BossLog.DrawnText.LogFeaturesNotAvailable=Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
+# BossLog.DrawnText.NoModsSupported=None of your loaded mods have added pages to the Boss Log. If you want your favorite mods to be included, suggest adding their own boss pages to the mod's discord or forums page!
 
 # BossLog.Credits.ThanksDevs=Special thanks to:
 # BossLog.Credits.ThanksMods=Thanks to all the mods who opted in!
@@ -117,6 +115,8 @@
 # Configs.Label.ColoredBossText=Colored Boss Text
 # Configs.Tooltip.ColoredBossText=The boss text in the table of contents will be green when defeated and red when not.\nIf next check is enabled, the next boss will be yellow
 # Configs.Label.BossSilhouettes=Boss Silhouettes
+# Configs.Label.CountDownedBosses=Boss Completion Display
+# Configs.Tooltip.CountDownedBosses=If enabled, the table of contents will display how many bosses were defeated compared to the total amount.
 # Configs.Tooltip.BossSilhouettes=Masks the images of bosses when they have not been defeated.
 # Configs.Label.SelectedCheckmarkType=Checklist Marking Type
 # Configs.Label.FilterBosses=Filter bosses in list
@@ -135,6 +135,9 @@
 # Configs.Tooltip.PillarMessages=When defeated, the chat sends a defeated message for Lunar Pillars
 # Configs.Label.LimbMessages=Segment Defeated Messages
 # Configs.Tooltip.LimbMessages=Multi-segmented bosses will send messages when a segment is defeated\nEx. Skeletron's hands
+# Configs.Label.RespawnTimer=Enable Respawn Timer
+# Configs.Label.TimerSounds=Respawn Timer Sounds
+# Configs.Tooltip.TimerSounds=If enabled, the last 3 seconds of your respawn time will have sound indicators
 
 # Configs.Header.ItemMapDetection=[i:893] [c/ffeb6e:Item Map Detection]
 # Configs.Label.TreasureBags=Treasure bags display on the map
@@ -152,3 +155,4 @@
 
 # Configs.Title.Debug=Debug Interface
 # Configs.Header.Debug=[i:3625] [c/ffeb6e:Debugging for developers]
+# Configs.Notice.InvalidChange=You cannot change this while a boss is active!

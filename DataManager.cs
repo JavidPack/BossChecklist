@@ -8,6 +8,7 @@ using Terraria.ModLoader.IO;
 namespace BossChecklist
 {
 	// Migrating data from BossAssist is possible, but is vastly unecessary. Going to be doing a clean slate for merge.
+	// TODO: Get rid of worst records. Use a "compare best to last fight"/"compare new best to old best" system
 	public class BossRecord : TagSerializable
 	{
 		internal string bossName;
