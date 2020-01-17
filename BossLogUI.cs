@@ -545,259 +545,129 @@ namespace BossChecklist
 						bool[] isNewRecord = new bool[4];
 						string recordType = "";
 						string recordNumbers = "";
-						int achX = 0;
-						int achY = 0;
+						string compareNumbers = "";
+						int[] achCoord = new int[] { 0, 0 };
 
 						for (int i = 0; i < 4; i++) { // 4 Records total
-							if (i == 0) {
-								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
-
-								int killTimes = record.kills;
-								int deathTimes = record.deaths;
-
-								if (killTimes >= deathTimes) {
-									achX = 4;
-									achY = 10;
+							if (i == 0) { // Kills & Deaths
+								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+									recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
+									int killTimes = record.kills;
+									int deathTimes = record.deaths;
+									achCoord = killTimes >= deathTimes ? new int[] { 4, 10 } : new int[] { 4, 8 };
+									if (killTimes == 0 && deathTimes == 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+									else recordNumbers = $"{killTimes} {Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills")} / {deathTimes} {Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths")}";
 								}
 								else {
-									achX = 4;
-									achY = 8;
+									recordType = $"World Records";
+									recordNumbers = $"for {Main.worldName}";
+									achCoord = new int[] { 4, 6 };
 								}
-
-								if (killTimes == 0 && deathTimes == 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
-								else recordNumbers = $"{killTimes} {Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills")} / {deathTimes} {Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths")}";
-
-								SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-								SubpageButton.displayLastArray[i] = "Victories: " + killTimes;
 							}
-							else if (i == 1) {
+							else if (i == 1) { // Fight Duration
 								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Duration");
-								string finalResult = "";
-
-								// TODO: Change formatting from #m ##.#s to #:##.#
-
-								int BestRecord = record.durationBest;
-								int WorstRecord = record.durationWorst;
-								int LastRecord = record.durationLast;
+								achCoord = new int[] { 4, 9 };
+								
+								int BestRecord_ticks = record.durationBest;
+								int PrevRecord_ticks = record.durationPrev;
+								int LastAttempt = modPlayer.durationLastFight;
 
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-									achX = 4;
-									achY = 9;
+									isNewRecord[i] = LastAttempt == BestRecord_ticks && LastAttempt > 0;
+									if (BestRecord_ticks > 0) {
+										double BestRecord_seconds = (double)BestRecord_ticks / 60;
+										int BestRecord_calcMin = (int)BestRecord_seconds / 60;
+										double BestRecord_calcSec = BestRecord_seconds % 60;
+										recordNumbers = $"{BestRecord_calcMin}:{BestRecord_calcSec.ToString("00.00")}";
 
-									if (LastRecord == BestRecord && LastRecord != -1) {
-										isNewRecord[i] = true;
-									}
+										if (BestRecord_ticks != PrevRecord_ticks && PrevRecord_ticks > 0) {
+											double PrevRecord_seconds = (double)PrevRecord_ticks / 60;
+											int PrevRecord_calcMin = (int)PrevRecord_seconds / 60;
+											double PrevRecord_calcSec = PrevRecord_seconds % 60;
 
-									if (BestRecord > 0) {
-										double recordOrg = (double)BestRecord / 60;
-										int recordMin = (int)recordOrg / 60;
-										int recordSec = (int)recordOrg % 60;
+											int Difference_ticks = BestRecord_ticks - PrevRecord_ticks;
+											if (Difference_ticks < 0) Difference_ticks *= -1;
+											string sign = isNewRecord[i] ? "+" : "-";
+											double Difference_seconds = (double)Difference_ticks / 60;
+											int Difference_calcMin = (int)Difference_seconds / 60;
+											int Difference_calcSec = (int)Difference_seconds % 60;
+											string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
 
-										double record2 = (double)LastRecord / 60;
-										int recordMin2 = (int)record2 / 60;
-										int recordSec2 = (int)record2 % 60;
-
-										string rec1 = recordOrg.ToString("0.##");
-										string recSec1 = recordSec.ToString("0.##");
-										string rec2 = record2.ToString("0.##");
-										string recSec2 = recordSec2.ToString("0.##");
-
-										if (rec1.Length > 2 && rec1.Substring(rec1.Length - 2).Contains(".")) rec1 += "0";
-										if (recSec1.Length > 2 && recSec1.Substring(recSec1.Length - 2).Contains(".")) recSec1 += "0";
-										if (rec2.Length > 2 && rec2.Substring(rec2.Length - 2).Contains(".")) rec2 += "0";
-										if (recSec2.Length > 2 && recSec2.Substring(recSec2.Length - 2).Contains(".")) recSec2 += "0";
-
-										if (recordMin > 0) finalResult += recordMin + "m " + recSec1 + "s";
-										else finalResult += rec1 + "s";
-
-										SubpageButton.displayArray[i] = recordType + ": " + finalResult;
-
-										if (LastRecord != BestRecord) {
-											string lastFight = "";
-											if (recordMin2 > 0) lastFight += recordMin2 + "m " + recSec2 + "s";
-											else lastFight += rec2 + "s";
-											SubpageButton.displayLastArray[i] = "Fight Time: " + lastFight;
-
-											finalResult += " [" + lastFight + "]";
+											string calcPrev = $"{PrevRecord_calcMin}:{PrevRecord_calcSec.ToString("00.00")}";
+											string calcDiff = $"{Difference_calcMin}:{Difference_calcSec.ToString("00")}";
+											compareNumbers = $"{type} {calcPrev} ({sign}{calcDiff})";
 										}
-										else {
-											SubpageButton.displayLastArray[i] = "";
-										}
-
-										recordNumbers = finalResult;
 									}
-									else {
-										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-									}
+									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
-								else {
-									achX = 7;
-									achY = 5;
-
-									if (LastRecord == WorstRecord && LastRecord != -1) {
-										isNewRecord[i] = true;
-									}
-
-									if (WorstRecord > 0) {
-										double recordOrg = (double)WorstRecord / 60;
-										int recordMin = (int)recordOrg / 60;
-										int recordSec = (int)recordOrg % 60;
-
-										double record2 = (double)LastRecord / 60;
-										int recordMin2 = (int)record2 / 60;
-										int recordSec2 = (int)record2 % 60;
-
-										string rec1 = recordOrg.ToString("0.##");
-										string recSec1 = recordSec.ToString("0.##");
-										string rec2 = record2.ToString("0.##");
-										string recSec2 = recordSec2.ToString("0.##");
-
-										if (rec1.Length > 2 && rec1.Substring(rec1.Length - 2).Contains(".")) rec1 += "0";
-										if (recSec1.Length > 2 && recSec1.Substring(recSec1.Length - 2).Contains(".")) recSec1 += "0";
-										if (rec2.Length > 2 && rec2.Substring(rec2.Length - 2).Contains(".")) rec2 += "0";
-										if (recSec2.Length > 2 && recSec2.Substring(recSec2.Length - 2).Contains(".")) recSec2 += "0";
-
-										if (recordMin > 0) finalResult += recordMin + "m " + recSec1 + "s";
-										else finalResult += rec1 + "s";
-
-										SubpageButton.displayArray[i] = recordType + ": " + finalResult;
-
-										string lastFight = "";
-
-										if (LastRecord != -1) {
-											if (recordMin2 > 0) {
-												lastFight = "Fight Time: " + recordMin2 + "m " + recSec2 + "s";
-												SubpageButton.displayLastArray[i] = "";
-												if (LastRecord != WorstRecord) finalResult += " [" + recordMin2 + "m " + recSec2 + "s]";
-											}
-											else {
-												lastFight = "Fight Time: " + rec2 + "s";
-												if (LastRecord != WorstRecord) finalResult += " [" + rec2 + "s]";
-											}
-										}
-
-										recordNumbers = finalResult;
-									}
-									else {
-										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-									}
+								else { // TODO: World Records for Multiplayer
+									recordNumbers = "Under Construction";
+									compareNumbers = "Mostly used for Multiplayer";
 								}
 							}
-							else if (i == 2) {
+							else if (i == 2) { // Hits Taken
+								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
+								achCoord = new int[] { 0, 7 };
+
+								int BestHits = record.hitsTakenBest;
+								int PrevHits = record.hitsTakenPrev;
+								int LastAttempt = modPlayer.hitsTakenLastFight;
+								int Timer_ticks = record.dodgeTimeBest;
+
+								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+									isNewRecord[i] = LastAttempt == BestHits && LastAttempt > 0;
+									if (BestHits >= 0) {
+										double Timer_seconds = (double)Timer_ticks / 60;
+										recordNumbers = $"{BestHits} hits [{Timer_seconds.ToString("00.00")}s]";
+
+										if (BestHits != PrevHits && PrevHits >= 0) {
+											string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
+											string sign = isNewRecord[i] ? "-" : "+";
+											int difference = BestHits - PrevHits;
+											if (difference < 0) difference *= -1;
+											compareNumbers = $"{type} {PrevHits} hits ({sign}{difference})";
+										}
+									}
+									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+								}
+								else { // TODO: World Records for Multiplayer
+									recordNumbers = "Under Construction";
+									compareNumbers = "Still works in single player!";
+								}
+							}
+							else if (i == 3) { // Health Lost
 								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Health");
+								achCoord = new int[] { 3, 0 };
 
 								int BestRecord = record.healthLossBest;
-								int BestPercent = record.healthLossBestPercent;
-								int WorstRecord = record.healthLossWorst;
-								int WorstPercent = record.healthLossWorstPercent;
-								int LastRecord = record.healthLossLast;
-								int LastPercent = record.healthLossLastPercent;
+								int PrevRecord = record.healthLossPrev;
+								int BestHealth = record.healthAtStart;
+								int PrevHealth = record.healthAtStartPrev;
+								int LastAttempt = modPlayer.healthLossLastFight;
 
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-									achX = 3;
-									achY = 0;
-									if (LastRecord == BestRecord && LastRecord != -1) {
-										isNewRecord[i] = true;
-									}
-
-									string finalResult = "";
-									string lastFight = "";
+									isNewRecord[i] = LastAttempt == BestRecord && LastAttempt > 0;
 									if (BestRecord > 0) {
-										finalResult += BestRecord + " (" + BestPercent + "%)";
-										SubpageButton.displayArray[i] = recordType + ": " + finalResult;
-										if (LastRecord != BestRecord && LastRecord != -1) {
-											lastFight = "Lowest Health: " + LastRecord + " (" + LastPercent + "%)";
-											if (LastRecord != BestRecord) finalResult += " [" + LastRecord + " (" + LastPercent + "%)]";
+										double RecordPercent = (double)((BestRecord * 100) / BestHealth);
+										recordNumbers = $"{BestRecord}/{BestHealth} [{RecordPercent.ToString("0")}%]";
+										if (BestRecord != PrevRecord && PrevRecord > 0) {
+											string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
+											string sign = isNewRecord[i] ? "-" : "+";
+											int difference = BestRecord - PrevRecord;
+											if (difference < 0) difference *= -1;
+											compareNumbers = $"{type} {PrevRecord}/{PrevHealth} ({sign}{difference})";
 										}
-										recordNumbers = finalResult;
 									}
-									else {
-										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-									}
-
-									SubpageButton.displayLastArray[i] = lastFight;
+									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
-								else {
-									achX = 6;
-									achY = 7;
-
-									if (LastRecord == WorstRecord && LastRecord != -1) {
-										isNewRecord[i] = true;
-									}
-
-									string finalResult = "";
-									string lastFight = "";
-									if (WorstRecord > 0) {
-										finalResult += WorstRecord + " (" + WorstPercent + "%)";
-										SubpageButton.displayArray[i] = recordType + ": " + finalResult;
-										if (LastRecord != -1) {
-											lastFight = "Lowest Health: " + LastRecord + " (" + LastPercent + "%)";
-											if (LastRecord != WorstRecord) finalResult += " [" + LastRecord + " (" + LastPercent + "%)" + "]";
-										}
-										recordNumbers = finalResult;
-									}
-									else {
-										recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-									}
-
-									SubpageButton.displayLastArray[i] = lastFight;
-								}
-							}
-							else if (i == 3) {
-								recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
-
-								int timer = record.dodgeTimeBest;
-								int low = record.hitsTakenBest;
-								int high = record.hitsTakenWorst;
-								int last = record.hitsTakenLast;
-
-								double timer2 = (double)record.dodgeTimeBest / 60;
-								string timerOutput = timer2.ToString("0.##");
-
-								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-									achX = 0;
-									achY = 7;
-
-									if (last == low && last != -1) {
-										isNewRecord[i] = true;
-									}
-
-									if (timer <= 0 || low < 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-									else recordNumbers = low + " (" + timerOutput + "s)";
-									SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-
-									if (last != -1) {
-										if (low != last) recordNumbers += " [" + last + "]";
-										SubpageButton.displayLastArray[i] = "Times Hit: " + last;
-									}
-									else SubpageButton.displayLastArray[i] = "";
-								}
-								else {
-									achX = 4;
-									achY = 2;
-
-									if (last == high && last != -1) {
-										isNewRecord[i] = true;
-									}
-
-									if (high < 0) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-									else recordNumbers = high + " (" + timerOutput + "s)";
-									SubpageButton.displayArray[i] = recordType + ": " + recordNumbers;
-
-									if (last != -1) {
-										if (high != last) recordNumbers = high + " (" + timerOutput + "s)" + " [" + last + "]";
-										SubpageButton.displayLastArray[i] = "Times Hit: " + last;
-									}
-									else SubpageButton.displayLastArray[i] = "";
+								else { // TODO: World Records for Multiplayer
+									recordNumbers = "Under Construction";
+									compareNumbers = "Your record compared";
 								}
 							}
 
 							Rectangle posRect = new Rectangle(pageRect.X, pageRect.Y + 100 + (75 * i), 64, 64);
-							Rectangle cutRect = new Rectangle(66 * achX, 66 * achY, 64, 64);
+							Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
 							spriteBatch.Draw(achievements, posRect, cutRect, Color.White);
 
 							if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
@@ -816,13 +686,23 @@ namespace BossChecklist
 								spriteBatch.Draw(text, exclam, Color.White);
 							}
 
+							int offsetY = compareNumbers == "" ? 110 + (i * 75) : 100 + (i * 75);
+
 							Vector2 stringAdjust = Main.fontMouseText.MeasureString(recordType);
-							Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + 110 + i * 75);
+							Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY);
 							Utils.DrawBorderString(spriteBatch, recordType, pos, Color.Goldenrod);
 
 							stringAdjust = Main.fontMouseText.MeasureString(recordNumbers);
-							pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + 135 + i * 75);
+							pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY + 25);
 							Utils.DrawBorderString(spriteBatch, recordNumbers, pos, Color.White);
+
+							if (compareNumbers != "") {
+								stringAdjust = Main.fontMouseText.MeasureString(compareNumbers);
+								float scale = 0.75f;
+								pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X * scale / 3), GetInnerDimensions().Y + offsetY + 50);
+								Utils.DrawBorderString(spriteBatch, compareNumbers, pos, Color.White, scale);
+								compareNumbers = "";
+							}
 						}
 					}
 					else {
@@ -1381,19 +1261,13 @@ namespace BossChecklist
 	internal class SubpageButton : UIPanel
 	{
 		string buttonString;
-
-		public static string[] displayArray = new string[4];
-		public static string[] displayLastArray = new string[4];
-		bool displayRecord = true; // To prevent multiple messages from accuring by holding down click
-		int recordCooldown = 0; // Allow only one display every 5 seconds
-
+		
 		public SubpageButton(string type) {
 			buttonString = type;
 		}
 
 		public override void Draw(SpriteBatch spriteBatch) {
 			if (BossLogUI.PageNum < 0) return;
-			if (recordCooldown > 0) recordCooldown--;
 
 			if (buttonString == "Mods.BossChecklist.BossLog.DrawnText.Records" || buttonString == "LegacyInterface.101") {
 				if (BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type == EntryType.Event) buttonString = "LegacyInterface.101"; // Kill Count
@@ -1417,54 +1291,19 @@ namespace BossChecklist
 
 			if (buttonString == "") {
 				if (BossLogUI.SubPageNum == 0) {
-					if (Id == "Display Records") {
-						if (Main.netMode != NetmodeID.MultiplayerClient) return; // The button only appears in Multiplayer
-						Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
+					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+						Rectangle exclamCut = new Rectangle(34 * 3, 0, 32, 32);
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-						if (IsMouseHovering) {
-							Main.hoverItemName = "Left-click to display your current records";
-							if (displayLastArray[3] != "") Main.hoverItemName += "\nRight-click to display the records of your last fight";
-							if (Main.mouseLeftRelease && Main.mouseRightRelease) displayRecord = true;
-							else if (displayRecord && recordCooldown == 0) {
-								if (Main.mouseLeft) {
-									recordCooldown = 600;
-									displayRecord = false;
-
-									NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s current records with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
-									if (displayArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[0]), new Color(138, 210, 137));
-									if (displayArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[1]), new Color(138, 210, 137));
-									if (displayArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[2]), new Color(138, 210, 137));
-									if (displayArray[3] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayArray[3]), new Color(138, 210, 137));
-								}
-								else if (Main.mouseRight && displayLastArray[3] != "") {
-									recordCooldown = 600;
-									displayRecord = false;
-									NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("[" + Main.LocalPlayer.name + "'s last fight stats with " + BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].name + "]"), new Color(82, 175, 82));
-									if (displayLastArray[0] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[0]), new Color(138, 210, 137));
-									if (displayLastArray[1] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[1]), new Color(138, 210, 137));
-									if (displayLastArray[2] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[2]), new Color(138, 210, 137));
-									if (displayLastArray[3] != "") NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(displayLastArray[3]), new Color(138, 210, 137));
-								}
-							}
-						}
+						if (IsMouseHovering) Main.hoverItemName = "Click to see the best records for this world\n(Multiplayer Under Construction!)";
 					}
 					else {
-						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-							Rectangle exclamCut = new Rectangle(34 * 3, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Records are shown as your best compared to your last fight" +
-																	"\nClick to see your 'Worst' records";
-						}
-						else {
-							Rectangle exclamCut = new Rectangle(0, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Records are shown as your worst compared to your last fight" +
-																	"\nClick to see your 'Best' records";
-						}
+						Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
+						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
+						if (IsMouseHovering) Main.hoverItemName = "Click to see your personal records";
 					}
 				}
 				else if (BossLogUI.SubPageNum == 1) {
-					/*
+					/* NO CURRENT ALTPAGE, BUTTON NOT NEEDED
 					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 						Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
 						spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
@@ -1490,7 +1329,7 @@ namespace BossChecklist
 					}
 				}
 				else if (BossLogUI.SubPageNum == 3) {
-
+					// Unused currently
 				}
 			}
 		}
@@ -1508,7 +1347,6 @@ namespace BossChecklist
 		public SubpageButton spawnButton;
 		public SubpageButton lootButton;
 		//public SubpageButton collectButton;
-		public SubpageButton displayRecordButton;
 		public SubpageButton toolTipButton;
 
 		public UIImageButton NextPage;
@@ -1553,13 +1391,12 @@ namespace BossChecklist
 		public static Texture2D chestTexture;
 		public static Texture2D starTexture;
 		public static Texture2D goldChestTexture;
-
-
+		
 		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
-		public static int SubPageNum = 0; // Selected Topic Tab (Loot, Stats, etc.)
+		public static int SubPageNum = 0; // Selected Topic Tab (Records, Spawn Info, Loot/Collection)
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
-		public static bool[] AltPage; // Flip between best and worst
+		public static bool[] AltPage; // AltPage for Records is "Player Best/World Best(Server)"
 
 		private bool bossLogVisible;
 		public bool BossLogVisible {
@@ -1834,12 +1671,6 @@ namespace BossChecklist
 			toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 			toolTipButton.Top.Pixels = 100;
 			toolTipButton.OnClick += (a, b) => SwapRecordPage();
-
-			displayRecordButton = new SubpageButton("Display Records");
-			displayRecordButton.Width.Pixels = 32;
-			displayRecordButton.Height.Pixels = 32;
-			displayRecordButton.Left.Pixels = PageTwo.Width.Pixels - displayRecordButton.Width.Pixels - 30;
-			displayRecordButton.Top.Pixels = 128;
 		}
 
 		public override void Update(GameTime gameTime) {
@@ -1977,17 +1808,17 @@ namespace BossChecklist
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.ResetRecordsBool && SubPageNum == 0 && Main.netMode == NetmodeID.SinglePlayer) {
 				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat;
-				stats.durationBest = -1;
-				stats.durationWorst = -1;
-				stats.dodgeTimeBest = -1;
-				stats.hitsTakenBest = -1;
-				stats.hitsTakenWorst = -1;
 				stats.kills = 0;
 				stats.deaths = 0;
-				stats.healthLossWorst = -1;
-				stats.healthLossWorstPercent = -1;
+				stats.durationBest = -1;
+				stats.durationPrev = -1;
+				stats.hitsTakenBest = -1;
+				stats.hitsTakenPrev = -1;
+				stats.dodgeTimeBest = -1;
 				stats.healthLossBest = -1;
-				stats.healthLossBestPercent = -1;
+				stats.healthLossPrev = -1;
+				stats.healthAtStart = -1;
+				stats.healthAtStartPrev = -1;
 				OpenRecord();
 
 				/*
@@ -2139,9 +1970,8 @@ namespace BossChecklist
 
 			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 			if (boss.modSource == "Unknown") return;
-			string infoText = boss.info;
-
-			var message = new UIMessageBox(infoText);
+			
+			var message = new UIMessageBox(Language.GetTextValue(boss.info));
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
@@ -2157,18 +1987,7 @@ namespace BossChecklist
 			scrollTwo.HAlign = 1f;
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
-
-			// Current code is mostly done in FittedTextPanel.Draw
-			FittedTextPanel infoLines = new FittedTextPanel(infoText);
-			infoLines.Left.Pixels = 0;
-			infoLines.Top.Pixels = 75;
-			infoLines.Width.Pixels = 300;
-			infoLines.MaxWidth.Pixels = 300;
-			infoLines.Height.Pixels = PageTwo.Height.Pixels - 150;
-			infoLines.MaxHeight.Pixels = PageTwo.Height.Pixels - 150;
-			infoLines.OverflowHidden = true;
-			//PageTwo.Append(infoLines);
-
+			
 			if (boss.spawnItem.Count < 1 || boss.spawnItem.All(x => x <= 0)) {
 				if (boss.modSource == "Unknown") return;
 				string type = "";
@@ -2649,7 +2468,6 @@ namespace BossChecklist
 			PageOne.RemoveChild(PrevPage);
 			PageTwo.RemoveChild(NextPage);
 			PageTwo.RemoveChild(toolTipButton);
-			PageTwo.RemoveChild(displayRecordButton);
 
 			if (PageNum == -2) PageOne.Append(PrevPage);
 			else if (PageNum == -1) PageTwo.Append(NextPage);
@@ -2664,18 +2482,7 @@ namespace BossChecklist
 						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 						toolTipButton.Top.Pixels = 86;
 						toolTipButton.OnClick += (a, b) => SwapRecordPage();
-
-						if (SubPageNum != 1) PageTwo.Append(toolTipButton);
-
-						if (SubPageNum == 0 && Main.netMode == NetmodeID.MultiplayerClient) {
-							displayRecordButton = new SubpageButton("");
-							displayRecordButton.Width.Pixels = 32;
-							displayRecordButton.Height.Pixels = 32;
-							displayRecordButton.Left.Pixels = PageTwo.Width.Pixels - displayRecordButton.Width.Pixels - 30;
-							displayRecordButton.Top.Pixels = 128;
-							displayRecordButton.Id = "Display Records";
-							PageTwo.Append(displayRecordButton);
-						}
+						if (SubPageNum != 1) PageTwo.Append(toolTipButton); // Not needed for Spawn Info currently
 					}
 				}
 				PageTwo.Append(NextPage);

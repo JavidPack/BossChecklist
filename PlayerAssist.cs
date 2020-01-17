@@ -15,11 +15,15 @@ namespace BossChecklist
 		public List<BossRecord> AllBossRecords;
 		public List<BossCollection> BossTrophies;
 
+		public int durationLastFight;
+		public int hitsTakenLastFight;
+		public int healthLossLastFight;
+
 		public List<int> RecordTimers;
 		public List<int> BrinkChecker;
 		public List<int> MaxHealth;
 		public List<int> DeathTracker;
-		public List<int> DodgeTimer; // Track the time in-between hits
+		public List<int> DodgeTimer;
 		public List<int> AttackCounter;
 
 		public override void Initialize() {
@@ -41,6 +45,10 @@ namespace BossChecklist
 				BossTrophies[index].loot = new List<ItemDefinition>();
 				BossTrophies[index].collectibles = new List<ItemDefinition>();
 			}
+
+			// This will be the attempt records of the players last fight (Not saved!)
+			// This is only used for the UI, to determine whether the PrevRecord is a "last attempt" or a "beaten record"
+			durationLastFight = hitsTakenLastFight = healthLossLastFight = -1;
 
 			// For being able to complete records in Multiplayer
 			RecordTimers = new List<int>();
@@ -103,6 +111,7 @@ namespace BossChecklist
 
 		public override void OnEnterWorld(Player player) {
 			BossLogUI.PageNum = -3;
+			durationLastFight = hitsTakenLastFight = healthLossLastFight = -1;
 			RecordTimers = new List<int>();
 			BrinkChecker = new List<int>();
 			MaxHealth = new List<int>();
@@ -119,6 +128,8 @@ namespace BossChecklist
 				AttackCounter.Add(0);
 			}
 
+			// TODO: Reset Prev variables to -1 OnEnterWorld
+
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
@@ -129,12 +140,12 @@ namespace BossChecklist
 					packet.Write(stat.kills);
 					packet.Write(stat.deaths);
 					packet.Write(stat.durationBest);
-					packet.Write(stat.durationWorst);
-					packet.Write(stat.healthLossBest);
-					packet.Write(stat.healthLossWorst);
+					packet.Write(stat.durationPrev);
 					packet.Write(stat.hitsTakenBest);
-					packet.Write(stat.hitsTakenWorst);
+					packet.Write(stat.hitsTakenPrev);
 					packet.Write(stat.dodgeTimeBest);
+					packet.Write(stat.healthLossBest);
+					packet.Write(stat.healthLossPrev);
 				}
 				packet.Send(); // To server
 			}
@@ -142,6 +153,15 @@ namespace BossChecklist
 
 		public override void OnRespawn(Player player) {
 			// This works both in SP and MP because it records within ModPlayer
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				for (int i = 0; i < DeathTracker.Count; i++) {
+					if (DeathTracker[i] == 1) AllBossRecords[i].stat.deaths++;
+					DeathTracker[i] = 0;
+				}
+			}
+		}
+
+		public override void UpdateDead() {
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 				for (int i = 0; i < DeathTracker.Count; i++) {
 					if (DeathTracker[i] == 1) AllBossRecords[i].stat.deaths++;
@@ -175,9 +195,12 @@ namespace BossChecklist
 				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
 					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
-						if (player.dead) DeathTracker[listNum] = 1;
+						if (player.dead) {
+							DeathTracker[listNum] = 1;
+							DodgeTimer[listNum] = 0;
+						}
 						RecordTimers[listNum]++;
-						DodgeTimer[listNum]++;
+						if (!player.dead) DodgeTimer[listNum]++;
 						if (BrinkChecker[listNum] == 0 || (player.statLife < BrinkChecker[listNum] && player.statLife > 0)) {
 							BrinkChecker[listNum] = player.statLife;
 						}

@@ -84,86 +84,72 @@ namespace BossChecklist
 
 		public void CheckRecords(NPC npc, int recordIndex) {
 			Player player = Main.LocalPlayer;
-			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
+			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 			if (!npc.playerInteraction[Main.myPlayer]) return; // Player must have contributed to the boss fight
 
 			bool newRecordSet = false;
+			BossStats bossStats = modPlayer.AllBossRecords[recordIndex].stat;
 
-			int recordAttempt = modplayer.RecordTimers[recordIndex]; // Trying to set a new record
-			BossStats bossStats = modplayer.AllBossRecords[recordIndex].stat;
-			int currentRecord = bossStats.durationBest;
-			int worstRecord = bossStats.durationWorst;
+			int durationAttempt = modPlayer.RecordTimers[recordIndex];
+			int currentBestDuration = bossStats.durationBest;
+			
+			int hitsTakenAttempt = modPlayer.AttackCounter[recordIndex];
+			int currentBestHitsTaken = bossStats.hitsTakenBest;
+			
+			int dodgeTimeAttempt = modPlayer.DodgeTimer[recordIndex];
+			int currentBestDodgeTime = bossStats.dodgeTimeBest;
 
-			bossStats.durationLast = recordAttempt;
+			int brinkAttempt = modPlayer.BrinkChecker[recordIndex];
+			int maxLifeAttempt = modPlayer.MaxHealth[recordIndex];
+			int currentBestBrink = bossStats.healthLossBest;
+			int currentBestMaxLife = bossStats.healthAtStart;
 
-			int brinkAttempt = modplayer.BrinkChecker[recordIndex]; // Trying to set a new record
-			int MaxLife = modplayer.MaxHealth[recordIndex];
-			int currentBrink = bossStats.healthLossBest;
-			int worstBrink = bossStats.healthLossWorst;
+			// Setup player's last fight attempt numbers
+			modPlayer.durationLastFight = durationAttempt;
+			modPlayer.hitsTakenLastFight = hitsTakenAttempt;
+			modPlayer.healthLossLastFight = brinkAttempt;
 
-			bossStats.healthLossLast = brinkAttempt;
-			double lastHealth = (double)brinkAttempt / (double)MaxLife;
-			bossStats.healthLossLastPercent = (int)(lastHealth * 100);
-
-			int dodgeTimeAttempt = modplayer.DodgeTimer[recordIndex];
-			int currentDodgeTime = bossStats.dodgeTimeBest;
-			int dodgeAttempt = modplayer.AttackCounter[recordIndex];
-			int currentDodges = bossStats.hitsTakenBest;
-			int worstDodges = bossStats.hitsTakenWorst;
-
-			bossStats.dodgeTimeLast = dodgeTimeAttempt;
-			bossStats.hitsTakenLast = dodgeAttempt;
-
-			// Increase kill count
-			bossStats.kills++;
-
-			if (recordAttempt < currentRecord && currentRecord != 0 && worstRecord <= 0) {
-				// First make the current record the worst record if no worst record has been made and a new record was made
-				bossStats.durationWorst = currentRecord;
-			}
-			if (recordAttempt < currentRecord || currentRecord <= 0) {
-				//The player has beaten their best record, so we have to overwrite the old record with the new one
-				bossStats.durationBest = recordAttempt;
+			bossStats.kills++; // Kills always go up, since comparing only occurs if boss was defeated
+			
+			// If the player has beaten their best record, we change BEST to PREV and make the current attempt the new BEST
+			// Otherwise, just overwrite PREV with the current attempt
+			if (durationAttempt < currentBestDuration || currentBestDuration <= 0) {
+				bossStats.durationPrev = currentBestDuration;
+				bossStats.durationBest = durationAttempt;
 				newRecordSet = true;
 			}
-			else if (recordAttempt > worstRecord || worstRecord <= 0) {
-				//The player has beaten their worst record, so we have to overwrite the old record with the new one
-				bossStats.durationWorst = recordAttempt;
+			else bossStats.durationPrev = durationAttempt;
+			
+			// Empty check should be less than 0 because 0 is achievable (No Hit)
+			if (hitsTakenAttempt < currentBestHitsTaken || currentBestHitsTaken < 0) {
+				bossStats.hitsTakenPrev = currentBestHitsTaken;
+				bossStats.hitsTakenBest = hitsTakenAttempt;
+				newRecordSet = true;
 			}
+			else bossStats.hitsTakenPrev = hitsTakenAttempt;
 
-			if (brinkAttempt > currentBrink && currentBrink != 0 && worstBrink <= 0) {
-				bossStats.healthLossWorst = currentBrink;
-			}
-			if (brinkAttempt > currentBrink || currentBrink <= 0) {
+			// This is an extra record based on Hits Taken. Only overwrite if time is higher than previous.
+			if (dodgeTimeAttempt > currentBestDodgeTime || currentBestDodgeTime <= 0) bossStats.dodgeTimeBest = dodgeTimeAttempt;
+			
+			if (brinkAttempt < currentBestBrink || currentBestBrink <= 0) {
+				bossStats.healthLossPrev = currentBestBrink;
 				bossStats.healthLossBest = brinkAttempt;
-				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
-				bossStats.healthLossBestPercent = (int)(newHealth * 100);
+				bossStats.healthAtStartPrev = currentBestMaxLife;
+				bossStats.healthAtStart = maxLifeAttempt;
 				newRecordSet = true;
 			}
-			else if (brinkAttempt < worstBrink || worstBrink <= 0) {
-				bossStats.healthLossWorst = brinkAttempt;
-				double newHealth = (double)brinkAttempt / (double)MaxLife; // Casts may be redundant, but this setup doesn't work without them.
-				bossStats.healthLossWorstPercent = (int)(newHealth * 100);
-			}
-
-			if (dodgeTimeAttempt > currentDodgeTime || currentDodgeTime < 0) {
-				// There is no "worse record" for this one so just overwrite any better records made
-				bossStats.dodgeTimeBest = dodgeTimeAttempt;
-			}
-
-			if (dodgeAttempt < currentDodges || currentDodges <= 0) {
-				bossStats.hitsTakenBest = dodgeAttempt;
-				if (worstDodges == 0) bossStats.hitsTakenWorst = currentDodges;
-				newRecordSet = true;
-			}
-			else if (dodgeAttempt > worstDodges || worstDodges < 0) {
-				bossStats.hitsTakenWorst = dodgeAttempt;
+			else {
+				bossStats.healthLossPrev = brinkAttempt;
+				bossStats.healthAtStartPrev = maxLifeAttempt;
 			}
 
 			// If a new record was made, notify the player
 			if (newRecordSet) {
-				CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-				modplayer.hasNewRecord[ListedBossNum(npc)] = true;
+				modPlayer.hasNewRecord[recordIndex] = true;
+				// Compare records to World Records. Logically, you can only beat the world records if you have beaten your own record
+				// TODO: Move World Record texts to Multiplayer exclusively. Check should still happen.
+				string message = CheckWorldRecords(recordIndex) ? "World Record!" : "New Record!";
+				CombatText.NewText(player.getRect(), Color.LightYellow, message, true);
 			}
 		}
 
@@ -180,71 +166,87 @@ namespace BossChecklist
 				// Establish the new records for comparing
 
 				BossStats newRecord = new BossStats() {
-					durationLast = modPlayer.RecordTimers[recordIndex],
-					hitsTakenLast = modPlayer.AttackCounter[recordIndex],
-					dodgeTimeLast = modPlayer.DodgeTimer[recordIndex],
-					healthLossLast = modPlayer.BrinkChecker[recordIndex],
-
-					healthLossLastPercent = (int)(((double)modPlayer.BrinkChecker[recordIndex] / modPlayer.MaxHealth[recordIndex]) * 100),
+					durationPrev = modPlayer.RecordTimers[recordIndex],
+					hitsTakenPrev = modPlayer.AttackCounter[recordIndex],
+					dodgeTimePrev = modPlayer.DodgeTimer[recordIndex],
+					healthLossPrev = modPlayer.BrinkChecker[recordIndex],
+					healthAtStartPrev = modPlayer.MaxHealth[recordIndex]
 				};
+
+				// Setup player's last fight attempt numbers
+				modPlayer.durationLastFight = newRecord.durationPrev;
+				modPlayer.hitsTakenLastFight = newRecord.hitsTakenPrev;
+				modPlayer.healthLossLastFight = newRecord.healthLossPrev;
 
 				RecordID specificRecord = RecordID.None;
 				
-				if ((newRecord.durationLast < oldRecord.durationBest && newRecord.durationLast > 0) || oldRecord.durationBest <= 0) {
-					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationLast} (Previous Record: {oldRecord.durationBest})");
+				if (newRecord.durationPrev < oldRecord.durationBest || oldRecord.durationBest <= 0) {
+					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationPrev} (Previous Record: {oldRecord.durationBest})");
 					specificRecord |= RecordID.ShortestFightTime;
-					oldRecord.durationBest = newRecord.durationLast;
+					oldRecord.durationPrev = oldRecord.durationBest;
+					oldRecord.durationBest = newRecord.durationPrev;
 				}
-				if (newRecord.durationLast > oldRecord.durationWorst && newRecord.durationLast > 0) {
-					Console.WriteLine($"{player.name} did worse than before for DURATION: {newRecord.durationLast} (Previous Record: {oldRecord.durationWorst})");
-					specificRecord |= RecordID.LongestFightTime;
-					oldRecord.durationWorst = newRecord.durationLast;
-				}
-				oldRecord.durationLast = newRecord.durationLast;
-
-				if (newRecord.healthLossLast > oldRecord.healthLossBest && newRecord.healthLossLast > 0) {
-					Console.WriteLine($"{player.name} set a new record for BEST HEALTH: {newRecord.healthLossLast} (Previous Record: {oldRecord.healthLossBest})");
-					specificRecord |= RecordID.BestBrink;
-					oldRecord.healthLossBest = newRecord.healthLossLast;
-					oldRecord.healthLossBestPercent = newRecord.healthLossLastPercent;
-				}
-				if (newRecord.healthLossLast < oldRecord.healthLossWorst && newRecord.healthLossLast > 0) {
-					Console.WriteLine($"{player.name} did worse than before for BEST HEALTH: {newRecord.healthLossLast} (Previous Record: {oldRecord.healthLossWorst})");
-					specificRecord |= RecordID.WorstBrink;
-					oldRecord.healthLossWorst = newRecord.healthLossLast;
-					oldRecord.healthLossWorstPercent = newRecord.healthLossLastPercent;
-				}
-				oldRecord.healthLossLast = newRecord.healthLossLast;
-				oldRecord.healthLossLastPercent = newRecord.healthLossLastPercent;
-
-				if (newRecord.hitsTakenLast < oldRecord.hitsTakenBest && newRecord.hitsTakenLast > -1) {
-					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenLast} (Previous Record: {oldRecord.hitsTakenBest})");
+				else oldRecord.durationPrev = newRecord.durationPrev;
+				specificRecord |= RecordID.PreviousFightTime;
+				
+				if (newRecord.hitsTakenPrev < oldRecord.hitsTakenBest || oldRecord.hitsTakenBest < 0) {
+					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenPrev} (Previous Record: {oldRecord.hitsTakenBest})");
 					specificRecord |= RecordID.LeastHits;
-					oldRecord.hitsTakenBest = newRecord.hitsTakenLast;
+					oldRecord.hitsTakenPrev = oldRecord.hitsTakenBest;
+					oldRecord.hitsTakenBest = newRecord.hitsTakenPrev;
 				}
-				if (newRecord.hitsTakenLast > oldRecord.hitsTakenWorst && oldRecord.hitsTakenLast > -1) {
-					Console.WriteLine($"{player.name} did worse than before for HITS TAKEN: {newRecord.hitsTakenLast} (Previous Record: {oldRecord.hitsTakenWorst})");
-					specificRecord |= RecordID.MostHits;
-					oldRecord.hitsTakenWorst = newRecord.hitsTakenLast;
-				}
-				oldRecord.hitsTakenLast = newRecord.hitsTakenLast;
+				else oldRecord.hitsTakenPrev = newRecord.hitsTakenPrev;
+				specificRecord |= RecordID.PreviousHits;
 
-				if (newRecord.dodgeTimeLast > oldRecord.dodgeTimeBest && oldRecord.dodgeTimeLast > 0) {
-					Console.WriteLine($"{player.name} set a new record for BEST DODGE TIME: {newRecord.dodgeTimeLast} (Previous Record: {oldRecord.dodgeTimeBest})");
+				if (newRecord.dodgeTimePrev > oldRecord.dodgeTimeBest || oldRecord.dodgeTimeBest <= 0) {
+					Console.WriteLine($"{player.name} set a new record for BEST DODGE TIME: {newRecord.dodgeTimePrev} (Previous Record: {oldRecord.dodgeTimeBest})");
 					specificRecord |= RecordID.DodgeTime;
-					oldRecord.dodgeTimeBest = newRecord.dodgeTimeLast;
+					oldRecord.dodgeTimeBest = newRecord.dodgeTimePrev;
 				}
-				oldRecord.dodgeTimeLast = newRecord.dodgeTimeLast;
 
-				// Make the packet
+				if (newRecord.healthLossPrev > oldRecord.healthLossBest || oldRecord.healthLossBest <= 0) {
+					Console.WriteLine($"{player.name} set a new record for BEST HEALTH: {newRecord.healthLossPrev} (Previous Record: {oldRecord.healthLossBest})");
+					specificRecord |= RecordID.BestBrink;
+					oldRecord.healthLossPrev = oldRecord.healthLossBest;
+					oldRecord.healthLossBest = newRecord.healthLossPrev;
+				}
+				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
+				specificRecord |= RecordID.PreviousBrink;
+				
+				// Make and send the packet
 				ModPacket packet = mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RecordUpdate);
 				packet.Write((int)recordIndex);
 				newRecord.NetSend(packet, specificRecord);
-
-				// ORDER MATTERS
 				packet.Send(toClient: i);
 			}
+		}
+
+		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from apparing to show World Record! instead
+			Player player = Main.LocalPlayer;
+			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
+			BossStats playerRecord = modPlayer.AllBossRecords[recordIndex].stat;
+			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stat;
+			bool newRecord = false;
+
+			if (playerRecord.durationBest < worldRecord.durationWorld) {
+				worldRecord.durationWorld = playerRecord.durationBest;
+				worldRecord.durationHolder = player.name;
+				newRecord = true;
+			}
+			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld) {
+				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
+				worldRecord.dodgeTimeWorld = playerRecord.dodgeTimeBest;
+				worldRecord.hitsTakenHolder = player.name;
+				newRecord = true;
+			}
+			if (playerRecord.healthLossBest < worldRecord.healthLossWorld) {
+				worldRecord.healthLossWorld = playerRecord.healthLossBest;
+				worldRecord.healthAtStartWorld = playerRecord.healthAtStart;
+				worldRecord.hitsTakenHolder = player.name;
+				newRecord = true;
+			}
+			return newRecord;
 		}
 
 		public bool NPCisLimb(NPC npcType) {

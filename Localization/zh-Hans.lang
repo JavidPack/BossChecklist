@@ -42,8 +42,19 @@ BossSpawnInfo.Golem=在神庙祭坛中使用 [i:1293] ，这将在丛林神庙�
 BossSpawnInfo.DD2Betsy=在 3 级旧日军团入侵的第 7 波——最后一波生成
 BossSpawnInfo.DukeFishron=使用 [i:2673] 作为鱼饵在大海中钓出
 BossSpawnInfo.CultistBoss=杀死在击败石巨人后出现在地牢门前的4个信徒
-BossSpawnInfo.MoonLordHead=使用 [i:3601] 或杀死所有 4 个天界塔
-BossSpawnInfo.MoonLordHead_Tremor=使用 [i:3601] 或杀死所有 5 个天界塔。[c/FF0000:开启震颤模式！]
+BossSpawnInfo.MoonLord=使用 [i:3601] 或杀死所有 4 个天界塔
+BossSpawnInfo.MoonLord_Tremor=使用 [i:3601] 或杀死所有 5 个天界塔。[c/FF0000:开启震颤模式！]
+
+# BossSpawnInfo.BloodMoon=Occurs randomly at the start of night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.
+# BossSpawnInfo.GoblinArmy=Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:361]. Lasts until enough enemies are defeated.
+# BossSpawnInfo.OldOnesArmy=After finding the Tavernkeep, purchase and activate [i:3816] with [i:3828]. Lasts until all waves are cleared.
+# BossSpawnInfo.FrostLegion=Use a [i:602], which can be found by opening [i:1869], during the Christmas season. Lasts until enough enemies are defeated.
+# BossSpawnInfo.SolarEclipse=Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:2767]. Lasts until nightfall.
+# BossSpawnInfo.PirateInvasion=Occurs randomly once at least one altar has been destroyed. Can be summoned with a [i:1315], which can be obtained from killing any enemy in the Ocean biome during Hardmode. Lasts until enough enemies are defeated.
+# BossSpawnInfo.PumpkinMoon=Summoned with a [i:1844] at night. Lasts until sunrise.
+# BossSpawnInfo.FrostMoon=Summoned with a [i:1958] at night. Lasts until sunrise.
+# BossSpawnInfo.MartianMadness=After defeating Golem, find a Martian Probe above ground and allow it to find you and escape. Lasts until enough enemies are defeated.
+# BossSpawnInfo.LunarEvent=Defeat the Lunatic Cultist found outside the dungeon. Each pillar spawns in its own area within the world. Lasts until all 4 pillars are destroyed.
 
 BossSpawnInfo.Pumpking=在南瓜月第 7 波及其之后生成。通过使用 [i:1844] 以开始南瓜月
 BossSpawnInfo.MourningWood=在南瓜月第 4 波及其之后生成。通过使用 [i:1844] 以开始南瓜月

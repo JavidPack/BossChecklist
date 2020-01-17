@@ -52,6 +52,8 @@ namespace BossChecklist
 		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 
+		// Possible Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
+
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.FilterBosses")]
 		[OptionStrings(new string[] { "Show", "Hide when completed" })]

@@ -44,22 +44,22 @@ namespace BossChecklist
 		private void InitializeVanillaBosses() {
 			SortedBosses = new List<BossInfo> {
 				// Bosses -- Vanilla
-				BossInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "$NPCName.KingSlime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }, "Mods.BossChecklist.BossVictory.KingSlime"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "$NPCName.EyeofCthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }, "Mods.BossChecklist.BossVictory.EyeofCthulhu"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.EaterofWorldsHead", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }, "Mods.BossChecklist.BossVictory.EaterofWorlds"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }, "Mods.BossChecklist.BossVictory.BrainofCthulhu"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "$NPCName.QueenBee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }, "Mods.BossChecklist.BossVictory.QueenBee"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }, "Mods.BossChecklist.BossVictory.Skeletron"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }, "Mods.BossChecklist.BossVictory.WallofFlesh"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }, "Mods.BossChecklist.BossVictory.Twins"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "$NPCName.TheDestroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }, "Mods.BossChecklist.BossVictory.TheDestroyer"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "$NPCName.SkeletronPrime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }, "Mods.BossChecklist.BossVictory.SkeletronPrime"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "$NPCName.Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }, "Mods.BossChecklist.BossVictory.Plantera"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }, "Mods.BossChecklist.BossVictory.Golem"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "$NPCName.KingSlime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "$NPCName.EyeofCthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.EaterofWorldsHead", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "$NPCName.QueenBee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "$NPCName.TheDestroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "$NPCName.SkeletronPrime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "$NPCName.Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal }), // No despawn message due to being in an event
-				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "$NPCName.DukeFishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }, "Mods.BossChecklist.BossVictory.DukeFishron"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "$NPCName.CultistBoss", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }, "Mods.BossChecklist.BossVictory.LunaticCultist"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }, "Mods.BossChecklist.BossVictory.MoonLord"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "$NPCName.DukeFishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "$NPCName.CultistBoss", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
 				
 				// Minibosses and Events -- Vanilla
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { }),
@@ -991,52 +991,6 @@ namespace BossChecklist
 				};
 			}
 			return new List<int>();
-		}
-
-		internal string SetupSpawnDesc(int npcID) {
-			if (npcID == NPCID.KingSlime) return "$Mods.BossChecklist.BossSpawnInfo.KingSlime";
-			if (npcID == NPCID.EyeofCthulhu) return "$Mods.BossChecklist.BossSpawnInfo.EyeofCthulhu";
-			if (npcID == NPCID.BrainofCthulhu) return "$Mods.BossChecklist.BossSpawnInfo.BrainofCthulhu";
-			if (npcID == NPCID.EaterofWorldsHead) return "$Mods.BossChecklist.BossSpawnInfo.EaterofWorldsHead";
-			if (npcID == NPCID.QueenBee) return "$Mods.BossChecklist.BossSpawnInfo.QueenBee";
-			if (npcID == NPCID.SkeletronHead) return "$Mods.BossChecklist.BossSpawnInfo.SkeletronHead";
-			if (npcID == NPCID.WallofFlesh) return "$Mods.BossChecklist.BossSpawnInfo.WallofFlesh";
-			if (npcID == NPCID.Retinazer) return "$Mods.BossChecklist.BossSpawnInfo.TheTwins";
-			if (npcID == NPCID.TheDestroyer) return "$Mods.BossChecklist.BossSpawnInfo.TheDestroyer";
-			if (npcID == NPCID.SkeletronPrime) return "$Mods.BossChecklist.BossSpawnInfo.SkeletronPrime";
-			if (npcID == NPCID.Plantera) return "$Mods.BossChecklist.BossSpawnInfo.Plantera";
-			if (npcID == NPCID.Golem) return "$Mods.BossChecklist.BossSpawnInfo.Golem";
-			if (npcID == NPCID.DD2Betsy) return "$Mods.BossChecklist.BossSpawnInfo.DD2Betsy";
-			if (npcID == NPCID.DukeFishron) return "$Mods.BossChecklist.BossSpawnInfo.DukeFishron";
-			if (npcID == NPCID.CultistBoss) return "$Mods.BossChecklist.BossSpawnInfo.CultistBoss";
-			if (npcID == NPCID.MoonLordHead) return BossChecklist.tremorLoaded ? "$Mods.BossChecklist.BossSpawnInfo.MoonLordHead_Tremor" : "$Mods.BossChecklist.BossSpawnInfo.MoonLordHead";
-
-			if (npcID == NPCID.Pumpking) return "$Mods.BossChecklist.BossSpawnInfo.Pumpking";
-			if (npcID == NPCID.MourningWood) return "$Mods.BossChecklist.BossSpawnInfo.MourningWood";
-			if (npcID == NPCID.IceQueen) return "$Mods.BossChecklist.BossSpawnInfo.IceQueen";
-			if (npcID == NPCID.SantaNK1) return "$Mods.BossChecklist.BossSpawnInfo.SantaNK1";
-			if (npcID == NPCID.Everscream) return "$Mods.BossChecklist.BossSpawnInfo.Everscream";
-
-			if (npcID == NPCID.PirateShip) return "$Mods.BossChecklist.BossSpawnInfo.PirateShip";
-			if (npcID == NPCID.DD2OgreT3) return "$Mods.BossChecklist.BossSpawnInfo.DD2OgreT3";
-			if (npcID == NPCID.DD2DarkMageT3) return "$Mods.BossChecklist.BossSpawnInfo.DD2DarkMageT3";
-			if (npcID == NPCID.MartianSaucer) return "$Mods.BossChecklist.BossSpawnInfo.MartianSaucer";
-
-			return "";
-		}
-
-		internal string SetupEventSpawnDesc(string eventName) {
-			if (eventName == "Blood Moon") return $"Occurs randomly at the start of night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.";
-			if (eventName == "Goblin Army") return $"Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:{ItemID.GoblinBattleStandard}]. Lasts until enough enemies are defeated.";
-			if (eventName == "Old One's Army") return $"After finding the Tavernkeep, purchase and activate [i:{ItemID.DD2ElderCrystalStand}] with [i:{ItemID.DD2ElderCrystal}]. Lasts until all waves are cleared.";
-			if (eventName == "Frost Legion") return $"Use a [i:{ItemID.SnowGlobe}], which can be found by opening [i:{ItemID.Present}], during the Christmas season. Lasts until enough enemies are defeated.";
-			if (eventName == "Solar Eclipse") return $"Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:{ItemID.SolarTablet}]. Lasts until nightfall.";
-			if (eventName == "Pirate Invasion") return $"Occurs randomly once at least one altar has been destroyed. Can be summoned with a [i:{ItemID.PirateMap}], which can be obtained from killing any enemy in the Ocean biome during Hardmode. Lasts until enough enemies are defeated.";
-			if (eventName == "Pumpkin Moon") return $"Summoned with a [i:{ItemID.PumpkinMoonMedallion}] at night. Lasts until sunrise.";
-			if (eventName == "Frost Moon") return $"Summoned with a [i:{ItemID.NaughtyPresent}] at night. Lasts until sunrise.";
-			if (eventName == "Martian Madness") return $"After defeating Golem, find a Martian Probe above ground and allow it to find you and escape. Lasts until enough enemies are defeated.";
-			if (eventName == "Lunar Event") return $"Defeat the Lunatic Cultist found outside the dungeon. Each pillar spawns in its own area within the world. Lasts until all 4 pillars are destroyed.";
-			return "";
 		}
 
 		internal List<int> SetupEventCollectibles(string eventName) {

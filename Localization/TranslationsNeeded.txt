@@ -1,8 +1,8 @@
-zh-Hans 94
-ru-RU 142
-pt-BR 142
-pl-PL 142
-it-IT 142
-fr-FR 142
-es-ES 142
-de-DE 142
+zh-Hans 104
+ru-RU 152
+pt-BR 152
+pl-PL 152
+it-IT 152
+fr-FR 152
+es-ES 152
+de-DE 152

@@ -58,7 +58,7 @@ namespace BossChecklist
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
 			this.overrideIconTexture = overrideIconTexture ?? "";
-			if (!ModContent.TextureExists(this.pageTexture) && this.overrideIconTexture != "") {
+			if (!ModContent.TextureExists(this.overrideIconTexture) && this.overrideIconTexture != "") {
 				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
 				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Info($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
 				this.overrideIconTexture = "Terraria/NPC_Head_0";
@@ -74,15 +74,45 @@ namespace BossChecklist
 			return this;
 		}
 
-		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem, string despawnMessage = "") {
+		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			Func<bool> avail = () => true;
 			if (name == "$NPCName.EaterofWorldsHead") avail = () => !WorldGen.crimson;
 			else if (name == "$NPCName.BrainofCthulhu") avail = () => WorldGen.crimson;
-			return new BossInfo(type, progression, "Terraria", name, ids, downed, avail, spawnItem, BossChecklist.bossTracker.SetupCollect(ids[0]), BossChecklist.bossTracker.SetupLoot(ids[0]), $"BossChecklist/Resources/BossTextures/Boss{ids[0]}", BossChecklist.bossTracker.SetupSpawnDesc(ids[0]), despawnMessage);
+			string nameKey = name.Substring(name.LastIndexOf("."));
+			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
+			return new BossInfo(
+				type,
+				progression,
+				"Terraria",
+				name,
+				ids,
+				downed,
+				avail,
+				spawnItem,
+				BossChecklist.bossTracker.SetupCollect(ids[0]),
+				BossChecklist.bossTracker.SetupLoot(ids[0]),
+				$"BossChecklist/Resources/BossTextures/Boss{ids[0]}",
+				$"Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
+				$"Mods.BossChecklist.BossVictory{nameKey}"
+			);
 		}
 
 		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
-			return new BossInfo(EntryType.Event, progression, "Terraria", name, BossChecklist.bossTracker.SetupEventNPCList(name), downed, () => true, spawnItem, BossChecklist.bossTracker.SetupEventCollectibles(name), BossChecklist.bossTracker.SetupEventLoot(name), $"BossChecklist/Resources/BossTextures/Event{name.Replace(" ", "")}", BossChecklist.bossTracker.SetupEventSpawnDesc(name));
+			string nameKey = name.Replace(" ", "").Replace("'", "");
+			return new BossInfo(
+				EntryType.Event,
+				progression,
+				"Terraria",
+				name,
+				BossChecklist.bossTracker.SetupEventNPCList(name),
+				downed,
+				() => true,
+				spawnItem,
+				BossChecklist.bossTracker.SetupEventCollectibles(name),
+				BossChecklist.bossTracker.SetupEventLoot(name),
+				$"BossChecklist/Resources/BossTextures/Event{nameKey}",
+				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}"
+			);
 		}
 
 		internal List<CollectionType> SetupCollectionTypes(List<int> collection) {

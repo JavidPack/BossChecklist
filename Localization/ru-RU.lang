@@ -42,8 +42,19 @@
 # BossSpawnInfo.DD2Betsy=Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).
 # BossSpawnInfo.DukeFishron=Fish in ocean using the [i:2673] as bait.
 # BossSpawnInfo.CultistBoss=Kill the 4 cultists outside the dungeon after defeating Golem.
-# BossSpawnInfo.MoonLordHead=Use [i:3601] or defeat all 4 pillars.
-# BossSpawnInfo.MoonLordHead_Tremor=Use [i:3601] or defeat all 5 pillars. [c/FF0000:Starts Tremode!]
+# BossSpawnInfo.MoonLord=Use [i:3601] or defeat all 4 pillars.
+# BossSpawnInfo.MoonLord_Tremor=Use [i:3601] or defeat all 5 pillars. [c/FF0000:Starts Tremode!]
+
+# BossSpawnInfo.BloodMoon=Occurs randomly at the start of night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.
+# BossSpawnInfo.GoblinArmy=Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:361]. Lasts until enough enemies are defeated.
+# BossSpawnInfo.OldOnesArmy=After finding the Tavernkeep, purchase and activate [i:3816] with [i:3828]. Lasts until all waves are cleared.
+# BossSpawnInfo.FrostLegion=Use a [i:602], which can be found by opening [i:1869], during the Christmas season. Lasts until enough enemies are defeated.
+# BossSpawnInfo.SolarEclipse=Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:2767]. Lasts until nightfall.
+# BossSpawnInfo.PirateInvasion=Occurs randomly once at least one altar has been destroyed. Can be summoned with a [i:1315], which can be obtained from killing any enemy in the Ocean biome during Hardmode. Lasts until enough enemies are defeated.
+# BossSpawnInfo.PumpkinMoon=Summoned with a [i:1844] at night. Lasts until sunrise.
+# BossSpawnInfo.FrostMoon=Summoned with a [i:1958] at night. Lasts until sunrise.
+# BossSpawnInfo.MartianMadness=After defeating Golem, find a Martian Probe above ground and allow it to find you and escape. Lasts until enough enemies are defeated.
+# BossSpawnInfo.LunarEvent=Defeat the Lunatic Cultist found outside the dungeon. Each pillar spawns in its own area within the world. Lasts until all 4 pillars are destroyed.
 
 # BossSpawnInfo.Pumpking=Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
 # BossSpawnInfo.MourningWood=Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]

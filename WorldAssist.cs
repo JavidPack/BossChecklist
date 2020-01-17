@@ -12,6 +12,7 @@ namespace BossChecklist
 {
 	public class WorldAssist : ModWorld
 	{
+		public static List<WorldRecord> worldRecords;
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
 
 		public static bool downedBloodMoon;
@@ -51,6 +52,11 @@ namespace BossChecklist
 		}
 
 		public override void Initialize() {
+			worldRecords = new List<WorldRecord>();
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				worldRecords.Add(new WorldRecord(boss.Key));
+			}
+
 			HiddenBosses.Clear();
 
 			downedBloodMoon = false;
@@ -205,6 +211,13 @@ namespace BossChecklist
 		}
 
 		public override void Load(TagCompound tag) {
+			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
+			foreach (WorldRecord record in TempRecordStorage) {
+				int index = worldRecords.FindIndex(x => x.bossName == record.bossName);
+				if (index == -1) worldRecords.Add(record);
+				else worldRecords[index] = record;
+			}
+
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {
 				HiddenBosses.Add(bossKey);

@@ -532,11 +532,11 @@ namespace BossChecklist
 						bossStats.kills = reader.ReadInt32();
 						bossStats.deaths = reader.ReadInt32();
 						bossStats.durationBest = reader.ReadInt32();
-						bossStats.durationWorst = reader.ReadInt32();
+						bossStats.durationPrev = reader.ReadInt32();
 						bossStats.healthLossBest = reader.ReadInt32();
-						bossStats.healthLossWorst = reader.ReadInt32();
+						bossStats.healthLossPrev = reader.ReadInt32();
 						bossStats.hitsTakenBest = reader.ReadInt32();
-						bossStats.hitsTakenWorst = reader.ReadInt32();
+						bossStats.hitsTakenPrev = reader.ReadInt32();
 						bossStats.dodgeTimeBest = reader.ReadInt32();
 
 						Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
@@ -565,12 +565,12 @@ namespace BossChecklist
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);
 						packet.Write(stat.durationBest);
-						packet.Write(stat.durationWorst);
-						packet.Write(stat.healthLossBest);
-						packet.Write(stat.healthLossWorst);
+						packet.Write(stat.durationPrev);
 						packet.Write(stat.hitsTakenBest);
-						packet.Write(stat.hitsTakenWorst);
+						packet.Write(stat.hitsTakenPrev);
 						packet.Write(stat.dodgeTimeBest);
+						packet.Write(stat.healthLossBest);
+						packet.Write(stat.healthLossPrev);
 					}
 					packet.Send(); // To server
 
