@@ -154,6 +154,15 @@ namespace BossChecklist
 		}
 
 		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
+			// TODO: Check each player for world records
+			string[] newRecordHolders = new string[] { "", "", "" };
+			int[] newWorldRecords = new int[]{
+				WorldAssist.worldRecords[recordIndex].stat.durationWorld,
+				WorldAssist.worldRecords[recordIndex].stat.hitsTakenWorld,
+				WorldAssist.worldRecords[recordIndex].stat.dodgeTimeWorld,
+				WorldAssist.worldRecords[recordIndex].stat.healthLossWorld,
+				WorldAssist.worldRecords[recordIndex].stat.healthAtStartWorld,
+			};
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
 
@@ -164,7 +173,6 @@ namespace BossChecklist
 				BossStats oldRecord = list[recordIndex];
 
 				// Establish the new records for comparing
-
 				BossStats newRecord = new BossStats() {
 					durationPrev = modPlayer.RecordTimers[recordIndex],
 					hitsTakenPrev = modPlayer.AttackCounter[recordIndex],
@@ -179,7 +187,8 @@ namespace BossChecklist
 				modPlayer.healthLossLastFight = newRecord.healthLossPrev;
 
 				RecordID specificRecord = RecordID.None;
-				
+				// For each record type we check if its beats the current record or if it is not set already
+				// If it is beaten, we add a flag to specificRecord to allow newRecord's numbers to override the current record
 				if (newRecord.durationPrev < oldRecord.durationBest || oldRecord.durationBest <= 0) {
 					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationPrev} (Previous Record: {oldRecord.durationBest})");
 					specificRecord |= RecordID.ShortestFightTime;
@@ -187,7 +196,6 @@ namespace BossChecklist
 					oldRecord.durationBest = newRecord.durationPrev;
 				}
 				else oldRecord.durationPrev = newRecord.durationPrev;
-				specificRecord |= RecordID.PreviousFightTime;
 				
 				if (newRecord.hitsTakenPrev < oldRecord.hitsTakenBest || oldRecord.hitsTakenBest < 0) {
 					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenPrev} (Previous Record: {oldRecord.hitsTakenBest})");
@@ -196,7 +204,6 @@ namespace BossChecklist
 					oldRecord.hitsTakenBest = newRecord.hitsTakenPrev;
 				}
 				else oldRecord.hitsTakenPrev = newRecord.hitsTakenPrev;
-				specificRecord |= RecordID.PreviousHits;
 
 				if (newRecord.dodgeTimePrev > oldRecord.dodgeTimeBest || oldRecord.dodgeTimeBest <= 0) {
 					Console.WriteLine($"{player.name} set a new record for BEST DODGE TIME: {newRecord.dodgeTimePrev} (Previous Record: {oldRecord.dodgeTimeBest})");
@@ -211,39 +218,65 @@ namespace BossChecklist
 					oldRecord.healthLossBest = newRecord.healthLossPrev;
 				}
 				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
-				specificRecord |= RecordID.PreviousBrink;
 				
 				// Make and send the packet
 				ModPacket packet = mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RecordUpdate);
-				packet.Write((int)recordIndex);
-				newRecord.NetSend(packet, specificRecord);
-				packet.Send(toClient: i);
+				packet.Write((int)recordIndex); // Which boss record are we changing?
+				newRecord.NetSend(packet, specificRecord); // Writes all the variables needed
+				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
+			}
+			if (newRecordHolders.Any(x => x != "")) {
+				WorldStats worldStats = WorldAssist.worldRecords[recordIndex].stat;
+				RecordID specificRecord = RecordID.None;
+				if (newRecordHolders[0] != "") {
+					specificRecord |= RecordID.ShortestFightTime;
+					worldStats.durationHolder = newRecordHolders[0];
+					worldStats.durationWorld = newWorldRecords[0];
+				}
+				if (newRecordHolders[1] != "") {
+					specificRecord |= RecordID.LeastHits;
+					worldStats.hitsTakenHolder = newRecordHolders[1];
+					worldStats.hitsTakenWorld = newWorldRecords[1];
+					worldStats.dodgeTimeWorld = newWorldRecords[2];
+				}
+				if (newRecordHolders[2] != "") {
+					specificRecord |= RecordID.BestBrink;
+					worldStats.healthLossHolder = newRecordHolders[2];
+					worldStats.healthLossWorld = newWorldRecords[3];
+					worldStats.healthAtStartWorld = newWorldRecords[4];
+				}
+				
+				ModPacket packet = mod.GetPacket();
+				packet.Write((byte)PacketMessageType.WorldRecordUpdate);
+				packet.Write((int)recordIndex); // Which boss record are we changing?
+				worldStats.NetSend(packet, specificRecord);
+				packet.Send(); // To server (world data for everyone)
 			}
 		}
 
-		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from apparing to show World Record! instead
+		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from appearing to show World Record! instead
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 			BossStats playerRecord = modPlayer.AllBossRecords[recordIndex].stat;
 			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stat;
 			bool newRecord = false;
 
-			if (playerRecord.durationBest < worldRecord.durationWorld) {
+			if (playerRecord.durationBest < worldRecord.durationWorld || worldRecord.durationWorld <= 0) {
 				worldRecord.durationWorld = playerRecord.durationBest;
 				worldRecord.durationHolder = player.name;
 				newRecord = true;
 			}
-			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld) {
+			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld || worldRecord.hitsTakenWorld < 0) {
 				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
 				worldRecord.dodgeTimeWorld = playerRecord.dodgeTimeBest;
 				worldRecord.hitsTakenHolder = player.name;
 				newRecord = true;
 			}
-			if (playerRecord.healthLossBest < worldRecord.healthLossWorld) {
+			if (playerRecord.healthLossBest < worldRecord.healthLossWorld || worldRecord.healthLossWorld <= 0) {
 				worldRecord.healthLossWorld = playerRecord.healthLossBest;
 				worldRecord.healthAtStartWorld = playerRecord.healthAtStart;
-				worldRecord.hitsTakenHolder = player.name;
+				worldRecord.healthLossHolder = player.name;
 				newRecord = true;
 			}
 			return newRecord;

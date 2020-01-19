@@ -128,7 +128,7 @@ namespace BossChecklist
 				AttackCounter.Add(0);
 			}
 
-			// TODO: Reset Prev variables to -1 OnEnterWorld
+			// TODO: Reset Prev variables to -1 OnEnterWorld??
 
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {

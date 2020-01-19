@@ -550,14 +550,11 @@ namespace BossChecklist
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
 					int npcPos = reader.ReadInt32();
 
-					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat;
-					specificRecord.NetRecieve(reader, modPlayer.hasNewRecord[npcPos]);
-					if (modPlayer.hasNewRecord[npcPos]) {
-						CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-					}
+					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat; // Get the Player's records
+					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)
 
 					//Update the serverrecords too so they can be used later
-
+					// TODO? send it as a single entry?
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
 					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
@@ -572,9 +569,12 @@ namespace BossChecklist
 						packet.Write(stat.healthLossBest);
 						packet.Write(stat.healthLossPrev);
 					}
-					packet.Send(); // To server
-
-					// ORDER MATTERS FOR reader
+					packet.Send(); // To server (ORDER MATTERS FOR reader)
+					break;
+				case (PacketMessageType.WorldRecordUpdate):
+					npcPos = reader.ReadInt32();
+					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stat; // Get the Player's records
+					worldRecords.NetRecieve(reader); // The records will be updated through the reader (player and npcPos needed for new record)
 					break;
 				default:
 					Logger.Error("BossChecklist: Unknown Message type: " + msgType);

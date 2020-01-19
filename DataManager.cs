@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -115,65 +116,54 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetRecieve(BinaryReader reader, bool playerRecord) {
+		internal void NetRecieve(BinaryReader reader, Player player, int boss) {
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 			if (!brokenRecords.HasFlag(RecordID.ResetAll)) {
+				// Determine if a new record was made (Prev records need to change still)
 				bool newRecord = brokenRecords.HasFlag(RecordID.ShortestFightTime) || brokenRecords.HasFlag(RecordID.LeastHits) || brokenRecords.HasFlag(RecordID.BestBrink);
 
 				kills++; // Kills always increase by 1, since records can only be made when a boss is defeated
-
 				if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) durationBest = reader.ReadInt32();
-				if (brokenRecords.HasFlag(RecordID.PreviousFightTime)) durationPrev = reader.ReadInt32();
-
+				durationPrev = reader.ReadInt32();
 				if (brokenRecords.HasFlag(RecordID.LeastHits)) hitsTakenBest = reader.ReadInt32();
-				if (brokenRecords.HasFlag(RecordID.PreviousHits)) hitsTakenPrev = reader.ReadInt32();
+				hitsTakenPrev = reader.ReadInt32();
 				if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTimeBest = reader.ReadInt32();
-
 				if (brokenRecords.HasFlag(RecordID.BestBrink)) {
 					healthLossBest = reader.ReadInt32();
 					healthAtStart = reader.ReadInt32();
 				}
-				if (brokenRecords.HasFlag(RecordID.PreviousBrink)) {
-					healthLossPrev = reader.ReadInt32();
-					healthAtStartPrev = reader.ReadInt32();
+				healthLossPrev = reader.ReadInt32();
+				healthAtStartPrev = reader.ReadInt32();
+				if (newRecord) {
+					player.GetModPlayer<PlayerAssist>().hasNewRecord[boss] = true;
+					CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 				}
-
-				if (newRecord) playerRecord = true;
 			}
-			else {
-				kills = 0;
-				deaths = 0;
-
-				durationBest = -1;
-				durationPrev = -1;
-				
-				hitsTakenBest = -1;
-				hitsTakenPrev = -1;
-				dodgeTimeBest = -1;
-				dodgeTimePrev = -1;
-
-				healthLossBest = -1;
-				healthLossPrev = -1;
-				healthAtStart = -1;
-				healthAtStartPrev = -1;
+			else { // If ResetAll was flagged, change all variables to their default
+				kills = deaths = 0;
+				durationBest = durationPrev = -1;
+				hitsTakenBest = hitsTakenPrev = dodgeTimeBest = dodgeTimePrev = -1;
+				healthLossBest = healthLossPrev = healthAtStart = healthAtStartPrev = -1;
 			}
 		}
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
-			writer.Write((int)specificRecord);
-			// Kills update by 1 automatically
-			// Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
+			writer.Write((int)specificRecord); // We need this for NetRecieve as well
+			// TODO? Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
 
-			if (!specificRecord.HasFlag(RecordID.ResetAll)) {
-				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(durationPrev);
-				if (specificRecord.HasFlag(RecordID.PreviousFightTime)) writer.Write(durationPrev);
-				if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(hitsTakenPrev);
-				if (specificRecord.HasFlag(RecordID.PreviousHits)) writer.Write(hitsTakenPrev);
+			if (!specificRecord.HasFlag(RecordID.ResetAll)) { // If ResetAll is flagged there is no need to write the rest
+				// Prev records ALWAYS are written. They always update as either record attempts or old records
+				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(durationBest);
+				writer.Write(durationPrev);
+				if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(hitsTakenBest);
+				writer.Write(hitsTakenPrev);
 				if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimePrev);
 				if (specificRecord.HasFlag(RecordID.BestBrink)) {
-					writer.Write(healthLossPrev);
-					writer.Write(healthAtStartPrev);
+					writer.Write(healthLossBest);
+					writer.Write(healthAtStart);
 				}
+				writer.Write(healthLossPrev);
+				writer.Write(healthAtStartPrev);
 			}
 		}
 	}
@@ -182,14 +172,11 @@ namespace BossChecklist
 	{
 		public string durationHolder = "";
 		public int durationWorld = -1;
-
-		// Total Hits / Dodge Timer (Less hits is better)
+		
 		public string hitsTakenHolder = "";
 		public int hitsTakenWorld = -1;
 		public int dodgeTimeWorld = -1;
 
-		// Lowest Health Point while survivng (Lower is better, dying resets it!)
-		// Having it high is an accomplishment too, but its already covered with Hits Taken, as in no hits means no health loss
 		public string healthLossHolder = "";
 		public int healthLossWorld = -1;
 		public int healthAtStartWorld = -1;
@@ -221,19 +208,48 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetRecieve(BinaryReader reader, bool playerRecord) {
+		internal void NetRecieve(BinaryReader reader) {
+			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 
+			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+				durationHolder = reader.ReadString();
+				durationWorld = reader.ReadInt32();
+			}
+			if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+				hitsTakenHolder = reader.ReadString();
+				hitsTakenWorld = reader.ReadInt32();
+				dodgeTimeWorld = reader.ReadInt32();
+			}
+			if (brokenRecords.HasFlag(RecordID.BestBrink)) {
+				healthLossHolder = reader.ReadString();
+				healthLossWorld = reader.ReadInt32();
+				healthAtStartWorld = reader.ReadInt32();
+			}
 		}
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
-
+			writer.Write((int)specificRecord); // We need this for NetRecieve as well
+			// Packet should have any beaten records written on it
+			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) {
+				writer.Write(durationHolder);
+				writer.Write(durationWorld);
+			}
+			if (specificRecord.HasFlag(RecordID.LeastHits)) {
+				writer.Write(hitsTakenHolder);
+				writer.Write(hitsTakenWorld);
+				writer.Write(dodgeTimeWorld);
+			}
+			if (specificRecord.HasFlag(RecordID.BestBrink)) {
+				writer.Write(healthLossHolder);
+				writer.Write(healthLossWorld);
+				writer.Write(healthAtStartWorld);
+			}
 		}
 	}
 
 	public class BossCollection : TagSerializable
 	{
 		internal string bossName;
-		
 		internal List<ItemDefinition> loot;
 		internal List<ItemDefinition> collectibles;
 

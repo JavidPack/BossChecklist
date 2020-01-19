@@ -191,6 +191,7 @@ namespace BossChecklist
 		}
 
 		public override TagCompound Save() {
+			var WorldRecordList = new List<WorldRecord>(worldRecords);
 			var HiddenBossesList = new List<string>(HiddenBosses);
 			var downed = new List<string>();
 			if (downedBloodMoon) downed.Add("bloodmoon");
@@ -206,7 +207,8 @@ namespace BossChecklist
 
 			return new TagCompound {
 				["downed"] = downed,
-				["HiddenBossesList"] =	HiddenBossesList
+				["HiddenBossesList"] =	HiddenBossesList,
+				["Records"] = WorldRecordList
 			};
 		}
 

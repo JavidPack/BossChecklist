@@ -571,10 +571,11 @@ namespace BossChecklist
 								int BestRecord_ticks = record.durationBest;
 								int PrevRecord_ticks = record.durationPrev;
 								int LastAttempt = modPlayer.durationLastFight;
-
+								
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 									isNewRecord[i] = LastAttempt == BestRecord_ticks && LastAttempt > 0;
 									if (BestRecord_ticks > 0) {
+										// Formatting for best record
 										double BestRecord_seconds = (double)BestRecord_ticks / 60;
 										int BestRecord_calcMin = (int)BestRecord_seconds / 60;
 										double BestRecord_calcSec = BestRecord_seconds % 60;
@@ -589,20 +590,25 @@ namespace BossChecklist
 											if (Difference_ticks < 0) Difference_ticks *= -1;
 											string sign = isNewRecord[i] ? "+" : "-";
 											double Difference_seconds = (double)Difference_ticks / 60;
-											int Difference_calcMin = (int)Difference_seconds / 60;
-											int Difference_calcSec = (int)Difference_seconds % 60;
 											string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
 
 											string calcPrev = $"{PrevRecord_calcMin}:{PrevRecord_calcSec.ToString("00.00")}";
-											string calcDiff = $"{Difference_calcMin}:{Difference_calcSec.ToString("00")}";
+											string calcDiff = $"{Difference_seconds.ToString("0.00")}s";
 											compareNumbers = $"{type} {calcPrev} ({sign}{calcDiff})";
 										}
 									}
 									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
-								else { // TODO: World Records for Multiplayer
-									recordNumbers = "Under Construction";
-									compareNumbers = "Mostly used for Multiplayer";
+								else {
+									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
+									if (wldRcd.durationWorld > 0 && wldRcd.durationHolder != "") {
+										double wld_seconds = (double)wldRcd.durationWorld / 60;
+										int wld_calcMin = (int)wld_seconds / 60;
+										double wld_calcSec = wld_seconds % 60;
+										recordNumbers = $"{wld_calcMin}:{wld_calcSec.ToString("00.00")}";
+										compareNumbers = wldRcd.durationHolder;
+									}
+									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
 							}
 							else if (i == 2) { // Hits Taken
@@ -618,7 +624,7 @@ namespace BossChecklist
 									isNewRecord[i] = LastAttempt == BestHits && LastAttempt > 0;
 									if (BestHits >= 0) {
 										double Timer_seconds = (double)Timer_ticks / 60;
-										recordNumbers = $"{BestHits} hits [{Timer_seconds.ToString("00.00")}s]";
+										recordNumbers = $"{BestHits} hits [{Timer_seconds.ToString("0.00")}s]";
 
 										if (BestHits != PrevHits && PrevHits >= 0) {
 											string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
@@ -630,9 +636,14 @@ namespace BossChecklist
 									}
 									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
-								else { // TODO: World Records for Multiplayer
-									recordNumbers = "Under Construction";
-									compareNumbers = "Still works in single player!";
+								else {
+									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
+									if (wldRcd.hitsTakenWorld >= 0 && wldRcd.hitsTakenHolder != "") {
+										double wld_seconds = (double)wldRcd.dodgeTimeWorld / 60;
+										recordNumbers = $"{wldRcd.hitsTakenWorld} hits [{wld_seconds.ToString("0.00")}s]";
+										compareNumbers = wldRcd.hitsTakenHolder;
+									}
+									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
 							}
 							else if (i == 3) { // Health Lost
@@ -660,9 +671,14 @@ namespace BossChecklist
 									}
 									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
-								else { // TODO: World Records for Multiplayer
-									recordNumbers = "Under Construction";
-									compareNumbers = "Your record compared";
+								else {
+									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
+									if (wldRcd.healthLossWorld >= 0 && wldRcd.healthLossHolder != "") {
+										double wldPercent = (double)((wldRcd.healthLossWorld * 100) / wldRcd.healthAtStartWorld);
+										recordNumbers = $"{wldRcd.healthLossWorld}/{wldRcd.healthAtStartWorld} [{wldPercent}%]";
+										compareNumbers = wldRcd.hitsTakenHolder;
+									}
+									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
 							}
 
@@ -673,10 +689,10 @@ namespace BossChecklist
 							if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
 								if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
 									// TODO: Change these texts to something better. A description of the record type
-									if (i == 0) Main.hoverItemName = "How many times have you defeated {}?\n How many times has it bested you?";
-									if (i == 1) Main.hoverItemName = "There's a gradification for achieving something quickly.\nA feeling of doing a task better the next time.";
-									if (i == 2) Main.hoverItemName = "How dangerous do you like to live?\nNear death situations tend to give some adrenaline.";
-									if (i == 3) Main.hoverItemName = "Close calls are a common occurence.\nBut is it at a point of survival or fun?";
+									if (i == 0 && !BossLogUI.AltPage[i]) Main.hoverItemName = "Kill Death Ratio. Overcome the beast.";
+									if (i == 1) Main.hoverItemName = "The fastest you've defeated a mighty foe.";
+									if (i == 2) Main.hoverItemName = "How many attacks can you avoid?";
+									if (i == 3) Main.hoverItemName = "Tasted death, didn't like it.";
 								}
 							}
 							
@@ -689,17 +705,17 @@ namespace BossChecklist
 							int offsetY = compareNumbers == "" ? 110 + (i * 75) : 100 + (i * 75);
 
 							Vector2 stringAdjust = Main.fontMouseText.MeasureString(recordType);
-							Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY);
+							Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY);
 							Utils.DrawBorderString(spriteBatch, recordType, pos, Color.Goldenrod);
 
 							stringAdjust = Main.fontMouseText.MeasureString(recordNumbers);
-							pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY + 25);
+							pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY + 25);
 							Utils.DrawBorderString(spriteBatch, recordNumbers, pos, Color.White);
 
 							if (compareNumbers != "") {
 								stringAdjust = Main.fontMouseText.MeasureString(compareNumbers);
 								float scale = 0.75f;
-								pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 45) - (stringAdjust.X * scale / 3), GetInnerDimensions().Y + offsetY + 50);
+								pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X * scale / 3), GetInnerDimensions().Y + offsetY + 50);
 								Utils.DrawBorderString(spriteBatch, compareNumbers, pos, Color.White, scale);
 								compareNumbers = "";
 							}
@@ -1125,6 +1141,7 @@ namespace BossChecklist
 
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 			int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == text || x.internalName == text)); // name check, for when progression matches
+			if (index == -1) return;
 
 			bool allLoot = false;
 			bool allCollect = false;

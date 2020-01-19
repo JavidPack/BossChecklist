@@ -31,21 +31,17 @@ namespace BossChecklist
 		RequestClearHidden,
 		SendRecordsToServer,
 		RecordUpdate,
+		WorldRecordUpdate
 	}
 
 	[Flags]
 	internal enum RecordID : int
 	{
 		None = 0,
-		Kills = 1,
-		Deaths = 2,
-		ShortestFightTime = 4,
-		PreviousFightTime = 8,
-		LeastHits = 16,
-		PreviousHits = 32,
-		DodgeTime = 64,
-		BestBrink = 128,
-		PreviousBrink = 512,
-		ResetAll = 1024
+		ShortestFightTime = 1,
+		LeastHits = 2,
+		DodgeTime = 4,
+		BestBrink = 8,
+		ResetAll = 16
 	}
 }
