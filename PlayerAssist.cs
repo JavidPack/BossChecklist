@@ -22,7 +22,7 @@ namespace BossChecklist
 		public List<int> RecordTimers;
 		public List<int> BrinkChecker;
 		public List<int> MaxHealth;
-		public List<int> DeathTracker;
+		public List<bool> DeathTracker;
 		public List<int> DodgeTimer;
 		public List<int> AttackCounter;
 
@@ -54,7 +54,7 @@ namespace BossChecklist
 			RecordTimers = new List<int>();
 			BrinkChecker = new List<int>();
 			MaxHealth = new List<int>();
-			DeathTracker = new List<int>();
+			DeathTracker = new List<bool>();
 			DodgeTimer = new List<int>();
 			AttackCounter = new List<int>();
 			hasNewRecord = new List<bool>();
@@ -63,7 +63,7 @@ namespace BossChecklist
 				RecordTimers.Add(0);
 				BrinkChecker.Add(0);
 				MaxHealth.Add(0);
-				DeathTracker.Add(0);
+				DeathTracker.Add(false);
 				DodgeTimer.Add(0);
 				AttackCounter.Add(0);
 				hasNewRecord.Add(false);
@@ -115,7 +115,7 @@ namespace BossChecklist
 			RecordTimers = new List<int>();
 			BrinkChecker = new List<int>();
 			MaxHealth = new List<int>();
-			DeathTracker = new List<int>();
+			DeathTracker = new List<bool>();
 			DodgeTimer = new List<int>();
 			AttackCounter = new List<int>();
 
@@ -123,12 +123,10 @@ namespace BossChecklist
 				RecordTimers.Add(0);
 				BrinkChecker.Add(0);
 				MaxHealth.Add(0);
-				DeathTracker.Add(0);
+				DeathTracker.Add(false);
 				DodgeTimer.Add(0);
 				AttackCounter.Add(0);
 			}
-
-			// TODO: Reset Prev variables to -1 OnEnterWorld??
 
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -155,17 +153,8 @@ namespace BossChecklist
 			// This works both in SP and MP because it records within ModPlayer
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 				for (int i = 0; i < DeathTracker.Count; i++) {
-					if (DeathTracker[i] == 1) AllBossRecords[i].stat.deaths++;
-					DeathTracker[i] = 0;
-				}
-			}
-		}
-
-		public override void UpdateDead() {
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int i = 0; i < DeathTracker.Count; i++) {
-					if (DeathTracker[i] == 1) AllBossRecords[i].stat.deaths++;
-					DeathTracker[i] = 0;
+					if (DeathTracker[i]) AllBossRecords[i].stat.deaths++;
+					DeathTracker[i] = false;
 				}
 			}
 		}
@@ -196,12 +185,13 @@ namespace BossChecklist
 					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
 					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
 						if (player.dead) {
-							DeathTracker[listNum] = 1;
+							DeathTracker[listNum] = true;
 							DodgeTimer[listNum] = 0;
+							BrinkChecker[listNum] = MaxHealth[listNum];
 						}
 						RecordTimers[listNum]++;
 						if (!player.dead) DodgeTimer[listNum]++;
-						if (BrinkChecker[listNum] == 0 || (player.statLife < BrinkChecker[listNum] && player.statLife > 0)) {
+						if (player.statLife < BrinkChecker[listNum] && player.statLife > 0) {
 							BrinkChecker[listNum] = player.statLife;
 						}
 					}

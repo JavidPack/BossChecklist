@@ -154,7 +154,6 @@ namespace BossChecklist
 		}
 
 		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
-			// TODO: Check each player for world records
 			string[] newRecordHolders = new string[] { "", "", "" };
 			int[] newWorldRecords = new int[]{
 				WorldAssist.worldRecords[recordIndex].stat.durationWorld,

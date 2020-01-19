@@ -689,10 +689,10 @@ namespace BossChecklist
 							if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
 								if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
 									// TODO: Change these texts to something better. A description of the record type
-									if (i == 0 && !BossLogUI.AltPage[i]) Main.hoverItemName = "Kill Death Ratio. Overcome the beast.";
+									if (i == 0 && !BossLogUI.AltPage[i]) Main.hoverItemName = "Boss kills and player deaths.";
 									if (i == 1) Main.hoverItemName = "The fastest you've defeated a mighty foe.";
-									if (i == 2) Main.hoverItemName = "How many attacks can you avoid?";
-									if (i == 3) Main.hoverItemName = "Tasted death, didn't like it.";
+									if (i == 2) Main.hoverItemName = "Avoid as many attacks as you can!";
+									if (i == 3) Main.hoverItemName = "How close can you be to death and still defeat you enemy?";
 								}
 							}
 							
@@ -1304,8 +1304,6 @@ namespace BossChecklist
 			Texture2D text = ModContent.GetTexture("Terraria/UI/Achievement_Categories");
 			Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 32, 32);
 
-			// TODO: Better UI for Multiplayer records (also save records made in world on to world)
-
 			if (buttonString == "") {
 				if (BossLogUI.SubPageNum == 0) {
 					if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
@@ -1822,8 +1820,9 @@ namespace BossChecklist
 			}
 		}
 
+		// TODO: Test both ResetStats and RemoveItem() in multiplayer
 		private void ResetStats() {
-			if (BossChecklist.DebugConfig.ResetRecordsBool && SubPageNum == 0 && Main.netMode == NetmodeID.SinglePlayer) {
+			if (BossChecklist.DebugConfig.ResetRecordsBool && SubPageNum == 0) {
 				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat;
 				stats.kills = 0;
 				stats.deaths = 0;
@@ -1837,28 +1836,16 @@ namespace BossChecklist
 				stats.healthAtStart = -1;
 				stats.healthAtStartPrev = -1;
 				OpenRecord();
-
-				/*
+				
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
-					BossStats newRecord = new BossStats() {
-						durationLast = -1,
-						hitsTakenLast = -1,
-						dodgeTimeLast = -1,
-						healthLossLast = -1,
-						healthLossLastPercent = -1,
-					};
-
 					RecordID specificRecord = RecordID.ResetAll;
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
 					packet.Write((int)PageNum);
-					newRecord.NetSend(packet, specificRecord);
-					
+					stats.NetSend(packet, specificRecord);
 					packet.Send(toClient: Main.LocalPlayer.whoAmI);
 				}
-				*/
 			}
-			// TODO: Test ResetStats() in multiplayer
 		}
 
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
@@ -1867,7 +1854,7 @@ namespace BossChecklist
 			// If holding Alt while right-clicking will do the above for ALL boss lists
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-			if (BossChecklist.DebugConfig.ResetLootItems && SubPageNum == 2) { // TODO: Test RemoveItem() in multiplayer
+			if (BossChecklist.DebugConfig.ResetLootItems && SubPageNum == 2) {
 				string ID = listeningElement.Id;
 				if (ID == "") {
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {

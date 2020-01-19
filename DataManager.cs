@@ -9,7 +9,6 @@ using Terraria.ModLoader.IO;
 namespace BossChecklist
 {
 	// Migrating data from BossAssist is possible, but is vastly unecessary. Going to be doing a clean slate for merge.
-	// TODO: Get rid of worst records. Use a "compare best to last fight"/"compare new best to old best" system
 	public class BossRecord : TagSerializable
 	{
 		internal string bossName;
@@ -149,7 +148,6 @@ namespace BossChecklist
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
 			writer.Write((int)specificRecord); // We need this for NetRecieve as well
-			// TODO? Deaths have to be sent elsewhere (NPCLoot wont run if the player dies)
 
 			if (!specificRecord.HasFlag(RecordID.ResetAll)) { // If ResetAll is flagged there is no need to write the rest
 				// Prev records ALWAYS are written. They always update as either record attempts or old records

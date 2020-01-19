@@ -52,7 +52,8 @@ namespace BossChecklist
 		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 
-		// Possible Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
+		// TODO Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
+		// TODO Config? Clear prev records OnEnterWorld (or maybe make it a button in boss log?)
 
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.FilterBosses")]
@@ -176,18 +177,17 @@ namespace BossChecklist
 		private bool rtEnabled;
 
 		[Header("$Mods.BossChecklist.Configs.Header.Debug")]
-
-		// TODO: Fix for MP
+		
 		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
 		[Label("Reset Records Option")]
-		[Tooltip("Reset records with a boss by double right-clicking the 'Records' button of the selected boss page\nNOTE: This debug feature only works in singleplayer currently!")]
+		[Tooltip("Reset records with a boss by double right-clicking the 'Records' button of the selected boss page")]
 		public bool ResetRecordsBool { get; set; }
 
 		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
 		[Label("Reset Loot/Collection")]
-		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot\nClear the entire loot/collection list by double right-clicking the 'Loot / Collection' button\nHold Alt for either of these to apply the effect to ALL bosses\nNOTE: This debug feature only works in singleplayer currently!")]
+		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot\nClear the entire loot/collection list by double right-clicking the 'Loot / Collection' button\nHold Alt for either of these to apply the effect to ALL bosses")]
 		public bool ResetLootItems { get; set; }
 
 		[DefaultValue(false)]
