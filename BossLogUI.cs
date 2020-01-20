@@ -485,8 +485,8 @@ namespace BossChecklist
 					if (bossTexture != null) {
 						float drawScale = 1f;
 						float xScale = (float)pageRect.Width / bossSourceRectangle.Width;
-						// TODO: pageRect.Height might be too much, we might want to trim off the top a bit
-						float yScale = (float)pageRect.Height / bossSourceRectangle.Height;
+						// TODO: pageRect.Height might be too much, we might want to trim off the top a bit (May need adjusting, but changed to -150)
+						float yScale = (float)(pageRect.Height - 150) / bossSourceRectangle.Height;
 						if (xScale < 1 || yScale < 1) {
 							drawScale = xScale < yScale ? xScale : yScale;
 						}
@@ -658,7 +658,7 @@ namespace BossChecklist
 
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 									isNewRecord[i] = LastAttempt == BestRecord && LastAttempt > 0;
-									if (BestRecord > 0) {
+									if (BestRecord > 0 && BestHealth > 0) {
 										double RecordPercent = (double)((BestRecord * 100) / BestHealth);
 										recordNumbers = $"{BestRecord}/{BestHealth} [{RecordPercent.ToString("0")}%]";
 										if (BestRecord != PrevRecord && PrevRecord > 0) {
