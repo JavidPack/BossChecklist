@@ -1123,13 +1123,15 @@ namespace BossChecklist
 	{
 		float order = 0;
 		bool nextCheck;
-		string text;
+		string bossName;
+		string displayName;
 
-		public TableOfContents(float order, string text, bool nextCheck, float textScale = 1, bool large = false) : base(text, textScale, large) {
+		public TableOfContents(float order, string displayName, string bossName, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 			this.order = order;
 			this.nextCheck = nextCheck;
 			Recalculate();
-			this.text = text;
+			this.bossName = bossName;
+			this.displayName = displayName;
 		}
 
 		public override void Draw(SpriteBatch spriteBatch) {
@@ -1140,8 +1142,9 @@ namespace BossChecklist
 			spriteBatch.Draw(BossLogUI.checkboxTexture, pos, Color.White);
 
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
-			int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == text || x.internalName == text)); // name check, for when progression matches
-			if (index == -1) return;
+			// name check, for when progression matches
+			// index should never be -1 since variables passed in are within bounds
+			int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == bossName || x.internalName == bossName));
 
 			bool allLoot = false;
 			bool allCollect = false;
@@ -1181,7 +1184,7 @@ namespace BossChecklist
 				}
 			}
 
-			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(text).X + 6, innerDimensions.Y - 2);
+			Vector2 pos2 = new Vector2(innerDimensions.X + Main.fontMouseText.MeasureString(displayName).X + 6, innerDimensions.Y - 2);
 
 			if (allLoot && (allCollect || condCollect)) spriteBatch.Draw(BossLogUI.goldChestTexture, pos2, Color.White);
 			else if (allLoot) spriteBatch.Draw(BossLogUI.chestTexture, pos2, Color.White);
@@ -1220,7 +1223,7 @@ namespace BossChecklist
 
 				if ((!sortedBosses[pagenum].available() && !sortedBosses[pagenum].downed()) || sortedBosses[pagenum].hidden) {
 					TextColor = Color.SlateGray;
-					Vector2 stringAdjust = Main.fontMouseText.MeasureString(text);
+					Vector2 stringAdjust = Main.fontMouseText.MeasureString(displayName);
 					for (int i = 0; i < stringAdjust.X + 4; i++) {
 						Texture2D strike = BossChecklist.instance.GetTexture("Resources/LogUI_Checks_Strike");
 						Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
@@ -2287,11 +2290,11 @@ namespace BossChecklist
 				if (!copiedList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 
-				string bossName = copiedList[i].name;
-				if (BossChecklist.DebugConfig.ShowInternalNames) bossName = copiedList[i].internalName;
-				else if (!copiedList[i].available() && !copiedList[i].downed()) bossName = "???";
+				string displayName = copiedList[i].name;
+				if (BossChecklist.DebugConfig.ShowInternalNames) displayName = copiedList[i].internalName;
+				else if (!copiedList[i].available() && !copiedList[i].downed()) displayName = "???";
 
-				TableOfContents next = new TableOfContents(copiedList[i].progression, bossName, nextCheckBool);
+				TableOfContents next = new TableOfContents(copiedList[i].progression, displayName, copiedList[i].name, nextCheckBool);
 				nextCheckBool = false;
 
 				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
@@ -2306,7 +2309,7 @@ namespace BossChecklist
 
 				if (copiedList[i].downed()) {
 					next.TextColor = Colors.RarityGreen;
-					if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter != "Hide when completed")) {
+					if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter == "Show")) {
 						if (copiedList[i].progression <= 6f) prehardmodeList.Add(next);
 						else hardmodeList.Add(next);
 					}
