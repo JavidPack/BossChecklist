@@ -440,13 +440,7 @@ namespace BossChecklist
 
 					// "Spriters"
 					stringPos = new Vector2(pageRect.X + 20, pageRect.Y + 390);
-					//TODO: Maybe change? Get riverOakens character sprite
 					Utils.DrawBorderString(spriteBatch, "...and thank you RiverOaken for an amazing book sprite!", stringPos, Color.MediumPurple, textScaling);
-
-					/*
-					pos = new Vector2(pageRect.X + 5, pageRect.Y + 270);
-					Utils.DrawBorderString(spriteBatch, "To add your own bosses to the boss log, \nfollow the instructions on the homepage.\nAdvise other modders to do the same. \nThe more this mod expands the better!!", pos, Color.LightCoral);
-					*/
 				}
 
 				if (Id == "PageTwo") { // Supported Mod Credits Page
