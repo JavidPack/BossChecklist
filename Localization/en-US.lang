@@ -93,6 +93,7 @@ BossLog.DrawnText.Noncraftable=This item is not craftable
 BossLog.DrawnText.NoSpawnBoss=This boss has no spawn item
 BossLog.DrawnText.NoSpawnMiniBoss=This mini boss has no spawn item
 BossLog.DrawnText.NoSpawnEvent=This event has no spawn item
+BossLog.DrawnText.NoInfo=No info available
 BossLog.DrawnText.NotImplemented=The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
 BossLog.DrawnText.LogFeaturesNotAvailable=Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
 BossLog.DrawnText.NoModsSupported=None of your loaded mods have added pages to the Boss Log. If you want your favorite mods to be included, suggest adding their own boss pages to the mod's discord or forums page!

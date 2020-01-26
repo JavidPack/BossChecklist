@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
@@ -102,7 +103,7 @@ namespace BossChecklist.UIElements
 			//Main.spriteBatch.Draw(Main.magicPixel, hitbox, Color.Red * 0.6f);
 
 			if (expanded) {
-				string info = boss.info ?? "No info available";
+				string info = Language.GetTextValue(boss.info);
 				int hoveredSnippet = -1;
 				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);

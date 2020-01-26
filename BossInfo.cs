@@ -47,7 +47,7 @@ namespace BossChecklist
 			this.collectType = SetupCollectionTypes(this.collection);
 			this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
-			if (this.info != "") this.info = info;
+			if (this.info == "") this.info = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
 			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
 			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
