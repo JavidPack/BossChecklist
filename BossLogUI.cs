@@ -1019,8 +1019,6 @@ namespace BossChecklist
 		}
 
 		public static bool DrawTab(string Id) {
-			///if (BossLogUI.PageNum == -1 && Id == "Table of Contents_Tab") return false;
-			///if (BossLogUI.PageNum != -1 && (Id == "ToCFilter_Tab")) return false;
 			if (BossLogUI.PageNum == -2 && Id == "Credits_Tab") return false;
 			if (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab") return false;
 			if (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) && Id == "Miniboss_Tab") return false;
@@ -1057,7 +1055,6 @@ namespace BossChecklist
 				Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 				spriteBatch.Draw(pages, pagePos, Color.White);
 			}
-			//Main.playerInventory = false;
 
 			if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 				// Needed to remove mousetext from outside sources when using the Boss Log
@@ -1245,22 +1242,17 @@ namespace BossChecklist
 	internal class FittedTextPanel : UITextPanel<string>
 	{
 		string text;
-		string empty;
 		public FittedTextPanel(string text, float textScale = 1, bool large = false) : base(text, textScale, large) {
 			this.text = text;
-			this.empty = text;
 		}
 
 		const float infoScaleX = 1f;
 		const float infoScaleY = 1f;
 		public override void Draw(SpriteBatch spriteBatch) {
-
-			text = "";
 			Rectangle hitbox = new Rectangle((int)GetInnerDimensions().X, (int)GetInnerDimensions().Y, (int)Width.Pixels, 100);
-
-			//string info = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].info ?? "No info available";
+			
 			int hoveredSnippet = -1;
-			TextSnippet[] textSnippets = ChatManager.ParseMessage(empty, Color.White).ToArray();
+			TextSnippet[] textSnippets = ChatManager.ParseMessage(text, Color.White).ToArray();
 			ChatManager.ConvertNormalSnippets(textSnippets);
 
 			for (int i = 0; i < ChatManager.ShadowDirections.Length; i++) {
@@ -2276,44 +2268,45 @@ namespace BossChecklist
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
 
-			List<BossInfo> copiedList = new List<BossInfo>(BossChecklist.bossTracker.SortedBosses);
+			List<BossInfo> referenceList = BossChecklist.bossTracker.SortedBosses;
 
-			for (int i = 0; i < copiedList.Count; i++) {
-				if (copiedList[i].modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) continue;
-				if ((!copiedList[i].available() || copiedList[i].hidden) && BossChecklist.BossLogConfig.HideUnavailable) continue;
-				if (!copiedList[i].downed()) nextCheck++;
+			for (int i = 0; i < referenceList.Count; i++) {
+				referenceList[i].hidden = WorldAssist.HiddenBosses.Contains(referenceList[i].Key);
+				if (referenceList[i].modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) continue;
+				if ((!referenceList[i].available() || referenceList[i].hidden) && BossChecklist.BossLogConfig.HideUnavailable) continue;
+				if (!referenceList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 
-				string displayName = copiedList[i].name;
-				if (BossChecklist.DebugConfig.ShowInternalNames) displayName = copiedList[i].internalName;
-				else if (!copiedList[i].available() && !copiedList[i].downed()) displayName = "???";
+				string displayName = referenceList[i].name;
+				if (BossChecklist.DebugConfig.ShowInternalNames) displayName = referenceList[i].internalName;
+				else if (!referenceList[i].available() && !referenceList[i].downed()) displayName = "???";
 
-				TableOfContents next = new TableOfContents(copiedList[i].progression, displayName, copiedList[i].name, nextCheckBool);
+				TableOfContents next = new TableOfContents(referenceList[i].progression, displayName, referenceList[i].name, nextCheckBool);
 				nextCheckBool = false;
 
 				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
 				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
-				EntryType type = copiedList[i].type;
+				EntryType type = referenceList[i].type;
 
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22;
 				next.Id = i.ToString();
 				next.OnClick += new MouseEvent(JumpToBossPage);
 
-				if (copiedList[i].downed()) {
+				if (referenceList[i].downed()) {
 					next.TextColor = Colors.RarityGreen;
 					if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter == "Show")) {
-						if (copiedList[i].progression <= 6f) prehardmodeList.Add(next);
+						if (referenceList[i].progression <= 6f) prehardmodeList.Add(next);
 						else hardmodeList.Add(next);
 					}
 				}
 				else {
 					nextCheck++;
 					next.TextColor = Colors.RarityRed;
-					if (!copiedList[i].available()) next.TextColor = Color.SlateGray;
+					if (!referenceList[i].available()) next.TextColor = Color.SlateGray;
 					if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
-						if (copiedList[i].progression <= 6f) prehardmodeList.Add(next);
+						if (referenceList[i].progression <= 6f) prehardmodeList.Add(next);
 						else hardmodeList.Add(next);
 					}
 				}
