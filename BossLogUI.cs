@@ -667,7 +667,7 @@ namespace BossChecklist
 								}
 								else {
 									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
-									if (wldRcd.healthLossWorld >= 0 && wldRcd.healthLossHolder != "") {
+									if ((wldRcd.healthLossWorld >= 0 && wldRcd.healthLossHolder != "") || wldRcd.healthAtStartWorld > 0) {
 										double wldPercent = (double)((wldRcd.healthLossWorld * 100) / wldRcd.healthAtStartWorld);
 										recordNumbers = $"{wldRcd.healthLossWorld}/{wldRcd.healthAtStartWorld} [{wldPercent}%]";
 										compareNumbers = wldRcd.hitsTakenHolder;
@@ -1981,8 +1981,7 @@ namespace BossChecklist
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
 			
-			if (boss.spawnItem.Count < 1 || boss.spawnItem.All(x => x <= 0)) {
-				if (boss.modSource == "Unknown") return;
+			if (boss.spawnItem.Count == 0 || boss.spawnItem.All(x => x <= 0)) {
 				string type = "";
 				if (boss.type == EntryType.MiniBoss) type = "MiniBoss";
 				else if (boss.type == EntryType.Event) type = "Event";
@@ -2010,7 +2009,7 @@ namespace BossChecklist
 							ingredients.Add(clone);
 						}
 						foreach (int tile in recipe.requiredTile) {
-							if (tile != -1 && tile != 0) requiredTiles.Add(tile);
+							if (tile != -1) requiredTiles.Add(tile);
 						}
 						if (recipe is ModRecipe modRecipe) {
 							recipeMod = modRecipe.mod.DisplayName;
@@ -2029,7 +2028,7 @@ namespace BossChecklist
 
 				int row = 0;
 				int col = 0;
-				for (int k = 0; k < ingredients.Count - 1; k++) {
+				for (int k = 0; k < ingredients.Count; k++) {
 					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem, 0.85f);
 					ingList.Id = "ingredient_" + k;
 					ingList.Height.Pixels = 50;
@@ -2469,14 +2468,14 @@ namespace BossChecklist
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown") {
 					bool eventCheck = SubPageNum == 0 && boss.type == EntryType.Event;
-					if (!eventCheck) {
+					if (!eventCheck && SubPageNum != 1) { // Not needed for Spawn Info currently
 						toolTipButton = new SubpageButton("");
 						toolTipButton.Width.Pixels = 32;
 						toolTipButton.Height.Pixels = 32;
 						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 						toolTipButton.Top.Pixels = 86;
 						toolTipButton.OnClick += (a, b) => SwapRecordPage();
-						if (SubPageNum != 1) PageTwo.Append(toolTipButton); // Not needed for Spawn Info currently
+						PageTwo.Append(toolTipButton);
 					}
 				}
 				PageTwo.Append(NextPage);
