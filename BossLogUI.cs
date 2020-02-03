@@ -2507,7 +2507,7 @@ namespace BossChecklist
 		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
 
 		public static Texture2D GetEventIcon(BossInfo boss) {
-			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") return BossChecklist.instance.GetTexture(boss.overrideIconTexture);
+			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") return ModContent.GetTexture(boss.overrideIconTexture);
 			switch (boss.internalName) {
 				case "Frost Legion": return ModContent.GetTexture("Terraria/Extra_7");
 				case "Frost Moon": return ModContent.GetTexture("Terraria/Extra_8");
