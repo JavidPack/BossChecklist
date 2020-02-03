@@ -769,8 +769,11 @@ namespace BossChecklist
 							else { // Its a modded NPC
 								Main.instance.LoadNPC(npcID);
 
+								int bannerItemID = NPCLoader.GetNPC(npcID).bannerItem;
+								if (bannerItemID == -1) continue;
+
 								Item newItem = new Item();
-								newItem.SetDefaults(NPCLoader.GetNPC(npcID).bannerItem);
+								newItem.SetDefaults(bannerItemID);
 
 								Main.instance.LoadTiles(newItem.createTile);
 								Texture2D banner = Main.tileTexture[newItem.createTile];
