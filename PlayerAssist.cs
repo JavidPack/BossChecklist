@@ -180,7 +180,7 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdate() {
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
 				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
 					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
