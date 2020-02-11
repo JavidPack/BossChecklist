@@ -262,21 +262,22 @@ namespace BossChecklist
 			bool newRecord = false;
 
 			if (playerRecord.durationBest < worldRecord.durationWorld || worldRecord.durationWorld <= 0) {
+				// only say World Record if you the player is on a server OR if the player wasn't holding the previoes record
+				newRecord = (worldRecord.durationHolder != player.name && worldRecord.durationHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
 				worldRecord.durationWorld = playerRecord.durationBest;
 				worldRecord.durationHolder = player.name;
-				newRecord = true;
 			}
 			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld || worldRecord.hitsTakenWorld < 0) {
+				newRecord = (worldRecord.hitsTakenHolder != player.name && worldRecord.hitsTakenHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
 				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
 				worldRecord.dodgeTimeWorld = playerRecord.dodgeTimeBest;
 				worldRecord.hitsTakenHolder = player.name;
-				newRecord = true;
 			}
 			if (playerRecord.healthLossBest < worldRecord.healthLossWorld || worldRecord.healthLossWorld <= 0) {
+				newRecord = (worldRecord.healthLossHolder != player.name && worldRecord.healthLossHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
 				worldRecord.healthLossWorld = playerRecord.healthLossBest;
 				worldRecord.healthAtStartWorld = playerRecord.healthAtStart;
 				worldRecord.healthLossHolder = player.name;
-				newRecord = true;
 			}
 			return newRecord;
 		}
