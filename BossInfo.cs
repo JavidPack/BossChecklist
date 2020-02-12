@@ -44,7 +44,7 @@ namespace BossChecklist
 			this.downed = downed;
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
-			this.collectType = SetupCollectionTypes(this.collection);
+			//this.collectType = SetupCollectionTypes(this.collection); Do this during the BossFinalization for orphan data
 			this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
 			if (this.info == "") this.info = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
@@ -115,7 +115,7 @@ namespace BossChecklist
 			);
 		}
 
-		internal List<CollectionType> SetupCollectionTypes(List<int> collection) {
+		internal static List<CollectionType> SetupCollectionTypes(List<int> collection) {
 			List<CollectionType> setup = new List<CollectionType>();
 			foreach (int type in collection) {
 				Item temp = new Item();

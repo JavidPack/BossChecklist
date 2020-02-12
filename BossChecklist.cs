@@ -347,6 +347,9 @@ namespace BossChecklist
 				else {
 					Logger.Info("Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
 				}
+				foreach (BossInfo boss in bossTracker.SortedBosses) {
+					boss.collectType = BossInfo.SetupCollectionTypes(boss.collection);
+				}
 			}
 			bossTracker.FinalizeBossData();
 		}
