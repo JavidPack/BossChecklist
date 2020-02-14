@@ -28,7 +28,7 @@ namespace BossChecklist
 
 			for (int i = 0; i < Main.maxItems; i++) {
 				if (!Main.item[i].active) continue;
-				if (IsWhiteListItem(Main.item[i])) {
+				if (WhiteListType(Main.item[i].type) != -1) {
 					whitelistPos.Add(Main.item[i].Center);
 					whitelistType.Add(Main.item[i].type);
 				}
@@ -37,14 +37,14 @@ namespace BossChecklist
 
 		private static void DrawIcons() {
 			for (int v = 0; v < whitelistPos.Count; v++) {
-				Texture2D drawTexture = Main.itemTexture[whitelistType[v]];
-				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));
-
 				int type = WhiteListType(whitelistType[v]);
 				if (type == -1) continue;
 				if (type == 1 && !BossChecklist.ClientConfig.FragmentsBool) continue;
 				if (type == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
 
+				Texture2D drawTexture = Main.itemTexture[whitelistType[v]];
+				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));
+				
 				DrawTextureOnMap(drawTexture, drawPosition);
 			}
 		}
@@ -63,13 +63,6 @@ namespace BossChecklist
 			Rectangle drawPos = new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height);
 			Vector2 originLoc = new Vector2(texture.Width / 2, texture.Height / 2);
 			Main.spriteBatch.Draw(texture, drawPos, null, Color.White, 0f, originLoc, SpriteEffects.None, 0f);
-		}
-
-		public static bool IsWhiteListItem(Item item) {
-			if (item.consumable && item.Name == "Treasure Bag" && item.expert) return true;
-			if (item.rare == 9 && item.damage <= 0 && item.Name.Contains("Fragment")) return true;
-			if (item.type == ItemID.ShadowScale || item.type == ItemID.TissueSample) return true;
-			return false;
 		}
 
 		public static int WhiteListType(int type) {
