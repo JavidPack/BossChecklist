@@ -37,10 +37,11 @@ namespace BossChecklist
 
 		private static void DrawIcons() {
 			for (int v = 0; v < whitelistPos.Count; v++) {
-				Texture2D drawTexture = Main.itemTexture[whitelistType[whitelistPos.IndexOf(whitelistPos[v])]];
+				Texture2D drawTexture = Main.itemTexture[whitelistType[v]];
 				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));
 
-				int type = WhiteListType(whitelistType[whitelistPos.IndexOf(whitelistPos[v])]);
+				int type = WhiteListType(whitelistType[v]);
+				if (type == -1) continue;
 				if (type == 1 && !BossChecklist.ClientConfig.FragmentsBool) continue;
 				if (type == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
 
