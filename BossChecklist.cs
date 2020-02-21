@@ -364,6 +364,23 @@ namespace BossChecklist
 			Array.Resize(ref args, 15);
 			try {
 				string message = args[0] as string;
+				if (message == "GetCurrentBossInfo") {
+					if (!bossTracker.BossesFinalized) {
+						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
+					}
+
+					//var bossStates = new List<ExpandoObject>();
+					//foreach (var boss in bossTracker.SortedBosses) {
+					//	bossStates.Add(boss.ConvertToExpandoObject());
+					//}
+					//return bossStates;
+
+					var bossInfos = new List<Dictionary<string, object>>();
+					foreach (var boss in bossTracker.SortedBosses) {
+						bossInfos.Add(boss.ConvertToDictionary());
+					}
+					return bossInfos;
+				}
 				if (bossTracker.BossesFinalized)
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
 				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons

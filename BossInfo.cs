@@ -32,6 +32,50 @@ namespace BossChecklist
 		internal bool hidden;
 		internal EntryType type;
 
+		/*
+		internal ExpandoObject ConvertToExpandoObject() {
+			dynamic expando = new ExpandoObject();
+
+			expando.key = Key;
+			expando.progression = progression;
+			//maybe make a hardmode = progression > 6f bool? or explain when a boss is hardmode on the wiki 
+			expando.displayName = name;
+			expando.npcIDs = new List<int>(npcIDs);
+			expando.downed = new Func<bool>(downed);
+
+			expando.isBoss = type.Equals(EntryType.Boss);
+			expando.isMiniboss = type.Equals(EntryType.MiniBoss);
+			expando.isEvent = type.Equals(EntryType.Event);
+
+			expando.spawnItem = new List<int>(spawnItem);
+			expando.loot = new List<int>(loot);
+			expando.collection = new List<int>(collection);
+
+			return expando;
+		}
+		*/
+
+		internal Dictionary<string, object> ConvertToDictionary() {
+			var dict = new Dictionary<string, object> {
+				{ "key", Key },
+				{ "progression", progression },
+				//maybe make a hardmode = progression > 6f bool? or explain when a boss is hardmode on the wiki 
+				{ "displayName", name },
+				{ "npcIDs", new List<int>(npcIDs) },
+				{ "downed", new Func<bool>(downed) },
+
+				{ "isBoss", type.Equals(EntryType.Boss) },
+				{ "isMiniboss", type.Equals(EntryType.MiniBoss) },
+				{ "isEvent", type.Equals(EntryType.Event) },
+
+				{ "spawnItem", new List<int>(spawnItem) },
+				{ "loot", new List<int>(loot) },
+				{ "collection", new List<int>(collection) }
+			};
+
+			return dict;
+		}
+
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
 
 		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string despawnMessage = "", string overrideIconTexture = "") {
