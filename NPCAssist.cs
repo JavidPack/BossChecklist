@@ -215,6 +215,8 @@ namespace BossChecklist
 					specificRecord |= RecordID.BestBrink;
 					oldRecord.healthLossPrev = oldRecord.healthLossBest;
 					oldRecord.healthLossBest = newRecord.healthLossPrev;
+					oldRecord.healthAtStartPrev = oldRecord.healthAtStart;
+					oldRecord.healthAtStart = newRecord.healthAtStartPrev;
 				}
 				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
 				
