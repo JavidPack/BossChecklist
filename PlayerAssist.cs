@@ -175,8 +175,10 @@ namespace BossChecklist
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
-					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
-					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
+					int listNum = NPCAssist.ListedBossNum(Main.npc[i]);
+					if (BrinkChecker[listNum] == 0) BrinkChecker[listNum] = player.statLife;
+					AttackCounter[listNum]++;
+					DodgeTimer[listNum] = 0;
 				}
 			}
 		}
