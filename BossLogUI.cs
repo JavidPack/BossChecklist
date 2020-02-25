@@ -496,8 +496,7 @@ namespace BossChecklist
 						Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 						for (int h = selectedBoss.npcIDs.Count - 1; h > -1; h--) {
 							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
-							if (selectedBoss.overrideIconTexture != "") head = ModContent.GetTexture(selectedBoss.overrideIconTexture);
-							if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
+							if (head != Main.npcHeadTexture[0]) {
 								Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
 								if (headsDisplayed == 0) firstHeadPos = headPos;
 								spriteBatch.Draw(head, headPos, maskedHead);
@@ -526,12 +525,9 @@ namespace BossChecklist
 					Texture2D texture = selectedBoss.downed() ? BossLogUI.checkMarkTexture : BossLogUI.xTexture;
 					Vector2 defeatpos = new Vector2(firstHeadPos.X + (firstHeadPos.Width / 2), firstHeadPos.Y + firstHeadPos.Height - (texture.Height / 2));
 					spriteBatch.Draw(texture, defeatpos, Color.White);
-					if (Main.mouseX >= defeatpos.X && Main.mouseX < defeatpos.X + texture.Width) {
-						if (Main.mouseY >= defeatpos.Y && Main.mouseY < defeatpos.Y + texture.Height) {
-							Main.hoverItemName = selectedBoss.downed() ? isDefeated : notDefeated;
-						}
-					}
-					else if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
+
+					// Hovering over the head icon will display the defeated text
+					if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
 						if (Main.mouseY >= firstHeadPos.Y && Main.mouseY < firstHeadPos.Y + firstHeadPos.Height) {
 							Main.hoverItemName = selectedBoss.downed() ? isDefeated : notDefeated;
 						}
@@ -844,7 +840,7 @@ namespace BossChecklist
 						for (int i = 0; i < selectedBoss.loot.Count; i++) {
 							Item bagItem = new Item();
 							bagItem.SetDefaults(selectedBoss.loot[i]);
-							bool foundModBag = bagItem.modItem != null && selectedBoss.npcIDs.Any(x => x == bagItem.modItem.BossBagNPC);
+							bool foundModBag = bagItem.modItem != null && bagItem.modItem.BossBagNPC != 0;
 							if (BossLogUI.vanillaBags.Contains(bagItem.type) || foundModBag) {
 								bag = Main.itemTexture[bagItem.type];
 								DrawAnimation drawAnim = Main.itemAnimations[bagItem.type];
