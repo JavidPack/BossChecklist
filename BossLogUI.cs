@@ -524,7 +524,7 @@ namespace BossChecklist
 					Utils.DrawBorderString(spriteBatch, entry, pos, Color.Goldenrod);
 
 					pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
-					Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
+					Utils.DrawBorderString(spriteBatch, BossChecklist.DebugConfig.ShowInternalNames ? selectedBoss.modSource : selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
 					pos = new Vector2(pageRect.X + 5, pageRect.Y + 55);
 					Utils.DrawBorderString(spriteBatch, isDefeated, pos, Color.White);
