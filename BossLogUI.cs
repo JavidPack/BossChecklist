@@ -488,6 +488,8 @@ namespace BossChecklist
 						spriteBatch.Draw(bossTexture, pageRect.Center(), bossSourceRectangle, maskedBoss, 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
 					}
 
+					Rectangle firstHeadPos = new Rectangle();
+
 					if (selectedBoss.type != EntryType.Event || selectedBoss.internalName == "Lunar Event") {
 						int headsDisplayed = 0;
 						int adjustment = 0;
@@ -496,38 +498,64 @@ namespace BossChecklist
 							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
 							if (selectedBoss.overrideIconTexture != "") head = ModContent.GetTexture(selectedBoss.overrideIconTexture);
 							if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
-								headsDisplayed++;
 								Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
+								if (headsDisplayed == 0) firstHeadPos = headPos;
 								spriteBatch.Draw(head, headPos, maskedHead);
+								headsDisplayed++;
 								adjustment++;
 							}
 						}
-						Texture2D noHead = Main.npcHeadTexture[0];
-						Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width - 10 - ((noHead.Width + 2) * adjustment), pageRect.Y + 5, noHead.Width, noHead.Height);
-						if (headsDisplayed == 0) spriteBatch.Draw(noHead, noHeadPos, maskedHead);
+						if (headsDisplayed == 0) {
+							Texture2D noHead = Main.npcHeadTexture[0];
+							Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width - 10 - ((noHead.Width + 2) * adjustment), pageRect.Y + 5, noHead.Width, noHead.Height);
+							firstHeadPos = noHeadPos;
+							spriteBatch.Draw(noHead, noHeadPos, maskedHead);
+						}
 					}
 					else {
 						Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 						Texture2D eventIcon = BossLogUI.GetEventIcon(selectedBoss);
 						Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width - 10, pageRect.Y + 5, eventIcon.Width, eventIcon.Height);
-						if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
+						firstHeadPos = iconpos;
+						spriteBatch.Draw(eventIcon, iconpos, maskedHead);
+					}
+					
+					string isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}]";
+					string notDefeated = $"[c/{Colors.RarityRed.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}]";
+
+					Texture2D texture = selectedBoss.downed() ? BossLogUI.checkMarkTexture : BossLogUI.xTexture;
+					Vector2 defeatpos = new Vector2(firstHeadPos.X + (firstHeadPos.Width / 2), firstHeadPos.Y + firstHeadPos.Height - (texture.Height / 2));
+					spriteBatch.Draw(texture, defeatpos, Color.White);
+					if (Main.mouseX >= defeatpos.X && Main.mouseX < defeatpos.X + texture.Width) {
+						if (Main.mouseY >= defeatpos.Y && Main.mouseY < defeatpos.Y + texture.Height) {
+							Main.hoverItemName = selectedBoss.downed() ? isDefeated : notDefeated;
+						}
+					}
+					else if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
+						if (Main.mouseY >= firstHeadPos.Y && Main.mouseY < firstHeadPos.Y + firstHeadPos.Height) {
+							Main.hoverItemName = selectedBoss.downed() ? isDefeated : notDefeated;
+						}
 					}
 
-					string isDefeated = "";
-					if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}]";
-					else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}]";
-
-					string entry = selectedBoss.name;
-					if (BossChecklist.DebugConfig.ShowInternalNames) entry = selectedBoss.internalName;
+					bool config = BossChecklist.DebugConfig.ShowInternalNames;
 
 					Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-					Utils.DrawBorderString(spriteBatch, entry, pos, Color.Goldenrod);
+					Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
+					
+					pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 42 : 30));
+					Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
-					pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
-					Utils.DrawBorderString(spriteBatch, BossChecklist.DebugConfig.ShowInternalNames ? selectedBoss.modSource : selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
+					if (config) {
+						pos = new Vector2(pageRect.X + 5, pageRect.Y + 25);
+						Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.internalName})", pos, Color.Goldenrod, 0.75f);
+						
+						pos = new Vector2(pageRect.X + 5, pageRect.Y + 60);
+						Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.modSource})", pos, new Color(150, 150, 255), 0.75f);
+					}
 
-					pos = new Vector2(pageRect.X + 5, pageRect.Y + 55);
-					Utils.DrawBorderString(spriteBatch, isDefeated, pos, Color.White);
+					//pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 75 : 55));
+					//Utils.DrawBorderString(spriteBatch, selectedBoss.downed() ? isDefeated : notDefeated, pos, selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed);
+
 				}
 				if (Id == "PageTwo" && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
 					if (selectedBoss.type != EntryType.Event) {
@@ -886,8 +914,7 @@ namespace BossChecklist
 							top = styleY;
 						}
 
-						offsetX = 0;
-						offsetY = 0;
+						offsetX = offsetY = 0;
 						
 						for (int i = 0; i < 4; i++) {
 							if (i != 0 && i % 2 == 0) {
@@ -949,8 +976,7 @@ namespace BossChecklist
 							top = styleY;
 						}
 
-						offsetX = 0;
-						offsetY = 0;
+						offsetX = offsetY = 0;
 
 						for (int i = 0; i < 9; i++) {
 							if (i != 0 && i % 3 == 0) {
@@ -966,10 +992,6 @@ namespace BossChecklist
 							offsetX++;
 						}
 					}
-				}
-
-				if (Id == "PageTwo" && BossLogUI.SubPageNum == 3 && validItems != null) {
-
 				}
 			}
 		}
