@@ -2173,7 +2173,7 @@ namespace BossChecklist
 				if (vanillaBags.Contains(shortcut.loot[i])) continue;
 				Item expertItem = new Item();
 				expertItem.SetDefaults(shortcut.loot[i]);
-				if (expertItem.modItem != null && shortcut.npcIDs.Any(x => x == expertItem.modItem.BossBagNPC)) continue;
+				if (expertItem.modItem != null && expertItem.modItem.BossBagNPC != 0) continue;
 				if (expertItem.expert) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
