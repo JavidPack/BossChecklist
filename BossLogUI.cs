@@ -794,10 +794,11 @@ namespace BossChecklist
 								Main.instance.LoadNPC(npcID);
 
 								int bannerItemID = NPCLoader.GetNPC(npcID).bannerItem;
-								if (bannerItemID == -1) continue;
+								if (bannerItemID <= 0) continue;
 
 								Item newItem = new Item();
 								newItem.SetDefaults(bannerItemID);
+								if (newItem.createTile <= -1) continue;
 
 								Main.instance.LoadTiles(newItem.createTile);
 								Texture2D banner = Main.tileTexture[newItem.createTile];
