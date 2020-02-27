@@ -948,8 +948,7 @@ namespace BossChecklist
 
 						Texture2D trophyTexture;
 						Item trophyItem = new Item();
-						trophyItem.SetDefaults(ItemID.WeaponRack);
-						if (hasTrophy) trophyItem.SetDefaults(selectedTrophy);
+						trophyItem.SetDefaults(hasTrophy ? selectedTrophy : ItemID.WeaponRack);
 
 						int trophyStyle = trophyItem.placeStyle;
 						int trophyTileType = trophyItem.createTile;
