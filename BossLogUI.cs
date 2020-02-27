@@ -1202,6 +1202,7 @@ namespace BossChecklist
 			if (allLoot && (allCollect || condCollect)) spriteBatch.Draw(BossLogUI.goldChestTexture, pos2, Color.White);
 			else if (allLoot) spriteBatch.Draw(BossLogUI.chestTexture, pos2, Color.White);
 			else if (allCollect) spriteBatch.Draw(BossLogUI.starTexture, pos2, Color.White);
+			// TODO: Hover explanation or description.txt explanation.
 
 			if (order != -1f) {
 				BossChecklist BA = BossChecklist.instance;
