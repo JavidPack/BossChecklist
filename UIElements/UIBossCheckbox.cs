@@ -17,7 +17,7 @@ namespace BossChecklist.UIElements
 		internal UICheckbox checkbox;
 		internal UIHoverImageButton moreInfo;
 		internal bool expanded;
-		BossInfo boss;
+		internal BossInfo boss;
 		float descriptionHeight = 18;
 
 		public UIBossCheckbox(BossInfo boss) {
@@ -84,6 +84,10 @@ namespace BossChecklist.UIElements
 			}
 
 			expanded = !expanded;
+			PostExpand();
+		}
+
+		internal void PostExpand() {
 			this.AddOrRemoveChild(moreInfo, expanded);
 			Height.Pixels = expanded ? 15 + descriptionHeight : 15;
 			Recalculate();

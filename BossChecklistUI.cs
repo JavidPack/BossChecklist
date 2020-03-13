@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -150,6 +151,8 @@ namespace BossChecklist.UIElements
 		public bool CalamityDS => CalamityMod.CalamityWorld.downedDesertScourge;*/
 
 		internal void UpdateCheckboxes() {
+			var expandedBoss = (checklistList._items.FirstOrDefault(x => x is UIBossCheckbox checkbox && checkbox.expanded) as UIBossCheckbox)?.boss;
+
 			checklistList.Clear();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
@@ -162,6 +165,11 @@ namespace BossChecklist.UIElements
 							continue;
 						UIBossCheckbox box = new UIBossCheckbox(boss);
 						checklistList.Add(box);
+
+						if (expandedBoss == boss) {
+							box.expanded = true;
+							box.PostExpand();
+						}
 					}
 				}
 			}
