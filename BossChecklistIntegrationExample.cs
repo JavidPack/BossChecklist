@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria.ModLoader;
 
 namespace <YourModsNamespace>
@@ -68,13 +66,21 @@ namespace <YourModsNamespace>
 			return false;
 		}
 
+		public static void UnloadBossChecklistIntegration() {
+			// Make sure to call this method in your Mod.Unload method to properly release memory.
+			bossInfos.Clear();
+		}
+
 		// This method shows an example of using the BossChecklistBossInfo data for something cool in your mod.
-		public static float DownedBossedProgress() {
+		public static float DownedBossProgress() {
 			if (bossInfos.Count == 0) // bossInfos might be empty, if BossChecklist isn't present or something goes wrong.
 				return 0;
 
 			return (float)bossInfos.Count(x => x.Value.downed()) / bossInfos.Count();
 		}
+
+		// This utility method shows how you can easily check downed bosses from mods without worrying about the typical cross mod headaches like reflection, strong/weak references, and obtaining dll files to reference.
+		public static bool BossDowned(string bossKey) => bossInfos.TryGetValue(bossKey, out var bossInfo) ? bossInfo.downed() : false;
 	}
 }
 */
