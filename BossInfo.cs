@@ -37,16 +37,18 @@ namespace BossChecklist
 			dynamic expando = new ExpandoObject();
 
 			expando.key = Key;
-			expando.progression = progression;
-			//maybe make a hardmode = progression > 6f bool? or explain when a boss is hardmode on the wiki 
+			expando.modSource = modSource;
+			expando.internalName = internalName;
 			expando.displayName = name;
-			expando.npcIDs = new List<int>(npcIDs);
+
+			expando.progression = progression;
 			expando.downed = new Func<bool>(downed);
 
 			expando.isBoss = type.Equals(EntryType.Boss);
 			expando.isMiniboss = type.Equals(EntryType.MiniBoss);
 			expando.isEvent = type.Equals(EntryType.Event);
 
+			expando.npcIDs = new List<int>(npcIDs);
 			expando.spawnItem = new List<int>(spawnItem);
 			expando.loot = new List<int>(loot);
 			expando.collection = new List<int>(collection);
@@ -55,19 +57,23 @@ namespace BossChecklist
 		}
 		*/
 
-		internal Dictionary<string, object> ConvertToDictionary() {
+		internal Dictionary<string, object> ConvertToDictionary(Version GetBossInfoAPIVersion) {
+			// We may want to allow different returns based on api version.
+			//if (GetBossInfoAPIVersion == new Version(1, 1)) {
 			var dict = new Dictionary<string, object> {
 				{ "key", Key },
-				{ "progression", progression },
-				//maybe make a hardmode = progression > 6f bool? or explain when a boss is hardmode on the wiki 
+				{ "modSource", modSource },
 				{ "displayName", name },
-				{ "npcIDs", new List<int>(npcIDs) },
+				{ "internalName", internalName },
+
+				{ "progression", progression },
 				{ "downed", new Func<bool>(downed) },
 
 				{ "isBoss", type.Equals(EntryType.Boss) },
 				{ "isMiniboss", type.Equals(EntryType.MiniBoss) },
 				{ "isEvent", type.Equals(EntryType.Event) },
 
+				{ "npcIDs", new List<int>(npcIDs) },
 				{ "spawnItem", new List<int>(spawnItem) },
 				{ "loot", new List<int>(loot) },
 				{ "collection", new List<int>(collection) }

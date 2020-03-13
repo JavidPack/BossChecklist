@@ -5,6 +5,7 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.Graphics;
@@ -358,28 +359,27 @@ namespace BossChecklist
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
 		// Merge Notes: AddStatPage added, new AddBoss needed.
+		// 1.1: added: string:GetBossInfoDictionary - string:apiversion
 		public override object Call(params object[] args) {
 			// Logs messages when a mod is not using an updated call for the boss log, urging them to update.
 			int argsLength = args.Length; // Simplify code by resizing args.
 			Array.Resize(ref args, 15);
 			try {
 				string message = args[0] as string;
-				if (message == "GetCurrentBossInfo") {
+				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
+				if (message == "GetBossInfoDictionary") { 
+					var apiVersion = args[1] is string ? new Version(args[1] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
+
 					if (!bossTracker.BossesFinalized) {
 						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
 					}
-
-					//var bossStates = new List<ExpandoObject>();
-					//foreach (var boss in bossTracker.SortedBosses) {
-					//	bossStates.Add(boss.ConvertToExpandoObject());
+					//if (message == "GetBossInfoExpando") {
+					//	return bossTracker.SortedBosses.ToDictionary(boss => boss.Key, boss => boss.ConvertToExpandoObject());
 					//}
-					//return bossStates;
-
-					var bossInfos = new List<Dictionary<string, object>>();
-					foreach (var boss in bossTracker.SortedBosses) {
-						bossInfos.Add(boss.ConvertToDictionary());
+					if (message == "GetBossInfoDictionary") {
+						return bossTracker.SortedBosses.ToDictionary(boss => boss.Key, boss => boss.ConvertToDictionary(apiVersion));
 					}
-					return bossInfos;
+					return "Failure";
 				}
 				if (bossTracker.BossesFinalized)
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
