@@ -160,23 +160,39 @@ namespace BossChecklist
 		}
 
 		public override void OnHitByNPC(NPC npc, int damage, bool crit) {
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+			/*
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
 					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
 					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
+				}
+			}
+			*/
+		}
+
+		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
+				for (int i = 0; i < Main.maxNPCs; i++) {
+					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
+					int listNum = NPCAssist.ListedBossNum(Main.npc[i]);
+					if (BrinkChecker[listNum] == 0) BrinkChecker[listNum] = player.statLife;
+					AttackCounter[listNum]++;
+					DodgeTimer[listNum] = 0;
 				}
 			}
 		}
 
 		public override void OnHitByProjectile(Projectile proj, int damage, bool crit) {
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+			/*
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
 					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
 					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
 				}
 			}
+			*/
 		}
 
 		public override void PreUpdate() {

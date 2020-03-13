@@ -74,7 +74,7 @@ namespace BossChecklist
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
 						modPlayer.MaxHealth[listNum] = Main.player[j].statLifeMax;
 						modPlayer.RecordTimers[listNum] = 0;
-						modPlayer.BrinkChecker[listNum] = 0;
+						modPlayer.BrinkChecker[listNum] = 0; // starts at 0 to prevent less health at start cheese, only updates when hit (if no-hitter, change to max health)
 						modPlayer.DodgeTimer[listNum] = 0;
 					}
 				}
@@ -131,6 +131,7 @@ namespace BossChecklist
 			// This is an extra record based on Hits Taken. Only overwrite if time is higher than previous.
 			if (dodgeTimeAttempt > currentBestDodgeTime || currentBestDodgeTime <= 0) bossStats.dodgeTimeBest = dodgeTimeAttempt;
 			
+			if (brinkAttempt == 0) brinkAttempt = maxLifeAttempt; // Update brink to full health if 0 (no-hitter)
 			if (brinkAttempt < currentBestBrink || currentBestBrink <= 0) {
 				bossStats.healthLossPrev = currentBestBrink;
 				bossStats.healthLossBest = brinkAttempt;
@@ -215,6 +216,8 @@ namespace BossChecklist
 					specificRecord |= RecordID.BestBrink;
 					oldRecord.healthLossPrev = oldRecord.healthLossBest;
 					oldRecord.healthLossBest = newRecord.healthLossPrev;
+					oldRecord.healthAtStartPrev = oldRecord.healthAtStart;
+					oldRecord.healthAtStart = newRecord.healthAtStartPrev;
 				}
 				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
 				

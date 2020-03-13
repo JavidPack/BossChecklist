@@ -559,9 +559,8 @@ namespace BossChecklist
 						bossStats.hitsTakenPrev = reader.ReadInt32();
 						bossStats.dodgeTimeBest = reader.ReadInt32();
 
-						Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
+						//Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
 					}
-					Console.WriteLine($"Record data established for player {player.name}.");
 					break;
 				case PacketMessageType.RecordUpdate:
 					player = Main.LocalPlayer;

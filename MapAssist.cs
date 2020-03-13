@@ -1,14 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace BossChecklist
 {
 	public static class MapAssist
 	{
-		#region [Item Drawing]
 		public static List<Vector2> whitelistPos;
 		public static List<int> whitelistType;
 
@@ -43,9 +44,11 @@ namespace BossChecklist
 				if (type == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
 
 				Texture2D drawTexture = Main.itemTexture[whitelistType[v]];
+				DrawAnimation drawAnim = Main.itemAnimations[whitelistType[v]];
+				Rectangle sourceRect = drawAnim != null ? drawAnim.GetFrame(drawTexture) : drawTexture.Bounds;
 				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));
 				
-				DrawTextureOnMap(drawTexture, drawPosition);
+				DrawTextureOnMap(drawTexture, drawPosition, sourceRect);
 			}
 		}
 
@@ -59,21 +62,25 @@ namespace BossChecklist
 			return drawPosition;
 		}
 
-		private static void DrawTextureOnMap(Texture2D texture, Vector2 drawPosition) {
+		private static void DrawTextureOnMap(Texture2D texture, Vector2 drawPosition, Rectangle source) {
 			Rectangle drawPos = new Rectangle((int)drawPosition.X, (int)drawPosition.Y, texture.Width, texture.Height);
 			Vector2 originLoc = new Vector2(texture.Width / 2, texture.Height / 2);
-			Main.spriteBatch.Draw(texture, drawPos, null, Color.White, 0f, originLoc, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(texture, drawPos, source, Color.White, 0f, originLoc, SpriteEffects.None, 0f);
 		}
 
 		public static int WhiteListType(int type) {
-			Item item = new Item();
-			item.SetDefaults(type);
-
-			if (item.consumable && item.Name == "Treasure Bag" && item.expert) return 0;
-			if (item.rare == 9 && item.damage <= 0 && item.Name.Contains("Fragment")) return 1;
-			if (item.type == ItemID.ShadowScale || item.type == ItemID.TissueSample) return 2;
-			return -1;
+			if (type == ItemID.ShadowScale || type == ItemID.TissueSample) return 2;
+			else if (RecipeGroup.recipeGroups[RecipeGroupID.Fragment].ValidItems.Any(x => x == type)) return 1;
+			else {
+				Item item = new Item();
+				item.SetDefaults(type);
+				List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
+				for (int i = 0; i < bossList.Count; i++) {
+					if (BossLogUI.vanillaBags.Contains(type)) return 0;
+					if (item.modItem != null && bossList[i].npcIDs.Any(x => x == item.modItem.BossBagNPC)) return 0;
+				}
+				return -1;
+			}
 		}
-		#endregion
 	}
 }

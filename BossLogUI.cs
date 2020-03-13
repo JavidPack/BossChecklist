@@ -488,46 +488,70 @@ namespace BossChecklist
 						spriteBatch.Draw(bossTexture, pageRect.Center(), bossSourceRectangle, maskedBoss, 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
 					}
 
+					Rectangle firstHeadPos = new Rectangle();
+
 					if (selectedBoss.type != EntryType.Event || selectedBoss.internalName == "Lunar Event") {
 						int headsDisplayed = 0;
 						int adjustment = 0;
 						Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 						for (int h = selectedBoss.npcIDs.Count - 1; h > -1; h--) {
 							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
-							if (selectedBoss.overrideIconTexture != "") head = ModContent.GetTexture(selectedBoss.overrideIconTexture);
-							if (BossLogUI.GetBossHead(selectedBoss.npcIDs[h]) != Main.npcHeadTexture[0]) {
-								headsDisplayed++;
+							if (head != Main.npcHeadTexture[0]) {
 								Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
+								if (headsDisplayed == 0) firstHeadPos = headPos;
 								spriteBatch.Draw(head, headPos, maskedHead);
+								headsDisplayed++;
 								adjustment++;
 							}
 						}
-						Texture2D noHead = Main.npcHeadTexture[0];
-						Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width - 10 - ((noHead.Width + 2) * adjustment), pageRect.Y + 5, noHead.Width, noHead.Height);
-						if (headsDisplayed == 0) spriteBatch.Draw(noHead, noHeadPos, maskedHead);
+						if (headsDisplayed == 0) {
+							Texture2D noHead = Main.npcHeadTexture[0];
+							Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width - 10 - ((noHead.Width + 2) * adjustment), pageRect.Y + 5, noHead.Width, noHead.Height);
+							firstHeadPos = noHeadPos;
+							spriteBatch.Draw(noHead, noHeadPos, maskedHead);
+						}
 					}
 					else {
 						Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 						Texture2D eventIcon = BossLogUI.GetEventIcon(selectedBoss);
 						Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width - 10, pageRect.Y + 5, eventIcon.Width, eventIcon.Height);
-						if (eventIcon != Main.npcHeadTexture[0]) spriteBatch.Draw(eventIcon, iconpos, maskedHead);
+						firstHeadPos = iconpos;
+						spriteBatch.Draw(eventIcon, iconpos, maskedHead);
+					}
+					
+					string isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}]";
+					string notDefeated = $"[c/{Colors.RarityRed.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}]";
+
+					Texture2D texture = selectedBoss.downed() ? BossLogUI.checkMarkTexture : BossLogUI.xTexture;
+					Vector2 defeatpos = new Vector2(firstHeadPos.X + (firstHeadPos.Width / 2), firstHeadPos.Y + firstHeadPos.Height - (texture.Height / 2));
+					spriteBatch.Draw(texture, defeatpos, Color.White);
+
+					// Hovering over the head icon will display the defeated text
+					if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
+						if (Main.mouseY >= firstHeadPos.Y && Main.mouseY < firstHeadPos.Y + firstHeadPos.Height) {
+							Main.hoverItemName = selectedBoss.downed() ? isDefeated : notDefeated;
+						}
 					}
 
-					string isDefeated = "";
-					if (selectedBoss.downed()) isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}]";
-					else isDefeated = $"[c/{Colors.RarityRed.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}]";
-
-					string entry = selectedBoss.name;
-					if (BossChecklist.DebugConfig.ShowInternalNames) entry = selectedBoss.internalName;
+					bool config = BossChecklist.DebugConfig.ShowInternalNames;
 
 					Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-					Utils.DrawBorderString(spriteBatch, entry, pos, Color.Goldenrod);
-
-					pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
+					Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
+					
+					pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 42 : 30));
 					Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
-					pos = new Vector2(pageRect.X + 5, pageRect.Y + 55);
-					Utils.DrawBorderString(spriteBatch, isDefeated, pos, Color.White);
+					if (config) {
+						pos = new Vector2(pageRect.X + 5, pageRect.Y + 25);
+						Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.internalName})", pos, Color.Goldenrod, 0.75f);
+						
+						pos = new Vector2(pageRect.X + 5, pageRect.Y + 60);
+						Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.modSource})", pos, new Color(150, 150, 255), 0.75f);
+					}
+
+					//pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 75 : 55));
+					//Utils.DrawBorderString(spriteBatch, selectedBoss.downed() ? isDefeated : notDefeated, pos, selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed);
+
 				}
 				if (Id == "PageTwo" && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
 					if (selectedBoss.type != EntryType.Event) {
@@ -770,10 +794,11 @@ namespace BossChecklist
 								Main.instance.LoadNPC(npcID);
 
 								int bannerItemID = NPCLoader.GetNPC(npcID).bannerItem;
-								if (bannerItemID == -1) continue;
+								if (bannerItemID <= 0) continue;
 
 								Item newItem = new Item();
 								newItem.SetDefaults(bannerItemID);
+								if (newItem.createTile <= -1) continue;
 
 								Main.instance.LoadTiles(newItem.createTile);
 								Texture2D banner = Main.tileTexture[newItem.createTile];
@@ -816,7 +841,7 @@ namespace BossChecklist
 						for (int i = 0; i < selectedBoss.loot.Count; i++) {
 							Item bagItem = new Item();
 							bagItem.SetDefaults(selectedBoss.loot[i]);
-							bool foundModBag = bagItem.modItem != null && selectedBoss.npcIDs.Any(x => x == bagItem.modItem.BossBagNPC);
+							bool foundModBag = bagItem.modItem != null && bagItem.modItem.BossBagNPC != 0;
 							if (BossLogUI.vanillaBags.Contains(bagItem.type) || foundModBag) {
 								bag = Main.itemTexture[bagItem.type];
 								DrawAnimation drawAnim = Main.itemAnimations[bagItem.type];
@@ -886,8 +911,7 @@ namespace BossChecklist
 							top = styleY;
 						}
 
-						offsetX = 0;
-						offsetY = 0;
+						offsetX = offsetY = 0;
 						
 						for (int i = 0; i < 4; i++) {
 							if (i != 0 && i % 2 == 0) {
@@ -924,8 +948,7 @@ namespace BossChecklist
 
 						Texture2D trophyTexture;
 						Item trophyItem = new Item();
-						trophyItem.SetDefaults(ItemID.WeaponRack);
-						if (hasTrophy) trophyItem.SetDefaults(selectedTrophy);
+						trophyItem.SetDefaults(hasTrophy ? selectedTrophy : ItemID.WeaponRack);
 
 						int trophyStyle = trophyItem.placeStyle;
 						int trophyTileType = trophyItem.createTile;
@@ -949,8 +972,7 @@ namespace BossChecklist
 							top = styleY;
 						}
 
-						offsetX = 0;
-						offsetY = 0;
+						offsetX = offsetY = 0;
 
 						for (int i = 0; i < 9; i++) {
 							if (i != 0 && i % 3 == 0) {
@@ -966,10 +988,6 @@ namespace BossChecklist
 							offsetX++;
 						}
 					}
-				}
-
-				if (Id == "PageTwo" && BossLogUI.SubPageNum == 3 && validItems != null) {
-
 				}
 			}
 		}
@@ -1183,6 +1201,7 @@ namespace BossChecklist
 			if (allLoot && (allCollect || condCollect)) spriteBatch.Draw(BossLogUI.goldChestTexture, pos2, Color.White);
 			else if (allLoot) spriteBatch.Draw(BossLogUI.chestTexture, pos2, Color.White);
 			else if (allCollect) spriteBatch.Draw(BossLogUI.starTexture, pos2, Color.White);
+			// TODO: Hover explanation or description.txt explanation.
 
 			if (order != -1f) {
 				BossChecklist BA = BossChecklist.instance;
@@ -2155,7 +2174,7 @@ namespace BossChecklist
 				if (vanillaBags.Contains(shortcut.loot[i])) continue;
 				Item expertItem = new Item();
 				expertItem.SetDefaults(shortcut.loot[i]);
-				if (expertItem.modItem != null && shortcut.npcIDs.Any(x => x == expertItem.modItem.BossBagNPC)) continue;
+				if (expertItem.modItem != null && expertItem.modItem.BossBagNPC != 0) continue;
 				if (expertItem.expert) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
