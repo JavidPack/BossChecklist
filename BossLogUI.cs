@@ -803,16 +803,42 @@ namespace BossChecklist
 								Main.instance.LoadTiles(newItem.createTile);
 								Texture2D banner = Main.tileTexture[newItem.createTile];
 
+								// Code adapted from TileObject.DrawPreview
+								var tileData = TileObjectData.GetTileData(newItem.createTile, newItem.placeStyle);
+								int styleColumn = tileData.CalculatePlacementStyle(newItem.placeStyle, 0, 0); // adjust for StyleMultiplier
+								int styleRow = 0;
+								//int num3 = tileData.DrawYOffset;
+								if (tileData.StyleWrapLimit > 0) {
+									styleRow = styleColumn / tileData.StyleWrapLimit * tileData.StyleLineSkip; // row quotient
+									styleColumn %= tileData.StyleWrapLimit; // remainder
+								}
+
+								int x;
+								int y;
+								if (tileData.StyleHorizontal) {
+									x = tileData.CoordinateFullWidth * styleColumn;
+									y = tileData.CoordinateFullHeight * styleRow;
+								}
+								else {
+									x = tileData.CoordinateFullWidth * styleRow;
+									y = tileData.CoordinateFullHeight * styleColumn;
+								}
+
 								int bannerID = NPCLoader.GetNPC(npcID).banner;
 								string source = NPCLoader.GetNPC(npcID).mod.DisplayName;
 
 								Color faded = new Color(128, 128, 128, 128);
 								if (NPC.killCount[bannerID] >= 50) faded = Color.White;
 
-								for (int j = 0; j < 3; j++) {
-									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
-									Rectangle rect = new Rectangle(0, j * 18, 16, 16);
-									spriteBatch.Draw(banner, pos, rect, faded);
+								int[] heights = tileData.CoordinateHeights;
+								int heightOffSet = 0;
+								int heightOffSetTexture = 0;
+								for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
+									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + heightOffSet + offsetY);
+									Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
+									Main.spriteBatch.Draw(banner, pos, rect, faded);
+									heightOffSet += heights[j];
+									heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
 
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
