@@ -6,13 +6,14 @@ using Terraria.ModLoader;
 
 namespace <YourModsNamespace>
 {
-	// This class provides an example of Boss Checklist integration that other Mods can copy into their mods.
+	// This class provides an example of advanced Boss Checklist integration utilizing the "GetBossInfoDictionary" Mod.Call that other Mods can copy into their mod's source code.
+	// If you are simply adding support for bosses in your mod to Boss Checklist, this is not what you want. Go read https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call
 	// By copying this class into your mod, you can access Boss Checklist boss data reliably and with type safety without requiring a strong dependency.
 	public static class BossChecklistIntegration
 	{
 		// Boss Checklist might add new features, so a version is passed into GetBossInfo. 
 		// If a new version of the GetBossInfo Call is implemented, find this class in the Boss Checklist Github once again and replace this version with the new version: https://github.com/JavidPack/BossChecklist/blob/master/BossChecklistIntegrationExample.cs
-		private static readonly Version BossChecklistAPIVersion = new Version(1, 1);
+		private static readonly Version BossChecklistAPIVersion = new Version(1, 1); // Do not change this yourself.
 
 		public class BossChecklistBossInfo
 		{
@@ -36,11 +37,12 @@ namespace <YourModsNamespace>
 
 		public static Dictionary<string, BossChecklistBossInfo> bossInfos = new Dictionary<string, BossChecklistBossInfo>();
 
-		public static bool DoBossChecklistIntegration() {
-			// Make sure to call this method in PostAddRecipes or later for best results
+		public static bool DoBossChecklistIntegration(Mod mod) {
+			// Make sure to call this method in PostAddRecipes or later for best results: BossChecklistIntegration.DoBossChecklistIntegration(this);
+			bossInfos.Clear();
 			Mod BossChecklist = ModLoader.GetMod("BossChecklist");
 			if (BossChecklist != null && BossChecklist.Version >= BossChecklistAPIVersion) {
-				object currentBossInfoResponse = BossChecklist.Call("GetBossInfoDictionary", BossChecklistAPIVersion.ToString());
+				object currentBossInfoResponse = BossChecklist.Call("GetBossInfoDictionary", mod, BossChecklistAPIVersion.ToString());
 				if (currentBossInfoResponse is Dictionary<string, Dictionary<string, object>> bossInfoList) {
 					bossInfos = bossInfoList.ToDictionary(boss => boss.Key, boss => new BossChecklistBossInfo() {
 						key = boss.Value.ContainsKey("key") ? boss.Value["key"] as string : "",
@@ -67,7 +69,7 @@ namespace <YourModsNamespace>
 		}
 
 		public static void UnloadBossChecklistIntegration() {
-			// Make sure to call this method in your Mod.Unload method to properly release memory.
+			// Make sure to call this method in your Mod.Unload method to properly release memory: BossChecklistIntegration.UnloadBossChecklistIntegration();
 			bossInfos.Clear();
 		}
 

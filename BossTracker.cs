@@ -1102,6 +1102,8 @@ namespace BossChecklist
 		}
 
 		internal void LogNewBoss(string mod, string name) {
+			if (!BossChecklist.DebugConfig.ModCallLogVerbose)
+				return;
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("<<Boss Checklist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;

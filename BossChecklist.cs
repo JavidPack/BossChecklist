@@ -142,6 +142,9 @@ namespace BossChecklist
 				}
 			}
 			*/
+
+			if(!DebugConfig.ModCallLogVerbose)
+				Logger.Info("Boss Log integration messages will not be logged.");
 		}
 
 		public override void Unload() {
@@ -319,7 +322,7 @@ namespace BossChecklist
 				//pumpkingLoaded = ModLoader.GetMod("Pumpking") != null;
 			}
 			catch (Exception e) {
-				Logger.Error("BossChecklist PostSetupContent Error: " + e.StackTrace + e.Message);
+				Logger.Error("PostSetupContent Error: " + e.StackTrace + e.Message);
 			}
 		}
 
@@ -346,7 +349,8 @@ namespace BossChecklist
 					}
 				}
 				else {
-					Logger.Info("Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
+					if(BossChecklist.DebugConfig.ModCallLogVerbose)
+						Logger.Info("Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
 				}
 			}
 			foreach (BossInfo boss in bossTracker.SortedBosses) {
@@ -359,7 +363,7 @@ namespace BossChecklist
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available
 		// Merge Notes: AddStatPage added, new AddBoss needed.
-		// 1.1: added: string:GetBossInfoDictionary - string:apiversion
+		// 1.1: added: string:GetBossInfoDictionary - Mod:mod - string:apiversion
 		public override object Call(params object[] args) {
 			// Logs messages when a mod is not using an updated call for the boss log, urging them to update.
 			int argsLength = args.Length; // Simplify code by resizing args.
@@ -367,8 +371,11 @@ namespace BossChecklist
 			try {
 				string message = args[0] as string;
 				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
-				if (message == "GetBossInfoDictionary") { 
-					var apiVersion = args[1] is string ? new Version(args[1] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
+				if (message == "GetBossInfoDictionary") {
+					var mod = args[1] as Mod;
+					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
+
+					Logger.Info($"{mod.DisplayName} has registered for GetBossInfoDictionary");
 
 					if (!bossTracker.BossesFinalized) {
 						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
@@ -596,7 +603,7 @@ namespace BossChecklist
 					worldRecords.NetRecieve(reader); // The records will be updated through the reader (player and npcPos needed for new record)
 					break;
 				default:
-					Logger.Error("BossChecklist: Unknown Message type: " + msgType);
+					Logger.Error("Unknown Message type: " + msgType);
 					break;
 			}
 		}

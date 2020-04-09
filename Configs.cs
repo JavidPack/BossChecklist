@@ -177,7 +177,12 @@ namespace BossChecklist
 		private bool rtEnabled;
 
 		[Header("$Mods.BossChecklist.Configs.Header.Debug")]
-		
+
+		[DefaultValue(false)]
+		[Label("Mod.Call Log Verbose")]
+		[Tooltip("If true, logs will display all bosses added to Boss Checklist")]
+		public bool ModCallLogVerbose { get; set; }
+
 		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
 		[Label("Reset Records Option")]
