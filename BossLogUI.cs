@@ -163,6 +163,7 @@ namespace BossChecklist
 
 			Main.inventoryBack6Texture = Main.inventoryBack15Texture;
 
+			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 			BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 
 			if (Id.StartsWith("loot_") && hasItem) {
@@ -178,7 +179,16 @@ namespace BossChecklist
 			string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
 
 			// Prevents empty slots from being drawn
-			if (item.type != 0 || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
+			bool hiddenItemUnobtained = (Id.Contains("loot_") || Id.Contains("collect_")) && !Collection.loot.Contains(new ItemDefinition(item.type)) && !Collection.collectibles.Contains(new ItemDefinition(item.type));
+			if (BossChecklist.BossLogConfig.BossSilhouettes && !selectedBoss.downed() && hiddenItemUnobtained) {
+				spriteBatch.Draw(Main.inventoryBack13Texture, rectangle.TopLeft(), Main.inventoryBack13Texture.Bounds, Color.DimGray, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+				Texture2D hiddenItem = Main.npcHeadTexture[0];
+				Vector2 vec = new Vector2(rectangle.X + ((rectangle.Width * scale) / 2) - (hiddenItem.Width / 2), rectangle.Y + ((rectangle.Height * scale) / 2) - (hiddenItem.Height / 2));
+				spriteBatch.Draw(hiddenItem, vec, Color.White);
+				if (IsMouseHovering) Main.hoverItemName = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPage[2] ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
+				return;
+			}
+			else if (item.type != 0 || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
 				ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 			}
 
@@ -203,7 +213,7 @@ namespace BossChecklist
 					}
 				}
 			}
-			
+
 			Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
 			if (item.type != 0 && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
 				if (hasItem) spriteBatch.Draw(BossLogUI.checkMarkTexture, rect, Color.White); // hasItem first priority
