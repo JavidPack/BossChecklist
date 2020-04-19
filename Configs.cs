@@ -48,7 +48,7 @@ namespace BossChecklist
 
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.SelectedCheckmarkType")]
-		[OptionStrings(new string[] { "✓  ☐", "✓  X", "X  ☐" })]
+		[OptionStrings(new string[] { "✓  ☐", "✓  X", "X  ☐", "Strike-through" })]
 		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 

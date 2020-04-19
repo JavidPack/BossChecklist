@@ -1187,8 +1187,6 @@ namespace BossChecklist
 
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
-			spriteBatch.Draw(BossLogUI.checkboxTexture, pos, Color.White);
-
 			List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 			// name check, for when progression matches
 			// index should never be -1 since variables passed in are within bounds
@@ -1242,11 +1240,23 @@ namespace BossChecklist
 			if (order != -1f) {
 				BossChecklist BA = BossChecklist.instance;
 				int pagenum = Convert.ToInt32(Id);
+				BossInfo selectedBoss = sortedBosses[pagenum];
 				Texture2D checkGrid = BossLogUI.checkboxTexture;
 
-				if (sortedBosses[pagenum].downed()) {
+				if (selectedBoss.downed()) {
 					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") checkGrid = BossLogUI.xTexture;
-					else checkGrid = BossLogUI.checkMarkTexture;
+					else if (BossChecklist.BossLogConfig.SelectedCheckmarkType != "Strike-through") checkGrid = BossLogUI.checkMarkTexture;
+					else {
+						Vector2 stringAdjust = Main.fontMouseText.MeasureString(displayName);
+						for (int i = 0; i < stringAdjust.X + 4; i++) {
+							Texture2D strike = BossChecklist.instance.GetTexture("Resources/LogUI_Checks_Strike");
+							Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
+							Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
+							if (i == 0) strikeSrc = new Rectangle(0, 0, 4, 3);
+							else if (i == stringAdjust.X + 3) strikeSrc = new Rectangle(0, 8, 4, 3);
+							spriteBatch.Draw(strike, strikePos, strikeSrc, Color.White);
+						}
+					}
 				}
 				else {
 					if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "✓ and  X") checkGrid = BossLogUI.xTexture;
@@ -1254,39 +1264,29 @@ namespace BossChecklist
 					if (nextCheck && BossChecklist.BossLogConfig.DrawNextMark) checkGrid = BossLogUI.circleTexture;
 				}
 
-				spriteBatch.Draw(checkGrid, pos, Color.White);
+				if (BossChecklist.BossLogConfig.SelectedCheckmarkType != "Strike-through") {
+					if (!selectedBoss.hidden) {
+						spriteBatch.Draw(BossLogUI.checkboxTexture, pos, Color.White);
+						spriteBatch.Draw(checkGrid, pos, Color.White);
+					}
+				}
 
+				// Use the appropriate text color for conditions
 				if (BossChecklist.BossLogConfig.ColoredBossText) {
 					if (IsMouseHovering) TextColor = TextColor = Color.SkyBlue;
 					//if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
 					//else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
-					else if (!sortedBosses[pagenum].downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
-					else if (sortedBosses[pagenum].downed()) TextColor = Colors.RarityGreen;
-					else if (!sortedBosses[pagenum].downed()) TextColor = Colors.RarityRed;
+					else if (!selectedBoss.downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) TextColor = new Color(248, 235, 91);
+					else if (selectedBoss.downed()) TextColor = Colors.RarityGreen;
+					else if (!selectedBoss.downed()) TextColor = Colors.RarityRed;
 					if (modPlayer.hasNewRecord[pagenum]) TextColor = Main.DiscoColor;
 				}
 				else {
-					if (IsMouseHovering) TextColor = new Color(80, 85, 100);
-					else TextColor = new Color(140, 145, 160);
+					if (IsMouseHovering) TextColor = Color.DarkGray;
+					else TextColor = Color.Silver;
 				}
-
-				if ((!sortedBosses[pagenum].available() && !sortedBosses[pagenum].downed()) || sortedBosses[pagenum].hidden) {
-					TextColor = Color.SlateGray;
-					Vector2 stringAdjust = Main.fontMouseText.MeasureString(displayName);
-					for (int i = 0; i < stringAdjust.X + 4; i++) {
-						Texture2D strike = BossChecklist.instance.GetTexture("Resources/LogUI_Checks_Strike");
-						Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
-						Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
-						if (i == 0) {
-							strikeSrc = new Rectangle(0, 0, 4, 3);
-						}
-						else if (i == stringAdjust.X + 3) {
-							strikeSrc = new Rectangle(0, 8, 4, 3);
-						}
-						spriteBatch.Draw(strike, strikePos, strikeSrc, Color.White);
-					}
-				}
-
+				// Hidden boss text color overwrites previous text color alterations
+				if ((!selectedBoss.available() && !selectedBoss.downed()) || selectedBoss.hidden) TextColor = Color.DimGray;
 				if (IsMouseHovering) BossLogPanel.headNum = Convert.ToInt32(Id);
 			}
 		}
@@ -1413,6 +1413,7 @@ namespace BossChecklist
 
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
+		public UIHoverImageButton toggleHidden;
 		public BookUI filterPanel;
 		private List<BookUI> filterCheck;
 		private List<BookUI> filterCheckMark;
@@ -1458,6 +1459,7 @@ namespace BossChecklist
 		public static int SubPageNum = 0; // Selected Topic Tab (Records, Spawn Info, Loot/Collection)
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
+		public static bool showHidden = false;
 		public static bool[] AltPage; // AltPage for Records is "Player Best/World Best(Server)"
 
 		private bool bossLogVisible;
@@ -1733,10 +1735,16 @@ namespace BossChecklist
 			toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
 			toolTipButton.Top.Pixels = 100;
 			toolTipButton.OnClick += (a, b) => SwapRecordPage();
+
+			toggleHidden = new UIHoverImageButton(Main.inventoryTickOffTexture, "Toggle hidden visibility");
+			toggleHidden.Left.Pixels = PageTwo.Width.Pixels - Main.inventoryTickOffTexture.Width - 30;
+			toggleHidden.Top.Pixels = 10;
+			toggleHidden.OnClick += (a, b) => ToggleHidden();
 		}
 
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
+			PageTwo.AddOrRemoveChild(toggleHidden, PageNum == -1);
 
 			// We reset the position of the button to make sure it updates with the screen res
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
@@ -2005,6 +2013,12 @@ namespace BossChecklist
 			}
 			ResetBothPages();
 			UpdateSubPage(SubPageNum);
+		}
+
+		private void ToggleHidden() {
+			showHidden = !showHidden;
+			toggleHidden.SetImage(showHidden ? Main.inventoryTickOnTexture : Main.inventoryTickOffTexture);
+			UpdateTableofContents();
 		}
 
 		private void OpenRecord() {
@@ -2330,7 +2344,8 @@ namespace BossChecklist
 			for (int i = 0; i < referenceList.Count; i++) {
 				referenceList[i].hidden = WorldAssist.HiddenBosses.Contains(referenceList[i].Key);
 				if (referenceList[i].modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) continue;
-				if ((!referenceList[i].available() || referenceList[i].hidden) && BossChecklist.BossLogConfig.HideUnavailable) continue;
+				if ((!referenceList[i].available()) && BossChecklist.BossLogConfig.HideUnavailable) continue;
+				if (referenceList[i].hidden && !showHidden) continue;
 				if (!referenceList[i].downed()) nextCheck++;
 				if (nextCheck == 1) nextCheckBool = true;
 
