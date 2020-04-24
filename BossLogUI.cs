@@ -602,7 +602,8 @@ namespace BossChecklist
 								
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 									isNewRecord[i] = LastAttempt == BestRecord_ticks && LastAttempt > 0;
-									if (BestRecord_ticks > 0) {
+									if (BestRecord_ticks == -1) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+									else {
 										// Formatting for best record
 										double BestRecord_seconds = (double)BestRecord_ticks / 60;
 										int BestRecord_calcMin = (int)BestRecord_seconds / 60;
@@ -625,7 +626,6 @@ namespace BossChecklist
 											compareNumbers = $"{type} {calcPrev} ({sign}{calcDiff})";
 										}
 									}
-									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
 								else {
 									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
@@ -650,7 +650,8 @@ namespace BossChecklist
 
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 									isNewRecord[i] = LastAttempt == BestHits && LastAttempt > 0;
-									if (BestHits >= 0) {
+									if (BestHits == -1) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+									else {
 										double Timer_seconds = (double)Timer_ticks / 60;
 										recordNumbers = $"{BestHits} hits [{Timer_seconds.ToString("0.00")}s]";
 
@@ -662,7 +663,6 @@ namespace BossChecklist
 											compareNumbers = $"{type} {PrevHits} hits ({sign}{difference})";
 										}
 									}
-									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
 								else {
 									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
@@ -686,9 +686,10 @@ namespace BossChecklist
 
 								if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 									isNewRecord[i] = LastAttempt == BestRecord && LastAttempt > 0;
-									if (BestRecord > 0 && BestHealth > 0) {
-										double RecordPercent = (double)((BestRecord * 100) / BestHealth);
-										recordNumbers = $"{BestRecord}/{BestHealth} [{RecordPercent.ToString("0")}%]";
+									if (BestRecord == -1 || BestHealth == -1) recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+									else {
+										double RecordPercent = (double)BestRecord / BestHealth;
+										recordNumbers = $"{BestRecord}/{BestHealth} [{RecordPercent.ToString("###.##%")}]";
 										if (BestRecord != PrevRecord && PrevRecord > 0) {
 											string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
 											string sign = isNewRecord[i] ? "-" : "+";
@@ -697,13 +698,12 @@ namespace BossChecklist
 											compareNumbers = $"{type} {PrevRecord}/{PrevHealth} ({sign}{difference})";
 										}
 									}
-									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 								}
 								else {
 									WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
 									if ((wldRcd.healthLossWorld >= 0 && wldRcd.healthLossHolder != "") || wldRcd.healthAtStartWorld > 0) {
-										double wldPercent = (double)((wldRcd.healthLossWorld * 100) / wldRcd.healthAtStartWorld);
-										recordNumbers = $"{wldRcd.healthLossWorld}/{wldRcd.healthAtStartWorld} [{wldPercent}%]";
+										double wldPercent = (double)wldRcd.healthLossWorld / wldRcd.healthAtStartWorld;
+										recordNumbers = $"{wldRcd.healthLossWorld}/{wldRcd.healthAtStartWorld} [{wldPercent.ToString("###.##%")}]";
 										compareNumbers = wldRcd.hitsTakenHolder;
 									}
 									else recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");

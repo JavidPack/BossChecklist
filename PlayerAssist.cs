@@ -196,6 +196,16 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdate() {
+			/* Previous bug? debug stuff
+			for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
+				if (AllBossRecords[listNum].stat.healthLossBest == 0) {
+					AllBossRecords[listNum].stat.healthLossBest = -1;
+					AllBossRecords[listNum].stat.healthAtStart = -1;
+					AllBossRecords[listNum].stat.healthLossPrev = -1;
+					AllBossRecords[listNum].stat.healthAtStartPrev = -1;
+				}
+			}
+			*/
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
 				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
