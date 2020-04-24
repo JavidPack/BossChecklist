@@ -113,18 +113,18 @@ namespace BossChecklist
 			
 			// If the player has beaten their best record, we change BEST to PREV and make the current attempt the new BEST
 			// Otherwise, just overwrite PREV with the current attempt
-			if (durationAttempt < currentBestDuration || currentBestDuration <= 0) {
+			if (durationAttempt < currentBestDuration || currentBestDuration == -1) {
+				if (bossStats.durationBest == -1) newRecordSet = true; // New Record should not appear on first boss kill
 				bossStats.durationPrev = currentBestDuration;
 				bossStats.durationBest = durationAttempt;
-				newRecordSet = true;
 			}
 			else bossStats.durationPrev = durationAttempt;
 			
 			// Empty check should be less than 0 because 0 is achievable (No Hit)
-			if (hitsTakenAttempt < currentBestHitsTaken || currentBestHitsTaken < 0) {
+			if (hitsTakenAttempt < currentBestHitsTaken || currentBestHitsTaken == -1) {
+				if (bossStats.hitsTakenBest  == -1) newRecordSet = true;
 				bossStats.hitsTakenPrev = currentBestHitsTaken;
 				bossStats.hitsTakenBest = hitsTakenAttempt;
-				newRecordSet = true;
 			}
 			else bossStats.hitsTakenPrev = hitsTakenAttempt;
 
@@ -132,12 +132,12 @@ namespace BossChecklist
 			if (dodgeTimeAttempt > currentBestDodgeTime || currentBestDodgeTime <= 0) bossStats.dodgeTimeBest = dodgeTimeAttempt;
 			
 			if (brinkAttempt == 0) brinkAttempt = maxLifeAttempt; // Update brink to full health if 0 (no-hitter)
-			if (brinkAttempt < currentBestBrink || currentBestBrink <= 0) {
+			if (brinkAttempt < currentBestBrink || currentBestBrink == -1) {
+				if (currentBestBrink == -1) newRecordSet = true;
 				bossStats.healthLossPrev = currentBestBrink;
 				bossStats.healthLossBest = brinkAttempt;
 				bossStats.healthAtStartPrev = currentBestMaxLife;
 				bossStats.healthAtStart = maxLifeAttempt;
-				newRecordSet = true;
 			}
 			else {
 				bossStats.healthLossPrev = brinkAttempt;
@@ -145,6 +145,7 @@ namespace BossChecklist
 			}
 
 			// If a new record was made, notify the player
+			// This will not show for newly set records
 			if (newRecordSet) {
 				modPlayer.hasNewRecord[recordIndex] = true;
 				// Compare records to World Records. Logically, you can only beat the world records if you have beaten your own record
