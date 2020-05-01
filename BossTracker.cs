@@ -102,7 +102,7 @@ namespace BossChecklist
 			BossesFinalized = true;
 			if (AnyModHasOldCall) {
 				foreach (var oldCall in OldCalls) {
-					BossChecklist.instance.Logger.Info(oldCall.Key + " calls for the following are not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience: " + string.Join(", ", oldCall.Value));
+					BossChecklist.instance.Logger.Info($"{oldCall.Key} calls for the following are not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience: {string.Join(", ", oldCall.Value)}");
 				}
 				OldCalls.Clear();
 				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
@@ -1114,7 +1114,7 @@ namespace BossChecklist
 			Console.Write(" to the boss log!");
 			Console.WriteLine();
 			Console.ResetColor();
-			BossChecklist.instance.Logger.Info(name + " has been added to the Boss Log!");
+			BossChecklist.instance.Logger.Info($"{name} has been added to the Boss Log!");
 		}
 
 		internal void AddOrphanData(string type, string modName, string bossName, List<int> ids) {

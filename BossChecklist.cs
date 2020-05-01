@@ -322,7 +322,7 @@ namespace BossChecklist
 				//pumpkingLoaded = ModLoader.GetMod("Pumpking") != null;
 			}
 			catch (Exception e) {
-				Logger.Error("PostSetupContent Error: " + e.StackTrace + e.Message);
+				Logger.Error($"PostSetupContent Error: {e.StackTrace} {e.Message}");
 			}
 		}
 
@@ -350,7 +350,7 @@ namespace BossChecklist
 				}
 				else {
 					if(BossChecklist.DebugConfig.ModCallLogVerbose)
-						Logger.Info("Could not find " + orphan.internalName + " from " + orphan.modSource + " to add OrphanInfo to.");
+						Logger.Info($"Could not find {orphan.internalName} from {orphan.modSource} to add OrphanInfo to.");
 				}
 			}
 			foreach (BossInfo boss in bossTracker.SortedBosses) {
@@ -375,7 +375,7 @@ namespace BossChecklist
 					var mod = args[1] as Mod;
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
 
-					Logger.Info($"{mod.DisplayName} has registered for GetBossInfoDictionary");
+					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for GetBossInfoDictionary");
 
 					if (!bossTracker.BossesFinalized) {
 						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
@@ -498,11 +498,11 @@ namespace BossChecklist
 					);
 				}
 				else {
-					Logger.Error("Call Error: Unknown Message: " + message);
+					Logger.Error($"Call Error: Unknown Message: {message}");
 				}
 			}
 			catch (Exception e) {
-				Logger.Error("Call Error: " + e.StackTrace + e.Message);
+				Logger.Error($"Call Error: {e.StackTrace} {e.Message}");
 			}
 			return "Failure";
 
@@ -603,7 +603,7 @@ namespace BossChecklist
 					worldRecords.NetRecieve(reader); // The records will be updated through the reader (player and npcPos needed for new record)
 					break;
 				default:
-					Logger.Error("Unknown Message type: " + msgType);
+					Logger.Error($"Unknown Message type: {msgType}");
 					break;
 			}
 		}
