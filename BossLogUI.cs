@@ -1737,14 +1737,14 @@ namespace BossChecklist
 			toolTipButton.OnClick += (a, b) => SwapRecordPage();
 
 			toggleHidden = new UIHoverImageButton(Main.inventoryTickOffTexture, "Toggle hidden visibility");
-			toggleHidden.Left.Pixels = PageTwo.Width.Pixels - Main.inventoryTickOffTexture.Width - 30;
-			toggleHidden.Top.Pixels = 10;
+			toggleHidden.Left.Pixels = 112 - Main.inventoryTickOffTexture.Width;
+			toggleHidden.Top.Pixels = Main.inventoryTickOffTexture.Height * 2 / 3;
 			toggleHidden.OnClick += (a, b) => ToggleHidden();
+			filterPanel.Append(toggleHidden);
 		}
 
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
-			PageTwo.AddOrRemoveChild(toggleHidden, PageNum == -1);
 
 			// We reset the position of the button to make sure it updates with the screen res
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
@@ -2331,56 +2331,67 @@ namespace BossChecklist
 			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
+		public bool[] CalculateTableOfContents(List<BossInfo> bossList) {
+			bool[] visibleList = new bool[bossList.Count];
+			for (int i = 0; i < bossList.Count; i++) {
+				BossInfo boss = bossList[i];
+				// if the boss cannot get through the config checks, it will remain false (invisible)
+				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) continue;
+				if ((!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable) continue;
+				if (boss.hidden && !showHidden) continue;
+
+				// Check filters as well
+				EntryType type = boss.type;
+				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
+				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
+
+				if (type == EntryType.Boss && BossChecklist.BossLogConfig.FilterBosses == "Hide when completed" && boss.downed()) continue;
+				if (type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && boss.downed()))) continue;
+				if (type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && boss.downed()))) continue;
+
+				visibleList[i] = true; // Boss will show on the Table of Contents
+			}
+			return visibleList;
+		}
+
 		public void UpdateTableofContents() {
 			PageNum = -1;
 			ResetBothPages();
-			int nextCheck = 0;
-			bool nextCheckBool = false;
+			bool nextCheck = true;
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
 
 			List<BossInfo> referenceList = BossChecklist.bossTracker.SortedBosses;
+			bool[] visibleList = CalculateTableOfContents(referenceList);
 
-			for (int i = 0; i < referenceList.Count; i++) {
-				referenceList[i].hidden = WorldAssist.HiddenBosses.Contains(referenceList[i].Key);
-				if (referenceList[i].modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) continue;
-				if ((!referenceList[i].available()) && BossChecklist.BossLogConfig.HideUnavailable) continue;
-				if (referenceList[i].hidden && !showHidden) continue;
-				if (!referenceList[i].downed()) nextCheck++;
-				if (nextCheck == 1) nextCheckBool = true;
+			for (int i = 0; i < visibleList.Length; i++) {
+				BossInfo boss = referenceList[i];
+				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
+				if (!visibleList[i]) continue;
 
-				string displayName = referenceList[i].name;
-				if (BossChecklist.DebugConfig.ShowInternalNames) displayName = referenceList[i].internalName;
-				else if (!referenceList[i].available() && !referenceList[i].downed()) displayName = "???";
+				// Setup display name. Use Internal Name if config is on, and show "???" if unavailable and Silhouettes are turned on
+				string displayName = BossChecklist.DebugConfig.ShowInternalNames ? boss.internalName : boss.name;
+				if (!boss.available() && !boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) displayName = "???";
 
-				TableOfContents next = new TableOfContents(referenceList[i].progression, displayName, referenceList[i].name, nextCheckBool);
-				nextCheckBool = false;
-
-				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
-				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
-				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
-				EntryType type = referenceList[i].type;
-
+				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
+				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
+				TableOfContents next = new TableOfContents(boss.progression, displayName, boss.name, nextCheck);
+				if (!boss.downed()) nextCheck = false;
+				
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22;
 				next.Id = i.ToString();
 				next.OnClick += new MouseEvent(JumpToBossPage);
 
-				if (referenceList[i].downed()) {
-					next.TextColor = Colors.RarityGreen;
-					if ((mbFilter == "Show" && type == EntryType.MiniBoss) || (eFilter == "Show" && type == EntryType.Event) || (type == EntryType.Boss && bFilter == "Show")) {
-						if (referenceList[i].progression <= 6f) prehardmodeList.Add(next);
-						else hardmodeList.Add(next);
-					}
+				if (boss.downed()) {
+					next.TextColor = Colors.RarityGreen; // TextColor is to prevent flashing text on page updating
+					if (boss.progression <= 6f) prehardmodeList.Add(next);
+					else hardmodeList.Add(next);
 				}
 				else {
-					nextCheck++;
-					next.TextColor = Colors.RarityRed;
-					if (!referenceList[i].available()) next.TextColor = Color.SlateGray;
-					if ((mbFilter != "Hide" && type == EntryType.MiniBoss) || (eFilter != "Hide" && type == EntryType.Event) || type == EntryType.Boss) {
-						if (referenceList[i].progression <= 6f) prehardmodeList.Add(next);
-						else hardmodeList.Add(next);
-					}
+					next.TextColor = boss.available() ? Colors.RarityRed : Color.SlateGray;
+					if (boss.progression <= 6f) prehardmodeList.Add(next);
+					else hardmodeList.Add(next);
 				}
 			}
 
