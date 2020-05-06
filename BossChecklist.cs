@@ -373,6 +373,9 @@ namespace BossChecklist
 				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
 				if (message == "GetBossInfoDictionary") {
 					var mod = args[1] as Mod;
+					if (mod == null) {
+						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
+					}
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
 
 					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for GetBossInfoDictionary");
