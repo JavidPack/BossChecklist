@@ -374,16 +374,16 @@ namespace BossChecklist
 						int headsDisplayed = 0;
 						int adjustment = 0;
 						Color maskedHead = BossLogUI.MaskBoss(headBoss);
+						Texture2D noHead = Main.npcHeadTexture[0];
 						for (int h = 0; h < headBoss.npcIDs.Count; h++) {
 							Texture2D head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
-							if (headBoss.overrideIconTexture != "") head = ModContent.GetTexture(headBoss.overrideIconTexture);
-							if (head != Main.npcHeadTexture[0]) {
+							if (headBoss.overrideIconTexture != "" && headBoss.overrideIconTexture != "Terraria/NPC_Head_0") head = ModContent.GetTexture(headBoss.overrideIconTexture);
+							if (head != noHead) {
 								headsDisplayed++;
 								spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * adjustment), Main.mouseY + 15, head.Width, head.Height), maskedHead);
 								adjustment++;
 							}
 						}
-						Texture2D noHead = Main.npcHeadTexture[0];
 						if (headsDisplayed == 0) spriteBatch.Draw(noHead, new Rectangle(Main.mouseX + 15 + ((noHead.Width + 2) * adjustment), Main.mouseY + 15, noHead.Width, noHead.Height), maskedHead);
 					}
 					else {
@@ -504,9 +504,11 @@ namespace BossChecklist
 						int headsDisplayed = 0;
 						int adjustment = 0;
 						Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
+						Texture2D noHead = Main.npcHeadTexture[0];
 						for (int h = selectedBoss.npcIDs.Count - 1; h > -1; h--) {
 							Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
-							if (head != Main.npcHeadTexture[0]) {
+							if (selectedBoss.overrideIconTexture != "" && selectedBoss.overrideIconTexture != "Terraria/NPC_Head_0") head = ModContent.GetTexture(selectedBoss.overrideIconTexture);
+							if (head != noHead) {
 								Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width - 10 - ((head.Width + 2) * adjustment), pageRect.Y + 5, head.Width, head.Height);
 								if (headsDisplayed == 0) firstHeadPos = headPos;
 								spriteBatch.Draw(head, headPos, maskedHead);
@@ -515,7 +517,6 @@ namespace BossChecklist
 							}
 						}
 						if (headsDisplayed == 0) {
-							Texture2D noHead = Main.npcHeadTexture[0];
 							Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width - 10 - ((noHead.Width + 2) * adjustment), pageRect.Y + 5, noHead.Width, noHead.Height);
 							firstHeadPos = noHeadPos;
 							spriteBatch.Draw(noHead, noHeadPos, maskedHead);
