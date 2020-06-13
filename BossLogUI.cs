@@ -121,6 +121,7 @@ namespace BossChecklist
 					Rectangle source = new Rectangle(0, 40 * cycleFrame, 34, 38);
 					spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, BossChecklist.BossLogConfig.BossLogColor);
 				}
+				else if (IsMouseHovering) spriteBatch.Draw(BossLogUI.borderTexture, innerDimensions.ToRectangle(), Color.Goldenrod);
 
 				// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
 				if (dragging) spriteBatch.Draw(texture, innerDimensions.ToRectangle(), Color.White);
@@ -877,8 +878,7 @@ namespace BossChecklist
 						for (int i = 0; i < selectedBoss.loot.Count; i++) {
 							Item bagItem = new Item();
 							bagItem.SetDefaults(selectedBoss.loot[i]);
-							bool foundModBag = bagItem.modItem != null && bagItem.modItem.BossBagNPC != 0;
-							if (BossLogUI.vanillaBags.Contains(bagItem.type) || foundModBag) {
+							if (BossLogUI.allTreasureBags.Contains(bagItem.type)) {
 								bag = Main.itemTexture[bagItem.type];
 								DrawAnimation drawAnim = Main.itemAnimations[bagItem.type];
 								if (drawAnim != null) sourceRect = drawAnim.GetFrame(bag);
@@ -1431,7 +1431,7 @@ namespace BossChecklist
 		public FixedUIScrollbar scrollTwo;
 
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
-		public static List<int> vanillaBags;
+		public static List<int> allTreasureBags;
 
 		// Cropped Textures
 		public static Texture2D bookTexture;
@@ -1539,7 +1539,7 @@ namespace BossChecklist
 			starTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 22, 22, 20));
 			goldChestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(72, 22, 22, 20));
 
-			vanillaBags = new List<int>() {
+			allTreasureBags = new List<int>() {
 				ItemID.KingSlimeBossBag,
 				ItemID.EyeOfCthulhuBossBag,
 				ItemID.EaterOfWorldsBossBag,
@@ -2221,10 +2221,9 @@ namespace BossChecklist
 			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
 			LootRow newRow = new LootRow(0) { Id = "Loot0" };
 			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (vanillaBags.Contains(shortcut.loot[i])) continue;
+				if (allTreasureBags.Contains(shortcut.loot[i])) continue;
 				Item expertItem = new Item();
 				expertItem.SetDefaults(shortcut.loot[i]);
-				if (expertItem.modItem != null && expertItem.modItem.BossBagNPC != 0) continue;
 				if (expertItem.expert) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
@@ -2244,7 +2243,7 @@ namespace BossChecklist
 				}
 			}
 			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (vanillaBags.Contains(shortcut.loot[i])) continue;
+				if (allTreasureBags.Contains(shortcut.loot[i])) continue;
 				Item loot = new Item();
 				loot.SetDefaults(shortcut.loot[i]);
 				if (shortcut.npcIDs[0] < NPCID.Count) {
@@ -2255,7 +2254,6 @@ namespace BossChecklist
 						if (loot.type == ItemID.CrimtaneOre || loot.type == ItemID.CrimsonSeeds) continue;
 					}
 				}
-				if (loot.modItem != null && shortcut.npcIDs.Any(x => x == loot.modItem.BossBagNPC)) continue;
 				if (!loot.expert) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem);

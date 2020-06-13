@@ -76,8 +76,7 @@ namespace BossChecklist
 				item.SetDefaults(type);
 				List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
 				for (int i = 0; i < bossList.Count; i++) {
-					if (BossLogUI.vanillaBags.Contains(type)) return 0;
-					if (item.modItem != null && bossList[i].npcIDs.Any(x => x == item.modItem.BossBagNPC)) return 0;
+					if (BossLogUI.allTreasureBags.Contains(type)) return 0;
 				}
 				return -1;
 			}

@@ -118,10 +118,17 @@ namespace BossChecklist
 				}
 			}
 
+			// Adding modded treasure bags preemptively to remove Mod Item checks in other parts of code
+			Item newitem = new Item();
 			BossCache = new bool[NPCLoader.NPCCount];
 			foreach (var boss in SortedBosses) {
+				foreach (int item in boss.loot) {
+					newitem.SetDefaults(item);
+					if (newitem.modItem != null && newitem.modItem.BossBagNPC != 0) BossLogUI.allTreasureBags.Add(item);
+				}
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}
+			newitem.TurnToAir();
 		}
 
 		internal protected List<int> SetupLoot(int bossNum) {

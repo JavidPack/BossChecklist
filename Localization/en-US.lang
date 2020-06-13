@@ -76,7 +76,7 @@ BossLog.HoverText.ViewCollect=Click to view collectibles only
 BossLog.HoverText.ViewLoot=Click to view all loot
 BossLog.HoverText.ItemIsExpertOnly=This item is only obtainable in expert mode
 
-BossLog.DrawnText.PreHardmode=Pre-hardmode
+BossLog.DrawnText.PreHardmode=Pre-Hardmode
 BossLog.DrawnText.Hardmode=Hardmode
 BossLog.DrawnText.Defeated=Defeated in {0}
 BossLog.DrawnText.Undefeated=Undefeated in {0}
