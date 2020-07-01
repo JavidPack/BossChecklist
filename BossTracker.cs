@@ -122,9 +122,11 @@ namespace BossChecklist
 			Item newitem = new Item();
 			BossCache = new bool[NPCLoader.NPCCount];
 			foreach (var boss in SortedBosses) {
-				foreach (int item in boss.loot) {
-					newitem.SetDefaults(item);
-					if (newitem.modItem != null && newitem.modItem.BossBagNPC != 0) BossLogUI.allTreasureBags.Add(item);
+				if (!Main.dedServ) {
+					foreach (int item in boss.loot) {
+						newitem.SetDefaults(item);
+						if (newitem.modItem != null && newitem.modItem.BossBagNPC != 0) BossLogUI.allTreasureBags.Add(item);
+					}
 				}
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}
