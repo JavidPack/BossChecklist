@@ -2,9 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader.Config;
 using Terraria.UI;
 
 namespace BossChecklist
@@ -21,8 +20,6 @@ namespace BossChecklist
 
 		internal static List<bool> drawLOS;
 
-		internal static List<Color> drawColor;
-
 		internal static Texture2D arrowTexture; //<- = null in Mod.Unload()
 
 		internal static int[] whitelistNPCs;
@@ -37,8 +34,8 @@ namespace BossChecklist
 			drawPos = new List<Vector2>();
 			drawRotation = new List<float>();
 			drawLOS = new List<bool>();
-			drawColor = new List<Color>();
 			arrowTexture = BossChecklist.instance.GetTexture("Resources/Extra_RadarArrow");
+			whitelistNPCs = new int[0];
 		}
 
 		private bool SetDrawPos() {
@@ -47,16 +44,20 @@ namespace BossChecklist
 			drawPos.Clear();
 			drawRotation.Clear();
 			drawLOS.Clear();
-			drawColor.Clear();
-			for (int k = 0; k < 200; k++) {
+			for (int k = 0; k < Main.maxNPCs; k++) {
 				NPC npc = Main.npc[k];
 
 				//limit to 20 drawn at all times
 				if (type.Count >= 20 || !npc.active) continue;
 
+				//don't draw anything if it has no boss head texture
+				int lbossHeadIndex = npc.GetBossHeadTextureIndex();
+				if (lbossHeadIndex < 0 || lbossHeadIndex >= Main.npcHeadBossTexture.Length) continue;
+
 				if (Array.BinarySearch(whitelistNPCs, npc.type) > -1) //if in whitelist
 				{
-					Vector2 between = npc.Center - Main.LocalPlayer.Center;
+					Player player = Main.LocalPlayer;
+					Vector2 between = npc.Center - player.Center;
 					//screen "radius" is 960, "diameter" is 1920
 
 					int ltype = npc.type;
@@ -88,7 +89,7 @@ namespace BossChecklist
 					if (!rectangle.Intersects(npc.getRect())) {
 						if (between.X == 0f) between.X = 0.0001f; //protection against division by zero
 						if (between.Y == 0f) between.Y = 0.0001f; //protection against NaN
-						if (Main.LocalPlayer.gravDir != 1f) between.Y = -between.Y;
+						if (player.gravDir != 1f) between.Y = -between.Y;
 						float slope = between.Y / between.X;
 
 						Vector2 pad = new Vector2
@@ -143,22 +144,13 @@ namespace BossChecklist
 						ldrawPos += new Vector2(pad.X, pad.Y);
 
 						//since we were operating based on Center to Center, we need to put the drawPos back to position instead
-						ldrawPos -= new Vector2(npc.width / 2, npc.height / 2);
-
-						//get boss head texture if it has one and use that instead of the NPC texture
-						int lbossHeadIndex = -1;
-						if (npc.GetBossHeadTextureIndex() >= 0 && npc.GetBossHeadTextureIndex() < Main.npcHeadBossTexture.Length) {
-							lbossHeadIndex = npc.GetBossHeadTextureIndex();
-						}
-
-						//get color if NPC has any
-						drawColor.Add(npc.color);
+						ldrawPos -= npc.Size / 2;
 
 						type.Add(ltype);
 						bossHeadIndex.Add(lbossHeadIndex);
 						drawPos.Add(ldrawPos);
-						drawRotation.Add((float)Math.Atan2(between.Y, between.X));
-						drawLOS.Add(Collision.CanHitLine(Main.LocalPlayer.position, Main.LocalPlayer.width, Main.LocalPlayer.height, npc.position, npc.width, npc.height));
+						drawRotation.Add(between.ToRotation());
+						drawLOS.Add(Collision.CanHitLine(player.position, player.width, player.height, npc.position, npc.width, npc.height));
 					}
 				}
 			}
@@ -172,10 +164,11 @@ namespace BossChecklist
 			if (!whitelistFilled || blacklistChanged) {
 				List<int> idList = new List<int>();
 				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
-					if (BossChecklist.bossTracker.SortedBosses[i].type == EntryType.Event) continue;
-					if (BossChecklist.bossTracker.SortedBosses[i].type == EntryType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
-					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses[i].npcIDs.Count; j++) {
-						int ID = BossChecklist.bossTracker.SortedBosses[i].npcIDs[j];
+					BossInfo bossInfo = BossChecklist.bossTracker.SortedBosses[i];
+					if (bossInfo.type == EntryType.Event) continue;
+					if (bossInfo.type == EntryType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
+					for (int j = 0; j < bossInfo.npcIDs.Count; j++) {
+						int ID = bossInfo.npcIDs[j];
 						if (!BlackListedID(ID) && BossLogUI.GetBossHead(ID) != Main.npcHeadTexture[0]) idList.Add(ID);
 					}
 				}
@@ -184,15 +177,12 @@ namespace BossChecklist
 				whitelistFilled = true;
 				blacklistChanged = false;
 			}
-			//do stuff
+
 			SetDrawPos();
 		}
 
 		private bool BlackListedID(int ID) {
-			foreach (NPCDefinition npc in BossChecklist.ClientConfig.RadarBlacklist) {
-				if (npc.Type == ID) return true;
-			}
-			return false;
+			return BossChecklist.ClientConfig.RadarBlacklist.Any(npcDef => npcDef.Type == ID);
 		}
 
 		//Draw
@@ -203,38 +193,16 @@ namespace BossChecklist
 
 			for (int i = 0; i < type.Count; i++) {
 				Vector2 ldrawPos = drawPos[i]; //contains top left corner of draw pos
-				Texture2D tex;
-				int tempWidth;
-				int tempHeight;
-				float scaleFactor;
-				int finalWidth;
-				int finalHeight;
-				//if it's a boss, draw the head texture instead, no scaling
-				if (bossHeadIndex[i] != -1) {
-					Main.instance.LoadNPC(type[i]);
-					tex = Main.npcHeadBossTexture[bossHeadIndex[i]];
-					if (tex == null) continue;
-					tempWidth = tex.Width;
-					tempHeight = tex.Height;
-					finalWidth = tex.Width;
-					finalHeight = tex.Height;
-				}
-				else {
-					Main.instance.LoadNPC(type[i]);
-					//MIGHT NOT BE NEEDED ANYMORE, but leave it in, in case some modded boss doesn't have boss head texture
-					//scale image down to max 64x64, only one of them needs to be max
-					tex = Main.npcTexture[type[i]];
-					if (tex == null) continue;
-					tempWidth = tex.Width;
-					tempHeight = tex.Height / Main.npcFrameCount[type[i]];
-					scaleFactor = (float)64 / ((tempWidth > tempHeight) ? tempWidth : tempHeight);
-					if (scaleFactor > 0.75f) //because when fully zoomed out, the texture isn't actually drawn in 1:1 scale onto the screen
-					{
-						scaleFactor = 0.75f; //only scale down, don't scale up
-					}
-					finalWidth = (int)(tempWidth * scaleFactor);
-					finalHeight = (int)(tempHeight * scaleFactor);
-				}
+
+				int headIndex = bossHeadIndex[i];
+				if (headIndex == -1) continue;
+
+				Texture2D tex = Main.npcHeadBossTexture[headIndex];
+				if (tex == null) continue;
+				int tempWidth = tex.Width;
+				int tempHeight = tex.Height;
+				int finalWidth = tex.Width;
+				int finalHeight = tex.Height;
 
 				int arrowPad = 10;
 
@@ -247,15 +215,7 @@ namespace BossChecklist
 				//create rect around center
 				Rectangle outputRect = new Rectangle((int)ldrawPos.X - (finalWidth / 2), (int)ldrawPos.Y - (finalHeight / 2), finalWidth, finalHeight);
 
-				//set color overlay if NPC has one
 				Color color = Color.LightGray;
-				if (drawColor[i] != default(Color)) {
-					color = new Color(
-						Math.Max(drawColor[i].R - 25, 50),
-						Math.Max(drawColor[i].G - 25, 50),
-						Math.Max(drawColor[i].B - 25, 50),
-						Math.Max((byte)(drawColor[i].A * 1.5f), (byte)75));
-				}
 				color *= drawLOS[i] ? BossChecklist.ClientConfig.OpacityFloat : BossChecklist.ClientConfig.OpacityFloat - 0.25f;
 				spriteBatch.Draw(tex, outputRect, new Rectangle(0, 0, tempWidth, tempHeight), color);
 

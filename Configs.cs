@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
@@ -147,15 +148,24 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		public bool RadarMiniBosses { get; set; }
 
+		public const float OpacityFloatMin = 0.35f;
+		public const float OpacityFloatMax = 0.85f;
 		[Label("$Mods.BossChecklist.Configs.Label.RadarOpacity")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.RadarOpacity")]
-		[Range(0.35f, 0.85f)]
+		[Range(OpacityFloatMin, OpacityFloatMax)]
 		[DefaultValue(0.75f)]
 		public float OpacityFloat { get; set; }
 
 		[Label("$Mods.BossChecklist.Configs.Label.RadarBlacklist")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.RadarBlacklist")]
 		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
+
+		[OnDeserialized]
+		internal void OnDeserializedMethod(StreamingContext context) {
+			//Range attribute doesn't enforce it onto the value, it's a limit for the UI only, so we have to clamp it here again if user decides to edit it through the json
+			//If this isn't in here, OpacityFloat can get negative for example, which will lead to a crash later
+			OpacityFloat = Utils.Clamp(OpacityFloat, OpacityFloatMin, OpacityFloatMax);
+		}
 
 		public override void OnChanged() {
 			BossRadarUI.blacklistChanged = true;

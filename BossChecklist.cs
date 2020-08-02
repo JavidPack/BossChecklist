@@ -156,6 +156,7 @@ namespace BossChecklist
 			ServerCollectedRecords = null;
 			BossRadarUIInterface = null;
 			BossRadarUI.arrowTexture = null;
+			BossRadarUI.whitelistNPCs = null;
 			ClientConfig = null;
 			DebugConfig = null;
 			BossLogConfig = null;
