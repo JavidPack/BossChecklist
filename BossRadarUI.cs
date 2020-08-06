@@ -160,6 +160,7 @@ namespace BossChecklist
 		//Update
 		public override void Update(GameTime gameTime) {
 			base.Update(gameTime);
+			if (!BossChecklist.ClientConfig.BossRadarBool) return;
 
 			if (!whitelistFilled || blacklistChanged) {
 				List<int> idList = new List<int>();
