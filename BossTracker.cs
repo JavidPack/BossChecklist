@@ -119,18 +119,26 @@ namespace BossChecklist
 			}
 
 			// Adding modded treasure bags preemptively to remove Mod Item checks in other parts of code
-			Item newitem = new Item();
 			BossCache = new bool[NPCLoader.NPCCount];
 			foreach (var boss in SortedBosses) {
 				if (!Main.dedServ) {
-					foreach (int item in boss.loot) {
-						newitem.SetDefaults(item);
-						if (newitem.modItem != null && newitem.modItem.BossBagNPC != 0) BossLogUI.allTreasureBags.Add(item);
+					foreach (int npc in boss.npcIDs) {
+						if (npc < NPCID.Count) {
+							// If the id is vanilla continue in case the boss uses a servant or something
+							// The first NPC should have the boss that drops the bag, but backups are needed anyways
+							continue; 
+						}
+						int bagType = NPCLoader.GetNPC(npc).bossBag;
+						if (bagType > 0) {
+							if (!BossChecklist.registeredBossBagTypes.Contains(bagType)) {
+								BossChecklist.registeredBossBagTypes.Add(bagType);
+								break; // We found the boss bag for this modded boss, skip the other NPC IDs and go to the next boss
+							}
+						}
 					}
 				}
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}
-			newitem.TurnToAir();
 		}
 
 		internal protected List<int> SetupLoot(int bossNum) {

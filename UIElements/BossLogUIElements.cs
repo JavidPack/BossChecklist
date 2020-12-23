@@ -995,17 +995,11 @@ namespace BossChecklist.UIElements
 							Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
 							Rectangle sourceRect = bag.Bounds;
 							for (int i = 0; i < selectedBoss.loot.Count; i++) {
-								Item bagItem = new Item();
-								bagItem.SetDefaults(selectedBoss.loot[i]);
-								if (BossLogUI.allTreasureBags.Contains(bagItem.type)) {
-									bag = Main.itemTexture[bagItem.type];
-									DrawAnimation drawAnim = Main.itemAnimations[bagItem.type];
-									if (drawAnim != null) {
-										sourceRect = drawAnim.GetFrame(bag);
-									}
-									else {
-										sourceRect = bag.Bounds;
-									}
+								int bagItem = selectedBoss.loot[i];
+								if (BossChecklist.registeredBossBagTypes.Contains(bagItem)) {
+									bag = Main.itemTexture[bagItem];
+									DrawAnimation drawAnim = Main.itemAnimations[bagItem];
+									sourceRect = drawAnim != null ? sourceRect = drawAnim.GetFrame(bag) : bag.Bounds;
 									break;
 									//if (bagItem.type < ItemID.Count) bag = ModContent.GetTexture("Terraria/Item_" + bagItem.type);
 									//else bag = ModContent.GetTexture(ItemLoader.GetItem(bagItem.type).Texture);

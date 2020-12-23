@@ -30,6 +30,24 @@ namespace BossChecklist
 		internal BossLogUI BossLog;
 		internal static UserInterface BossRadarUIInterface;
 		internal BossRadarUI BossRadarUI;
+		
+		public readonly static List<int> registeredBossBagTypes = new List<int>() {
+			ItemID.KingSlimeBossBag,
+			ItemID.EyeOfCthulhuBossBag,
+			ItemID.EaterOfWorldsBossBag,
+			ItemID.BrainOfCthulhuBossBag,
+			ItemID.QueenBeeBossBag,
+			ItemID.SkeletronBossBag,
+			ItemID.WallOfFleshBossBag,
+			ItemID.TwinsBossBag,
+			ItemID.DestroyerBossBag,
+			ItemID.SkeletronPrimeBossBag,
+			ItemID.PlanteraBossBag,
+			ItemID.GolemBossBag,
+			ItemID.FishronBossBag,
+			ItemID.MoonLordBossBag,
+			ItemID.BossBagBetsy
+		};
 
 		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
 			ItemID.MusicBoxOverworldDay,

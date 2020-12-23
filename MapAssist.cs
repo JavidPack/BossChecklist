@@ -5,6 +5,7 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace BossChecklist
 {
@@ -69,14 +70,15 @@ namespace BossChecklist
 		}
 
 		public static int WhiteListType(int type) {
-			if (type == ItemID.ShadowScale || type == ItemID.TissueSample) return 2;
-			else if (RecipeGroup.recipeGroups[RecipeGroupID.Fragment].ValidItems.Any(x => x == type)) return 1;
+			if (type == ItemID.ShadowScale || type == ItemID.TissueSample) {
+				return 2;
+			}
+			else if (RecipeGroup.recipeGroups[RecipeGroupID.Fragment].ValidItems.Any(x => x == type)) {
+				return 1;
+			}
 			else {
-				Item item = new Item();
-				item.SetDefaults(type);
-				List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
-				for (int i = 0; i < bossList.Count; i++) {
-					if (BossLogUI.allTreasureBags.Contains(type)) return 0;
+				if (BossChecklist.registeredBossBagTypes.Contains(type)) {
+					return 0;
 				}
 				return -1;
 			}

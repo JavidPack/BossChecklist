@@ -52,7 +52,6 @@ namespace BossChecklist
 		public BossLogUIElements.FixedUIScrollbar scrollTwo;
 
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
-		public static List<int> allTreasureBags;
 
 		// Cropped Textures
 		public static Texture2D bookTexture;
@@ -163,25 +162,7 @@ namespace BossChecklist
 			chestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 22, 22, 20));
 			starTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 22, 22, 20));
 			goldChestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(72, 22, 22, 20));
-
-			allTreasureBags = new List<int>() {
-				ItemID.KingSlimeBossBag,
-				ItemID.EyeOfCthulhuBossBag,
-				ItemID.EaterOfWorldsBossBag,
-				ItemID.BrainOfCthulhuBossBag,
-				ItemID.QueenBeeBossBag,
-				ItemID.SkeletronBossBag,
-				ItemID.WallOfFleshBossBag,
-				ItemID.TwinsBossBag,
-				ItemID.DestroyerBossBag,
-				ItemID.SkeletronPrimeBossBag,
-				ItemID.PlanteraBossBag,
-				ItemID.GolemBossBag,
-				ItemID.FishronBossBag,
-				ItemID.MoonLordBossBag,
-				ItemID.BossBagBetsy
-			};
-
+			
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog");
 			bosslogbutton.Id = "OpenUI";
 			bosslogbutton.Width.Set(34, 0f);
@@ -934,7 +915,7 @@ namespace BossChecklist
 			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
 			LootRow newRow = new LootRow(0) { Id = "Loot0" };
 			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (allTreasureBags.Contains(shortcut.loot[i])) {
+				if (BossChecklist.registeredBossBagTypes.Contains(shortcut.loot[i])) {
 					continue;
 				}
 				Item expertItem = new Item();
@@ -958,7 +939,7 @@ namespace BossChecklist
 				}
 			}
 			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (allTreasureBags.Contains(shortcut.loot[i])) {
+				if (BossChecklist.registeredBossBagTypes.Contains(shortcut.loot[i])) {
 					continue;
 				}
 				Item loot = new Item();
@@ -1359,7 +1340,7 @@ namespace BossChecklist
 				OpenSpawn();
 			}
 		}
-
+		
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
 
 		public static Color MaskBoss(BossInfo boss) => (((!boss.downed() || !boss.available()) && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
