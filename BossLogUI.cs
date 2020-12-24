@@ -794,11 +794,17 @@ namespace BossChecklist
 					PageTwo.Append(ingList);
 					col++;
 					if (k == 6) {
+						// Fills in rows with empty slots. New rows start after 7 items
 						if (ingList.item.type == 0) {
 							break;
 						}
 						col = 0;
 						row++;
+					}
+					else if (k == 13) {
+						// Hopefully no mod uses more than 14 items to craft this spawn item
+						// If so, cut off the remaining row to prevent the itemslots from overflowing below the page. TODO? change this?
+						break;
 					}
 				}
 
