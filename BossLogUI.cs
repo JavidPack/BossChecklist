@@ -684,10 +684,6 @@ namespace BossChecklist
 				}
 			}
 
-			// Reset the collectible item timer and reset the shown item back to the first
-			BossLogPanel.itemTimer = 240;
-			BossLogPanel.itemShown = new int[] { 0, 0, 0 };
-
 			ResetBothPages();
 			UpdateSubPage(SubPageNum);
 		}

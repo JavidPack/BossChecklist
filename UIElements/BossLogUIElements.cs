@@ -356,6 +356,8 @@ namespace BossChecklist.UIElements
 						if (validItems[2].Count == 0) {
 							validItems[2].Add(0);
 						}
+						itemShown = new int[] { 0, 0, 0 };
+						itemTimer = 240;
 					}
 
 					// The timer to cycle through multiple items in a given collection type
