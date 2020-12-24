@@ -318,7 +318,8 @@ namespace BossChecklist.UIElements
 
 		internal class BossLogPanel : UIElement
 		{
-			public static int itemTimer = 300;
+			public static int itemTimer = 240;
+			public static int shownPage = 0;
 			public static int[] itemShown;
 			public static List<List<int>> validItems;
 			public static int headNum = -1;
@@ -326,10 +327,12 @@ namespace BossChecklist.UIElements
 			public override void Draw(SpriteBatch spriteBatch) {
 				BossInfo selectedBoss;
 				// Pre-drawing
-				if (BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2 && BossLogUI.AltPage[BossLogUI.SubPageNum] && Id == "PageTwo") // PageTwo check to prevent the timer from counting down twice (once for each page)
-				{
-					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-					if (validItems == null) {
+				// PageTwo check to prevent the timer from counting down twice (once for each page)
+				if (BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2 && BossLogUI.AltPage[BossLogUI.SubPageNum] && Id == "PageTwo") {
+					// This page check allows this code to only run when the page has changed.
+					if (shownPage != BossLogUI.PageNum) {
+						shownPage = BossLogUI.PageNum;
+						selectedBoss = BossChecklist.bossTracker.SortedBosses[shownPage];
 						validItems = new List<List<int>> { new List<int>(), new List<int>(), new List<int>() };
 						for (int i = 0; i < selectedBoss.collection.Count; i++) {
 							int item = selectedBoss.collection[i];
@@ -353,10 +356,11 @@ namespace BossChecklist.UIElements
 						if (validItems[2].Count == 0) {
 							validItems[2].Add(0);
 						}
-						itemShown = new int[] { 0, 0, 0 };
 					}
+
+					// The timer to cycle through multiple items in a given collection type
 					if (itemTimer <= 0) {
-						itemTimer = 300;
+						itemTimer = 240; // Items cycle through every 4 seconds
 						for (int i = 0; i < itemShown.Length; i++) {
 							if (itemShown[i] == validItems[i].Count - 1) {
 								itemShown[i] = 0;

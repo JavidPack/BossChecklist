@@ -638,7 +638,6 @@ namespace BossChecklist
 			PageTwo.RemoveChild(scrollTwo);
 			RecipeShown = 0;
 			RecipePageNum = 0;
-			BossLogPanel.validItems = null;
 
 			// Move to next/prev
 			List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
@@ -684,6 +683,11 @@ namespace BossChecklist
 					}
 				}
 			}
+
+			// Reset the collectible item timer and reset the shown item back to the first
+			BossLogPanel.itemTimer = 240;
+			BossLogPanel.itemShown = new int[] { 0, 0, 0 };
+
 			ResetBothPages();
 			UpdateSubPage(SubPageNum);
 		}
