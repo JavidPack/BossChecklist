@@ -896,6 +896,7 @@ namespace BossChecklist
 
 		private void OpenLoot() {
 			ResetBothPages();
+			BossLogPanel.shownAltPage = false;
 			if (AltPage[SubPageNum]) {
 				OpenCollect();
 				return;

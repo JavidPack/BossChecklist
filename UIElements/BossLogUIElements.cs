@@ -28,7 +28,7 @@ namespace BossChecklist.UIElements
 			internal int cycleFrame = 0;
 			internal bool slowDown = true;
 			private Vector2 offset;
-			public static bool dragging;
+			internal bool dragging;
 
 			public BossAssistButton(Texture2D texture, string type) : base(texture) {
 				buttonType = type;
@@ -318,10 +318,11 @@ namespace BossChecklist.UIElements
 
 		internal class BossLogPanel : UIElement
 		{
-			public static int itemTimer = 240;
-			public static int shownPage = 0;
-			public static int[] itemShown;
-			public static List<List<int>> validItems;
+			private int itemTimer = 240;
+			private int shownPage = 0;
+			public static bool shownAltPage = false;
+			private int[] itemShown;
+			private List<List<int>> validItems;
 			public static int headNum = -1;
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -330,8 +331,9 @@ namespace BossChecklist.UIElements
 				// PageTwo check to prevent the timer from counting down twice (once for each page)
 				if (BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2 && BossLogUI.AltPage[BossLogUI.SubPageNum] && Id == "PageTwo") {
 					// This page check allows this code to only run when the page has changed.
-					if (shownPage != BossLogUI.PageNum) {
+					if (shownPage != BossLogUI.PageNum || !shownAltPage) {
 						shownPage = BossLogUI.PageNum;
+						shownAltPage = true;
 						selectedBoss = BossChecklist.bossTracker.SortedBosses[shownPage];
 						validItems = new List<List<int>> { new List<int>(), new List<int>(), new List<int>() };
 						for (int i = 0; i < selectedBoss.collection.Count; i++) {
