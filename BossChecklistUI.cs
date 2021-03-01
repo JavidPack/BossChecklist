@@ -210,7 +210,8 @@ namespace BossChecklist.UIElements
 		}
 
 		internal static void OnScrollWheel_FixHotbarScroll(UIScrollWheelEvent evt, UIElement listeningElement) {
-			Main.LocalPlayer.ScrollHotbar(Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120);
+			if (Main.LocalPlayer.itemAnimation == 0 && Main.LocalPlayer.itemTime == 0 && Main.LocalPlayer.reuseDelay == 0)
+				Main.LocalPlayer.ScrollHotbar(Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120);
 		}
 
 		private Texture2D ResizeImage(Texture2D texture2D, int desiredWidth, int desiredHeight) {
