@@ -127,8 +127,9 @@ namespace BossChecklist
 
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			Func<bool> avail = () => true;
-			if (name == "$NPCName.EaterofWorldsHead") avail = () => !WorldGen.crimson;
-			else if (name == "$NPCName.BrainofCthulhu") avail = () => WorldGen.crimson;
+			// If Fargo's Both Evils mod is installed, make both available
+			if (name == "$NPCName.EaterofWorldsHead") avail = () => !WorldGen.crimson || ModLoader.GetMod("BothEvils") != null;
+			else if (name == "$NPCName.BrainofCthulhu") avail = () => WorldGen.crimson || ModLoader.GetMod("BothEvils") != null;
 			string nameKey = name.Substring(name.LastIndexOf("."));
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 			return new BossInfo(
