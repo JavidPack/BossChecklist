@@ -1102,7 +1102,7 @@ namespace BossChecklist
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
 				TableOfContents next = new TableOfContents(boss.progression, displayName, boss.name, nextCheck);
-				if (!boss.downed()) {
+				if (!boss.downed() && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
 				
