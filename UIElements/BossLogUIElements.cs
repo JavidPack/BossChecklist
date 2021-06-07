@@ -407,7 +407,7 @@ namespace BossChecklist.UIElements
 							int totalPreHard = 0;
 							int downedBosses = 0;
 							for (int i = 0; i < bossList.Count; i++) {
-								if (bossList[i].type == EntryType.Boss && bossList[i].progression <= 6f && bossList[i].available()) {
+								if (bossList[i].type == EntryType.Boss && bossList[i].progression <= 6f && (bossList[i].available() || bossList[i].downed())) {
 									totalPreHard++;
 									if (bossList[i].downed()) {
 										downedBosses++;
