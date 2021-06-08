@@ -486,53 +486,88 @@ namespace BossChecklist.UIElements
 						float textScaling = 0.75f;
 
 						string username = "Jopojelly";
-						Vector2 userpos = new Vector2(pageRect.X + 100, pageRect.Y + 75);
-						Rectangle userselected = new Rectangle(0 + (59 * 1), 0, 59, 58);
+						string title = "Mod Owner";
+						Vector2 userpos = new Vector2(pageRect.X + 75, pageRect.Y + 75);
+						Rectangle userselected = new Rectangle(0 + (60 * 1), 0, 60, 58);
 						spriteBatch.Draw(users, userpos, userselected, Color.White);
 
 						Vector2 stringAdjust = Main.fontMouseText.MeasureString(username);
 						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
 						Utils.DrawBorderString(spriteBatch, username, stringPos, Color.CornflowerBlue, textScaling);
 
-						username = "Sheepish Shepherd";
-						userpos = new Vector2(pageRect.X + 200, pageRect.Y + 75);
-						userselected = new Rectangle(0 + (59 * 0), 0, 59, 58);
+						stringAdjust = Main.fontMouseText.MeasureString(title);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y + userselected.Height + 10);
+						Utils.DrawBorderString(spriteBatch, title, stringPos, Color.CornflowerBlue, textScaling);
+
+						username = "SheepishShepherd";
+						title = "Mod Co-Owner";
+						userpos = new Vector2(pageRect.X + 225, pageRect.Y + 75);
+						userselected = new Rectangle(0 + (60 * 0), 0, 60, 58);
 						spriteBatch.Draw(users, userpos, userselected, Color.White);
 
 						stringAdjust = Main.fontMouseText.MeasureString(username);
 						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
 						Utils.DrawBorderString(spriteBatch, username, stringPos, Color.Goldenrod, textScaling);
 
+						stringAdjust = Main.fontMouseText.MeasureString(title);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y + userselected.Height + 10);
+						Utils.DrawBorderString(spriteBatch, title, stringPos, Color.Goldenrod, textScaling);
+
 						username = "direwolf420";
-						userpos = new Vector2(pageRect.X + 50, pageRect.Y + 180);
-						userselected = new Rectangle(0 + (59 * 3), 0, 59, 58);
+						title = "Boss Radar Code";
+						userpos = new Vector2(pageRect.X + 75, pageRect.Y + 200);
+						userselected = new Rectangle(0 + (60 * 3), 0, 60, 58);
 						spriteBatch.Draw(users, userpos, userselected, Color.White);
 
 						stringAdjust = Main.fontMouseText.MeasureString(username);
 						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
 						Utils.DrawBorderString(spriteBatch, username, stringPos, Color.Tomato, textScaling);
 
+						stringAdjust = Main.fontMouseText.MeasureString(title);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y + userselected.Height + 10);
+						Utils.DrawBorderString(spriteBatch, title, stringPos, Color.Tomato, textScaling);
+
+						username = "RiverOaken";
+						title = "Spriter";
+						userpos = new Vector2(pageRect.X + 225, pageRect.Y + 200);
+						userselected = new Rectangle(0 + (60 * 4), 0, 60, 58);
+						spriteBatch.Draw(users, userpos, userselected, Color.White);
+
+						stringAdjust = Main.fontMouseText.MeasureString(username);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+						Utils.DrawBorderString(spriteBatch, username, stringPos, Color.MediumPurple, textScaling);
+
+						stringAdjust = Main.fontMouseText.MeasureString(title);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y + userselected.Height + 10);
+						Utils.DrawBorderString(spriteBatch, title, stringPos, Color.MediumPurple, textScaling);
+
 						username = "Orian";
-						userpos = new Vector2(pageRect.X + 150, pageRect.Y + 180);
-						userselected = new Rectangle(0 + (59 * 2), 0, 59, 58);
+						title = "Singleplayer Testing";
+						userpos = new Vector2(pageRect.X + 75, pageRect.Y + 325);
+						userselected = new Rectangle(0 + (60 * 2), 0, 60, 58);
 						spriteBatch.Draw(users, userpos, userselected, Color.White);
 
 						stringAdjust = Main.fontMouseText.MeasureString(username);
 						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
 						Utils.DrawBorderString(spriteBatch, username, stringPos, new Color(49, 210, 162), textScaling);
 
+						stringAdjust = Main.fontMouseText.MeasureString(title);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y + userselected.Height + 10);
+						Utils.DrawBorderString(spriteBatch, title, stringPos, new Color(49, 210, 162), textScaling);
+
 						username = "Panini";
-						userpos = new Vector2(pageRect.X + 241, pageRect.Y + 180);
-						userselected = new Rectangle(0 + (59 * 4), 0, 68, 58);
+						title = "Multiplayer Testing";
+						userpos = new Vector2(pageRect.X + 225 - 10, pageRect.Y + 325);
+						userselected = new Rectangle(0 + (60 * 5), 0, 70, 58);
 						spriteBatch.Draw(users, userpos, userselected, Color.White);
 
 						stringAdjust = Main.fontMouseText.MeasureString(username);
-						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2), userpos.Y - 25);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2) + 5, userpos.Y - 25);
 						Utils.DrawBorderString(spriteBatch, username, stringPos, Color.HotPink, textScaling);
 
-						// "Spriters"
-						stringPos = new Vector2(pageRect.X + 20, pageRect.Y + 390);
-						Utils.DrawBorderString(spriteBatch, "...and thank you RiverOaken for an amazing book sprite!", stringPos, Color.MediumPurple, textScaling);
+						stringAdjust = Main.fontMouseText.MeasureString(title);
+						stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * 0.75f) / 2) + 5, userpos.Y + userselected.Height + 10);
+						Utils.DrawBorderString(spriteBatch, title, stringPos, Color.HotPink, textScaling);
 					}
 
 					if (Id == "PageTwo") { // Supported Mod Credits Page
