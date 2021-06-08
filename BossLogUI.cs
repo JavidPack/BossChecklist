@@ -138,30 +138,27 @@ namespace BossChecklist
 		}
 
 		public override void OnInitialize() {
-			// Book Button
-			bookTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(0, 0, 34, 38));
-			borderTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(36, 0, 34, 38));
-			fadedTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(72, 0, 34, 38));
-			colorTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Button"), new Rectangle(108, 0, 34, 38));
-
-			// Nav
-			prevTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 0, 22, 22));
-			nextTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 0, 22, 22));
-			tocTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(48, 0, 22, 22));
-			credTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 0, 22, 22));
-			bossNavTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(0, 24, 22, 22));
-			minibossNavTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(24, 24, 22, 22));
-			eventNavTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(48, 24, 22, 22));
-			filterTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Nav"), new Rectangle(72, 24, 22, 22));
-
-			// Checks
-			checkMarkTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(0, 0, 22, 20));
-			xTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 0, 22, 20));
-			circleTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 0, 22, 20));
-			checkboxTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(72, 0, 22, 20));
-			chestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(24, 22, 22, 20));
-			starTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(48, 22, 22, 20));
-			goldChestTexture = CropTexture(BossChecklist.instance.GetTexture("Resources/LogUI_Checks"), new Rectangle(72, 22, 22, 20));
+			bookTexture = BossChecklist.instance.GetTexture("Resources/Book_Outline");
+			borderTexture = BossChecklist.instance.GetTexture("Resources/Book_Border");
+			fadedTexture = BossChecklist.instance.GetTexture("Resources/Book_Faded");
+			colorTexture = BossChecklist.instance.GetTexture("Resources/Book_Color");
+			
+			prevTexture = BossChecklist.instance.GetTexture("Resources/Nav_Prev");
+			nextTexture = BossChecklist.instance.GetTexture("Resources/Nav_Next");
+			tocTexture = BossChecklist.instance.GetTexture("Resources/Nav_Contents");
+			credTexture = BossChecklist.instance.GetTexture("Resources/Nav_Credits");
+			bossNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Boss");
+			minibossNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Miniboss");
+			eventNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Event");
+			filterTexture = BossChecklist.instance.GetTexture("Resources/Nav_Filter");
+			
+			checkMarkTexture = BossChecklist.instance.GetTexture("Resources/Checks_Check");
+			xTexture = BossChecklist.instance.GetTexture("Resources/Checks_X");
+			circleTexture = BossChecklist.instance.GetTexture("Resources/Checks_Next");
+			checkboxTexture = BossChecklist.instance.GetTexture("Resources/Checks_Box");
+			chestTexture = BossChecklist.instance.GetTexture("Resources/Checks_Chest");
+			starTexture = BossChecklist.instance.GetTexture("Resources/Checks_Star");
+			goldChestTexture = BossChecklist.instance.GetTexture("Resources/Checks_GoldChest");
 			
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog");
 			bosslogbutton.Id = "OpenUI";
@@ -1372,6 +1369,7 @@ namespace BossChecklist
 			}
 		}
 
+		/* Currently removed due to rendering issue that is unable to replicated
 		public static Texture2D CropTexture(Texture2D texture, Rectangle snippet) {
 			Texture2D croppedTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
 			Color[] data = new Color[snippet.Width * snippet.Height];
@@ -1379,6 +1377,7 @@ namespace BossChecklist
 			croppedTexture.SetData(data);
 			return croppedTexture;
 		}
+		*/
 
 		public static void OverrideForGroups(Recipe recipe, Item item) {
 			// This method taken from RecipeBrowser with permission.
