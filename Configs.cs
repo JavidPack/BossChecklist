@@ -27,35 +27,23 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossLogPos")]
 		public Vector2 BossLogPos { get; set; }
 
-		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
-		public bool DrawNextMark { get; set; }
-
-		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.ColoredBossText")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ColoredBossText")]
-		public bool ColoredBossText { get; set; }
+		[Header("$Mods.BossChecklist.Configs.Header.BossLogChecklist")]
 
 		[DefaultValue(false)]
-		[Label("$Mods.BossChecklist.Configs.Label.CountDownedBosses")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CountDownedBosses")]
-		public bool CountDownedBosses { get; set; }
-
+		[Label("$Mods.BossChecklist.Configs.Label.OnlyBosses")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.OnlyBosses")]
+		public bool OnlyBosses { get; set; }
+		
 		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.BossSilhouettes")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossSilhouettes")]
-		public bool BossSilhouettes { get; set; }
+		[Label("$Mods.BossChecklist.Configs.Label.HideUnavailable")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnavailable")]
+		public bool HideUnavailable { get; set; }
 
-		[DrawTicks]
-		[Label("$Mods.BossChecklist.Configs.Label.SelectedCheckmarkType")]
-		[OptionStrings(new string[] { "✓  ☐", "✓  X", "X  ☐", "Strike-through" })]
-		[DefaultValue("✓  ☐")]
-		public string SelectedCheckmarkType { get; set; }
-
-		// TODO Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
-		// TODO Config? Clear prev records OnEnterWorld (or maybe make it a button in boss log?)
-
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.HideUnsupported")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnsupported")]
+		public bool HideUnsupported { get; set; }
+		
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.FilterBosses")]
 		[OptionStrings(new string[] { "Show", "Hide when completed" })]
@@ -73,21 +61,35 @@ namespace BossChecklist
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
+		
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.ColoredBossText")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ColoredBossText")]
+		public bool ColoredBossText { get; set; }
 
-		[DefaultValue(false)]
-		[Label("$Mods.BossChecklist.Configs.Label.OnlyBosses")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.OnlyBosses")]
-		public bool OnlyBosses { get; set; }
+		[DrawTicks]
+		[Label("$Mods.BossChecklist.Configs.Label.SelectedCheckmarkType")]
+		[OptionStrings(new string[] { "✓  ☐", "✓  X", "X  ☐", "Strike-through" })]
+		[DefaultValue("✓  ☐")]
+		public string SelectedCheckmarkType { get; set; }
 
 		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.HideUnavailable")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnavailable")]
-		public bool HideUnavailable { get; set; }
+		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
+		public bool DrawNextMark { get; set; }
 
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.BossSilhouettes")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossSilhouettes")]
+		public bool BossSilhouettes { get; set; }
+		
 		[DefaultValue(false)]
-		[Label("$Mods.BossChecklist.Configs.Label.HideUnsupported")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnsupported")]
-		public bool HideUnsupported { get; set; }
+		[Label("$Mods.BossChecklist.Configs.Label.CountDownedBosses")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CountDownedBosses")]
+		public bool CountDownedBosses { get; set; }
+		
+		// TODO Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
+		// TODO Config? Clear prev records OnEnterWorld (or maybe make it a button in boss log?)
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;

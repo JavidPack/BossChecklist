@@ -118,6 +118,7 @@ BossLog.Terms.Events=Eventos
 
 Configs.Title.BossLogCustomization=Personalização do Registro de Chefes
 Configs.Header.BossLogUI=[i:149] [c/ffeb6e:IU do Registro de Chefes]
+# Configs.Header.BossLogChecklist=[i:903] [c/ffeb6e:Boss Log Checklist]
 Configs.Label.BossLogColor=Cor do Registro de Chefes
 Configs.Tooltip.BossLogColor=Escolha a cor do seu Registro de Chefes!
 Configs.Label.BossLogPos=Posição do Botão Abrir Registros

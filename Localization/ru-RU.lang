@@ -118,6 +118,7 @@ BossLog.Terms.Events=События
 
 Configs.Title.BossLogCustomization=Настройка Босс-журнала
 Configs.Header.BossLogUI=[i:149] [c/ffeb6e:UI Босс-журнала]
+# Configs.Header.BossLogChecklist=[i:903] [c/ffeb6e:Boss Log Checklist]
 Configs.Label.BossLogColor=Цвет Босс-журнала
 Configs.Tooltip.BossLogColor=Выберите цвет вашей Босс-журнала!
 Configs.Label.BossLogPos=Позиция кнопки открытия журнала

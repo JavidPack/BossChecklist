@@ -118,6 +118,7 @@ BossLog.Terms.Events=事件
 
 Configs.Title.BossLogCustomization=自定义Boss日志
 Configs.Header.BossLogUI=[i:149] [c/ffeb6e:Boss日志界面]
+# Configs.Header.BossLogChecklist=[i:903] [c/ffeb6e:Boss Log Checklist]
 Configs.Label.BossLogColor=Boss日志颜色
 Configs.Tooltip.BossLogColor=自定义你的Boss日志的颜色！
 Configs.Label.BossLogPos=开启Boss日志的按钮的位置

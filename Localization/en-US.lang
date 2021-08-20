@@ -117,6 +117,7 @@ BossLog.Terms.Events=Events
 
 Configs.Title.BossLogCustomization=Boss Log Customization
 Configs.Header.BossLogUI=[i:149] [c/ffeb6e:Boss Log UI]
+Configs.Header.BossLogChecklist=[i:903] [c/ffeb6e:Boss Log Checklist]
 Configs.Label.BossLogColor=Boss Log Color
 Configs.Tooltip.BossLogColor=Choose the color of your Boss Log!
 Configs.Label.BossLogPos=Open Log Button Position
@@ -137,7 +138,7 @@ Configs.Label.OnlyBosses=Boss Log only show bosses
 Configs.Tooltip.OnlyBosses=If enabled, the checklist and page navigation will only display boss entries.
 Configs.Label.HideUnavailable=Hide unavailable and hidden bosses
 Configs.Tooltip.HideUnavailable=If enabled, unavailable and hidden bosses will be removed from the Boss Log's table of contents.
-Configs.Label.HideUnsupported=Hide Unsupported Bosses
+Configs.Label.HideUnsupported=Hide unsupported bosses
 Configs.Tooltip.HideUnsupported=If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
 
 Configs.Title.OtherFeatures=Other features
