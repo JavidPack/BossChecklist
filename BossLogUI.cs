@@ -383,7 +383,10 @@ namespace BossChecklist
 			if (filterPanel.HasChild(filterCheck[0])) {
 				filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
 
-				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
+				if (BossChecklist.BossLogConfig.OnlyBosses) {
+					filterCheckMark[1].SetImage(xTexture);
+				}
+				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					filterCheckMark[1].SetImage(checkMarkTexture);
 				}
 				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
@@ -393,7 +396,10 @@ namespace BossChecklist
 					filterCheckMark[1].SetImage(circleTexture);
 				}
 
-				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
+				if (BossChecklist.BossLogConfig.OnlyBosses) {
+					filterCheckMark[2].SetImage(xTexture);
+				}
+				else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					filterCheckMark[2].SetImage(checkMarkTexture);
 				}
 				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
@@ -455,7 +461,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
 				}
 			}
-			if (rowID == "1") {
+			if (rowID == "1" && !BossChecklist.BossLogConfig.OnlyBosses) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
 				}
@@ -466,7 +472,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
 				}
 			}
-			if (rowID == "2") {
+			if (rowID == "2" && !BossChecklist.BossLogConfig.OnlyBosses) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
 				}
@@ -656,26 +662,40 @@ namespace BossChecklist
 			}
 
 			// If the page is hidden or unavailable, keep moving till its not or until page is at either end
-			if (PageNum >= 0 && (BossList[PageNum].hidden || !BossList[PageNum].available())) {
-				while (PageNum >= 0) {
-					BossInfo currentBoss = BossList[PageNum];
-					if (!currentBoss.hidden && currentBoss.available()) {
-						break;
-					}
-					if (listeningElement.Id == "Next") {
-						if (PageNum < BossList.Count - 1) {
-							PageNum++;
+			// Also check for "Only Bosses" navigation
+			bool bossesOnly = BossChecklist.BossLogConfig.OnlyBosses;
+			if (PageNum >= 0) {
+				bool HiddenOrUnAvailable = BossList[PageNum].hidden || !BossList[PageNum].available();
+				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyBosses && BossList[PageNum].type != EntryType.Boss;
+				if ((HiddenOrUnAvailable || OnlyDisplayBosses)) {
+					while (PageNum >= 0) {
+						BossInfo currentBoss = BossList[PageNum];
+						if (!currentBoss.hidden && currentBoss.available()) {
+							if (BossChecklist.BossLogConfig.OnlyBosses) {
+								if (currentBoss.type == EntryType.Boss) {
+									break;
+								}
+							}
+							else {
+								break;
+							}
 						}
-						else {
-							PageNum = -2;
+
+						if (listeningElement.Id == "Next") {
+							if (PageNum < BossList.Count - 1) {
+								PageNum++;
+							}
+							else {
+								PageNum = -2;
+							}
 						}
-					}
-					else { // button is previous
-						if (PageNum >= 0) {
-							PageNum--;
-						}
-						else {
-							PageNum = BossList.Count - 1;
+						else { // button is previous
+							if (PageNum >= 0) {
+								PageNum--;
+							}
+							else {
+								PageNum = BossList.Count - 1;
+							}
 						}
 					}
 				}
@@ -1051,7 +1071,8 @@ namespace BossChecklist
 				bool HideUnsupported = boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported;
 				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
 				bool HideHidden = boss.hidden && !showHidden;
-				if (HideUnsupported || HideUnavailable || HideHidden) {
+				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyBosses && boss.type != EntryType.Boss;
+				if (HideUnsupported || HideUnavailable || HideHidden || SkipNonBosses) {
 					continue;
 				}
 

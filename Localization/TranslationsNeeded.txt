@@ -1,8 +1,8 @@
-zh-Hans 105
-ru-RU 153
-pt-BR 153
-pl-PL 153
-it-IT 153
-fr-FR 153
-es-ES 153
-de-DE 153
+zh-Hans 2
+ru-RU 2
+pt-BR 2
+pl-PL 155
+it-IT 155
+fr-FR 155
+es-ES 2
+de-DE 155

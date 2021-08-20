@@ -74,6 +74,11 @@ namespace BossChecklist
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
 
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.OnlyBosses")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.OnlyBosses")]
+		public bool OnlyBosses { get; set; }
+
 		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.HideUnavailable")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnavailable")]

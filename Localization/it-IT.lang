@@ -77,7 +77,7 @@
 # BossLog.HoverText.ViewLoot=Click to view all loot
 # BossLog.HoverText.ItemIsExpertOnly=This item is only obtainable in expert mode
 
-# BossLog.DrawnText.PreHardmode=Pre-hardmode
+# BossLog.DrawnText.PreHardmode=Pre-Hardmode
 # BossLog.DrawnText.Hardmode=Hardmode
 # BossLog.DrawnText.Defeated=Defeated in {0}
 # BossLog.DrawnText.Undefeated=Undefeated in {0}
@@ -134,6 +134,8 @@
 # Configs.Label.FilterBosses=Filter bosses in list
 # Configs.Label.FilterMiniBosses=Filter mini bosses in list
 # Configs.Label.FilterEvents=Filter events in list
+# Configs.Label.OnlyBosses=Boss Log only show bosses
+# Configs.Tooltip.OnlyBosses=If enabled, the checklist and page navigation will only display boss entries.
 # Configs.Label.HideUnavailable=Hide unavailable and hidden bosses
 # Configs.Tooltip.HideUnavailable=If enabled, unavailable and hidden bosses will be removed from the Boss Log's table of contents.
 # Configs.Label.HideUnsupported=Hide Unsupported Bosses

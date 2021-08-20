@@ -1184,8 +1184,8 @@ namespace BossChecklist.UIElements
 			public static bool DrawTab(string Id) {
 				bool MatchesCreditsTab = BossLogUI.PageNum == -2 && Id == "Credits_Tab";
 				bool MatchesBossTab = BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab";
-				bool MatchesMinibossTab = BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) && Id == "Miniboss_Tab";
-				bool MatchesEventTab = BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Event) && Id == "Event_Tab";
+				bool MatchesMinibossTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyBosses) && Id == "Miniboss_Tab";
+				bool MatchesEventTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyBosses) && Id == "Event_Tab";
 				return !(MatchesCreditsTab || MatchesBossTab || MatchesMinibossTab || MatchesEventTab);
 			}
 
@@ -1302,14 +1302,22 @@ namespace BossChecklist.UIElements
 				}
 
 				if (Id.Contains("C_") && IsMouseHovering) {
+					string termPrefix = "Mods.BossChecklist.BossLog.Terms.";
+					string termLang = $"{termPrefix}hide";
 					if (Id == "C_0") {
-						Main.hoverItemName = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}");
+						Main.hoverItemName = Language.GetTextValue($"{termPrefix}{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}");
 					}
 					if (Id == "C_1") {
-						Main.hoverItemName = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}");
+						if (!BossChecklist.BossLogConfig.OnlyBosses) {
+							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}";
+						}
+						Main.hoverItemName = Language.GetTextValue(termLang);
 					}
 					if (Id == "C_2") {
-						Main.hoverItemName = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}");
+						if (!BossChecklist.BossLogConfig.OnlyBosses) {
+							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}";
+						}
+						Main.hoverItemName = Language.GetTextValue(termLang);
 					}
 				}
 			}

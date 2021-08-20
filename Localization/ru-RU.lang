@@ -115,7 +115,7 @@ BossLog.Terms.hidewhencompleted=Скрыть после завершения
 BossLog.Terms.Bosses=Боссы
 BossLog.Terms.MiniBosses=Мини-боссы
 BossLog.Terms.Events=События
-				
+
 Configs.Title.BossLogCustomization=Настройка Босс-журнала
 Configs.Header.BossLogUI=[i:149] [c/ffeb6e:UI Босс-журнала]
 Configs.Label.BossLogColor=Цвет Босс-журнала
@@ -134,6 +134,8 @@ Configs.Label.SelectedCheckmarkType=Checklist Marking Type
 Configs.Label.FilterBosses=Фильтр боссов в списке
 Configs.Label.FilterMiniBosses=Фильтр мини-боссов в списке
 Configs.Label.FilterEvents=Фильтр событий в списке
+# Configs.Label.OnlyBosses=Boss Log only show bosses
+# Configs.Tooltip.OnlyBosses=If enabled, the checklist and page navigation will only display boss entries.
 Configs.Label.HideUnavailable=Скрыть недоступных и скрытых боссов
 Configs.Tooltip.HideUnavailable=Если этот параметр включён, то недоступные и скрытые боссы будут удалены из оглавления босс-журнала.
 Configs.Label.HideUnsupported=Скрыть неподдерживаемых боссов
