@@ -138,9 +138,9 @@ Configs.Label.FilterEvents=过滤日志中不符合条件的事件
 # Configs.Label.OnlyBosses=Boss日志仅显示Boss
 # Configs.Tooltip.OnlyBosses=如果启用，则只会在目录和跳转便签中显示Boss。
 Configs.Label.HideUnavailable=隐藏不可用和被隐藏的Boss
-Configs.Tooltip.HideUnavailable=如果启用，则不可用和隐藏的Boss将从Boss清单的目录中被删除。
+Configs.Tooltip.HideUnavailable=如果启用，则不可用和隐藏的Boss将从Boss日志的目录中被隐藏。
 Configs.Label.HideUnsupported=隐藏没有引用的Boss
-Configs.Tooltip.HideUnsupported=如果启用，则尚未完美引用的Boss将从Boss清单的目录中删除。
+Configs.Tooltip.HideUnsupported=如果启用，则尚未完美引用的Boss将从Boss日志的目录中隐藏。
 
 Configs.Title.OtherFeatures=其他特性
 Configs.Header.ChatMessages=[i:3037] [c/ffeb6e:聊天栏信息]
