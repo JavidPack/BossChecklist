@@ -1327,12 +1327,14 @@ namespace BossChecklist.UIElements
 		{
 			float order = 0;
 			bool nextCheck;
+			bool downed;
 			string bossName;
 			string displayName;
 
-			public TableOfContents(float order, string displayName, string bossName, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+			public TableOfContents(float order, string displayName, string bossName, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				this.order = order;
 				this.nextCheck = nextCheck;
+				this.downed = downed;
 				Recalculate();
 				this.bossName = bossName;
 				this.displayName = displayName;
@@ -1419,7 +1421,7 @@ namespace BossChecklist.UIElements
 					BossInfo selectedBoss = sortedBosses[pagenum];
 					Texture2D checkGrid = BossLogUI.checkboxTexture;
 
-					if (selectedBoss.downed()) {
+					if (downed) {
 						if (BossChecklist.BossLogConfig.SelectedCheckmarkType == "X and  ☐") {
 							checkGrid = BossLogUI.xTexture;
 						}
@@ -1463,14 +1465,16 @@ namespace BossChecklist.UIElements
 						}
 						//if (IsMouseHovering && sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.DarkSeaGreen;
 						//else if (IsMouseHovering && !sortedBosses[Convert.ToInt32(Id)].downed()) TextColor = Color.IndianRed;
-						else if (!selectedBoss.downed() && nextCheck && BossChecklist.BossLogConfig.DrawNextMark) {
-							TextColor = new Color(248, 235, 91);
+						else if (!downed) {
+							if (nextCheck && BossChecklist.BossLogConfig.DrawNextMark) {
+								TextColor = new Color(248, 235, 91);
+							}
+							else {
+								TextColor = Colors.RarityRed;
+							}
 						}
-						else if (selectedBoss.downed()) {
+						else if (downed) {
 							TextColor = Colors.RarityGreen;
-						}
-						else if (!selectedBoss.downed()) {
-							TextColor = Colors.RarityRed;
 						}
 						if (modPlayer.hasNewRecord[pagenum]) {
 							TextColor = Main.DiscoColor;
@@ -1480,7 +1484,7 @@ namespace BossChecklist.UIElements
 						TextColor = IsMouseHovering ? Color.DarkGray : Color.Silver;
 					}
 					// Hidden boss text color overwrites previous text color alterations
-					if ((!selectedBoss.available() && !selectedBoss.downed()) || selectedBoss.hidden) {
+					if ((!selectedBoss.available() && !downed) || selectedBoss.hidden) {
 						TextColor = Color.DimGray;
 					}
 					if (IsMouseHovering) {

@@ -1119,7 +1119,7 @@ namespace BossChecklist
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				TableOfContents next = new TableOfContents(boss.progression, displayName, boss.name, nextCheck);
+				TableOfContents next = new TableOfContents(boss.progression, displayName, boss.name, boss.downed(), nextCheck);
 				if (!boss.downed() && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
@@ -1130,7 +1130,6 @@ namespace BossChecklist
 				next.OnClick += new MouseEvent(JumpToBossPage);
 
 				if (boss.downed()) {
-					next.TextColor = Colors.RarityGreen; // TextColor is to prevent flashing text on page updating
 					if (boss.progression <= 6f) {
 						prehardmodeList.Add(next);
 					}
@@ -1139,7 +1138,6 @@ namespace BossChecklist
 					}
 				}
 				else {
-					next.TextColor = boss.available() ? Colors.RarityRed : Color.SlateGray;
 					if (boss.progression <= 6f) {
 						prehardmodeList.Add(next);
 					}
