@@ -30,7 +30,7 @@ namespace BossChecklist
 		public SubpageButton spawnButton;
 		public SubpageButton lootButton;
 		//public SubpageButton collectButton;
-		public SubpageButton toolTipButton;
+		public SubpageButton[] AltPageButtons;
 
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
@@ -76,11 +76,12 @@ namespace BossChecklist
 		public static Texture2D goldChestTexture;
 		
 		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
-		public static int SubPageNum = 0; // Selected Topic Tab (Records, Spawn Info, Loot/Collection)
+		public static CategoryPage CategoryPageNum = CategoryPage.Record; // Selected Category Tab (Records, Spawn Info, Loot/Collection)
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool showHidden = false;
-		public static bool[] AltPage; // AltPage for Records is "Player Best/World Best(Server)"
+		public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
+		public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
 		private bool bossLogVisible;
 		public bool BossLogVisible {
@@ -118,7 +119,7 @@ namespace BossChecklist
 			}
 			if (resetPage) {
 				PageNum = -1;
-				SubPageNum = 0;
+				CategoryPageNum = 0;
 				ToCTab.Left.Set(-416, 0.5f);
 				filterPanel.Left.Set(-416 + ToCTab.Width.Pixels, 0.5f);
 				foreach (UIText uitext in filterTypes) {
@@ -127,7 +128,7 @@ namespace BossChecklist
 				UpdateTableofContents();
 			}
 			else {
-				UpdateSubPage(SubPageNum);
+				UpdateCatPage(CategoryPageNum, AltPageSelected[(int)CategoryPageNum]);
 			}
 			BossLogVisible = show;
 			if (show) {
@@ -168,9 +169,12 @@ namespace BossChecklist
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
 
-			AltPage = new bool[]
-			{
-				false, false, false, false
+			AltPageSelected = new int[] {
+				0, 0, 0
+			};
+
+			TotalAltPages = new int[] {
+				4, 0, 1
 			};
 
 			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
@@ -318,7 +322,7 @@ namespace BossChecklist
 			recordButton.Height.Pixels = 25;
 			recordButton.Left.Pixels = 0;
 			recordButton.Top.Pixels = 15;
-			recordButton.OnClick += (a, b) => UpdateSubPage(0);
+			recordButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Record, AltPageSelected[(int)CategoryPage.Record]);
 			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
 
 			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
@@ -326,22 +330,28 @@ namespace BossChecklist
 			spawnButton.Height.Pixels = 25;
 			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
 			spawnButton.Top.Pixels = 15;
-			spawnButton.OnClick += (a, b) => UpdateSubPage(1);
+			spawnButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Spawn, AltPageSelected[(int)CategoryPage.Spawn]);
 
 			lootButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.LootCollect");
 			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2 - 16;
 			lootButton.Top.Pixels = 50;
-			lootButton.OnClick += (a, b) => UpdateSubPage(2);
+			lootButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Loot, AltPageSelected[(int)CategoryPage.Loot]);
 			lootButton.OnRightDoubleClick += new MouseEvent(RemoveItem);
 
-			toolTipButton = new SubpageButton("Disclaimer");
-			toolTipButton.Width.Pixels = 32;
-			toolTipButton.Height.Pixels = 32;
-			toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
-			toolTipButton.Top.Pixels = 100;
-			toolTipButton.OnClick += (a, b) => SwapRecordPage();
+			// These will serve as a reservation for our AltPage buttons
+			SubpageButton zero = new SubpageButton(0);
+			SubpageButton one = new SubpageButton(1);
+			SubpageButton two = new SubpageButton(2);
+			SubpageButton three = new SubpageButton(3);
+
+			AltPageButtons = new SubpageButton[] {
+				zero,
+				one,
+				two,
+				three
+			};
 
 			toggleHidden = new UIHoverImageButton(Main.inventoryTickOffTexture, "Toggle hidden visibility");
 			toggleHidden.Left.Pixels = 112 - Main.inventoryTickOffTexture.Width;
@@ -519,13 +529,13 @@ namespace BossChecklist
 			}
 			if (PageNum >= 0) {
 				ResetBothPages();
-				UpdateSubPage(SubPageNum);
+				UpdateCatPage(CategoryPageNum, AltPageSelected[(int)CategoryPageNum]);
 			}
 		}
 
 		// TODO: Test both ResetStats and RemoveItem() in multiplayer
 		private void ResetStats() {
-			if (BossChecklist.DebugConfig.ResetRecordsBool && SubPageNum == 0) {
+			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == CategoryPage.Record) {
 				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllBossRecords[PageNum].stat;
 				stats.kills = 0;
 				stats.deaths = 0;
@@ -557,24 +567,24 @@ namespace BossChecklist
 			// If holding Alt while right-clicking will do the above for ALL boss lists
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-			if (BossChecklist.DebugConfig.ResetLootItems && SubPageNum == 2) {
+			if (BossChecklist.DebugConfig.ResetLootItems && CategoryPageNum == CategoryPage.Loot) {
 				string ID = listeningElement.Id;
 				if (ID == "") {
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
-							if (AltPage[2]) {
+							if (AltPageSelected[2] == 1) {
 								modPlayer.BossTrophies[i].collectibles.Clear();
 							}
-							else {
+							else if (AltPageSelected[2] == 0) {
 								modPlayer.BossTrophies[i].loot.Clear();
 							}
 						}
 					}
 					else {
-						if (AltPage[2]) {
+						if (AltPageSelected[2] == 1) {
 							modPlayer.BossTrophies[PageNum].collectibles.Clear();
 						}
-						else {
+						else if (AltPageSelected[2] == 0) {
 							modPlayer.BossTrophies[PageNum].loot.Clear();
 						}
 					}
@@ -702,7 +712,7 @@ namespace BossChecklist
 			}
 
 			ResetBothPages();
-			UpdateSubPage(SubPageNum);
+			UpdateCatPage(CategoryPageNum, AltPageSelected[(int)CategoryPageNum]);
 		}
 
 		private void ToggleHidden() {
@@ -914,7 +924,7 @@ namespace BossChecklist
 		private void OpenLoot() {
 			ResetBothPages();
 			BossLogPanel.shownAltPage = false;
-			if (AltPage[SubPageNum]) {
+			if (AltPageSelected[(int)CategoryPageNum] == 1) {
 				OpenCollect();
 				return;
 			}
@@ -1240,7 +1250,7 @@ namespace BossChecklist
 			}
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
-			UpdateSubPage(SubPageNum);
+			UpdateCatPage(CategoryPageNum, AltPageSelected[(int)CategoryPageNum]);
 		}
 
 		private void ResetBothPages() {
@@ -1306,7 +1316,9 @@ namespace BossChecklist
 		private void ResetPageButtons() {
 			PageOne.RemoveChild(PrevPage);
 			PageTwo.RemoveChild(NextPage);
-			PageTwo.RemoveChild(toolTipButton);
+			for (int i = 0; i < AltPageButtons.Length; i++) {
+				PageTwo.RemoveChild(AltPageButtons[i]);
+			}
 
 			if (PageNum == -2) {
 				PageOne.Append(PrevPage);
@@ -1317,15 +1329,23 @@ namespace BossChecklist
 			else {
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown") {
-					bool eventCheck = SubPageNum == 0 && boss.type == EntryType.Event;
-					if (!eventCheck && SubPageNum != 1) { // Not needed for Spawn Info currently
-						toolTipButton = new SubpageButton("");
-						toolTipButton.Width.Pixels = 32;
-						toolTipButton.Height.Pixels = 32;
-						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
-						toolTipButton.Top.Pixels = 86;
-						toolTipButton.OnClick += (a, b) => SwapRecordPage();
-						PageTwo.Append(toolTipButton);
+					// Events do not have records. Instead we create their own page with banners of the enemies in the event.
+					bool eventCheck = CategoryPageNum == CategoryPage.Record && boss.type == EntryType.Event;
+					if (!eventCheck) {
+						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {
+							AltPageButtons[i] = new SubpageButton(i);
+							AltPageButtons[i].Width.Pixels = 32;
+							AltPageButtons[i].Height.Pixels = 32;
+							if (CategoryPageNum == CategoryPage.Record) {
+								AltPageButtons[i].Left.Pixels = (PageTwo.Width.Pixels / 2) - 89 + ((AltPageButtons[0].Width.Pixels + 6) * i);
+							}
+							else {
+								AltPageButtons[i].Left.Pixels = PageTwo.Width.Pixels - 24 - AltPageButtons[0].Width.Pixels;
+							}
+							AltPageButtons[i].Top.Pixels = 86;
+							AltPageButtons[i].OnClick += (a, b) => UpdateCatPage(CategoryPageNum, i);
+							PageTwo.Append(AltPageButtons[i]);
+						}
 					}
 				}
 				PageTwo.Append(NextPage);
@@ -1333,8 +1353,15 @@ namespace BossChecklist
 			}
 		}
 
-		public void UpdateSubPage(int subpage) {
-			SubPageNum = subpage;
+		public void UpdateCatPage(CategoryPage catPage, int altPage) {
+			CategoryPageNum = catPage;
+			if (catPage == CategoryPage.Loot) {
+				AltPageSelected[(int)catPage] = AltPageSelected[(int)catPage] == 0 ? 1 : 0;
+			}
+			else {
+				AltPageSelected[(int)catPage] = altPage;
+			}
+
 			if (PageNum == -1) {
 				UpdateTableofContents(); // Handle new page
 			}
@@ -1342,25 +1369,15 @@ namespace BossChecklist
 				UpdateCredits();
 			}
 			else {
-				if (SubPageNum == 0) {
+				if (CategoryPageNum == CategoryPage.Record) {
 					OpenRecord();
 				}
-				else if (SubPageNum == 1) {
+				else if (CategoryPageNum == CategoryPage.Spawn) {
 					OpenSpawn();
 				}
-				else if (SubPageNum == 2) {
+				else if (CategoryPageNum == CategoryPage.Loot) {
 					OpenLoot();
 				}
-			}
-		}
-
-		private void SwapRecordPage() {
-			AltPage[SubPageNum] = !AltPage[SubPageNum];
-			if (SubPageNum == 2) {
-				OpenLoot();
-			}
-			if (SubPageNum == 1) {
-				OpenSpawn();
 			}
 		}
 		

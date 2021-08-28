@@ -25,6 +25,13 @@ namespace BossChecklist
 		MusicBox
 	}
 
+	internal enum CategoryPage
+	{
+		Record,
+		Spawn,
+		Loot
+	}
+
 	enum PacketMessageType : byte
 	{
 		RequestHideBoss,

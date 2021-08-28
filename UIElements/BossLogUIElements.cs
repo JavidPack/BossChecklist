@@ -212,7 +212,7 @@ namespace BossChecklist.UIElements
 					Vector2 vec = new Vector2(rectangle.X + ((rectangle.Width * scale) / 2) - (hiddenItem.Width / 2), rectangle.Y + ((rectangle.Height * scale) / 2) - (hiddenItem.Height / 2));
 					spriteBatch.Draw(hiddenItem, vec, Color.White);
 					if (IsMouseHovering) {
-						Main.hoverItemName = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPage[2] ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
+						Main.hoverItemName = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
 					}
 					return;
 				}
@@ -329,7 +329,7 @@ namespace BossChecklist.UIElements
 				BossInfo selectedBoss;
 				// Pre-drawing
 				// PageTwo check to prevent the timer from counting down twice (once for each page)
-				if (BossLogUI.PageNum >= 0 && BossLogUI.SubPageNum == 2 && BossLogUI.AltPage[BossLogUI.SubPageNum] && Id == "PageTwo") {
+				if (BossLogUI.PageNum >= 0 && BossLogUI.CategoryPageNum == CategoryPage.Loot && BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 && Id == "PageTwo") {
 					// This page check allows this code to only run when the page has changed.
 					if (shownPage != BossLogUI.PageNum || !shownAltPage) {
 						shownPage = BossLogUI.PageNum;
@@ -624,7 +624,7 @@ namespace BossChecklist.UIElements
 						//Utils.DrawBorderString(spriteBatch, selectedBoss.downed() ? isDefeated : notDefeated, pos, selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed);
 
 					}
-					if (Id == "PageTwo" && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
+					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == CategoryPage.Record && selectedBoss.modSource != "Unknown") {
 						if (selectedBoss.type != EntryType.Event) {
 							// Boss Records Subpage
 							Texture2D achievements = ModContent.GetTexture("Terraria/UI/Achievements");
@@ -639,7 +639,7 @@ namespace BossChecklist.UIElements
 
 							for (int i = 0; i < 4; i++) { // 4 Records total
 								if (i == 0) { // Kills & Deaths
-									if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
 										int killTimes = record.kills;
 										int deathTimes = record.deaths;
@@ -665,7 +665,7 @@ namespace BossChecklist.UIElements
 									int PrevRecord_ticks = record.durationPrev;
 									int LastAttempt = modPlayer.durationLastFight;
 
-									if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										isNewRecord[i] = LastAttempt == BestRecord_ticks && LastAttempt > 0;
 										if (BestRecord_ticks == -1) {
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
@@ -720,7 +720,7 @@ namespace BossChecklist.UIElements
 									int LastAttempt = modPlayer.hitsTakenLastFight;
 									int Timer_ticks = record.dodgeTimeBest;
 
-									if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										isNewRecord[i] = LastAttempt == BestHits && LastAttempt > 0;
 										if (BestHits == -1) {
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
@@ -762,7 +762,7 @@ namespace BossChecklist.UIElements
 									int PrevHealth = record.healthAtStartPrev;
 									int LastAttempt = modPlayer.healthLossLastFight;
 
-									if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										isNewRecord[i] = LastAttempt == BestRecord && LastAttempt > 0;
 										if (BestRecord == -1 || BestHealth == -1) {
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
@@ -794,14 +794,14 @@ namespace BossChecklist.UIElements
 									}
 								}
 
-								Rectangle posRect = new Rectangle(pageRect.X, pageRect.Y + 100 + (75 * i), 64, 64);
+								Rectangle posRect = new Rectangle(pageRect.X, pageRect.Y + 125 + (75 * i), 64, 64);
 								Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
 								spriteBatch.Draw(achievements, posRect, cutRect, Color.White);
 
 								if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
 									if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
 										// TODO: Change these texts to something better. A description of the record type
-										if (i == 0 && !BossLogUI.AltPage[i]) {
+										if (i == 0 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 											Main.hoverItemName = "Boss kills and player deaths.";
 										}
 										if (i == 1) {
@@ -822,7 +822,7 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(text, exclam, Color.White);
 								}
 
-								int offsetY = compareNumbers == "" ? 110 + (i * 75) : 100 + (i * 75);
+								int offsetY = compareNumbers == "" ? 135 + (i * 75) : 115 + (i * 75);
 
 								Vector2 stringAdjust = Main.fontMouseText.MeasureString(recordType);
 								Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY);
@@ -970,12 +970,12 @@ namespace BossChecklist.UIElements
 							}
 						}
 					}
-					if (Id == "PageTwo" && BossLogUI.SubPageNum == 1) {
+					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == CategoryPage.Spawn) {
 						// Spawn Item Subpage
 					}
 
-					if (Id == "PageTwo" && BossLogUI.SubPageNum == 2) {
-						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == CategoryPage.Loot) {
+						if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 							// Loot Table Subpage
 							Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
 							Rectangle sourceRect = bag.Bounds;
@@ -1527,9 +1527,16 @@ namespace BossChecklist.UIElements
 		internal class SubpageButton : UIPanel
 		{
 			string buttonString;
+			int AltButtonNum;
 
 			public SubpageButton(string type) {
 				buttonString = type;
+				AltButtonNum = -1;
+			}
+
+			public SubpageButton(int num) {
+				buttonString = "";
+				AltButtonNum = num;
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -1548,46 +1555,37 @@ namespace BossChecklist.UIElements
 				string translated = Language.GetTextValue(buttonString);
 				Vector2 stringAdjust = Main.fontMouseText.MeasureString(translated);
 				Vector2 pos = new Vector2(innerDimensions.X + ((Width.Pixels - stringAdjust.X) / 2) - 12, innerDimensions.Y - 10);
-				if (buttonString != "Disclaimer" && buttonString != "recordAlts") {
+				if (AltButtonNum == -1) {
 					DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, translated, pos, Color.Gold);
 				}
 
 				Texture2D text = ModContent.GetTexture("Terraria/UI/Achievement_Categories");
+				Texture2D texture = BossChecklist.instance.GetTexture("Resources/Extra_RecordTabs");
 				Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 32, 32);
 
-				if (buttonString == "") {
-					if (BossLogUI.SubPageNum == 0) {
-						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-							Rectangle exclamCut = new Rectangle(34 * 3, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) {
-								Main.hoverItemName = "Click to see the best records for this world\n(Multiplayer Under Construction!)";
-							}
+				if (AltButtonNum >= 0) {
+					if (BossLogUI.CategoryPageNum == CategoryPage.Record) {
+						string[] hoverTexts = {
+							"First Record",
+							"Previous Attempt",
+							"Best Record",
+							"World Record"
+						};
+						
+						exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 32, 32);
+						Rectangle exclamCut = new Rectangle(32 * AltButtonNum, 0, 32, 32);
+						spriteBatch.Draw(texture, exclamPos, exclamCut, Color.White);
+							
+						if (IsMouseHovering) {
+							Main.hoverItemName = hoverTexts[AltButtonNum];
 						}
-						else {
-							Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) {
-								Main.hoverItemName = "Click to see your personal records";
-							}
-						}
+
 					}
-					else if (BossLogUI.SubPageNum == 1) {
-						/* NO CURRENT ALTPAGE, BUTTON NOT NEEDED
-						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-							Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Click to read more info";
-						}
-						else {
-							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Click to view spawn item recipes";
-						}
-						*/
+					else if (BossLogUI.CategoryPageNum == CategoryPage.Spawn) {
+						// NO CURRENT ALTPAGE, BUTTON NOT NEEDED
 					}
-					else if (BossLogUI.SubPageNum == 2) {
-						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
+					else if (BossLogUI.CategoryPageNum == CategoryPage.Loot) {
+						if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
 							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
 							if (IsMouseHovering) {
@@ -1601,9 +1599,6 @@ namespace BossChecklist.UIElements
 								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewLoot");
 							}
 						}
-					}
-					else if (BossLogUI.SubPageNum == 3) {
-						// Unused currently
 					}
 				}
 			}
