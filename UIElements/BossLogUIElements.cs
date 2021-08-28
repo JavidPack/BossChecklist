@@ -631,13 +631,13 @@ namespace BossChecklist.UIElements
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 							BossStats record = modPlayer.AllBossRecords[BossLogUI.PageNum].stat;
 
-							bool[] isNewRecord = new bool[4];
+							bool[] isNewRecord = new bool[3];
 							string recordType = "";
 							string recordNumbers = "";
 							string compareNumbers = "";
 							int[] achCoord = new int[] { 0, 0 };
 
-							for (int i = 0; i < 4; i++) { // 4 Records total
+							for (int i = 0; i < 3; i++) { // "3 Records" total
 								if (i == 0) { // Kills & Deaths
 									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
@@ -713,12 +713,11 @@ namespace BossChecklist.UIElements
 								}
 								else if (i == 2) { // Hits Taken
 									recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
-									achCoord = new int[] { 0, 7 };
+									achCoord = new int[] { 3, 0 };
 
 									int BestHits = record.hitsTakenBest;
 									int PrevHits = record.hitsTakenPrev;
 									int LastAttempt = modPlayer.hitsTakenLastFight;
-									int Timer_ticks = record.dodgeTimeBest;
 
 									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										isNewRecord[i] = LastAttempt == BestHits && LastAttempt > 0;
@@ -726,8 +725,7 @@ namespace BossChecklist.UIElements
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
-											double Timer_seconds = (double)Timer_ticks / 60;
-											recordNumbers = $"{BestHits} hits [{Timer_seconds.ToString("0.00")}s]";
+											recordNumbers = $"{BestHits} hits";
 
 											if (BestHits != PrevHits && PrevHits >= 0) {
 												string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
@@ -743,49 +741,6 @@ namespace BossChecklist.UIElements
 									else {
 										WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
 										if (wldRcd.hitsTakenWorld >= 0 && wldRcd.hitsTakenHolder != "") {
-											double wld_seconds = (double)wldRcd.dodgeTimeWorld / 60;
-											recordNumbers = $"{wldRcd.hitsTakenWorld} hits [{wld_seconds.ToString("0.00")}s]";
-											compareNumbers = wldRcd.hitsTakenHolder;
-										}
-										else {
-											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-									}
-								}
-								else if (i == 3) { // Health Lost
-									recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Health");
-									achCoord = new int[] { 3, 0 };
-
-									int BestRecord = record.healthLossBest;
-									int PrevRecord = record.healthLossPrev;
-									int BestHealth = record.healthAtStart;
-									int PrevHealth = record.healthAtStartPrev;
-									int LastAttempt = modPlayer.healthLossLastFight;
-
-									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-										isNewRecord[i] = LastAttempt == BestRecord && LastAttempt > 0;
-										if (BestRecord == -1 || BestHealth == -1) {
-											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											double RecordPercent = (double)BestRecord / BestHealth;
-											recordNumbers = $"{BestRecord}/{BestHealth} [{RecordPercent.ToString("###.##%")}]";
-											if (BestRecord != PrevRecord && PrevRecord > 0) {
-												string type = isNewRecord[i] ? "Previous Best:" : "Last Attempt:";
-												string sign = isNewRecord[i] ? "-" : "+";
-												int difference = BestRecord - PrevRecord;
-												if (difference < 0) {
-													difference *= -1;
-												}
-												compareNumbers = $"{type} {PrevRecord}/{PrevHealth} ({sign}{difference})";
-											}
-										}
-									}
-									else {
-										WorldStats wldRcd = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
-										if ((wldRcd.healthLossWorld >= 0 && wldRcd.healthLossHolder != "") || wldRcd.healthAtStartWorld > 0) {
-											double wldPercent = (double)wldRcd.healthLossWorld / wldRcd.healthAtStartWorld;
-											recordNumbers = $"{wldRcd.healthLossWorld}/{wldRcd.healthAtStartWorld} [{wldPercent.ToString("###.##%")}]";
 											compareNumbers = wldRcd.hitsTakenHolder;
 										}
 										else {
@@ -802,16 +757,13 @@ namespace BossChecklist.UIElements
 									if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
 										// TODO: Change these texts to something better. A description of the record type
 										if (i == 0 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-											Main.hoverItemName = "Boss kills and player deaths.";
+											Main.hoverItemName = "Total times you killed the boss and total times the boss has killed you!";
 										}
 										if (i == 1) {
-											Main.hoverItemName = "The fastest you've defeated a mighty foe.";
+											Main.hoverItemName = "The quickest time you became victorious!";
 										}
 										if (i == 2) {
-											Main.hoverItemName = "Avoid as many attacks as you can!";
-										}
-										if (i == 3) {
-											Main.hoverItemName = "How close can you be to death and still defeat you enemy?";
+											Main.hoverItemName = "Avoid as many attacks as you can for a no-hitter!";
 										}
 									}
 								}
@@ -1566,8 +1518,8 @@ namespace BossChecklist.UIElements
 				if (AltButtonNum >= 0) {
 					if (BossLogUI.CategoryPageNum == CategoryPage.Record) {
 						string[] hoverTexts = {
-							"First Record",
 							"Previous Attempt",
+							"First Record",
 							"Best Record",
 							"World Record"
 						};

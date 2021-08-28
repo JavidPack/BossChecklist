@@ -72,10 +72,7 @@ namespace BossChecklist
 					for (int j = 0; j < Main.maxPlayers; j++) {
 						if (!Main.player[j].active) continue;
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-						modPlayer.MaxHealth[listNum] = Main.player[j].statLifeMax;
 						modPlayer.RecordTimers[listNum] = 0;
-						modPlayer.BrinkChecker[listNum] = 0; // starts at 0 to prevent less health at start cheese, only updates when hit (if no-hitter, change to max health)
-						modPlayer.DodgeTimer[listNum] = 0;
 					}
 				}
 			}
@@ -95,19 +92,10 @@ namespace BossChecklist
 			
 			int hitsTakenAttempt = modPlayer.AttackCounter[recordIndex];
 			int currentBestHitsTaken = bossStats.hitsTakenBest;
-			
-			int dodgeTimeAttempt = modPlayer.DodgeTimer[recordIndex];
-			int currentBestDodgeTime = bossStats.dodgeTimeBest;
-
-			int brinkAttempt = modPlayer.BrinkChecker[recordIndex];
-			int maxLifeAttempt = modPlayer.MaxHealth[recordIndex];
-			int currentBestBrink = bossStats.healthLossBest;
-			int currentBestMaxLife = bossStats.healthAtStart;
 
 			// Setup player's last fight attempt numbers
 			modPlayer.durationLastFight = durationAttempt;
 			modPlayer.hitsTakenLastFight = hitsTakenAttempt;
-			modPlayer.healthLossLastFight = brinkAttempt;
 
 			bossStats.kills++; // Kills always go up, since comparing only occurs if boss was defeated
 			
@@ -127,23 +115,7 @@ namespace BossChecklist
 				bossStats.hitsTakenBest = hitsTakenAttempt;
 			}
 			else bossStats.hitsTakenPrev = hitsTakenAttempt;
-
-			// This is an extra record based on Hits Taken. Only overwrite if time is higher than previous.
-			if (dodgeTimeAttempt > currentBestDodgeTime || currentBestDodgeTime <= 0) bossStats.dodgeTimeBest = dodgeTimeAttempt;
 			
-			if (brinkAttempt == 0) brinkAttempt = maxLifeAttempt; // Update brink to full health if 0 (no-hitter)
-			if (brinkAttempt < currentBestBrink || currentBestBrink == -1) {
-				if (currentBestBrink == -1) newRecordSet = true;
-				bossStats.healthLossPrev = currentBestBrink;
-				bossStats.healthLossBest = brinkAttempt;
-				bossStats.healthAtStartPrev = currentBestMaxLife;
-				bossStats.healthAtStart = maxLifeAttempt;
-			}
-			else {
-				bossStats.healthLossPrev = brinkAttempt;
-				bossStats.healthAtStartPrev = maxLifeAttempt;
-			}
-
 			// If a new record was made, notify the player
 			// This will not show for newly set records
 			if (newRecordSet) {
@@ -160,9 +132,6 @@ namespace BossChecklist
 			int[] newWorldRecords = new int[]{
 				WorldAssist.worldRecords[recordIndex].stat.durationWorld,
 				WorldAssist.worldRecords[recordIndex].stat.hitsTakenWorld,
-				WorldAssist.worldRecords[recordIndex].stat.dodgeTimeWorld,
-				WorldAssist.worldRecords[recordIndex].stat.healthLossWorld,
-				WorldAssist.worldRecords[recordIndex].stat.healthAtStartWorld,
 			};
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
@@ -177,15 +146,11 @@ namespace BossChecklist
 				BossStats newRecord = new BossStats() {
 					durationPrev = modPlayer.RecordTimers[recordIndex],
 					hitsTakenPrev = modPlayer.AttackCounter[recordIndex],
-					dodgeTimePrev = modPlayer.DodgeTimer[recordIndex],
-					healthLossPrev = modPlayer.BrinkChecker[recordIndex],
-					healthAtStartPrev = modPlayer.MaxHealth[recordIndex]
 				};
 
 				// Setup player's last fight attempt numbers
 				modPlayer.durationLastFight = newRecord.durationPrev;
 				modPlayer.hitsTakenLastFight = newRecord.hitsTakenPrev;
-				modPlayer.healthLossLastFight = newRecord.healthLossPrev;
 
 				RecordID specificRecord = RecordID.None;
 				// For each record type we check if its beats the current record or if it is not set already
@@ -205,22 +170,6 @@ namespace BossChecklist
 					oldRecord.hitsTakenBest = newRecord.hitsTakenPrev;
 				}
 				else oldRecord.hitsTakenPrev = newRecord.hitsTakenPrev;
-
-				if (newRecord.dodgeTimePrev > oldRecord.dodgeTimeBest || oldRecord.dodgeTimeBest <= 0) {
-					Console.WriteLine($"{player.name} set a new record for BEST DODGE TIME: {newRecord.dodgeTimePrev} (Previous Record: {oldRecord.dodgeTimeBest})");
-					specificRecord |= RecordID.DodgeTime;
-					oldRecord.dodgeTimeBest = newRecord.dodgeTimePrev;
-				}
-
-				if (newRecord.healthLossPrev > oldRecord.healthLossBest || oldRecord.healthLossBest <= 0) {
-					Console.WriteLine($"{player.name} set a new record for BEST HEALTH: {newRecord.healthLossPrev} (Previous Record: {oldRecord.healthLossBest})");
-					specificRecord |= RecordID.BestBrink;
-					oldRecord.healthLossPrev = oldRecord.healthLossBest;
-					oldRecord.healthLossBest = newRecord.healthLossPrev;
-					oldRecord.healthAtStartPrev = oldRecord.healthAtStart;
-					oldRecord.healthAtStart = newRecord.healthAtStartPrev;
-				}
-				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
 				
 				// Make and send the packet
 				ModPacket packet = mod.GetPacket();
@@ -241,13 +190,6 @@ namespace BossChecklist
 					specificRecord |= RecordID.LeastHits;
 					worldStats.hitsTakenHolder = newRecordHolders[1];
 					worldStats.hitsTakenWorld = newWorldRecords[1];
-					worldStats.dodgeTimeWorld = newWorldRecords[2];
-				}
-				if (newRecordHolders[2] != "") {
-					specificRecord |= RecordID.BestBrink;
-					worldStats.healthLossHolder = newRecordHolders[2];
-					worldStats.healthLossWorld = newWorldRecords[3];
-					worldStats.healthAtStartWorld = newWorldRecords[4];
 				}
 				
 				ModPacket packet = mod.GetPacket();
@@ -274,14 +216,7 @@ namespace BossChecklist
 			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld || worldRecord.hitsTakenWorld < 0) {
 				newRecord = (worldRecord.hitsTakenHolder != player.name && worldRecord.hitsTakenHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
 				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
-				worldRecord.dodgeTimeWorld = playerRecord.dodgeTimeBest;
 				worldRecord.hitsTakenHolder = player.name;
-			}
-			if (playerRecord.healthLossBest < worldRecord.healthLossWorld || worldRecord.healthLossWorld <= 0) {
-				newRecord = (worldRecord.healthLossHolder != player.name && worldRecord.healthLossHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
-				worldRecord.healthLossWorld = playerRecord.healthLossBest;
-				worldRecord.healthAtStartWorld = playerRecord.healthAtStart;
-				worldRecord.healthLossHolder = player.name;
 			}
 			return newRecord;
 		}

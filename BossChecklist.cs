@@ -310,9 +310,7 @@ namespace BossChecklist
 						if (ConfigIndex != -1) {
 							string textKingSlime = $"{bossTracker.SortedBosses[ConfigIndex].name} (#{ConfigIndex + 1})" +
 												$"\nTime: {playerAssist.RecordTimers[ConfigIndex]}" +
-												$"\nDodge Timer: {playerAssist.DodgeTimer[ConfigIndex]}" +
 												$"\nTimes Hit: {playerAssist.AttackCounter[ConfigIndex]}" +
-												$"\nLowest Health: {playerAssist.BrinkChecker[ConfigIndex]} / {playerAssist.MaxHealth[ConfigIndex]}" +
 												$"\nDeaths: {playerAssist.DeathTracker[ConfigIndex]}";
 							DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
 						}
@@ -582,11 +580,8 @@ namespace BossChecklist
 						bossStats.deaths = reader.ReadInt32();
 						bossStats.durationBest = reader.ReadInt32();
 						bossStats.durationPrev = reader.ReadInt32();
-						bossStats.healthLossBest = reader.ReadInt32();
-						bossStats.healthLossPrev = reader.ReadInt32();
 						bossStats.hitsTakenBest = reader.ReadInt32();
 						bossStats.hitsTakenPrev = reader.ReadInt32();
-						bossStats.dodgeTimeBest = reader.ReadInt32();
 
 						//Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
 					}
@@ -613,9 +608,6 @@ namespace BossChecklist
 						packet.Write(stat.durationPrev);
 						packet.Write(stat.hitsTakenBest);
 						packet.Write(stat.hitsTakenPrev);
-						packet.Write(stat.dodgeTimeBest);
-						packet.Write(stat.healthLossBest);
-						packet.Write(stat.healthLossPrev);
 					}
 					packet.Send(); // To server (ORDER MATTERS FOR reader)
 					break;

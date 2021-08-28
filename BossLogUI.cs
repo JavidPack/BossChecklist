@@ -543,11 +543,6 @@ namespace BossChecklist
 				stats.durationPrev = -1;
 				stats.hitsTakenBest = -1;
 				stats.hitsTakenPrev = -1;
-				stats.dodgeTimeBest = -1;
-				stats.healthLossBest = -1;
-				stats.healthLossPrev = -1;
-				stats.healthAtStart = -1;
-				stats.healthAtStartPrev = -1;
 				OpenRecord();
 				
 				if (Main.netMode == NetmodeID.MultiplayerClient) {

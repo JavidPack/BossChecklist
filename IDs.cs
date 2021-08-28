@@ -47,8 +47,6 @@ namespace BossChecklist
 		None = 0,
 		ShortestFightTime = 1,
 		LeastHits = 2,
-		DodgeTime = 4,
-		BestBrink = 8,
-		ResetAll = 16
+		ResetAll = 4
 	}
 }

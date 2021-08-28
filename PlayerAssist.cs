@@ -17,13 +17,9 @@ namespace BossChecklist
 
 		public int durationLastFight;
 		public int hitsTakenLastFight;
-		public int healthLossLastFight;
 
 		public List<int> RecordTimers;
-		public List<int> BrinkChecker;
-		public List<int> MaxHealth;
 		public List<bool> DeathTracker;
-		public List<int> DodgeTimer;
 		public List<int> AttackCounter;
 
 		public override void Initialize() {
@@ -48,23 +44,17 @@ namespace BossChecklist
 
 			// This will be the attempt records of the players last fight (Not saved!)
 			// This is only used for the UI, to determine whether the PrevRecord is a "last attempt" or a "beaten record"
-			durationLastFight = hitsTakenLastFight = healthLossLastFight = -1;
+			durationLastFight = hitsTakenLastFight = -1;
 
 			// For being able to complete records in Multiplayer
 			RecordTimers = new List<int>();
-			BrinkChecker = new List<int>();
-			MaxHealth = new List<int>();
 			DeathTracker = new List<bool>();
-			DodgeTimer = new List<int>();
 			AttackCounter = new List<int>();
 			hasNewRecord = new List<bool>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				RecordTimers.Add(0);
-				BrinkChecker.Add(0);
-				MaxHealth.Add(0);
 				DeathTracker.Add(false);
-				DodgeTimer.Add(0);
 				AttackCounter.Add(0);
 				hasNewRecord.Add(false);
 			}
@@ -111,20 +101,14 @@ namespace BossChecklist
 
 		public override void OnEnterWorld(Player player) {
 			BossLogUI.PageNum = -3;
-			durationLastFight = hitsTakenLastFight = healthLossLastFight = -1;
+			durationLastFight = -1;
 			RecordTimers = new List<int>();
-			BrinkChecker = new List<int>();
-			MaxHealth = new List<int>();
 			DeathTracker = new List<bool>();
-			DodgeTimer = new List<int>();
 			AttackCounter = new List<int>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				RecordTimers.Add(0);
-				BrinkChecker.Add(0);
-				MaxHealth.Add(0);
 				DeathTracker.Add(false);
-				DodgeTimer.Add(0);
 				AttackCounter.Add(0);
 			}
 
@@ -141,9 +125,6 @@ namespace BossChecklist
 					packet.Write(stat.durationPrev);
 					packet.Write(stat.hitsTakenBest);
 					packet.Write(stat.hitsTakenPrev);
-					packet.Write(stat.dodgeTimeBest);
-					packet.Write(stat.healthLossBest);
-					packet.Write(stat.healthLossPrev);
 				}
 				packet.Send(); // To server
 			}
@@ -174,11 +155,11 @@ namespace BossChecklist
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
-					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
+					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) {
+						continue;
+					}
 					int listNum = NPCAssist.ListedBossNum(Main.npc[i]);
-					if (BrinkChecker[listNum] == 0) BrinkChecker[listNum] = player.statLife;
 					AttackCounter[listNum]++;
-					DodgeTimer[listNum] = 0;
 				}
 			}
 		}
@@ -212,14 +193,8 @@ namespace BossChecklist
 					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
 						if (player.dead) {
 							DeathTracker[listNum] = true;
-							DodgeTimer[listNum] = 0;
-							BrinkChecker[listNum] = MaxHealth[listNum];
 						}
 						RecordTimers[listNum]++;
-						if (!player.dead) DodgeTimer[listNum]++;
-						if (player.statLife < BrinkChecker[listNum] && player.statLife > 0) {
-							BrinkChecker[listNum] = player.statLife;
-						}
 					}
 				}
 			}
