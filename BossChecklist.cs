@@ -578,10 +578,12 @@ namespace BossChecklist
 						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
 						bossStats.kills = reader.ReadInt32();
 						bossStats.deaths = reader.ReadInt32();
-						bossStats.durationBest = reader.ReadInt32();
 						bossStats.durationPrev = reader.ReadInt32();
-						bossStats.hitsTakenBest = reader.ReadInt32();
+						bossStats.durationFirs = reader.ReadInt32();
+						bossStats.durationBest = reader.ReadInt32();
 						bossStats.hitsTakenPrev = reader.ReadInt32();
+						bossStats.hitsTakenFirs = reader.ReadInt32();
+						bossStats.hitsTakenBest = reader.ReadInt32();
 
 						//Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
 					}
@@ -604,10 +606,12 @@ namespace BossChecklist
 						BossStats stat = modPlayer.AllBossRecords[i].stat;
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);
-						packet.Write(stat.durationBest);
 						packet.Write(stat.durationPrev);
-						packet.Write(stat.hitsTakenBest);
+						packet.Write(stat.durationFirs);
+						packet.Write(stat.durationBest);
 						packet.Write(stat.hitsTakenPrev);
+						packet.Write(stat.hitsTakenFirs);
+						packet.Write(stat.hitsTakenBest);
 					}
 					packet.Send(); // To server (ORDER MATTERS FOR reader)
 					break;

@@ -98,6 +98,7 @@ namespace BossChecklist
 		public static Func<TagCompound, BossStats> DESERIALIZER = tag => new BossStats(tag);
 
 		public BossStats() { }
+
 		private BossStats(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
