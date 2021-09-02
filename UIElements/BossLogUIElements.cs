@@ -1431,7 +1431,7 @@ namespace BossChecklist.UIElements
 						else {
 							Vector2 stringAdjust = Main.fontMouseText.MeasureString(displayName);
 							for (int i = 0; i < stringAdjust.X + 4; i++) {
-								Texture2D strike = BossChecklist.instance.GetTexture("Resources/LogUI_Checks_Strike");
+								Texture2D strike = BossChecklist.instance.GetTexture("Resources/Checks_Strike");
 								Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
 								Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
 								if (i == 0) {
