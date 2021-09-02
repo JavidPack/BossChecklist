@@ -9,116 +9,131 @@ namespace BossChecklist
 {
 	public class PlayerAssist : ModPlayer
 	{
-		public bool hasOpenedTheBossLog;
-		public List<bool> hasNewRecord;
-
-		public List<BossRecord> AllBossRecords;
-		public List<BossCollection> BossTrophies;
-
+		public bool hasOpenedTheBossLog; // For the 'never opened' button glow for players who haven't noticed the new feature yet.
+		
+		public Dictionary<string, List<BossRecord>> AllStoredRecords; // string = Main.ActiveWorldFileData.UniqueId.ToString()
+		public List<BossRecord> RecordsForWorld; // Records will now be tied to character AND world.
+		public List<BossCollection> BossTrophies; // Unlike records, loot and collectibles are bound to player only.
+		
 		public int durationLastFight;
 		public int hitsTakenLastFight;
 
-		public List<int> RecordTimers;
-		public List<bool> DeathTracker;
-		public List<int> AttackCounter;
+		public List<int> Trackers_Duration;
+		public List<int> Tracker_HitsTaken;
+		public List<bool> Tracker_Deaths;
+		public List<bool> hasNewRecord;
 
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
 
-			AllBossRecords = new List<BossRecord>();
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				AllBossRecords.Add(new BossRecord(boss.Key));
-			}
-
-			// Make a new list of collections
+			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
+			RecordsForWorld = new List<BossRecord>();
 			BossTrophies = new List<BossCollection>();
-			// For each boss added...
+
+			// Create new lists for each boss's loot and collections so we can apply the saved data to them
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				// 1.) Add a collection for the boss
 				BossTrophies.Add(new BossCollection(boss.Key));
-				// 2.) setup the item list and check off list for the boss
-				int index = BossTrophies.FindIndex(x => x.bossName == boss.Key);
+				int index = BossTrophies.FindIndex(x => x.bossKey == boss.Key);
 				BossTrophies[index].loot = new List<ItemDefinition>();
 				BossTrophies[index].collectibles = new List<ItemDefinition>();
 			}
 
+			// TODO: Reimplement how this works. Best record becomes Prev Best on new record until another fight overwrites it with a new previous attempt?
 			// This will be the attempt records of the players last fight (Not saved!)
 			// This is only used for the UI, to determine whether the PrevRecord is a "last attempt" or a "beaten record"
 			durationLastFight = hitsTakenLastFight = -1;
 
 			// For being able to complete records in Multiplayer
-			RecordTimers = new List<int>();
-			DeathTracker = new List<bool>();
-			AttackCounter = new List<int>();
+			Trackers_Duration = new List<int>();
+			Tracker_Deaths = new List<bool>();
+			Tracker_HitsTaken = new List<int>();
 			hasNewRecord = new List<bool>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				RecordTimers.Add(0);
-				DeathTracker.Add(false);
-				AttackCounter.Add(0);
+				Trackers_Duration.Add(0);
+				Tracker_Deaths.Add(false);
+				Tracker_HitsTaken.Add(0);
 				hasNewRecord.Add(false);
 			}
 		}
 
 		public override TagCompound Save() {
-			TagCompound saveData = new TagCompound
-			{
+			TagCompound saveData = new TagCompound {
 				{ "BossLogPrompt", hasOpenedTheBossLog },
-				{ "Records", AllBossRecords },
+				{ "Records", AllStoredRecords },
 				{ "Collection", BossTrophies }
 			};
 			return saveData;
 		}
 
 		public override void Load(TagCompound tag) {
-			// Add new bosses to the list, and place existing ones accordingly
-			List<BossRecord> TempRecordStorage = tag.Get<List<BossRecord>>("Records");
-			foreach (BossRecord record in TempRecordStorage) {
-				int index = AllBossRecords.FindIndex(x => x.bossName == record.bossName);
-				if (index == -1) AllBossRecords.Add(record);
-				else AllBossRecords[index] = record;
-			}
+			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt");
+
+			// Grab the player's record data so we can grab what we need in OnEnterWorld().
+			AllStoredRecords = tag.Get<Dictionary<string, List<BossRecord>>>("Records");
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
-			List<BossCollection> TempCollectionStorage = tag.Get<List<BossCollection>>("Collection");
-
-			List<BossCollection> AddedCollections = new List<BossCollection>();
-			foreach (BossCollection collection in TempCollectionStorage) {
-				int index = BossTrophies.FindIndex(x => x.bossName == collection.bossName);
-				if (index == -1) BossTrophies.Add(collection);
-				else BossTrophies[index] = collection;
+			List<BossCollection> SavedCollections = tag.Get<List<BossCollection>>("Collection");
+			foreach (BossCollection collection in SavedCollections) {
+				int index = BossTrophies.FindIndex(x => x.bossKey == collection.bossKey);
+				if (index == -1) {
+					BossTrophies.Add(collection);
+				}
+				else {
+					BossTrophies[index] = collection;
+				}
 			}
-
-			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt");
 		}
 
 		public override void clientClone(ModPlayer clientClone) {
 			PlayerAssist clone = clientClone as PlayerAssist;
 			clone.hasOpenedTheBossLog = hasOpenedTheBossLog;
 			clone.BossTrophies = BossTrophies;
-			clone.AllBossRecords = AllBossRecords;
+			clone.RecordsForWorld = RecordsForWorld;
 		}
 
 		public override void OnEnterWorld(Player player) {
-			BossLogUI.PageNum = -3;
-			durationLastFight = -1;
-			RecordTimers = new List<int>();
-			DeathTracker = new List<bool>();
-			AttackCounter = new List<int>();
+			// PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
+			BossLogUI.PageNum = -3; 
+			
+			// Reset record tracker numbers
+			durationLastFight = -1; //TODO: find out why hitstaken isnt reset and why its set to -1
+			Trackers_Duration = new List<int>();
+			Tracker_Deaths = new List<bool>();
+			Tracker_HitsTaken = new List<int>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				RecordTimers.Add(0);
-				DeathTracker.Add(false);
-				AttackCounter.Add(0);
+				Trackers_Duration.Add(0);
+				Tracker_Deaths.Add(false);
+				Tracker_HitsTaken.Add(0);
 			}
 
+			// Upon entering a world, determine if records already exist for a player and copy them into a variable.
+			string WorldID = Main.ActiveWorldFileData.UniqueId.ToString();
+			if (AllStoredRecords.ContainsKey(WorldID) && AllStoredRecords.TryGetValue(WorldID, out RecordsForWorld)) {
+				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+					if (!RecordsForWorld.Exists(x => x.bossKey == boss.Key)) {
+						RecordsForWorld.Add(new BossRecord(boss.Key));
+					}
+				}
+			}
+			else {
+				// If records dont exist (player is new to the world) create a new entry for the player to use.
+				RecordsForWorld = new List<BossRecord>();
+				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+					RecordsForWorld.Add(new BossRecord(boss.Key));
+				}
+				AllStoredRecords.Add(WorldID, RecordsForWorld);
+			}
+			
+			// Send the player's world-bound records to the server. The server doesn't need player records from every world.
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
 				for (int i = 0; i < bossCount; i++) {
-					BossStats stat = AllBossRecords[i].stat;
+					BossStats stat = RecordsForWorld[i].stat;
 					packet.Write(stat.kills);
 					packet.Write(stat.deaths);
 					packet.Write(stat.durationBest);
@@ -130,28 +145,39 @@ namespace BossChecklist
 			}
 		}
 
+		// Continually track the duration of boss fights while boss NPCs are active.
+		// If a player dies at any point while a boss is active, add to the death tracker for later.
+		public override void PreUpdate() {
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
+				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
+					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) {
+						continue;
+					}
+					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
+						if (player.dead) {
+							Tracker_Deaths[listNum] = true;
+						}
+						Trackers_Duration[listNum]++;
+					}
+				}
+			}
+		}
+
+		// When a player is dead they are marked as such in the Death tracker.
+		// On respawn, add to the total deaths towards marked bosses.
 		public override void OnRespawn(Player player) {
-			// This works both in SP and MP because it records within ModPlayer
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int i = 0; i < DeathTracker.Count; i++) {
-					if (DeathTracker[i]) AllBossRecords[i].stat.deaths++;
-					DeathTracker[i] = false;
+				for (int i = 0; i < Tracker_Deaths.Count; i++) {
+					if (Tracker_Deaths[i]) {
+						RecordsForWorld[i].stat.deaths++;
+					}
+					Tracker_Deaths[i] = false;
 				}
 			}
 		}
 
-		public override void OnHitByNPC(NPC npc, int damage, bool crit) {
-			/*
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
-				for (int i = 0; i < Main.maxNPCs; i++) {
-					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
-					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
-					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
-				}
-			}
-			*/
-		}
-
+		// Whenever the player is hurt, add to the HitsTaken tracker.
+		// TODO: Test debuff damage. Would rather that not count.
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
@@ -159,47 +185,9 @@ namespace BossChecklist
 						continue;
 					}
 					int listNum = NPCAssist.ListedBossNum(Main.npc[i]);
-					AttackCounter[listNum]++;
+					Tracker_HitsTaken[listNum]++;
 				}
 			}
-		}
-
-		public override void OnHitByProjectile(Projectile proj, int damage, bool crit) {
-			/*
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
-				for (int i = 0; i < Main.maxNPCs; i++) {
-					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
-					AttackCounter[NPCAssist.ListedBossNum(Main.npc[i])]++;
-					DodgeTimer[NPCAssist.ListedBossNum(Main.npc[i])] = 0;
-				}
-			}
-			*/
-		}
-
-		public override void PreUpdate() {
-			/* Previous bug? debug stuff
-			for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
-				if (AllBossRecords[listNum].stat.healthLossBest == 0) {
-					AllBossRecords[listNum].stat.healthLossBest = -1;
-					AllBossRecords[listNum].stat.healthAtStart = -1;
-					AllBossRecords[listNum].stat.healthLossPrev = -1;
-					AllBossRecords[listNum].stat.healthAtStartPrev = -1;
-				}
-			}
-			*/
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
-				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
-					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
-					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
-						if (player.dead) {
-							DeathTracker[listNum] = true;
-						}
-						RecordTimers[listNum]++;
-					}
-				}
-			}
-
-			
 		}
 	}
 }

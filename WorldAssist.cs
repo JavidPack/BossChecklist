@@ -45,10 +45,12 @@ namespace BossChecklist
 
 		private void DD2Event_WinInvasionInternal(On.Terraria.GameContent.Events.DD2Event.orig_WinInvasionInternal orig) {
 			orig();
-			if (DD2Event.OngoingDifficulty == 2)
+			if (DD2Event.OngoingDifficulty == 2) {
 				downedInvasionT2Ours = true;
-			if (DD2Event.OngoingDifficulty == 3)
+			}
+			if (DD2Event.OngoingDifficulty == 3) {
 				downedInvasionT3Ours = true;
+			}
 		}
 
 		public override void Initialize() {
@@ -72,7 +74,8 @@ namespace BossChecklist
 			downedInvasionT2Ours = false;
 			downedInvasionT3Ours = false;
 
-			DayDespawners = new List<int>() { //Skeletron and Skeletron Prime are not added because they kill the player before despawning
+			//Skeletron and Skeletron Prime are not added because they kill the player before despawning
+			DayDespawners = new List<int>() {
 				NPCID.EyeofCthulhu,
 				NPCID.Retinazer,
 				NPCID.Spazmatism,
@@ -82,7 +85,8 @@ namespace BossChecklist
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			ActiveBossesList = new List<bool>();
 			StartingPlayers = new List<bool[]>();
-			for (int i = 0; i < BL.Count; i++) { // Includes events, even though they wont be accounted for
+			for (int i = 0; i < BL.Count; i++) {
+				// Includes events, even though they wont be accounted for
 				ActiveBossesList.Add(false);
 				StartingPlayers.Add(new bool[Main.maxPlayers]);
 			}
@@ -110,7 +114,9 @@ namespace BossChecklist
 										Main.NewText(Language.GetTextValue(message, b.FullName), Colors.RarityPurple);
 									}
 								}
-								else NetMessage.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
+								else {
+									NetMessage.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
+								}
 							}
 							ActiveBossesList[listNum] = false;
 							// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
@@ -162,18 +168,31 @@ namespace BossChecklist
 
 			if (EventKey != "") {
 				NetworkText message = NetworkText.FromKey(EventKey);
-				if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(message.ToString(), Colors.RarityGreen);
-				else NetMessage.BroadcastChatMessage(message, Colors.RarityGreen);
+				if (Main.netMode == NetmodeID.SinglePlayer) {
+					Main.NewText(message.ToString(), Colors.RarityGreen);
+				}
+				else {
+					NetMessage.BroadcastChatMessage(message, Colors.RarityGreen);
+				}
 				EventKey = "";
 			}
 		}
 
 		public string GetDespawnMessage(NPC boss, int listnum) {
-			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead)) { // If any player is active and alive
-				if (Main.npc.Any(x => x.life > 0 && BossChecklist.bossTracker.SortedBosses[listnum].npcIDs.IndexOf(x.type) != -1)) { // If boss is still active
-					if (Main.dayTime && DayDespawners.Contains(boss.type)) return "Mods.BossChecklist.BossDespawn.Day";
-					else if (boss.type == NPCID.WallofFlesh) return "Mods.BossChecklist.BossVictory.WallofFlesh";
-					else return "Mods.BossChecklist.BossDespawn.Generic";
+			// If any player is active and alive
+			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead)) {
+				// If boss is still active
+				BossInfo bossInfo = BossChecklist.bossTracker.SortedBosses[listnum];
+				if (Main.npc.Any(x => x.life > 0 && bossInfo.npcIDs.IndexOf(x.type) != -1)) {
+					if (Main.dayTime && DayDespawners.Contains(boss.type)) {
+						return "Mods.BossChecklist.BossDespawn.Day";
+					}
+					else if (boss.type == NPCID.WallofFlesh) {
+						return "Mods.BossChecklist.BossVictory.WallofFlesh";
+					}
+					else {
+						return "Mods.BossChecklist.BossDespawn.Generic";
+					}
 				}
 				else return "";
 			}
@@ -181,29 +200,57 @@ namespace BossChecklist
 				// Check already accounted for to get to this point
 				return BossChecklist.bossTracker.SortedBosses[NPCAssist.ListedBossNum(boss)].despawnMessage;
 			}
-			else return "Mods.BossChecklist.BossVictory.Generic";
+			else {
+				return "Mods.BossChecklist.BossVictory.Generic";
+			}
 		}
 
+		// TODO: Unused. Needed for worm-like bosses?
+		/*
 		public bool CheckRealLife(int realNPC) {
-			if (realNPC == -1) return true;
-			if (Main.npc[realNPC].life >= 0) return true;
-			else return false;
+			if (realNPC == -1 || Main.npc[realNPC].life >= 0) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
+		*/
 
 		public override TagCompound Save() {
 			var WorldRecordList = new List<WorldRecord>(worldRecords);
 			var HiddenBossesList = new List<string>(HiddenBosses);
 			var downed = new List<string>();
-			if (downedBloodMoon) downed.Add("bloodmoon");
-			if (downedFrostMoon) downed.Add("frostmoon");
-			if (downedPumpkinMoon) downed.Add("pumpkinmoon");
-			if (downedSolarEclipse) downed.Add("solareclipse");
-			if (downedDarkMage) downed.Add("darkmage");
-			if (downedOgre) downed.Add("ogre");
-			if (downedFlyingDutchman) downed.Add("flyingdutchman");
-			if (downedMartianSaucer) downed.Add("martiansaucer");
-			if (downedInvasionT2Ours) downed.Add("invasionT2Ours");
-			if (downedInvasionT3Ours) downed.Add("invasionT3Ours");
+			if (downedBloodMoon) {
+				downed.Add("bloodmoon");
+			}
+			if (downedFrostMoon) {
+				downed.Add("frostmoon");
+			}
+			if (downedPumpkinMoon) {
+				downed.Add("pumpkinmoon");
+			}
+			if (downedSolarEclipse) {
+				downed.Add("solareclipse");
+			}
+			if (downedDarkMage) {
+				downed.Add("darkmage");
+			}
+			if (downedOgre) {
+				downed.Add("ogre");
+			}
+			if (downedFlyingDutchman) {
+				downed.Add("flyingdutchman");
+			}
+			if (downedMartianSaucer) {
+				downed.Add("martiansaucer");
+			}
+			if (downedInvasionT2Ours) {
+				downed.Add("invasionT2Ours");
+			}
+			if (downedInvasionT3Ours) {
+				downed.Add("invasionT3Ours");
+			}
 
 			return new TagCompound {
 				["downed"] = downed,
@@ -215,9 +262,13 @@ namespace BossChecklist
 		public override void Load(TagCompound tag) {
 			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
 			foreach (WorldRecord record in TempRecordStorage) {
-				int index = worldRecords.FindIndex(x => x.bossName == record.bossName);
-				if (index == -1) worldRecords.Add(record);
-				else worldRecords[index] = record;
+				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
+				if (index == -1) {
+					worldRecords.Add(record);
+				}
+				else {
+					worldRecords[index] = record;
+				}
 			}
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
@@ -293,7 +344,9 @@ namespace BossChecklist
 				HiddenBosses.Add(reader.ReadString());
 			}
 			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) BossChecklist.instance.BossLog.UpdateTableofContents();
+			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) {
+				BossChecklist.instance.BossLog.UpdateTableofContents();
+			}
 		}
 	}
 }

@@ -309,9 +309,9 @@ namespace BossChecklist
 						int ConfigIndex = NPCAssist.ListedBossNum(DebugConfig.ShowTimerOrCounter.Type, DebugConfig.ShowTimerOrCounter.mod);
 						if (ConfigIndex != -1) {
 							string textKingSlime = $"{bossTracker.SortedBosses[ConfigIndex].name} (#{ConfigIndex + 1})" +
-												$"\nTime: {playerAssist.RecordTimers[ConfigIndex]}" +
-												$"\nTimes Hit: {playerAssist.AttackCounter[ConfigIndex]}" +
-												$"\nDeaths: {playerAssist.DeathTracker[ConfigIndex]}";
+												$"\nTime: {playerAssist.Trackers_Duration[ConfigIndex]}" +
+												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[ConfigIndex]}" +
+												$"\nDeaths: {playerAssist.Tracker_Deaths[ConfigIndex]}";
 							DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
 						}
 						return true;
@@ -595,7 +595,7 @@ namespace BossChecklist
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
 					int npcPos = reader.ReadInt32();
 
-					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat; // Get the Player's records
+					BossStats specificRecord = modPlayer.RecordsForWorld[npcPos].stat; // Get the Player's records
 					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)
 
 					//Update the serverrecords too so they can be used later
@@ -603,7 +603,7 @@ namespace BossChecklist
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
 					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
-						BossStats stat = modPlayer.AllBossRecords[i].stat;
+						BossStats stat = modPlayer.RecordsForWorld[i].stat;
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);
 						packet.Write(stat.durationPrev);

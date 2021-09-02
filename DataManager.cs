@@ -10,23 +10,23 @@ namespace BossChecklist
 {
 	public class BossRecord : TagSerializable
 	{
-		internal string bossName;
+		internal string bossKey;
 		internal BossStats stat = new BossStats();
 
 		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
 
 		private BossRecord(TagCompound tag) {
-			bossName = tag.Get<string>(nameof(bossName));
+			bossKey = tag.Get<string>(nameof(bossKey));
 			stat = tag.Get<BossStats>(nameof(stat));
 		}
 
 		public BossRecord(string boss) {
-			bossName = boss;
+			bossKey = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(bossName), bossName },
+				{ nameof(bossKey), bossKey },
 				{ nameof(stat), stat }
 			};
 		}
@@ -34,23 +34,23 @@ namespace BossChecklist
 
 	public class WorldRecord : TagSerializable
 	{
-		internal string bossName;
+		internal string bossKey;
 		internal WorldStats stat = new WorldStats();
 
 		public static Func<TagCompound, WorldRecord> DESERIALIZER = tag => new WorldRecord(tag);
 
 		private WorldRecord(TagCompound tag) {
-			bossName = tag.Get<string>(nameof(bossName));
+			bossKey = tag.Get<string>(nameof(bossKey));
 			stat = tag.Get<WorldStats>(nameof(stat));
 		}
 
 		public WorldRecord(string boss) {
-			bossName = boss;
+			bossKey = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(bossName), bossName },
+				{ nameof(bossKey), bossKey },
 				{ nameof(stat), stat }
 			};
 		}
@@ -132,14 +132,14 @@ namespace BossChecklist
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 			if (!brokenRecords.HasFlag(RecordID.ResetAll)) {
 				// Determine if a new record was made (Prev records need to change still)
-				bool newRecord = brokenRecords.HasFlag(RecordID.ShortestFightTime) || brokenRecords.HasFlag(RecordID.LeastHits);
+				bool newRecord = brokenRecords.HasFlag(RecordID.Duration) || brokenRecords.HasFlag(RecordID.HitsTaken);
 
 				kills++; // Kills always increase by 1, since records can only be made when a boss is defeated
-				if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+				if (brokenRecords.HasFlag(RecordID.Duration)) {
 					durationBest = reader.ReadInt32();
 				}
 				durationPrev = reader.ReadInt32();
-				if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+				if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
 					hitsTakenBest = reader.ReadInt32();
 				}
 				hitsTakenPrev = reader.ReadInt32();
@@ -161,11 +161,11 @@ namespace BossChecklist
 			if (!specificRecord.HasFlag(RecordID.ResetAll)) { 
 				// If ResetAll is flagged there is no need to write the rest
 				// Prev records ALWAYS are written. They always update as either record attempts or old records
-				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) {
+				if (specificRecord.HasFlag(RecordID.Duration)) {
 					writer.Write(durationBest);
 				}
 				writer.Write(durationPrev);
-				if (specificRecord.HasFlag(RecordID.LeastHits)) {
+				if (specificRecord.HasFlag(RecordID.HitsTaken)) {
 					writer.Write(hitsTakenBest);
 				}
 				writer.Write(hitsTakenPrev);
@@ -179,6 +179,8 @@ namespace BossChecklist
 	 * Server Host can remove anyone from this list (ex. Troll, wrong character join)
 	 * Server grabs BEST Records from the list of players and determines which one is the best
 	 * The player's name and record will be displayed on the World Record alt page for everyone to see and try to beat.
+	 * 
+	 * WorldStats only generate once the world is Multiplayer?
 	 */
 
 	public class WorldStats : TagSerializable
@@ -213,11 +215,11 @@ namespace BossChecklist
 		internal void NetRecieve(BinaryReader reader) {
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 
-			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+			if (brokenRecords.HasFlag(RecordID.Duration)) {
 				durationHolder = reader.ReadString();
 				durationWorld = reader.ReadInt32();
 			}
-			if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+			if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
 				hitsTakenHolder = reader.ReadString();
 				hitsTakenWorld = reader.ReadInt32();
 			}
@@ -226,11 +228,11 @@ namespace BossChecklist
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
 			writer.Write((int)specificRecord); // We need this for NetRecieve as well
 			// Packet should have any beaten records written on it
-			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) {
+			if (specificRecord.HasFlag(RecordID.Duration)) {
 				writer.Write(durationHolder);
 				writer.Write(durationWorld);
 			}
-			if (specificRecord.HasFlag(RecordID.LeastHits)) {
+			if (specificRecord.HasFlag(RecordID.HitsTaken)) {
 				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
 			}
@@ -239,25 +241,25 @@ namespace BossChecklist
 
 	public class BossCollection : TagSerializable
 	{
-		internal string bossName;
+		internal string bossKey;
 		internal List<ItemDefinition> loot;
 		internal List<ItemDefinition> collectibles;
 
 		public static Func<TagCompound, BossCollection> DESERIALIZER = tag => new BossCollection(tag);
 
 		private BossCollection(TagCompound tag) {
-			bossName = tag.Get<string>(nameof(bossName));
+			bossKey = tag.Get<string>(nameof(bossKey));
 			loot = tag.Get<List<ItemDefinition>>(nameof(loot));
 			collectibles = tag.Get<List<ItemDefinition>>(nameof(collectibles));
 		}
 
 		public BossCollection(string boss) {
-			bossName = boss;
+			bossKey = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(bossName), bossName },
+				{ nameof(bossKey), bossKey },
 				{ nameof(loot), loot },
 				{ nameof(collectibles), collectibles },
 			};

@@ -629,7 +629,7 @@ namespace BossChecklist.UIElements
 							// Boss Records Subpage
 							Texture2D achievements = ModContent.GetTexture("Terraria/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-							BossStats record = modPlayer.AllBossRecords[BossLogUI.PageNum].stat;
+							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNum].stat;
 
 							bool[] isNewRecord = new bool[3];
 							string recordType = "";
@@ -637,9 +637,31 @@ namespace BossChecklist.UIElements
 							string compareNumbers = "";
 							int[] achCoord = new int[] { 0, 0 };
 
-							for (int i = 0; i < 3; i++) { // "3 Records" total
-								if (i == 0) { // Kills & Deaths
+							for (int i = 0; i < 4; i++) { // 4 spots total
+								if (i == 0) {
+									recordNumbers = $"{Main.LocalPlayer.name}";
+									// Which sub-category are we in?
 									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
+										recordType = "Previous Attempt";
+										achCoord = new int[] { 7, 9 };
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
+										recordType = "First Vistory";
+										achCoord = new int[] { 0, 10 };
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
+										recordType = "Personal Best";
+										achCoord = new int[] { 1, 10 };
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
+										recordType = $"World Records";
+										recordNumbers = $"{Main.worldName}";
+										achCoord = new int[] { 4, 6 };
+									}
+								}
+								if (i == 1) {
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] != 3) {
+										// Kills & Deaths
 										recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
 										int killTimes = record.kills;
 										int deathTimes = record.deaths;
@@ -652,15 +674,50 @@ namespace BossChecklist.UIElements
 										}
 									}
 									else {
-										recordType = $"World Records";
+										// World Kills & Deaths
+										recordType = $"Maybe count times boss has been defeated in total?";
 										recordNumbers = $"for {Main.worldName}";
 										achCoord = new int[] { 4, 6 };
 									}
 								}
-								else if (i == 1) { // Fight Duration
+								else if (i == 2) {
+									// Fight Duration
 									recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Duration");
 									achCoord = new int[] { 4, 9 };
 
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
+										// Last Attempt
+										if (record.durationPrev == -1) {
+											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordNumbers = RecordTimeConversion(record.durationPrev);
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
+										// First Victory
+										if (record.durationFirs == -1) {
+											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordNumbers = RecordTimeConversion(record.durationFirs);
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
+										// Personal Best
+										if (record.durationBest == -1) {
+											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordNumbers = RecordTimeConversion(record.durationBest);
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
+										// World Record
+										recordNumbers = $"for {Main.worldName}";
+									}
+
+									/*
 									int BestRecord_ticks = record.durationBest;
 									int PrevRecord_ticks = record.durationPrev;
 									int LastAttempt = modPlayer.durationLastFight;
@@ -710,11 +767,45 @@ namespace BossChecklist.UIElements
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 									}
+									*/
 								}
-								else if (i == 2) { // Hits Taken
+								else if (i == 3) { // Hits Taken
 									recordType = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
 									achCoord = new int[] { 3, 0 };
 
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
+										// Last Attempt
+										if (record.hitsTakenPrev == -1) {
+											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordNumbers = RecordTimeConversion(record.hitsTakenPrev);
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
+										// First Victory
+										if (record.hitsTakenFirs == -1) {
+											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordNumbers = RecordTimeConversion(record.hitsTakenFirs);
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
+										// Personal Best
+										if (record.hitsTakenBest == -1) {
+											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordNumbers = RecordTimeConversion(record.hitsTakenBest);
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
+										// World Record
+										recordNumbers = $"for {Main.worldName}";
+									}
+
+									/*
 									int BestHits = record.hitsTakenBest;
 									int PrevHits = record.hitsTakenPrev;
 									int LastAttempt = modPlayer.hitsTakenLastFight;
@@ -747,6 +838,7 @@ namespace BossChecklist.UIElements
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 									}
+									*/
 								}
 
 								Rectangle posRect = new Rectangle(pageRect.X, pageRect.Y + 125 + (75 * i), 64, 64);
@@ -767,12 +859,46 @@ namespace BossChecklist.UIElements
 										}
 									}
 								}
-
+								/*
 								if (isNewRecord[i] && modPlayer.hasNewRecord[BossLogUI.PageNum]) {
 									Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
 									Rectangle exclam = new Rectangle(pageRect.X + 59, pageRect.Y + 96 + (75 * i), 9, 24);
 									spriteBatch.Draw(text, exclam, Color.White);
 								}
+								*/
+
+								// If we have the compare state set to another type, show the comparison
+								// Skip this if the CompareState is inactive or we are on the page of the marked section
+								if (BossLogUI.CompareState != -1 && BossLogUI.CompareState != BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum]) {
+									if (i == 2) {
+										// Duration
+										int compareValue = -1;
+										if (BossLogUI.CompareState == 0) {
+											// 0, Previous
+											compareValue = record.durationPrev;
+										}
+										else if (BossLogUI.CompareState == 1) {
+											// 1, First
+											compareValue = record.durationFirs;
+										}
+										else if (BossLogUI.CompareState == 2) {
+											// 2, Best
+											compareValue = record.durationBest;
+										}
+										else if (BossLogUI.CompareState == 3) {
+											// 3, World
+										}
+									}
+									else if (i == 3) {
+										// Hits Taken
+									}
+									if (BossLogUI.CompareState == 1) {
+
+									}
+
+									Main.NewText($"({RecordTimeConversion(1000)})");
+								}
+
 
 								int offsetY = compareNumbers == "" ? 135 + (i * 75) : 115 + (i * 75);
 
@@ -1084,6 +1210,13 @@ namespace BossChecklist.UIElements
 						}
 					}
 				}
+			}
+
+			public string RecordTimeConversion(int ticks) {
+				double seconds = (double)ticks / 60;
+				double seconds00 = seconds % 60;
+				int minutes = (int)seconds / 60;
+				return $"{minutes}:{seconds00.ToString("00.00")}";
 			}
 		}
 

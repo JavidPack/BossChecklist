@@ -107,7 +107,7 @@ namespace BossChecklist
 							continue;
 						}
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-						modPlayer.RecordTimers[listNum] = 0;
+						modPlayer.Trackers_Duration[listNum] = 0;
 					}
 				}
 			}
@@ -122,13 +122,13 @@ namespace BossChecklist
 			}
 
 			bool newRecordSet = false;
-			BossStats bossStats = modPlayer.AllBossRecords[recordIndex].stat;
+			BossStats bossStats = modPlayer.RecordsForWorld[recordIndex].stat;
 
-			int duration_Prev = modPlayer.RecordTimers[recordIndex];
+			int duration_Prev = modPlayer.Trackers_Duration[recordIndex];
 			int duration_First = bossStats.durationFirs;
 			int duration_Best = bossStats.durationBest;
 			
-			int hitsTaken_Prev = modPlayer.AttackCounter[recordIndex];
+			int hitsTaken_Prev = modPlayer.Tracker_HitsTaken[recordIndex];
 			int hitsTaken_First = bossStats.hitsTakenFirs;
 			int hitsTaken_Best = bossStats.hitsTakenBest;
 
@@ -165,7 +165,7 @@ namespace BossChecklist
 			}
 			
 			// 5.) If a new record was made, notify the player. Note: The player isn't notified if it was their first attempt.
-			// Since we are in singleplayer we don't need to check for notifying for a world record.
+			// If thw world records are set, we can check for new world records as well
 			if (newRecordSet) {
 				modPlayer.hasNewRecord[recordIndex] = true;
 				CombatText.NewText(player.getRect(), Color.LightYellow, "Personal Best!", true);
@@ -173,11 +173,7 @@ namespace BossChecklist
 		}
 
 		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
-			string[] worldRecordHolders = new string[] { "", "" };
-			int[] newWorldRecords = new int[]{
-				WorldAssist.worldRecords[recordIndex].stat.durationWorld,
-				WorldAssist.worldRecords[recordIndex].stat.hitsTakenWorld,
-			};
+			bool hasNewRecord = false;
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
 
@@ -190,8 +186,8 @@ namespace BossChecklist
 				List<BossStats> serverCollectedPlayerRecords = BossChecklist.ServerCollectedRecords[i];
 				BossStats playerRecord = serverCollectedPlayerRecords[recordIndex];
 
-				int duration_Prev = modPlayer.RecordTimers[recordIndex];
-				int hitsTaken_Prev = modPlayer.AttackCounter[recordIndex];
+				int duration_Prev = modPlayer.Trackers_Duration[recordIndex];
+				int hitsTaken_Prev = modPlayer.Tracker_HitsTaken[recordIndex];
 
 				// 1.) Setup this player's new boss records for the server to recollect.
 				// We also mark them for modplayer so we can calculate differences! //TODO ?? Is this necessary ??
@@ -213,29 +209,29 @@ namespace BossChecklist
 				// 4.) ?? Check if this is the first record attempt. If it is mark the best record too since it must be empty.
 				// If the record is beaten, we add a flag to specificRecord to allow an override of the current record
 				if (playerRecord.durationFirs == -1 && playerRecord.durationBest == -1) {
-					specificRecord |= RecordID.ShortestFightTime;
+					specificRecord |= RecordID.Duration;
 					newRecord.durationFirs = duration_Prev;
 					newRecord.durationBest = duration_Prev;
+					hasNewRecord = true;
 				}
 				else if (duration_Prev < playerRecord.durationBest || playerRecord.durationBest == -1) {
-					specificRecord |= RecordID.ShortestFightTime;
+					specificRecord |= RecordID.Duration;
 					newRecord.durationBest = duration_Prev;
+					hasNewRecord = true;
 				}
 
 				/// repeat...
 				if (playerRecord.hitsTakenFirs == -1 && playerRecord.hitsTakenBest == -1) {
-					specificRecord |= RecordID.LeastHits;
+					specificRecord |= RecordID.HitsTaken;
 					newRecord.hitsTakenFirs = hitsTaken_Prev;
 					newRecord.hitsTakenBest = hitsTaken_Prev;
+					hasNewRecord = true;
 				}
 				else if (hitsTaken_Prev < playerRecord.hitsTakenBest || playerRecord.hitsTakenBest == -1) {
-					specificRecord |= RecordID.LeastHits;
+					specificRecord |= RecordID.HitsTaken;
 					newRecord.hitsTakenBest = hitsTaken_Prev;
+					hasNewRecord = true;
 				}
-
-				//Log Example: Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationPrev} (Previous Record: {playerRecord.durationBest})");
-				
-				// TODO?? Does the CheckWorldRecords method go here?
 
 				// 5.) Make and send the packet
 				ModPacket packet = mod.GetPacket();
@@ -244,16 +240,23 @@ namespace BossChecklist
 				newRecord.NetSend(packet, specificRecord); // Writes all the variables needed
 				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
 			}
+			if (hasNewRecord) {
+				CheckForAWorldRecord();
+			}
+
+
+
+
 			if (worldRecordHolders.Any(x => x != "")) {
 				WorldStats worldStats = WorldAssist.worldRecords[recordIndex].stat;
 				RecordID specificRecord = RecordID.None;
 				if (worldRecordHolders[0] != "") {
-					specificRecord |= RecordID.ShortestFightTime;
+					specificRecord |= RecordID.Duration;
 					worldStats.durationHolder = worldRecordHolders[0];
 					worldStats.durationWorld = newWorldRecords[0];
 				}
 				if (worldRecordHolders[1] != "") {
-					specificRecord |= RecordID.LeastHits;
+					specificRecord |= RecordID.HitsTaken;
 					worldStats.hitsTakenHolder = worldRecordHolders[1];
 					worldStats.hitsTakenWorld = newWorldRecords[1];
 				}
@@ -265,17 +268,12 @@ namespace BossChecklist
 				packet.Send(); // To server (world data for everyone)
 			}
 		}
-
-		///<summary>
-		/// Returns whether or not a player's new record has beaten a world record.
-		/// If true, replaces the hovering text "Personal Best!" with "New World Record!".
-		/// THIS ONLY OCCURS IN MULTIPLAYER
-		///</summary>
-		public bool CheckWorldRecords(int recordIndex, int whoAmI) {
+		
+		public void CheckForAWorldRecord(int recordIndex, int whoAmI) {
 			Player player = Main.player[whoAmI];
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 
-			BossStats playerRecord = modPlayer.AllBossRecords[recordIndex].stat;
+			BossStats playerRecord = modPlayer.RecordsForWorld[recordIndex].stat;
 			int duration_PlrBest = playerRecord.durationBest;
 			int hitsTaken_PlrBest = playerRecord.hitsTakenBest;
 
@@ -300,23 +298,29 @@ namespace BossChecklist
 				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
 				worldRecord.hitsTakenHolder = player.name;
 			}
-			return newRecord_duration || newRecord_hitsTaken;
+			return; // newRecord_duration || newRecord_hitsTaken;
 		}
 
 		public bool NPCisLimb(NPC npcType) {
-			return npcType.type == NPCID.PrimeSaw
-				|| npcType.type == NPCID.PrimeLaser
-				|| npcType.type == NPCID.PrimeCannon
-				|| npcType.type == NPCID.PrimeVice
-				|| npcType.type == NPCID.SkeletronHand
-				|| npcType.type == NPCID.GolemFistLeft
-				|| npcType.type == NPCID.GolemFistRight
-				|| npcType.type == NPCID.GolemHead
-				|| (npcType.type == NPCID.Retinazer && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Spazmatism && otherBoss.active))
-				|| (npcType.type == NPCID.Spazmatism && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Retinazer && otherBoss.active));
+			int[] limbNPCs = new int[] {
+				NPCID.PrimeSaw,
+				NPCID.PrimeLaser,
+				NPCID.PrimeCannon,
+				NPCID.PrimeVice,
+				NPCID.SkeletronHand,
+				NPCID.GolemFistLeft,
+				NPCID.GolemFistRight,
+				NPCID.GolemHead
+			};
+
+			bool isTwinsRet = npcType.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
+			bool isTwinsSpaz = npcType.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
+
+			return limbNPCs.Contains(npcType.type) || isTwinsRet || isTwinsSpaz;
 		}
 
-		public static int ListedBossNum(NPC boss, bool skipEventCheck = true) { // Skipcheck incase we need it to account for events
+		// Skipcheck incase we need it to account for events
+		public static int ListedBossNum(NPC boss, bool skipEventCheck = true) {
 			if (!BossChecklist.bossTracker.BossCache[boss.type]) return -1;
 			
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
@@ -343,8 +347,11 @@ namespace BossChecklist
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[index].npcIDs.Count; i++) {
-					if (Main.npc.Any(x => x != npc && x.type == BossChecklist.bossTracker.SortedBosses[index].npcIDs[i] && x.active)) return false;
+				BossInfo bossInfo = BossChecklist.bossTracker.SortedBosses[index];
+				for (int i = 0; i < bossInfo.npcIDs.Count; i++) {
+					if (Main.npc.Any(x => x != npc && x.type == bossInfo.npcIDs[i] && x.active)) {
+						return false;
+					}
 				}
 			}
 			return true;
