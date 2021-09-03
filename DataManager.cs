@@ -71,7 +71,7 @@ namespace BossChecklist
 	 * Firs represents the first successful attempt made for records
 	 *		If a player has nothing recorded we keep the Prev Records records stored in the First Records as well.
 	 *		Ideally, First Records will never change and cannot be 'reset'.
-	 *		They can be restricted to a certain extent, but prevent abuse is needed. 
+	 *		They can be restricted to a certain extent, but something to prevent abuse is needed. 
 	 *		TODO: Looking for thoughts on the issue above.
 	 * 
 	 * Best represents the best record
@@ -90,7 +90,7 @@ namespace BossChecklist
 		public int durationFirs = -1;
 		public int durationBest = -1;
 
-		/// Total Hits / Dodge Timer (Less hits is better)
+		/// Total Hits Taken
 		public int hitsTakenPrev = -1;
 		public int hitsTakenFirs = -1;
 		public int hitsTakenBest = -1;

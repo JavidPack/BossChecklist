@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -58,9 +59,15 @@ namespace BossChecklist
 		}
 
 		public override TagCompound Save() {
+			// We cannot save dictionaries, so we'll convert it to a TagoCompund instead
+			TagCompound TempStoredRecords = new TagCompound();
+			foreach (KeyValuePair<string, List<BossRecord>> bossRecord in AllStoredRecords) {
+				TempStoredRecords.Add(bossRecord.Key, bossRecord.Value);
+			}
+
 			TagCompound saveData = new TagCompound {
 				{ "BossLogPrompt", hasOpenedTheBossLog },
-				{ "Records", AllStoredRecords },
+				{ "StoredRecords", TempStoredRecords },
 				{ "Collection", BossTrophies }
 			};
 			return saveData;
@@ -70,7 +77,12 @@ namespace BossChecklist
 			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt");
 
 			// Grab the player's record data so we can grab what we need in OnEnterWorld().
-			AllStoredRecords = tag.Get<Dictionary<string, List<BossRecord>>>("Records");
+			TagCompound TempStoredRecords = tag.Get<TagCompound>("StoredRecords");
+			// Clear the list so we can convert our TagCompund back to a Dictionary
+			AllStoredRecords.Clear();
+			foreach (KeyValuePair<string, object> bossRecords in TempStoredRecords) {
+				AllStoredRecords.Add(bossRecords.Key, TempStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
+			}
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
 			List<BossCollection> SavedCollections = tag.Get<List<BossCollection>>("Collection");
@@ -107,11 +119,12 @@ namespace BossChecklist
 				Tracker_Deaths.Add(false);
 				Tracker_HitsTaken.Add(0);
 			}
-
+			
 			// Upon entering a world, determine if records already exist for a player and copy them into a variable.
 			string WorldID = Main.ActiveWorldFileData.UniqueId.ToString();
 			if (AllStoredRecords.ContainsKey(WorldID) && AllStoredRecords.TryGetValue(WorldID, out RecordsForWorld)) {
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+					// If we added mod bosses since we last generated this, be sure to add them
 					if (!RecordsForWorld.Exists(x => x.bossKey == boss.Key)) {
 						RecordsForWorld.Add(new BossRecord(boss.Key));
 					}

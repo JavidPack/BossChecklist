@@ -779,7 +779,7 @@ namespace BossChecklist.UIElements
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
-											recordNumbers = RecordTimeConversion(record.hitsTakenPrev);
+											recordNumbers = record.hitsTakenPrev.ToString();
 										}
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
@@ -788,7 +788,7 @@ namespace BossChecklist.UIElements
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
-											recordNumbers = RecordTimeConversion(record.hitsTakenFirs);
+											recordNumbers = record.hitsTakenFirs.ToString();
 										}
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
@@ -797,7 +797,7 @@ namespace BossChecklist.UIElements
 											recordNumbers = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
-											recordNumbers = RecordTimeConversion(record.hitsTakenBest);
+											recordNumbers = record.hitsTakenBest.ToString();
 										}
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
