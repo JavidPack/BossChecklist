@@ -216,7 +216,7 @@ namespace BossChecklist.UIElements
 					}
 					return;
 				}
-				else if (item.type != 0 || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
+				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 				}
 
@@ -245,7 +245,7 @@ namespace BossChecklist.UIElements
 				}
 
 				Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
-				if (item.type != 0 && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
+				if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
 					if (hasItem) {
 						spriteBatch.Draw(BossLogUI.checkMarkTexture, rect, Color.White); // hasItem first priority
 					}
@@ -278,10 +278,10 @@ namespace BossChecklist.UIElements
 
 				if (IsMouseHovering) {
 					if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
-						if (item.type != 0 && (Id.StartsWith("loot_") || Id.StartsWith("collect_")) && !Main.expertMode && (item.expert || item.expertOnly)) {
+						if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_")) && !Main.expertMode && (item.expert || item.expertOnly)) {
 							Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
 						}
-						else if (item.type != 0 || hoverText != "") {
+						else if (item.type != ItemID.None || hoverText != "") {
 							Color newcolor = ItemRarity.GetColor(item.rare);
 							float num3 = (float)(int)Main.mouseTextColor / 255f;
 							if (item.expert || item.expertOnly) {
@@ -619,10 +619,6 @@ namespace BossChecklist.UIElements
 							pos = new Vector2(pageRect.X + 5, pageRect.Y + 60);
 							Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.modSource})", pos, new Color(150, 150, 255), 0.75f);
 						}
-
-						//pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 75 : 55));
-						//Utils.DrawBorderString(spriteBatch, selectedBoss.downed() ? isDefeated : notDefeated, pos, selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed);
-
 					}
 					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == CategoryPage.Record && selectedBoss.modSource != "Unknown") {
 						if (selectedBoss.type != EntryType.Event) {
@@ -1044,7 +1040,7 @@ namespace BossChecklist.UIElements
 							Main.instance.LoadTiles(musicBoxTileType);
 							musicBoxTexture = Main.tileTexture[musicBoxTileType];
 
-							if (musicBoxItem.createTile > 0) {
+							if (musicBoxItem.createTile > TileID.Dirt) {
 								TileObjectData data = TileObjectData.GetTileData(musicBoxTileType, musicBoxStyle);
 
 								width = data.CoordinateWidth;
@@ -1107,7 +1103,7 @@ namespace BossChecklist.UIElements
 							Main.instance.LoadTiles(trophyTileType);
 							trophyTexture = Main.tileTexture[trophyTileType];
 
-							if (trophyItem.createTile > 0) {
+							if (trophyItem.createTile > TileID.Dirt) {
 								TileObjectData data = TileObjectData.GetTileData(trophyTileType, trophyStyle);
 
 								width = data.CoordinateWidth;

@@ -287,7 +287,7 @@ namespace BossChecklist
 						delegate {
 							if (Main.LocalPlayer.dead && Main.LocalPlayer.difficulty != 2) {
 								if (ClientConfig.TimerSounds) {
-									if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) Main.PlaySound(25);
+									if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) Main.PlaySound(SoundID.MaxMana);
 								}
 								string timer = (Main.LocalPlayer.respawnTimer / 60 + 1).ToString();
 								Vector2 screenPos = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 - 75);

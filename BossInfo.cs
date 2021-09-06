@@ -174,7 +174,7 @@ namespace BossChecklist
 				temp.SetDefaults(type);
 				if (temp.headSlot > 0 && temp.vanity) setup.Add(CollectionType.Mask);
 				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) setup.Add(CollectionType.MusicBox);
-				else if (temp.createTile > 0) {
+				else if (temp.createTile > TileID.Dirt) {
 					TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
 					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
 						setup.Add(CollectionType.Trophy);

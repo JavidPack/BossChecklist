@@ -828,7 +828,7 @@ namespace BossChecklist
 					col++;
 					if (k == 6) {
 						// Fills in rows with empty slots. New rows start after 7 items
-						if (ingList.item.type == 0) {
+						if (ingList.item.type == ItemID.None) {
 							break;
 						}
 						col = 0;
@@ -1471,19 +1471,19 @@ namespace BossChecklist
 			if (recipe.ProcessGroupsForText(item.type, out nameOverride)) {
 				//Main.toolTip.name = name;
 			}
-			if (recipe.anyIronBar && item.type == 22) {
+			if (recipe.anyIronBar && item.type == ItemID.IronBar) {
 				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(22);
 			}
-			else if (recipe.anyWood && item.type == 9) {
+			else if (recipe.anyWood && item.type == ItemID.Wood) {
 				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(9);
 			}
-			else if (recipe.anySand && item.type == 169) {
+			else if (recipe.anySand && item.type == ItemID.SandBlock) {
 				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(169);
 			}
-			else if (recipe.anyFragment && item.type == 3458) {
+			else if (recipe.anyFragment && item.type == ItemID.FragmentSolar) {
 				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.51");
 			}
-			else if (recipe.anyPressurePlate && item.type == 542) {
+			else if (recipe.anyPressurePlate && item.type == ItemID.GrayPressurePlate) {
 				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.38");
 			}
 			if (nameOverride != "") {
