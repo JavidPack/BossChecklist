@@ -185,6 +185,9 @@ namespace BossChecklist
 
 	public class WorldStats : TagSerializable
 	{
+		public int totalKills = 0;
+		public int totalDeaths = 0;
+
 		public string durationHolder = "";
 		public int durationWorld = -1;
 		
@@ -195,6 +198,9 @@ namespace BossChecklist
 
 		public WorldStats() { }
 		private WorldStats(TagCompound tag) {
+			totalKills = tag.Get<int>(nameof(totalKills));
+			totalDeaths = tag.Get<int>(nameof(totalDeaths));
+
 			durationHolder = tag.Get<string>(nameof(durationHolder));
 			durationWorld = tag.Get<int>(nameof(durationWorld));
 
@@ -204,6 +210,9 @@ namespace BossChecklist
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
+				{ nameof(totalKills), totalKills },
+				{ nameof(totalDeaths), totalDeaths },
+
 				{ nameof(durationHolder), durationHolder },
 				{ nameof(durationWorld), durationWorld },
 

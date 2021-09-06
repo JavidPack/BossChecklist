@@ -92,6 +92,78 @@ namespace BossChecklist
 			}
 		}
 
+		public override TagCompound Save() {
+			var WorldRecordList = new List<WorldRecord>(worldRecords);
+			var HiddenBossesList = new List<string>(HiddenBosses);
+			var downed = new List<string>();
+			if (downedBloodMoon) {
+				downed.Add("bloodmoon");
+			}
+			if (downedFrostMoon) {
+				downed.Add("frostmoon");
+			}
+			if (downedPumpkinMoon) {
+				downed.Add("pumpkinmoon");
+			}
+			if (downedSolarEclipse) {
+				downed.Add("solareclipse");
+			}
+			if (downedDarkMage) {
+				downed.Add("darkmage");
+			}
+			if (downedOgre) {
+				downed.Add("ogre");
+			}
+			if (downedFlyingDutchman) {
+				downed.Add("flyingdutchman");
+			}
+			if (downedMartianSaucer) {
+				downed.Add("martiansaucer");
+			}
+			if (downedInvasionT2Ours) {
+				downed.Add("invasionT2Ours");
+			}
+			if (downedInvasionT3Ours) {
+				downed.Add("invasionT3Ours");
+			}
+
+			return new TagCompound {
+				["downed"] = downed,
+				["HiddenBossesList"] = HiddenBossesList,
+				["Records"] = WorldRecordList
+			};
+		}
+
+		public override void Load(TagCompound tag) {
+			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
+			foreach (WorldRecord record in TempRecordStorage) {
+				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
+				if (index == -1) {
+					worldRecords.Add(record);
+				}
+				else {
+					worldRecords[index] = record;
+				}
+			}
+
+			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
+			foreach (var bossKey in HiddenBossesList) {
+				HiddenBosses.Add(bossKey);
+			}
+
+			var downed = tag.GetList<string>("downed");
+			downedBloodMoon = downed.Contains("bloodmoon");
+			downedFrostMoon = downed.Contains("frostmoon");
+			downedPumpkinMoon = downed.Contains("pumpkinmoon");
+			downedSolarEclipse = downed.Contains("solareclipse");
+			downedDarkMage = downed.Contains("darkmage");
+			downedOgre = downed.Contains("ogre");
+			downedFlyingDutchman = downed.Contains("flyingdutchman");
+			downedMartianSaucer = downed.Contains("martiansaucer");
+			downedInvasionT2Ours = downed.Contains("invasionT2Ours");
+			downedInvasionT3Ours = downed.Contains("invasionT3Ours");
+		}
+
 		public override void PreUpdate() {
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC b = Main.npc[n];
@@ -216,78 +288,6 @@ namespace BossChecklist
 			}
 		}
 		*/
-
-		public override TagCompound Save() {
-			var WorldRecordList = new List<WorldRecord>(worldRecords);
-			var HiddenBossesList = new List<string>(HiddenBosses);
-			var downed = new List<string>();
-			if (downedBloodMoon) {
-				downed.Add("bloodmoon");
-			}
-			if (downedFrostMoon) {
-				downed.Add("frostmoon");
-			}
-			if (downedPumpkinMoon) {
-				downed.Add("pumpkinmoon");
-			}
-			if (downedSolarEclipse) {
-				downed.Add("solareclipse");
-			}
-			if (downedDarkMage) {
-				downed.Add("darkmage");
-			}
-			if (downedOgre) {
-				downed.Add("ogre");
-			}
-			if (downedFlyingDutchman) {
-				downed.Add("flyingdutchman");
-			}
-			if (downedMartianSaucer) {
-				downed.Add("martiansaucer");
-			}
-			if (downedInvasionT2Ours) {
-				downed.Add("invasionT2Ours");
-			}
-			if (downedInvasionT3Ours) {
-				downed.Add("invasionT3Ours");
-			}
-
-			return new TagCompound {
-				["downed"] = downed,
-				["HiddenBossesList"] =	HiddenBossesList,
-				["Records"] = WorldRecordList
-			};
-		}
-
-		public override void Load(TagCompound tag) {
-			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
-			foreach (WorldRecord record in TempRecordStorage) {
-				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
-				if (index == -1) {
-					worldRecords.Add(record);
-				}
-				else {
-					worldRecords[index] = record;
-				}
-			}
-
-			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
-			foreach (var bossKey in HiddenBossesList) {
-				HiddenBosses.Add(bossKey);
-			}
-
-			var downed = tag.GetList<string>("downed");
-			downedBloodMoon = downed.Contains("bloodmoon");
-			downedFrostMoon = downed.Contains("frostmoon");
-			downedPumpkinMoon = downed.Contains("pumpkinmoon");
-			downedSolarEclipse = downed.Contains("solareclipse");
-			downedDarkMage = downed.Contains("darkmage");
-			downedOgre = downed.Contains("ogre");
-			downedFlyingDutchman = downed.Contains("flyingdutchman");
-			downedMartianSaucer = downed.Contains("martiansaucer");
-			downedInvasionT2Ours = downed.Contains("invasionT2Ours");
-			downedInvasionT3Ours = downed.Contains("invasionT3Ours");
-		}
 
 		public override void NetSend(BinaryWriter writer) {
 			// BitBytes can have up to 8 values.

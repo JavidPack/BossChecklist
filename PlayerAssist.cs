@@ -16,8 +16,8 @@ namespace BossChecklist
 		public List<BossRecord> RecordsForWorld; // Records will now be tied to character AND world.
 		public List<BossCollection> BossTrophies; // Unlike records, loot and collectibles are bound to player only.
 		
-		public int durationLastFight;
-		public int hitsTakenLastFight;
+		public int duration_CompareValue;
+		public int hitsTaken_CompareValue;
 
 		public List<int> Trackers_Duration;
 		public List<int> Tracker_HitsTaken;
@@ -42,7 +42,7 @@ namespace BossChecklist
 			// TODO: Reimplement how this works. Best record becomes Prev Best on new record until another fight overwrites it with a new previous attempt?
 			// This will be the attempt records of the players last fight (Not saved!)
 			// This is only used for the UI, to determine whether the PrevRecord is a "last attempt" or a "beaten record"
-			durationLastFight = hitsTakenLastFight = -1;
+			duration_CompareValue = hitsTaken_CompareValue = -1;
 
 			// For being able to complete records in Multiplayer
 			Trackers_Duration = new List<int>();
@@ -109,7 +109,7 @@ namespace BossChecklist
 			BossLogUI.PageNum = -3; 
 			
 			// Reset record tracker numbers
-			durationLastFight = -1; //TODO: find out why hitstaken isnt reset and why its set to -1
+			duration_CompareValue = -1; //TODO: find out why hitstaken isnt reset and why its set to -1
 			Trackers_Duration = new List<int>();
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();

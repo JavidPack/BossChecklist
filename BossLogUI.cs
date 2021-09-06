@@ -30,6 +30,8 @@ namespace BossChecklist
 		public SubpageButton lootButton;
 		//public SubpageButton collectButton;
 		public SubpageButton[] AltPageButtons;
+		public UIImageButton comparebutton1;
+		public UIImageButton comparebutton2;
 
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
@@ -349,6 +351,18 @@ namespace BossChecklist
 				two,
 				three
 			};
+
+			comparebutton1 = new UIImageButton(Main.inventoryBackTexture);
+			comparebutton1.Width.Pixels = 32;
+			comparebutton1.Height.Pixels = 32;
+			comparebutton1.Left.Pixels = PageTwo.Width.Pixels - (comparebutton1.Width.Pixels * 2) - 40;
+			comparebutton1.Top.Pixels = 50;
+
+			comparebutton2 = new UIImageButton(Main.inventoryBack2Texture);
+			comparebutton2.Width.Pixels = 32;
+			comparebutton2.Height.Pixels = 32;
+			comparebutton2.Left.Pixels = PageTwo.Width.Pixels - (comparebutton2.Width.Pixels * 2) - 8;
+			comparebutton2.Top.Pixels = 50;
 
 			toggleHidden = new UIHoverImageButton(Main.inventoryTickOffTexture, "Toggle hidden visibility");
 			toggleHidden.Left.Pixels = 112 - Main.inventoryTickOffTexture.Width;
@@ -1311,6 +1325,8 @@ namespace BossChecklist
 			for (int i = 0; i < AltPageButtons.Length; i++) {
 				PageTwo.RemoveChild(AltPageButtons[i]);
 			}
+			PageTwo.RemoveChild(comparebutton1);
+			PageTwo.RemoveChild(comparebutton2);
 
 			if (PageNum == -2) {
 				PageOne.Append(PrevPage);
@@ -1338,6 +1354,22 @@ namespace BossChecklist
 							AltPageButtons[i].Top.Pixels = 86;
 							AltPageButtons[i].OnClick += new MouseEvent(ButtonClicked);
 							PageTwo.Append(AltPageButtons[i]);
+						}
+						if (AltPageSelected[0] != 0 && AltPageSelected[0] != 1) {
+							comparebutton1.Width.Pixels = 32;
+							comparebutton1.Height.Pixels = 32;
+							comparebutton1.Left.Pixels = PageTwo.Width.Pixels - (comparebutton1.Width.Pixels * 2) - 40;
+							comparebutton1.Top.Pixels = 50;
+							comparebutton1.OnClick += (a, b) => CompareState = (CompareState == 1) ? -1 : 1;
+
+							comparebutton2.Width.Pixels = 32;
+							comparebutton2.Height.Pixels = 32;
+							comparebutton2.Left.Pixels = PageTwo.Width.Pixels - (comparebutton2.Width.Pixels * 2) - 8;
+							comparebutton2.Top.Pixels = 50;
+							comparebutton2.OnClick += (a, b) => CompareState = (CompareState == 2) ? -1 : 2;
+
+							PageTwo.Append(comparebutton1);
+							PageTwo.Append(comparebutton2);
 						}
 					}
 				}

@@ -84,6 +84,7 @@ BossLog.DrawnText.Records=Records
 BossLog.DrawnText.SpawnInfo=Spawn Info
 BossLog.DrawnText.LootCollect=Loot & Collection
 BossLog.DrawnText.KDR=Kill Death Ratio
+BossLog.DrawnText.KDRWorld=Total Victories and Deaths
 BossLog.DrawnText.Duration=Fight Duration
 BossLog.DrawnText.Health=Lowest Health State
 BossLog.DrawnText.Dodge=Hits Taken
@@ -104,7 +105,7 @@ BossLog.Credits.Notice=[This list only contains loaded mods]
 
 BossLog.Terms.BossLog=Boss Log
 BossLog.Terms.ByHand=By Hand
-BossLog.Terms.NoRecord=No record!
+BossLog.Terms.NoRecord=No record set...
 BossLog.Terms.Unchallenged=Unchallenged!
 BossLog.Terms.Kills=kills
 BossLog.Terms.Deaths=deaths

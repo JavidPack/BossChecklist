@@ -133,12 +133,12 @@ namespace BossChecklist
 			int hitsTaken_Best = bossStats.hitsTakenBest;
 
 			// 1.) Setup player's last fight attempt numbers. These will be the numbers we are comparing to our best record.
-			// We also mark them for modplayer so we can calculate differences! //TODO ?? Is this necessary ??
+			// Also record them for comparison against Best/World records.
 			bossStats.durationPrev = duration_Prev;
 			bossStats.hitsTakenPrev = hitsTaken_Prev;
 
-			modPlayer.durationLastFight = duration_Prev;
-			modPlayer.hitsTakenLastFight = hitsTaken_Prev;
+			modPlayer.duration_CompareValue = duration_Prev;
+			modPlayer.hitsTaken_CompareValue = hitsTaken_Prev;
 
 			// 2.) Kills always go up, since this section of code only occurs if boss was defeated
 			bossStats.kills++; 
@@ -148,9 +148,11 @@ namespace BossChecklist
 				bossStats.durationFirs = duration_Prev;
 				bossStats.durationBest = duration_Prev;
 			}
-			// 4.) If a first attempt was made, check to see if it is a new best record.
+			// 4.) If a first attempt was already made, check to see if it is a new best record.
+			// Since its a new record, keep the old best record for comparison until the next fight.
 			else if (duration_Prev < duration_Best || duration_Best == -1) {
 				newRecordSet = true;
+				modPlayer.duration_CompareValue = bossStats.durationBest;
 				bossStats.durationBest = duration_Prev;
 			}
 
@@ -161,11 +163,12 @@ namespace BossChecklist
 			}
 			else if (hitsTaken_Prev < hitsTaken_Best || hitsTaken_Best == -1) {
 				newRecordSet = true;
+				modPlayer.hitsTaken_CompareValue = bossStats.hitsTakenBest;
 				bossStats.hitsTakenBest = duration_Prev;
 			}
 			
 			// 5.) If a new record was made, notify the player. Note: The player isn't notified if it was their first attempt.
-			// If thw world records are set, we can check for new world records as well
+			// If the world records are set, we can check for new world records as well
 			if (newRecordSet) {
 				modPlayer.hasNewRecord[recordIndex] = true;
 				CombatText.NewText(player.getRect(), Color.LightYellow, "Personal Best!", true);
@@ -196,8 +199,8 @@ namespace BossChecklist
 					hitsTakenPrev = hitsTaken_Prev
 				};
 
-				modPlayer.durationLastFight = duration_Prev;
-				modPlayer.hitsTakenLastFight = hitsTaken_Prev;
+				modPlayer.duration_CompareValue = duration_Prev;
+				modPlayer.hitsTaken_CompareValue = hitsTaken_Prev;
 
 				// 2.) Kills always go up, since this section of code only occurs if boss was defeated
 				// TODO: Do I need to account for deaths to update to the server too?? Or is that happen each instance already.
@@ -239,14 +242,14 @@ namespace BossChecklist
 				packet.Write((int)recordIndex); // Which boss record are we changing?
 				newRecord.NetSend(packet, specificRecord); // Writes all the variables needed
 				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
+				
+				if (hasNewRecord) {
+					CheckForAWorldRecord(recordIndex, player.whoAmI);
+					hasNewRecord = false;
+				}
 			}
-			if (hasNewRecord) {
-				CheckForAWorldRecord();
-			}
 
-
-
-
+			/*
 			if (worldRecordHolders.Any(x => x != "")) {
 				WorldStats worldStats = WorldAssist.worldRecords[recordIndex].stat;
 				RecordID specificRecord = RecordID.None;
@@ -260,13 +263,16 @@ namespace BossChecklist
 					worldStats.hitsTakenHolder = worldRecordHolders[1];
 					worldStats.hitsTakenWorld = newWorldRecords[1];
 				}
-				
+
 				ModPacket packet = mod.GetPacket();
 				packet.Write((byte)PacketMessageType.WorldRecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
 				worldStats.NetSend(packet, specificRecord);
 				packet.Send(); // To server (world data for everyone)
 			}
+			*/
+
+
 		}
 		
 		public void CheckForAWorldRecord(int recordIndex, int whoAmI) {
