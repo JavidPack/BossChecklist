@@ -4,6 +4,7 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.UI;
@@ -24,13 +25,13 @@ namespace BossChecklist.UIElements
 		internal class BossAssistButton : UIImageButton
 		{
 			internal string buttonType;
-			internal Texture2D texture;
+			internal Asset<Texture2D> texture;
 			internal int cycleFrame = 0;
 			internal bool slowDown = true;
 			private Vector2 offset;
 			internal bool dragging;
 
-			public BossAssistButton(Texture2D texture, string type) : base(texture) {
+			public BossAssistButton(Asset<Texture2D> texture, string type) : base(texture) {
 				buttonType = type;
 				this.texture = texture;
 			}
@@ -132,7 +133,7 @@ namespace BossChecklist.UIElements
 							cycleFrame = 0;
 						}
 
-						Texture2D bookBorder = BossChecklist.instance.GetTexture("Resources/LogUI_ButtonBorder");
+						Texture2D bookBorder = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_ButtonBorder");
 						Rectangle source = new Rectangle(0, 40 * cycleFrame, 34, 38);
 						spriteBatch.Draw(bookBorder, innerDimensions.ToRectangle(), source, BossChecklist.BossLogConfig.BossLogColor);
 					}
@@ -194,7 +195,7 @@ namespace BossChecklist.UIElements
 
 				if (Id.StartsWith("loot_") && hasItem) {
 					Main.inventoryBack7Texture = Main.inventoryBack3Texture;
-					Main.inventoryBack6Texture = BossChecklist.instance.GetTexture("Resources/Extra_ExpertCollected");
+					Main.inventoryBack6Texture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_ExpertCollected");
 				}
 
 				if (Id.StartsWith("collect_") && hasItem) {
@@ -453,7 +454,7 @@ namespace BossChecklist.UIElements
 							for (int h = 0; h < headBoss.npcIDs.Count; h++) {
 								Texture2D head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
 								if (headBoss.overrideIconTexture != "") {
-									head = ModContent.GetTexture(headBoss.overrideIconTexture);
+									head = ModContent.Assets.Request<Texture2D>(headBoss.overrideIconTexture);
 								}
 								if (head != Main.npcHeadTexture[0]) {
 									headsDisplayed++;
@@ -482,7 +483,7 @@ namespace BossChecklist.UIElements
 						Vector2 stringPos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs"), stringPos, Color.IndianRed);
 
-						Texture2D users = BossChecklist.instance.GetTexture("Resources/Extra_CreditUsers");
+						Texture2D users = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_CreditUsers");
 						string[] usernames = { "Jopojelly", "SheepishShepherd", "direwolf420", "RiverOaken", "Orian", "Panini" };
 						string[] titles = { "Mod Owner", "Mod Co-Owner", "Boss Radar Code", "Spriter", "Singleplayer Testing", "Server Testing" };
 						Color[] colors = { Color.CornflowerBlue, Color.Goldenrod, Color.Tomato, Color.MediumPurple, new Color(49, 210, 162), Color.HotPink };
@@ -537,7 +538,7 @@ namespace BossChecklist.UIElements
 						Texture2D bossTexture = null;
 						Rectangle bossSourceRectangle = new Rectangle();
 						if (selectedBoss.pageTexture != "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-							bossTexture = ModContent.GetTexture(selectedBoss.pageTexture);
+							bossTexture = ModContent.Assets.Request<Texture2D>(selectedBoss.pageTexture);
 							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width, bossTexture.Height);
 						}
 						else if (selectedBoss.npcIDs.Count > 0) {
@@ -627,7 +628,7 @@ namespace BossChecklist.UIElements
 					if (Id == "PageTwo" && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
 						if (selectedBoss.type != EntryType.Event) {
 							// Boss Records Subpage
-							Texture2D achievements = ModContent.GetTexture("Terraria/UI/Achievements");
+							Texture2D achievements = ModContent.Assets.Request<Texture2D>("Terraria/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 							BossStats record = modPlayer.AllBossRecords[BossLogUI.PageNum].stat;
 
@@ -817,7 +818,7 @@ namespace BossChecklist.UIElements
 								}
 
 								if (isNewRecord[i] && modPlayer.hasNewRecord[BossLogUI.PageNum]) {
-									Texture2D text = ModContent.GetTexture("Terraria/UI/UI_quickicon1");
+									Texture2D text = ModContent.Assets.Request<Texture2D>("Terraria/UI/UI_quickicon1");
 									Rectangle exclam = new Rectangle(pageRect.X + 59, pageRect.Y + 96 + (75 * i), 9, 24);
 									spriteBatch.Draw(text, exclam, Color.White);
 								}
@@ -977,7 +978,7 @@ namespace BossChecklist.UIElements
 					if (Id == "PageTwo" && BossLogUI.SubPageNum == 2) {
 						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
 							// Loot Table Subpage
-							Texture2D bag = ModContent.GetTexture("BossChecklist/Resources/Extra_TreasureBag");
+							Texture2D bag = ModContent.Assets.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag");
 							Rectangle sourceRect = bag.Bounds;
 							for (int i = 0; i < selectedBoss.loot.Count; i++) {
 								int bagItem = selectedBoss.loot[i];
@@ -986,8 +987,8 @@ namespace BossChecklist.UIElements
 									DrawAnimation drawAnim = Main.itemAnimations[bagItem];
 									sourceRect = drawAnim != null ? sourceRect = drawAnim.GetFrame(bag) : bag.Bounds;
 									break;
-									//if (bagItem.type < ItemID.Count) bag = ModContent.GetTexture("Terraria/Item_" + bagItem.type);
-									//else bag = ModContent.GetTexture(ItemLoader.GetItem(bagItem.type).Texture);
+									//if (bagItem.type < ItemID.Count) bag = ModContent.Assets.Request<Texture2D>("Terraria/Item_" + bagItem.type);
+									//else bag = ModContent.Assets.Request<Texture2D>(ItemLoader.GetItem(bagItem.type).Texture);
 								}
 							}
 							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 20 - (bag.Width / 2), pageRect.Y + 88, sourceRect.Width, sourceRect.Height);
@@ -1017,7 +1018,7 @@ namespace BossChecklist.UIElements
 
 							// PageNum already corresponds with the index of the saved player data
 
-							Texture2D template = ModContent.GetTexture("BossChecklist/Resources/Extra_CollectionTemplate");
+							Texture2D template = ModContent.Assets.Request<Texture2D>("BossChecklist/Resources/Extra_CollectionTemplate");
 							Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width / 2) - 20, pageRect.Y + 84, template.Width, template.Height);
 							spriteBatch.Draw(template, ctRect, Color.White);
 
@@ -1073,10 +1074,10 @@ namespace BossChecklist.UIElements
 								if (selectedMask < ItemID.Count) {
 									Item newItem = new Item();
 									newItem.SetDefaults(selectedMask);
-									mask = ModContent.GetTexture("Terraria/Armor_Head_" + newItem.headSlot);
+									mask = ModContent.Assets.Request<Texture2D>("Terraria/Armor_Head_" + newItem.headSlot);
 								}
 								else {
-									mask = ModContent.GetTexture(ItemLoader.GetItem(selectedMask).Texture + "_Head");
+									mask = ModContent.Assets.Request<Texture2D>(ItemLoader.GetItem(selectedMask).Texture + "_Head");
 								}
 
 								int frameCut = mask.Height / 24;
@@ -1175,9 +1176,9 @@ namespace BossChecklist.UIElements
 
 		internal class BookUI : UIImage
 		{
-			Texture2D book;
+			Asset<Texture2D> book;
 
-			public BookUI(Texture2D texture) : base(texture) {
+			public BookUI(Asset<Texture2D> texture) : base(texture) {
 				book = texture;
 			}
 
@@ -1191,9 +1192,9 @@ namespace BossChecklist.UIElements
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
 				if (Id == "ToCFilter_Tab") {
-					Texture2D pages = BossChecklist.instance.GetTexture("Resources/LogUI_Back");
+					Asset<Texture2D> pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Back");
 					Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
-					spriteBatch.Draw(pages, pagePos, BossChecklist.BossLogConfig.BossLogColor);
+					spriteBatch.Draw(pages.Value, pagePos, BossChecklist.BossLogConfig.BossLogColor);
 				}
 				if (!Id.EndsWith("_Tab")) {
 					base.DrawSelf(spriteBatch);
@@ -1226,7 +1227,7 @@ namespace BossChecklist.UIElements
 				}
 				if (Id == "Event_Tab") {
 					// Paper Drawing
-					Texture2D pages = BossChecklist.instance.GetTexture("Resources/LogUI_Paper");
+					Texture2D pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Paper");
 					Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
 					spriteBatch.Draw(pages, pagePos, Color.White);
 				}
@@ -1431,7 +1432,7 @@ namespace BossChecklist.UIElements
 						else {
 							Vector2 stringAdjust = Main.fontMouseText.MeasureString(displayName);
 							for (int i = 0; i < stringAdjust.X + 4; i++) {
-								Texture2D strike = BossChecklist.instance.GetTexture("Resources/Checks_Strike");
+								Texture2D strike = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Strike");
 								Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
 								Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
 								if (i == 0) {
@@ -1552,7 +1553,7 @@ namespace BossChecklist.UIElements
 					DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, Main.fontMouseText, translated, pos, Color.Gold);
 				}
 
-				Texture2D text = ModContent.GetTexture("Terraria/UI/Achievement_Categories");
+				Texture2D text = ModContent.Assets.Request<Texture2D>("Terraria/UI/Achievement_Categories");
 				Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 32, 32);
 
 				if (buttonString == "") {

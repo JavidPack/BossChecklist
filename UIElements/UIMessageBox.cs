@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -66,7 +67,7 @@ namespace BossChecklist.UIElements
 			CalculatedStyle space = GetInnerDimensions();
 			//Main.spriteBatch.Draw(Main.magicPixel, space.ToRectangle(), Color.Yellow * .7f);
 			//Main.spriteBatch.Draw(Main.magicPixel, GetOuterDimensions().ToRectangle(), Color.Red * .7f);
-			DynamicSpriteFont font = Main.fontMouseText;
+			DynamicSpriteFont font = FontAssets.MouseText.Value;
 			float position = 0f;
 			if (this._scrollbar != null) {
 				position = -this._scrollbar.GetValue();
@@ -92,9 +93,9 @@ namespace BossChecklist.UIElements
 					ChatManager.ConvertNormalSnippets(texts);
 					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, texts, new Vector2(space.X, space.Y + position /*+ offset*/), 0f, Vector2.Zero, Vector2.One, out hoveredSnippet);
 					//offset += 20;
-					//offset += texts.Max(t => (int)ChatManager.GetStringSize(Main.fontMouseText, texts, Vector2.One).X);
+					//offset += texts.Max(t => (int)ChatManager.GetStringSize(FontAssets.MouseText, texts, Vector2.One).X);
 					if (hoveredSnippet > -1 && IsMouseHovering) {
-						BossChecklist.instance.BossLog.hoveredTextSnippet = texts[hoveredSnippet];
+						BossUISystem.Instance.BossLog.hoveredTextSnippet = texts[hoveredSnippet];
 						// BossChecklist change: Use hoveredTextSnippet to bypass clippingRectangle and draw order issues.
 						//texts[hoveredSnippet].OnHover();
 						//if (Main.mouseLeft && Main.mouseLeftRelease/* && Terraria.GameInput.PlayerInput.Triggers.JustReleased.MouseLeft*/) {
@@ -133,7 +134,7 @@ namespace BossChecklist.UIElements
 			if (space.Width <= 0 || space.Height <= 0) {
 				return;
 			}
-			DynamicSpriteFont font = Main.fontMouseText;
+			DynamicSpriteFont font = FontAssets.MouseText.Value;
 
 			drawTextSnippets = WordwrapStringSmart(text, Color.White, font, (int)space.Width, -1);
 			//height = ChatManager.GetStringSize(font, text, Vector2.One, space.Width).Y;

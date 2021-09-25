@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.Localization;
@@ -54,26 +56,26 @@ namespace BossChecklist
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Cropped Textures
-		public static Texture2D bookTexture;
-		public static Texture2D borderTexture;
-		public static Texture2D fadedTexture;
-		public static Texture2D colorTexture;
-		public static Texture2D prevTexture;
-		public static Texture2D nextTexture;
-		public static Texture2D tocTexture;
-		public static Texture2D credTexture;
-		public static Texture2D bossNavTexture;
-		public static Texture2D minibossNavTexture;
-		public static Texture2D eventNavTexture;
-		public static Texture2D filterTexture;
-		public static Texture2D checkMarkTexture;
-		public static Texture2D xTexture;
-		public static Texture2D circleTexture;
-		public static Texture2D checkboxTexture;
+		public static Asset<Texture2D> bookTexture;
+		public static Asset<Texture2D> borderTexture;
+		public static Asset<Texture2D> fadedTexture;
+		public static Asset<Texture2D> colorTexture;
+		public static Asset<Texture2D> prevTexture;
+		public static Asset<Texture2D> nextTexture;
+		public static Asset<Texture2D> tocTexture;
+		public static Asset<Texture2D> credTexture;
+		public static Asset<Texture2D> bossNavTexture;
+		public static Asset<Texture2D> minibossNavTexture;
+		public static Asset<Texture2D> eventNavTexture;
+		public static Asset<Texture2D> filterTexture;
+		public static Asset<Texture2D> checkMarkTexture;
+		public static Asset<Texture2D> xTexture;
+		public static Asset<Texture2D> circleTexture;
+		public static Asset<Texture2D> checkboxTexture;
 		//public static Texture2D silverStarTexture; // unused
-		public static Texture2D chestTexture;
-		public static Texture2D starTexture;
-		public static Texture2D goldChestTexture;
+		public static Asset<Texture2D> chestTexture;
+		public static Asset<Texture2D> starTexture;
+		public static Asset<Texture2D> goldChestTexture;
 		
 		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
 		public static int SubPageNum = 0; // Selected Topic Tab (Records, Spawn Info, Loot/Collection)
@@ -138,27 +140,27 @@ namespace BossChecklist
 		}
 
 		public override void OnInitialize() {
-			bookTexture = BossChecklist.instance.GetTexture("Resources/Book_Outline");
-			borderTexture = BossChecklist.instance.GetTexture("Resources/Book_Border");
-			fadedTexture = BossChecklist.instance.GetTexture("Resources/Book_Faded");
-			colorTexture = BossChecklist.instance.GetTexture("Resources/Book_Color");
+			bookTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Outline");
+			borderTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Border");
+			fadedTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Faded");
+			colorTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Color");
 			
-			prevTexture = BossChecklist.instance.GetTexture("Resources/Nav_Prev");
-			nextTexture = BossChecklist.instance.GetTexture("Resources/Nav_Next");
-			tocTexture = BossChecklist.instance.GetTexture("Resources/Nav_Contents");
-			credTexture = BossChecklist.instance.GetTexture("Resources/Nav_Credits");
-			bossNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Boss");
-			minibossNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Miniboss");
-			eventNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Event");
-			filterTexture = BossChecklist.instance.GetTexture("Resources/Nav_Filter");
+			prevTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Prev");
+			nextTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Next");
+			tocTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Contents");
+			credTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Credits");
+			bossNavTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Boss");
+			minibossNavTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Miniboss");
+			eventNavTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Event");
+			filterTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Filter");
 			
-			checkMarkTexture = BossChecklist.instance.GetTexture("Resources/Checks_Check");
-			xTexture = BossChecklist.instance.GetTexture("Resources/Checks_X");
-			circleTexture = BossChecklist.instance.GetTexture("Resources/Checks_Next");
-			checkboxTexture = BossChecklist.instance.GetTexture("Resources/Checks_Box");
-			chestTexture = BossChecklist.instance.GetTexture("Resources/Checks_Chest");
-			starTexture = BossChecklist.instance.GetTexture("Resources/Checks_Star");
-			goldChestTexture = BossChecklist.instance.GetTexture("Resources/Checks_GoldChest");
+			checkMarkTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Check");
+			xTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_X");
+			circleTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Next");
+			checkboxTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Box");
+			chestTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Chest");
+			starTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Star");
+			goldChestTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_GoldChest");
 			
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog");
 			bosslogbutton.Id = "OpenUI";
@@ -173,7 +175,7 @@ namespace BossChecklist
 				false, false, false, false
 			};
 
-			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			ToCTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab"));
 			ToCTab.Height.Pixels = 76;
 			ToCTab.Width.Pixels = 32;
 			ToCTab.Left.Set(-416, 0.5f);
@@ -181,7 +183,7 @@ namespace BossChecklist
 			ToCTab.Id = "ToCFilter_Tab";
 			ToCTab.OnClick += new MouseEvent(OpenViaTab);
 
-			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			BossTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab"));
 			BossTab.Height.Pixels = 76;
 			BossTab.Width.Pixels = 32;
 			BossTab.Left.Set(-416, 0.5f);
@@ -189,7 +191,7 @@ namespace BossChecklist
 			BossTab.Id = "Boss_Tab";
 			BossTab.OnClick += new MouseEvent(OpenViaTab);
 
-			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			MiniBossTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab"));
 			MiniBossTab.Height.Pixels = 76;
 			MiniBossTab.Width.Pixels = 32;
 			MiniBossTab.Left.Set(-416, 0.5f);
@@ -197,7 +199,7 @@ namespace BossChecklist
 			MiniBossTab.Id = "Miniboss_Tab";
 			MiniBossTab.OnClick += new MouseEvent(OpenViaTab);
 
-			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			EventTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab"));
 			EventTab.Height.Pixels = 76;
 			EventTab.Width.Pixels = 32;
 			EventTab.Left.Set(-416, 0.5f);
@@ -205,7 +207,7 @@ namespace BossChecklist
 			EventTab.Id = "Event_Tab";
 			EventTab.OnClick += new MouseEvent(OpenViaTab);
 
-			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			CreditsTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab"));
 			CreditsTab.Height.Pixels = 76;
 			CreditsTab.Width.Pixels = 32;
 			CreditsTab.Left.Set(-416, 0.5f);
@@ -261,7 +263,7 @@ namespace BossChecklist
 
 			pageTwoItemList = new UIList();
 
-			filterPanel = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Filter"));
+			filterPanel = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Filter"));
 			filterPanel.Id = "filterPanel";
 			filterPanel.Height.Pixels = 76;
 			filterPanel.Width.Pixels = 152;
@@ -343,9 +345,9 @@ namespace BossChecklist
 			toolTipButton.Top.Pixels = 100;
 			toolTipButton.OnClick += (a, b) => SwapRecordPage();
 
-			toggleHidden = new UIHoverImageButton(Main.inventoryTickOffTexture, "Toggle hidden visibility");
-			toggleHidden.Left.Pixels = 112 - Main.inventoryTickOffTexture.Width;
-			toggleHidden.Top.Pixels = Main.inventoryTickOffTexture.Height * 2 / 3;
+			toggleHidden = new UIHoverImageButton(TextureAssets.InventoryTickOff, "Toggle hidden visibility");
+			toggleHidden.Left.Pixels = 112 - TextureAssets.InventoryTickOff.Width();
+			toggleHidden.Top.Pixels = TextureAssets.InventoryTickOff.Height() * 2 / 3;
 			toggleHidden.OnClick += (a, b) => ToggleHidden();
 			filterPanel.Append(toggleHidden);
 		}
@@ -707,7 +709,7 @@ namespace BossChecklist
 
 		private void ToggleHidden() {
 			showHidden = !showHidden;
-			toggleHidden.SetImage(showHidden ? Main.inventoryTickOnTexture : Main.inventoryTickOffTexture);
+			toggleHidden.SetImage(showHidden ? TextureAssets.InventoryTickOn : TextureAssets.InventoryTickOff);
 			UpdateTableofContents();
 		}
 
@@ -758,7 +760,7 @@ namespace BossChecklist
 					type = "Event";
 				}
 				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
-				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (Main.fontMouseText.MeasureString(info.Text).X / 2) - 20;
+				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 20;
 				info.Top.Pixels = 300;
 				PageTwo.Append(info);
 				return;
@@ -769,23 +771,22 @@ namespace BossChecklist
 			//List<Recipe> recipes = Main.recipe.ToList();
 			Item spawn = new Item();
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
-				RecipeFinder finder = new RecipeFinder();
-				finder.SetResult(boss.spawnItem[RecipePageNum]);
+				var recipes = Main.recipe
+					.Take(Recipe.numRecipes)
+					.Where(r => r.HasResult(boss.spawnItem[RecipePageNum]));
 
-				foreach (Recipe recipe in finder.SearchRecipes()) {
+				foreach (Recipe recipe in recipes) {
 					if (TotalRecipes == RecipeShown) {
 						foreach (Item item in recipe.requiredItem) {
 							Item clone = item.Clone();
 							OverrideForGroups(recipe, clone);
 							ingredients.Add(clone);
 						}
-						foreach (int tile in recipe.requiredTile) {
-							if (tile != -1) {
-								requiredTiles.Add(tile);
-							}
-						}
-						if (recipe is ModRecipe modRecipe) {
-							recipeMod = modRecipe.mod.DisplayName;
+
+						requiredTiles.AddRange(recipe.requiredTile);
+
+						if (recipe.Mod != null) {
+							recipeMod = recipe.Mod.DisplayName;
 						}
 					}
 					TotalRecipes++;
@@ -1227,7 +1228,7 @@ namespace BossChecklist
 				else {
 					WorldAssist.HiddenBosses.Remove(pgBoss.Key);
 				}
-				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				UpdateTableofContents();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
@@ -1368,24 +1369,25 @@ namespace BossChecklist
 
 		public static Color MaskBoss(BossInfo boss) => (((!boss.downed() || !boss.available()) && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
 
-		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
+		public static Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
 
-		public static Texture2D GetEventIcon(BossInfo boss) {
+		public static Asset<Texture2D> GetEventIcon(BossInfo boss) {
 			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") {
-				return ModContent.GetTexture(boss.overrideIconTexture);
+				return ModContent.Request<Texture2D>(boss.overrideIconTexture);
 			}
-			switch (boss.internalName) {
-				case "Frost Legion": return ModContent.GetTexture("Terraria/Extra_7");
-				case "Frost Moon": return ModContent.GetTexture("Terraria/Extra_8");
-				case "Goblin Army": return ModContent.GetTexture("Terraria/Extra_9");
-				case "Martian Madness": return ModContent.GetTexture("Terraria/Extra_10");
-				case "Pirate Invasion": return ModContent.GetTexture("Terraria/Extra_11");
-				case "Pumpkin Moon": return ModContent.GetTexture("Terraria/Extra_12");
-				case "Old One's Army": return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-				case "Blood Moon": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-				case "Solar Eclipse": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
-				default: return Main.npcHeadTexture[0];
-			}
+
+			return boss.internalName switch {
+				"Frost Legion"    => ModContent.Request<Texture2D>("Terraria/Extra_7"),
+				"Frost Moon"      => ModContent.Request<Texture2D>("Terraria/Extra_8"),
+				"Goblin Army"     => ModContent.Request<Texture2D>("Terraria/Extra_9"),
+				"Martian Madness" => ModContent.Request<Texture2D>("Terraria/Extra_10"),
+				"Pirate Invasion" => ModContent.Request<Texture2D>("Terraria/Extra_11"),
+				"Pumpkin Moon"    => ModContent.Request<Texture2D>("Terraria/Extra_12"),
+				"Old One's Army"  => BossLogUI.GetBossHead(NPCID.DD2LanePortal),
+				"Blood Moon"      => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventBloodMoon_Head"),
+				"Solar Eclipse"   => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventSolarEclipse_Head"),
+				_                 => TextureAssets.NpcHead[0]
+			};
 		}
 
 		/* Currently removed due to rendering issue that is unable to replicated
@@ -1403,21 +1405,6 @@ namespace BossChecklist
 			string nameOverride;
 			if (recipe.ProcessGroupsForText(item.type, out nameOverride)) {
 				//Main.toolTip.name = name;
-			}
-			if (recipe.anyIronBar && item.type == 22) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(22);
-			}
-			else if (recipe.anyWood && item.type == 9) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(9);
-			}
-			else if (recipe.anySand && item.type == 169) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(169);
-			}
-			else if (recipe.anyFragment && item.type == 3458) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.51");
-			}
-			else if (recipe.anyPressurePlate && item.type == 542) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.38");
 			}
 			if (nameOverride != "") {
 				item.SetNameOverride(nameOverride);

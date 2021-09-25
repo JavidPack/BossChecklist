@@ -2,8 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using ReLogic.Content;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,8 +28,8 @@ namespace BossChecklist.UIElements
 
 		float spacing = 8f;
 		public static bool Visible {
-			get { return BossChecklist.bossChecklistInterface.CurrentState == BossChecklist.instance.bossChecklistUI; }
-			set { BossChecklist.bossChecklistInterface.SetState(value ? BossChecklist.instance.bossChecklistUI : null); }
+			get { return BossUISystem.bossChecklistInterface.CurrentState == BossUISystem.Instance.bossChecklistUI; }
+			set { BossUISystem.bossChecklistInterface.SetState(value ? BossUISystem.Instance.bossChecklistUI : null); }
 		}
 
 		public static bool showCompleted = true;
@@ -38,17 +42,28 @@ namespace BossChecklist.UIElements
 		public override void Update(GameTime gameTime) {
 			base.Update(gameTime);
 			if (!imagesResized) {
-				Texture2D completedToggle = ResizeImage(Main.itemTexture[ItemID.SuspiciousLookingEye], 32, 32);
-				Texture2D miniBossToggle = ResizeImage(Main.itemTexture[ItemID.CandyCorn], 32, 32);
-				Texture2D eventToggle = ResizeImage(Main.itemTexture[ItemID.SnowGlobe], 32, 32);
-				Texture2D showHiddenToggle = ResizeImage(Main.itemTexture[ItemID.InvisibilityPotion], 32, 32);
-				toggleCompletedButton.SetImage(completedToggle);
-				toggleMiniBossButton.SetImage(miniBossToggle);
-				toggleEventButton.SetImage(eventToggle);
-				toggleHiddenButton.SetImage(showHiddenToggle);
+				Main.instance.LoadItem(ItemID.SuspiciousLookingEye);
+				Main.instance.LoadItem(ItemID.CandyCorn);
+				Main.instance.LoadItem(ItemID.SnowGlobe);
+				Main.instance.LoadItem(ItemID.InvisibilityPotion);
+
+				Texture2D completedToggle = ResizeImage(TextureAssets.Item[ItemID.SuspiciousLookingEye].Value, 32, 32);
+				Texture2D miniBossToggle = ResizeImage(TextureAssets.Item[ItemID.CandyCorn].Value, 32, 32);
+				Texture2D eventToggle = ResizeImage(TextureAssets.Item[ItemID.SnowGlobe].Value, 32, 32);
+				Texture2D showHiddenToggle = ResizeImage(TextureAssets.Item[ItemID.InvisibilityPotion].Value, 32, 32);
+				toggleCompletedButton.SetImage(TextureAsset(completedToggle));
+				toggleMiniBossButton.SetImage(TextureAsset(miniBossToggle));
+				toggleEventButton.SetImage(TextureAsset(eventToggle));
+				toggleHiddenButton.SetImage(TextureAsset(showHiddenToggle));
 				imagesResized = true;
 			}
-			BossChecklist.instance.bossChecklistUI.checklistPanel.Left.Pixels = Main.playerInventory ? -200 : 0;
+			BossUISystem.Instance.bossChecklistUI.checklistPanel.Left.Pixels = Main.playerInventory ? -200 : 0;
+		}
+
+		public static Asset<Texture2D> TextureAsset(Texture2D texture) {
+			using MemoryStream stream = new();
+			texture.SaveAsPng(stream, texture.Width, texture.Height);
+			return BossChecklist.instance.Assets.CreateUntracked<Texture2D>(stream, "resize.png");
 		}
 
 		public override void OnInitialize() {
@@ -61,25 +76,25 @@ namespace BossChecklist.UIElements
 			checklistPanel.Height.Set(-100, 1f);
 			checklistPanel.BackgroundColor = new Color(73, 94, 171);
 
-			toggleCompletedButton = new UIHoverImageButton(Main.magicPixel, "Toggle Completed");
+			toggleCompletedButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Completed");
 			toggleCompletedButton.OnClick += ToggleCompletedButtonClicked;
 			toggleCompletedButton.Left.Pixels = spacing;
 			toggleCompletedButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleCompletedButton);
 
-			toggleMiniBossButton = new UIHoverImageButton(Main.magicPixel, "Toggle Mini Bosses");
+			toggleMiniBossButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Mini Bosses");
 			toggleMiniBossButton.OnClick += ToggleMiniBossButtonClicked;
 			toggleMiniBossButton.Left.Pixels = spacing + 32;
 			toggleMiniBossButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleMiniBossButton);
 
-			toggleEventButton = new UIHoverImageButton(Main.magicPixel, "Toggle Events");
+			toggleEventButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Events");
 			toggleEventButton.OnClick += ToggleEventButtonClicked;
 			toggleEventButton.Left.Pixels = spacing + 64;
 			toggleEventButton.Top.Pixels = 0;
 			checklistPanel.Append(toggleEventButton);
 
-			toggleHiddenButton = new UIHoverImageButton(Main.magicPixel, "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
+			toggleHiddenButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
 			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
 			toggleHiddenButton.Left.Pixels = spacing + 96;
 			toggleHiddenButton.Top.Pixels = 0;
@@ -109,19 +124,19 @@ namespace BossChecklist.UIElements
 
 		private void ToggleCompletedButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			showCompleted = !showCompleted;
-			Main.PlaySound(showCompleted ? SoundID.MenuOpen : SoundID.MenuClose);
+			SoundEngine.PlaySound(showCompleted ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
 		private void ToggleMiniBossButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			showMiniBoss = !showMiniBoss;
-			Main.PlaySound(showMiniBoss ? SoundID.MenuOpen : SoundID.MenuClose);
+			SoundEngine.PlaySound(showMiniBoss ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
 		private void ToggleEventButtonClicked(UIMouseEvent evt, UIElement listeningElement) {
 			showEvent = !showEvent;
-			Main.PlaySound(showEvent ? SoundID.MenuOpen : SoundID.MenuClose);
+			SoundEngine.PlaySound(showEvent ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
@@ -136,11 +151,11 @@ namespace BossChecklist.UIElements
 					packet.Write((byte)PacketMessageType.RequestClearHidden);
 					packet.Send();
 				}
-				Main.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
+				SoundEngine.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
 				return;
 			}
 			showHidden = !showHidden;
-			Main.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
+			SoundEngine.PlaySound(showHidden ? SoundID.MenuOpen : SoundID.MenuClose);
 			UpdateCheckboxes();
 		}
 
@@ -246,17 +261,17 @@ namespace BossChecklist.UIElements
 	{
 		const int paddingForBox = 10;
 		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y) {
-			if (BossChecklist.instance.bossChecklistUI.hoveredTextSnippet != null || BossChecklist.instance.BossLog.hoveredTextSnippet != null) {
+			if (BossUISystem.Instance.bossChecklistUI.hoveredTextSnippet != null || BossUISystem.Instance.BossLog.hoveredTextSnippet != null) {
 				var texts = lines.Select(z => z.text);
 				string longestText = texts.ToList().OrderByDescending(z => z.Length).First();
-				int widthForBox = (int)Main.fontMouseText.MeasureString(longestText).X;
-				int heightForBox = (int)texts.ToList().Sum(z => Main.fontMouseText.MeasureString(z).Y);
+				int widthForBox = (int)FontAssets.MouseText.Value.MeasureString(longestText).X;
+				int heightForBox = (int)texts.ToList().Sum(z => FontAssets.MouseText.Value.MeasureString(z).Y);
 
 				Vector2 drawPosForBox = new Vector2(x - paddingForBox, y - paddingForBox);
 				Rectangle drawRectForBox = new Rectangle(x, y, widthForBox, heightForBox);
 				drawRectForBox.Inflate(paddingForBox, paddingForBox);
 				// Draw the magic box
-				Main.spriteBatch.Draw(Main.magicPixel, drawRectForBox, Color.NavajoWhite);
+				Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, drawRectForBox, Color.NavajoWhite);
 			}
 			return base.PreDrawTooltip(item, lines, ref x, ref y);
 		}

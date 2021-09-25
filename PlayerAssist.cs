@@ -70,17 +70,13 @@ namespace BossChecklist
 			}
 		}
 
-		public override TagCompound Save() {
-			TagCompound saveData = new TagCompound
-			{
-				{ "BossLogPrompt", hasOpenedTheBossLog },
-				{ "Records", AllBossRecords },
-				{ "Collection", BossTrophies }
-			};
-			return saveData;
+		public override void SaveData(TagCompound tag) {
+			tag["BossLogPrompt"] = hasOpenedTheBossLog;
+			tag["Records"] = AllBossRecords;
+			tag["Collection"] = BossTrophies;
 		}
 
-		public override void Load(TagCompound tag) {
+		public override void LoadData(TagCompound tag) {
 			// Add new bosses to the list, and place existing ones accordingly
 			List<BossRecord> TempRecordStorage = tag.Get<List<BossRecord>>("Records");
 			foreach (BossRecord record in TempRecordStorage) {
@@ -131,7 +127,7 @@ namespace BossChecklist
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
-				ModPacket packet = mod.GetPacket();
+				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
 				for (int i = 0; i < bossCount; i++) {
 					BossStats stat = AllBossRecords[i].stat;
@@ -176,7 +172,7 @@ namespace BossChecklist
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) continue;
 					int listNum = NPCAssist.ListedBossNum(Main.npc[i]);
-					if (BrinkChecker[listNum] == 0) BrinkChecker[listNum] = player.statLife;
+					if (BrinkChecker[listNum] == 0) BrinkChecker[listNum] = Player.statLife;
 					AttackCounter[listNum]++;
 					DodgeTimer[listNum] = 0;
 				}
@@ -210,15 +206,15 @@ namespace BossChecklist
 				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) continue;
 					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
-						if (player.dead) {
+						if (Player.dead) {
 							DeathTracker[listNum] = true;
 							DodgeTimer[listNum] = 0;
 							BrinkChecker[listNum] = MaxHealth[listNum];
 						}
 						RecordTimers[listNum]++;
-						if (!player.dead) DodgeTimer[listNum]++;
-						if (player.statLife < BrinkChecker[listNum] && player.statLife > 0) {
-							BrinkChecker[listNum] = player.statLife;
+						if (!Player.dead) DodgeTimer[listNum]++;
+						if (Player.statLife < BrinkChecker[listNum] && Player.statLife > 0) {
+							BrinkChecker[listNum] = Player.statLife;
 						}
 					}
 				}

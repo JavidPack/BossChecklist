@@ -33,7 +33,7 @@ namespace BossChecklist
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
 		internal bool AnyModHasOldCall = false;
-		internal Dictionary<string, List<string>> OldCalls = new Dictionary<string, List<string>>();
+		internal Dictionary<string, List<string>> OldCalls = new();
 
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
@@ -128,7 +128,7 @@ namespace BossChecklist
 							// The first NPC should have the boss that drops the bag, but backups are needed anyways
 							continue; 
 						}
-						int bagType = NPCLoader.GetNPC(npc).bossBag;
+						int bagType = NPCLoader.GetNPC(npc).BossBag;
 						if (bagType > 0) {
 							if (!BossChecklist.registeredBossBagTypes.Contains(bagType)) {
 								BossChecklist.registeredBossBagTypes.Add(bagType);
@@ -410,10 +410,10 @@ namespace BossChecklist
 					ItemID.BossBagBetsy,
 					ItemID.BetsyWings,
 					ItemID.DD2BetsyBow, // Aerial Bane
-                    ItemID.MonkStaffT3, // Sky Dragon's Fury
-                    ItemID.ApprenticeStaffT3, // Betsy's Wrath
-                    ItemID.DD2SquireBetsySword // Flying Dragon
-                };
+					ItemID.MonkStaffT3, // Sky Dragon's Fury
+					ItemID.ApprenticeStaffT3, // Betsy's Wrath
+					ItemID.DD2SquireBetsySword // Flying Dragon
+				};
 			}
 			if (bossNum == NPCID.DukeFishron) {
 				return new List<int>()
@@ -449,11 +449,11 @@ namespace BossChecklist
 					ItemID.StarWrath,
 					ItemID.SDMG,
 					ItemID.FireworksLauncher, // The Celebration
-                    ItemID.LastPrism,
+					ItemID.LastPrism,
 					ItemID.LunarFlareBook,
 					ItemID.RainbowCrystalStaff,
 					ItemID.MoonlordTurretStaff, // Lunar Portal Staff
-                    ItemID.SuspiciousLookingTentacle,
+					ItemID.SuspiciousLookingTentacle,
 					ItemID.GreaterHealingPotion
 				};
 			}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -44,7 +45,7 @@ namespace BossChecklist
 				if (type == 1 && !BossChecklist.ClientConfig.FragmentsBool) continue;
 				if (type == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
 
-				Texture2D drawTexture = Main.itemTexture[whitelistType[v]];
+				Texture2D drawTexture = TextureAssets.Item[whitelistType[v]].Value;
 				DrawAnimation drawAnim = Main.itemAnimations[whitelistType[v]];
 				Rectangle sourceRect = drawAnim != null ? drawAnim.GetFrame(drawTexture) : drawTexture.Bounds;
 				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));

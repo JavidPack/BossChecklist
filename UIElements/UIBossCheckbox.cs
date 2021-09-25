@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -36,7 +37,7 @@ namespace BossChecklist.UIElements
 			//checkbox.spawnItemID = boss.spawnItemID;
 			Append(checkbox);
 
-			moreInfo = new UIHoverImageButton(ModContent.GetTexture("BossChecklist/UIElements/info"), "More Info");
+			moreInfo = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/UIElements/info"), "More Info");
 			moreInfo.Left.Set(-24, 1f);
 			moreInfo.SetVisibility(1f, 0.7f);
 			moreInfo.OnClick += MoreInfo_OnClick;
@@ -47,8 +48,8 @@ namespace BossChecklist.UIElements
 		}
 
 		private void MoreInfo_OnClick(UIMouseEvent evt, UIElement listeningElement) {
-			BossChecklist.instance.BossLog.ToggleBossLog(true);
-			BossChecklist.instance.BossLog.JumpToBossPage(evt, listeningElement);
+			BossUISystem.Instance.BossLog.ToggleBossLog(true);
+			BossUISystem.Instance.BossLog.JumpToBossPage(evt, listeningElement);
 		}
 
 		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement) {
@@ -60,8 +61,8 @@ namespace BossChecklist.UIElements
 					WorldAssist.HiddenBosses.Add(boss.Key);
 				else
 					WorldAssist.HiddenBosses.Remove(boss.Key);
-				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-				if (BossChecklist.BossLogConfig.HideUnavailable) BossChecklist.instance.BossLog.UpdateTableofContents();
+				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+				if (BossChecklist.BossLogConfig.HideUnavailable) BossUISystem.Instance.BossLog.UpdateTableofContents();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RequestHideBoss);
@@ -73,7 +74,7 @@ namespace BossChecklist.UIElements
 			}
 
 			UIBossCheckbox clicked = listeningElement as UIBossCheckbox;
-			foreach (var item in BossChecklist.instance.bossChecklistUI.checklistList._items) {
+			foreach (var item in BossUISystem.Instance.bossChecklistUI.checklistList._items) {
 				UIBossCheckbox box = (item as UIBossCheckbox);
 				if (box != clicked) {
 					box.expanded = false;
@@ -113,15 +114,15 @@ namespace BossChecklist.UIElements
 				ChatManager.ConvertNormalSnippets(textSnippets);
 
 				for (int i = 0; i < ChatManager.ShadowDirections.Length; i++) {
-					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, Main.fontMouseText, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1,
+					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1,
 						Color.Black, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), hitbox.Width - (7 * 2), 1);
 				}
-				Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, Main.fontMouseText, textSnippets,
+				Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets,
 					new Vector2(2, 15 + 3) + hitbox.TopLeft(), Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out hoveredSnippet, hitbox.Width - (7 * 2), false);
 
 				if (hoveredSnippet > -1) {
 					// because of draw order, we'll do the hover later.
-					BossChecklist.instance.bossChecklistUI.hoveredTextSnippet = textSnippets[hoveredSnippet];
+					BossUISystem.Instance.bossChecklistUI.hoveredTextSnippet = textSnippets[hoveredSnippet];
 					//array[hoveredSnippet].OnHover();
 					//if (Main.mouseLeft && Main.mouseLeftRelease)
 					//{

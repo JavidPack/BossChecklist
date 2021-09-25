@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Chat;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.Localization;
@@ -10,7 +11,7 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
-	public class WorldAssist : ModWorld
+	public class WorldAssist : ModSystem
 	{
 		public static List<WorldRecord> worldRecords;
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
@@ -38,9 +39,8 @@ namespace BossChecklist
 		bool isFrostMoon = false;
 		bool isEclipse = false;
 
-		public override bool Autoload(ref string name) {
+		public override void Load() {
 			On.Terraria.GameContent.Events.DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
-			return base.Autoload(ref name);
 		}
 
 		private void DD2Event_WinInvasionInternal(On.Terraria.GameContent.Events.DD2Event.orig_WinInvasionInternal orig) {
@@ -51,7 +51,7 @@ namespace BossChecklist
 				downedInvasionT3Ours = true;
 		}
 
-		public override void Initialize() {
+		public override void OnWorldLoad() {
 			worldRecords = new List<WorldRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				worldRecords.Add(new WorldRecord(boss.Key));
@@ -88,7 +88,7 @@ namespace BossChecklist
 			}
 		}
 
-		public override void PreUpdate() {
+		public override void PreUpdateWorld() {
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC b = Main.npc[n];
 				int listNum = NPCAssist.ListedBossNum(b);
@@ -110,7 +110,7 @@ namespace BossChecklist
 										Main.NewText(Language.GetTextValue(message, b.FullName), Colors.RarityPurple);
 									}
 								}
-								else NetMessage.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
+								else ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
 							}
 							ActiveBossesList[listNum] = false;
 							// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
@@ -120,7 +120,7 @@ namespace BossChecklist
 			}
 		}
 
-		public override void PostUpdate() {
+		public override void PostUpdateWorld() {
 			// Event Ending Messages
 			if (Main.bloodMoon) isBloodMoon = true;
 			if (Main.snowMoon) isFrostMoon = true;
@@ -163,7 +163,7 @@ namespace BossChecklist
 			if (EventKey != "") {
 				NetworkText message = NetworkText.FromKey(EventKey);
 				if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(message.ToString(), Colors.RarityGreen);
-				else NetMessage.BroadcastChatMessage(message, Colors.RarityGreen);
+				else ChatHelper.BroadcastChatMessage(message, Colors.RarityGreen);
 				EventKey = "";
 			}
 		}
@@ -190,7 +190,7 @@ namespace BossChecklist
 			else return false;
 		}
 
-		public override TagCompound Save() {
+		public override void SaveWorldData(TagCompound tag) {
 			var WorldRecordList = new List<WorldRecord>(worldRecords);
 			var HiddenBossesList = new List<string>(HiddenBosses);
 			var downed = new List<string>();
@@ -205,14 +205,12 @@ namespace BossChecklist
 			if (downedInvasionT2Ours) downed.Add("invasionT2Ours");
 			if (downedInvasionT3Ours) downed.Add("invasionT3Ours");
 
-			return new TagCompound {
-				["downed"] = downed,
-				["HiddenBossesList"] =	HiddenBossesList,
-				["Records"] = WorldRecordList
-			};
+			tag["downed"] = downed;
+			tag["HiddenBossesList"] = HiddenBossesList;
+			tag["Records"] = WorldRecordList;
 		}
 
-		public override void Load(TagCompound tag) {
+		public override void LoadWorldData(TagCompound tag) {
 			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
 			foreach (WorldRecord record in TempRecordStorage) {
 				int index = worldRecords.FindIndex(x => x.bossName == record.bossName);
@@ -292,8 +290,8 @@ namespace BossChecklist
 			for (int i = 0; i < count; i++) {
 				HiddenBosses.Add(reader.ReadString());
 			}
-			BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
-			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) BossChecklist.instance.BossLog.UpdateTableofContents();
+			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) BossUISystem.Instance.BossLog.UpdateTableofContents();
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace BossChecklist
 			return base.OnPickup(item, player);
 		}
 
-		public override void OnCraft(Item item, Recipe recipe) {
+		public override void OnCreate(Item item, ItemCreationContext context) {
 			if (Main.netMode != NetmodeID.Server) {
 				Player player = Main.LocalPlayer;
 				// Loot and Collections Updating
