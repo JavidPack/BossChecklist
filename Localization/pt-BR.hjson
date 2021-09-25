@@ -1,0 +1,230 @@
+Mods: {
+	BossChecklist: {
+		BossDespawn: {
+			Generic: "{0} não está mais atrás de você..."
+			Day: "{0} foge enquanto o sol nasce..."
+		}
+
+		BossVictory: {
+			Generic: "{0} matou todos os jogadores!"
+			KingSlime: A Geleia Rei sai em triunfo...
+			EyeofCthulhu: O Olho de Cthulhu desapareceu no céu noturno...
+			EaterofWorlds: O Devorador de Mundos cava de volta ao subterrâneo...
+			BrainofCthulhu: O Cérebro de Cthulhu some nas profundezas do carmim...
+			QueenBee: A Abelha Rainha retorna ao ninho de sua colônia...
+			Skeletron: O Esqueletron continua a torturar o Velho...
+			WallofFlesh: A Parede de Carne conseguiu cruzar o submundo...
+			Twins: "{0} continua suas observações..."
+			TheDestroyer: O Destruidor busca outro mundo para devorar...
+			SkeletronPrime: O Esqueletron Alfa começa a procurar uma nova vítima...
+			Plantera: Plantera continua seu descanso na selva...
+			Golem: Golem desativa nas entranhas do templo...
+			DukeFishron: O Duque Peixe-dragão retorna às profundezas do oceano...
+			LunaticCultist: O Cultista Lunático volta a sua devoção...
+			MoonLord: O Senhor da Lua deixou este reino...
+		}
+
+		EventEnd: {
+			BloodMoon: A Lua de Sangue cai além do horizonte...
+			FrostMoon: A Lua Congelada derrete quando o sol nasce...
+			PumpkinMoon: A Lua de Abóbora termina sua colheita...
+			SolarEclipse: O eclipse solar acabou... até a próxima...
+		}
+
+		BossDefeated: {
+			Tower: A {0} foi destruída!
+			Limb: O {0} caiu!
+		}
+
+		BossSpawnInfo: {
+			KingSlime: Use [i:560], aleatoriamente nos terços externos do mapa, ou mate 150 geleias durante a chuva de geleias.
+			EyeofCthulhu: Use [i:43] à noite, ou 1/3 de chance à noite se tiver mais de 200 PV.
+			EaterofWorldsHead: Use [i:70] ou quebre 3 Esferas das Sombras em um abismo da corrupção.
+			BrainofCthulhu: Use [i:1331] ou quebre 3 Corações de Carmesim em um abismo do carmim.
+			QueenBee: Use [i:1133] ou quebre uma larva de uma Colmeia encontrada na selva.
+			SkeletronHead: Visite o calabouço e fale com o velho à noite ou mate o Alfaiate com [i:1307] à noite.
+			WallofFlesh: Invoque jogando [i:267] na lava no Submundo. [c/FF0000:Inicia o Modo Difícil!]
+			TheTwins: 10% de chance de surgirem aleatoriamente a cada noite após o primeiro altar ser destruído, até que um chefe mecânico seja derrotado. Alternativamente, Use [i:544] à noite para invocá-los.
+			TheDestroyer: 10% de chance de surgir aleatoriamente a cada noite após o primeiro altar ser destruído, até que um chefe mecânico seja derrotado. Use [i:556] à noite para invocar.
+			SkeletronPrime: 10% de chance de surgir aleatoriamente a cada noite após o primeiro altar ser destruído, até que um chefe mecânico seja derrotado. Use [i:557] à noite para invocar.
+			Plantera: Quebre um Bulbo da Plantera na selva depois que 3 Chefes mecânicos forem derrotados.
+			Golem: Use [i:1293] em um Altar Lagharto, encontrado nas profundezas do Templo da Selva.
+			DD2Betsy: Surge na Onda 7, a onda final, do Exército do Ancião (Nível 3).
+			DukeFishron: Pesque no oceano usando o [i:2673] como isca.
+			CultistBoss: Mate os 4 cultistas fora do calabouço após derrotar o Golem.
+			MoonLord: Use [i:3601] derrote todas as 4 colunas.
+			MoonLord_Tremor: Use [i:3601] ou derrote todas as 5 colunas. [c/FF0000:Inicia o Tremode!]
+			BloodMoon: Ocorre aleatoriamente no início da noite. Pode acontecer quando qualquer jogador do mundo tiver mais de 100 de vida e a fase da lua atual NÃO for lua nova. Dura até o amanhecer.
+			GoblinArmy: Tem uma chance de 1 em 3 de ocorrer a cada amanhecer se pelo menos uma Esfera das Sombras/Coração Carmesim for destruído, pelo menos um jogador tiver 200 de vida ou mais e não houver um Exército Goblin em andamento. Ele também pode ser convocado manualmente usando um [i:361]. Dura até que inimigos suficientes sejam derrotados.
+			OldOnesArmy: Depois de encontrar o Taberneiro, compre e ative [i:3816] com [i:3828]. Dura até que inimigos suficientes sejam derrotados.
+			FrostLegion: Use um [i:602], que pode ser encontrado abrindo [i:1869], durante a temporada de Natal. Dura até que inimigos suficientes sejam derrotados.
+			SolarEclipse: Tem uma chance de 1/20 de ocorrer cada dia no amanhecer, assim que qualquer Chefe Mecânico for derrotado. Alternativamente, invoque com um [i:2767]. Dura até o anoitecer.
+			PirateInvasion: Ocorre aleatoriamente quando pelo menos um altar for destruído. Pode ser invocada com um [i:1315], que pode ser obtido matando qualquer inimigo no bioma de Oceano durante o Modo Difícil. Dura até que inimigos suficientes sejam derrotados.
+			PumpkinMoon: Invocado com um [i:1844] à noite. Dura até o amanhecer.
+			FrostMoon: Invocado com um [i:1958] à noite. Dura até o amanhecer.
+			MartianMadness: Depois de derrotar o Golem, encontre uma Sonda de Marte acima do solo e permita que ela encontre você e escape. Dura até que inimigos suficientes sejam derrotados.
+			LunarEvent: Derrote o Cultista Lunático encontrado fora do calabouço. Cada coluna surge em sua própria área dentro do mundo. Dura até que todas as 4 colunas sejam destruídas.
+			Pumpking: Surge durante a Onda 7 da Lua de Abóbora. Inicie uma Lua de Abóbora com [i:1844]
+			MourningWood: Surge durante a Onda 4 da Lua de Abóbora. Inicie uma Lua de Abóbora com [i:1844]
+			IceQueen: Surge durante a Onda 11 da Lua Congelada. Inicie uma Lua Congelada com [i:1958]
+			SantaNK1: Surge durante a Onda 7 da Lua Congelada. Inicie uma Lua Congelada com [i:1958]
+			Everscream: Surge durante a Onda 4 da Lua Congelada. Inicie uma Lua Congelada com [i:1958]
+			PirateShip: Ocasionalmente aparece durante uma Invasão Pirata! Comece a Invasão Pirata com [i:1315]
+			DD2OgreT3: Aparece na onda 7 (Nível 2) e ondas 4 & 6 (Nível 3) durante o evento do Exército do Ancião! Comece o Exército do Ancião com [i:3816] e [i:3828]
+			DD2DarkMageT3: Aparece na onda 5 (Nível 1) e ondas 5 & 6 (Nível 3) durante o evento do Exército do Ancião! Comece o Exército do Ancião com [i:3816] e [i:3828]
+			MartianSaucer: Ocasionalmente aparece durante a Loucura de Marte! Comece uma Loucura de Marte sendo detectado por uma sonda alienígena.
+		}
+
+		BossLog: {
+			HoverText: {
+				ToggleFilters: Alternar Filtros
+				JumpTOC: Pular para o Índice
+				JumpCred: Pular para os Créditos
+				JumpBoss:
+					'''
+					Pular para o próximo chefe:
+					{0}
+					'''
+				JumpMini:
+					'''
+					Pular para o próximo mini chefe:
+					{0}
+					'''
+				JumpEvent:
+					'''
+					Pular para o próximo evento:
+					{0}
+					'''
+				ViewCollect: Clique para ver apenas os colecionáveis
+				ViewLoot: Clique para ver todos os espólios
+				ItemIsExpertOnly: Este item só pode ser obtido no modo perito
+			}
+
+			DrawnText: {
+				PreHardmode: Pré-modo difícil
+				Hardmode: Modo difícil
+				Defeated: Derrotado em {0}
+				Undefeated: Não Derrotado em {0}
+				Records: Recordes
+				SpawnInfo: Informações de Surgimento
+				LootCollect: Espólios & Coleção
+				KDR: Taxa de Vitórias e Mortes
+				Duration: Duração da Luta
+				Health: Estado de Vida mais Baixo
+				Dodge: Acertos levados
+				RecipeFrom: Receita de: {0}
+				CycleRecipe: Alterne entre receitas alternativas
+				Noncraftable: Esse item não é criável
+				NoSpawnBoss: Esse chefe não tem item de invocação
+				NoSpawnMiniBoss: Esse mini chefe não tem item de invocação
+				NoSpawnEvent: This event has no spawn item
+				NoInfo: Nenhuma informação disponível
+				NotImplemented: A exibição desta página não está disponível. O mod não enviou uma página ou a configurou incorretamente.
+				LogFeaturesNotAvailable: Recordes, itens de invocação e a tabela de espólios estão desabilitados para esta página. O mod não enviou informações suficientes para uma página ou a configurou incorretamente.
+				NoModsSupported: Nenhum de seus mods carregados adicionou páginas ao Registro de Chefes. Se você quiser que seus mods favoritos sejam incluídos, sugira adicionar suas próprias páginas de chefe ao Discord ou à página de fóruns do mod!
+			}
+
+			Credits: {
+				ThanksDevs: Agradecimentos especiais para:
+				ThanksMods: Obrigado a todos os mods que optaram por participar!
+				Notice: "[Esta lista contém apenas mods carregados]"
+			}
+
+			Terms: {
+				BossLog: Registro de Chefes
+				ByHand: À mão
+				NoRecord: Nenhum recorde!
+				Unchallenged: Não Desafiado!
+				Kills: vitórias
+				Deaths: mortes
+				show: Mostrar
+				hide: Ocultar
+				hidewhencompleted: Ocultar quando concluído
+				Bosses: Chefes
+				MiniBosses: Mini chefes
+				Events: Eventos
+			}
+		}
+
+		Configs: {
+			Title: {
+				BossLogCustomization: Personalização do Registro de Chefes
+				OtherFeatures: Outros recursos
+				Debug: Interface de Depuração
+			}
+
+			Header: {
+				BossLogUI: "[i:149] [c/ffeb6e:IU do Registro de Chefes]"
+				ChatMessages: "[i:3037] [c/ffeb6e:Mensagens do Bate-Papo]"
+				ItemMapDetection: "[i:893] [c/ffeb6e:Detecção de Items no Mapa]"
+				BossRadar: "[i:3084] [c/ffeb6e:Radar de Chefes]"
+				Debug: "[i:3625] [c/ffeb6e:Depuração para desenvolvedores]"
+			}
+
+			Label: {
+				BossLogColor: Cor do Registro de Chefes
+				BossLogPos: Posição do Botão Abrir Registros
+				DrawNextMark: Verificar Próximo Chefe
+				ColoredBossText: Texto de Chefe Colorido
+				BossSilhouettes: Silhuetas de chefe
+				CountDownedBosses: Exibição de Conclusão de Chefe
+				SelectedCheckmarkType: Tipo de Marcação da Lista de Verificação
+				FilterBosses: Filtrar chefes na lista
+				FilterMiniBosses: Filtrar mini chefes na lista
+				FilterEvents: Filtrar eventos na lista
+				HideUnavailable: Esconder chefes indisponíveis ou escondidos
+				HideUnsupported: Esconder Chefes Não Suportados
+				DespawnMessageType: Mensagens de Desaparecimento de Chefe
+				PillarMessages: Mensagens de Derrota de Colunas
+				LimbMessages: Mensagens de Derrota de Segmentos
+				RespawnTimer: Habilitar Cronômetro de Renascimento
+				TimerSounds: Sons do Cronômetro de Renascimento
+				TreasureBags: Bolsas do tesouro exibidas no mapa
+				Fragments: Fragmentos exibidos no mapa
+				Scales: Placas das Sombras e Amostras de Tecido exibidos no mapa
+				BossRadar: Ativar o Radar de chefes
+				RadarMiniBosses: Permitir mini chefes
+				RadarOpacity: Opacidade do Radar
+				RadarBlacklist: Lista Negra do Radar
+			}
+
+			Tooltip: {
+				BossLogColor: Escolha a cor do seu Registro de Chefes!
+				BossLogPos:
+					'''
+					Segure com o botão direito no jogo para mover o botão onde você quiser com facilidade!
+					A posição é medida a partir do canto inferior direito da tela
+					'''
+				DrawNextMark: Coloca um círculo na caixa de seleção para indicar que é o próximo chefe não derrotado a lutar
+				ColoredBossText:
+					'''
+					O Texto de chefe no índice será verde quando derrotado e vermelho quando não.
+					Se a próxima seleção estiver ativada, o chefe seguinte será amarelo
+					'''
+				CountDownedBosses: Se ativado, o índice exibirá quantos chefes foram derrotados em comparação com o valor total.
+				BossSilhouettes: Esconde as imagens dos chefes quando eles não foram derrotados.
+				HideUnavailable: Se ativado, chefes indisponíveis e escondidos serão removidos do índice do Registro de Chefes.
+				HideUnsupported: Se ativado, os chefes que não foram totalmente integrados serão removidos do índice do Registro de Chefes.
+				DespawnMessageType:
+					'''
+					Mensagens de desaparecimento aparecerão no bate-papo quando um chefe se tornar inativo.
+					Se ativado, escolha entre mensagens genéricas ou únicas.
+					'''
+				PillarMessages: Quando derrotadas, o bate-papo envia uma mensagem de derrota para as Colunas Lunares
+				LimbMessages:
+					'''
+					Chefes com múltiplos segmentos enviarão mensagens quando um segmento for derrotaro
+					Ex. as mãos do Esqueletron
+					'''
+				TimerSounds: Se ativado, os últimos 3 segundos do seu tempo de renascimento terão indicadores de som
+				RadarMiniBosses: Nota: Isso só funciona corretamente com mini chefes que têm ícones de cabeça
+				RadarOpacity: Ajusta a transparência do ícone do radar
+				RadarBlacklist: Os NPCs selecionados não serão rastreados pelo radar
+			}
+
+			Notice: {
+				InvalidChange: Você não pode mudar isso enquanto um chefe estiver ativo!
+			}
+		}
+	}
+}
