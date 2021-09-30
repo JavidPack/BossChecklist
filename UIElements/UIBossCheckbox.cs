@@ -113,8 +113,8 @@ namespace BossChecklist.UIElements
 				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);
 
-				for (int i = 0; i < ChatManager.ShadowDirections.Length; i++) {
-					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1,
+				foreach (Vector2 direction in ChatManager.ShadowDirections) {
+					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + direction * 1,
 						Color.Black, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), hitbox.Width - (7 * 2), 1);
 				}
 				Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets,

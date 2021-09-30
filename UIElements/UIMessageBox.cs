@@ -226,12 +226,8 @@ namespace BossChecklist.UIElements
 			TextSnippet[] array = ChatManager.ParseMessage(text, c).ToArray();
 			List<List<TextSnippet>> finalList = new List<List<TextSnippet>>();
 			List<TextSnippet> list2 = new List<TextSnippet>();
-			for (int i = 0; i < array.Length; i++) {
-				TextSnippet textSnippet = array[i];
-				string[] array2 = textSnippet.Text.Split(new char[]
-					{
-						'\n'
-					});
+			foreach (TextSnippet textSnippet in array) {
+				string[] array2 = textSnippet.Text.Split('\n');
 				for (int j = 0; j < array2.Length - 1; j++) {
 					list2.Add(textSnippet.CopyMorph(array2[j]));
 					finalList.Add(list2);

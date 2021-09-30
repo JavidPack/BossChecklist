@@ -55,11 +55,11 @@ namespace BossChecklist
 			// Twins check makes sure the other is not around before counting towards the record
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled && TruelyDead(npc)) {
+				if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled && TrulyDead(npc)) {
 					if (Main.netMode == NetmodeID.SinglePlayer) CheckRecords(npc, index);
 					else if (Main.netMode == NetmodeID.Server) CheckRecordsMultiplayer(npc, index);
 				}
-				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(npc.FullName + ": " + TruelyDead(npc));
+				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(npc.FullName + ": " + TrulyDead(npc));
 			}
 		}
 
@@ -322,13 +322,13 @@ namespace BossChecklist
 			else return BL.FindIndex(x => x.modSource == modSource && x.npcIDs.Any(y => y == type));
 		}
 
-		public static bool TruelyDead(NPC npc) {
+		public static bool TrulyDead(NPC npc) {
 			// Check all multibosses
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[index].npcIDs.Count; i++) {
-					if (Main.npc.Any(x => x != npc && x.type == BossChecklist.bossTracker.SortedBosses[index].npcIDs[i] && x.active)) return false;
+				foreach (int id in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
+					if (Main.npc.Any(x => x != npc && x.type == id && x.active)) return false;
 				}
 			}
 			return true;

@@ -412,10 +412,10 @@ namespace BossChecklist.UIElements
 						if (BossChecklist.BossLogConfig.CountDownedBosses) {
 							int totalPreHard = 0;
 							int downedBosses = 0;
-							for (int i = 0; i < bossList.Count; i++) {
-								if (bossList[i].type == EntryType.Boss && bossList[i].progression <= 6f && (bossList[i].available() || bossList[i].downed())) {
+							foreach (BossInfo boss in bossList) {
+								if (boss.type == EntryType.Boss && boss.progression <= 6f && (boss.available() || boss.downed())) {
 									totalPreHard++;
-									if (bossList[i].downed()) {
+									if (boss.downed()) {
 										downedBosses++;
 									}
 								}
@@ -431,10 +431,10 @@ namespace BossChecklist.UIElements
 						if (BossChecklist.BossLogConfig.CountDownedBosses) {
 							int totalHard = 0;
 							int downedBosses = 0;
-							for (int i = 0; i < bossList.Count; i++) {
-								if (bossList[i].type == EntryType.Boss && bossList[i].progression > 6f) {
+							foreach (BossInfo boss in bossList) {
+								if (boss.type == EntryType.Boss && boss.progression > 6f) {
 									totalHard++;
-									if (bossList[i].downed()) {
+									if (boss.downed()) {
 										downedBosses++;
 									}
 								}
@@ -456,8 +456,8 @@ namespace BossChecklist.UIElements
 							int headsDisplayed = 0;
 							int adjustment = 0;
 							Color maskedHead = BossLogUI.MaskBoss(headBoss);
-							for (int h = 0; h < headBoss.npcIDs.Count; h++) {
-								Asset<Texture2D> head = BossLogUI.GetBossHead(headBoss.npcIDs[h]);
+							foreach (int id in headBoss.npcIDs) {
+								Asset<Texture2D> head = BossLogUI.GetBossHead(id);
 								if (headBoss.overrideIconTexture != "") {
 									head = ModContent.Request<Texture2D>(headBoss.overrideIconTexture);
 								}
@@ -850,11 +850,12 @@ namespace BossChecklist.UIElements
 						else {
 							int offset = 0;
 							int offsetY = 0;
-							for (int i = 0; i < selectedBoss.npcIDs.Count; i++) {
+							foreach (int npcID in selectedBoss.npcIDs)
+							{
 								if (offset == 0 && offsetY == 5) {
 									break; // For now, we stop drawing any banners that exceed the books limit (might have to reimplement as a UIList for scrolling purposes)
 								}
-								int npcID = selectedBoss.npcIDs[i];
+
 								if (npcID < NPCID.Count) {
 									int init = Item.NPCtoBanner(npcID) + 21;
 									if (init <= 21) {
@@ -985,8 +986,7 @@ namespace BossChecklist.UIElements
 							// Loot Table Subpage
 							Asset<Texture2D> bag = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag");
 							Rectangle sourceRect = bag.Value.Bounds;
-							for (int i = 0; i < selectedBoss.loot.Count; i++) {
-								int bagItem = selectedBoss.loot[i];
+							foreach (int bagItem in selectedBoss.loot) {
 								if (BossChecklist.registeredBossBagTypes.Contains(bagItem)) {
 									bag = TextureAssets.Item[bagItem];
 									DrawAnimation drawAnim = Main.itemAnimations[bagItem];
@@ -1521,8 +1521,8 @@ namespace BossChecklist.UIElements
 				TextSnippet[] textSnippets = ChatManager.ParseMessage(text, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);
 
-				for (int i = 0; i < ChatManager.ShadowDirections.Length; i++) {
-					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + ChatManager.ShadowDirections[i] * 1,
+				foreach (Vector2 direction in ChatManager.ShadowDirections) {
+					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + direction * 1,
 						Color.Black, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), hitbox.Width - (7 * 2), 1);
 				}
 				Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets,

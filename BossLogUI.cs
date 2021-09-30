@@ -588,12 +588,12 @@ namespace BossChecklist
 
 				if (id == "") {
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
+						foreach (BossCollection trophy in modPlayer.BossTrophies) {
 							if (AltPage[2]) {
-								modPlayer.BossTrophies[i].collectibles.Clear();
+								trophy.collectibles.Clear();
 							}
 							else {
-								modPlayer.BossTrophies[i].loot.Clear();
+								trophy.loot.Clear();
 							}
 						}
 					}
@@ -609,8 +609,8 @@ namespace BossChecklist
 				else if (id.StartsWith("collect_")) {
 					int itemType = Convert.ToInt32(id.Substring(8));
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
-							modPlayer.BossTrophies[i].collectibles.RemoveAll(x => x.Type == itemType);
+						foreach (BossCollection trophy in modPlayer.BossTrophies) {
+							trophy.collectibles.RemoveAll(x => x.Type == itemType);
 						}
 					}
 					else {
@@ -621,8 +621,8 @@ namespace BossChecklist
 				else if (id.StartsWith("loot_")) {
 					int itemType = Convert.ToInt32(id.Substring(5));
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
-							modPlayer.BossTrophies[i].loot.RemoveAll(x => x.Type == itemType);
+						foreach (BossCollection trophy in modPlayer.BossTrophies) {
+							trophy.loot.RemoveAll(x => x.Type == itemType);
 						}
 					}
 					else {
@@ -1003,12 +1003,13 @@ namespace BossChecklist
 					}
 				}
 			}
-			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (BossChecklist.registeredBossBagTypes.Contains(shortcut.loot[i])) {
+			foreach (int itemType in shortcut.loot)
+			{
+				if (BossChecklist.registeredBossBagTypes.Contains(itemType)) {
 					continue;
 				}
 				Item loot = new Item();
-				loot.SetDefaults(shortcut.loot[i]);
+				loot.SetDefaults(itemType);
 				if (shortcut.npcIDs[0] < NPCID.Count) {
 					if (WorldGen.crimson) {
 						if (loot.type == ItemID.DemoniteOre || loot.type == ItemID.CorruptSeeds || loot.type == ItemID.UnholyArrow) {

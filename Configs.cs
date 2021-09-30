@@ -223,7 +223,7 @@ namespace BossChecklist
 		public bool ShowCollectionType { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Truely Dead Check")]
+		[Label("Truly Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
 

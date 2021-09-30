@@ -102,7 +102,7 @@ namespace BossChecklist
 						// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 					}
 					else if (ActiveBossesList[listNum]) {
-						if (NPCAssist.TruelyDead(b)) {
+						if (NPCAssist.TrulyDead(b)) {
 							string message = GetDespawnMessage(b, listNum);
 							if (message != "") {
 								if (Main.netMode == NetmodeID.SinglePlayer) {
