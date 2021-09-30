@@ -112,7 +112,7 @@ namespace BossChecklist
 			if (!Main.dedServ && !ModContent.HasAsset(this.overrideIconTexture) && this.overrideIconTexture != "") {
 				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
 				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Warn($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
-				this.overrideIconTexture = "Terraria/NPC_Head_0";
+				this.overrideIconTexture = "Terraria/Images/NPC_Head_0";
 			}
 			this.available = available ?? (() => true);
 

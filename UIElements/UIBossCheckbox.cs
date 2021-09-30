@@ -19,7 +19,8 @@ namespace BossChecklist.UIElements
 		internal UIHoverImageButton moreInfo;
 		internal bool expanded;
 		internal BossInfo boss;
-		float descriptionHeight = 18;
+		private float descriptionHeight = 18;
+		private int bossIndex { get; }
 
 		public UIBossCheckbox(BossInfo boss) {
 			this.boss = boss;
@@ -41,15 +42,14 @@ namespace BossChecklist.UIElements
 			moreInfo.Left.Set(-24, 1f);
 			moreInfo.SetVisibility(1f, 0.7f);
 			moreInfo.OnClick += MoreInfo_OnClick;
-			int index = BossChecklist.bossTracker.SortedBosses.IndexOf(boss);
-			moreInfo.Id = index.ToString();
+			bossIndex = BossChecklist.bossTracker.SortedBosses.IndexOf(boss);
 
 			OnClick += Box_OnClick;
 		}
 
 		private void MoreInfo_OnClick(UIMouseEvent evt, UIElement listeningElement) {
 			BossUISystem.Instance.BossLog.ToggleBossLog(true);
-			BossUISystem.Instance.BossLog.JumpToBossPage(evt, listeningElement);
+			BossUISystem.Instance.BossLog.JumpToBossPage(bossIndex);
 		}
 
 		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement) {
