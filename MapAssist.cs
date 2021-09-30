@@ -47,7 +47,7 @@ namespace BossChecklist
 
 				Texture2D drawTexture = TextureAssets.Item[whitelistType[v]].Value;
 				DrawAnimation drawAnim = Main.itemAnimations[whitelistType[v]];
-				Rectangle sourceRect = drawAnim != null ? drawAnim.GetFrame(drawTexture) : drawTexture.Bounds;
+				Rectangle sourceRect = drawAnim?.GetFrame(drawTexture) ?? drawTexture.Bounds;
 				Vector2 drawPosition = CalculateDrawPos(new Vector2(whitelistPos[v].X / 16, whitelistPos[v].Y / 16));
 				
 				DrawTextureOnMap(drawTexture, drawPosition, sourceRect);

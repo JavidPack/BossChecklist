@@ -214,12 +214,7 @@ namespace BossChecklist.UIElements
 			this.heightNeedsRecalculating = true;
 		}
 
-		private void UpdateScrollbar() {
-			if (this._scrollbar == null) {
-				return;
-			}
-			this._scrollbar.SetView(base.GetInnerDimensions().Height, this.height);
-		}
+		private void UpdateScrollbar() => _scrollbar?.SetView(base.GetInnerDimensions().Height, this.height);
 
 		// Attempt at fix: problems: long words crash it, spaces seem to be miscounted.
 		public static List<List<TextSnippet>> WordwrapStringSmart(string text, Color c, DynamicSpriteFont font, int maxWidth, int maxLines) {

@@ -224,8 +224,7 @@ namespace BossChecklist
 				string message = args[0] as string;
 				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
 				if (message == "GetBossInfoDictionary") {
-					var mod = args[1] as Mod;
-					if (mod == null) {
+					if (args[1] is not Mod mod) {
 						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
 					}
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
@@ -366,8 +365,7 @@ namespace BossChecklist
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)
-				List<string> oldCallsList;
-				if (!bossTracker.OldCalls.TryGetValue(message, out oldCallsList))
+				if (!bossTracker.OldCalls.TryGetValue(message, out List<string> oldCallsList))
 					bossTracker.OldCalls.Add(message, oldCallsList = new List<string>());
 				oldCallsList.Add(name);
 			}

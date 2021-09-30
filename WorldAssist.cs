@@ -184,11 +184,7 @@ namespace BossChecklist
 			else return "Mods.BossChecklist.BossVictory.Generic";
 		}
 
-		public bool CheckRealLife(int realNPC) {
-			if (realNPC == -1) return true;
-			if (Main.npc[realNPC].life >= 0) return true;
-			else return false;
-		}
+		public bool CheckRealLife(int realNPC) => realNPC == -1 || Main.npc[realNPC].life >= 0;
 
 		public override void SaveWorldData(TagCompound tag) {
 			var WorldRecordList = new List<WorldRecord>(worldRecords);
@@ -239,25 +235,27 @@ namespace BossChecklist
 		public override void NetSend(BinaryWriter writer) {
 			// BitBytes can have up to 8 values.
 			// BitsByte flags2 = reader.ReadByte();
-			BitsByte flags = new BitsByte();
-			flags[0] = downedBloodMoon;
-			flags[1] = downedFrostMoon;
-			flags[2] = downedPumpkinMoon;
-			flags[3] = downedSolarEclipse;
-			flags[4] = downedDarkMage;
-			flags[5] = downedOgre;
-			flags[6] = downedFlyingDutchman;
-			flags[7] = downedMartianSaucer;
+			BitsByte flags = new BitsByte {
+				[0] = downedBloodMoon,
+				[1] = downedFrostMoon,
+				[2] = downedPumpkinMoon,
+				[3] = downedSolarEclipse,
+				[4] = downedDarkMage,
+				[5] = downedOgre,
+				[6] = downedFlyingDutchman,
+				[7] = downedMartianSaucer
+			};
 			writer.Write(flags);
 
 			// Vanilla doesn't sync these values, so we will.
-			flags = new BitsByte();
-			flags[0] = NPC.downedTowerSolar;
-			flags[1] = NPC.downedTowerVortex;
-			flags[2] = NPC.downedTowerNebula;
-			flags[3] = NPC.downedTowerStardust;
-			flags[4] = downedInvasionT2Ours;
-			flags[5] = downedInvasionT3Ours;
+			flags = new BitsByte {
+				[0] = NPC.downedTowerSolar,
+				[1] = NPC.downedTowerVortex,
+				[2] = NPC.downedTowerNebula,
+				[3] = NPC.downedTowerStardust,
+				[4] = downedInvasionT2Ours,
+				[5] = downedInvasionT3Ours
+			};
 			writer.Write(flags);
 
 			writer.Write(HiddenBosses.Count);

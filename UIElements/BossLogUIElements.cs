@@ -152,7 +152,7 @@ namespace BossChecklist.UIElements
 				if (IsMouseHovering && !dragging) {
 					BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 					if (!Id.StartsWith("CycleItem")) {
-						DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, translated, pos, Color.White);
+						spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.White);
 					}
 					else {
 						Main.hoverItemName = buttonType;
@@ -1166,11 +1166,11 @@ namespace BossChecklist.UIElements
 				//Main.NewText(evt.ScrollWheelValue);
 				base.ScrollWheel(evt);
 				//if (BossLogUI.PageNum < 0 || BossLogUI.SubPageNum != 1) return;
-				if (this != null && this.Parent != null && this.Parent.IsMouseHovering) {
+				if (this.Parent != null && this.Parent.IsMouseHovering) {
 					//Main.NewText(evt.ScrollWheelValue);
 					this.ViewPosition -= (float)evt.ScrollWheelValue / 1000;
 				}
-				else if (this != null && this.Parent != null && this.Parent.IsMouseHovering) {
+				else if (this.Parent != null && this.Parent.IsMouseHovering) {
 					//Main.NewText(evt.ScrollWheelValue);
 					this.ViewPosition -= (float)evt.ScrollWheelValue / 1000;
 				}
@@ -1555,7 +1555,7 @@ namespace BossChecklist.UIElements
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				Vector2 pos = new Vector2(innerDimensions.X + ((Width.Pixels - stringAdjust.X) / 2) - 12, innerDimensions.Y - 10);
 				if (buttonString != "Disclaimer" && buttonString != "recordAlts") {
-					DynamicSpriteFontExtensionMethods.DrawString(spriteBatch, FontAssets.MouseText.Value, translated, pos, Color.Gold);
+					spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 				}
 
 				Asset<Texture2D> text = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievement_Categories");
