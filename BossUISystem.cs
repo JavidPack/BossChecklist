@@ -152,26 +152,6 @@ namespace BossChecklist
 					InterfaceScaleType.UI)
 				);
 			}
-			if (BossChecklist.ClientConfig.RespawnTimerEnabled) {
-				int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Death Text"));
-				if (inventoryIndex != -1) {
-					layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer("BossChecklist: Respawn Timer",
-						delegate {
-							if (Main.LocalPlayer.dead && Main.LocalPlayer.difficulty != 2) {
-								if (BossChecklist.ClientConfig.TimerSounds) {
-									if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) SoundEngine.PlaySound(25);
-								}
-								string timer = (Main.LocalPlayer.respawnTimer / 60 + 1).ToString();
-								Vector2 screenPos = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 - 75);
-								Color deathColor = Main.player[Main.myPlayer].GetDeathAlpha(Color.Transparent);
-								Main.spriteBatch.DrawString(FontAssets.DeathText.Value, timer, screenPos, deathColor);
-							}
-							return true;
-						},
-						InterfaceScaleType.UI)
-					);
-				}
-			}
 			#region DEBUG
 			int playerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
 			if (playerChatIndex != -1) {

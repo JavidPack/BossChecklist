@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -192,6 +193,11 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdate() {
+			if (Player.dead && BossChecklist.ClientConfig.TimerSounds) {
+				if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) {
+					SoundEngine.PlaySound(25);
+				}
+			}
 			/* Previous bug? debug stuff
 			for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 				if (AllBossRecords[listNum].stat.healthLossBest == 0) {

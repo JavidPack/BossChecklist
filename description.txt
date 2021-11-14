@@ -12,5 +12,4 @@ Introducing the Boss Log, which enhances the traditional boss checklist experien
 
 [i:890] Boss despawn messages display in chat
 [i:3084] Boss radar for bosses that are off-screen
-[i:889] Respawn timer appears while dead
 [i:893] Certain items like treasure bags appear on the map

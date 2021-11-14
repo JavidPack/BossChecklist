@@ -179,7 +179,6 @@ Mods: {
 				DespawnMessageType: Boss Despawn Messages
 				PillarMessages: Pillar Defeated Messages
 				LimbMessages: Segment Defeated Messages
-				RespawnTimer: Enable Respawn Timer
 				TimerSounds: Respawn Timer Sounds
 				TreasureBags: Treasure bags display on the map
 				Fragments: Fragments display on the map
