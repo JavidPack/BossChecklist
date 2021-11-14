@@ -78,21 +78,21 @@ Mods: {
 		BossLog: {
 			HoverText: {
 				ToggleFilters: Toggle Filters
-				JumpTOC: Jump to Table of Contents
-				JumpCred: Jump to Credits
+				JumpTOC: Table of Contents
+				JumpCred: Credits
 				JumpBoss:
 					'''
-					Jump to next boss:
+					Next Boss:
 					{0}
 					'''
 				JumpMini:
 					'''
-					Jump to next mini boss:
+					Next Mini-boss:
 					{0}
 					'''
 				JumpEvent:
 					'''
-					Jump to next event:
+					Next Event:
 					{0}
 					'''
 				ViewCollect: Click to view collectibles only

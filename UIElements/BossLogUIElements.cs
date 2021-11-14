@@ -406,8 +406,8 @@ namespace BossChecklist.UIElements
 
 				if (BossLogUI.PageNum == -1) { // Table of Contents
 					List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
-					Vector2 pos = new Vector2(GetInnerDimensions().X + 19, GetInnerDimensions().Y + 15);
 					if (Id == "PageOne") {
+						Vector2 pos = new Vector2(GetInnerDimensions().X + 20, GetInnerDimensions().Y + 15);
 						Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode"), pos, Colors.RarityAmber, 0.6f);
 						if (BossChecklist.BossLogConfig.CountDownedBosses) {
 							int totalPreHard = 0;
@@ -427,6 +427,7 @@ namespace BossChecklist.UIElements
 						}
 					}
 					else if (Id == "PageTwo") {
+						Vector2 pos = new Vector2(GetInnerDimensions().X + 35, GetInnerDimensions().Y + 15);
 						Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode"), pos, Colors.RarityAmber, 0.6f);
 						if (BossChecklist.BossLogConfig.CountDownedBosses) {
 							int totalHard = 0;
@@ -800,7 +801,7 @@ namespace BossChecklist.UIElements
 									}
 								}
 
-								Rectangle posRect = new Rectangle(pageRect.X, pageRect.Y + 100 + (75 * i), 64, 64);
+								Rectangle posRect = new Rectangle(pageRect.X + 15, pageRect.Y + 100 + (75 * i), 64, 64);
 								Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
 								spriteBatch.Draw(achievements.Value, posRect, cutRect, Color.White);
 
@@ -824,24 +825,24 @@ namespace BossChecklist.UIElements
 
 								if (isNewRecord[i] && modPlayer.hasNewRecord[BossLogUI.PageNum]) {
 									Asset<Texture2D> text = ModContent.Request<Texture2D>("Terraria/Images/UI/UI_quickicon1");
-									Rectangle exclam = new Rectangle(pageRect.X + 59, pageRect.Y + 96 + (75 * i), 9, 24);
+									Rectangle exclam = new Rectangle(pageRect.X + 74, pageRect.Y + 96 + (75 * i), 9, 24);
 									spriteBatch.Draw(text.Value, exclam, Color.White);
 								}
 
 								int offsetY = compareNumbers == "" ? 110 + (i * 75) : 100 + (i * 75);
 
 								Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(recordType);
-								Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY);
+								Vector2 pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 20) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY);
 								Utils.DrawBorderString(spriteBatch, recordType, pos, Color.Goldenrod);
 
 								stringAdjust = FontAssets.MouseText.Value.MeasureString(recordNumbers);
-								pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY + 25);
+								pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 20) - (stringAdjust.X / 3), GetInnerDimensions().Y + offsetY + 25);
 								Utils.DrawBorderString(spriteBatch, recordNumbers, pos, Color.White);
 
 								float scale = 0.75f;
 								if (compareNumbers != "") {
 									stringAdjust = FontAssets.MouseText.Value.MeasureString(compareNumbers);
-									pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 35) - (stringAdjust.X * scale / 3), GetInnerDimensions().Y + offsetY + 50);
+									pos = new Vector2(GetInnerDimensions().X + (GetInnerDimensions().Width / 2 - 20) - (stringAdjust.X * scale / 3), GetInnerDimensions().Y + offsetY + 50);
 									Utils.DrawBorderString(spriteBatch, compareNumbers, pos, Color.White, scale);
 									compareNumbers = "";
 								}
@@ -889,7 +890,7 @@ namespace BossChecklist.UIElements
 									}
 
 									for (int j = 0; j < 3; j++) {
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
+										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset + 15, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
 										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
 										spriteBatch.Draw(banner.Value, pos, rect, faded);
 
@@ -1023,8 +1024,8 @@ namespace BossChecklist.UIElements
 
 							// PageNum already corresponds with the index of the saved player data
 
-							Asset<Texture2D> template = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CollectionTemplate");
-							Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width() / 2) - 20, pageRect.Y + 84, template.Width(), template.Height());
+							Asset<Texture2D> template = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CollectionTemplate", AssetRequestMode.ImmediateLoad);
+							Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width() / 2) - 5, pageRect.Y + 84, template.Width(), template.Height());
 							spriteBatch.Draw(template.Value, ctRect, Color.White);
 
 							// Draw Music Boxes
@@ -1065,7 +1066,7 @@ namespace BossChecklist.UIElements
 									offsetX = 0;
 									offsetY++;
 								}
-								Rectangle posRect = new Rectangle(pageRect.X + 210 + styleX - left - (2 * offsetX), pageRect.Y + 160 + styleY - top - (2 * offsetY), 16, 16);
+								Rectangle posRect = new Rectangle(pageRect.X + 225 + styleX - left - (2 * offsetX), pageRect.Y + 160 + styleY - top - (2 * offsetY), 16, 16);
 								Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
 								spriteBatch.Draw(musicBoxTexture.Value, posRect, cutRect, Color.White);
 								styleX += 18;
@@ -1085,7 +1086,7 @@ namespace BossChecklist.UIElements
 								}
 
 								int frameCut = mask.Height() / 24;
-								Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (mask.Width() / 2) - 8, pageRect.Y + (pageRect.Height / 2) - (frameCut / 2) - 86, mask.Width(), frameCut);
+								Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (mask.Width() / 2) + 7, pageRect.Y + (pageRect.Height / 2) - (frameCut / 2) - 86, mask.Width(), frameCut);
 								Rectangle cutRect = new Rectangle(0, 0, mask.Width(), frameCut);
 								spriteBatch.Draw(mask.Value, posRect, cutRect, Color.White);
 							}
@@ -1127,7 +1128,7 @@ namespace BossChecklist.UIElements
 									offsetX = 0;
 									offsetY++;
 								}
-								Rectangle posRect = new Rectangle(pageRect.X + 98 + styleX - left - (2 * offsetX), pageRect.Y + 126 + styleY - top - (2 * offsetY), width, height);
+								Rectangle posRect = new Rectangle(pageRect.X + 113 + styleX - left - (2 * offsetX), pageRect.Y + 126 + styleY - top - (2 * offsetY), width, height);
 								Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
 								spriteBatch.Draw(trophyTexture.Value, posRect, cutRect, Color.White);
 								styleX += 18;
