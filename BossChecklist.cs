@@ -1,19 +1,12 @@
-﻿using BossChecklist.UIElements;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Terraria;
-using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using Terraria.UI;
-using Terraria.UI.Chat;
 
 namespace BossChecklist
 {
@@ -110,7 +103,7 @@ namespace BossChecklist
 			ToggleChecklistHotKey = KeybindLoader.RegisterKeybind(this, "Toggle Boss Checklist", "P");
 			ToggleBossLog = KeybindLoader.RegisterKeybind(this, "Toggle Boss Log", "L");
 
-			tremorLoaded = ModLoader.GetMod("Tremor") != null;
+			tremorLoaded = ModLoader.TryGetMod("Tremor", out Mod mod);
 
 			FieldInfo itemToMusicField = typeof(MusicLoader).GetField("itemToMusic", BindingFlags.Static | BindingFlags.NonPublic);
 			itemToMusicReference = (Dictionary<int, int>)itemToMusicField.GetValue(null);

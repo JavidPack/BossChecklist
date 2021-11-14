@@ -89,6 +89,7 @@ namespace BossChecklist
 			get { return bossLogVisible; }
 			set {
 				if (value) {
+					Append(BookArea);
 					Append(ToCTab);
 					Append(CreditsTab);
 					Append(filterPanel);
@@ -97,7 +98,6 @@ namespace BossChecklist
 					Append(EventTab);
 					Append(PageOne);
 					Append(PageTwo);
-					Append(BookArea);
 				}
 				else {
 					RemoveChild(ToCTab);
@@ -140,28 +140,28 @@ namespace BossChecklist
 		}
 
 		public override void OnInitialize() {
-			bookTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Outline");
-			borderTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Border");
-			fadedTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Faded");
-			colorTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Book_Color");
-			
-			prevTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Prev");
-			nextTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Next");
-			tocTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Contents");
-			credTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Credits");
-			bossNavTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Boss");
-			minibossNavTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Miniboss");
-			eventNavTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Event");
-			filterTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Nav_Filter");
-			
-			checkMarkTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Check");
-			xTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_X");
-			circleTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Next");
-			checkboxTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Box");
-			chestTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Chest");
-			starTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Star");
-			goldChestTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_GoldChest");
-			
+			bookTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Outline");
+			borderTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Border");
+			fadedTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Faded");
+			colorTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Color");
+
+			prevTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Prev");
+			nextTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Next");
+			tocTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Contents");
+			credTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Credits");
+			bossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Boss");
+			minibossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss");
+			eventNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event");
+			filterTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Filter");
+
+			checkMarkTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check");
+			xTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X");
+			circleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Next");
+			checkboxTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box");
+			chestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Chest");
+			starTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Star");
+			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
+
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
 				Id = "OpenUI"
 			};
@@ -176,7 +176,7 @@ namespace BossChecklist
 				false, false, false, false
 			};
 
-			ToCTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab")) {
+			ToCTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "ToCFilter_Tab"
 			};
 			ToCTab.Height.Pixels = 76;
@@ -185,7 +185,7 @@ namespace BossChecklist
 			ToCTab.Top.Set(-250 + 20, 0.5f);
 			ToCTab.OnClick += OpenViaTab;
 
-			BossTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab")) {
+			BossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "Boss_Tab"
 			};
 			BossTab.Height.Pixels = 76;
@@ -194,7 +194,7 @@ namespace BossChecklist
 			BossTab.Top.Set(-250 + 30 + 76, 0.5f);
 			BossTab.OnClick += OpenViaTab;
 
-			MiniBossTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab")) {
+			MiniBossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "Miniboss_Tab"
 			};
 			MiniBossTab.Height.Pixels = 76;
@@ -203,7 +203,7 @@ namespace BossChecklist
 			MiniBossTab.Top.Set(-250 + 40 + (76 * 2), 0.5f);
 			MiniBossTab.OnClick += OpenViaTab;
 
-			EventTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab")) {
+			EventTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "Event_Tab"
 			};
 			EventTab.Height.Pixels = 76;
@@ -212,7 +212,7 @@ namespace BossChecklist
 			EventTab.Top.Set(-250 + 50 + (76 * 3), 0.5f);
 			EventTab.OnClick += OpenViaTab;
 
-			CreditsTab = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Tab")) {
+			CreditsTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "Credits_Tab"
 			};
 			CreditsTab.Height.Pixels = 76;
@@ -275,7 +275,7 @@ namespace BossChecklist
 
 			pageTwoItemList = new UIList();
 
-			filterPanel = new BookUI(BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Filter")) {
+			filterPanel = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Filter")) {
 				Id = "filterPanel"
 			};
 			filterPanel.Height.Pixels = 76;

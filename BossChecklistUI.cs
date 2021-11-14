@@ -11,7 +11,6 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -63,7 +62,8 @@ namespace BossChecklist.UIElements
 		public static Asset<Texture2D> TextureAsset(Texture2D texture) {
 			using MemoryStream stream = new();
 			texture.SaveAsPng(stream, texture.Width, texture.Height);
-			return BossChecklist.instance.Assets.CreateUntracked<Texture2D>(stream, "resize.png");
+			stream.Position = 0;
+			return BossChecklist.instance.Assets.CreateUntracked<Texture2D>(stream, ".png");
 		}
 
 		public override void OnInitialize() {

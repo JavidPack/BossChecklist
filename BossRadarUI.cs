@@ -7,6 +7,7 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.UI;
+using Terraria.ModLoader;
 
 namespace BossChecklist
 {
@@ -36,7 +37,7 @@ namespace BossChecklist
 			drawPos = new List<Vector2>();
 			drawRotation = new List<float>();
 			drawLOS = new List<bool>();
-			arrowTexture = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_RadarArrow");
+			arrowTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RadarArrow");
 			whitelistNPCs = new int[0];
 		}
 
