@@ -44,17 +44,19 @@ Mods: {
 			QueenBee: Use [i:1133] or break a Bee Hive's Larva found in the jungle.
 			SkeletronHead: Visit the dungeon and talk to the old man at night or kill the Clothier with [i:1307] at night.
 			WallofFlesh: Spawn by throwing [i:267] into lava in the Underworld. [c/FF0000:Starts Hardmode!]
+			QueenSlimeBoss: Use [i:4988] in the Hallow biome, which can be found in the Underground Hallow among Crystal Shards growing on Pearlstone and Pink Ice blocks.
 			TheTwins: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Alternatively, Use [i:544] at night to spawn.
 			TheDestroyer: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:556] at night to spawn.
 			SkeletronPrime: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:557] at night to spawn.
 			Plantera: Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated.
 			Golem: Use [i:1293] on Lihzahrd Altar, found deep in the Jungle Temple.
+			HallowBoss: Kill [i:4961] in the Hallow biome, which can be found on the Hallow surface between 7:30pm and 12:00am after Plantera has been defeated.
 			DD2Betsy: Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).
-			DukeFishron: Fish in ocean using the [i:2673] as bait.
+			DukeFishron: Fish in ocean using the [i:2673] as bait, which can be caught in an underground Glowing Mushroom biome during hardmode.
 			CultistBoss: Kill the 4 cultists outside the dungeon after defeating Golem.
 			MoonLord: Use [i:3601] or defeat all 4 pillars.
 			MoonLord_Tremor: Use [i:3601] or defeat all 5 pillars. [c/FF0000:Starts Tremode!]
-			BloodMoon: Occurs randomly at the start of night. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.
+			BloodMoon: Occurs randomly at the start of night or can be summoned with a [i:4271] which can be dropped by any blood moon enemy. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.
 			GoblinArmy: Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:361]. Lasts until enough enemies are defeated.
 			OldOnesArmy: After finding the Tavernkeep, purchase and activate [i:3816] with [i:3828]. Lasts until all waves are cleared.
 			FrostLegion: Use a [i:602], which can be found by opening [i:1869], during the Christmas season. Lasts until enough enemies are defeated.
@@ -98,6 +100,7 @@ Mods: {
 				ViewCollect: Click to view collectibles only
 				ViewLoot: Click to view all loot
 				ItemIsExpertOnly: This item is only obtainable in expert mode
+				ItemIsMasterOnly: This item is only obtainable in master mode
 			}
 
 			DrawnText: {

@@ -32,9 +32,12 @@ namespace BossChecklist
 			ItemID.GolemBossBag,
 			ItemID.FishronBossBag,
 			ItemID.MoonLordBossBag,
-			ItemID.BossBagBetsy
+			ItemID.BossBagBetsy,
+			ItemID.QueenSlimeBossBag,
+			ItemID.FairyQueenBossBag
 		};
 
+		// Vanilla and Other World music boxes are in order given by the official Terraria wiki
 		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
 			ItemID.MusicBoxOverworldDay,
 			ItemID.MusicBoxAltOverworldDay,
@@ -44,7 +47,9 @@ namespace BossChecklist
 			ItemID.MusicBoxIce,
 			ItemID.MusicBoxDesert,
 			ItemID.MusicBoxOcean,
+			ItemID.MusicBoxOceanAlt,
 			ItemID.MusicBoxSpace,
+			ItemID.MusicBoxSpaceAlt,
 			ItemID.MusicBoxUnderground,
 			ItemID.MusicBoxAltUnderground,
 			ItemID.MusicBoxMushrooms,
@@ -63,7 +68,10 @@ namespace BossChecklist
 			ItemID.MusicBoxBoss3,
 			ItemID.MusicBoxBoss4,
 			ItemID.MusicBoxBoss5,
+			ItemID.MusicBoxQueenSlime,
 			ItemID.MusicBoxPlantera,
+			ItemID.MusicBoxEmpressOfLight,
+			ItemID.MusicBoxDukeFishron,
 			ItemID.MusicBoxEerie,
 			ItemID.MusicBoxEclipse,
 			ItemID.MusicBoxGoblins,
@@ -75,8 +83,54 @@ namespace BossChecklist
 			ItemID.MusicBoxLunarBoss,
 			ItemID.MusicBoxSandstorm,
 			ItemID.MusicBoxDD2,
-			ItemID.MusicBoxTitle
+			ItemID.MusicBoxSlimeRain,
+			ItemID.MusicBoxTownDay,
+			ItemID.MusicBoxTownNight,
+			ItemID.MusicBoxWindyDay,
+			ItemID.MusicBoxDayRemix,
+			ItemID.MusicBoxTitleAlt, // Journey's Beginning
+			ItemID.MusicBoxStorm,
+			ItemID.MusicBoxGraveyard,
+			ItemID.MusicBoxUndergroundJungle,
+			ItemID.MusicBoxJungleNight,
+			ItemID.MusicBoxMorningRain,
+			ItemID.MusicBoxConsoleTitle,
+			ItemID.MusicBoxUndergroundDesert,
+			ItemID.MusicBoxCredits, // Journey's End
+			ItemID.MusicBoxTitle,
 		};
+
+		//TODO: setup special-condition collectible checks
+		public readonly static List<int> otherWorldMusicBoxTypes = new List<int>() {
+			ItemID.MusicBoxOWRain,
+			ItemID.MusicBoxOWDay,
+			ItemID.MusicBoxOWNight,
+			ItemID.MusicBoxOWUnderground,
+			ItemID.MusicBoxOWDesert,
+			ItemID.MusicBoxOWOcean,
+			ItemID.MusicBoxOWMushroom,
+			ItemID.MusicBoxOWDungeon,
+			ItemID.MusicBoxOWSpace,
+			ItemID.MusicBoxOWUnderworld,
+			ItemID.MusicBoxOWSnow,
+			ItemID.MusicBoxOWCorruption,
+			ItemID.MusicBoxOWUndergroundCorruption,
+			ItemID.MusicBoxOWCrimson,
+			ItemID.MusicBoxOWUndergroundCrimson,
+			ItemID.MusicBoxOWUndergroundSnow, // Ice
+			ItemID.MusicBoxOWUndergroundHallow,
+			ItemID.MusicBoxOWBloodMoon, // Eerie
+			ItemID.MusicBoxOWBoss2,
+			ItemID.MusicBoxOWBoss1,
+			ItemID.MusicBoxOWInvasion,
+			ItemID.MusicBoxOWTowers,
+			ItemID.MusicBoxOWMoonLord,
+			ItemID.MusicBoxOWPlantera,
+			ItemID.MusicBoxOWJungle,
+			ItemID.MusicBoxOWWallOfFlesh,
+			ItemID.MusicBoxOWHallow,
+		};
+
 		public static Dictionary<int, int> itemToMusicReference;
 
 		// Mods that have been added manually
