@@ -92,20 +92,20 @@ namespace BossChecklist
 					Append(BookArea);
 					Append(ToCTab);
 					Append(filterPanel);
+					Append(CreditsTab);
 					Append(BossTab);
 					Append(MiniBossTab);
 					Append(EventTab);
-					Append(CreditsTab);
 					Append(PageOne);
 					Append(PageTwo);
 				}
 				else {
 					RemoveChild(PageTwo);
 					RemoveChild(PageOne);
-					RemoveChild(CreditsTab);
 					RemoveChild(EventTab);
 					RemoveChild(MiniBossTab);
 					RemoveChild(BossTab);
+					RemoveChild(CreditsTab);
 					RemoveChild(filterPanel);
 					RemoveChild(ToCTab);
 					RemoveChild(BookArea);
@@ -844,7 +844,7 @@ namespace BossChecklist
 					col++;
 					if (k == 6) {
 						// Fills in rows with empty slots. New rows start after 7 items
-						if (ingList.item.type == 0) {
+						if (ingList.item.type == ItemID.None) {
 							break;
 						}
 						col = 0;
@@ -964,7 +964,7 @@ namespace BossChecklist
 
 			scrollTwo.SetView(10f, 1000f);
 			scrollTwo.Top.Pixels = 125;
-			scrollTwo.Left.Pixels = -18;
+			scrollTwo.Left.Pixels = -3;
 			scrollTwo.Height.Set(-88f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
@@ -980,12 +980,32 @@ namespace BossChecklist
 				if (BossChecklist.registeredBossBagTypes.Contains(loot)) {
 					continue;
 				}
-				Item expertItem = new Item();
-				expertItem.SetDefaults(loot);
-				if (expertItem.expert) {
+				Item selectedItem = new Item();
+				selectedItem.SetDefaults(loot);
+				if (selectedItem.master) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem) {
-						Id = "loot_" + expertItem.type
+					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
+						Id = "loot_" + selectedItem.type
+					};
+					lootTable.Height.Pixels = 50;
+					lootTable.Width.Pixels = 50;
+					lootTable.Left.Pixels = (col * 56) + 15;
+					lootTable.OnRightDoubleClick += RemoveItem;
+					newRow.Append(lootTable);
+					col++;
+					if (col == 6) {
+						col = 0;
+						row++;
+						pageTwoItemList.Add(newRow);
+						newRow = new LootRow(row) {
+							Id = "Loot" + row
+						};
+					}
+				}
+				if (selectedItem.expert) {
+					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
+					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
+						Id = "loot_" + selectedItem.type
 					};
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
@@ -1003,8 +1023,7 @@ namespace BossChecklist
 					}
 				}
 			}
-			foreach (int itemType in shortcut.loot)
-			{
+			foreach (int itemType in shortcut.loot) {
 				if (BossChecklist.registeredBossBagTypes.Contains(itemType)) {
 					continue;
 				}
@@ -1022,7 +1041,7 @@ namespace BossChecklist
 						}
 					}
 				}
-				if (!loot.expert) {
+				if (!loot.expert && !loot.master) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem) {
 						Id = "loot_" + loot.type
@@ -1071,7 +1090,7 @@ namespace BossChecklist
 
 			scrollTwo.SetView(10f, 1000f);
 			scrollTwo.Top.Pixels = 250;
-			scrollTwo.Left.Pixels = -18;
+			scrollTwo.Left.Pixels = -3;
 			scrollTwo.Height.Set(-220f, 0.75f);
 			scrollTwo.HAlign = 1f;
 

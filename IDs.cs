@@ -22,7 +22,10 @@ namespace BossChecklist
 		Generic,
 		Trophy,
 		Mask,
-		MusicBox
+		MusicBox,
+		Relic,
+		Pet,
+		Mount
 	}
 
 	enum PacketMessageType : byte

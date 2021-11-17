@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using Terraria.ObjectData;
+using Terraria.ID;
 
 namespace BossChecklist
 {
@@ -175,12 +176,25 @@ namespace BossChecklist
 			foreach (int type in collection) {
 				Item temp = new Item();
 				temp.SetDefaults(type);
-				if (temp.headSlot > 0 && temp.vanity) setup.Add(CollectionType.Mask);
-				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) setup.Add(CollectionType.MusicBox);
-				else if (temp.createTile > 0) {
+				if (temp.headSlot > 0 && temp.vanity) {
+					setup.Add(CollectionType.Mask);
+				}
+				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+					setup.Add(CollectionType.MusicBox);
+				}
+				else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
+					setup.Add(CollectionType.Pet);
+				}
+				else if (temp.master && temp.mountType > MountID.None) {
+					setup.Add(CollectionType.Mount);
+				}
+				else if (temp.createTile > TileID.Dirt) {
 					TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
 					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
 						setup.Add(CollectionType.Trophy);
+					}
+					else if (temp.master && data.Width == 3 && data.Height == 4) {
+						setup.Add(CollectionType.Relic);
 					}
 					else setup.Add(CollectionType.Generic);
 				}

@@ -191,18 +191,16 @@ namespace BossChecklist.UIElements
 				var backup = TextureAssets.InventoryBack6;
 				var backup2 = TextureAssets.InventoryBack7;
 
-				TextureAssets.InventoryBack6 = TextureAssets.InventoryBack15;
-
 				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 				BossCollection collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 
-				if (Id.StartsWith("loot_") && hasItem) {
-					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
-					TextureAssets.InventoryBack6 = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_ExpertCollected");
-				}
-
-				if (Id.StartsWith("collect_") && hasItem) {
-					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
+				if (Id.StartsWith("loot_") || Id.StartsWith("collect_")) {
+					if (hasItem) {
+						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
+					}
+					else if ((item.expert && !Main.expertMode) || (item.master && !Main.masterMode)) {
+						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
+					}
 				}
 
 				string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
@@ -212,15 +210,23 @@ namespace BossChecklist.UIElements
 				bool hiddenItemUnobtained = (Id.Contains("loot_") || Id.Contains("collect_")) && !collection.loot.Contains(new ItemDefinition(item.type)) && !collection.collectibles.Contains(new ItemDefinition(item.type));
 				if (BossChecklist.BossLogConfig.BossSilhouettes && !selectedBoss.downed() && hiddenItemUnobtained) {
 					spriteBatch.Draw(TextureAssets.InventoryBack13.Value, rectangle.TopLeft(), TextureAssets.InventoryBack13.Value.Bounds, Color.DimGray, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-					Texture2D hiddenItem = TextureAssets.NpcHead[0].Value;
-					Vector2 vec = new Vector2(rectangle.X + ((rectangle.Width * scale) / 2) - (hiddenItem.Width / 2), rectangle.Y + ((rectangle.Height * scale) / 2) - (hiddenItem.Height / 2));
+					//Texture2D hiddenItem = TextureAssets.NpcHead[0].Value;
+					Texture2D hiddenItem = ModContent.Request<Texture2D>("Terraria/Images/UI/Bestiary/Icon_Locked").Value;
+					Vector2 vec = new Vector2(rectangle.X + (rectangle.Width * scale / 2) - (hiddenItem.Width / 2), rectangle.Y + (rectangle.Height * scale / 2) - (hiddenItem.Height / 2));
 					spriteBatch.Draw(hiddenItem, vec, Color.White);
 					if (IsMouseHovering) {
 						Main.hoverItemName = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPage[2] ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
 					}
+					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
+					if (item.expert && !Main.expertMode) {
+						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
+					}
+					if (item.master && !Main.masterMode) {
+						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
+					}
 					return;
 				}
-				else if (item.type != 0 || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
+				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 				}
 
@@ -249,43 +255,73 @@ namespace BossChecklist.UIElements
 				}
 
 				Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
-				if (item.type != 0 && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
+				if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
 					if (hasItem) {
 						spriteBatch.Draw(BossLogUI.checkMarkTexture.Value, rect, Color.White); // hasItem first priority
 					}
-					else if (!Main.expertMode && (item.expert || item.expertOnly)) {
-						spriteBatch.Draw(BossLogUI.xTexture.Value, rect, Color.White);
+					else {
+						Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
+						if (item.expert && !Main.expertMode) {
+							spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
+						}
+						if (item.master && !Main.masterMode) {
+							spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
+						}
 					}
 				}
 
 				if (Id.StartsWith("collect_") && BossChecklist.DebugConfig.ShowCollectionType) {
-					string showType = "";
 					BossInfo boss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 					int index = boss.collection.FindIndex(x => x == item.type);
 					CollectionType type = boss.collectType[index];
-					if (type == CollectionType.Trophy) {
-						showType = "Trophy";
-					}
-					else if (type == CollectionType.MusicBox) {
-						showType = "Music";
-					}
-					else if (type == CollectionType.Mask) {
-						showType = "Mask";
-					}
 
-					if (showType != "") {
-						Vector2 measure = FontAssets.MouseText.Value.MeasureString(showType);
-						Vector2 pos = new Vector2(rectangle.X + (Width.Pixels / 2) - (measure.X * 0.8f / 2), rectangle.Top);
-						Utils.DrawBorderString(spriteBatch, showType, pos, Colors.RarityAmber, 0.8f);
+					if (type != CollectionType.Generic) {
+						string showType = "";
+						Texture2D showIcon = ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value;
+						if (type == CollectionType.Trophy) {
+							showType = "Trophy";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
+						}
+						else if (type == CollectionType.MusicBox) {
+							showType = "Music";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Music").Value;
+						}
+						else if (type == CollectionType.Mask) {
+							showType = "Mask";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Mask").Value;
+						}
+						else if (type == CollectionType.Pet) {
+							showType = "Pet";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet").Value;
+						}
+						else if (type == CollectionType.Pet) {
+							showType = "Mount";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet").Value;
+						}
+						else if (type == CollectionType.Relic) {
+							showType = "Relic";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
+						}
+
+						Rectangle rect2 = new Rectangle((int)rectangle.BottomLeft().X - 4, (int)rectangle.BottomLeft().Y - 15, 22, 20);
+						spriteBatch.Draw(showIcon, rect2, Color.White);
+						if (IsMouseHovering) {
+							Utils.DrawBorderString(spriteBatch, showType, rectangle.TopLeft(), Colors.RarityAmber, 0.8f);
+						}
 					}
 				}
 
 				if (IsMouseHovering) {
 					if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
-						if (item.type != 0 && (Id.StartsWith("loot_") || Id.StartsWith("collect_")) && !Main.expertMode && (item.expert || item.expertOnly)) {
-							Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
+						if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_")) && !hasItem) {
+							if (!Main.expertMode && (item.expert || item.expertOnly)) {
+								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
+							}
+							else if (!Main.masterMode && (item.master || item.masterOnly)) {
+								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
+							}
 						}
-						else if (item.type != 0 || hoverText != "") {
+						else if (item.type != ItemID.None || hoverText != "") {
 							Color newcolor = ItemRarity.GetColor(item.rare);
 							float num3 = (float)(int)Main.mouseTextColor / 255f;
 							if (item.expert || item.expertOnly) {
@@ -851,8 +887,7 @@ namespace BossChecklist.UIElements
 						else {
 							int offset = 0;
 							int offsetY = 0;
-							foreach (int npcID in selectedBoss.npcIDs)
-							{
+							foreach (int npcID in selectedBoss.npcIDs) {
 								if (offset == 0 && offsetY == 5) {
 									break; // For now, we stop drawing any banners that exceed the books limit (might have to reimplement as a UIList for scrolling purposes)
 								}
@@ -1041,7 +1076,7 @@ namespace BossChecklist.UIElements
 							Main.instance.LoadTiles(musicBoxTileType);
 							var musicBoxTexture = TextureAssets.Tile[musicBoxTileType];
 
-							if (musicBoxItem.createTile > 0) {
+							if (musicBoxItem.createTile > TileID.Dirt) {
 								TileObjectData data = TileObjectData.GetTileData(musicBoxTileType, musicBoxStyle);
 
 								width = data.CoordinateWidth;
@@ -1103,7 +1138,7 @@ namespace BossChecklist.UIElements
 							Main.instance.LoadTiles(trophyTileType);
 							Asset<Texture2D> trophyTexture = TextureAssets.Tile[trophyTileType];
 
-							if (trophyItem.createTile > 0) {
+							if (trophyItem.createTile > TileID.Dirt) {
 								TileObjectData data = TileObjectData.GetTileData(trophyTileType, trophyStyle);
 
 								width = data.CoordinateWidth;
