@@ -670,6 +670,27 @@ namespace BossChecklist.UIElements
 					if (Id == "PageTwo" && BossLogUI.SubPageNum == 0 && selectedBoss.modSource != "Unknown") {
 						if (selectedBoss.type != EntryType.Event) {
 							// Boss Records Subpage
+							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
+								if (info.type != EntryType.Event) {
+									continue;
+								}
+								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+									Texture2D icon = BossLogUI.GetEventIcon(info).Value;
+									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + 15, GetInnerDimensions().ToRectangle().Y + 50);
+									Color faded = info.downed() ? Color.White : new Color(128, 128, 128, 128);
+									spriteBatch.Draw(icon, pos, faded);
+									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
+										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
+											Main.hoverItemName = info.name + "\nClick to view page";
+											if (Main.mouseLeft && Main.mouseLeftRelease) {
+												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+											}
+										}
+									}
+								}
+							}
+
+							// Beginning of record drawing
 							Asset<Texture2D> achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 							BossStats record = modPlayer.AllBossRecords[BossLogUI.PageNum].stat;
@@ -885,11 +906,47 @@ namespace BossChecklist.UIElements
 							}
 						}
 						else {
+							var bosses = BossChecklist.bossTracker.SortedBosses;
 							int offset = 0;
 							int offsetY = 0;
+
+							int headTextureOffsetX = 0;
+							int headTextureOffsetY = 0;
 							foreach (int npcID in selectedBoss.npcIDs) {
-								if (offset == 0 && offsetY == 5) {
-									break; // For now, we stop drawing any banners that exceed the books limit (might have to reimplement as a UIList for scrolling purposes)
+								foreach (BossInfo info in bosses) {
+									if (info.type == EntryType.Event) {
+										continue;
+									}
+									if (info.npcIDs.Contains(npcID)) {
+										Texture2D head = info.overrideIconTexture == "" ? BossLogUI.GetBossHead(npcID).Value : ModContent.Request<Texture2D>(info.overrideIconTexture).Value;
+										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + headTextureOffsetX + 15, GetInnerDimensions().ToRectangle().Y + 100);
+										Color faded = info.downed() ? Color.White : new Color(128, 128, 128, 128);
+										spriteBatch.Draw(head, pos, faded);
+										headTextureOffsetX += head.Width + 5;
+										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + head.Width) {
+											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + head.Height) {
+												Main.hoverItemName = info.name + "\nClick to view page";
+												if (Main.mouseLeft && Main.mouseLeftRelease) {
+													BossLogUI.PageNum = bosses.FindIndex(x => x.Key == info.Key);
+												}
+											}
+										}
+										if (head.Height > headTextureOffsetY) {
+											headTextureOffsetY = head.Height;
+										}
+										break;
+									}
+								}
+							}
+
+							offset = 0;
+							if (headTextureOffsetY != 0) {
+								offsetY = headTextureOffsetY + 5;
+							}
+
+							foreach (int npcID in selectedBoss.npcIDs) {
+								if (offset == 0 && offsetY == 4) {
+									break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
 								}
 
 								if (npcID < NPCID.Count) {
@@ -1000,7 +1057,7 @@ namespace BossChecklist.UIElements
 
 										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
 											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-												Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)].ToString()}\n[{source}]";
+												Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
 											}
 										}
 									}

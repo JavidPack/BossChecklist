@@ -944,7 +944,8 @@ namespace BossChecklist
 					NPCID.DD2LightningBugT3,
 					NPCID.DD2SkeletonT3,
 					NPCID.DD2DarkMageT3,
-					NPCID.DD2OgreT3
+					NPCID.DD2OgreT3,
+					NPCID.DD2Betsy
 				};
 			}
 			if (eventName == "Frost Legion") {
@@ -1012,7 +1013,7 @@ namespace BossChecklist
 			}
 			if (eventName == "Martian Madness") {
 				return new List<int>() {
-					NPCID.MartianSaucer,
+					NPCID.MartianSaucerCore,
 					NPCID.Scutlix,
 					NPCID.ScutlixRider,
 					NPCID.MartianWalker,
