@@ -277,7 +277,7 @@ namespace BossChecklist.UIElements
 
 					if (type != CollectionType.Generic) {
 						string showType = "";
-						Texture2D showIcon = ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value;
+						Texture2D showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
 						if (type == CollectionType.Trophy) {
 							showType = "Trophy";
 							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
@@ -294,7 +294,7 @@ namespace BossChecklist.UIElements
 							showType = "Pet";
 							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet").Value;
 						}
-						else if (type == CollectionType.Pet) {
+						else if (type == CollectionType.Mount) {
 							showType = "Mount";
 							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet").Value;
 						}
