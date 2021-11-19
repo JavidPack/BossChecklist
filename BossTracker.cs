@@ -15,17 +15,18 @@ namespace BossChecklist
 		public const float EaterOfWorlds = 3f;
 		public const float QueenBee = 4f;
 		public const float Skeletron = 5f;
-		public const float WallOfFlesh = 6f;
-		public const float QueenSlime = 7f;
-		public const float TheTwins = 8f;
-		public const float TheDestroyer = 9f;
-		public const float SkeletronPrime = 10f;
-		public const float Plantera = 11f;
-		public const float Golem = 12f;
-		public const float EmpressOfLight = 13f;
-		public const float DukeFishron = 14f;
-		public const float LunaticCultist = 15f;
-		public const float Moonlord = 16f;
+		public const float DeerClops = 6f;
+		public const float WallOfFlesh = 7f;
+		public const float QueenSlime = 8f;
+		public const float TheTwins = 9f;
+		public const float TheDestroyer = 10f;
+		public const float SkeletronPrime = 11f;
+		public const float Plantera = 12f;
+		public const float Golem = 13f;
+		public const float EmpressOfLight = 14f;
+		public const float DukeFishron = 15f;
+		public const float LunaticCultist = 16f;
+		public const float Moonlord = 17f;
 
 		/// <summary>
 		/// All currently loaded bosses/minibosses/events sorted in progression order.
@@ -52,6 +53,7 @@ namespace BossChecklist
 				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "$NPCName.QueenBee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "$NPCName.Deerclops", new List<int>() { NPCID.Deerclops }, () => NPC.downedDeerclops, new List<int>() { ItemID.DeerThing }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode, new List<int>() { ItemID.GuideVoodooDoll }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenSlime, "$NPCName.QueenSlimeBoss", new List<int>() { NPCID.QueenSlimeBoss }, () => NPC.downedQueenSlime, new List<int>() { ItemID.QueenSlimeCrystal }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
@@ -253,6 +255,24 @@ namespace BossChecklist
 					ItemID.SkeletronHand,
 					ItemID.BookofSkulls,
 					ItemID.LesserHealingPotion
+				};
+			}
+			if (bossNum == NPCID.Deerclops) {
+				return new List<int>() {
+					ItemID.DeerclopsBossBag,
+					ItemID.DeerclopsMasterTrophy,
+					ItemID.DeerclopsPetItem,
+					ItemID.BoneHelm,
+					ItemID.DeerclopsTrophy,
+					ItemID.DeerclopsMask,
+
+					ItemID.ChesterPetItem,
+					ItemID.Eyebrella,
+					ItemID.DontStarveShaderItem,
+					ItemID.PewMaticHorn,
+					ItemID.WeatherPain,
+					ItemID.HoundiusShootius,
+					ItemID.LucyTheAxe
 				};
 			}
 			if (bossNum == NPCID.WallofFlesh) {
@@ -671,7 +691,7 @@ namespace BossChecklist
 					ItemID.QueenBeePetItem,
 					ItemID.QueenBeeTrophy,
 					ItemID.BeeMask,
-					ItemID.MusicBoxBoss4,
+					ItemID.MusicBoxBoss5,
 					ItemID.MusicBoxOWBoss1,
 					ItemID.Nectar,
 				};
@@ -685,6 +705,16 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss1,
 					ItemID.MusicBoxOWBoss1,
 					ItemID.ChippysCouch
+				};
+			}
+			if (bossNum == NPCID.Deerclops) {
+				return new List<int>() {
+					ItemID.DeerclopsMasterTrophy,
+					ItemID.DeerclopsPetItem,
+					ItemID.DeerclopsTrophy,
+					ItemID.DeerclopsMask,
+					ItemID.MusicBoxDeerclops,
+					ItemID.MusicBoxOWBoss1
 				};
 			}
 			if (bossNum == NPCID.WallofFlesh) {

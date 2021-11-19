@@ -34,7 +34,8 @@ namespace BossChecklist
 			ItemID.MoonLordBossBag,
 			ItemID.BossBagBetsy,
 			ItemID.QueenSlimeBossBag,
-			ItemID.FairyQueenBossBag
+			ItemID.FairyQueenBossBag,
+			ItemID.DeerclopsBossBag
 		};
 
 		// Vanilla and Other World music boxes are in order given by the official Terraria wiki
@@ -68,6 +69,7 @@ namespace BossChecklist
 			ItemID.MusicBoxBoss3,
 			ItemID.MusicBoxBoss4,
 			ItemID.MusicBoxBoss5,
+			ItemID.MusicBoxDeerclops,
 			ItemID.MusicBoxQueenSlime,
 			ItemID.MusicBoxPlantera,
 			ItemID.MusicBoxEmpressOfLight,

@@ -185,7 +185,7 @@ namespace BossChecklist
 				if (temp.headSlot > 0 && temp.vanity) {
 					setup.Add(CollectionType.Mask);
 				}
-				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) ||  BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
 					setup.Add(CollectionType.MusicBox);
 				}
 				else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
