@@ -27,7 +27,7 @@ Mods: {
 		EventEnd: {
 			BloodMoon: 猩红之月落至地平线之下...
 			FrostMoon: 寒霜之月在日光中融化了...
-			PumpkinMoon: 南瓜月结束了“疯狂的丰收”...
+			PumpkinMoon: 南瓜月结束了'疯狂的丰收'...
 			SolarEclipse: 日食暂时地结束了...
 		}
 
@@ -123,9 +123,9 @@ Mods: {
 				NoSpawnMiniBoss: 此小Boss不可被物品召唤
 				NoSpawnEvent: 此事件不可被物品召唤
 				NoInfo: 无可用信息
-				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确. 
-				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确. 
-				NoModsSupported: 您已加载的Mod均未将页面添加到Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 建议将Boss页面添加到该Mod的Discord或论坛中! 
+				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
+				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
+				NoModsSupported: 您已加载的Mod均未将页面添加到Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 建议将Boss页面添加到该Mod的Discord或论坛中!
 			}
 
 			Credits: {
@@ -203,18 +203,18 @@ Mods: {
 				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss
 				ColoredBossText:
 					'''
-					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色. 
+					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
 					如果启用了”提示下一个要挑战的Boss“, 则下一个Boss将为黄色.
 					'''
-				CountDownedBosses: 如果启用, 目录将显示与总Boss数相比被击败的Boss数. 
-				BossSilhouettes: 在没有被击败的情况下显示一个Boss形象的剪影. 
+				CountDownedBosses: 如果启用, 目录将显示与总Boss数相比被击败的Boss数.
+				BossSilhouettes: 在没有被击败的情况下显示一个Boss形象的剪影.
 				OnlyBosses: 如果启用, 则清单和导航页仅会显示Boss栏目.
-				HideUnavailable: 如果启用, 则不可用和隐藏的Boss将从Boss日志的目录中被隐藏. 
-				HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏. 
+				HideUnavailable: 如果启用, 则不可用和隐藏的Boss将从Boss日志的目录中被隐藏.
+				HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
 				DespawnMessageType:
 					'''
-					当Boss消失时, 消失信息将出现在聊天栏中. 
-					如果启用, 请在常规消息或唯一消息之间选择其一. 
+					当Boss消失时, 消失信息将出现在聊天栏中.
+					如果启用, 请在常规消息或唯一消息之间选择其一.
 					'''
 				PillarMessages: 当天界柱被击败时, 发送一条来自天界柱的消息
 				LimbMessages:
