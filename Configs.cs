@@ -122,10 +122,6 @@ namespace BossChecklist
 		public bool LimbMessages { get; set; }
 
 		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.RespawnTimer")]
-		public bool RespawnTimerEnabled { get; set; }
-
-		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.TimerSounds")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.TimerSounds")]
 		public bool TimerSounds { get; set; }
@@ -223,7 +219,7 @@ namespace BossChecklist
 		public bool ShowCollectionType { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Truely Dead Check")]
+		[Label("Truly Dead Check")]
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
 

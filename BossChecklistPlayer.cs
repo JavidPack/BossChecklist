@@ -10,12 +10,12 @@ namespace BossChecklist
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			if (BossChecklist.ToggleChecklistHotKey.JustPressed) {
 				if (!BossChecklistUI.Visible) {
-					BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				}
 				BossChecklistUI.Visible = !BossChecklistUI.Visible;
 			}
 			if (BossChecklist.ToggleBossLog.JustPressed) { 
-				BossChecklist.instance.BossLog.ToggleBossLog(!BossChecklist.instance.BossLog.BossLogVisible);
+				BossUISystem.Instance.BossLog.ToggleBossLog(!BossUISystem.Instance.BossLog.BossLogVisible);
 
 				// Debug assistance, allows for reinitializing BossLog in-game
 				//BossChecklist.instance.BossLog.RemoveAllChildren();
@@ -26,20 +26,20 @@ namespace BossChecklist
 		}
 
 		public override void SetControls() {
-			if (BossChecklist.instance.BossLog.BossLogVisible && Main.LocalPlayer.controlInv) {
-				BossChecklist.instance.BossLog.ToggleBossLog(false);
+			if (BossUISystem.Instance.BossLog.BossLogVisible && Main.LocalPlayer.controlInv) {
+				BossUISystem.Instance.BossLog.ToggleBossLog(false);
 				Main.LocalPlayer.releaseInventory = false;
 			}
 		}
 
 		public override void PostUpdate() {
-			if (Main.LocalPlayer.dead && BossChecklist.instance.BossLog.BossLogVisible)
-				BossChecklist.instance.BossLog.ToggleBossLog(false);
+			if (Main.LocalPlayer.dead && BossUISystem.Instance.BossLog.BossLogVisible)
+				BossUISystem.Instance.BossLog.ToggleBossLog(false);
 		}
 
 		public override void OnEnterWorld(Player player) {
 			BossChecklistUI.Visible = false;
-			BossChecklist.instance.BossLog.ToggleBossLog(false);
+			BossUISystem.Instance.BossLog.ToggleBossLog(false);
 		}
 	}
 }

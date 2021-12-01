@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using Terraria.ObjectData;
+using Terraria.ID;
 
 namespace BossChecklist
 {
@@ -97,22 +97,28 @@ namespace BossChecklist
 			//this.collectType = SetupCollectionTypes(this.collection); Do this during the BossFinalization for orphan data
 			this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
-			if (this.info == "") this.info = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
+			if (this.info == "") {
+				this.info = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
+			}
 			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
-			if ((this.despawnMessage == null || this.despawnMessage == "") && type == EntryType.Boss) {
+			if (string.IsNullOrEmpty(this.despawnMessage) && type == EntryType.Boss) {
 				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
 			}
 
 			this.pageTexture = pageTexture ?? $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
-			if (!Main.dedServ && !ModContent.TextureExists(this.pageTexture) && this.pageTexture != $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Warn($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
+			if (!Main.dedServ && !ModContent.HasAsset(this.pageTexture) && this.pageTexture != "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
+				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") {
+					BossChecklist.instance.Logger.Warn($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
+				}
 				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
 			}
 			this.overrideIconTexture = overrideIconTexture ?? "";
-			if (!Main.dedServ && !ModContent.TextureExists(this.overrideIconTexture) && this.overrideIconTexture != "") {
+			if (!Main.dedServ && !ModContent.HasAsset(this.overrideIconTexture) && this.overrideIconTexture != "") {
 				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
-				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") BossChecklist.instance.Logger.Warn($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
-				this.overrideIconTexture = "Terraria/NPC_Head_0";
+				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") {
+					BossChecklist.instance.Logger.Warn($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
+				}
+				this.overrideIconTexture = "Terraria/Images/NPC_Head_0";
 			}
 			this.available = available ?? (() => true);
 
@@ -128,8 +134,12 @@ namespace BossChecklist
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			Func<bool> avail = () => true;
 			// If Fargo's Both Evils mod is installed, make both available
-			if (name == "$NPCName.EaterofWorldsHead") avail = () => !WorldGen.crimson || ModLoader.GetMod("BothEvils") != null;
-			else if (name == "$NPCName.BrainofCthulhu") avail = () => WorldGen.crimson || ModLoader.GetMod("BothEvils") != null;
+			if (name == "$NPCName.EaterofWorldsHead") {
+				avail = () => !WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod);
+			}
+			else if (name == "$NPCName.BrainofCthulhu") {
+				avail = () => WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod);
+			}
 			string nameKey = name.Substring(name.LastIndexOf("."));
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 			return new BossInfo(
@@ -172,12 +182,25 @@ namespace BossChecklist
 			foreach (int type in collection) {
 				Item temp = new Item();
 				temp.SetDefaults(type);
-				if (temp.headSlot > 0 && temp.vanity) setup.Add(CollectionType.Mask);
-				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) setup.Add(CollectionType.MusicBox);
-				else if (temp.createTile > 0) {
+				if (temp.headSlot > 0 && temp.vanity) {
+					setup.Add(CollectionType.Mask);
+				}
+				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) ||  BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+					setup.Add(CollectionType.MusicBox);
+				}
+				else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
+					setup.Add(CollectionType.Pet);
+				}
+				else if (temp.master && temp.mountType > MountID.None) {
+					setup.Add(CollectionType.Mount);
+				}
+				else if (temp.createTile > TileID.Dirt) {
 					TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
 					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
 						setup.Add(CollectionType.Trophy);
+					}
+					else if (temp.master && data.Width == 3 && data.Height == 4) {
+						setup.Add(CollectionType.Relic);
 					}
 					else setup.Add(CollectionType.Generic);
 				}

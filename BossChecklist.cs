@@ -1,19 +1,12 @@
-﻿using BossChecklist.UIElements;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Terraria;
-using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using Terraria.UI;
-using Terraria.UI.Chat;
 
 namespace BossChecklist
 {
@@ -21,15 +14,8 @@ namespace BossChecklist
 	{
 		internal static BossChecklist instance;
 		internal static BossTracker bossTracker;
-		internal static ModHotKey ToggleChecklistHotKey;
-		public static ModHotKey ToggleBossLog;
-
-		internal static UserInterface bossChecklistInterface;
-		internal BossChecklistUI bossChecklistUI;
-		internal UserInterface BossLogInterface;
-		internal BossLogUI BossLog;
-		internal static UserInterface BossRadarUIInterface;
-		internal BossRadarUI BossRadarUI;
+		internal static ModKeybind ToggleChecklistHotKey;
+		public static ModKeybind ToggleBossLog;
 		
 		public readonly static List<int> registeredBossBagTypes = new List<int>() {
 			ItemID.KingSlimeBossBag,
@@ -46,9 +32,13 @@ namespace BossChecklist
 			ItemID.GolemBossBag,
 			ItemID.FishronBossBag,
 			ItemID.MoonLordBossBag,
-			ItemID.BossBagBetsy
+			ItemID.BossBagBetsy,
+			ItemID.QueenSlimeBossBag,
+			ItemID.FairyQueenBossBag,
+			ItemID.DeerclopsBossBag
 		};
 
+		// Vanilla and Other World music boxes are in order given by the official Terraria wiki
 		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
 			ItemID.MusicBoxOverworldDay,
 			ItemID.MusicBoxAltOverworldDay,
@@ -58,7 +48,9 @@ namespace BossChecklist
 			ItemID.MusicBoxIce,
 			ItemID.MusicBoxDesert,
 			ItemID.MusicBoxOcean,
+			ItemID.MusicBoxOceanAlt,
 			ItemID.MusicBoxSpace,
+			ItemID.MusicBoxSpaceAlt,
 			ItemID.MusicBoxUnderground,
 			ItemID.MusicBoxAltUnderground,
 			ItemID.MusicBoxMushrooms,
@@ -77,7 +69,11 @@ namespace BossChecklist
 			ItemID.MusicBoxBoss3,
 			ItemID.MusicBoxBoss4,
 			ItemID.MusicBoxBoss5,
+			ItemID.MusicBoxDeerclops,
+			ItemID.MusicBoxQueenSlime,
 			ItemID.MusicBoxPlantera,
+			ItemID.MusicBoxEmpressOfLight,
+			ItemID.MusicBoxDukeFishron,
 			ItemID.MusicBoxEerie,
 			ItemID.MusicBoxEclipse,
 			ItemID.MusicBoxGoblins,
@@ -89,8 +85,54 @@ namespace BossChecklist
 			ItemID.MusicBoxLunarBoss,
 			ItemID.MusicBoxSandstorm,
 			ItemID.MusicBoxDD2,
-			ItemID.MusicBoxTitle
+			ItemID.MusicBoxSlimeRain,
+			ItemID.MusicBoxTownDay,
+			ItemID.MusicBoxTownNight,
+			ItemID.MusicBoxWindyDay,
+			ItemID.MusicBoxDayRemix,
+			ItemID.MusicBoxTitleAlt, // Journey's Beginning
+			ItemID.MusicBoxStorm,
+			ItemID.MusicBoxGraveyard,
+			ItemID.MusicBoxUndergroundJungle,
+			ItemID.MusicBoxJungleNight,
+			ItemID.MusicBoxMorningRain,
+			ItemID.MusicBoxConsoleTitle,
+			ItemID.MusicBoxUndergroundDesert,
+			ItemID.MusicBoxCredits, // Journey's End
+			ItemID.MusicBoxTitle,
 		};
+
+		//TODO: setup special-condition collectible checks
+		public readonly static List<int> otherWorldMusicBoxTypes = new List<int>() {
+			ItemID.MusicBoxOWRain,
+			ItemID.MusicBoxOWDay,
+			ItemID.MusicBoxOWNight,
+			ItemID.MusicBoxOWUnderground,
+			ItemID.MusicBoxOWDesert,
+			ItemID.MusicBoxOWOcean,
+			ItemID.MusicBoxOWMushroom,
+			ItemID.MusicBoxOWDungeon,
+			ItemID.MusicBoxOWSpace,
+			ItemID.MusicBoxOWUnderworld,
+			ItemID.MusicBoxOWSnow,
+			ItemID.MusicBoxOWCorruption,
+			ItemID.MusicBoxOWUndergroundCorruption,
+			ItemID.MusicBoxOWCrimson,
+			ItemID.MusicBoxOWUndergroundCrimson,
+			ItemID.MusicBoxOWUndergroundSnow, // Ice
+			ItemID.MusicBoxOWUndergroundHallow,
+			ItemID.MusicBoxOWBloodMoon, // Eerie
+			ItemID.MusicBoxOWBoss2,
+			ItemID.MusicBoxOWBoss1,
+			ItemID.MusicBoxOWInvasion,
+			ItemID.MusicBoxOWTowers,
+			ItemID.MusicBoxOWMoonLord,
+			ItemID.MusicBoxOWPlantera,
+			ItemID.MusicBoxOWJungle,
+			ItemID.MusicBoxOWWallOfFlesh,
+			ItemID.MusicBoxOWHallow,
+		};
+
 		public static Dictionary<int, int> itemToMusicReference;
 
 		// Mods that have been added manually
@@ -108,45 +150,23 @@ namespace BossChecklist
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
 		public static List<BossStats>[] ServerCollectedRecords;
-		//Zoom level, (for UIs)
-		public static Vector2 ZoomFactor; //0f == fully zoomed out, 1f == fully zoomed in
 
 		public BossChecklist() {
 		}
 
 		public override void Load() {
 			instance = this;
-			ToggleChecklistHotKey = RegisterHotKey("Toggle Boss Checklist", "P");
-			ToggleBossLog = RegisterHotKey("Toggle Boss Log", "L");
+			ToggleChecklistHotKey = KeybindLoader.RegisterKeybind(this, "Toggle Boss Checklist", "P");
+			ToggleBossLog = KeybindLoader.RegisterKeybind(this, "Toggle Boss Log", "L");
 
-			tremorLoaded = ModLoader.GetMod("Tremor") != null;
+			tremorLoaded = ModLoader.TryGetMod("Tremor", out Mod mod);
 
-			FieldInfo itemToMusicField = typeof(SoundLoader).GetField("itemToMusic", BindingFlags.Static | BindingFlags.NonPublic);
+			FieldInfo itemToMusicField = typeof(MusicLoader).GetField("itemToMusic", BindingFlags.Static | BindingFlags.NonPublic);
 			itemToMusicReference = (Dictionary<int, int>)itemToMusicField.GetValue(null);
 
 			bossTracker = new BossTracker();
 
 			MapAssist.FullMapInitialize();
-
-			if (!Main.dedServ) {
-				bossChecklistUI = new BossChecklistUI();
-				bossChecklistUI.Activate();
-				bossChecklistInterface = new UserInterface();
-
-				UICheckbox.checkboxTexture = GetTexture("UIElements/checkBox");
-				UICheckbox.checkmarkTexture = GetTexture("UIElements/checkMark");
-
-				BossLog = new BossLogUI();
-				BossLog.Activate();
-				BossLogInterface = new UserInterface();
-				BossLogInterface.SetState(BossLog);
-
-				//important, after setup has been initialized
-				BossRadarUI = new BossRadarUI();
-				BossRadarUI.Activate();
-				BossRadarUIInterface = new UserInterface();
-				BossRadarUIInterface.SetState(BossRadarUI);
-			}
 
 			/*
 			// Fix some translation keys automatically -- TODO
@@ -168,24 +188,12 @@ namespace BossChecklist
 		public override void Unload() {
 			instance = null;
 			ToggleChecklistHotKey = null;
-			bossChecklistInterface = null;
 			bossTracker = null;
 			ToggleBossLog = null;
 			ServerCollectedRecords = null;
-			BossRadarUIInterface = null;
-			BossRadarUI.arrowTexture = null;
-			BossRadarUI.whitelistNPCs = null;
 			ClientConfig = null;
 			DebugConfig = null;
 			BossLogConfig = null;
-			UICheckbox.checkboxTexture = null;
-			UICheckbox.checkmarkTexture = null;
-		}
-
-		public override void UpdateUI(GameTime gameTime) {
-			bossChecklistInterface?.Update(gameTime);
-			BossLogInterface?.Update(gameTime);
-			BossRadarUI?.Update(gameTime);
 		}
 
 		internal static void SaveConfig(BossLogConfiguration bossLogConfig) {
@@ -196,132 +204,6 @@ namespace BossChecklist
 				saveMethodInfo.Invoke(null, new object[] { bossLogConfig });
 			else
 				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
-		}
-
-		public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
-			//this is needed for Boss Radar, so it takes the range at which to draw the icon properly
-			ZoomFactor = Transform.Zoom - (Vector2.UnitX + Vector2.UnitY);
-		}
-
-		public override void PostDrawFullscreenMap(ref string mouseText) {
-			MapAssist.DrawFullscreenMap();
-		}
-
-		private string[] LayersToHideWhenChecklistVisible = new string[] {
-			"Vanilla: Map / Minimap", "Vanilla: Resource Bars"
-		};
-
-		//int lastSeenScreenWidth;
-		//int lastSeenScreenHeight;
-		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
-			//if (BossChecklistUI.visible)
-			//{
-			//	layers.RemoveAll(x => x.Name == "Vanilla: Resource Bars" || x.Name == "Vanilla: Map / Minimap");
-			//}
-
-			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-			if (MouseTextIndex != -1) {
-				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
-					"BossChecklist: Boss Checklist",
-					delegate {
-						if (BossChecklistUI.Visible) {
-							bossChecklistInterface?.Draw(Main.spriteBatch, new GameTime());
-
-							if (BossChecklistUI.hoverText != "") {
-								float x = Main.fontMouseText.MeasureString(BossChecklistUI.hoverText).X;
-								Vector2 vector = new Vector2((float)Main.mouseX, (float)Main.mouseY) + new Vector2(16f, 16f);
-								if (vector.Y > (float)(Main.screenHeight - 30)) {
-									vector.Y = (float)(Main.screenHeight - 30);
-								}
-								if (vector.X > (float)(Main.screenWidth - x - 30)) {
-									vector.X = (float)(Main.screenWidth - x - 30);
-								}
-								//Utils.DrawBorderStringFourWay(Main.spriteBatch, Main.fontMouseText, BossChecklistUI.hoverText,
-								//	vector.X, vector.Y, new Color((int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor), Color.Black, Vector2.Zero, 1f);
-								//	Utils.draw
-
-								//ItemTagHandler.GenerateTag(item)
-								int hoveredSnippet = -1;
-								TextSnippet[] array = ChatManager.ParseMessage(BossChecklistUI.hoverText, Color.White).ToArray();
-								ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, array,
-									vector, 0f, Vector2.Zero, Vector2.One, out hoveredSnippet/*, -1f, 2f*/);
-
-								if (hoveredSnippet > -1) {
-									array[hoveredSnippet].OnHover();
-									//if (Main.mouseLeft && Main.mouseLeftRelease)
-									//{
-									//	array[hoveredSnippet].OnClick();
-									//}
-								}
-							}
-						}
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
-			}
-			// This doesn't work perfectly.
-			//if (BossChecklistUI.Visible) {
-			//	layers.RemoveAll(x => LayersToHideWhenChecklistVisible.Contains(x.Name));
-			//}
-			if (MouseTextIndex != -1) {
-				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
-					delegate {
-						BossLogInterface.Draw(Main.spriteBatch, new GameTime());
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
-				layers.Insert(++MouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Radar",
-					delegate {
-						BossRadarUIInterface.Draw(Main.spriteBatch, new GameTime());
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
-			}
-			if (ClientConfig.RespawnTimerEnabled) {
-				int InventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Death Text"));
-				if (InventoryIndex != -1) {
-					layers.Insert(InventoryIndex, new LegacyGameInterfaceLayer("BossChecklist: Respawn Timer",
-						delegate {
-							if (Main.LocalPlayer.dead && Main.LocalPlayer.difficulty != 2) {
-								if (ClientConfig.TimerSounds) {
-									if (Main.LocalPlayer.respawnTimer % 60 == 0 && Main.LocalPlayer.respawnTimer / 60 <= 3) Main.PlaySound(25);
-								}
-								string timer = (Main.LocalPlayer.respawnTimer / 60 + 1).ToString();
-								Vector2 screenPos = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2 - 75);
-								Color deathColor = Main.player[Main.myPlayer].GetDeathAlpha(Color.Transparent);
-								DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontDeathText, timer, screenPos, deathColor);
-							}
-							return true;
-						},
-						InterfaceScaleType.UI)
-					);
-				}
-			}
-			#region DEBUG
-			int PlayerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
-			if (PlayerChatIndex != -1) {
-				layers.Insert(PlayerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Debug Timers and Counters",
-					delegate {
-						PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						int ConfigIndex = NPCAssist.ListedBossNum(DebugConfig.ShowTimerOrCounter.Type, DebugConfig.ShowTimerOrCounter.mod);
-						if (ConfigIndex != -1) {
-							string textKingSlime = $"{bossTracker.SortedBosses[ConfigIndex].name} (#{ConfigIndex + 1})" +
-												$"\nTime: {playerAssist.RecordTimers[ConfigIndex]}" +
-												$"\nDodge Timer: {playerAssist.DodgeTimer[ConfigIndex]}" +
-												$"\nTimes Hit: {playerAssist.AttackCounter[ConfigIndex]}" +
-												$"\nLowest Health: {playerAssist.BrinkChecker[ConfigIndex]} / {playerAssist.MaxHealth[ConfigIndex]}" +
-												$"\nDeaths: {playerAssist.DeathTracker[ConfigIndex]}";
-							DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
-						}
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
-			}
-			#endregion
 		}
 
 		// An alternative approach to the weak reference approach is to do the following in YOUR mod in PostSetupContent
@@ -368,7 +250,7 @@ namespace BossChecklist
 					}
 				}
 				else {
-					if(BossChecklist.DebugConfig.ModCallLogVerbose)
+					if(DebugConfig.ModCallLogVerbose)
 						Logger.Info($"Could not find {orphan.internalName} from {orphan.modSource} to add OrphanInfo to.");
 				}
 			}
@@ -391,8 +273,7 @@ namespace BossChecklist
 				string message = args[0] as string;
 				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
 				if (message == "GetBossInfoDictionary") {
-					var mod = args[1] as Mod;
-					if (mod == null) {
+					if (args[1] is not Mod mod) {
 						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
 					}
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
@@ -533,8 +414,7 @@ namespace BossChecklist
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)
-				List<string> oldCallsList;
-				if (!bossTracker.OldCalls.TryGetValue(message, out oldCallsList))
+				if (!bossTracker.OldCalls.TryGetValue(message, out List<string> oldCallsList))
 					bossTracker.OldCalls.Add(message, oldCallsList = new List<string>());
 				oldCallsList.Add(name);
 			}

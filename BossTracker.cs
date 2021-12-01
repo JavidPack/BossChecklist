@@ -15,15 +15,18 @@ namespace BossChecklist
 		public const float EaterOfWorlds = 3f;
 		public const float QueenBee = 4f;
 		public const float Skeletron = 5f;
-		public const float WallOfFlesh = 6f;
-		public const float TheTwins = 7f;
-		public const float TheDestroyer = 8f;
-		public const float SkeletronPrime = 9f;
-		public const float Plantera = 10f;
-		public const float Golem = 11f;
-		public const float DukeFishron = 12f;
-		public const float LunaticCultist = 13f;
-		public const float Moonlord = 14f;
+		public const float DeerClops = 6f;
+		public const float WallOfFlesh = 7f;
+		public const float QueenSlime = 8f;
+		public const float TheTwins = 9f;
+		public const float TheDestroyer = 10f;
+		public const float SkeletronPrime = 11f;
+		public const float Plantera = 12f;
+		public const float Golem = 13f;
+		public const float EmpressOfLight = 14f;
+		public const float DukeFishron = 15f;
+		public const float LunaticCultist = 16f;
+		public const float Moonlord = 17f;
 
 		/// <summary>
 		/// All currently loaded bosses/minibosses/events sorted in progression order.
@@ -33,7 +36,7 @@ namespace BossChecklist
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
 		internal bool AnyModHasOldCall = false;
-		internal Dictionary<string, List<string>> OldCalls = new Dictionary<string, List<string>>();
+		internal Dictionary<string, List<string>> OldCalls = new();
 
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
@@ -50,19 +53,22 @@ namespace BossChecklist
 				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "$NPCName.QueenBee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode  , new List<int>() { ItemID.GuideVoodooDoll }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "$NPCName.Deerclops", new List<int>() { NPCID.Deerclops }, () => NPC.downedDeerclops, new List<int>() { ItemID.DeerThing }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode, new List<int>() { ItemID.GuideVoodooDoll }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenSlime, "$NPCName.QueenSlimeBoss", new List<int>() { NPCID.QueenSlimeBoss }, () => NPC.downedQueenSlime, new List<int>() { ItemID.QueenSlimeCrystal }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "$NPCName.TheDestroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "$NPCName.SkeletronPrime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "$NPCName.Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal }), // No despawn message due to being in an event
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell, ItemID.LihzahrdAltar }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }), // No despawn message due to being in an event
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "$NPCName.HallowBoss", new List<int>() { NPCID.HallowBoss }, () => NPC.downedEmpressOfLight, new List<int>() { ItemID.EmpressButterfly }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "$NPCName.DukeFishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "$NPCName.CultistBoss", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
 				
 				// Minibosses and Events -- Vanilla
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter }),
 					// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard }).WithCustomTranslationKey("$LegacyInterface.88"),
 				BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }).WithCustomTranslationKey("$DungeonDefenders2.InvasionProgressTitle"),
@@ -128,7 +134,7 @@ namespace BossChecklist
 							// The first NPC should have the boss that drops the bag, but backups are needed anyways
 							continue; 
 						}
-						int bagType = NPCLoader.GetNPC(npc).bossBag;
+						int bagType = NPCLoader.GetNPC(npc).BossBag;
 						if (bagType > 0) {
 							if (!BossChecklist.registeredBossBagTypes.Contains(bagType)) {
 								BossChecklist.registeredBossBagTypes.Add(bagType);
@@ -142,155 +148,394 @@ namespace BossChecklist
 		}
 
 		internal protected List<int> SetupLoot(int bossNum) {
+			#region Boss Loot
 			if (bossNum == NPCID.KingSlime) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.KingSlimeBossBag,
+					ItemID.KingSlimeMasterTrophy,
+					ItemID.KingSlimePetItem,
 					ItemID.RoyalGel,
-					ItemID.Solidifier,
+					ItemID.KingSlimeMask,
+					ItemID.KingSlimeTrophy,
+
 					ItemID.SlimySaddle,
 					ItemID.NinjaHood,
 					ItemID.NinjaShirt,
 					ItemID.NinjaPants,
-					ItemID.SlimeHook,
 					ItemID.SlimeGun,
+					ItemID.SlimeHook,
+					ItemID.Solidifier,
 					ItemID.LesserHealingPotion
 				};
 			}
 			if (bossNum == NPCID.EyeofCthulhu) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.EyeOfCthulhuBossBag,
+					ItemID.EyeofCthulhuMasterTrophy,
+					ItemID.EyeOfCthulhuPetItem,
 					ItemID.EoCShield,
+					ItemID.EyeofCthulhuTrophy,
+					ItemID.EyeMask,
+
+					ItemID.BadgersHat,
+					ItemID.Binoculars,
 					ItemID.DemoniteOre,
 					ItemID.CrimtaneOre,
 					ItemID.UnholyArrow,
 					ItemID.CorruptSeeds,
 					ItemID.CrimsonSeeds,
-					ItemID.Binoculars,
+					ItemID.AviatorSunglasses,
 					ItemID.LesserHealingPotion
 				};
 			}
 			if (bossNum == NPCID.EaterofWorldsHead) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.EaterOfWorldsBossBag,
+					ItemID.EaterofWorldsMasterTrophy,
+					ItemID.EaterOfWorldsPetItem,
 					ItemID.WormScarf,
-					ItemID.ShadowScale,
+					ItemID.EaterofWorldsTrophy,
+					ItemID.EaterMask,
+
 					ItemID.DemoniteOre,
+					ItemID.ShadowScale,
 					ItemID.EatersBone,
 					ItemID.LesserHealingPotion
 				};
 			}
 			if (bossNum == NPCID.BrainofCthulhu) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.BrainOfCthulhuBossBag,
+					ItemID.BrainofCthulhuMasterTrophy,
+					ItemID.BrainOfCthulhuPetItem,
 					ItemID.BrainOfConfusion,
+					ItemID.BrainofCthulhuTrophy,
+					ItemID.BrainMask,
+
 					ItemID.CrimtaneOre,
 					ItemID.TissueSample,
 					ItemID.BoneRattle,
 					ItemID.LesserHealingPotion
 				};
 			}
-			if (bossNum == NPCID.DD2DarkMageT3) {
-				return new List<int>()
-				{
-					ItemID.WarTable,
-					ItemID.WarTableBanner,
-					ItemID.DD2PetDragon,
-					ItemID.DD2PetGato,
-				};
-			}
 			if (bossNum == NPCID.QueenBee) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.QueenBeeBossBag,
+					ItemID.QueenBeeMasterTrophy,
+					ItemID.QueenBeePetItem,
 					ItemID.HiveBackpack,
+					ItemID.QueenBeeTrophy,
+					ItemID.BeeMask,
+
 					ItemID.BeeGun,
 					ItemID.BeeKeeper,
 					ItemID.BeesKnees,
+					ItemID.HoneyComb,
+					ItemID.Nectar,
+					ItemID.HoneyedGoggles,
 					ItemID.HiveWand,
 					ItemID.BeeHat,
 					ItemID.BeeShirt,
 					ItemID.BeePants,
-					ItemID.HoneyComb,
-					ItemID.Nectar,
-					ItemID.HoneyedGoggles,
 					ItemID.Beenade,
+					ItemID.BeeWax,
 					ItemID.BottledHoney
 				};
 			}
 			if (bossNum == NPCID.SkeletronHead) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.SkeletronBossBag,
+					ItemID.SkeletronMasterTrophy,
+					ItemID.SkeletronPetItem,
 					ItemID.BoneGlove,
+					ItemID.SkeletronTrophy,
+					ItemID.SkeletronMask,
+
+					ItemID.ChippysCouch,
 					ItemID.SkeletronHand,
 					ItemID.BookofSkulls,
 					ItemID.LesserHealingPotion
 				};
 			}
+			if (bossNum == NPCID.Deerclops) {
+				return new List<int>() {
+					ItemID.DeerclopsBossBag,
+					ItemID.DeerclopsMasterTrophy,
+					ItemID.DeerclopsPetItem,
+					ItemID.BoneHelm,
+					ItemID.DeerclopsTrophy,
+					ItemID.DeerclopsMask,
+
+					ItemID.ChesterPetItem,
+					ItemID.Eyebrella,
+					ItemID.DontStarveShaderItem,
+					ItemID.PewMaticHorn,
+					ItemID.WeatherPain,
+					ItemID.HoundiusShootius,
+					ItemID.LucyTheAxe
+				};
+			}
 			if (bossNum == NPCID.WallofFlesh) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.WallOfFleshBossBag,
+					ItemID.WallofFleshMasterTrophy,
+					ItemID.WallOfFleshGoatMountItem,
 					ItemID.DemonHeart,
+					ItemID.WallofFleshTrophy,
+					ItemID.FleshMask,
+
+					ItemID.BadgersHat,
 					ItemID.Pwnhammer,
-					ItemID.BreakerBlade,
-					ItemID.ClockworkAssaultRifle,
-					ItemID.LaserRifle,
 					ItemID.WarriorEmblem,
 					ItemID.SorcererEmblem,
 					ItemID.RangerEmblem,
 					ItemID.SummonerEmblem,
+					ItemID.BreakerBlade,
+					ItemID.ClockworkAssaultRifle,
+					ItemID.LaserRifle,
+					ItemID.FireWhip,
 					ItemID.HealingPotion
 				};
 			}
-			if (bossNum == NPCID.PirateShip) {
-				return new List<int>()
-				{
-					ItemID.CoinGun,
-					ItemID.LuckyCoin,
-					ItemID.DiscountCard,
-					ItemID.PirateStaff,
-					ItemID.GoldRing,
-					ItemID.Cutlass,
+			if (bossNum == NPCID.QueenSlimeBoss) {
+				return new List<int>() {
+					ItemID.QueenSlimeBossBag,
+					ItemID.QueenSlimeMasterTrophy,
+					ItemID.QueenSlimePetItem,
+					ItemID.VolatileGelatin,
+					ItemID.QueenSlimeTrophy,
+					ItemID.QueenSlimeMask,
+
+					ItemID.Smolstar,
+					ItemID.QueenSlimeMountSaddle,
+					ItemID.CrystalNinjaHelmet,
+					ItemID.CrystalNinjaChestplate,
+					ItemID.CrystalNinjaLeggings,
+					ItemID.QueenSlimeHook,
+					ItemID.GelBalloon,
+					ItemID.GreaterHealingPotion
 				};
 			}
 			if (bossNum == NPCID.Retinazer) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.TwinsBossBag,
+					ItemID.TwinsMasterTrophy,
+					ItemID.TwinsPetItem,
 					ItemID.MechanicalWheelPiece,
+					ItemID.RetinazerTrophy,
+					ItemID.SpazmatismTrophy,
+					ItemID.TwinMask,
+
 					ItemID.SoulofSight,
 					ItemID.HallowedBar,
 					ItemID.GreaterHealingPotion
 				};
 			}
 			if (bossNum == NPCID.TheDestroyer) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.DestroyerBossBag,
+					ItemID.DestroyerMasterTrophy,
+					ItemID.DestroyerPetItem,
 					ItemID.MechanicalWagonPiece,
+					ItemID.DestroyerTrophy,
+					ItemID.DestroyerMask,
+
 					ItemID.SoulofMight,
 					ItemID.HallowedBar,
 					ItemID.GreaterHealingPotion
 				};
 			}
 			if (bossNum == NPCID.SkeletronPrime) {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.SkeletronPrimeBossBag,
+					ItemID.SkeletronPrimeMasterTrophy,
+					ItemID.SkeletronPrimePetItem,
 					ItemID.MechanicalBatteryPiece,
+					ItemID.SkeletronPrimeTrophy,
+					ItemID.SkeletronPrimeMask,
+
 					ItemID.SoulofFright,
 					ItemID.HallowedBar,
 					ItemID.GreaterHealingPotion
 				};
 			}
+			if (bossNum == NPCID.Plantera) {
+				return new List<int>() {
+					ItemID.PlanteraBossBag,
+					ItemID.PlanteraMasterTrophy,
+					ItemID.PlanteraPetItem,
+					ItemID.SporeSac,
+					ItemID.PlanteraTrophy,
+					ItemID.PlanteraMask,
+
+					ItemID.TempleKey,
+					ItemID.GrenadeLauncher,
+					ItemID.VenusMagnum,
+					ItemID.NettleBurst,
+					ItemID.LeafBlower,
+					ItemID.FlowerPow,
+					ItemID.WaspGun,
+					ItemID.Seedler,
+					ItemID.Seedling,
+					ItemID.TheAxe,
+					ItemID.PygmyStaff,
+					ItemID.ThornHook,
+					ItemID.GreaterHealingPotion
+				};
+			}
+			if (bossNum == NPCID.Golem) {
+				return new List<int>() {
+					ItemID.GolemBossBag,
+					ItemID.GolemMasterTrophy,
+					ItemID.GolemPetItem,
+					ItemID.ShinyStone,
+					ItemID.GolemTrophy,
+					ItemID.GolemMask,
+
+					ItemID.Picksaw,
+					ItemID.Stynger,
+					ItemID.StyngerBolt,
+					ItemID.PossessedHatchet,
+					ItemID.SunStone,
+					ItemID.EyeoftheGolem,
+					ItemID.HeatRay,
+					ItemID.StaffofEarth,
+					ItemID.GolemFist,
+					ItemID.BeetleHusk,
+					ItemID.GreaterHealingPotion
+				};
+			}
+			if (bossNum == NPCID.HallowBoss) {
+				return new List<int>() {
+					ItemID.FairyQueenBossBag,
+					ItemID.FairyQueenMasterTrophy,
+					ItemID.FairyQueenPetItem,
+					ItemID.EmpressFlightBooster,
+					ItemID.FairyQueenTrophy,
+					ItemID.FairyQueenMask,
+
+					ItemID.FairyQueenMagicItem,
+					ItemID.PiercingStarlight,
+					ItemID.RainbowWhip,
+					ItemID.FairyQueenRangedItem,
+					ItemID.RainbowWings,
+					ItemID.SparkleGuitar,
+					ItemID.RainbowCursor,
+					ItemID.HallowBossDye,
+					ItemID.EmpressBlade,
+					ItemID.GreaterHealingPotion
+				};
+			}
+			if (bossNum == NPCID.DD2Betsy) {
+				return new List<int>() {
+					ItemID.BossBagBetsy,
+					ItemID.BetsyMasterTrophy,
+					ItemID.DD2BetsyPetItem,
+					ItemID.BossTrophyBetsy,
+					ItemID.BossMaskBetsy,
+
+					ItemID.BetsyWings,
+					ItemID.DD2BetsyBow, // Aerial Bane
+					ItemID.MonkStaffT3, // Sky Dragon's Fury
+					ItemID.ApprenticeStaffT3, // Betsy's Wrath
+					ItemID.DD2SquireBetsySword, // Flying Dragon
+					ItemID.DefenderMedal
+				};
+			}
+			if (bossNum == NPCID.DukeFishron) {
+				return new List<int>() {
+					ItemID.FishronBossBag,
+					ItemID.DukeFishronMasterTrophy,
+					ItemID.DukeFishronPetItem,
+					ItemID.ShrimpyTruffle,
+					ItemID.DukeFishronTrophy,
+					ItemID.DukeFishronMask,
+
+					ItemID.BubbleGun,
+					ItemID.Flairon,
+					ItemID.RazorbladeTyphoon,
+					ItemID.TempestStaff,
+					ItemID.Tsunami,
+					ItemID.FishronWings,
+					ItemID.GreaterHealingPotion
+				};
+			}
+			if (bossNum == NPCID.CultistBoss) {
+				return new List<int>() {
+					ItemID.CultistBossBag,
+					ItemID.LunaticCultistMasterTrophy,
+					ItemID.LunaticCultistPetItem,
+					ItemID.AncientCultistTrophy,
+					ItemID.BossMaskCultist,
+
+					ItemID.LunarCraftingStation,
+					ItemID.GreaterHealingPotion
+				};
+			}
+			if (bossNum == NPCID.MoonLordHead) {
+				return new List<int>() {
+					ItemID.MoonLordBossBag,
+					ItemID.MoonLordMasterTrophy,
+					ItemID.MoonLordPetItem,
+					ItemID.GravityGlobe,
+					ItemID.MoonLordTrophy,
+					ItemID.BossMaskMoonlord,
+
+					ItemID.SuspiciousLookingTentacle,
+					ItemID.LongRainbowTrailWings,
+					ItemID.Meowmere,
+					ItemID.Terrarian,
+					ItemID.StarWrath,
+					ItemID.SDMG,
+					ItemID.LastPrism,
+					ItemID.LunarFlareBook,
+					ItemID.RainbowCrystalStaff,
+					ItemID.MoonlordTurretStaff, // Lunar Portal Staff
+					ItemID.Celeb2,
+					ItemID.PortalGun,
+					ItemID.LunarOre,
+					ItemID.MeowmereMinecart,
+					ItemID.SuperHealingPotion
+				};
+			}
+			#endregion
+			#region Mini-boss Loot
+			// MiniBosses
+			if (bossNum == NPCID.DD2DarkMageT3) {
+				return new List<int>() {
+					ItemID.DarkMageMasterTrophy,
+					ItemID.DarkMageBookMountItem,
+					ItemID.BossTrophyDarkmage,
+					ItemID.BossMaskDarkMage,
+
+					ItemID.WarTable,
+					ItemID.WarTableBanner,
+					ItemID.DD2PetDragon,
+					ItemID.DD2PetGato,
+				};
+			}
+			if (bossNum == NPCID.PirateShip) {
+				return new List<int>() {
+					ItemID.FlyingDutchmanMasterTrophy,
+					ItemID.PirateShipMountItem,
+					ItemID.FlyingDutchmanTrophy,
+
+					ItemID.CoinGun,
+					ItemID.LuckyCoin,
+					ItemID.DiscountCard,
+					ItemID.PirateStaff,
+					ItemID.GoldRing,
+					ItemID.PirateMinecart,
+					ItemID.Cutlass,
+				};
+			}
 			if (bossNum == NPCID.DD2OgreT3) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.OgreMasterTrophy,
+					ItemID.DD2OgrePetItem,
+					ItemID.BossTrophyOgre,
+					ItemID.BossMaskOgre,
+
 					ItemID.ApprenticeScarf,
 					ItemID.SquireShield,
 					ItemID.HuntressBuckler,
@@ -303,52 +548,46 @@ namespace BossChecklist
 					ItemID.DD2PetGhost,
 				};
 			}
-			if (bossNum == NPCID.Plantera) {
-				return new List<int>()
-				{
-					ItemID.PlanteraBossBag,
-					ItemID.SporeSac,
-					ItemID.TempleKey,
-					ItemID.Seedling,
-					ItemID.TheAxe,
-					ItemID.PygmyStaff,
-					ItemID.GrenadeLauncher,
-					ItemID.VenusMagnum,
-					ItemID.NettleBurst,
-					ItemID.LeafBlower,
-					ItemID.FlowerPow,
-					ItemID.WaspGun,
-					ItemID.Seedler,
-					ItemID.ThornHook,
-					ItemID.GreaterHealingPotion
-				};
-			}
 			if (bossNum == NPCID.MourningWood) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.MourningWoodMasterTrophy,
+					ItemID.SpookyWoodMountItem,
+					ItemID.WitchBroom,
+					ItemID.MourningWoodTrophy,
+
 					ItemID.SpookyWood,
-					ItemID.CursedSapling,
-					ItemID.SpookyTwig,
 					ItemID.SpookyHook,
-					ItemID.NecromanticScroll,
+					ItemID.SpookyTwig,
 					ItemID.StakeLauncher,
+					ItemID.Stake,
+					ItemID.CursedSapling,
+					ItemID.NecromanticScroll,
 				};
 			}
 			if (bossNum == NPCID.Pumpking) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.PumpkingMasterTrophy,
+					ItemID.PumpkingPetItem,
+					ItemID.PumpkingTrophy,
+
 					ItemID.TheHorsemansBlade,
 					ItemID.BatScepter,
 					ItemID.BlackFairyDust,
 					ItemID.SpiderEgg,
 					ItemID.RavenStaff,
 					ItemID.CandyCornRifle,
+					ItemID.CandyCorn,
 					ItemID.JackOLanternLauncher,
+					ItemID.ExplosiveJackOLantern,
+					ItemID.ScytheWhip
 				};
 			}
 			if (bossNum == NPCID.Everscream) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.EverscreamMasterTrophy,
+					ItemID.EverscreamPetItem,
+					ItemID.EverscreamTrophy,
+
 					ItemID.ChristmasTreeSword,
 					ItemID.ChristmasHook,
 					ItemID.Razorpine,
@@ -356,336 +595,364 @@ namespace BossChecklist
 				};
 			}
 			if (bossNum == NPCID.SantaNK1) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.SantankMasterTrophy,
+					ItemID.SantankMountItem,
+					ItemID.SantaNK1Trophy,
+
 					ItemID.EldMelter,
 					ItemID.ChainGun,
 				};
 			}
 			if (bossNum == NPCID.IceQueen) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.IceQueenMasterTrophy,
+					ItemID.IceQueenPetItem,
+					ItemID.IceQueenTrophy,
+
+					ItemID.BlizzardStaff,
 					ItemID.SnowmanCannon,
 					ItemID.NorthPole,
-					ItemID.BlizzardStaff,
 					ItemID.BabyGrinchMischiefWhistle,
 					ItemID.ReindeerBells,
 				};
 			}
-			if (bossNum == NPCID.Golem) {
-				return new List<int>()
-				{
-					ItemID.GolemBossBag,
-					ItemID.ShinyStone,
-					ItemID.Stynger,
-					ItemID.PossessedHatchet,
-					ItemID.SunStone,
-					ItemID.EyeoftheGolem,
-					ItemID.Picksaw,
-					ItemID.HeatRay,
-					ItemID.StaffofEarth,
-					ItemID.GolemFist,
-					ItemID.BeetleHusk,
-					ItemID.GreaterHealingPotion
-				};
-			}
 			if (bossNum == NPCID.MartianSaucer) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.UFOMasterTrophy,
+					ItemID.MartianPetItem,
+					ItemID.MartianSaucerTrophy,
+
 					ItemID.Xenopopper,
 					ItemID.XenoStaff,
 					ItemID.LaserMachinegun,
-					ItemID.LaserDrill,
 					ItemID.ElectrosphereLauncher,
-					ItemID.ChargedBlasterCannon,
 					ItemID.InfluxWaver,
 					ItemID.CosmicCarKey,
 					ItemID.AntiGravityHook,
+					ItemID.LaserDrill,
+					ItemID.ChargedBlasterCannon,
 					ItemID.GreaterHealingPotion,
 				};
 			}
-			if (bossNum == NPCID.DD2Betsy) {
-				return new List<int>()
-				{
-					ItemID.BossBagBetsy,
-					ItemID.BetsyWings,
-					ItemID.DD2BetsyBow, // Aerial Bane
-                    ItemID.MonkStaffT3, // Sky Dragon's Fury
-                    ItemID.ApprenticeStaffT3, // Betsy's Wrath
-                    ItemID.DD2SquireBetsySword // Flying Dragon
-                };
-			}
-			if (bossNum == NPCID.DukeFishron) {
-				return new List<int>()
-				{
-					ItemID.FishronBossBag,
-					ItemID.ShrimpyTruffle,
-					ItemID.FishronWings,
-					ItemID.BubbleGun,
-					ItemID.Flairon,
-					ItemID.RazorbladeTyphoon,
-					ItemID.TempestStaff,
-					ItemID.Tsunami,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			if (bossNum == NPCID.CultistBoss) {
-				return new List<int>()
-				{
-					ItemID.CultistBossBag,
-					ItemID.LunarCraftingStation,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			if (bossNum == NPCID.MoonLordHead) {
-				return new List<int>()
-				{
-					ItemID.MoonLordBossBag,
-					ItemID.GravityGlobe,
-					ItemID.PortalGun,
-					ItemID.LunarOre,
-					ItemID.Meowmere,
-					ItemID.Terrarian,
-					ItemID.StarWrath,
-					ItemID.SDMG,
-					ItemID.FireworksLauncher, // The Celebration
-                    ItemID.LastPrism,
-					ItemID.LunarFlareBook,
-					ItemID.RainbowCrystalStaff,
-					ItemID.MoonlordTurretStaff, // Lunar Portal Staff
-                    ItemID.SuspiciousLookingTentacle,
-					ItemID.GreaterHealingPotion
-				};
-			}
+			#endregion
 			return new List<int>();
 		}
 
 		internal protected List<int> SetupCollect(int bossNum) {
+			#region Boss Collectibles
 			if (bossNum == NPCID.KingSlime) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.KingSlimeMasterTrophy,
+					ItemID.KingSlimePetItem,
 					ItemID.KingSlimeTrophy,
 					ItemID.KingSlimeMask,
-					ItemID.MusicBoxBoss1
+					ItemID.MusicBoxBoss1,
+					ItemID.MusicBoxOWBoss1
 				};
 			}
 			if (bossNum == NPCID.EyeofCthulhu) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.EyeofCthulhuMasterTrophy,
+					ItemID.EyeOfCthulhuPetItem,
 					ItemID.EyeofCthulhuTrophy,
 					ItemID.EyeMask,
-					ItemID.MusicBoxBoss1
+					ItemID.MusicBoxBoss1,
+					ItemID.MusicBoxOWBoss1,
+					ItemID.AviatorSunglasses,
+					ItemID.BadgersHat
 				};
 			}
 			if (bossNum == NPCID.EaterofWorldsHead) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.EaterofWorldsMasterTrophy,
+					ItemID.EaterOfWorldsPetItem,
 					ItemID.EaterofWorldsTrophy,
 					ItemID.EaterMask,
-					ItemID.MusicBoxBoss1
+					ItemID.MusicBoxBoss1,
+					ItemID.MusicBoxOWBoss1,
+					ItemID.EatersBone
 				};
 			}
 			if (bossNum == NPCID.BrainofCthulhu) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.BrainofCthulhuMasterTrophy,
+					ItemID.BrainOfCthulhuPetItem,
 					ItemID.BrainofCthulhuTrophy,
 					ItemID.BrainMask,
-					ItemID.MusicBoxBoss3
-				};
-			}
-			if (bossNum == NPCID.BrainofCthulhu) {
-				return new List<int>()
-				{
-					ItemID.BossMaskDarkMage,
-					ItemID.BossTrophyDarkmage,
-					ItemID.MusicBoxDD2
-				};
-			}
-			if (bossNum == NPCID.DD2DarkMageT3) {
-				return new List<int>()
-				{
-					ItemID.BossMaskDarkMage,
-					ItemID.BossTrophyDarkmage,
-					ItemID.MusicBoxDD2
+					ItemID.MusicBoxBoss3,
+					ItemID.MusicBoxOWBoss1,
+					ItemID.BoneRattle
 				};
 			}
 			if (bossNum == NPCID.QueenBee) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.QueenBeeMasterTrophy, 
+					ItemID.QueenBeePetItem,
 					ItemID.QueenBeeTrophy,
 					ItemID.BeeMask,
-					ItemID.MusicBoxBoss4
+					ItemID.MusicBoxBoss5,
+					ItemID.MusicBoxOWBoss1,
+					ItemID.Nectar,
 				};
 			}
 			if (bossNum == NPCID.SkeletronHead) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.SkeletronMasterTrophy,
+					ItemID.SkeletronPetItem,
 					ItemID.SkeletronTrophy,
 					ItemID.SkeletronMask,
-					ItemID.MusicBoxBoss1
+					ItemID.MusicBoxBoss1,
+					ItemID.MusicBoxOWBoss1,
+					ItemID.ChippysCouch
+				};
+			}
+			if (bossNum == NPCID.Deerclops) {
+				return new List<int>() {
+					ItemID.DeerclopsMasterTrophy,
+					ItemID.DeerclopsPetItem,
+					ItemID.DeerclopsTrophy,
+					ItemID.DeerclopsMask,
+					ItemID.MusicBoxDeerclops,
+					ItemID.MusicBoxOWBoss1
 				};
 			}
 			if (bossNum == NPCID.WallofFlesh) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.WallofFleshMasterTrophy,
+					ItemID.WallOfFleshGoatMountItem,
 					ItemID.WallofFleshTrophy,
 					ItemID.FleshMask,
-					ItemID.MusicBoxBoss2
+					ItemID.MusicBoxBoss2,
+					ItemID.MusicBoxOWWallOfFlesh,
+					ItemID.BadgersHat
+				};
+			}
+			if (bossNum == NPCID.QueenSlimeBoss) {
+				return new List<int>() {
+					ItemID.QueenSlimeMasterTrophy,
+					ItemID.QueenSlimePetItem,
+					ItemID.QueenSlimeTrophy,
+					ItemID.QueenSlimeMask,
+					ItemID.MusicBoxQueenSlime,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.Retinazer) {
+				return new List<int>() {
+					ItemID.TwinsMasterTrophy,
+					ItemID.TwinsPetItem,
+					ItemID.RetinazerTrophy,
+					ItemID.SpazmatismTrophy,
+					ItemID.TwinMask,
+					ItemID.MusicBoxBoss2,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.TheDestroyer) {
+				return new List<int>() {
+					ItemID.DestroyerMasterTrophy,
+					ItemID.DestroyerPetItem,
+					ItemID.DestroyerTrophy,
+					ItemID.DestroyerMask,
+					ItemID.MusicBoxBoss3,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.SkeletronPrime) {
+				return new List<int>() {
+					ItemID.SkeletronPrimeMasterTrophy,
+					ItemID.SkeletronPrimePetItem,
+					ItemID.SkeletronPrimeTrophy,
+					ItemID.SkeletronPrimeMask,
+					ItemID.MusicBoxBoss1,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.Plantera) {
+				return new List<int>() {
+					ItemID.PlanteraMasterTrophy,
+					ItemID.PlanteraPetItem,
+					ItemID.PlanteraTrophy,
+					ItemID.PlanteraMask,
+					ItemID.MusicBoxPlantera,
+					ItemID.MusicBoxOWPlantera,
+					ItemID.Seedling
+				};
+			}
+			if (bossNum == NPCID.Golem) {
+				return new List<int>() {
+					ItemID.GolemMasterTrophy,
+					ItemID.GolemPetItem,
+					ItemID.GolemTrophy,
+					ItemID.GolemMask,
+					ItemID.MusicBoxBoss5,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.HallowBoss) {
+				return new List<int>() {
+					ItemID.FairyQueenMasterTrophy,
+					ItemID.FairyQueenPetItem,
+					ItemID.FairyQueenTrophy,
+					ItemID.FairyQueenMask,
+					ItemID.MusicBoxEmpressOfLight,
+					ItemID.MusicBoxOWBoss2,
+					ItemID.HallowBossDye,
+					ItemID.RainbowCursor,
+				};
+			}
+			if (bossNum == NPCID.DD2Betsy) {
+				return new List<int>() {
+					ItemID.BetsyMasterTrophy,
+					ItemID.DD2BetsyPetItem,
+					ItemID.BossTrophyBetsy,
+					ItemID.BossMaskBetsy,
+					ItemID.MusicBoxDD2,
+					ItemID.MusicBoxOWInvasion
+				};
+			}
+			if (bossNum == NPCID.DukeFishron) {
+				return new List<int>() {
+					ItemID.DukeFishronMasterTrophy,
+					ItemID.DukeFishronPetItem,
+					ItemID.DukeFishronTrophy,
+					ItemID.DukeFishronMask,
+					ItemID.MusicBoxDukeFishron,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.CultistBoss) {
+				return new List<int>() {
+					ItemID.LunaticCultistMasterTrophy,
+					ItemID.LunaticCultistPetItem,
+					ItemID.AncientCultistTrophy,
+					ItemID.BossMaskCultist,
+					ItemID.MusicBoxBoss5,
+					ItemID.MusicBoxOWBoss2
+				};
+			}
+			if (bossNum == NPCID.MoonLordHead) {
+				return new List<int>() {
+					ItemID.MoonLordMasterTrophy,
+					ItemID.MoonLordPetItem,
+					ItemID.MoonLordTrophy,
+					ItemID.BossMaskMoonlord,
+					ItemID.MusicBoxLunarBoss,
+					ItemID.MusicBoxOWMoonLord
+				};
+			}
+			#endregion
+			#region Mini-boss Collectibles
+			if (bossNum == NPCID.DD2DarkMageT3) {
+				return new List<int>() {
+					ItemID.DarkMageMasterTrophy,
+					ItemID.DarkMageBookMountItem,
+					ItemID.BossTrophyDarkmage,
+					ItemID.BossMaskDarkMage,
+					ItemID.MusicBoxDD2,
+					ItemID.DD2PetDragon,
+					ItemID.DD2PetGato
 				};
 			}
 			if (bossNum == NPCID.PirateShip) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.FlyingDutchmanMasterTrophy,
+					ItemID.PirateShipMountItem,
 					ItemID.FlyingDutchmanTrophy,
 					ItemID.MusicBoxPirates
 				};
 			}
-			if (bossNum == NPCID.Retinazer) {
-				return new List<int>()
-				{
-					ItemID.RetinazerTrophy,
-					ItemID.SpazmatismTrophy,
-					ItemID.TwinMask,
-					ItemID.MusicBoxBoss2
-				};
-			}
-			if (bossNum == NPCID.TheDestroyer) {
-				return new List<int>()
-				{
-					ItemID.DestroyerTrophy,
-					ItemID.DestroyerMask,
-					ItemID.MusicBoxBoss3
-				};
-			}
-			if (bossNum == NPCID.SkeletronPrime) {
-				return new List<int>()
-				{
-					ItemID.SkeletronPrimeTrophy,
-					ItemID.SkeletronPrimeMask,
-					ItemID.MusicBoxBoss1
-				};
-			}
 			if (bossNum == NPCID.DD2OgreT3) {
-				return new List<int>()
-				{
-					ItemID.BossMaskOgre,
+				return new List<int>() {
+					ItemID.OgreMasterTrophy,
+					ItemID.DD2OgrePetItem,
 					ItemID.BossTrophyOgre,
-					ItemID.MusicBoxDD2
-				};
-			}
-			if (bossNum == NPCID.Plantera) {
-				return new List<int>()
-				{
-					ItemID.PlanteraTrophy,
-					ItemID.PlanteraMask,
-					ItemID.MusicBoxPlantera
+					ItemID.BossMaskOgre,
+					ItemID.MusicBoxDD2,
+					ItemID.DD2PetGhost
 				};
 			}
 			if (bossNum == NPCID.MourningWood) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.MourningWoodMasterTrophy,
+					ItemID.SpookyWoodMountItem,
 					ItemID.MourningWoodTrophy,
-					ItemID.MusicBoxPumpkinMoon
+					ItemID.MusicBoxPumpkinMoon,
+					ItemID.CursedSapling
 				};
 			}
 			if (bossNum == NPCID.Pumpking) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.PumpkingMasterTrophy,
+					ItemID.PumpkingPetItem,
 					ItemID.PumpkingTrophy,
-					ItemID.MusicBoxPumpkinMoon
+					ItemID.MusicBoxPumpkinMoon,
+					ItemID.SpiderEgg
 				};
 			}
 			if (bossNum == NPCID.Everscream) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.EverscreamMasterTrophy,
+					ItemID.EverscreamPetItem,
 					ItemID.EverscreamTrophy,
 					ItemID.MusicBoxFrostMoon
 				};
 			}
 			if (bossNum == NPCID.SantaNK1) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.SantankMasterTrophy,
+					ItemID.SantankMountItem,
 					ItemID.SantaNK1Trophy,
 					ItemID.MusicBoxFrostMoon
 				};
 			}
 			if (bossNum == NPCID.IceQueen) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.IceQueenMasterTrophy,
+					ItemID.IceQueenPetItem,
 					ItemID.IceQueenTrophy,
-					ItemID.MusicBoxFrostMoon
-				};
-			}
-			if (bossNum == NPCID.Golem) {
-				return new List<int>()
-				{
-					ItemID.GolemTrophy,
-					ItemID.GolemMask,
-					ItemID.MusicBoxBoss5
+					ItemID.MusicBoxFrostMoon,
+					ItemID.BabyGrinchMischiefWhistle
 				};
 			}
 			if (bossNum == NPCID.MartianSaucer) {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.UFOMasterTrophy,
+					ItemID.MartianPetItem,
 					ItemID.MartianSaucerTrophy,
 					ItemID.MusicBoxMartians
 				};
 			}
-			if (bossNum == NPCID.DD2Betsy) {
-				return new List<int>()
-				{
-					ItemID.BossTrophyBetsy,
-					ItemID.BossMaskBetsy,
-					ItemID.MusicBoxDD2
-				};
-			}
-			if (bossNum == NPCID.DukeFishron) {
-				return new List<int>()
-				{
-					ItemID.DukeFishronTrophy,
-					ItemID.DukeFishronMask,
-					ItemID.MusicBoxBoss1
-				};
-			}
-			if (bossNum == NPCID.CultistBoss) {
-				return new List<int>()
-				{
-					ItemID.AncientCultistTrophy,
-					ItemID.BossMaskCultist,
-					ItemID.MusicBoxBoss5
-				};
-			}
-			if (bossNum == NPCID.MoonLordHead) {
-				return new List<int>()
-				{
-					ItemID.MoonLordTrophy,
-					ItemID.BossMaskMoonlord,
-					ItemID.MusicBoxLunarBoss
-				};
-			}
+			#endregion
 			return new List<int>();
 		}
 
 		internal List<int> SetupEventNPCList(string eventName) {
 			if (eventName == "Blood Moon") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.BloodZombie,
 					NPCID.Drippler,
 					NPCID.TheGroom,
 					NPCID.TheBride,
-					NPCID.Clown,
 					NPCID.CorruptBunny,
-					NPCID.CorruptGoldfish,
-					NPCID.CorruptPenguin,
 					NPCID.CrimsonBunny,
+					NPCID.CorruptGoldfish,
 					NPCID.CrimsonGoldfish,
-					NPCID.CrimsonPenguin
+					NPCID.CorruptPenguin,
+					NPCID.CrimsonPenguin,
+					NPCID.Clown,
+					NPCID.ChatteringTeethBomb,
+					NPCID.WanderingEye,
+					NPCID.ZombieMerman,
+					NPCID.GoblinShark,
+					NPCID.BloodEelHead,
+					NPCID.BloodSquid,
+					NPCID.BloodNautilus,
 				};
 			}
 			if (eventName == "Goblin Army") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.GoblinScout,
 					NPCID.GoblinPeon,
 					NPCID.GoblinSorcerer,
@@ -696,8 +963,7 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Old One's Army") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.DD2GoblinT3,
 					NPCID.DD2GoblinBomberT3,
 					NPCID.DD2JavelinstT3,
@@ -708,39 +974,38 @@ namespace BossChecklist
 					NPCID.DD2LightningBugT3,
 					NPCID.DD2SkeletonT3,
 					NPCID.DD2DarkMageT3,
-					NPCID.DD2OgreT3
+					NPCID.DD2OgreT3,
+					NPCID.DD2Betsy
 				};
 			}
 			if (eventName == "Frost Legion") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.MisterStabby,
 					NPCID.SnowmanGangsta,
 					NPCID.SnowBalla,
 				};
 			}
 			if (eventName == "Solar Eclipse") {
-				return new List<int>()
-				{
-					NPCID.SwampThing,
-					NPCID.Frankenstein,
+				return new List<int>() {
 					NPCID.Eyezor,
+					NPCID.Frankenstein,
+					NPCID.SwampThing,
 					NPCID.Vampire,
-					NPCID.ThePossessed,
-					NPCID.Fritz,
 					NPCID.CreatureFromTheDeep,
+					NPCID.Fritz,
+					NPCID.ThePossessed,
 					NPCID.Reaper,
-					NPCID.Mothron,
 					NPCID.Butcher,
-					NPCID.Nailhead,
 					NPCID.DeadlySphere,
-					NPCID.Psycho,
 					NPCID.DrManFly,
+					NPCID.Nailhead,
+					NPCID.Psycho,
+					NPCID.Mothron,
+					NPCID.MothronSpawn,
 				};
 			}
 			if (eventName == "Pirate Invasion") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.PirateDeckhand,
 					NPCID.PirateDeadeye,
 					NPCID.PirateCorsair,
@@ -751,8 +1016,7 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Pumpkin Moon") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.Scarecrow1,
 					NPCID.Splinterling,
 					NPCID.Hellhound,
@@ -763,8 +1027,7 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Frost Moon") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.GingerbreadMan,
 					NPCID.ZombieElf,
 					NPCID.ElfArcher,
@@ -779,10 +1042,10 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Martian Madness") {
-				return new List<int>()
-				{
-					NPCID.MartianSaucer,
+				return new List<int>() {
+					NPCID.MartianSaucerCore,
 					NPCID.Scutlix,
+					NPCID.ScutlixRider,
 					NPCID.MartianWalker,
 					NPCID.MartianDrone,
 					NPCID.MartianTurret,
@@ -795,8 +1058,7 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Lunar Event") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					NPCID.LunarTowerSolar,
 					NPCID.SolarSolenian,
 					NPCID.SolarSpearman,
@@ -832,19 +1094,35 @@ namespace BossChecklist
 
 		internal List<int> SetupEventLoot(string eventName) {
 			if (eventName == "Blood Moon") {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.BunnyHood,
 					ItemID.TopHat,
 					ItemID.TheBrideHat,
 					ItemID.TheBrideDress,
 					ItemID.MoneyTrough,
 					ItemID.SharkToothNecklace,
 					ItemID.Bananarang,
+					ItemID.BloodMoonStarter,
+					ItemID.ChumBucket,
+					ItemID.KiteBunnyCorrupt,
+					ItemID.KiteBunnyCrimson,
+					ItemID.KOCannon,
+					ItemID.SanguineStaff,
+					ItemID.BloodMoonMonolith,
+					ItemID.DripplerFlail,
+					ItemID.SharpTears,
+					ItemID.BloodHamaxe,
+					ItemID.BloodRainBow,
+					ItemID.VampireFrogStaff,
+					ItemID.BloodFishingRod,
+					ItemID.CombatBook,
+					ItemID.PedguinHat,
+					ItemID.PedguinShirt,
+					ItemID.PedguinPants,
 				};
 			}
 			if (eventName == "Goblin Army") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.Harpoon,
 					ItemID.SpikyBall,
 					ItemID.ShadowFlameHexDoll,
@@ -853,14 +1131,12 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Frost Legion") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.SnowBlock,
 				};
 			}
 			if (eventName == "Pirate Invasion") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.CoinGun,
 					ItemID.Cutlass,
 					ItemID.DiscountCard,
@@ -897,69 +1173,51 @@ namespace BossChecklist
 				};
 			}
 			if (eventName == "Solar Eclipse") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.EyeSpring,
-					ItemID.DeathSickle,
 					ItemID.BrokenBatWing,
 					ItemID.MoonStone,
-					ItemID.ButchersChainsaw,
 					ItemID.NeptunesShell,
+					ItemID.Steak,
+					ItemID.DeathSickle,
+					ItemID.ButchersChainsaw,
+					ItemID.ButcherMask,
+					ItemID.ButcherApron,
+					ItemID.ButcherPants,
 					ItemID.DeadlySphereStaff,
 					ItemID.ToxicFlask,
-					ItemID.BrokenHeroSword,
-					ItemID.MothronWings,
-					ItemID.TheEyeOfCthulhu,
+					ItemID.DrManFlyMask,
+					ItemID.DrManFlyLabCoat,
 					ItemID.NailGun,
 					ItemID.Nail,
 					ItemID.PsychoKnife,
+					ItemID.BrokenHeroSword,
+					ItemID.MothronWings,
+					ItemID.TheEyeOfCthulhu,
 				};
 			}
 			if (eventName == "Pumpkin Moon") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.ScarecrowHat,
 					ItemID.ScarecrowShirt,
 					ItemID.ScarecrowPants,
 					ItemID.SpookyWood,
-					ItemID.StakeLauncher,
-					ItemID.Stake,
-					ItemID.NecromanticScroll,
-					ItemID.SpookyHook,
-					ItemID.SpookyTwig,
-					ItemID.CursedSapling,
 					ItemID.JackOLanternMask,
-					ItemID.TheHorsemansBlade,
-					ItemID.RavenStaff,
-					ItemID.BatScepter,
-					ItemID.CandyCornRifle,
-					ItemID.JackOLanternLauncher,
-					ItemID.BlackFairyDust,
-					ItemID.SpiderEgg,
 				};
 			}
 			if (eventName == "Frost Moon") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.ElfHat,
 					ItemID.ElfShirt,
 					ItemID.ElfPants,
-					ItemID.ChristmasTreeSword,
-					ItemID.Razorpine,
-					ItemID.FestiveWings,
-					ItemID.ChristmasHook,
-					ItemID.EldMelter,
-					ItemID.ChainGun,
-					ItemID.BlizzardStaff,
-					ItemID.NorthPole,
-					ItemID.SnowmanCannon,
-					ItemID.BabyGrinchMischiefWhistle,
-					ItemID.ReindeerBells,
 				};
 			}
 			if (eventName == "Martian Madness") {
-				return new List<int>()
-				{
+				return new List<int>() {
+					ItemID.MartianConduitPlating,
+					ItemID.LaserDrill,
+					ItemID.ChargedBlasterCannon,
+					ItemID.AntiGravityHook,
 					ItemID.MartianCostumeMask,
 					ItemID.MartianCostumeShirt,
 					ItemID.MartianCostumePants,
@@ -967,40 +1225,16 @@ namespace BossChecklist
 					ItemID.MartianUniformTorso,
 					ItemID.MartianUniformPants,
 					ItemID.BrainScrambler,
-					ItemID.LaserMachinegun,
-					ItemID.Xenopopper,
-					ItemID.XenoStaff,
-					ItemID.CosmicCarKey,
-					ItemID.LaserDrill,
-					ItemID.ElectrosphereLauncher,
-					ItemID.ChargedBlasterCannon,
-					ItemID.InfluxWaver,
-					ItemID.AntiGravityHook,
 				};
 			}
 			if (eventName == "Old One's Army") {
-				return new List<int>()
-				{
-					ItemID.DefenderMedal,
-					ItemID.WarTable,
-					ItemID.WarTableBanner,
-					ItemID.DD2PetDragon,
-					ItemID.DD2PetGato,
-					ItemID.ApprenticeScarf,
-					ItemID.SquireShield,
-					ItemID.HuntressBuckler,
-					ItemID.MonkBelt,
-					ItemID.BookStaff,
-					ItemID.DD2PhoenixBow,
-					ItemID.DD2SquireDemonSword,
-					ItemID.MonkStaffT1,
-					ItemID.MonkStaffT2,
-					ItemID.DD2PetGhost,
+				return new List<int>() {
+					ItemID.DD2EnergyCrystal,
+					ItemID.DefenderMedal
 				};
 			}
 			if (eventName == "Lunar Event") {
-				return new List<int>()
-				{
+				return new List<int>() {
 					ItemID.FragmentSolar,
 					ItemID.FragmentNebula,
 					ItemID.FragmentStardust,
@@ -1014,68 +1248,61 @@ namespace BossChecklist
 			if (eventName == "Blood Moon") {
 				return new List<int>() {
 					ItemID.MusicBoxEerie,
+					ItemID.MusicBoxOWBloodMoon
 				};
 			}
 			if (eventName == "Goblin Army") {
 				return new List<int>() {
 					ItemID.MusicBoxGoblins,
+					ItemID.MusicBoxOWInvasion
 				};
 			}
-
 			if (eventName == "Old One's Army") {
 				return new List<int>() {
 					ItemID.MusicBoxDD2,
-					//Betsy
-					ItemID.BossTrophyBetsy,
-					ItemID.BossMaskBetsy,
-					//Ogre
-					ItemID.BossMaskOgre,
-					ItemID.BossTrophyOgre,
-					//Dark Mage
-					ItemID.BossMaskDarkMage,
-					ItemID.BossTrophyDarkmage,
+					ItemID.MusicBoxOWInvasion
 				};
 			}
 			if (eventName == "Frost Legion") {
 				return new List<int>() {
 					ItemID.MusicBoxBoss3,
+					ItemID.MusicBoxOWInvasion
 				};
 			}
 			if (eventName == "Solar Eclipse") {
 				return new List<int>() {
 					ItemID.MusicBoxEclipse,
+					ItemID.MusicBoxOWBloodMoon
 				};
 			}
 			if (eventName == "Pirate Invasion") {
 				return new List<int>() {
 					ItemID.MusicBoxPirates,
-					ItemID.FlyingDutchmanTrophy
+					ItemID.MusicBoxOWInvasion
 				};
 			}
 			if (eventName == "Pumpkin Moon") {
 				return new List<int>() {
-					ItemID.MourningWoodTrophy,
-					ItemID.PumpkingTrophy,
-					ItemID.MusicBoxPumpkinMoon
+					ItemID.MusicBoxPumpkinMoon,
+					ItemID.MusicBoxOWInvasion
 				};
 			}
 			if (eventName == "Frost Moon") {
 				return new List<int>() {
-					ItemID.EverscreamTrophy,
-					ItemID.SantaNK1Trophy,
-					ItemID.IceQueenTrophy,
-					ItemID.MusicBoxFrostMoon
+					ItemID.MusicBoxFrostMoon,
+					ItemID.MusicBoxOWInvasion
 				};
 			}
 			if (eventName == "Martian Madness") {
 				return new List<int>() {
 					ItemID.MusicBoxMartians,
-					ItemID.MartianSaucerTrophy
+					ItemID.MusicBoxOWInvasion
 				};
 			}
 			if (eventName == "Lunar Event") {
 				return new List<int>() {
 					ItemID.MusicBoxTowers,
+					ItemID.MusicBoxOWTowers
 				};
 			}
 			return new List<int>();
@@ -1136,9 +1363,15 @@ namespace BossChecklist
 
 		internal void AddOrphanData(string type, string modName, string bossName, List<int> ids) {
 			OrphanType orphanType = OrphanType.Loot;
-			if (type == "AddToBossCollection") orphanType = OrphanType.Collection;
-			else if (type == "AddToBossSpawnItems") orphanType = OrphanType.SpawnItem;
-			else if (type == "AddToEventNPCs") orphanType = OrphanType.EventNPC;
+			if (type == "AddToBossCollection") {
+				orphanType = OrphanType.Collection;
+			}
+			else if (type == "AddToBossSpawnItems") {
+				orphanType = OrphanType.SpawnItem;
+			}
+			else if (type == "AddToEventNPCs") {
+				orphanType = OrphanType.EventNPC;
+			}
 			ExtraData.Add(new OrphanInfo(orphanType, modName, bossName, ids));
 		}
 	}

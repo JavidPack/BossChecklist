@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -11,7 +12,7 @@ namespace BossChecklist
 {
 	class NPCAssist : GlobalNPC
 	{
-		public override void NPCLoot(NPC npc) {
+		public override void OnKill(NPC npc) {
 			if ((npc.type == NPCID.DD2DarkMageT1 || npc.type == NPCID.DD2DarkMageT3) && !WorldAssist.downedDarkMage) {
 				WorldAssist.downedDarkMage = true;
 				if (Main.netMode == NetmodeID.Server) {
@@ -40,25 +41,25 @@ namespace BossChecklist
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
-					if (Main.netMode == 0) Main.NewText(Language.GetTextValue("Mods.BossChecklist.BossDefeated.Tower", npc.GetFullNetName().ToString()), Colors.RarityPurple);
-					else NetMessage.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.BossDefeated.Tower", npc.GetFullNetName().ToString()), Colors.RarityPurple);
+					if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(Language.GetTextValue("Mods.BossChecklist.BossDefeated.Tower", npc.GetFullNetName().ToString()), Colors.RarityPurple);
+					else ChatHelper.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.BossDefeated.Tower", npc.GetFullNetName().ToString()), Colors.RarityPurple);
 				}
 			}
 			if (NPCisLimb(npc) && BossChecklist.ClientConfig.LimbMessages) {
 				if (npc.type == NPCID.SkeletronHand) partName = "Skeletron Hand";
 				if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(Language.GetTextValue("Mods.BossChecklist.BossDefeated.Limb", partName), Colors.RarityGreen);
-				else NetMessage.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.BossDefeated.Limb", partName), Colors.RarityGreen);
+				else ChatHelper.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.BossDefeated.Limb", partName), Colors.RarityGreen);
 			}
 
 			// Setting a record for fastest boss kill, and counting boss kills
 			// Twins check makes sure the other is not around before counting towards the record
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled && TruelyDead(npc)) {
+				if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled && TrulyDead(npc)) {
 					if (Main.netMode == NetmodeID.SinglePlayer) CheckRecords(npc, index);
 					else if (Main.netMode == NetmodeID.Server) CheckRecordsMultiplayer(npc, index);
 				}
-				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(npc.FullName + ": " + TruelyDead(npc));
+				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(npc.FullName + ": " + TrulyDead(npc));
 			}
 		}
 
@@ -223,7 +224,7 @@ namespace BossChecklist
 				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
 				
 				// Make and send the packet
-				ModPacket packet = mod.GetPacket();
+				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
 				newRecord.NetSend(packet, specificRecord); // Writes all the variables needed
@@ -250,7 +251,7 @@ namespace BossChecklist
 					worldStats.healthAtStartWorld = newWorldRecords[4];
 				}
 				
-				ModPacket packet = mod.GetPacket();
+				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.WorldRecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
 				worldStats.NetSend(packet, specificRecord);
@@ -309,7 +310,7 @@ namespace BossChecklist
 				return index;
 			}
 			else {
-				int index = BL.FindIndex(x => x.modSource == boss.modNPC.mod.Name && x.npcIDs.Any(y => y == boss.type));
+				int index = BL.FindIndex(x => x.modSource == boss.ModNPC.Mod.Name && x.npcIDs.Any(y => y == boss.type));
 				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) return -1;
 				return index;
 			}
@@ -321,13 +322,13 @@ namespace BossChecklist
 			else return BL.FindIndex(x => x.modSource == modSource && x.npcIDs.Any(y => y == type));
 		}
 
-		public static bool TruelyDead(NPC npc) {
+		public static bool TrulyDead(NPC npc) {
 			// Check all multibosses
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses[index].npcIDs.Count; i++) {
-					if (Main.npc.Any(x => x != npc && x.type == BossChecklist.bossTracker.SortedBosses[index].npcIDs[i] && x.active)) return false;
+				foreach (int id in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
+					if (Main.npc.Any(x => x != npc && x.type == id && x.active)) return false;
 				}
 			}
 			return true;

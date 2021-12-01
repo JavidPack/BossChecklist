@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.Localization;
@@ -54,26 +56,26 @@ namespace BossChecklist
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Cropped Textures
-		public static Texture2D bookTexture;
-		public static Texture2D borderTexture;
-		public static Texture2D fadedTexture;
-		public static Texture2D colorTexture;
-		public static Texture2D prevTexture;
-		public static Texture2D nextTexture;
-		public static Texture2D tocTexture;
-		public static Texture2D credTexture;
-		public static Texture2D bossNavTexture;
-		public static Texture2D minibossNavTexture;
-		public static Texture2D eventNavTexture;
-		public static Texture2D filterTexture;
-		public static Texture2D checkMarkTexture;
-		public static Texture2D xTexture;
-		public static Texture2D circleTexture;
-		public static Texture2D checkboxTexture;
+		public static Asset<Texture2D> bookTexture;
+		public static Asset<Texture2D> borderTexture;
+		public static Asset<Texture2D> fadedTexture;
+		public static Asset<Texture2D> colorTexture;
+		public static Asset<Texture2D> prevTexture;
+		public static Asset<Texture2D> nextTexture;
+		public static Asset<Texture2D> tocTexture;
+		public static Asset<Texture2D> credTexture;
+		public static Asset<Texture2D> bossNavTexture;
+		public static Asset<Texture2D> minibossNavTexture;
+		public static Asset<Texture2D> eventNavTexture;
+		public static Asset<Texture2D> filterTexture;
+		public static Asset<Texture2D> checkMarkTexture;
+		public static Asset<Texture2D> xTexture;
+		public static Asset<Texture2D> circleTexture;
+		public static Asset<Texture2D> checkboxTexture;
 		//public static Texture2D silverStarTexture; // unused
-		public static Texture2D chestTexture;
-		public static Texture2D starTexture;
-		public static Texture2D goldChestTexture;
+		public static Asset<Texture2D> chestTexture;
+		public static Asset<Texture2D> starTexture;
+		public static Asset<Texture2D> goldChestTexture;
 		
 		public static int PageNum = -3; // Selected Boss Page (starts out with an invalid number for the initial check)
 		public static int SubPageNum = 0; // Selected Topic Tab (Records, Spawn Info, Loot/Collection)
@@ -87,25 +89,25 @@ namespace BossChecklist
 			get { return bossLogVisible; }
 			set {
 				if (value) {
+					Append(BookArea);
 					Append(ToCTab);
-					Append(CreditsTab);
 					Append(filterPanel);
+					Append(CreditsTab);
 					Append(BossTab);
 					Append(MiniBossTab);
 					Append(EventTab);
 					Append(PageOne);
 					Append(PageTwo);
-					Append(BookArea);
 				}
 				else {
-					RemoveChild(ToCTab);
+					RemoveChild(PageTwo);
+					RemoveChild(PageOne);
+					RemoveChild(EventTab);
+					RemoveChild(MiniBossTab);
+					RemoveChild(BossTab);
 					RemoveChild(CreditsTab);
 					RemoveChild(filterPanel);
-					RemoveChild(BossTab);
-					RemoveChild(MiniBossTab);
-					RemoveChild(EventTab);
-					RemoveChild(PageOne);
-					RemoveChild(PageTwo);
+					RemoveChild(ToCTab);
 					RemoveChild(BookArea);
 				}
 				bossLogVisible = value;
@@ -138,30 +140,31 @@ namespace BossChecklist
 		}
 
 		public override void OnInitialize() {
-			bookTexture = BossChecklist.instance.GetTexture("Resources/Book_Outline");
-			borderTexture = BossChecklist.instance.GetTexture("Resources/Book_Border");
-			fadedTexture = BossChecklist.instance.GetTexture("Resources/Book_Faded");
-			colorTexture = BossChecklist.instance.GetTexture("Resources/Book_Color");
-			
-			prevTexture = BossChecklist.instance.GetTexture("Resources/Nav_Prev");
-			nextTexture = BossChecklist.instance.GetTexture("Resources/Nav_Next");
-			tocTexture = BossChecklist.instance.GetTexture("Resources/Nav_Contents");
-			credTexture = BossChecklist.instance.GetTexture("Resources/Nav_Credits");
-			bossNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Boss");
-			minibossNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Miniboss");
-			eventNavTexture = BossChecklist.instance.GetTexture("Resources/Nav_Event");
-			filterTexture = BossChecklist.instance.GetTexture("Resources/Nav_Filter");
-			
-			checkMarkTexture = BossChecklist.instance.GetTexture("Resources/Checks_Check");
-			xTexture = BossChecklist.instance.GetTexture("Resources/Checks_X");
-			circleTexture = BossChecklist.instance.GetTexture("Resources/Checks_Next");
-			checkboxTexture = BossChecklist.instance.GetTexture("Resources/Checks_Box");
-			chestTexture = BossChecklist.instance.GetTexture("Resources/Checks_Chest");
-			starTexture = BossChecklist.instance.GetTexture("Resources/Checks_Star");
-			goldChestTexture = BossChecklist.instance.GetTexture("Resources/Checks_GoldChest");
-			
-			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog");
-			bosslogbutton.Id = "OpenUI";
+			bookTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Outline");
+			borderTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Border");
+			fadedTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Faded");
+			colorTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Color");
+
+			prevTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Prev");
+			nextTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Next");
+			tocTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Contents");
+			credTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Credits");
+			bossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Boss");
+			minibossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss");
+			eventNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event");
+			filterTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Filter");
+
+			checkMarkTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
+			xTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
+			circleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Next", AssetRequestMode.ImmediateLoad);
+			checkboxTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad);
+			chestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Chest");
+			starTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Star");
+			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
+
+			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
+				Id = "OpenUI"
+			};
 			bosslogbutton.Width.Set(34, 0f);
 			bosslogbutton.Height.Set(38, 0f);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
@@ -173,45 +176,50 @@ namespace BossChecklist
 				false, false, false, false
 			};
 
-			ToCTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			ToCTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+				Id = "ToCFilter_Tab"
+			};
 			ToCTab.Height.Pixels = 76;
 			ToCTab.Width.Pixels = 32;
 			ToCTab.Left.Set(-416, 0.5f);
 			ToCTab.Top.Set(-250 + 20, 0.5f);
-			ToCTab.Id = "ToCFilter_Tab";
-			ToCTab.OnClick += new MouseEvent(OpenViaTab);
+			ToCTab.OnClick += OpenViaTab;
 
-			BossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			BossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+				Id = "Boss_Tab"
+			};
 			BossTab.Height.Pixels = 76;
 			BossTab.Width.Pixels = 32;
 			BossTab.Left.Set(-416, 0.5f);
 			BossTab.Top.Set(-250 + 30 + 76, 0.5f);
-			BossTab.Id = "Boss_Tab";
-			BossTab.OnClick += new MouseEvent(OpenViaTab);
+			BossTab.OnClick += OpenViaTab;
 
-			MiniBossTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			MiniBossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+				Id = "Miniboss_Tab"
+			};
 			MiniBossTab.Height.Pixels = 76;
 			MiniBossTab.Width.Pixels = 32;
 			MiniBossTab.Left.Set(-416, 0.5f);
 			MiniBossTab.Top.Set(-250 + 40 + (76 * 2), 0.5f);
-			MiniBossTab.Id = "Miniboss_Tab";
-			MiniBossTab.OnClick += new MouseEvent(OpenViaTab);
+			MiniBossTab.OnClick += OpenViaTab;
 
-			EventTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			EventTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+				Id = "Event_Tab"
+			};
 			EventTab.Height.Pixels = 76;
 			EventTab.Width.Pixels = 32;
 			EventTab.Left.Set(-416, 0.5f);
 			EventTab.Top.Set(-250 + 50 + (76 * 3), 0.5f);
-			EventTab.Id = "Event_Tab";
-			EventTab.OnClick += new MouseEvent(OpenViaTab);
+			EventTab.OnClick += OpenViaTab;
 
-			CreditsTab = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Tab"));
+			CreditsTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+				Id = "Credits_Tab"
+			};
 			CreditsTab.Height.Pixels = 76;
 			CreditsTab.Width.Pixels = 32;
 			CreditsTab.Left.Set(-416, 0.5f);
 			CreditsTab.Top.Set(-250 + 60 + (76 * 4), 0.5f);
-			CreditsTab.Id = "Credits_Tab";
-			CreditsTab.OnClick += new MouseEvent(OpenViaTab);
+			CreditsTab.OnClick += OpenViaTab;
 
 			BookArea = new BossLogPanel();
 			BookArea.Width.Pixels = 800;
@@ -219,18 +227,22 @@ namespace BossChecklist
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
 			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
 
-			PageOne = new BossLogPanel { Id = "PageOne" };
+			PageOne = new BossLogPanel() {
+				Id = "PageOne"
+			};
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
-			PrevPage = new BossAssistButton(prevTexture, "") { Id = "Previous" };
+			PrevPage = new BossAssistButton(prevTexture, "") {
+				Id = "Previous"
+			};
 			PrevPage.Width.Pixels = 14;
 			PrevPage.Height.Pixels = 20;
 			PrevPage.Left.Pixels = 8;
 			PrevPage.Top.Pixels = 416;
-			PrevPage.OnClick += new MouseEvent(PageChangerClicked);
+			PrevPage.OnClick += PageChangerClicked;
 
 			prehardmodeList = new UIList();
 			prehardmodeList.Left.Pixels = 4;
@@ -249,20 +261,23 @@ namespace BossChecklist
 			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
 			scrollTwo.SetView(100f, 1000f);
 			scrollTwo.Top.Pixels = 50f;
-			scrollTwo.Left.Pixels = -28;
+			scrollTwo.Left.Pixels = -13;
 			scrollTwo.Height.Set(-24f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
-			PageTwo = new BossLogPanel { Id = "PageTwo" };
+			PageTwo = new BossLogPanel() {
+				Id = "PageTwo"
+			};
 			PageTwo.Width.Pixels = 375;
 			PageTwo.Height.Pixels = 480;
-			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
+			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 415 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			pageTwoItemList = new UIList();
 
-			filterPanel = new BookUI(BossChecklist.instance.GetTexture("Resources/LogUI_Filter"));
-			filterPanel.Id = "filterPanel";
+			filterPanel = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Filter")) {
+				Id = "filterPanel"
+			};
 			filterPanel.Height.Pixels = 76;
 			filterPanel.Width.Pixels = 152;
 			filterPanel.Left.Set(-416, 0.5f);
@@ -273,41 +288,43 @@ namespace BossChecklist
 			filterTypes = new List<UIText>();
 
 			for (int i = 0; i < 3; i++) {
-				BookUI newCheck = new BookUI(checkMarkTexture);
-				newCheck.Id = "C_" + i;
+				BookUI newCheck = new BookUI(checkMarkTexture) {
+					Id = "C_" + i
+				};
 				filterCheckMark.Add(newCheck);
 
-				BookUI newCheckBox = new BookUI(checkboxTexture);
-				newCheckBox.Id = "F_" + i;
+				BookUI newCheckBox = new BookUI(checkboxTexture) {
+					Id = "F_" + i
+				};
 				newCheckBox.Top.Pixels = (20 * i) + 5;
 				newCheckBox.Left.Pixels = 5;
-				newCheckBox.OnClick += new MouseEvent(ChangeFilter);
+				newCheckBox.OnClick += ChangeFilter;
 				newCheckBox.Append(filterCheckMark[i]);
 				filterCheck.Add(newCheckBox);
 
-				string type = "Bosses";
-				if (i == 1) {
-					type = "Mini bosses";
-				}
-				if (i == 2) {
-					type = "Events";
-				}
+				string type = i switch {
+					1 => "Mini bosses",
+					2 => "Events",
+					_ => "Bosses"
+				};
 				UIText bosses = new UIText(type, 0.85f);
 				bosses.Top.Pixels = 10 + (20 * i);
 				bosses.Left.Pixels = 25;
 				filterTypes.Add(bosses);
 			}
 
-			NextPage = new BossAssistButton(nextTexture, "") { Id = "Next" };
+			NextPage = new BossAssistButton(nextTexture, "") {
+				Id = "Next"
+			};
 			NextPage.Width.Pixels = 14;
 			NextPage.Height.Pixels = 20;
-			NextPage.Left.Pixels = PageTwo.Width.Pixels - (int)(NextPage.Width.Pixels * 3);
+			NextPage.Left.Pixels = PageTwo.Width.Pixels + 15 - (int)(NextPage.Width.Pixels * 3);
 			NextPage.Top.Pixels = 416;
-			NextPage.OnClick += new MouseEvent(PageChangerClicked);
+			NextPage.OnClick += PageChangerClicked;
 			PageTwo.Append(NextPage);
 
 			hardmodeList = new UIList();
-			hardmodeList.Left.Pixels = 4;
+			hardmodeList.Left.Pixels = 19;
 			hardmodeList.Top.Pixels = 44;
 			hardmodeList.Width.Pixels = PageOne.Width.Pixels - 60;
 			hardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
@@ -316,7 +333,7 @@ namespace BossChecklist
 			recordButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.Records");
 			recordButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			recordButton.Height.Pixels = 25;
-			recordButton.Left.Pixels = 0;
+			recordButton.Left.Pixels = 15;
 			recordButton.Top.Pixels = 15;
 			recordButton.OnClick += (a, b) => UpdateSubPage(0);
 			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
@@ -324,28 +341,28 @@ namespace BossChecklist
 			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
 			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			spawnButton.Height.Pixels = 25;
-			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8;
+			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8 + 15;
 			spawnButton.Top.Pixels = 15;
 			spawnButton.OnClick += (a, b) => UpdateSubPage(1);
 
 			lootButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.LootCollect");
-			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
+			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24 + 15;
 			lootButton.Height.Pixels = 25;
-			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2 - 16;
+			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 50;
 			lootButton.OnClick += (a, b) => UpdateSubPage(2);
-			lootButton.OnRightDoubleClick += new MouseEvent(RemoveItem);
+			lootButton.OnRightDoubleClick += RemoveItem;
 
 			toolTipButton = new SubpageButton("Disclaimer");
 			toolTipButton.Width.Pixels = 32;
 			toolTipButton.Height.Pixels = 32;
-			toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
+			toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels;
 			toolTipButton.Top.Pixels = 100;
 			toolTipButton.OnClick += (a, b) => SwapRecordPage();
 
-			toggleHidden = new UIHoverImageButton(Main.inventoryTickOffTexture, "Toggle hidden visibility");
-			toggleHidden.Left.Pixels = 112 - Main.inventoryTickOffTexture.Width;
-			toggleHidden.Top.Pixels = Main.inventoryTickOffTexture.Height * 2 / 3;
+			toggleHidden = new UIHoverImageButton(TextureAssets.InventoryTickOff, "Toggle hidden visibility");
+			toggleHidden.Left.Pixels = 112 - TextureAssets.InventoryTickOff.Width();
+			toggleHidden.Top.Pixels = TextureAssets.InventoryTickOff.Height() * 2 / 3;
 			toggleHidden.OnClick += (a, b) => ToggleHidden();
 			filterPanel.Append(toggleHidden);
 		}
@@ -358,7 +375,7 @@ namespace BossChecklist
 			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
 			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
 			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 400 + 800 - PageTwo.Width.Pixels;
+			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 415 + 800 - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			// Updating tabs to proper positions
@@ -426,7 +443,7 @@ namespace BossChecklist
 			}
 		}
 
-		public void ToggleFilterPanel(UIMouseEvent evt, UIElement listeningElement) {
+		public void ToggleFilterPanel() {
 			if (filterPanel.Left.Pixels != -416 - 120 + ToCTab.Width.Pixels) {
 				ToCTab.Left.Set(-416 - 120, 0.5f);
 				filterPanel.Left.Set(-416 - 120 + ToCTab.Width.Pixels, 0.5f);
@@ -452,7 +469,10 @@ namespace BossChecklist
 		}
 
 		private void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
-			string rowID = listeningElement.Id.Substring(2, 1);
+			if (listeningElement is not BookUI book)
+				return;
+
+			string rowID = book.Id.Substring(2, 1);
 			if (rowID == "0") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
@@ -488,7 +508,11 @@ namespace BossChecklist
 		}
 
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
-			if (!BookUI.DrawTab(listeningElement.Id)) {
+			if (listeningElement is not BookUI book)
+				return;
+
+			string id = book.Id;
+			if (!BookUI.DrawTab(id)) {
 				return;
 			}
 
@@ -498,20 +522,20 @@ namespace BossChecklist
 				modPlayer.hasNewRecord[PageNum] = false;
 			}
 
-			if (listeningElement.Id == "ToCFilter_Tab" && PageNum == -1) {
-				ToggleFilterPanel(evt, listeningElement);
+			if (id == "ToCFilter_Tab" && PageNum == -1) {
+				ToggleFilterPanel();
 				return;
 			}
-			if (listeningElement.Id == "Boss_Tab") {
+			if (id == "Boss_Tab") {
 				PageNum = FindNext(EntryType.Boss);
 			}
-			else if (listeningElement.Id == "Miniboss_Tab") {
+			else if (id == "Miniboss_Tab") {
 				PageNum = FindNext(EntryType.MiniBoss);
 			}
-			else if (listeningElement.Id == "Event_Tab") {
+			else if (id == "Event_Tab") {
 				PageNum = FindNext(EntryType.Event);
 			}
-			else if (listeningElement.Id == "Credits_Tab") {
+			else if (id == "Credits_Tab") {
 				UpdateCredits();
 			}
 			else {
@@ -558,15 +582,18 @@ namespace BossChecklist
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 			if (BossChecklist.DebugConfig.ResetLootItems && SubPageNum == 2) {
-				string ID = listeningElement.Id;
-				if (ID == "") {
+				string id = "";
+				if (listeningElement is LogItemSlot slot)
+					id = slot.Id;
+
+				if (id == "") {
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
+						foreach (BossCollection trophy in modPlayer.BossTrophies) {
 							if (AltPage[2]) {
-								modPlayer.BossTrophies[i].collectibles.Clear();
+								trophy.collectibles.Clear();
 							}
 							else {
-								modPlayer.BossTrophies[i].loot.Clear();
+								trophy.loot.Clear();
 							}
 						}
 					}
@@ -579,11 +606,11 @@ namespace BossChecklist
 						}
 					}
 				}
-				else if (ID.StartsWith("collect_")) {
-					int itemType = Convert.ToInt32(ID.Substring(8));
+				else if (id.StartsWith("collect_")) {
+					int itemType = Convert.ToInt32(id.Substring(8));
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
-							modPlayer.BossTrophies[i].collectibles.RemoveAll(x => x.Type == itemType);
+						foreach (BossCollection trophy in modPlayer.BossTrophies) {
+							trophy.collectibles.RemoveAll(x => x.Type == itemType);
 						}
 					}
 					else {
@@ -591,11 +618,11 @@ namespace BossChecklist
 						collection.RemoveAll(x => x.Type == itemType);
 					}
 				}
-				else if (ID.StartsWith("loot_")) {
-					int itemType = Convert.ToInt32(ID.Substring(5));
+				else if (id.StartsWith("loot_")) {
+					int itemType = Convert.ToInt32(id.Substring(5));
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						for (int i = 0; i < modPlayer.BossTrophies.Count; i++) {
-							modPlayer.BossTrophies[i].loot.RemoveAll(x => x.Type == itemType);
+						foreach (BossCollection trophy in modPlayer.BossTrophies) {
+							trophy.loot.RemoveAll(x => x.Type == itemType);
 						}
 					}
 					else {
@@ -608,17 +635,19 @@ namespace BossChecklist
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement.Id == "NextItem") {
+			BossAssistButton button = (BossAssistButton)listeningElement;
+			string id = button.Id;
+			if (id == "NextItem") {
 				RecipePageNum++;
 				RecipeShown = 0;
 			}
-			else if (listeningElement.Id == "PrevItem") {
+			else if (id == "PrevItem") {
 				RecipePageNum--;
 				RecipeShown = 0;
 			}
-			else if (listeningElement.Id.Contains("CycleItem")) {
-				int index = listeningElement.Id.IndexOf('_');
-				if (RecipeShown == Convert.ToInt32(listeningElement.Id.Substring(index + 1)) - 1) {
+			else if (id.Contains("CycleItem")) {
+				int index = id.IndexOf('_');
+				if (RecipeShown == Convert.ToInt32(id.Substring(index + 1)) - 1) {
 					RecipeShown = 0;
 				}
 				else {
@@ -629,6 +658,9 @@ namespace BossChecklist
 		}
 
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
+			if (listeningElement is not BossAssistButton button)
+				return;
+
 			// Reset new record
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			if (PageNum >= 0 && modPlayer.hasNewRecord[PageNum]) {
@@ -644,7 +676,7 @@ namespace BossChecklist
 
 			// Move to next/prev
 			List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
-			if (listeningElement.Id == "Next") {
+			if (button.Id == "Next") {
 				if (PageNum < BossList.Count - 1) {
 					PageNum++;
 				}
@@ -681,7 +713,7 @@ namespace BossChecklist
 							}
 						}
 
-						if (listeningElement.Id == "Next") {
+						if (button.Id == "Next") {
 							if (PageNum < BossList.Count - 1) {
 								PageNum++;
 							}
@@ -707,7 +739,7 @@ namespace BossChecklist
 
 		private void ToggleHidden() {
 			showHidden = !showHidden;
-			toggleHidden.SetImage(showHidden ? Main.inventoryTickOnTexture : Main.inventoryTickOffTexture);
+			toggleHidden.SetImage(showHidden ? TextureAssets.InventoryTickOn : TextureAssets.InventoryTickOff);
 			UpdateTableofContents();
 		}
 
@@ -736,7 +768,7 @@ namespace BossChecklist
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
-			message.Left.Set(-10f, 0f);
+			message.Left.Set(5f, 0f);
 			//message.PaddingRight = 30;
 			PageTwo.Append(message);
 
@@ -744,7 +776,7 @@ namespace BossChecklist
 			scrollTwo.SetView(100f, 1000f);
 			scrollTwo.Top.Set(91f, 0f);
 			scrollTwo.Height.Set(-382f, 1f);
-			scrollTwo.Left.Set(-20, 0f);
+			scrollTwo.Left.Set(-5, 0f);
 			scrollTwo.HAlign = 1f;
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
@@ -758,7 +790,7 @@ namespace BossChecklist
 					type = "Event";
 				}
 				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
-				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (Main.fontMouseText.MeasureString(info.Text).X / 2) - 20;
+				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
 				PageTwo.Append(info);
 				return;
@@ -769,23 +801,22 @@ namespace BossChecklist
 			//List<Recipe> recipes = Main.recipe.ToList();
 			Item spawn = new Item();
 			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
-				RecipeFinder finder = new RecipeFinder();
-				finder.SetResult(boss.spawnItem[RecipePageNum]);
+				var recipes = Main.recipe
+					.Take(Recipe.numRecipes)
+					.Where(r => r.HasResult(boss.spawnItem[RecipePageNum]));
 
-				foreach (Recipe recipe in finder.SearchRecipes()) {
+				foreach (Recipe recipe in recipes) {
 					if (TotalRecipes == RecipeShown) {
 						foreach (Item item in recipe.requiredItem) {
 							Item clone = item.Clone();
 							OverrideForGroups(recipe, clone);
 							ingredients.Add(clone);
 						}
-						foreach (int tile in recipe.requiredTile) {
-							if (tile != -1) {
-								requiredTiles.Add(tile);
-							}
-						}
-						if (recipe is ModRecipe modRecipe) {
-							recipeMod = modRecipe.mod.DisplayName;
+
+						requiredTiles.AddRange(recipe.requiredTile);
+
+						if (recipe.Mod != null) {
+							recipeMod = recipe.Mod.DisplayName;
 						}
 					}
 					TotalRecipes++;
@@ -796,23 +827,24 @@ namespace BossChecklist
 				spawnItemSlot.Height.Pixels = 50;
 				spawnItemSlot.Width.Pixels = 50;
 				spawnItemSlot.Top.Pixels = 230;
-				spawnItemSlot.Left.Pixels = 33 + (56 * 2);
+				spawnItemSlot.Left.Pixels = 48 + (56 * 2);
 				PageTwo.Append(spawnItemSlot);
 
 				int row = 0;
 				int col = 0;
 				for (int k = 0; k < ingredients.Count; k++) {
-					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem, 0.85f);
-					ingList.Id = "ingredient_" + k;
+					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem, 0.85f) {
+						Id = "ingredient_" + k
+					};
 					ingList.Height.Pixels = 50;
 					ingList.Width.Pixels = 50;
 					ingList.Top.Pixels = 240 + (48 * (row + 1));
-					ingList.Left.Pixels = 5 + (48 * col);
+					ingList.Left.Pixels = 20 + (48 * col);
 					PageTwo.Append(ingList);
 					col++;
 					if (k == 6) {
 						// Fills in rows with empty slots. New rows start after 7 items
-						if (ingList.item.type == 0) {
+						if (ingList.item.type == ItemID.None) {
 							break;
 						}
 						col = 0;
@@ -833,7 +865,7 @@ namespace BossChecklist
 					craftItem.Height.Pixels = 50;
 					craftItem.Width.Pixels = 50;
 					craftItem.Top.Pixels = 240 + (48 * (row + 2));
-					craftItem.Left.Pixels = 5;
+					craftItem.Left.Pixels = 20;
 					PageTwo.Append(craftItem);
 				}
 				else if (requiredTiles.Count > 0) {
@@ -861,41 +893,44 @@ namespace BossChecklist
 						tileList.Height.Pixels = 50;
 						tileList.Width.Pixels = 50;
 						tileList.Top.Pixels = 240 + (48 * (row + 2));
-						tileList.Left.Pixels = 5 + (48 * l);
+						tileList.Left.Pixels = 20 + (48 * l);
 						PageTwo.Append(tileList);
 					}
 				}
 
 				if (RecipePageNum > 0) {
-					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "");
-					PrevItem.Id = "PrevItem";
+					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
+						Id = "PrevItem"
+					};
 					PrevItem.Top.Pixels = 245;
-					PrevItem.Left.Pixels = 125;
+					PrevItem.Left.Pixels = 140;
 					PrevItem.Width.Pixels = 14;
 					PrevItem.Height.Pixels = 20;
-					PrevItem.OnClick += new MouseEvent(ChangeSpawnItem);
+					PrevItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(PrevItem);
 				}
 
 				if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-					BossAssistButton NextItem = new BossAssistButton(nextTexture, "");
-					NextItem.Id = "NextItem";
+					BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
+						Id = "NextItem"
+					};
 					NextItem.Top.Pixels = 245;
-					NextItem.Left.Pixels = 203;
+					NextItem.Left.Pixels = 218;
 					NextItem.Width.Pixels = 14;
 					NextItem.Height.Pixels = 20;
-					NextItem.OnClick += new MouseEvent(ChangeSpawnItem);
+					NextItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(NextItem);
 				}
 
 				if (TotalRecipes > 1) {
-					BossAssistButton CycleItem = new BossAssistButton(tocTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe"));
-					CycleItem.Id = "CycleItem_" + TotalRecipes;
+					BossAssistButton CycleItem = new BossAssistButton(tocTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
+						Id = "CycleItem_" + TotalRecipes
+					};
 					CycleItem.Top.Pixels = 245;
-					CycleItem.Left.Pixels = 40;
+					CycleItem.Left.Pixels = 55;
 					CycleItem.Width.Pixels = 22;
 					CycleItem.Height.Pixels = 22;
-					CycleItem.OnClick += new MouseEvent(ChangeSpawnItem);
+					CycleItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(CycleItem);
 				}
 
@@ -905,7 +940,7 @@ namespace BossChecklist
 				}
 
 				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
-				ModdedRecipe.Left.Pixels = -5;
+				ModdedRecipe.Left.Pixels = 10;
 				ModdedRecipe.Top.Pixels = 205;
 				PageTwo.Append(ModdedRecipe);
 			}
@@ -921,8 +956,6 @@ namespace BossChecklist
 			if (PageNum < 0) {
 				return;
 			}
-			int row = 0;
-			int col = 0;
 
 			pageTwoItemList.Left.Pixels = 0;
 			pageTwoItemList.Top.Pixels = 125;
@@ -931,43 +964,71 @@ namespace BossChecklist
 
 			scrollTwo.SetView(10f, 1000f);
 			scrollTwo.Top.Pixels = 125;
-			scrollTwo.Left.Pixels = -18;
+			scrollTwo.Left.Pixels = -3;
 			scrollTwo.Height.Set(-88f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
 			pageTwoItemList.Clear();
 			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
-			LootRow newRow = new LootRow(0) { Id = "Loot0" };
-			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (BossChecklist.registeredBossBagTypes.Contains(shortcut.loot[i])) {
+			LootRow newRow = new LootRow(0) {
+				Id = "Loot0"
+			};
+
+			int row = 0;
+			int col = 0;
+			foreach (int loot in shortcut.loot) {
+				if (BossChecklist.registeredBossBagTypes.Contains(loot)) {
 					continue;
 				}
-				Item expertItem = new Item();
-				expertItem.SetDefaults(shortcut.loot[i]);
-				if (expertItem.expert) {
+				Item selectedItem = new Item();
+				selectedItem.SetDefaults(loot);
+				if (selectedItem.master) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(expertItem, Collection.loot.Any(x => x.Type == expertItem.type), expertItem.Name, ItemSlot.Context.ShopItem);
+					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
+						Id = "loot_" + selectedItem.type
+					};
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
-					lootTable.Id = "loot_" + expertItem.type;
-					lootTable.Left.Pixels = (col * 56);
-					lootTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
+					lootTable.Left.Pixels = (col * 56) + 15;
+					lootTable.OnRightDoubleClick += RemoveItem;
 					newRow.Append(lootTable);
 					col++;
 					if (col == 6) {
 						col = 0;
 						row++;
 						pageTwoItemList.Add(newRow);
-						newRow = new LootRow(row) { Id = "Loot" + row };
+						newRow = new LootRow(row) {
+							Id = "Loot" + row
+						};
+					}
+				}
+				if (selectedItem.expert) {
+					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
+					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
+						Id = "loot_" + selectedItem.type
+					};
+					lootTable.Height.Pixels = 50;
+					lootTable.Width.Pixels = 50;
+					lootTable.Left.Pixels = (col * 56) + 15;
+					lootTable.OnRightDoubleClick += RemoveItem;
+					newRow.Append(lootTable);
+					col++;
+					if (col == 6) {
+						col = 0;
+						row++;
+						pageTwoItemList.Add(newRow);
+						newRow = new LootRow(row) {
+							Id = "Loot" + row
+						};
 					}
 				}
 			}
-			for (int i = 0; i < shortcut.loot.Count; i++) {
-				if (BossChecklist.registeredBossBagTypes.Contains(shortcut.loot[i])) {
+			foreach (int itemType in shortcut.loot) {
+				if (BossChecklist.registeredBossBagTypes.Contains(itemType)) {
 					continue;
 				}
 				Item loot = new Item();
-				loot.SetDefaults(shortcut.loot[i]);
+				loot.SetDefaults(itemType);
 				if (shortcut.npcIDs[0] < NPCID.Count) {
 					if (WorldGen.crimson) {
 						if (loot.type == ItemID.DemoniteOre || loot.type == ItemID.CorruptSeeds || loot.type == ItemID.UnholyArrow) {
@@ -980,21 +1041,24 @@ namespace BossChecklist
 						}
 					}
 				}
-				if (!loot.expert) {
+				if (!loot.expert && !loot.master) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem);
+					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem) {
+						Id = "loot_" + loot.type
+					};
 					lootTable.Height.Pixels = 50;
 					lootTable.Width.Pixels = 50;
-					lootTable.Id = "loot_" + loot.type;
-					lootTable.Left.Pixels = (col * 56);
-					lootTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
+					lootTable.Left.Pixels = (col * 56) + 15;
+					lootTable.OnRightDoubleClick += RemoveItem;
 					newRow.Append(lootTable);
 					col++;
 					if (col == 6) {
 						col = 0;
 						row++;
 						pageTwoItemList.Add(newRow);
-						newRow = new LootRow(row) { Id = "Loot" + row };
+						newRow = new LootRow(row) {
+							Id = "Loot" + row
+						};
 					}
 				}
 			}
@@ -1002,7 +1066,9 @@ namespace BossChecklist
 				col = 0;
 				row++;
 				pageTwoItemList.Add(newRow);
-				newRow = new LootRow(row) { Id = "Loot" + row };
+				newRow = new LootRow(row) {
+					Id = "Loot" + row
+				};
 			}
 			if (row > 5) {
 				PageTwo.Append(scrollTwo);
@@ -1016,8 +1082,6 @@ namespace BossChecklist
 			if (PageNum < 0) {
 				return;
 			}
-			int row = 0;
-			int col = 0;
 
 			pageTwoItemList.Left.Pixels = 0;
 			pageTwoItemList.Top.Pixels = 235;
@@ -1026,13 +1090,19 @@ namespace BossChecklist
 
 			scrollTwo.SetView(10f, 1000f);
 			scrollTwo.Top.Pixels = 250;
-			scrollTwo.Left.Pixels = -18;
+			scrollTwo.Left.Pixels = -3;
 			scrollTwo.Height.Set(-220f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
 			pageTwoItemList.Clear();
-			LootRow newRow = new LootRow(0) { Id = "Collect0" };
+			LootRow newRow = new LootRow(0) {
+				Id = "Collect0"
+			};
+
 			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
+
+			int row = 0;
+			int col = 0;
 			for (int i = 0; i < shortcut.collection.Count; i++) {
 				if (shortcut.collection[i] == -1) {
 					continue;
@@ -1041,19 +1111,22 @@ namespace BossChecklist
 				collectible.SetDefaults(shortcut.collection[i]);
 
 				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
-				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name);   
+				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name) {
+					Id = "collect_" + collectible.type
+				};
 				collectionTable.Height.Pixels = 50;
 				collectionTable.Width.Pixels = 50;
-				collectionTable.Id = "collect_" + collectible.type;
-				collectionTable.Left.Pixels = (56 * (col));
-				collectionTable.OnRightDoubleClick += new MouseEvent(RemoveItem);
+				collectionTable.Left.Pixels = (col * 56) + 15;
+				collectionTable.OnRightDoubleClick += RemoveItem;
 				newRow.Append(collectionTable);
 				col++;
 				if (col == 6 || i == shortcut.collection.Count - 1) {
 					col = 0;
 					row++;
 					pageTwoItemList.Add(newRow);
-					newRow = new LootRow(row) { Id = "Collect" + row };
+					newRow = new LootRow(row) {
+						Id = "Collect" + row
+					};
 				}
 			}
 			if (row > 3) {
@@ -1119,15 +1192,14 @@ namespace BossChecklist
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				TableOfContents next = new TableOfContents(boss.progression, displayName, boss.name, boss.downed(), nextCheck);
+				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.downed(), nextCheck);
 				if (!boss.downed() && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
 				
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22;
-				next.Id = i.ToString();
-				next.OnClick += new MouseEvent(JumpToBossPage);
+				next.OnClick += JumpToBossPage;
 
 				if (boss.downed()) {
 					if (boss.progression <= 6f) {
@@ -1172,7 +1244,7 @@ namespace BossChecklist
 				}
 			}
 
-			pageTwoItemList.Left.Pixels = 15;
+			pageTwoItemList.Left.Pixels = 30;
 			pageTwoItemList.Top.Pixels = 75;
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 66;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 75 - 80;
@@ -1180,7 +1252,7 @@ namespace BossChecklist
 
 			scrollTwo.SetView(10f, 1000f);
 			scrollTwo.Top.Pixels = 90;
-			scrollTwo.Left.Pixels = -24;
+			scrollTwo.Left.Pixels = 5;
 			scrollTwo.Height.Set(-60f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
@@ -1204,7 +1276,7 @@ namespace BossChecklist
 				brokenPanel.Height.Pixels = 220;
 				brokenPanel.Width.Pixels = 340;
 				brokenPanel.Top.Pixels = 120;
-				brokenPanel.Left.Pixels = 3;
+				brokenPanel.Left.Pixels = 18;
 				PageTwo.Append(brokenPanel);
 
 				FittedTextPanel brokenDisplay = new FittedTextPanel(Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.NoModsSupported"));
@@ -1217,7 +1289,12 @@ namespace BossChecklist
 		}
 
 		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
-			PageNum = Convert.ToInt32(listeningElement.Id);
+			if (listeningElement is TableOfContents table)
+				JumpToBossPage(table.PageNum);
+		}
+
+		internal void JumpToBossPage(int index) {
+			PageNum = index;
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				pgBoss.hidden = !pgBoss.hidden;
@@ -1227,7 +1304,7 @@ namespace BossChecklist
 				else {
 					WorldAssist.HiddenBosses.Remove(pgBoss.Key);
 				}
-				BossChecklist.instance.bossChecklistUI.UpdateCheckboxes();
+				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				UpdateTableofContents();
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
@@ -1257,7 +1334,7 @@ namespace BossChecklist
 			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
 			scrollTwo.SetView(100f, 1000f);
 			scrollTwo.Top.Pixels = 50f;
-			scrollTwo.Left.Pixels = -28;
+			scrollTwo.Left.Pixels = -13;
 			scrollTwo.Height.Set(-24f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
@@ -1322,7 +1399,7 @@ namespace BossChecklist
 						toolTipButton = new SubpageButton("");
 						toolTipButton.Width.Pixels = 32;
 						toolTipButton.Height.Pixels = 32;
-						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 30;
+						toolTipButton.Left.Pixels = PageTwo.Width.Pixels - toolTipButton.Width.Pixels - 15;
 						toolTipButton.Top.Pixels = 86;
 						toolTipButton.OnClick += (a, b) => SwapRecordPage();
 						PageTwo.Append(toolTipButton);
@@ -1368,24 +1445,25 @@ namespace BossChecklist
 
 		public static Color MaskBoss(BossInfo boss) => (((!boss.downed() || !boss.available()) && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
 
-		public static Texture2D GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? Main.npcHeadBossTexture[NPCID.Sets.BossHeadTextures[boss]] : Main.npcHeadTexture[0];
+		public static Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
 
-		public static Texture2D GetEventIcon(BossInfo boss) {
-			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/NPC_Head_0") {
-				return ModContent.GetTexture(boss.overrideIconTexture);
+		public static Asset<Texture2D> GetEventIcon(BossInfo boss) {
+			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/Images/NPC_Head_0") {
+				return ModContent.Request<Texture2D>(boss.overrideIconTexture);
 			}
-			switch (boss.internalName) {
-				case "Frost Legion": return ModContent.GetTexture("Terraria/Extra_7");
-				case "Frost Moon": return ModContent.GetTexture("Terraria/Extra_8");
-				case "Goblin Army": return ModContent.GetTexture("Terraria/Extra_9");
-				case "Martian Madness": return ModContent.GetTexture("Terraria/Extra_10");
-				case "Pirate Invasion": return ModContent.GetTexture("Terraria/Extra_11");
-				case "Pumpkin Moon": return ModContent.GetTexture("Terraria/Extra_12");
-				case "Old One's Army": return BossLogUI.GetBossHead(NPCID.DD2LanePortal);
-				case "Blood Moon": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventBloodMoon_Head");
-				case "Solar Eclipse": return BossChecklist.instance.GetTexture("Resources/BossTextures/EventSolarEclipse_Head");
-				default: return Main.npcHeadTexture[0];
-			}
+
+			return boss.internalName switch {
+				"Frost Legion"    => ModContent.Request<Texture2D>("Terraria/Images/Extra_7"),
+				"Frost Moon"      => ModContent.Request<Texture2D>("Terraria/Images/Extra_8"),
+				"Goblin Army"     => ModContent.Request<Texture2D>("Terraria/Images/Extra_9"),
+				"Martian Madness" => ModContent.Request<Texture2D>("Terraria/Images/Extra_10"),
+				"Pirate Invasion" => ModContent.Request<Texture2D>("Terraria/Images/Extra_11"),
+				"Pumpkin Moon"    => ModContent.Request<Texture2D>("Terraria/Images/Extra_12"),
+				"Old One's Army"  => BossLogUI.GetBossHead(NPCID.DD2LanePortal),
+				"Blood Moon"      => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventBloodMoon_Head"),
+				"Solar Eclipse"   => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventSolarEclipse_Head"),
+				_                 => TextureAssets.NpcHead[0]
+			};
 		}
 
 		/* Currently removed due to rendering issue that is unable to replicated
@@ -1403,21 +1481,6 @@ namespace BossChecklist
 			string nameOverride;
 			if (recipe.ProcessGroupsForText(item.type, out nameOverride)) {
 				//Main.toolTip.name = name;
-			}
-			if (recipe.anyIronBar && item.type == 22) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(22);
-			}
-			else if (recipe.anyWood && item.type == 9) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(9);
-			}
-			else if (recipe.anySand && item.type == 169) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Lang.GetItemNameValue(169);
-			}
-			else if (recipe.anyFragment && item.type == 3458) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.51");
-			}
-			else if (recipe.anyPressurePlate && item.type == 542) {
-				nameOverride = Language.GetTextValue("LegacyMisc.37") + " " + Language.GetTextValue("LegacyMisc.38");
 			}
 			if (nameOverride != "") {
 				item.SetNameOverride(nameOverride);

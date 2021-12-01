@@ -3,8 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.UI;
+using Terraria.ModLoader;
 
 namespace BossChecklist
 {
@@ -20,7 +23,7 @@ namespace BossChecklist
 
 		internal static List<bool> drawLOS;
 
-		internal static Texture2D arrowTexture; //<- = null in Mod.Unload()
+		internal static Asset<Texture2D> arrowTexture; //<- = null in Mod.Unload()
 
 		internal static int[] whitelistNPCs;
 
@@ -34,7 +37,7 @@ namespace BossChecklist
 			drawPos = new List<Vector2>();
 			drawRotation = new List<float>();
 			drawLOS = new List<bool>();
-			arrowTexture = BossChecklist.instance.GetTexture("Resources/Extra_RadarArrow");
+			arrowTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RadarArrow");
 			whitelistNPCs = new int[0];
 		}
 
@@ -52,7 +55,7 @@ namespace BossChecklist
 
 				//don't draw anything if it has no boss head texture
 				int lbossHeadIndex = npc.GetBossHeadTextureIndex();
-				if (lbossHeadIndex < 0 || lbossHeadIndex >= Main.npcHeadBossTexture.Length) continue;
+				if (lbossHeadIndex < 0 || lbossHeadIndex >= TextureAssets.NpcHeadBoss.Length) continue;
 
 				if (Array.BinarySearch(whitelistNPCs, npc.type) > -1) //if in whitelist
 				{
@@ -69,8 +72,8 @@ namespace BossChecklist
 
 					//independent of resolution, but scales with zoom factor
 
-					float zoomFactorX = 0.25f * BossChecklist.ZoomFactor.X;
-					float zoomFactorY = 0.25f * BossChecklist.ZoomFactor.Y;
+					float zoomFactorX = 0.25f * BossUISystem.ZoomFactor.X;
+					float zoomFactorY = 0.25f * BossUISystem.ZoomFactor.Y;
 					//for some reason with small hitbox NPCs, it starts drawing closer to the player than it should when zoomed in too much
 					if (zoomFactorX > 0.175f) zoomFactorX = 0.175f;
 					if (zoomFactorY > 0.175f) zoomFactorY = 0.175f;
@@ -164,13 +167,11 @@ namespace BossChecklist
 
 			if (!whitelistFilled || blacklistChanged) {
 				List<int> idList = new List<int>();
-				for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
-					BossInfo bossInfo = BossChecklist.bossTracker.SortedBosses[i];
+				foreach (BossInfo bossInfo in BossChecklist.bossTracker.SortedBosses) {
 					if (bossInfo.type == EntryType.Event) continue;
 					if (bossInfo.type == EntryType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
-					for (int j = 0; j < bossInfo.npcIDs.Count; j++) {
-						int ID = bossInfo.npcIDs[j];
-						if (!BlackListedID(ID) && BossLogUI.GetBossHead(ID) != Main.npcHeadTexture[0]) idList.Add(ID);
+					foreach (int id in bossInfo.npcIDs) {
+						if (!BlackListedID(id) && BossLogUI.GetBossHead(id) != TextureAssets.NpcHead[0]) idList.Add(id);
 					}
 				}
 				whitelistNPCs = idList.ToArray();
@@ -198,12 +199,12 @@ namespace BossChecklist
 				int headIndex = bossHeadIndex[i];
 				if (headIndex == -1) continue;
 
-				Texture2D tex = Main.npcHeadBossTexture[headIndex];
+				Asset<Texture2D> tex = TextureAssets.NpcHeadBoss[headIndex];
 				if (tex == null) continue;
-				int tempWidth = tex.Width;
-				int tempHeight = tex.Height;
-				int finalWidth = tex.Width;
-				int finalHeight = tex.Height;
+				int tempWidth = tex.Width();
+				int tempHeight = tex.Height();
+				int finalWidth = tex.Width();
+				int finalHeight = tex.Height();
 
 				int arrowPad = 10;
 
@@ -218,14 +219,14 @@ namespace BossChecklist
 
 				Color color = Color.LightGray;
 				color *= drawLOS[i] ? BossChecklist.ClientConfig.OpacityFloat : BossChecklist.ClientConfig.OpacityFloat - 0.25f;
-				spriteBatch.Draw(tex, outputRect, new Rectangle(0, 0, tempWidth, tempHeight), color);
+				spriteBatch.Draw(tex.Value, outputRect, new Rectangle(0, 0, tempWidth, tempHeight), color);
 
 				//draw Arrow
 				Vector2 stupidOffset = drawRotation[i].ToRotationVector2() * 24f;
 				Vector2 drawPosArrow = ldrawPos + stupidOffset;
 				color = drawLOS[i] ? Color.Green * BossChecklist.ClientConfig.OpacityFloat : Color.Red * BossChecklist.ClientConfig.OpacityFloat;
 				color.A = 150;
-				spriteBatch.Draw(arrowTexture, drawPosArrow, null, color, drawRotation[i], arrowTexture.Bounds.Size() / 2, 1f, SpriteEffects.None, 0f);
+				spriteBatch.Draw(arrowTexture.Value, drawPosArrow, null, color, drawRotation[i], arrowTexture.Value.Bounds.Size() / 2, 1f, SpriteEffects.None, 0f);
 			}
 		}
 	}
