@@ -1476,5 +1476,25 @@ namespace BossChecklist
 				item.SetNameOverride(nameOverride);
 			}
 		}
+
+		// Use Main.HoverItemName to get text value
+		public static void DrawTooltipBG(SpriteBatch sb, string text, Color textColor = default) {
+			if (text == "") {
+				return;
+			}
+
+			int padd = 20;
+
+			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(text);
+			Rectangle bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd);
+			
+			Vector2 textPos = new Vector2(Main.mouseX + 20 + padd / 2, Main.mouseY + 20 + padd / 2);
+			if (textColor == default) {
+				textColor = Main.MouseTextColorReal;
+			}
+
+			Utils.DrawInvBG(sb, bgPos, new Color(23, 25, 81, 255) * 0.925f);
+			Utils.DrawBorderString(sb, text, textPos, textColor);
+		}
 	}
 }

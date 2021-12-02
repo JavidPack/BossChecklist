@@ -155,7 +155,7 @@ namespace BossChecklist.UIElements
 						spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.White);
 					}
 					else {
-						Main.hoverItemName = buttonType;
+						BossUISystem.Instance.UIHoverText = buttonType;
 					}
 				}
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
@@ -215,7 +215,7 @@ namespace BossChecklist.UIElements
 					Vector2 vec = new Vector2(rectangle.X + (rectangle.Width * scale / 2) - (hiddenItem.Width / 2), rectangle.Y + (rectangle.Height * scale / 2) - (hiddenItem.Height / 2));
 					spriteBatch.Draw(hiddenItem, vec, Color.White);
 					if (IsMouseHovering) {
-						Main.hoverItemName = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPage[2] ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
+						BossUISystem.Instance.UIHoverText = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPage[2] ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
 					}
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if (item.expert && !Main.expertMode) {
@@ -315,24 +315,30 @@ namespace BossChecklist.UIElements
 					if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
 						if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_")) && !hasItem) {
 							if (!Main.expertMode && (item.expert || item.expertOnly)) {
-								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
+								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
 							}
 							else if (!Main.masterMode && (item.master || item.masterOnly)) {
-								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
+								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
 							}
+						}
+						else if (hoverText == crimsonAltar || hoverText == demonAltar) {
+							BossUISystem.Instance.UIHoverText = hoverText;
 						}
 						else if (item.type != ItemID.None || hoverText != "") {
 							Color newcolor = ItemRarity.GetColor(item.rare);
 							float num3 = (float)(int)Main.mouseTextColor / 255f;
 							if (item.expert || item.expertOnly) {
-								newcolor = new Color((byte)(Main.DiscoR * num3), (byte)(Main.DiscoG * num3), (byte)(Main.DiscoB * num3), Main.mouseTextColor);
+								newcolor = Main.DiscoColor;
 							}
 							Main.HoverItem = item;
 							Main.hoverItemName = $"[c/{newcolor.Hex3()}: {hoverText}]";
 						}
+						else {
+							BossUISystem.Instance.UIHoverText = hoverText;
+						}
 					}
 					else {
-						Main.hoverItemName = hoverText;
+						BossUISystem.Instance.UIHoverText = hoverText;
 					}
 				}
 				Main.inventoryScale = oldScale;
@@ -633,8 +639,8 @@ namespace BossChecklist.UIElements
 							spriteBatch.Draw(eventIcon.Value, iconpos, maskedHead);
 						}
 
-						string isDefeated = $"[c/{Colors.RarityGreen.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}]";
-						string notDefeated = $"[c/{Colors.RarityRed.Hex3()}:{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}]";
+						string isDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}";
+						string notDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}";
 
 						Asset<Texture2D> texture = selectedBoss.downed() ? BossLogUI.checkMarkTexture : BossLogUI.xTexture;
 						Vector2 defeatpos = new Vector2(firstHeadPos.X + (firstHeadPos.Width / 2), firstHeadPos.Y + firstHeadPos.Height - (texture.Height() / 2));
@@ -643,7 +649,8 @@ namespace BossChecklist.UIElements
 						// Hovering over the head icon will display the defeated text
 						if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
 							if (Main.mouseY >= firstHeadPos.Y && Main.mouseY < firstHeadPos.Y + firstHeadPos.Height) {
-								Main.hoverItemName = selectedBoss.downed() ? isDefeated : notDefeated;
+								BossUISystem.Instance.UIHoverText = selectedBoss.downed() ? isDefeated : notDefeated;
+								BossUISystem.Instance.UIHoverTextColor = selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed;
 							}
 						}
 
@@ -681,7 +688,7 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											Main.hoverItemName = info.name + "\nClick to view page";
+											BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 											}
@@ -865,18 +872,20 @@ namespace BossChecklist.UIElements
 								if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
 									if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
 										// TODO: Change these texts to something better. A description of the record type
+										string tooltip = "";
 										if (i == 0 && !BossLogUI.AltPage[i]) {
-											Main.hoverItemName = "Boss kills and player deaths.";
+											tooltip = "Boss kills and player deaths.";
 										}
 										if (i == 1) {
-											Main.hoverItemName = "The fastest you've defeated a mighty foe.";
+											tooltip = "The fastest you've defeated a mighty foe.";
 										}
 										if (i == 2) {
-											Main.hoverItemName = "Avoid as many attacks as you can!";
+											tooltip = "Avoid as many attacks as you can!";
 										}
 										if (i == 3) {
-											Main.hoverItemName = "How close can you be to death and still defeat you enemy?";
+											tooltip = "How close can you be to death and still defeat you enemy?";
 										}
+										BossUISystem.Instance.UIHoverText = tooltip;
 									}
 								}
 
@@ -925,7 +934,7 @@ namespace BossChecklist.UIElements
 										headTextureOffsetX += head.Width + 5;
 										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + head.Width) {
 											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + head.Height) {
-												Main.hoverItemName = info.name + "\nClick to view page";
+												BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
 												if (Main.mouseLeft && Main.mouseLeftRelease) {
 													BossLogUI.PageNum = bosses.FindIndex(x => x.Key == info.Key);
 												}
@@ -992,7 +1001,7 @@ namespace BossChecklist.UIElements
 												if (NPC.killCount[Item.NPCtoBanner(npcID)] < ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]) {
 													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
 												}
-												Main.hoverItemName = killcount;
+												BossUISystem.Instance.UIHoverText = killcount;
 											}
 										}
 									}
@@ -1057,7 +1066,7 @@ namespace BossChecklist.UIElements
 
 										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
 											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-												Main.hoverItemName = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
+												BossUISystem.Instance.UIHoverText = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
 											}
 										}
 									}
@@ -1394,7 +1403,7 @@ namespace BossChecklist.UIElements
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpTOC");
 						}
 						if (tabMessage != "") {
-							Main.hoverItemName = tabMessage;
+							BossUISystem.Instance.UIHoverText = tabMessage;
 						}
 					}
 				}
@@ -1403,19 +1412,19 @@ namespace BossChecklist.UIElements
 					string termPrefix = "Mods.BossChecklist.BossLog.Terms.";
 					string termLang = $"{termPrefix}hide";
 					if (Id == "C_0") {
-						Main.hoverItemName = Language.GetTextValue($"{termPrefix}{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}");
+						BossUISystem.Instance.UIHoverText = Language.GetTextValue($"{termPrefix}{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}");
 					}
 					if (Id == "C_1") {
 						if (!BossChecklist.BossLogConfig.OnlyBosses) {
 							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}";
 						}
-						Main.hoverItemName = Language.GetTextValue(termLang);
+						BossUISystem.Instance.UIHoverText = Language.GetTextValue(termLang);
 					}
 					if (Id == "C_2") {
 						if (!BossChecklist.BossLogConfig.OnlyBosses) {
 							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}";
 						}
-						Main.hoverItemName = Language.GetTextValue(termLang);
+						BossUISystem.Instance.UIHoverText = Language.GetTextValue(termLang);
 					}
 				}
 			}
@@ -1660,14 +1669,14 @@ namespace BossChecklist.UIElements
 							Rectangle exclamCut = new Rectangle(34 * 3, 0, 32, 32);
 							spriteBatch.Draw(text.Value, exclamPos, exclamCut, Color.White);
 							if (IsMouseHovering) {
-								Main.hoverItemName = "Click to see the best records for this world\n(Multiplayer Under Construction!)";
+								BossUISystem.Instance.UIHoverText = "Click to see the best records for this world\n(Multiplayer Under Construction!)";
 							}
 						}
 						else {
 							Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
 							spriteBatch.Draw(text.Value, exclamPos, exclamCut, Color.White);
 							if (IsMouseHovering) {
-								Main.hoverItemName = "Click to see your personal records";
+								BossUISystem.Instance.UIHoverText = "Click to see your personal records";
 							}
 						}
 					}
@@ -1690,14 +1699,14 @@ namespace BossChecklist.UIElements
 							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
 							spriteBatch.Draw(text.Value, exclamPos, exclamCut, Color.White);
 							if (IsMouseHovering) {
-								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewCollect");
+								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewCollect");
 							}
 						}
 						else {
 							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
 							spriteBatch.Draw(text.Value, exclamPos, exclamCut, Color.White);
 							if (IsMouseHovering) {
-								Main.hoverItemName = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewLoot");
+								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewLoot");
 							}
 						}
 					}

@@ -27,7 +27,10 @@ namespace BossChecklist
 		internal BossLogUI BossLog;
 		internal static UserInterface BossRadarUIInterface;
 		internal BossRadarUI BossRadarUI;
-		
+
+		internal string UIHoverText = "";
+		internal Color UIHoverTextColor = default;
+
 		//Zoom level, (for UIs)
 		public static Vector2 ZoomFactor; //0f == fully zoomed out, 1f == fully zoomed in
 
@@ -152,6 +155,21 @@ namespace BossChecklist
 					InterfaceScaleType.UI)
 				);
 			}
+
+			if (mouseTextIndex != -1) {
+				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
+					delegate {
+						if (UIHoverText != "") {
+							BossLogUI.DrawTooltipBG(Main.spriteBatch, UIHoverText, UIHoverTextColor);
+						}
+						UIHoverText = "";
+						UIHoverTextColor = default;
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+			}
+
 			#region DEBUG
 			int playerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
 			if (playerChatIndex != -1) {
