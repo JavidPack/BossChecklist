@@ -16,7 +16,7 @@ namespace BossChecklist.UIElements
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			base.DrawSelf(spriteBatch);
 			if (IsMouseHovering) {
-				Main.hoverItemName = hoverText;
+				BossUISystem.Instance.UIHoverText = hoverText;
 				//	Main.toolTip = new Item();
 				//	Main.toolTip.name = hoverText;
 			}

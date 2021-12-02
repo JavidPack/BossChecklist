@@ -533,7 +533,7 @@ namespace BossChecklist.UIElements
 
 						Asset<Texture2D> users = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_CreditUsers");
 						string[] usernames = { "Jopojelly", "SheepishShepherd", "direwolf420", "RiverOaken", "Orian", "Panini" };
-						string[] titles = { "Mod Owner", "Mod Co-Owner", "Boss Radar Code", "Spriter", "Singleplayer Testing", "Server Testing" };
+						string[] titles = { "Mod Owner", "Mod Co-Owner", "Code Contributor", "Spriter", "Beta Tester", "Beta Tester" };
 						Color[] colors = { Color.CornflowerBlue, Color.Goldenrod, Color.Tomato, Color.MediumPurple, new Color(49, 210, 162), Color.HotPink };
 						const float nameScaling = 0.85f;
 						const float titleScaling = 0.75f;
