@@ -1431,9 +1431,9 @@ namespace BossChecklist
 			}
 		}
 		
-		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.type == entryType);
+		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.available() && !x.hidden && x.type == entryType);
 
-		public static Color MaskBoss(BossInfo boss) => (((!boss.downed() || !boss.available()) && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden) ? Color.Black : Color.White;
+		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden || (!boss.downed() && !boss.available())) ? Color.Black : Color.White;
 
 		public static Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
 
