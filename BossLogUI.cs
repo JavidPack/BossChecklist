@@ -1201,21 +1201,11 @@ namespace BossChecklist
 				next.PaddingLeft = 22;
 				next.OnClick += JumpToBossPage;
 
-				if (boss.downed()) {
-					if (boss.progression <= 6f) {
-						prehardmodeList.Add(next);
-					}
-					else {
-						hardmodeList.Add(next);
-					}
+				if (boss.progression <= BossTracker.WallOfFlesh) {
+					prehardmodeList.Add(next);
 				}
 				else {
-					if (boss.progression <= 6f) {
-						prehardmodeList.Add(next);
-					}
-					else {
-						hardmodeList.Add(next);
-					}
+					hardmodeList.Add(next);
 				}
 			}
 

@@ -449,7 +449,7 @@ namespace BossChecklist.UIElements
 							int totalPreHard = 0;
 							int downedBosses = 0;
 							foreach (BossInfo boss in bossList) {
-								if (boss.type == EntryType.Boss && boss.progression <= 6f && (boss.available() || boss.downed())) {
+								if (boss.type == EntryType.Boss && boss.progression <= BossTracker.WallOfFlesh && (boss.available() || boss.downed())) {
 									totalPreHard++;
 									if (boss.downed()) {
 										downedBosses++;
@@ -469,7 +469,7 @@ namespace BossChecklist.UIElements
 							int totalHard = 0;
 							int downedBosses = 0;
 							foreach (BossInfo boss in bossList) {
-								if (boss.type == EntryType.Boss && boss.progression > 6f) {
+								if (boss.type == EntryType.Boss && boss.progression > BossTracker.WallOfFlesh) {
 									totalHard++;
 									if (boss.downed()) {
 										downedBosses++;
