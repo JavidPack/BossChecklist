@@ -15,8 +15,10 @@ namespace BossChecklist
 				List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
 				PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
 				for (int i = 0; i < BossList.Count; i++) {
-					int BossIndex = modplayer.BossTrophies.FindIndex(boss => boss.bossName == BossList[i].Key);
-					if (BossIndex == -1) continue;
+					int BossIndex = modplayer.BossTrophies.FindIndex(boss => boss.bossKey == BossList[i].Key);
+					if (BossIndex == -1) {
+						continue;
+					}
 					// Loot Collections
 					if (BossList[i].loot.Contains(item.type)) {
 						if (modplayer.BossTrophies[i].loot.All(x => x.Type != item.type)) {
@@ -41,8 +43,10 @@ namespace BossChecklist
 				List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
 				PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
 				for (int i = 0; i < BossList.Count; i++) {
-					int BossIndex = modplayer.BossTrophies.FindIndex(boss => boss.bossName == BossList[i].Key);
-					if (BossIndex == -1) continue;
+					int BossIndex = modplayer.BossTrophies.FindIndex(boss => boss.bossKey == BossList[i].Key);
+					if (BossIndex == -1) {
+						continue;
+					}
 					// Loot Collections
 					if (BossList[i].loot.Contains(item.type)) {
 						if (modplayer.BossTrophies[i].loot.All(x => x.Type != item.type)) {

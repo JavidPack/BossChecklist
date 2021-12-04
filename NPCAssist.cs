@@ -73,10 +73,7 @@ namespace BossChecklist
 					for (int j = 0; j < Main.maxPlayers; j++) {
 						if (!Main.player[j].active) continue;
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-						modPlayer.MaxHealth[listNum] = Main.player[j].statLifeMax;
-						modPlayer.RecordTimers[listNum] = 0;
-						modPlayer.BrinkChecker[listNum] = 0; // starts at 0 to prevent less health at start cheese, only updates when hit (if no-hitter, change to max health)
-						modPlayer.DodgeTimer[listNum] = 0;
+						modPlayer.Tracker_Duration[listNum] = 0;
 					}
 				}
 			}
@@ -86,63 +83,51 @@ namespace BossChecklist
 		public void CheckRecords(NPC npc, int recordIndex) {
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-			if (!npc.playerInteraction[Main.myPlayer]) return; // Player must have contributed to the boss fight
+
+			// Player must have contributed to the boss fight
+			if (!npc.playerInteraction[Main.myPlayer]) {
+				return;
+			}
 
 			bool newRecordSet = false;
-			BossStats bossStats = modPlayer.AllBossRecords[recordIndex].stat;
+			BossStats bossStats = modPlayer.RecordsForWorld[recordIndex].stat;
 
-			int durationAttempt = modPlayer.RecordTimers[recordIndex];
+			int durationAttempt = modPlayer.Tracker_Duration[recordIndex];
 			int currentBestDuration = bossStats.durationBest;
 			
-			int hitsTakenAttempt = modPlayer.AttackCounter[recordIndex];
+			int hitsTakenAttempt = modPlayer.Tracker_HitsTaken[recordIndex];
 			int currentBestHitsTaken = bossStats.hitsTakenBest;
-			
-			int dodgeTimeAttempt = modPlayer.DodgeTimer[recordIndex];
-			int currentBestDodgeTime = bossStats.dodgeTimeBest;
-
-			int brinkAttempt = modPlayer.BrinkChecker[recordIndex];
-			int maxLifeAttempt = modPlayer.MaxHealth[recordIndex];
-			int currentBestBrink = bossStats.healthLossBest;
-			int currentBestMaxLife = bossStats.healthAtStart;
 
 			// Setup player's last fight attempt numbers
-			modPlayer.durationLastFight = durationAttempt;
-			modPlayer.hitsTakenLastFight = hitsTakenAttempt;
-			modPlayer.healthLossLastFight = brinkAttempt;
+			modPlayer.duration_CompareValue = durationAttempt;
+			modPlayer.hitsTaken_CompareValue = hitsTakenAttempt;
 
 			bossStats.kills++; // Kills always go up, since comparing only occurs if boss was defeated
-			
+
 			// If the player has beaten their best record, we change BEST to PREV and make the current attempt the new BEST
 			// Otherwise, just overwrite PREV with the current attempt
 			if (durationAttempt < currentBestDuration || currentBestDuration == -1) {
-				if (bossStats.durationBest == -1) newRecordSet = true; // New Record should not appear on first boss kill
+				// New Record should not appear on first boss kill, which would appear as -1
+				if (bossStats.durationBest == -1) {
+					newRecordSet = true;
+				}
 				bossStats.durationPrev = currentBestDuration;
 				bossStats.durationBest = durationAttempt;
 			}
-			else bossStats.durationPrev = durationAttempt;
-			
+			else {
+				bossStats.durationPrev = durationAttempt;
+			}
+
 			// Empty check should be less than 0 because 0 is achievable (No Hit)
 			if (hitsTakenAttempt < currentBestHitsTaken || currentBestHitsTaken == -1) {
-				if (bossStats.hitsTakenBest  == -1) newRecordSet = true;
+				if (bossStats.hitsTakenBest == -1) {
+					newRecordSet = true;
+				}
 				bossStats.hitsTakenPrev = currentBestHitsTaken;
 				bossStats.hitsTakenBest = hitsTakenAttempt;
 			}
-			else bossStats.hitsTakenPrev = hitsTakenAttempt;
-
-			// This is an extra record based on Hits Taken. Only overwrite if time is higher than previous.
-			if (dodgeTimeAttempt > currentBestDodgeTime || currentBestDodgeTime <= 0) bossStats.dodgeTimeBest = dodgeTimeAttempt;
-			
-			if (brinkAttempt == 0) brinkAttempt = maxLifeAttempt; // Update brink to full health if 0 (no-hitter)
-			if (brinkAttempt < currentBestBrink || currentBestBrink == -1) {
-				if (currentBestBrink == -1) newRecordSet = true;
-				bossStats.healthLossPrev = currentBestBrink;
-				bossStats.healthLossBest = brinkAttempt;
-				bossStats.healthAtStartPrev = currentBestMaxLife;
-				bossStats.healthAtStart = maxLifeAttempt;
-			}
 			else {
-				bossStats.healthLossPrev = brinkAttempt;
-				bossStats.healthAtStartPrev = maxLifeAttempt;
+				bossStats.hitsTakenPrev = hitsTakenAttempt;
 			}
 
 			// If a new record was made, notify the player
@@ -157,36 +142,31 @@ namespace BossChecklist
 		}
 
 		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
-			string[] newRecordHolders = new string[] { "", "", "" };
+			string[] newRecordHolders = new string[] { "", "" };
 			int[] newWorldRecords = new int[]{
 				WorldAssist.worldRecords[recordIndex].stat.durationWorld,
-				WorldAssist.worldRecords[recordIndex].stat.hitsTakenWorld,
-				WorldAssist.worldRecords[recordIndex].stat.dodgeTimeWorld,
-				WorldAssist.worldRecords[recordIndex].stat.healthLossWorld,
-				WorldAssist.worldRecords[recordIndex].stat.healthAtStartWorld,
+				WorldAssist.worldRecords[recordIndex].stat.hitsTakenWorld
 			};
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
 
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				if (!player.active || !npc.playerInteraction[i]) continue;
+				if (!player.active || !npc.playerInteraction[i]) {
+					continue;
+				}
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
 				BossStats oldRecord = list[recordIndex];
 
 				// Establish the new records for comparing
 				BossStats newRecord = new BossStats() {
-					durationPrev = modPlayer.RecordTimers[recordIndex],
-					hitsTakenPrev = modPlayer.AttackCounter[recordIndex],
-					dodgeTimePrev = modPlayer.DodgeTimer[recordIndex],
-					healthLossPrev = modPlayer.BrinkChecker[recordIndex],
-					healthAtStartPrev = modPlayer.MaxHealth[recordIndex]
+					durationPrev = modPlayer.Tracker_Duration[recordIndex],
+					hitsTakenPrev = modPlayer.Tracker_HitsTaken[recordIndex]
 				};
 
 				// Setup player's last fight attempt numbers
-				modPlayer.durationLastFight = newRecord.durationPrev;
-				modPlayer.hitsTakenLastFight = newRecord.hitsTakenPrev;
-				modPlayer.healthLossLastFight = newRecord.healthLossPrev;
+				modPlayer.duration_CompareValue = newRecord.durationPrev;
+				modPlayer.hitsTaken_CompareValue = newRecord.hitsTakenPrev;
 
 				RecordID specificRecord = RecordID.None;
 				// For each record type we check if its beats the current record or if it is not set already
@@ -197,31 +177,19 @@ namespace BossChecklist
 					oldRecord.durationPrev = oldRecord.durationBest;
 					oldRecord.durationBest = newRecord.durationPrev;
 				}
-				else oldRecord.durationPrev = newRecord.durationPrev;
-				
+				else {
+					oldRecord.durationPrev = newRecord.durationPrev;
+				}
+
 				if (newRecord.hitsTakenPrev < oldRecord.hitsTakenBest || oldRecord.hitsTakenBest < 0) {
 					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenPrev} (Previous Record: {oldRecord.hitsTakenBest})");
 					specificRecord |= RecordID.LeastHits;
 					oldRecord.hitsTakenPrev = oldRecord.hitsTakenBest;
 					oldRecord.hitsTakenBest = newRecord.hitsTakenPrev;
 				}
-				else oldRecord.hitsTakenPrev = newRecord.hitsTakenPrev;
-
-				if (newRecord.dodgeTimePrev > oldRecord.dodgeTimeBest || oldRecord.dodgeTimeBest <= 0) {
-					Console.WriteLine($"{player.name} set a new record for BEST DODGE TIME: {newRecord.dodgeTimePrev} (Previous Record: {oldRecord.dodgeTimeBest})");
-					specificRecord |= RecordID.DodgeTime;
-					oldRecord.dodgeTimeBest = newRecord.dodgeTimePrev;
+				else {
+					oldRecord.hitsTakenPrev = newRecord.hitsTakenPrev;
 				}
-
-				if (newRecord.healthLossPrev > oldRecord.healthLossBest || oldRecord.healthLossBest <= 0) {
-					Console.WriteLine($"{player.name} set a new record for BEST HEALTH: {newRecord.healthLossPrev} (Previous Record: {oldRecord.healthLossBest})");
-					specificRecord |= RecordID.BestBrink;
-					oldRecord.healthLossPrev = oldRecord.healthLossBest;
-					oldRecord.healthLossBest = newRecord.healthLossPrev;
-					oldRecord.healthAtStartPrev = oldRecord.healthAtStart;
-					oldRecord.healthAtStart = newRecord.healthAtStartPrev;
-				}
-				else oldRecord.healthLossPrev = newRecord.healthLossPrev;
 				
 				// Make and send the packet
 				ModPacket packet = Mod.GetPacket();
@@ -242,13 +210,6 @@ namespace BossChecklist
 					specificRecord |= RecordID.LeastHits;
 					worldStats.hitsTakenHolder = newRecordHolders[1];
 					worldStats.hitsTakenWorld = newWorldRecords[1];
-					worldStats.dodgeTimeWorld = newWorldRecords[2];
-				}
-				if (newRecordHolders[2] != "") {
-					specificRecord |= RecordID.BestBrink;
-					worldStats.healthLossHolder = newRecordHolders[2];
-					worldStats.healthLossWorld = newWorldRecords[3];
-					worldStats.healthAtStartWorld = newWorldRecords[4];
 				}
 				
 				ModPacket packet = Mod.GetPacket();
@@ -262,7 +223,7 @@ namespace BossChecklist
 		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from appearing to show World Record! instead
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-			BossStats playerRecord = modPlayer.AllBossRecords[recordIndex].stat;
+			BossStats playerRecord = modPlayer.RecordsForWorld[recordIndex].stat;
 			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stat;
 			bool newRecord = false;
 
@@ -275,51 +236,59 @@ namespace BossChecklist
 			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld || worldRecord.hitsTakenWorld < 0) {
 				newRecord = (worldRecord.hitsTakenHolder != player.name && worldRecord.hitsTakenHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
 				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
-				worldRecord.dodgeTimeWorld = playerRecord.dodgeTimeBest;
 				worldRecord.hitsTakenHolder = player.name;
-			}
-			if (playerRecord.healthLossBest < worldRecord.healthLossWorld || worldRecord.healthLossWorld <= 0) {
-				newRecord = (worldRecord.healthLossHolder != player.name && worldRecord.healthLossHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
-				worldRecord.healthLossWorld = playerRecord.healthLossBest;
-				worldRecord.healthAtStartWorld = playerRecord.healthAtStart;
-				worldRecord.healthLossHolder = player.name;
 			}
 			return newRecord;
 		}
 
 		public bool NPCisLimb(NPC npcType) {
-			return npcType.type == NPCID.PrimeSaw
-				|| npcType.type == NPCID.PrimeLaser
-				|| npcType.type == NPCID.PrimeCannon
-				|| npcType.type == NPCID.PrimeVice
-				|| npcType.type == NPCID.SkeletronHand
-				|| npcType.type == NPCID.GolemFistLeft
-				|| npcType.type == NPCID.GolemFistRight
-				|| npcType.type == NPCID.GolemHead
-				|| (npcType.type == NPCID.Retinazer && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Spazmatism && otherBoss.active))
-				|| (npcType.type == NPCID.Spazmatism && Main.npc.Any(otherBoss => otherBoss.type == NPCID.Retinazer && otherBoss.active));
+			int[] limbNPCs = new int[] {
+				NPCID.PrimeSaw,
+				NPCID.PrimeLaser,
+				NPCID.PrimeCannon,
+				NPCID.PrimeVice,
+				NPCID.SkeletronHand,
+				NPCID.GolemFistLeft,
+				NPCID.GolemFistRight,
+				NPCID.GolemHead
+			};
+
+			bool isTwinsRet = npcType.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
+			bool isTwinsSpaz = npcType.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
+
+			return limbNPCs.Contains(npcType.type) || isTwinsRet || isTwinsSpaz;
 		}
 
 		public static int ListedBossNum(NPC boss, bool skipEventCheck = true) { // Skipcheck incase we need it to account for events
-			if (!BossChecklist.bossTracker.BossCache[boss.type]) return -1;
+			if (!BossChecklist.bossTracker.BossCache[boss.type]) {
+				return -1;
+			}
 			
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			if (boss.type < NPCID.Count) {
 				int index = BL.FindIndex(x => x.npcIDs.Any(y => y == boss.type));
-				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) return -1;
+				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) {
+					return -1;
+				}
 				return index;
 			}
 			else {
 				int index = BL.FindIndex(x => x.modSource == boss.ModNPC.Mod.Name && x.npcIDs.Any(y => y == boss.type));
-				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) return -1;
+				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) {
+					return -1;
+				}
 				return index;
 			}
 		}
 
 		public static int ListedBossNum(int type, string modSource) {
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
-			if (type < NPCID.Count) return BL.FindIndex(x => x.npcIDs.Any(y => y == type));
-			else return BL.FindIndex(x => x.modSource == modSource && x.npcIDs.Any(y => y == type));
+			if (type < NPCID.Count) {
+				return BL.FindIndex(x => x.npcIDs.Any(y => y == type));
+			}
+			else {
+				return BL.FindIndex(x => x.modSource == modSource && x.npcIDs.Any(y => y == type));
+			}
 		}
 
 		public static bool TrulyDead(NPC npc) {
@@ -328,7 +297,9 @@ namespace BossChecklist
 			int index = ListedBossNum(npc);
 			if (index != -1) {
 				foreach (int id in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
-					if (Main.npc.Any(x => x != npc && x.type == id && x.active)) return false;
+					if (Main.npc.Any(x => x != npc && x.type == id && x.active)) {
+						return false;
+					}
 				}
 			}
 			return true;

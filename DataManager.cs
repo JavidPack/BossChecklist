@@ -8,26 +8,49 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
+	/* Summary of Records : SheepishShepherd
+	 * 
+	 * Kills represent the amount of times a player has particiapted in killing a boss.
+	 * Deaths represent the amount of deaths a player has accumulated during a participated boss fight
+	 *		Kills MUST have player participation
+	 *		Note that the player does not need to die by damage from the boss.
+	 *		Also keep in mind players that are not anywhere near the boss fight and may die from other sources.
+	 * 
+	 * Prev represents the last attempt/previous best record for comparison
+	 *		Whenever a player defeats a boss, we record their records and keep them stored.
+	 *		There is no need to 'reset' these stats as they are only meant to tell you what you just got.
+	 * 
+	 * Firs represents the first successful attempt made for records
+	 *		If a player has nothing recorded we keep the Prev Records records stored in the First Records as well.
+	 *		Ideally, First Records will never change and cannot be 'reset'.
+	 *		They can be restricted to a certain extent, but something to prevent abuse is needed. 
+	 *		TODO: Looking for thoughts on the issue above.
+	 * 
+	 * Best represents the best record
+	 *		Compare the Prev Records numbers to the current Best Records and determine if its better to record.
+	 *		Best Records can be reset 
+	 */
+
 	// Migrating data from BossAssist is possible, but is vastly unecessary. Going to be doing a clean slate for merge.
 	public class BossRecord : TagSerializable
 	{
-		internal string bossName;
+		internal string bossKey;
 		internal BossStats stat = new BossStats();
 
 		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
 
 		private BossRecord(TagCompound tag) {
-			bossName = tag.Get<string>(nameof(bossName));
+			bossKey = tag.Get<string>(nameof(bossKey));
 			stat = tag.Get<BossStats>(nameof(stat));
 		}
 
 		public BossRecord(string boss) {
-			bossName = boss;
+			bossKey = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(bossName), bossName },
+				{ nameof(bossKey), bossKey },
 				{ nameof(stat), stat }
 			};
 		}
@@ -59,80 +82,71 @@ namespace BossChecklist
 
 	public class BossStats : TagSerializable
 	{
-		public int kills; // How many times the player has killed the boss
-		public int deaths; // How many times the player has died during a participated boss fight
+		/// Boss Kills and Player Deaths
+		public int kills;
+		public int deaths;
 
-		// Best represents the best record
-		// Prev represents the last attempt/previous best record for comparison
-
-		// Fight Duration
-		public int durationBest = -1;
+		/// Fight Duration
 		public int durationPrev = -1;
+		public int durationFirs = -1;
+		public int durationBest = -1;
 
-		// Total Hits / Dodge Timer (Less hits is better)
-		public int hitsTakenBest = -1;
+		/// Total Hits Taken
 		public int hitsTakenPrev = -1;
-		public int dodgeTimeBest = -1;
-		public int dodgeTimePrev = -1;
-
-		// Lowest Health Point while survivng (Lower is better, dying resets it!)
-		// Having it high is an accomplishment too, but its already covered with Hits Taken, as in no hits means no health loss
-		public int healthLossBest = -1;
-		public int healthLossPrev = -1;
-		public int healthAtStart = -1;
-		public int healthAtStartPrev = -1;
+		public int hitsTakenFirs = -1;
+		public int hitsTakenBest = -1;
 
 		public static Func<TagCompound, BossStats> DESERIALIZER = tag => new BossStats(tag);
 
 		public BossStats() { }
+
 		private BossStats(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
-			durationBest = tag.Get<int>(nameof(durationBest));
+
 			durationPrev = tag.Get<int>(nameof(durationPrev));
-			dodgeTimeBest = tag.Get<int>(nameof(dodgeTimeBest));
-			hitsTakenBest = tag.Get<int>(nameof(hitsTakenBest));
+			durationFirs = tag.Get<int>(nameof(durationFirs));
+			durationBest = tag.Get<int>(nameof(durationBest));
+
 			hitsTakenPrev = tag.Get<int>(nameof(hitsTakenPrev));
-			healthLossPrev = tag.Get<int>(nameof(healthLossPrev));
-			healthLossBest = tag.Get<int>(nameof(healthLossBest));
-			healthAtStart = tag.Get<int>(nameof(healthAtStart));
-			healthAtStartPrev = tag.Get<int>(nameof(healthAtStartPrev));
+			hitsTakenFirs = tag.Get<int>(nameof(hitsTakenFirs));
+			hitsTakenBest = tag.Get<int>(nameof(hitsTakenBest));
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
-				{ nameof(durationBest), durationBest },
+
 				{ nameof(durationPrev), durationPrev },
-				{ nameof(dodgeTimeBest), dodgeTimeBest },
-				{ nameof(hitsTakenBest), hitsTakenBest },
+				{ nameof(durationFirs), durationFirs },
+				{ nameof(durationBest), durationBest },
+
 				{ nameof(hitsTakenPrev), hitsTakenPrev },
-				{ nameof(healthLossPrev), healthLossPrev },
-				{ nameof(healthLossBest), healthLossBest },
-				{ nameof(healthAtStart), healthAtStart },
-				{ nameof(healthAtStartPrev), healthAtStartPrev },
+				{ nameof(hitsTakenFirs), hitsTakenFirs },
+				{ nameof(hitsTakenBest), hitsTakenBest },
 			};
 		}
 
+		//TODO: Change NetSend/NetRecieve to account for FirstRecord
 		internal void NetRecieve(BinaryReader reader, Player player, int boss) {
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 			if (!brokenRecords.HasFlag(RecordID.ResetAll)) {
 				// Determine if a new record was made (Prev records need to change still)
-				bool newRecord = brokenRecords.HasFlag(RecordID.ShortestFightTime) || brokenRecords.HasFlag(RecordID.LeastHits) || brokenRecords.HasFlag(RecordID.BestBrink);
+				bool newRecord = brokenRecords.HasFlag(RecordID.ShortestFightTime) || brokenRecords.HasFlag(RecordID.LeastHits);
 
 				kills++; // Kills always increase by 1, since records can only be made when a boss is defeated
-				if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) durationBest = reader.ReadInt32();
-				durationPrev = reader.ReadInt32();
-				if (brokenRecords.HasFlag(RecordID.LeastHits)) hitsTakenBest = reader.ReadInt32();
-				hitsTakenPrev = reader.ReadInt32();
-				if (brokenRecords.HasFlag(RecordID.DodgeTime)) dodgeTimeBest = reader.ReadInt32();
-				if (brokenRecords.HasFlag(RecordID.BestBrink)) {
-					healthLossBest = reader.ReadInt32();
-					healthAtStart = reader.ReadInt32();
+
+				if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+					durationBest = reader.ReadInt32();
 				}
-				healthLossPrev = reader.ReadInt32();
-				healthAtStartPrev = reader.ReadInt32();
+				durationPrev = reader.ReadInt32();
+
+				if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+					hitsTakenBest = reader.ReadInt32();
+				}
+				hitsTakenPrev = reader.ReadInt32();
+				
 				if (newRecord) {
 					player.GetModPlayer<PlayerAssist>().hasNewRecord[boss] = true;
 					CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
@@ -141,68 +155,71 @@ namespace BossChecklist
 			else { // If ResetAll was flagged, change all variables to their default
 				kills = deaths = 0;
 				durationBest = durationPrev = -1;
-				hitsTakenBest = hitsTakenPrev = dodgeTimeBest = dodgeTimePrev = -1;
-				healthLossBest = healthLossPrev = healthAtStart = healthAtStartPrev = -1;
+				hitsTakenBest = hitsTakenPrev = -1;
 			}
 		}
 
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
 			writer.Write((int)specificRecord); // We need this for NetRecieve as well
-
-			if (!specificRecord.HasFlag(RecordID.ResetAll)) { // If ResetAll is flagged there is no need to write the rest
+			if (!specificRecord.HasFlag(RecordID.ResetAll)) {
+				// If ResetAll is flagged there is no need to write the rest
 				// Prev records ALWAYS are written. They always update as either record attempts or old records
-				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) writer.Write(durationBest);
-				writer.Write(durationPrev);
-				if (specificRecord.HasFlag(RecordID.LeastHits)) writer.Write(hitsTakenBest);
-				writer.Write(hitsTakenPrev);
-				if (specificRecord.HasFlag(RecordID.DodgeTime)) writer.Write(dodgeTimePrev);
-				if (specificRecord.HasFlag(RecordID.BestBrink)) {
-					writer.Write(healthLossBest);
-					writer.Write(healthAtStart);
+				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) {
+					writer.Write(durationBest);
 				}
-				writer.Write(healthLossPrev);
-				writer.Write(healthAtStartPrev);
+				writer.Write(durationPrev);
+				if (specificRecord.HasFlag(RecordID.LeastHits)) {
+					writer.Write(hitsTakenBest);
+				}
+				writer.Write(hitsTakenPrev);
 			}
 		}
 	}
 
+	/* Summary of World Records : SheepishShepherd
+	 * 
+	 * All players that join a "world" are recorded to a list
+	 * Server Host can remove anyone from this list (ex. Troll, wrong character join)
+	 * Server grabs BEST Records from the list of players and determines which one is the best
+	 * The player's name and record will be displayed on the World Record alt page for everyone to see and try to beat.
+	 */
+
 	public class WorldStats : TagSerializable
 	{
+		public int totalKills;
+		public int totalDeaths;
+
 		public string durationHolder = "";
 		public int durationWorld = -1;
 		
 		public string hitsTakenHolder = "";
 		public int hitsTakenWorld = -1;
-		public int dodgeTimeWorld = -1;
-
-		public string healthLossHolder = "";
-		public int healthLossWorld = -1;
-		public int healthAtStartWorld = -1;
 
 		public static Func<TagCompound, WorldStats> DESERIALIZER = tag => new WorldStats(tag);
 
 		public WorldStats() { }
+
 		private WorldStats(TagCompound tag) {
+			totalKills = tag.Get<int>(nameof(totalKills));
+			totalDeaths = tag.Get<int>(nameof(totalDeaths));
+
 			durationHolder = tag.Get<string>(nameof(durationHolder));
 			durationWorld = tag.Get<int>(nameof(durationWorld));
+
 			hitsTakenHolder = tag.Get<string>(nameof(hitsTakenHolder));
 			hitsTakenWorld = tag.Get<int>(nameof(hitsTakenWorld));
-			dodgeTimeWorld = tag.Get<int>(nameof(dodgeTimeWorld));
-			healthLossHolder = tag.Get<string>(nameof(healthLossHolder));
-			healthLossWorld = tag.Get<int>(nameof(healthLossWorld));
-			healthAtStartWorld = tag.Get<int>(nameof(healthAtStartWorld));
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
+				{ nameof(totalKills), totalKills },
+				{ nameof(totalDeaths), totalDeaths },
+
 				{ nameof(durationHolder), durationHolder },
 				{ nameof(durationWorld), durationWorld },
+
 				{ nameof(hitsTakenHolder), hitsTakenHolder },
 				{ nameof(hitsTakenWorld), hitsTakenWorld },
-				{ nameof(dodgeTimeWorld), dodgeTimeWorld },
-				{ nameof(healthLossHolder), healthLossHolder },
-				{ nameof(healthLossWorld), healthLossWorld },
-				{ nameof(healthAtStartWorld), healthAtStartWorld },
 			};
 		}
 
@@ -216,12 +233,6 @@ namespace BossChecklist
 			if (brokenRecords.HasFlag(RecordID.LeastHits)) {
 				hitsTakenHolder = reader.ReadString();
 				hitsTakenWorld = reader.ReadInt32();
-				dodgeTimeWorld = reader.ReadInt32();
-			}
-			if (brokenRecords.HasFlag(RecordID.BestBrink)) {
-				healthLossHolder = reader.ReadString();
-				healthLossWorld = reader.ReadInt32();
-				healthAtStartWorld = reader.ReadInt32();
 			}
 		}
 
@@ -235,37 +246,31 @@ namespace BossChecklist
 			if (specificRecord.HasFlag(RecordID.LeastHits)) {
 				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
-				writer.Write(dodgeTimeWorld);
-			}
-			if (specificRecord.HasFlag(RecordID.BestBrink)) {
-				writer.Write(healthLossHolder);
-				writer.Write(healthLossWorld);
-				writer.Write(healthAtStartWorld);
 			}
 		}
 	}
 
 	public class BossCollection : TagSerializable
 	{
-		internal string bossName;
+		internal string bossKey;
 		internal List<ItemDefinition> loot;
 		internal List<ItemDefinition> collectibles;
 
 		public static Func<TagCompound, BossCollection> DESERIALIZER = tag => new BossCollection(tag);
 
 		private BossCollection(TagCompound tag) {
-			bossName = tag.Get<string>(nameof(bossName));
+			bossKey = tag.Get<string>(nameof(bossKey));
 			loot = tag.Get<List<ItemDefinition>>(nameof(loot));
 			collectibles = tag.Get<List<ItemDefinition>>(nameof(collectibles));
 		}
 
 		public BossCollection(string boss) {
-			bossName = boss;
+			bossKey = boss;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(bossName), bossName },
+				{ nameof(bossKey), bossKey },
 				{ nameof(loot), loot },
 				{ nameof(collectibles), collectibles },
 			};
