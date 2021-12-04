@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
@@ -182,7 +183,7 @@ namespace BossChecklist
 	[Label("$Mods.BossChecklist.Configs.Title.Debug")]
 	public class DebugConfiguration : ModConfig
 	{
-		public override ConfigScope Mode => ConfigScope.ClientSide;
+		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 		
 		private int processRecord = 0;
@@ -245,7 +246,7 @@ namespace BossChecklist
 
 		[BackgroundColor(55, 85, 120)]
 		[DefaultValue(false)]
-		[Label("Disable records from being tracked entirely")]
+		[Label("Disable records from being tracked entirely.")]
 		public bool RecordTrackingDisabled {
 			get { return processRecord == 2 && rtEnabled; }
 			set {
@@ -269,7 +270,25 @@ namespace BossChecklist
 		[Tooltip("This will only show if Record Tracking is NOT disabled\nNOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
+		// Code created by Jopojelly, taken from CheatSheet
+		private bool IsPlayerLocalServerOwner(Player player) {
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				return Netplay.Connection.Socket.GetRemoteAddress().IsLocalHost();
+			}
+			for (int plr = 0; plr < Main.maxPlayers; plr++) {
+				RemoteClient NetPlayer = Netplay.Clients[plr];
+				if (NetPlayer.State == 10 && Main.player[plr] == player && NetPlayer.Socket.GetRemoteAddress().IsLocalHost()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+			if (!IsPlayerLocalServerOwner(Main.player[whoAmI])) {
+				message = "Only the host is allowed to change this config.";
+				return false;
+			}
 			return true;
 		}
 	}

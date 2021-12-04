@@ -37,7 +37,9 @@ namespace BossChecklist
 					NetMessage.SendData(MessageID.WorldData);
 				}
 			}
-			if (!Main.dedServ && Main.gameMenu) return;
+			if (!Main.dedServ && Main.gameMenu) {
+				return;
+			}
 			string partName = npc.GetFullNetName().ToString();
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
@@ -55,25 +57,40 @@ namespace BossChecklist
 			// Twins check makes sure the other is not around before counting towards the record
 			int index = ListedBossNum(npc);
 			if (index != -1) {
-				if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled && TrulyDead(npc)) {
-					if (Main.netMode == NetmodeID.SinglePlayer) CheckRecords(npc, index);
-					else if (Main.netMode == NetmodeID.Server) CheckRecordsMultiplayer(npc, index);
+				if (TrulyDead(npc)) {
+					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
+						if (Main.netMode == NetmodeID.SinglePlayer) {
+							CheckRecords(npc, index);
+						}
+						else if (Main.netMode == NetmodeID.Server) {
+							CheckRecordsMultiplayer(npc, index);
+						}
+					}
+					if (BossChecklist.DebugConfig.ShowTDC) {
+						Main.NewText(npc.FullName + ": " + TrulyDead(npc));
+					}
+					WorldAssist.worldRecords[index].stat.totalKills++;
 				}
-				if (BossChecklist.DebugConfig.ShowTDC) Main.NewText(npc.FullName + ": " + TrulyDead(npc));
 			}
 		}
 
 		public override bool InstancePerEntity => true;
 
 		public override bool PreAI(NPC npc) {
-			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) return true; // Checks for multi-segmented bosses?
+			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) {
+				return true; // Checks for multi-segmented bosses?
+			}
 			int listNum = ListedBossNum(npc);
 			if (listNum != -1) {
 				if (!WorldAssist.ActiveBossesList[listNum]) {
 					for (int j = 0; j < Main.maxPlayers; j++) {
-						if (!Main.player[j].active) continue;
+						if (!Main.player[j].active) {
+							continue;
+						}
+						// Reset Timers and counters so we can start recording the next fight
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
 						modPlayer.Tracker_Duration[listNum] = 0;
+						modPlayer.Tracker_HitsTaken[listNum] = 0;
 					}
 				}
 			}

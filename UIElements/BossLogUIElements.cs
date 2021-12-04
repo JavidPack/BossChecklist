@@ -676,6 +676,18 @@ namespace BossChecklist.UIElements
 					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == 0 && selectedBoss.modSource != "Unknown") {
 						if (selectedBoss.type != EntryType.Event) {
 							// Boss Records Subpage
+							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
+							Rectangle innerRect = GetInnerDimensions().ToRectangle();
+							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 60, 32, 34);
+							spriteBatch.Draw(construction.Value, conRect, Color.White);
+
+							if (Main.mouseX >= conRect.X && Main.mouseX < conRect.X + conRect.Width) {
+								if (Main.mouseY >= conRect.Y && Main.mouseY < conRect.Y + conRect.Height) {
+									BossUISystem.Instance.UIHoverText = "Boss records is still under construction and may not work.";
+									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
+								}
+							}
+
 							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
 								if (info.type != EntryType.Event) {
 									continue;
@@ -712,22 +724,19 @@ namespace BossChecklist.UIElements
 								if (recordSlot == 0) {
 									recordValue = $"{Main.LocalPlayer.name}";
 									// Which sub-category are we in?
+									achCoord = new int[] { -1, -1 }; // No achievement drawing
 									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 										recordTitle = "Previous Attempt";
-										achCoord = new int[] { 7, 9 };
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
-										recordTitle = "First Vistory";
-										achCoord = new int[] { 0, 10 };
+										recordTitle = "First Victory";
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
 										recordTitle = "Personal Best";
-										achCoord = new int[] { 1, 10 };
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
 										recordTitle = $"World Records";
 										recordValue = $"{Main.worldName}";
-										achCoord = new int[] { 4, 6 };
 									}
 								}
 								if (recordSlot == 1) {
@@ -871,21 +880,26 @@ namespace BossChecklist.UIElements
 									}
 								}
 
-								Rectangle posRect = new Rectangle(pageRect.X + 15, pageRect.Y + 125 + (75 * recordSlot), 64, 64);
-								Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
-								spriteBatch.Draw(achievements.Value, posRect, cutRect, Color.White);
+								if (achCoord[0] != -1) {
+									Rectangle posRect = new Rectangle(pageRect.X + 15, pageRect.Y + 125 + (75 * recordSlot), 64, 64);
+									Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
 
-								if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
-									if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
-										// TODO: Change these texts to something better. A description of the record type
-										if (recordSlot == 0 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-											BossUISystem.Instance.UIHoverText = "Total times you killed the boss and total times the boss has killed you!";
-										}
-										if (recordSlot == 1) {
-											BossUISystem.Instance.UIHoverText = "The quickest time you became victorious!";
-										}
-										if (recordSlot == 2) {
-											BossUISystem.Instance.UIHoverText = "Avoid as many attacks as you can for a no-hitter!";
+									Asset<Texture2D> slot = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
+									spriteBatch.Draw(slot.Value, new Vector2(posRect.X, posRect.Y), new Color(175, 175, 125));
+									spriteBatch.Draw(achievements.Value, posRect, cutRect, Color.White);
+
+									if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
+										if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
+											// TODO: Change these texts to something better. A description of the record type
+											if (recordSlot == 1 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
+												BossUISystem.Instance.UIHoverText = "Total times you killed the boss and total times the boss has killed you!";
+											}
+											if (recordSlot == 2) {
+												BossUISystem.Instance.UIHoverText = "The quickest time you became victorious!";
+											}
+											if (recordSlot == 3) {
+												BossUISystem.Instance.UIHoverText = "Avoid as many attacks as you can for a no-hitter!";
+											}
 										}
 									}
 								}
@@ -901,8 +915,15 @@ namespace BossChecklist.UIElements
 								CalculatedStyle inner = GetInnerDimensions();
 
 								Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(recordTitle);
-								Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - ((int)stringAdjust.Length() / 2) + 2, inner.Y + offsetY);
-								Utils.DrawBorderString(spriteBatch, recordTitle, pos, Color.Goldenrod);
+								float strScale = 1.2f;
+								Vector2 firstTitle = new Vector2(stringAdjust.X * strScale, stringAdjust.Y * strScale);
+
+								float len = recordSlot == 0 ? firstTitle.Length() : stringAdjust.Length();
+								Color col = recordSlot == 0 ? Color.Goldenrod : Color.Gold;
+								float scl = recordSlot == 0 ? strScale : 1f;
+
+								Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (len / 2) + 2, inner.Y + offsetY);
+								Utils.DrawBorderString(spriteBatch, recordTitle, pos, col, scl);
 
 								stringAdjust = FontAssets.MouseText.Value.MeasureString(recordValue);
 								pos = new Vector2(inner.X + (inner.Width / 2) - ((int)stringAdjust.Length() / 2) + 2, inner.Y + offsetY + 25);

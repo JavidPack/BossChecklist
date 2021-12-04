@@ -1409,8 +1409,11 @@ namespace BossChecklist
 				if (boss.modSource != "Unknown") {
 					// Events do not have records. Instead we create their own page with banners of the enemies in the event.
 					bool eventCheck = CategoryPageNum == CategoryPage.Record && boss.type == EntryType.Event;
-					if (!eventCheck && CategoryPageNum != CategoryPage.Spawn) {
+					if (!eventCheck) {
 						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {
+							if (CategoryPageNum == CategoryPage.Spawn) {
+								break;
+							}
 							AltPageButtons[i].Width.Pixels = 32;
 							AltPageButtons[i].Height.Pixels = 32;
 							if (CategoryPageNum == CategoryPage.Record) {

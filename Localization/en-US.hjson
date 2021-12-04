@@ -115,7 +115,7 @@ Mods: {
 				KDR: Kill Death Ratio
 				Duration: Fight Duration
 				Health: Lowest Health State
-				Dodge: Hits Taken
+				Dodge: Hits Received
 				RecipeFrom: Recipe from: {0}
 				CycleRecipe: Cycle alternative recipes
 				Noncraftable: This item is not craftable
@@ -137,8 +137,8 @@ Mods: {
 			Terms: {
 				BossLog: Boss Log
 				ByHand: By Hand
-				NoRecord: No record!
-				Unchallenged: Unchallenged!
+				NoRecord: No record
+				Unchallenged: Unchallenged
 				Kills: kills
 				Deaths: deaths
 				show: Show

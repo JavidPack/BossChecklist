@@ -185,13 +185,14 @@ namespace BossChecklist
 		// When a player is dead they are marked as such in the Death tracker.
 		// On respawn, add to the total deaths towards marked bosses.
 		public override void OnRespawn(Player player) {
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int i = 0; i < Tracker_Deaths.Count; i++) {
+			for (int i = 0; i < Tracker_Deaths.Count; i++) {
+				if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 					if (Tracker_Deaths[i]) {
 						RecordsForWorld[i].stat.deaths++;
 					}
 					Tracker_Deaths[i] = false;
 				}
+				WorldAssist.worldRecords[i].stat.totalDeaths++;
 			}
 		}
 
