@@ -1369,26 +1369,48 @@ namespace BossChecklist.UIElements
 				}
 				if (!Id.EndsWith("_Tab")) {
 					base.DrawSelf(spriteBatch);
+					if (Id == "filterPanel") {
+						string[] type = {
+							"Bosses",
+							"Mini bosses",
+							"Events"
+						};
+
+						for (int i = 0; i < type.Length; i++) {
+							Rectangle inner = GetInnerDimensions().ToRectangle();
+							Vector2 pos = new Vector2(inner.X + 25, inner.Y + 7 + (20 * i));
+							Utils.DrawBorderString(spriteBatch, type[i], pos, Color.White);
+						}
+					}
 				}
 				else {
 					// Tab drawing
 					SpriteEffects effect = SpriteEffects.FlipHorizontally;
-					if (Left.Pixels <= 0) {
-						effect = SpriteEffects.None;
-					}
 
 					Color color = new Color(153, 199, 255);
 					if (Id == "Boss_Tab") {
 						color = new Color(255, 168, 168);
+						if (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Boss) || BossLogUI.PageNum == -2) {
+							effect = SpriteEffects.None;
+						}
 					}
 					else if (Id == "Miniboss_Tab") {
 						color = new Color(153, 253, 119);
+						if (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.MiniBoss) || BossLogUI.PageNum == -2) {
+							effect = SpriteEffects.None;
+						}
 					}
 					else if (Id == "Event_Tab") {
 						color = new Color(196, 171, 254);
+						if (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Event) || BossLogUI.PageNum == -2) {
+							effect = SpriteEffects.None;
+						}
 					}
 					else if (Id == "Credits_Tab") {
 						color = new Color(218, 175, 133);
+					}
+					else if (Id == "ToCFilter_Tab") {
+						effect = SpriteEffects.None;
 					}
 					color = Color.Tan;
 
@@ -1416,9 +1438,7 @@ namespace BossChecklist.UIElements
 
 				if (Id.EndsWith("_Tab")) {
 					// Tab Icon
-					Rectangle inner = GetInnerDimensions().ToRectangle();
 					Asset<Texture2D> texture = BossLogUI.tocTexture;
-					Vector2 pos = new Vector2(inner.X + Width.Pixels / 2 - 11, inner.Y + Height.Pixels / 2 - 11);
 
 					if (Id == "Boss_Tab") {
 						texture = BossLogUI.bossNavTexture;
@@ -1438,6 +1458,10 @@ namespace BossChecklist.UIElements
 					else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum != -1) {
 						texture = BossLogUI.tocTexture;
 					}
+
+					Rectangle inner = GetInnerDimensions().ToRectangle();
+					int offsetX = inner.X < Main.screenWidth / 2 ? 2 : -2;
+					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (texture.Value.Width / 2) + offsetX, inner.Y + (inner.Height / 2) - (texture.Value.Height / 2));
 
 					if (DrawTab(Id)) {
 						spriteBatch.Draw(texture.Value, pos, Color.White);

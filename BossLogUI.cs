@@ -56,6 +56,7 @@ namespace BossChecklist
 		public BookUI BossTab;
 		public BookUI MiniBossTab;
 		public BookUI EventTab;
+		public bool filterOpen = false;
 
 		public UIList prehardmodeList;
 		public UIList hardmodeList;
@@ -127,8 +128,8 @@ namespace BossChecklist
 			if (resetPage) {
 				PageNum = -1;
 				CategoryPageNum = 0;
-				ToCTab.Left.Set(-416, 0.5f);
-				filterPanel.Left.Set(-416 + ToCTab.Width.Pixels, 0.5f);
+				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+				filterPanel.Top.Pixels = -5000; // throw offscreen
 				foreach (UIText uitext in filterTypes) {
 					filterPanel.RemoveChild(uitext);
 				}
@@ -186,14 +187,22 @@ namespace BossChecklist
 				1, // Spawn
 				2 // Loot, Collectibles
 			};
-			
+
+			BookArea = new BossLogPanel();
+			BookArea.Width.Pixels = 800;
+			BookArea.Height.Pixels = 478;
+			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
+			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
+
+			int offsetY = 100;
+
 			ToCTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "ToCFilter_Tab"
 			};
 			ToCTab.Height.Pixels = 76;
 			ToCTab.Width.Pixels = 32;
-			ToCTab.Left.Set(-416, 0.5f);
-			ToCTab.Top.Set(-250 + 20, 0.5f);
+			ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
 			ToCTab.OnClick += OpenViaTab;
 
 			BossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -201,8 +210,8 @@ namespace BossChecklist
 			};
 			BossTab.Height.Pixels = 76;
 			BossTab.Width.Pixels = 32;
-			BossTab.Left.Set(-416, 0.5f);
-			BossTab.Top.Set(-250 + 30 + 76, 0.5f);
+			BossTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			BossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 1);
 			BossTab.OnClick += OpenViaTab;
 
 			MiniBossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -210,8 +219,8 @@ namespace BossChecklist
 			};
 			MiniBossTab.Height.Pixels = 76;
 			MiniBossTab.Width.Pixels = 32;
-			MiniBossTab.Left.Set(-416, 0.5f);
-			MiniBossTab.Top.Set(-250 + 40 + (76 * 2), 0.5f);
+			MiniBossTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			MiniBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 2);
 			MiniBossTab.OnClick += OpenViaTab;
 
 			EventTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -219,8 +228,8 @@ namespace BossChecklist
 			};
 			EventTab.Height.Pixels = 76;
 			EventTab.Width.Pixels = 32;
-			EventTab.Left.Set(-416, 0.5f);
-			EventTab.Top.Set(-250 + 50 + (76 * 3), 0.5f);
+			EventTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			EventTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 3);
 			EventTab.OnClick += OpenViaTab;
 
 			CreditsTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -228,15 +237,9 @@ namespace BossChecklist
 			};
 			CreditsTab.Height.Pixels = 76;
 			CreditsTab.Width.Pixels = 32;
-			CreditsTab.Left.Set(-416, 0.5f);
-			CreditsTab.Top.Set(-250 + 60 + (76 * 4), 0.5f);
+			CreditsTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
 			CreditsTab.OnClick += OpenViaTab;
-
-			BookArea = new BossLogPanel();
-			BookArea.Width.Pixels = 800;
-			BookArea.Height.Pixels = 478;
-			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
-			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
 
 			PageOne = new BossLogPanel() {
 				Id = "PageOne"
@@ -291,8 +294,8 @@ namespace BossChecklist
 			};
 			filterPanel.Height.Pixels = 76;
 			filterPanel.Width.Pixels = 152;
-			filterPanel.Left.Set(-416, 0.5f);
-			filterPanel.Top.Set(-250 + 20, 0.5f);
+			filterPanel.Left.Pixels = BookArea.Left.Pixels - 20 - 152;
+			filterPanel.Top.Pixels = 0;
 
 			filterCheckMark = new List<BookUI>();
 			filterCheck = new List<BookUI>();
@@ -312,16 +315,13 @@ namespace BossChecklist
 				newCheckBox.OnClick += ChangeFilter;
 				newCheckBox.Append(filterCheckMark[i]);
 				filterCheck.Add(newCheckBox);
+			}
 
-				string type = i switch {
-					1 => "Mini bosses",
-					2 => "Events",
-					_ => "Bosses"
-				};
-				UIText bosses = new UIText(type, 0.85f);
-				bosses.Top.Pixels = 10 + (20 * i);
-				bosses.Left.Pixels = 25;
-				filterTypes.Add(bosses);
+			foreach (BookUI uiimage in filterCheck) {
+				filterPanel.Append(uiimage);
+			}
+			foreach (UIText uitext in filterTypes) {
+				filterPanel.Append(uitext);
 			}
 
 			NextPage = new BossAssistButton(nextTexture, "") {
@@ -385,7 +385,7 @@ namespace BossChecklist
 			};
 
 			toggleHidden = new UIHoverImageButton(TextureAssets.InventoryTickOff, "Toggle hidden visibility");
-			toggleHidden.Left.Pixels = 112 - TextureAssets.InventoryTickOff.Width();
+			toggleHidden.Left.Pixels = filterPanel.Width.Pixels - TextureAssets.InventoryTickOff.Width() * 2 - 10;
 			toggleHidden.Top.Pixels = TextureAssets.InventoryTickOff.Height() * 2 / 3;
 			toggleHidden.OnClick += (a, b) => ToggleHidden();
 			filterPanel.Append(toggleHidden);
@@ -403,22 +403,28 @@ namespace BossChecklist
 			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			// Updating tabs to proper positions
-			CreditsTab.Left.Pixels = -416 + (PageNum == -2 ? 0 : 800);
-			BossTab.Left.Pixels = -416 + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? 0 : 800);
-			MiniBossTab.Left.Pixels = -416 + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? 0 : 800);
-			EventTab.Left.Pixels = -416 + (PageNum >= FindNext(EntryType.Event) || PageNum == -2 ? 0 : 800);
+			CreditsTab.Left.Pixels = BookArea.Left.Pixels + (PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
 
 			if (PageNum != -1) {
-				ToCTab.Left.Set(-416, 0.5f);
-				filterPanel.Left.Set(-416 + ToCTab.Width.Pixels, 0.5f);
-				foreach (UIText uitext in filterTypes) {
-					filterPanel.RemoveChild(uitext);
-				}
-				filterPanel.Width.Pixels = 32;
-				filterPanel.Top.Precent = 5f; // Throw it off screen.
+				filterOpen = false;
+			}
+
+			// Weird positioning check
+			if (filterPanel.Left.Pixels != BookArea.Left.Pixels - 20 - 100) {
+				filterPanel.Left.Pixels = BookArea.Left.Pixels - 20 - 100;
+			}
+
+			// Filter panel update
+			if (filterOpen) {
+				ToCTab.Left.Pixels = filterPanel.Left.Pixels - ToCTab.Width.Pixels;
+				filterPanel.Top.Pixels = ToCTab.Top.Pixels;
 			}
 			else {
-				filterPanel.Top.Precent = 0.5f;
+				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+				filterPanel.Top.Pixels = -5000; // throw offscreen
 			}
 
 			if (filterPanel.HasChild(filterCheck[0])) {
@@ -464,31 +470,6 @@ namespace BossChecklist
 					hoveredTextSnippet.OnClick();
 				}
 				hoveredTextSnippet = null;
-			}
-		}
-
-		public void ToggleFilterPanel() {
-			if (filterPanel.Left.Pixels != -416 - 120 + ToCTab.Width.Pixels) {
-				ToCTab.Left.Set(-416 - 120, 0.5f);
-				filterPanel.Left.Set(-416 - 120 + ToCTab.Width.Pixels, 0.5f);
-				filterPanel.Width.Pixels = 152;
-				foreach (BookUI uiimage in filterCheck) {
-					filterPanel.Append(uiimage);
-				}
-				foreach (UIText uitext in filterTypes) {
-					filterPanel.Append(uitext);
-				}
-			}
-			else {
-				ToCTab.Left.Set(-416, 0.5f);
-				filterPanel.Left.Set(-416 + ToCTab.Width.Pixels, 0.5f);
-				foreach (BookUI uiimage in filterCheck) {
-					filterPanel.RemoveChild(uiimage);
-				}
-				foreach (UIText uitext in filterTypes) {
-					filterPanel.RemoveChild(uitext);
-				}
-				filterPanel.Width.Pixels = 32;
 			}
 		}
 
@@ -547,7 +528,7 @@ namespace BossChecklist
 			}
 
 			if (id == "ToCFilter_Tab" && PageNum == -1) {
-				ToggleFilterPanel();
+				filterOpen = !filterOpen;
 				return;
 			}
 			if (id == "Boss_Tab") {
