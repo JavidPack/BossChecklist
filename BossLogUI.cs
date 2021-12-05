@@ -1187,7 +1187,7 @@ namespace BossChecklist
 				}
 
 				// Setup display name. Use Internal Name if config is on, and show "???" if unavailable and Silhouettes are turned on
-				string displayName = BossChecklist.DebugConfig.ShowInternalNames ? boss.internalName : boss.name;
+				string displayName = boss.name;
 				if (!boss.available() && !boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) {
 					displayName = "???";
 				}
