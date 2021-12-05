@@ -4,6 +4,7 @@ using ReLogic.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using ReLogic.Content;
+using ReLogic.OS;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -653,25 +654,49 @@ namespace BossChecklist.UIElements
 							}
 						}
 
-						bool config = BossChecklist.DebugConfig.ShowInternalNames;
-
-						Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
+						bool showInternal = BossChecklist.DebugConfig.ShowInternalNames;
+						Vector2 pos = new Vector2(pageRect.X + 5 + (showInternal ? 25 : 0), pageRect.Y + 5);
 						Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
 
-						pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 42 : 30));
-						Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
-
-						if (config) {
-							pos = new Vector2(pageRect.X + 5, pageRect.Y + 25);
-							Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.internalName})", pos, Color.Goldenrod, 0.75f);
-
-							pos = new Vector2(pageRect.X + 5, pageRect.Y + 60);
-							Utils.DrawBorderString(spriteBatch, $"(Internal: {selectedBoss.modSource})", pos, new Color(150, 150, 255), 0.75f);
+						if (showInternal) {
+							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
+							Vector2 vec2 = new Vector2(pageRect.X + 5, pos.Y);
+							spriteBatch.Draw(clipboard, vec2, Color.Goldenrod);
 						}
 
-						//pos = new Vector2(pageRect.X + 5, pageRect.Y + (config ? 75 : 55));
-						//Utils.DrawBorderString(spriteBatch, selectedBoss.downed() ? isDefeated : notDefeated, pos, selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed);
+						pos = new Vector2(pageRect.X + 5 + (showInternal ? 25 : 0), pageRect.Y + 30);
+						Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
+						if (showInternal) {
+							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
+							Vector2 vec2 = new Vector2(pageRect.X + 5, pageRect.Y + 5);
+
+							Color copied = (Platform.Get<IClipboard>().Value == selectedBoss.Key) ? Color.Gold : Color.White;
+							spriteBatch.Draw(clipboard, vec2, copied);
+
+							// Hovering and rightclick will copy to clipboard
+							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
+								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
+									BossUISystem.Instance.UIHoverText = "Click to copy internal 'boss key' to clipboard";
+									if (Main.mouseLeft && Main.mouseLeftRelease) {
+										Platform.Get<IClipboard>().Value = selectedBoss.Key;
+									}
+								}
+							}
+
+							vec2 = new Vector2(pageRect.X + 5, pageRect.Y + 30);
+							copied = (Platform.Get<IClipboard>().Value == selectedBoss.SourceDisplayName) ? Color.Gold : Color.White;
+							spriteBatch.Draw(clipboard, vec2, copied);
+
+							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
+								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
+									BossUISystem.Instance.UIHoverText = "Click to copy internal 'mod source' to clipboard";
+									if (Main.mouseLeft && Main.mouseLeftRelease) {
+										Platform.Get<IClipboard>().Value = selectedBoss.SourceDisplayName;
+									}
+								}
+							}
+						}
 					}
 					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == 0 && selectedBoss.modSource != "Unknown") {
 						if (selectedBoss.type != EntryType.Event) {
@@ -683,7 +708,7 @@ namespace BossChecklist.UIElements
 
 							if (Main.mouseX >= conRect.X && Main.mouseX < conRect.X + conRect.Width) {
 								if (Main.mouseY >= conRect.Y && Main.mouseY < conRect.Y + conRect.Height) {
-									BossUISystem.Instance.UIHoverText = "Boss records is still under construction and may not work.";
+									BossUISystem.Instance.UIHoverText = "Boss records is still under construction and may not work.\nThis includes any configs related to boss records.";
 									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
 								}
 							}
