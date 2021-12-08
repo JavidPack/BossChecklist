@@ -115,7 +115,7 @@ Mods: {
 				KDR: Kill Death Ratio
 				Duration: Fight Duration
 				Health: Lowest Health State
-				Dodge: Hits Taken
+				Dodge: Hits Received
 				RecipeFrom: Recipe from: {0}
 				CycleRecipe: Cycle alternative recipes
 				Noncraftable: This item is not craftable
@@ -137,8 +137,8 @@ Mods: {
 			Terms: {
 				BossLog: Boss Log
 				ByHand: By Hand
-				NoRecord: No record!
-				Unchallenged: Unchallenged!
+				NoRecord: No record
+				Unchallenged: Unchallenged
 				Kills: kills
 				Deaths: deaths
 				show: Show
@@ -163,7 +163,7 @@ Mods: {
 				ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
 				ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
-				Debug: "[i:3625] [c/ffeb6e:Debugging for developers]"
+				Debug: "[i:3625] [c/ffeb6e:Debug]"
 			}
 
 			Label: {

@@ -460,13 +460,12 @@ namespace BossChecklist
 						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
 						bossStats.kills = reader.ReadInt32();
 						bossStats.deaths = reader.ReadInt32();
-						bossStats.durationBest = reader.ReadInt32();
+
 						bossStats.durationPrev = reader.ReadInt32();
-						bossStats.healthLossBest = reader.ReadInt32();
-						bossStats.healthLossPrev = reader.ReadInt32();
-						bossStats.hitsTakenBest = reader.ReadInt32();
+						bossStats.durationBest = reader.ReadInt32();
+
 						bossStats.hitsTakenPrev = reader.ReadInt32();
-						bossStats.dodgeTimeBest = reader.ReadInt32();
+						bossStats.hitsTakenBest = reader.ReadInt32();
 
 						//Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
 					}
@@ -478,7 +477,7 @@ namespace BossChecklist
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
 					int npcPos = reader.ReadInt32();
 
-					BossStats specificRecord = modPlayer.AllBossRecords[npcPos].stat; // Get the Player's records
+					BossStats specificRecord = modPlayer.RecordsForWorld[npcPos].stat; // Get the Player's records
 					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)
 
 					//Update the serverrecords too so they can be used later
@@ -486,16 +485,15 @@ namespace BossChecklist
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
 					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
-						BossStats stat = modPlayer.AllBossRecords[i].stat;
+						BossStats stat = modPlayer.RecordsForWorld[i].stat;
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);
-						packet.Write(stat.durationBest);
+
 						packet.Write(stat.durationPrev);
-						packet.Write(stat.hitsTakenBest);
+						packet.Write(stat.durationBest);
+
 						packet.Write(stat.hitsTakenPrev);
-						packet.Write(stat.dodgeTimeBest);
-						packet.Write(stat.healthLossBest);
-						packet.Write(stat.healthLossPrev);
+						packet.Write(stat.hitsTakenBest);
 					}
 					packet.Send(); // To server (ORDER MATTERS FOR reader)
 					break;

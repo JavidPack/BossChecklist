@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using BossChecklist.UIElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics;
 using Terraria.ModLoader;
@@ -27,7 +22,10 @@ namespace BossChecklist
 		internal BossLogUI BossLog;
 		internal static UserInterface BossRadarUIInterface;
 		internal BossRadarUI BossRadarUI;
-		
+
+		internal string UIHoverText = "";
+		internal Color UIHoverTextColor = default;
+
 		//Zoom level, (for UIs)
 		public static Vector2 ZoomFactor; //0f == fully zoomed out, 1f == fully zoomed in
 
@@ -152,6 +150,21 @@ namespace BossChecklist
 					InterfaceScaleType.UI)
 				);
 			}
+
+			if (mouseTextIndex != -1) {
+				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
+					delegate {
+						if (UIHoverText != "") {
+							BossLogUI.DrawTooltipBG(Main.spriteBatch, UIHoverText, UIHoverTextColor);
+						}
+						UIHoverText = "";
+						UIHoverTextColor = default;
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+			}
+
 			#region DEBUG
 			int playerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
 			if (playerChatIndex != -1) {
@@ -161,11 +174,9 @@ namespace BossChecklist
 						int configIndex = NPCAssist.ListedBossNum(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, BossChecklist.DebugConfig.ShowTimerOrCounter.mod);
 						if (configIndex != -1) {
 							string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].name} (#{configIndex + 1})" +
-												$"\nTime: {playerAssist.RecordTimers[configIndex]}" +
-												$"\nDodge Timer: {playerAssist.DodgeTimer[configIndex]}" +
-												$"\nTimes Hit: {playerAssist.AttackCounter[configIndex]}" +
-												$"\nLowest Health: {playerAssist.BrinkChecker[configIndex]} / {playerAssist.MaxHealth[configIndex]}" +
-												$"\nDeaths: {playerAssist.DeathTracker[configIndex]}";
+												$"\nTime: {playerAssist.Tracker_Duration[configIndex]}" +
+												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[configIndex]}" +
+												$"\nDeaths: {playerAssist.Tracker_Deaths[configIndex]}";
 							Main.spriteBatch.DrawString(FontAssets.MouseText.Value, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
 						}
 						return true;

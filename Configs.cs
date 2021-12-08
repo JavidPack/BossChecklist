@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
@@ -182,7 +183,7 @@ namespace BossChecklist
 	[Label("$Mods.BossChecklist.Configs.Title.Debug")]
 	public class DebugConfiguration : ModConfig
 	{
-		public override ConfigScope Mode => ConfigScope.ClientSide;
+		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 		
 		private int processRecord = 0;
@@ -193,14 +194,8 @@ namespace BossChecklist
 
 		[DefaultValue(false)]
 		[Label("Mod.Call Log Verbose")]
-		[Tooltip("If true, logs will display all bosses added to Boss Checklist")]
+		[Tooltip("If true, logs will display all bosses added to Boss Checklist within the server console")]
 		public bool ModCallLogVerbose { get; set; }
-
-		[BackgroundColor(85, 55, 120)]
-		[DefaultValue(false)]
-		[Label("Reset Records Option")]
-		[Tooltip("Reset records with a boss by double right-clicking the 'Records' button of the selected boss page")]
-		public bool ResetRecordsBool { get; set; }
 
 		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
@@ -208,14 +203,16 @@ namespace BossChecklist
 		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot\nClear the entire loot/collection list by double right-clicking the 'Loot / Collection' button\nHold Alt for either of these to apply the effect to ALL bosses")]
 		public bool ResetLootItems { get; set; }
 
+		[Header("[i:3619] [c/ffeb6e:Mod Developer Tools]")]
+
 		[DefaultValue(false)]
-		[Label("Show Internal Names")]
-		[Tooltip("Replaces boss names with their internal names.\nGood for mod developers who need it for cross-mod content")]
+		[Label("Access Internal Names")]
+		[Tooltip("Adds a button on a boss entry's page to copy boss keys and mod sources to clipboard.\nUseful for cross-mod content")]
 		public bool ShowInternalNames { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Show Auto-detected Collection Type")]
-		[Tooltip("This will show what items our system has found as a trophy, mask, or music box on the collection page")]
+		[Label("Show auto-detected collection type")]
+		[Tooltip("This will show what items our system has found as a specific collection type.")]
 		public bool ShowCollectionType { get; set; }
 
 		[DefaultValue(false)]
@@ -223,9 +220,18 @@ namespace BossChecklist
 		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
 		public bool ShowTDC { get; set; }
 
+		[Header("[i:3619] [c/ffeb6e:Boss Records]")]
+
+		[BackgroundColor(85, 55, 120)]
+		[DefaultValue(false)]
+		[Label("Reset Records Option")]
+		[Tooltip("Reset records with a boss by double right-clicking the 'Records' button of the selected boss page")]
+		public bool ResetRecordsBool { get; set; }
+
 		[BackgroundColor(55, 85, 120)]
 		[DefaultValue(false)]
-		[Label("Disable new records from being recorded to the boss log")]
+		[Label("Disable updating new records")]
+		[Tooltip("Only 'previous attempt' will be updated.")]
 		public bool NewRecordsDisabled {
 			get { return processRecord == 1 && nrEnabled; }
 			set {
@@ -245,7 +251,7 @@ namespace BossChecklist
 
 		[BackgroundColor(55, 85, 120)]
 		[DefaultValue(false)]
-		[Label("Disable records from being tracked entirely")]
+		[Label("Disable records from being tracked entirely.")]
 		public bool RecordTrackingDisabled {
 			get { return processRecord == 2 && rtEnabled; }
 			set {
@@ -269,7 +275,25 @@ namespace BossChecklist
 		[Tooltip("This will only show if Record Tracking is NOT disabled\nNOTE: This debug feature only works in singleplayer currently!")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
+		// Code created by Jopojelly, taken from CheatSheet
+		private bool IsPlayerLocalServerOwner(Player player) {
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				return Netplay.Connection.Socket.GetRemoteAddress().IsLocalHost();
+			}
+			for (int plr = 0; plr < Main.maxPlayers; plr++) {
+				RemoteClient NetPlayer = Netplay.Clients[plr];
+				if (NetPlayer.State == 10 && Main.player[plr] == player && NetPlayer.Socket.GetRemoteAddress().IsLocalHost()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+			if (!IsPlayerLocalServerOwner(Main.player[whoAmI])) {
+				message = "Only the host is allowed to change this config.";
+				return false;
+			}
 			return true;
 		}
 	}
