@@ -187,7 +187,6 @@ namespace BossChecklist
 		public bool CheckRealLife(int realNPC) => realNPC == -1 || Main.npc[realNPC].life >= 0;
 
 		public override void SaveWorldData(TagCompound tag) {
-			var WorldRecordList = new List<WorldRecord>(worldRecords);
 			var HiddenBossesList = new List<string>(HiddenBosses);
 			var downed = new List<string>();
 			if (downedBloodMoon) downed.Add("bloodmoon");
@@ -203,15 +202,24 @@ namespace BossChecklist
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
-			tag["Records"] = WorldRecordList;
+			if (worldRecords == null) {
+				tag["Records"] = new List<WorldRecord>();
+			}
+			else {
+				tag["Records"] = new List<WorldRecord>(worldRecords);
+			}
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
 			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
 			foreach (WorldRecord record in TempRecordStorage) {
 				int index = worldRecords.FindIndex(x => x.bossName == record.bossName);
-				if (index == -1) worldRecords.Add(record);
-				else worldRecords[index] = record;
+				if (index == -1) {
+					worldRecords.Add(record);
+				}
+				else {
+					worldRecords[index] = record;
+				}
 			}
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
@@ -289,7 +297,9 @@ namespace BossChecklist
 				HiddenBosses.Add(reader.ReadString());
 			}
 			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) BossUISystem.Instance.BossLog.UpdateTableofContents();
+			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) {
+				BossUISystem.Instance.BossLog.UpdateTableofContents();
+			}
 		}
 	}
 }
