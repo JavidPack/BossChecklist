@@ -66,7 +66,6 @@ namespace BossChecklist
 			}
 		}
 
-
 		public override void SaveData(TagCompound tag) {
 			// We cannot save dictionaries, so we'll convert it to a TagCompound instead
 			TagCompound TempRecords = new TagCompound();
@@ -101,13 +100,6 @@ namespace BossChecklist
 					BossTrophies[index] = collection;
 				}
 			}
-		}
-
-		public override void clientClone(ModPlayer clientClone) {
-			PlayerAssist clone = clientClone as PlayerAssist;
-			clone.hasOpenedTheBossLog = hasOpenedTheBossLog;
-			clone.BossTrophies = BossTrophies;
-			clone.RecordsForWorld = RecordsForWorld;
 		}
 
 		public override void OnEnterWorld(Player player) {
