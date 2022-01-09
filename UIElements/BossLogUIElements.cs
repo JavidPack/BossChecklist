@@ -811,7 +811,7 @@ namespace BossChecklist.UIElements
 											Main.hoverItemName = "Avoid as many attacks as you can!";
 										}
 										if (i == 3) {
-											Main.hoverItemName = "How close can you be to death and still defeat you enemy?";
+											Main.hoverItemName = "How close can you be to death and still defeat your enemy?";
 										}
 									}
 								}
