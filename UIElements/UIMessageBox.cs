@@ -317,8 +317,15 @@ namespace BossChecklist.UIElements
 			return finalList;
 		}
 
+		private static readonly List<char> cnPuncs = new List<char>() {
+			'–', '—', '‘', '’', '“', '”',
+			'…', '、', '。', '〈', '〉', '《',
+			'》', '「', '」', '『', '』', '【',
+			'】', '〔', '〕', '！', '（', '）',
+			'，', '．', '：', '；', '？'
+		};
 		public static bool isChinese(char a) {
-			return a >= 0x4E00 && a <= 0x9FA5;
+			return (a >= 0x4E00 && a <= 0x9FA5) || cnPuncs.Contains(a);
 		}
 	}
 }
