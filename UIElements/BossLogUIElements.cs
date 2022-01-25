@@ -685,14 +685,14 @@ namespace BossChecklist.UIElements
 							}
 
 							vec2 = new Vector2(pageRect.X + 5, pageRect.Y + 30);
-							copied = (Platform.Get<IClipboard>().Value == selectedBoss.SourceDisplayName) ? Color.Gold : Color.White;
+							copied = (Platform.Get<IClipboard>().Value == selectedBoss.modSource) ? Color.Gold : Color.White;
 							spriteBatch.Draw(clipboard, vec2, copied);
 
 							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
 								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
 									BossUISystem.Instance.UIHoverText = "Click to copy internal 'mod source' to clipboard";
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
-										Platform.Get<IClipboard>().Value = selectedBoss.SourceDisplayName;
+										Platform.Get<IClipboard>().Value = selectedBoss.modSource;
 									}
 								}
 							}
