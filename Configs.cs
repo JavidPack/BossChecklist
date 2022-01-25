@@ -208,7 +208,7 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		[Label("Access Internal Names")]
 		[Tooltip("Adds a button on a boss entry's page to copy boss keys and mod sources to clipboard.\nUseful for cross-mod content")]
-		public bool ShowInternalNames { get; set; }
+		public bool AccessInternalNames { get; set; }
 
 		[DefaultValue(false)]
 		[Label("Show auto-detected collection type")]

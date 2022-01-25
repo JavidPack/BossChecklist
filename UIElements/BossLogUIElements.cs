@@ -654,20 +654,20 @@ namespace BossChecklist.UIElements
 							}
 						}
 
-						bool showInternal = BossChecklist.DebugConfig.ShowInternalNames && selectedBoss.modSource != "Unknown";
-						Vector2 pos = new Vector2(pageRect.X + 5 + (showInternal ? 25 : 0), pageRect.Y + 5);
+						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && selectedBoss.modSource != "Unknown";
+						Vector2 pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 5);
 						Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
 
-						if (showInternal) {
+						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
 							Vector2 vec2 = new Vector2(pageRect.X + 5, pos.Y);
 							spriteBatch.Draw(clipboard, vec2, Color.Goldenrod);
 						}
 
-						pos = new Vector2(pageRect.X + 5 + (showInternal ? 25 : 0), pageRect.Y + 30);
+						pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 30);
 						Utils.DrawBorderString(spriteBatch, selectedBoss.SourceDisplayName, pos, new Color(150, 150, 255));
 
-						if (showInternal) {
+						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
 							Vector2 vec2 = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 
