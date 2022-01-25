@@ -654,7 +654,7 @@ namespace BossChecklist.UIElements
 							}
 						}
 
-						bool showInternal = BossChecklist.DebugConfig.ShowInternalNames;
+						bool showInternal = BossChecklist.DebugConfig.ShowInternalNames && selectedBoss.modSource != "Unknown";
 						Vector2 pos = new Vector2(pageRect.X + 5 + (showInternal ? 25 : 0), pageRect.Y + 5);
 						Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
 
