@@ -925,13 +925,14 @@ namespace BossChecklist
 				}
 
 				if (TotalRecipes > 1) {
-					BossAssistButton CycleItem = new BossAssistButton(tocTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
+					Asset<Texture2D> cycleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CycleRecipe", AssetRequestMode.ImmediateLoad);
+					BossAssistButton CycleItem = new BossAssistButton(cycleTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
 						Id = "CycleItem_" + TotalRecipes
 					};
-					CycleItem.Top.Pixels = 245;
-					CycleItem.Left.Pixels = 55;
-					CycleItem.Width.Pixels = 22;
-					CycleItem.Height.Pixels = 22;
+					CycleItem.Top.Pixels = 240;
+					CycleItem.Left.Pixels = 240;
+					CycleItem.Width.Pixels = cycleTexture.Value.Width;
+					CycleItem.Height.Pixels = cycleTexture.Value.Height;
 					CycleItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(CycleItem);
 				}
