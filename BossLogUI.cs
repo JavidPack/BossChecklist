@@ -1195,14 +1195,17 @@ namespace BossChecklist
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.downed(), nextCheck);
-				if (!boss.downed() && boss.available() && !boss.hidden) {
+				bool forceDowned = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld.Contains(boss.Key);
+
+				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.downed() || forceDowned, nextCheck);
+				if (!boss.downed() && !forceDowned && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
 				
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22;
 				next.OnClick += JumpToBossPage;
+				next.OnRightClick += HideBoss;
 
 				if (boss.progression <= BossTracker.WallOfFlesh) {
 					prehardmodeList.Add(next);
@@ -1281,32 +1284,52 @@ namespace BossChecklist
 			}
 		}
 
-		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
+		internal void HideBoss(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.PageNum);
+				JumpToBossPage(table.PageNum, false);
 		}
 
-		internal void JumpToBossPage(int index) {
+		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
+			if (listeningElement is TableOfContents table)
+				JumpToBossPage(table.PageNum, true);
+		}
+
+		internal void JumpToBossPage(int index, bool leftClick = true) {
 			PageNum = index;
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
+				// While holding alt, a user can interact with any boss list entry
+				// Left-clicking forces a completion check on or off
+				// Right-clicking hides the boss from the list
 				BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
-				pgBoss.hidden = !pgBoss.hidden;
-				if (pgBoss.hidden) {
-					WorldAssist.HiddenBosses.Add(pgBoss.Key);
+				if (leftClick) {
+					List<string> list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld;
+					if (list.Contains(pgBoss.Key)) {
+						list.RemoveAll(x => x == pgBoss.Key);
+					}
+					else {
+						list.Add(pgBoss.Key);
+					}
+					UpdateTableofContents();
 				}
 				else {
-					WorldAssist.HiddenBosses.Remove(pgBoss.Key);
+					pgBoss.hidden = !pgBoss.hidden;
+					if (pgBoss.hidden) {
+						WorldAssist.HiddenBosses.Add(pgBoss.Key);
+					}
+					else {
+						WorldAssist.HiddenBosses.Remove(pgBoss.Key);
+					}
+					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+					UpdateTableofContents();
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.RequestHideBoss);
+						packet.Write(pgBoss.Key);
+						packet.Write(pgBoss.hidden);
+						packet.Send();
+					}
 				}
-				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-				UpdateTableofContents();
-				if (Main.netMode == NetmodeID.MultiplayerClient) {
-					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)PacketMessageType.RequestHideBoss);
-					packet.Write(pgBoss.Key);
-					packet.Write(pgBoss.hidden);
-					packet.Send();
-				}
-				return;
+				return; // Alt-clicking should never jump to a boss page
 			}
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();

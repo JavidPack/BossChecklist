@@ -642,15 +642,21 @@ namespace BossChecklist.UIElements
 						string isDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}";
 						string notDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}";
 
-						Asset<Texture2D> texture = selectedBoss.downed() ? BossLogUI.checkMarkTexture : BossLogUI.xTexture;
+						bool listed = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld.Contains(selectedBoss.Key);
+						if (listed) {
+							isDefeated = $"''{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}''";
+						}
+
+						bool isChecked = selectedBoss.downed() || listed;
+						Asset<Texture2D> texture = isChecked ? BossLogUI.checkMarkTexture : BossLogUI.xTexture;
 						Vector2 defeatpos = new Vector2(firstHeadPos.X + (firstHeadPos.Width / 2), firstHeadPos.Y + firstHeadPos.Height - (texture.Height() / 2));
 						spriteBatch.Draw(texture.Value, defeatpos, Color.White);
 
 						// Hovering over the head icon will display the defeated text
 						if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
 							if (Main.mouseY >= firstHeadPos.Y && Main.mouseY < firstHeadPos.Y + firstHeadPos.Height) {
-								BossUISystem.Instance.UIHoverText = selectedBoss.downed() ? isDefeated : notDefeated;
-								BossUISystem.Instance.UIHoverTextColor = selectedBoss.downed() ? Colors.RarityGreen : Colors.RarityRed;
+								BossUISystem.Instance.UIHoverText = isChecked ? isDefeated : notDefeated;
+								BossUISystem.Instance.UIHoverTextColor = isChecked ? Colors.RarityGreen : Colors.RarityRed;
 							}
 						}
 
