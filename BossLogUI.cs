@@ -138,11 +138,17 @@ namespace BossChecklist
 			else {
 				UpdateCatPage(CategoryPageNum);
 			}
+
+			// If UI is closed on a new record page, remove the new record from the list
+			if (BossLogVisible && show == false && PageNum >= 0) {
+				UpdateRecordHighlight();
+			}
+
 			BossLogVisible = show;
 			if (show) {
 				// TODO: Small fix to update hidden list on open
 				Main.playerInventory = false;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes rainbow glow
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes the 'unopened' glow
 			}
 		}
 
@@ -456,7 +462,7 @@ namespace BossChecklist
 					filterCheckMark[2].SetImage(circleTexture);
 				}
 			}
-			
+
 			base.Update(gameTime);
 		}
 
@@ -512,6 +518,13 @@ namespace BossChecklist
 			UpdateTableofContents();
 		}
 
+		private void UpdateRecordHighlight() {
+			if (PageNum >= 0) {
+				PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				modplayer.hasNewRecord[PageNum] = false;
+			}
+		}
+
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not BookUI book)
 				return;
@@ -521,16 +534,14 @@ namespace BossChecklist
 				return;
 			}
 
-			// Reset new record
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && modPlayer.hasNewRecord[PageNum]) {
-				modPlayer.hasNewRecord[PageNum] = false;
-			}
-
 			if (id == "ToCFilter_Tab" && PageNum == -1) {
 				filterOpen = !filterOpen;
 				return;
 			}
+
+			// Remove new records when navigating from a new record page
+			UpdateRecordHighlight();
+
 			if (id == "Boss_Tab") {
 				PageNum = FindNext(EntryType.Boss);
 			}
@@ -546,6 +557,7 @@ namespace BossChecklist
 			else {
 				UpdateTableofContents();
 			}
+
 			if (PageNum >= 0) {
 				ResetBothPages();
 				UpdateCatPage(CategoryPageNum);
@@ -663,11 +675,9 @@ namespace BossChecklist
 			if (listeningElement is not BossAssistButton button)
 				return;
 
-			// Reset new record
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && modPlayer.hasNewRecord[PageNum]) {
-				modPlayer.hasNewRecord[PageNum] = false;
-			}
+			// Remove new records when navigating from a new record page
+			UpdateRecordHighlight();
+
 			pageTwoItemList.Clear();
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
