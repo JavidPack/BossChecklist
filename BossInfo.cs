@@ -160,15 +160,13 @@ namespace BossChecklist
 			return this;
 		}
 
+		internal BossInfo WithCustomAvailability(Func<bool> funcBool) {
+			this.available = funcBool;
+			return this;
+		}
+
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			Func<bool> avail = () => true;
-			// If Fargo's Both Evils mod is installed, make both available
-			if (name == "$NPCName.EaterofWorldsHead") {
-				avail = () => !WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod);
-			}
-			else if (name == "$NPCName.BrainofCthulhu") {
-				avail = () => WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod);
-			}
 			string nameKey = name.Substring(name.LastIndexOf("."));
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 			return new BossInfo(
