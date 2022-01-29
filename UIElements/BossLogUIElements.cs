@@ -1375,19 +1375,6 @@ namespace BossChecklist.UIElements
 				}
 				if (!Id.EndsWith("_Tab")) {
 					base.DrawSelf(spriteBatch);
-					if (Id == "filterPanel") {
-						string[] type = {
-							"Bosses",
-							"Mini bosses",
-							"Events"
-						};
-
-						for (int i = 0; i < type.Length; i++) {
-							Rectangle inner = GetInnerDimensions().ToRectangle();
-							Vector2 pos = new Vector2(inner.X + 25, inner.Y + 7 + (20 * i));
-							Utils.DrawBorderString(spriteBatch, type[i], pos, Color.White);
-						}
-					}
 				}
 				else {
 					// Tab drawing
@@ -1503,23 +1490,32 @@ namespace BossChecklist.UIElements
 					}
 				}
 
-				if (Id.Contains("C_") && IsMouseHovering) {
+				if (Id.Contains("F_") && IsMouseHovering) {
 					string termPrefix = "Mods.BossChecklist.BossLog.Terms.";
 					string termLang = $"{termPrefix}hide";
-					if (Id == "C_0") {
-						BossUISystem.Instance.UIHoverText = Language.GetTextValue($"{termPrefix}{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}");
+					string termLang2 = $"";
+					if (Id == "F_0") {
+						termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}";
+						termLang2 = $"{termPrefix}Bosses";
+						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
 					}
-					if (Id == "C_1") {
+					if (Id == "F_1") {
 						if (!BossChecklist.BossLogConfig.OnlyBosses) {
 							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}";
+							termLang2 = $"{termPrefix}MiniBosses";
 						}
-						BossUISystem.Instance.UIHoverText = Language.GetTextValue(termLang);
+						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
 					}
-					if (Id == "C_2") {
+					if (Id == "F_2") {
 						if (!BossChecklist.BossLogConfig.OnlyBosses) {
 							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}";
+							termLang2 = $"{termPrefix}Events";
 						}
-						BossUISystem.Instance.UIHoverText = Language.GetTextValue(termLang);
+						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
+					}
+					if (Id == "F_3") {
+						//TODO: lang
+						BossUISystem.Instance.UIHoverText = "Toggle hidden visibility";
 					}
 				}
 			}

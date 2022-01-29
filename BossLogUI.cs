@@ -45,11 +45,9 @@ namespace BossChecklist
 
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
-		public UIHoverImageButton toggleHidden;
 		public BookUI filterPanel;
 		private List<BookUI> filterCheck;
 		private List<BookUI> filterCheckMark;
-		private List<UIText> filterTypes;
 
 		public BookUI ToCTab;
 		public BookUI CreditsTab;
@@ -78,6 +76,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> minibossNavTexture;
 		public static Asset<Texture2D> eventNavTexture;
 		public static Asset<Texture2D> filterTexture;
+		public static Asset<Texture2D> hiddenTexture;
 		public static Asset<Texture2D> checkMarkTexture;
 		public static Asset<Texture2D> xTexture;
 		public static Asset<Texture2D> circleTexture;
@@ -130,9 +129,6 @@ namespace BossChecklist
 				CategoryPageNum = 0;
 				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
 				filterPanel.Top.Pixels = -5000; // throw offscreen
-				foreach (UIText uitext in filterTypes) {
-					filterPanel.RemoveChild(uitext);
-				}
 				UpdateTableofContents();
 			}
 			else {
@@ -166,6 +162,7 @@ namespace BossChecklist
 			minibossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss");
 			eventNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event");
 			filterTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Filter");
+			hiddenTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Hidden");
 
 			checkMarkTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
 			xTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
@@ -295,39 +292,87 @@ namespace BossChecklist
 
 			pageTwoItemList = new UIList();
 
-			filterPanel = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Filter")) {
+			Asset<Texture2D> filterPanelTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Filter");
+			filterPanel = new BookUI(filterPanelTexture) {
 				Id = "filterPanel"
 			};
-			filterPanel.Height.Pixels = 76;
-			filterPanel.Width.Pixels = 152;
-			filterPanel.Left.Pixels = BookArea.Left.Pixels - 20 - 152;
+			filterPanel.Height.Pixels = 166;
+			filterPanel.Width.Pixels = 50;
+			filterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
 			filterPanel.Top.Pixels = 0;
 
 			filterCheckMark = new List<BookUI>();
 			filterCheck = new List<BookUI>();
-			filterTypes = new List<UIText>();
 
-			for (int i = 0; i < 3; i++) {
+			List<Asset<Texture2D>> filterNav = new List<Asset<Texture2D>>() {
+				bossNavTexture,
+				minibossNavTexture,
+				eventNavTexture,
+				hiddenTexture
+			};
+
+			for (int i = 0; i < 4; i++) {
 				BookUI newCheck = new BookUI(checkMarkTexture) {
 					Id = "C_" + i
 				};
+				newCheck.Left.Pixels = filterNav[i].Value.Width * 0.56f;
+				newCheck.Top.Pixels = filterNav[i].Value.Height * 3 / 8;
 				filterCheckMark.Add(newCheck);
 
-				BookUI newCheckBox = new BookUI(checkboxTexture) {
+				BookUI newCheckBox = new BookUI(filterNav[i]) {
 					Id = "F_" + i
 				};
-				newCheckBox.Top.Pixels = (20 * i) + 5;
-				newCheckBox.Left.Pixels = 5;
+				newCheckBox.Top.Pixels = (34 * i) + 15;
+				newCheckBox.Left.Pixels = (25) - (filterNav[i].Value.Width / 2);
 				newCheckBox.OnClick += ChangeFilter;
 				newCheckBox.Append(filterCheckMark[i]);
 				filterCheck.Add(newCheckBox);
 			}
 
+			// Setup the inital checkmarks to display what the user has prematurely selected
+
+			// ...Bosses
+			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
+
+			// ...Mini-Bosses
+			if (BossChecklist.BossLogConfig.OnlyBosses) {
+				filterCheckMark[1].SetImage(xTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
+				filterCheckMark[1].SetImage(checkMarkTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
+				filterCheckMark[1].SetImage(xTexture);
+			}
+			else {
+				filterCheckMark[1].SetImage(circleTexture);
+			}
+
+			// ...Events
+			if (BossChecklist.BossLogConfig.OnlyBosses) {
+				filterCheckMark[2].SetImage(xTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
+				filterCheckMark[2].SetImage(checkMarkTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
+				filterCheckMark[2].SetImage(xTexture);
+			}
+			else {
+				filterCheckMark[2].SetImage(circleTexture);
+			}
+
+			// ...Hidden Entries
+			if (showHidden) {
+				filterCheckMark[3].SetImage(checkMarkTexture);
+			}
+			else {
+				filterCheckMark[3].SetImage(xTexture);
+			}
+
+			// Append the filter checks to the filter panel
 			foreach (BookUI uiimage in filterCheck) {
 				filterPanel.Append(uiimage);
-			}
-			foreach (UIText uitext in filterTypes) {
-				filterPanel.Append(uitext);
 			}
 
 			NextPage = new BossAssistButton(nextTexture, "") {
@@ -389,12 +434,6 @@ namespace BossChecklist
 				two,
 				three
 			};
-
-			toggleHidden = new UIHoverImageButton(TextureAssets.InventoryTickOff, "Toggle hidden visibility");
-			toggleHidden.Left.Pixels = filterPanel.Width.Pixels - TextureAssets.InventoryTickOff.Width() * 2 - 10;
-			toggleHidden.Top.Pixels = TextureAssets.InventoryTickOff.Height() * 2 / 3;
-			toggleHidden.OnClick += (a, b) => ToggleHidden();
-			filterPanel.Append(toggleHidden);
 		}
 
 		public override void Update(GameTime gameTime) {
@@ -418,49 +457,15 @@ namespace BossChecklist
 				filterOpen = false;
 			}
 
-			// Weird positioning check
-			if (filterPanel.Left.Pixels != BookArea.Left.Pixels - 20 - 100) {
-				filterPanel.Left.Pixels = BookArea.Left.Pixels - 20 - 100;
-			}
-
 			// Filter panel update
 			if (filterOpen) {
-				ToCTab.Left.Pixels = filterPanel.Left.Pixels - ToCTab.Width.Pixels;
 				filterPanel.Top.Pixels = ToCTab.Top.Pixels;
+				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20 - filterPanel.Width.Pixels;
+				filterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
 			}
 			else {
 				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
 				filterPanel.Top.Pixels = -5000; // throw offscreen
-			}
-
-			if (filterPanel.HasChild(filterCheck[0])) {
-				filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
-
-				if (BossChecklist.BossLogConfig.OnlyBosses) {
-					filterCheckMark[1].SetImage(xTexture);
-				}
-				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
-					filterCheckMark[1].SetImage(checkMarkTexture);
-				}
-				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
-					filterCheckMark[1].SetImage(xTexture);
-				}
-				else {
-					filterCheckMark[1].SetImage(circleTexture);
-				}
-
-				if (BossChecklist.BossLogConfig.OnlyBosses) {
-					filterCheckMark[2].SetImage(xTexture);
-				}
-				else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
-					filterCheckMark[2].SetImage(checkMarkTexture);
-				}
-				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
-					filterCheckMark[2].SetImage(xTexture);
-				}
-				else {
-					filterCheckMark[2].SetImage(circleTexture);
-				}
 			}
 
 			base.Update(gameTime);
@@ -487,31 +492,48 @@ namespace BossChecklist
 			if (rowID == "0") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
+					filterCheckMark[0].SetImage(circleTexture);
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
+					filterCheckMark[0].SetImage(checkMarkTexture);
 				}
 			}
 			if (rowID == "1" && !BossChecklist.BossLogConfig.OnlyBosses) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
+					filterCheckMark[1].SetImage(circleTexture);
 				}
 				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide when completed") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide";
+					filterCheckMark[1].SetImage(xTexture);
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
+					filterCheckMark[1].SetImage(checkMarkTexture);
 				}
 			}
 			if (rowID == "2" && !BossChecklist.BossLogConfig.OnlyBosses) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
+					filterCheckMark[2].SetImage(circleTexture);
 				}
 				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide when completed") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide";
+					filterCheckMark[2].SetImage(xTexture);
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterEvents = "Show";
+					filterCheckMark[2].SetImage(checkMarkTexture);
+				}
+			}
+			if (rowID == "3") {
+				showHidden = !showHidden;
+				if (showHidden) {
+					filterCheckMark[3].SetImage(checkMarkTexture);
+				}
+				else {
+					filterCheckMark[3].SetImage(xTexture);
 				}
 			}
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
@@ -747,12 +769,6 @@ namespace BossChecklist
 
 			ResetBothPages();
 			UpdateCatPage(CategoryPageNum);
-		}
-
-		private void ToggleHidden() {
-			showHidden = !showHidden;
-			toggleHidden.SetImage(showHidden ? TextureAssets.InventoryTickOn : TextureAssets.InventoryTickOff);
-			UpdateTableofContents();
 		}
 
 		private void OpenRecord() {
@@ -1197,7 +1213,7 @@ namespace BossChecklist
 					continue;
 				}
 
-				// Setup display name. Use Internal Name if config is on, and show "???" if unavailable and Silhouettes are turned on
+				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
 				string displayName = boss.name;
 				if (!boss.available() && !boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) {
 					displayName = "???";
@@ -1205,7 +1221,13 @@ namespace BossChecklist
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				bool forceDowned = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld.Contains(boss.Key);
+				List<string> ChecksRef = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld;
+				bool forceDowned = ChecksRef.Contains(boss.Key);
+
+				// Update forced downs. If the boss is actaully downed, remove the force check.
+				if (forceDowned && boss.downed()) {
+					ChecksRef.RemoveAll(x => x == boss.Key);
+				}
 
 				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.downed() || forceDowned, nextCheck);
 				if (!boss.downed() && !forceDowned && boss.available() && !boss.hidden) {
@@ -1316,7 +1338,7 @@ namespace BossChecklist
 					if (list.Contains(pgBoss.Key)) {
 						list.RemoveAll(x => x == pgBoss.Key);
 					}
-					else {
+					else if (!pgBoss.downed()) {
 						list.Add(pgBoss.Key);
 					}
 					UpdateTableofContents();
