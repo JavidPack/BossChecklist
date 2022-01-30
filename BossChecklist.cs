@@ -271,7 +271,7 @@ namespace BossChecklist
 			Array.Resize(ref args, 15);
 			try {
 				string message = args[0] as string;
-				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
+				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convenient. BossInfoAPI public static class for strong dependencies.
 				if (message == "GetBossInfoDictionary") {
 					if (args[1] is not Mod mod) {
 						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
