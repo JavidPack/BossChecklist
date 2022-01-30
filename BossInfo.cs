@@ -150,8 +150,14 @@ namespace BossChecklist
 				this.overrideIconTexture = "Terraria/Images/NPC_Head_0";
 			}
 			this.available = available ?? (() => true);
-
 			this.hidden = false;
+
+			// Add to Opted Mods if a new mod
+			if (modSource != "Unknown" && modSource != "Terraria") {
+				if (!BossUISystem.Instance.OptedModNames.Contains(SourceDisplayNameWithoutChatTags(modSource))) {
+					BossUISystem.Instance.OptedModNames.Add(SourceDisplayNameWithoutChatTags(modSource));
+				}
+			}
 		}
 
 		// Workaround for vanilla events with illogical translation keys.
@@ -166,7 +172,6 @@ namespace BossChecklist
 		}
 
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
-			Func<bool> avail = () => true;
 			string nameKey = name.Substring(name.LastIndexOf("."));
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 			return new BossInfo(
@@ -176,7 +181,7 @@ namespace BossChecklist
 				name,
 				ids,
 				downed,
-				avail,
+				() => true,
 				spawnItem,
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
 				BossChecklist.bossTracker.SetupLoot(ids[0]),

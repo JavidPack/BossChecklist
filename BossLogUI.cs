@@ -1262,15 +1262,7 @@ namespace BossChecklist
 		private void UpdateCredits() {
 			PageNum = -2;
 			ResetBothPages();
-			List<string> optedMods = new List<string>();
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.modSource != "Terraria" && boss.modSource != "Unknown") {
-					string sourceDisplayName = boss.SourceDisplayName;
-					if (!optedMods.Contains(sourceDisplayName)) {
-						optedMods.Add(sourceDisplayName);
-					}
-				}
-			}
+			List<string> optedMods = BossUISystem.Instance.OptedModNames;
 
 			pageTwoItemList.Left.Pixels = 30;
 			pageTwoItemList.Top.Pixels = 75;

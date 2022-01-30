@@ -562,17 +562,7 @@ namespace BossChecklist.UIElements
 					}
 
 					if (Id == "PageTwo") { // Supported Mod Credits Page
-						List<string> optedMods = new List<string>();
-						foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-							if (boss.modSource != "Terraria" && boss.modSource != "Unknown") {
-								string sourceDisplayName = boss.SourceDisplayName;
-								if (!optedMods.Contains(sourceDisplayName)) {
-									optedMods.Add(sourceDisplayName);
-								}
-							}
-						}
-
-						if (optedMods.Count > 0) {
+						if (BossUISystem.Instance.OptedModNames.Count > 0) {
 							Vector2 pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 5);
 							Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods"), pos, Color.LightSkyBlue);
 							pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 35);
