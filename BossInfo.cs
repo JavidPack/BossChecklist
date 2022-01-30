@@ -84,7 +84,7 @@ namespace BossChecklist
 
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 		
-		internal string SourceDisplayNameWithoutChatTags(string modSource) {
+		internal static string SourceDisplayNameWithoutChatTags(string modSource) {
 			string editedName = "";
 
 			for (int c = 0; c < modSource.Length; c++) {
@@ -252,7 +252,7 @@ namespace BossChecklist
 		internal string Key => modSource + " " + internalName;
 		internal List<int> values;
 
-		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : ModLoader.GetMod(modSource).DisplayName;
+		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : BossInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
 		internal OrphanInfo(OrphanType type, string modSource, string internalName, List<int> values) {
 			this.type = type;
