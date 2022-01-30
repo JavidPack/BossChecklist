@@ -76,6 +76,7 @@ Mods: {
 			DD2OgreT3: Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
 			DD2DarkMageT3: Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
 			MartianSaucer: Occasionally appears during Martian Madness! Start Martian Madness by being detected by an alien probe.
+			TheTorchGod: Place 101 torches while underground. The event starts once the last torch is placed.
 		}
 
 		BossLog: {

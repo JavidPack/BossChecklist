@@ -850,6 +850,10 @@ namespace BossChecklist
 					TotalRecipes++;
 				}
 				spawn.SetDefaults(boss.spawnItem[RecipePageNum]);
+				// TODO: temp until figuring out what to do with Torch God info
+				if (boss.npcIDs.Contains(NPCID.TorchGod) && spawn.type == ItemID.Torch) {
+					spawn.stack = 101;
+				}
 
 				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
 				spawnItemSlot.Height.Pixels = 50;
@@ -1538,7 +1542,8 @@ namespace BossChecklist
 				"Martian Madness" => ModContent.Request<Texture2D>("Terraria/Images/Extra_10"),
 				"Pirate Invasion" => ModContent.Request<Texture2D>("Terraria/Images/Extra_11"),
 				"Pumpkin Moon"    => ModContent.Request<Texture2D>("Terraria/Images/Extra_12"),
-				"Old One's Army"  => BossLogUI.GetBossHead(NPCID.DD2LanePortal),
+				"Old One's Army"  => ModContent.Request<Texture2D>("Terraria/Images/Extra_79"),
+				"The Torch God" => ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
 				"Blood Moon"      => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventBloodMoon_Head"),
 				"Solar Eclipse"   => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventSolarEclipse_Head"),
 				_                 => TextureAssets.NpcHead[0]

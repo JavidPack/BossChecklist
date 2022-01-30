@@ -68,6 +68,7 @@ namespace BossChecklist
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
 				
 				// Minibosses and Events -- Vanilla
+				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "The Torch God", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch }).WithCustomTranslationKey("$NPCName.TorchGod"),
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter }),
 					// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard }).WithCustomTranslationKey("$LegacyInterface.88"),
@@ -929,6 +930,11 @@ namespace BossChecklist
 		}
 
 		internal List<int> SetupEventNPCList(string eventName) {
+			if (eventName == "The Torch God") {
+				return new List<int>() {
+					NPCID.TorchGod,
+				};
+			}
 			if (eventName == "Blood Moon") {
 				return new List<int>() {
 					NPCID.BloodZombie,
@@ -943,7 +949,7 @@ namespace BossChecklist
 					NPCID.CrimsonPenguin,
 					NPCID.Clown,
 					NPCID.ChatteringTeethBomb,
-					NPCID.WanderingEye,
+					NPCID.EyeballFlyingFish,
 					NPCID.ZombieMerman,
 					NPCID.GoblinShark,
 					NPCID.BloodEelHead,
@@ -1093,6 +1099,11 @@ namespace BossChecklist
 		}
 
 		internal List<int> SetupEventLoot(string eventName) {
+			if (eventName == "The Torch God") {
+				return new List<int>() {
+					ItemID.TorchGodsFavor,
+				};
+			}
 			if (eventName == "Blood Moon") {
 				return new List<int>() {
 					ItemID.BunnyHood,
@@ -1245,6 +1256,12 @@ namespace BossChecklist
 		}
 
 		internal List<int> SetupEventCollectibles(string eventName) {
+			if (eventName == "The Torch God") {
+				return new List<int>() {
+					ItemID.MusicBoxBoss3,
+					ItemID.MusicBoxOWWallOfFlesh
+				};
+			}
 			if (eventName == "Blood Moon") {
 				return new List<int>() {
 					ItemID.MusicBoxEerie,

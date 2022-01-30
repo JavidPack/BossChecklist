@@ -673,7 +673,7 @@ namespace BossChecklist.UIElements
 							// Hovering and rightclick will copy to clipboard
 							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
 								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
-									BossUISystem.Instance.UIHoverText = "Click to copy internal 'boss key' to clipboard";
+									BossUISystem.Instance.UIHoverText = $"Click to copy internal 'boss key' to clipboard:\n{selectedBoss.Key}";
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
 										Platform.Get<IClipboard>().Value = selectedBoss.Key;
 									}
@@ -686,7 +686,7 @@ namespace BossChecklist.UIElements
 
 							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
 								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
-									BossUISystem.Instance.UIHoverText = "Click to copy internal 'mod source' to clipboard";
+									BossUISystem.Instance.UIHoverText = $"Click to copy internal 'mod source' to clipboard:\n{selectedBoss.modSource}";
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
 										Platform.Get<IClipboard>().Value = selectedBoss.modSource;
 									}
