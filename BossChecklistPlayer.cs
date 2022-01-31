@@ -14,8 +14,9 @@ namespace BossChecklist
 				}
 				BossChecklistUI.Visible = !BossChecklistUI.Visible;
 			}
-			if (BossChecklist.ToggleBossLog.JustPressed) { 
-				BossUISystem.Instance.BossLog.ToggleBossLog(!BossUISystem.Instance.BossLog.BossLogVisible);
+			if (BossChecklist.ToggleBossLog.JustPressed) {
+				BossLogUI.PendingToggleBossLogUI = true;
+				//BossUISystem.Instance.BossLog.ToggleBossLog(!BossUISystem.Instance.BossLog.BossLogVisible);
 
 				// Debug assistance, allows for reinitializing BossLog in-game
 				//BossChecklist.instance.BossLog.RemoveAllChildren();

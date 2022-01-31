@@ -89,6 +89,7 @@ namespace BossChecklist
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool showHidden = false;
+		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
 
 		private bool bossLogVisible;
 		public bool BossLogVisible {
@@ -409,6 +410,10 @@ namespace BossChecklist
 		}
 
 		public override void Update(GameTime gameTime) {
+			if (PendingToggleBossLogUI) {
+				PendingToggleBossLogUI = false;
+				BossUISystem.Instance.BossLog.ToggleBossLog(!BossUISystem.Instance.BossLog.BossLogVisible);
+			}
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
 			base.Update(gameTime);
 		}
