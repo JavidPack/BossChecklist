@@ -122,17 +122,21 @@ namespace BossChecklist
 
 		public void ToggleBossLog(bool show = true, bool resetPage = false) {
 			if (PageNum == -3) {
-				resetPage = true;
-			}
-			if (resetPage) {
+				// Reset page, PageNum is only -3 when entering a world.
+				// This is to reset the page from what the user previously had back to the Table of Contents
 				PageNum = -1;
 				CategoryPageNum = 0;
-				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
-				filterPanel.Top.Pixels = -5000; // throw offscreen
 				UpdateTableofContents();
 			}
 			else {
 				UpdateCatPage(CategoryPageNum);
+			}
+
+			if (show) {
+				// Update UI Element positioning before marked visible
+				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
+				ResetUIPositioning();
+				UpdateTabNavPos();
 			}
 
 			// If UI is closed on a new record page, remove the new record from the list
@@ -194,18 +198,12 @@ namespace BossChecklist
 			BookArea = new BossLogPanel();
 			BookArea.Width.Pixels = 800;
 			BookArea.Height.Pixels = 478;
-			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
-			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
-
-			int offsetY = 100;
 
 			ToCTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
 				Id = "ToCFilter_Tab"
 			};
 			ToCTab.Height.Pixels = 76;
 			ToCTab.Width.Pixels = 32;
-			ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
-			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
 			ToCTab.OnClick += OpenViaTab;
 
 			BossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -213,8 +211,6 @@ namespace BossChecklist
 			};
 			BossTab.Height.Pixels = 76;
 			BossTab.Width.Pixels = 32;
-			BossTab.Left.Pixels = BookArea.Left.Pixels - 20;
-			BossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 1);
 			BossTab.OnClick += OpenViaTab;
 
 			MiniBossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -222,8 +218,6 @@ namespace BossChecklist
 			};
 			MiniBossTab.Height.Pixels = 76;
 			MiniBossTab.Width.Pixels = 32;
-			MiniBossTab.Left.Pixels = BookArea.Left.Pixels - 20;
-			MiniBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 2);
 			MiniBossTab.OnClick += OpenViaTab;
 
 			EventTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -231,8 +225,6 @@ namespace BossChecklist
 			};
 			EventTab.Height.Pixels = 76;
 			EventTab.Width.Pixels = 32;
-			EventTab.Left.Pixels = BookArea.Left.Pixels - 20;
-			EventTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 3);
 			EventTab.OnClick += OpenViaTab;
 
 			CreditsTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
@@ -240,17 +232,13 @@ namespace BossChecklist
 			};
 			CreditsTab.Height.Pixels = 76;
 			CreditsTab.Width.Pixels = 32;
-			CreditsTab.Left.Pixels = BookArea.Left.Pixels - 20;
-			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
 			CreditsTab.OnClick += OpenViaTab;
 
 			PageOne = new BossLogPanel() {
-				Id = "PageOne"
+				Id = "PageOne",
 			};
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
-			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
-			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			PrevPage = new BossAssistButton(prevTexture, "") {
 				Id = "Previous"
@@ -268,20 +256,6 @@ namespace BossChecklist
 			prehardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			prehardmodeList.PaddingTop = 5;
 
-			scrollOne = new BossLogUIElements.FixedUIScrollbar();
-			scrollOne.SetView(100f, 1000f);
-			scrollOne.Top.Pixels = 50f;
-			scrollOne.Left.Pixels = -18;
-			scrollOne.Height.Set(-24f, 0.75f);
-			scrollOne.HAlign = 1f;
-
-			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
-			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Pixels = 50f;
-			scrollTwo.Left.Pixels = -13;
-			scrollTwo.Height.Set(-24f, 0.75f);
-			scrollTwo.HAlign = 1f;
-
 			PageTwo = new BossLogPanel() {
 				Id = "PageTwo"
 			};
@@ -298,8 +272,6 @@ namespace BossChecklist
 			};
 			filterPanel.Height.Pixels = 166;
 			filterPanel.Width.Pixels = 50;
-			filterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
-			filterPanel.Top.Pixels = 0;
 
 			filterCheckMark = new List<BookUI>();
 			filterCheck = new List<BookUI>();
@@ -438,36 +410,6 @@ namespace BossChecklist
 
 		public override void Update(GameTime gameTime) {
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
-
-			// We reset the position of the button to make sure it updates with the screen res
-			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
-			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
-			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
-			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 415 + 800 - PageTwo.Width.Pixels;
-			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-
-			// Updating tabs to proper positions
-			CreditsTab.Left.Pixels = BookArea.Left.Pixels + (PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-
-			if (PageNum != -1) {
-				filterOpen = false;
-			}
-
-			// Filter panel update
-			if (filterOpen) {
-				filterPanel.Top.Pixels = ToCTab.Top.Pixels;
-				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20 - filterPanel.Width.Pixels;
-				filterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
-			}
-			else {
-				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
-				filterPanel.Top.Pixels = -5000; // throw offscreen
-			}
-
 			base.Update(gameTime);
 		}
 
@@ -481,6 +423,60 @@ namespace BossChecklist
 					hoveredTextSnippet.OnClick();
 				}
 				hoveredTextSnippet = null;
+			}
+		}
+
+		public void ResetUIPositioning() {
+			// Reset the position of the button to make sure it updates with the screen res
+			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
+			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
+			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
+			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
+			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 415 + 800 - PageTwo.Width.Pixels;
+			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
+
+			int offsetY = 50;
+
+			// ToC/Filter Tab and Credits Tab never changes position, just visibility
+			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
+			ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			CreditsTab.Left.Pixels = BookArea.Left.Pixels + BookArea.Width.Pixels - 12;
+			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
+			filterPanel.Top.Pixels = -5000; // throw offscreen
+
+			// Reset book tabs Y positioning after BookArea adjusted
+			BossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 1);
+			MiniBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 2);
+			EventTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 3);
+			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
+			UpdateTabNavPos();
+		}
+
+		private void UpdateTabNavPos() {
+			// Updating tabs to proper positions
+			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			UpdateFilterTabPos(false);
+		}
+
+		private void UpdateFilterTabPos(bool tabClicked) {
+			if (tabClicked) {
+				filterOpen = !filterOpen;
+			}
+			if (PageNum != -1) {
+				filterOpen = false;
+			}
+
+			// Page changes should always reset the filter tab's UI elements
+			if (filterOpen) {
+				filterPanel.Top.Pixels = ToCTab.Top.Pixels;
+				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20 - filterPanel.Width.Pixels;
+				filterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
+			}
+			else {
+				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+				filterPanel.Top.Pixels = -5000; // throw offscreen
 			}
 		}
 
@@ -557,7 +553,7 @@ namespace BossChecklist
 			}
 
 			if (id == "ToCFilter_Tab" && PageNum == -1) {
-				filterOpen = !filterOpen;
+				UpdateFilterTabPos(true);
 				return;
 			}
 
@@ -579,6 +575,9 @@ namespace BossChecklist
 			else {
 				UpdateTableofContents();
 			}
+
+			// Update tabs to be properly positioned on either the left or right side
+			UpdateTabNavPos();
 
 			if (PageNum >= 0) {
 				ResetBothPages();
@@ -767,6 +766,8 @@ namespace BossChecklist
 				}
 			}
 
+			// Update tabs to be properly positioned on either the left or right side
+			UpdateTabNavPos();
 			ResetBothPages();
 			UpdateCatPage(CategoryPageNum);
 		}

@@ -1377,8 +1377,10 @@ namespace BossChecklist.UIElements
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
 				if (Id == "ToCFilter_Tab") {
+					// The hardback part of the UIPanel should be layered under all of the tabs, so it is drawn here
 					Asset<Texture2D> pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Back");
-					Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
+					BossLogPanel panel = BossUISystem.Instance.BossLog.BookArea;
+					Vector2 pagePos = new Vector2(panel.Left.Pixels, panel.Top.Pixels);
 					spriteBatch.Draw(pages.Value, pagePos, BossChecklist.BossLogConfig.BossLogColor);
 				}
 				if (!Id.EndsWith("_Tab")) {
@@ -1421,8 +1423,10 @@ namespace BossChecklist.UIElements
 				}
 				if (Id == "Event_Tab") {
 					// Paper Drawing
+					// The paper part of the UIPanel should be layered on top of all tabs, so it is drawn here
 					Asset<Texture2D> pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Paper");
-					Vector2 pagePos = new Vector2((Main.screenWidth / 2) - 400, (Main.screenHeight / 2) - 250);
+					BossLogPanel panel = BossUISystem.Instance.BossLog.BookArea;
+					Vector2 pagePos = new Vector2(panel.Left.Pixels, panel.Top.Pixels);
 					spriteBatch.Draw(pages.Value, pagePos, Color.White);
 				}
 
