@@ -716,7 +716,13 @@ namespace BossChecklist.UIElements
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = BossLogUI.GetEventIcon(info).Value;
 									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + 15, GetInnerDimensions().ToRectangle().Y + 50);
-									Color faded = info.downed() ? Color.White : new Color(128, 128, 128, 128);
+									Color faded = new Color(128, 128, 128, 128);
+									if (BossChecklist.BossLogConfig.BossSilhouettes) {
+										faded = Color.Black;
+									}
+									if (info.downed()) {
+										faded = Color.White;
+									}
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
@@ -979,7 +985,13 @@ namespace BossChecklist.UIElements
 									if (info.npcIDs.Contains(npcID)) {
 										Texture2D head = info.overrideIconTexture == "" ? BossLogUI.GetBossHead(npcID).Value : ModContent.Request<Texture2D>(info.overrideIconTexture).Value;
 										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + headTextureOffsetX + 15, GetInnerDimensions().ToRectangle().Y + 100);
-										Color faded = info.downed() ? Color.White : new Color(128, 128, 128, 128);
+										Color faded = new Color(128, 128, 128, 128);
+										if (BossChecklist.BossLogConfig.BossSilhouettes) {
+											faded = Color.Black;
+										}
+										if (info.downed()) {
+											faded = Color.White;
+										}
 										spriteBatch.Draw(head, pos, faded);
 										headTextureOffsetX += head.Width + 5;
 										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + head.Width) {
@@ -1032,6 +1044,9 @@ namespace BossChecklist.UIElements
 									int bannerID = Item.NPCtoBanner(npcID);
 									if (bannerID > 0 && !NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)]) {
 										int bannerItem = Item.BannerToItem(bannerID);
+										if (BossChecklist.BossLogConfig.BossSilhouettes) {
+											faded = Color.Black;
+										}
 										if (NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem]) {
 											faded = Color.White;
 										}
@@ -1041,17 +1056,20 @@ namespace BossChecklist.UIElements
 									}
 
 									for (int j = 0; j < 3; j++) {
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset + 15, GetInnerDimensions().ToRectangle().Y + 100 + 16 * j + offsetY);
+										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset + 15, GetInnerDimensions().ToRectangle().Y + 100 + (16 * j) + offsetY);
 										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
 										spriteBatch.Draw(banner.Value, pos, rect, faded);
 
 										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
 											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-												string killcount = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}";
-												if (NPC.killCount[Item.NPCtoBanner(npcID)] < ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]) {
+												bool killCountNotReached = NPC.killCount[Item.NPCtoBanner(npcID)] < ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)];
+												bool masked = BossChecklist.BossLogConfig.BossSilhouettes && killCountNotReached;
+												string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+												string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+												if (killCountNotReached) {
 													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
 												}
-												BossUISystem.Instance.UIHoverText = killcount;
+												BossUISystem.Instance.UIHoverText = npcName + killcount;
 											}
 										}
 									}
