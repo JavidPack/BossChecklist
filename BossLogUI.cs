@@ -303,45 +303,7 @@ namespace BossChecklist
 			}
 
 			// Setup the inital checkmarks to display what the user has prematurely selected
-
-			// ...Bosses
-			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
-
-			// ...Mini-Bosses
-			if (BossChecklist.BossLogConfig.OnlyBosses) {
-				filterCheckMark[1].SetImage(xTexture);
-			}
-			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
-				filterCheckMark[1].SetImage(checkMarkTexture);
-			}
-			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
-				filterCheckMark[1].SetImage(xTexture);
-			}
-			else {
-				filterCheckMark[1].SetImage(circleTexture);
-			}
-
-			// ...Events
-			if (BossChecklist.BossLogConfig.OnlyBosses) {
-				filterCheckMark[2].SetImage(xTexture);
-			}
-			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
-				filterCheckMark[2].SetImage(checkMarkTexture);
-			}
-			else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
-				filterCheckMark[2].SetImage(xTexture);
-			}
-			else {
-				filterCheckMark[2].SetImage(circleTexture);
-			}
-
-			// ...Hidden Entries
-			if (showHidden) {
-				filterCheckMark[3].SetImage(checkMarkTexture);
-			}
-			else {
-				filterCheckMark[3].SetImage(xTexture);
-			}
+			Filters_SetImage();
 
 			// Append the filter checks to the filter panel
 			foreach (BookUI uiimage in filterCheck) {
@@ -433,18 +395,18 @@ namespace BossChecklist
 
 		public void ResetUIPositioning() {
 			// Reset the position of the button to make sure it updates with the screen res
-			BookArea.Left.Pixels = (Main.screenWidth / 2) - 400;
-			BookArea.Top.Pixels = (Main.screenHeight / 2) - (478 / 2) - 6;
-			PageOne.Left.Pixels = (Main.screenWidth / 2) - 400 + 20;
-			PageOne.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
-			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 415 + 800 - PageTwo.Width.Pixels;
-			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
+			BookArea.Left.Pixels = (Main.screenWidth / 2) - (BookArea.Width.Pixels / 2);
+			BookArea.Top.Pixels = (Main.screenHeight / 2) - (BookArea.Height.Pixels / 2) - 6;
+			PageOne.Left.Pixels = BookArea.Left.Pixels + 20;
+			PageOne.Top.Pixels = BookArea.Top.Pixels + 12;
+			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
+			PageTwo.Top.Pixels = BookArea.Top.Pixels + 12;
 
 			int offsetY = 50;
 
-			// ToC/Filter Tab and Credits Tab never changes position, just visibility
-			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
+			// ToC/Filter Tab and Credits Tab never flips to the other side, just disappears when on said page
 			ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
 			CreditsTab.Left.Pixels = BookArea.Left.Pixels + BookArea.Width.Pixels - 12;
 			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
 			filterPanel.Top.Pixels = -5000; // throw offscreen
@@ -473,7 +435,6 @@ namespace BossChecklist
 				filterOpen = false;
 			}
 
-			// Page changes should always reset the filter tab's UI elements
 			if (filterOpen) {
 				filterPanel.Top.Pixels = ToCTab.Top.Pixels;
 				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20 - filterPanel.Width.Pixels;
@@ -485,6 +446,47 @@ namespace BossChecklist
 			}
 		}
 
+		private void Filters_SetImage() {
+			// ...Bosses
+			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
+
+			// ...Mini-Bosses
+			if (BossChecklist.BossLogConfig.OnlyBosses) {
+				filterCheckMark[1].SetImage(xTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
+				filterCheckMark[1].SetImage(checkMarkTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
+				filterCheckMark[1].SetImage(xTexture);
+			}
+			else {
+				filterCheckMark[1].SetImage(circleTexture);
+			}
+
+			// ...Events
+			if (BossChecklist.BossLogConfig.OnlyBosses) {
+				filterCheckMark[2].SetImage(xTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
+				filterCheckMark[2].SetImage(checkMarkTexture);
+			}
+			else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
+				filterCheckMark[2].SetImage(xTexture);
+			}
+			else {
+				filterCheckMark[2].SetImage(circleTexture);
+			}
+
+			// ...Hidden Entries
+			if (showHidden) {
+				filterCheckMark[3].SetImage(checkMarkTexture);
+			}
+			else {
+				filterCheckMark[3].SetImage(xTexture);
+			}
+		}
+
 		private void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not BookUI book)
 				return;
@@ -493,51 +495,38 @@ namespace BossChecklist
 			if (rowID == "0") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
-					filterCheckMark[0].SetImage(circleTexture);
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
-					filterCheckMark[0].SetImage(checkMarkTexture);
 				}
 			}
 			if (rowID == "1" && !BossChecklist.BossLogConfig.OnlyBosses) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
-					filterCheckMark[1].SetImage(circleTexture);
 				}
 				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide when completed") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide";
-					filterCheckMark[1].SetImage(xTexture);
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
-					filterCheckMark[1].SetImage(checkMarkTexture);
 				}
 			}
 			if (rowID == "2" && !BossChecklist.BossLogConfig.OnlyBosses) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
-					filterCheckMark[2].SetImage(circleTexture);
 				}
 				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide when completed") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide";
-					filterCheckMark[2].SetImage(xTexture);
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterEvents = "Show";
-					filterCheckMark[2].SetImage(checkMarkTexture);
 				}
 			}
 			if (rowID == "3") {
 				showHidden = !showHidden;
-				if (showHidden) {
-					filterCheckMark[3].SetImage(checkMarkTexture);
-				}
-				else {
-					filterCheckMark[3].SetImage(xTexture);
-				}
 			}
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+			Filters_SetImage();
 			UpdateTableofContents();
 		}
 
@@ -1245,7 +1234,7 @@ namespace BossChecklist
 				}
 				
 				next.PaddingTop = 5;
-				next.PaddingLeft = 22;
+				next.PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0);
 				next.OnClick += JumpToBossPage;
 				next.OnRightClick += HideBoss;
 
@@ -1549,7 +1538,7 @@ namespace BossChecklist
 				"Pirate Invasion" => ModContent.Request<Texture2D>("Terraria/Images/Extra_11"),
 				"Pumpkin Moon"    => ModContent.Request<Texture2D>("Terraria/Images/Extra_12"),
 				"Old One's Army"  => ModContent.Request<Texture2D>("Terraria/Images/Extra_79"),
-				"The Torch God" => ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
+				"The Torch God"   => ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
 				"Blood Moon"      => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventBloodMoon_Head"),
 				"Solar Eclipse"   => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventSolarEclipse_Head"),
 				_                 => TextureAssets.NpcHead[0]

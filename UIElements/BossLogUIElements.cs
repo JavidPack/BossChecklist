@@ -449,7 +449,7 @@ namespace BossChecklist.UIElements
 				if (BossLogUI.PageNum == -1) { // Table of Contents
 					List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
 					if (Id == "PageOne") {
-						Vector2 pos = new Vector2(GetInnerDimensions().X + 20, GetInnerDimensions().Y + 15);
+						Vector2 pos = new Vector2(GetInnerDimensions().X + 30, GetInnerDimensions().Y + 15);
 						Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode"), pos, Colors.RarityAmber, 0.6f);
 						if (BossChecklist.BossLogConfig.CountDownedBosses) {
 							int totalPreHard = 0;
