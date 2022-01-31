@@ -479,12 +479,7 @@ namespace BossChecklist
 			}
 
 			// ...Hidden Entries
-			if (showHidden) {
-				filterCheckMark[3].SetImage(checkMarkTexture);
-			}
-			else {
-				filterCheckMark[3].SetImage(xTexture);
-			}
+			filterCheckMark[3].SetImage(showHidden ? checkMarkTexture : xTexture);
 		}
 
 		private void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
@@ -571,6 +566,7 @@ namespace BossChecklist
 			}
 
 			// Update tabs to be properly positioned on either the left or right side
+			UpdateFilterTabPos(false);
 			UpdateTabNavPos();
 
 			if (PageNum >= 0) {
@@ -1357,6 +1353,7 @@ namespace BossChecklist
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
 			UpdateCatPage(CategoryPageNum);
+			UpdateFilterTabPos(false); // Clicking entry on the ToC should update filter panel
 		}
 
 		private void ResetBothPages() {
