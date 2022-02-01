@@ -237,14 +237,15 @@ namespace BossChecklist.UIElements
 					Main.instance.LoadTiles(TileID.DemonAltar);
 					int offsetX = 0;
 					int offsetY = 0;
-					int offsetSrc = 0;
-					if (hoverText == crimsonAltar) {
-						offsetSrc = 3;
-					}
+					int offsetSrc = hoverText == crimsonAltar ? 3 : 0;
 					for (int i = 0; i < 6; i++) {
-						Vector2 pos = new Vector2(rectangle.X + (rectangle.Width / 2) - (24 * 0.64f) + (16 * offsetX * 0.64f) - 3, rectangle.Y + (rectangle.Height / 2) - (16 * 0.64f) + (16 * offsetY * 0.64f) - 3);
+						float scale = 0.64f;
 						Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
-						spriteBatch.Draw(TextureAssets.Tile[TileID.DemonAltar].Value, pos, src, Color.White, 0f, Vector2.Zero, 0.64f, SpriteEffects.None, 0f);
+						// Determine the position of EACH tile of the selected altar (multi-tile, 3x2)
+						float posX = rectangle.X + (rectangle.Width / 2) - (src.Width * scale / 2) + (src.Width * scale * (offsetX - 1));
+						float posY = rectangle.Y + (rectangle.Height / 2) - (src.Height * scale / 2) + (src.Height * scale / 2 * (offsetY == 0 ? -1 : 1));
+						Vector2 pos = new Vector2(posX, posY);
+						spriteBatch.Draw(TextureAssets.Tile[TileID.DemonAltar].Value, pos, src, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
 						offsetX++;
 						if (offsetX == 3) {

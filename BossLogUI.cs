@@ -79,15 +79,14 @@ namespace BossChecklist
 		public static Asset<Texture2D> eventNavTexture;
 		public static Asset<Texture2D> filterTexture;
 		public static Asset<Texture2D> hiddenTexture;
+		public static Asset<Texture2D> cycleTexture;
 		public static Asset<Texture2D> checkMarkTexture;
 		public static Asset<Texture2D> xTexture;
 		public static Asset<Texture2D> circleTexture;
 		public static Asset<Texture2D> checkboxTexture;
-		//public static Texture2D silverStarTexture; // unused
 		public static Asset<Texture2D> chestTexture;
-		public static Asset<Texture2D> starTexture;
 		public static Asset<Texture2D> goldChestTexture;
-		
+
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool showHidden = false;
@@ -172,13 +171,13 @@ namespace BossChecklist
 			eventNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event");
 			filterTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Filter");
 			hiddenTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Hidden");
+			cycleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CycleRecipe");
 
 			checkMarkTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
 			xTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
 			circleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Next", AssetRequestMode.ImmediateLoad);
 			checkboxTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad);
 			chestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Chest");
-			starTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Star");
 			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
 
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
@@ -848,11 +847,13 @@ namespace BossChecklist
 					spawn.stack = 101;
 				}
 
+				Rectangle slotRect = TextureAssets.InventoryBack.Value.Bounds;
+
 				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
-				spawnItemSlot.Height.Pixels = 50;
-				spawnItemSlot.Width.Pixels = 50;
-				spawnItemSlot.Top.Pixels = 230;
+				spawnItemSlot.Width.Pixels = slotRect.Width;
+				spawnItemSlot.Height.Pixels = slotRect.Height;
 				spawnItemSlot.Left.Pixels = 48 + (56 * 2);
+				spawnItemSlot.Top.Pixels = 230;
 				PageTwo.Append(spawnItemSlot);
 
 				int row = 0;
@@ -861,10 +862,10 @@ namespace BossChecklist
 					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem, 0.85f) {
 						Id = "ingredient_" + k
 					};
-					ingList.Height.Pixels = 50;
-					ingList.Width.Pixels = 50;
-					ingList.Top.Pixels = 240 + (48 * (row + 1));
+					ingList.Width.Pixels = slotRect.Width * 0.85f;
+					ingList.Height.Pixels = slotRect.Height * 0.85f;
 					ingList.Left.Pixels = 20 + (48 * col);
+					ingList.Top.Pixels = 240 + (48 * (row + 1));
 					PageTwo.Append(ingList);
 					col++;
 					if (k == 6) {
@@ -887,8 +888,8 @@ namespace BossChecklist
 					craft.SetDefaults(ItemID.PowerGlove);
 
 					LogItemSlot craftItem = new LogItemSlot(craft, false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
-					craftItem.Height.Pixels = 50;
-					craftItem.Width.Pixels = 50;
+					craftItem.Width.Pixels = slotRect.Width * 0.85f;
+					craftItem.Height.Pixels = slotRect.Height * 0.85f;
 					craftItem.Top.Pixels = 240 + (48 * (row + 2));
 					craftItem.Left.Pixels = 20;
 					PageTwo.Append(craftItem);
@@ -915,10 +916,10 @@ namespace BossChecklist
 							}
 							tileList = new LogItemSlot(craft, false, craft.HoverName, ItemSlot.Context.EquipArmorVanity, 0.85f);
 						}
-						tileList.Height.Pixels = 50;
-						tileList.Width.Pixels = 50;
-						tileList.Top.Pixels = 240 + (48 * (row + 2));
+						tileList.Width.Pixels = slotRect.Width * 0.85f;
+						tileList.Height.Pixels = slotRect.Height * 0.85f;
 						tileList.Left.Pixels = 20 + (48 * l);
+						tileList.Top.Pixels = 240 + (48 * (row + 2));
 						PageTwo.Append(tileList);
 					}
 				}
@@ -927,10 +928,10 @@ namespace BossChecklist
 					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
 						Id = "PrevItem"
 					};
-					PrevItem.Top.Pixels = 245;
-					PrevItem.Left.Pixels = 140;
-					PrevItem.Width.Pixels = 14;
-					PrevItem.Height.Pixels = 20;
+					PrevItem.Width.Pixels = prevTexture.Value.Bounds.Width;
+					PrevItem.Height.Pixels = prevTexture.Value.Bounds.Width;
+					PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
+					PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
 					PrevItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(PrevItem);
 				}
@@ -939,23 +940,22 @@ namespace BossChecklist
 					BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
 						Id = "NextItem"
 					};
-					NextItem.Top.Pixels = 245;
-					NextItem.Left.Pixels = 218;
-					NextItem.Width.Pixels = 14;
-					NextItem.Height.Pixels = 20;
+					NextItem.Width.Pixels = nextTexture.Value.Bounds.Width;
+					NextItem.Height.Pixels = nextTexture.Value.Bounds.Height;
+					NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
+					NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
 					NextItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(NextItem);
 				}
 
 				if (TotalRecipes > 1) {
-					Asset<Texture2D> cycleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CycleRecipe", AssetRequestMode.ImmediateLoad);
 					BossAssistButton CycleItem = new BossAssistButton(cycleTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
 						Id = "CycleItem_" + TotalRecipes
 					};
-					CycleItem.Top.Pixels = 240;
-					CycleItem.Left.Pixels = 240;
 					CycleItem.Width.Pixels = cycleTexture.Value.Width;
 					CycleItem.Height.Pixels = cycleTexture.Value.Height;
+					CycleItem.Left.Pixels = 240;
+					CycleItem.Top.Pixels = 240;
 					CycleItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(CycleItem);
 				}
