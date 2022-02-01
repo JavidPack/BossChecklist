@@ -1581,5 +1581,14 @@ namespace BossChecklist
 			Utils.DrawInvBG(sb, bgPos, new Color(23, 25, 81, 255) * 0.925f);
 			Utils.DrawBorderString(sb, text, textPos, textColor);
 		}
+
+		public static bool MouseIntersects(float posX, float posY, int width, int height) {
+			if (Main.mouseX >= posX && Main.mouseX < posX + width) {
+				if (Main.mouseY >= posY && Main.mouseY < posY + height) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

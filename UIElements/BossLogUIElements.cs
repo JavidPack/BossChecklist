@@ -643,11 +643,9 @@ namespace BossChecklist.UIElements
 						spriteBatch.Draw(texture.Value, defeatpos, Color.White);
 
 						// Hovering over the head icon will display the defeated text
-						if (Main.mouseX >= firstHeadPos.X && Main.mouseX < firstHeadPos.X + firstHeadPos.Width) {
-							if (Main.mouseY >= firstHeadPos.Y && Main.mouseY < firstHeadPos.Y + firstHeadPos.Height) {
-								BossUISystem.Instance.UIHoverText = isChecked ? isDefeated : notDefeated;
-								BossUISystem.Instance.UIHoverTextColor = isChecked ? Colors.RarityGreen : Colors.RarityRed;
-							}
+						if (BossLogUI.MouseIntersects(firstHeadPos.X, firstHeadPos.Y, firstHeadPos.Width, firstHeadPos.Height)) {
+							BossUISystem.Instance.UIHoverText = isChecked ? isDefeated : notDefeated;
+							BossUISystem.Instance.UIHoverTextColor = isChecked ? Colors.RarityGreen : Colors.RarityRed;
 						}
 
 						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && selectedBoss.modSource != "Unknown";
@@ -671,12 +669,10 @@ namespace BossChecklist.UIElements
 							spriteBatch.Draw(clipboard, vec2, copied);
 
 							// Hovering and rightclick will copy to clipboard
-							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
-								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
-									BossUISystem.Instance.UIHoverText = $"Click to copy internal 'boss key' to clipboard:\n{selectedBoss.Key}";
-									if (Main.mouseLeft && Main.mouseLeftRelease) {
-										Platform.Get<IClipboard>().Value = selectedBoss.Key;
-									}
+							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Bounds.Width, clipboard.Bounds.Height)) {
+								BossUISystem.Instance.UIHoverText = $"Click to copy internal 'boss key' to clipboard:\n{selectedBoss.Key}";
+								if (Main.mouseLeft && Main.mouseLeftRelease) {
+									Platform.Get<IClipboard>().Value = selectedBoss.Key;
 								}
 							}
 
@@ -684,12 +680,10 @@ namespace BossChecklist.UIElements
 							copied = (Platform.Get<IClipboard>().Value == selectedBoss.modSource) ? Color.Gold : Color.White;
 							spriteBatch.Draw(clipboard, vec2, copied);
 
-							if (Main.mouseX >= vec2.X && Main.mouseX < vec2.X + clipboard.Bounds.Width) {
-								if (Main.mouseY >= vec2.Y && Main.mouseY < vec2.Y + clipboard.Bounds.Height) {
-									BossUISystem.Instance.UIHoverText = $"Click to copy internal 'mod source' to clipboard:\n{selectedBoss.modSource}";
-									if (Main.mouseLeft && Main.mouseLeftRelease) {
-										Platform.Get<IClipboard>().Value = selectedBoss.modSource;
-									}
+							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Bounds.Width, clipboard.Bounds.Height)) {
+								BossUISystem.Instance.UIHoverText = $"Click to copy internal 'mod source' to clipboard:\n{selectedBoss.modSource}";
+								if (Main.mouseLeft && Main.mouseLeftRelease) {
+									Platform.Get<IClipboard>().Value = selectedBoss.modSource;
 								}
 							}
 						}
@@ -915,18 +909,16 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(slot.Value, new Vector2(posRect.X, posRect.Y), new Color(175, 175, 125));
 									spriteBatch.Draw(achievements.Value, posRect, cutRect, Color.White);
 
-									if (Main.mouseX >= posRect.X && Main.mouseX < posRect.X + 64) {
-										if (Main.mouseY >= posRect.Y && Main.mouseY < posRect.Y + 64) {
-											// TODO: Change these texts to something better. A description of the record type
-											if (recordSlot == 1 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-												BossUISystem.Instance.UIHoverText = "Total times you killed the boss and total times the boss has killed you!";
-											}
-											if (recordSlot == 2) {
-												BossUISystem.Instance.UIHoverText = "The quickest time you became victorious!";
-											}
-											if (recordSlot == 3) {
-												BossUISystem.Instance.UIHoverText = "Avoid as many attacks as you can for a no-hitter!";
-											}
+									if (BossLogUI.MouseIntersects(posRect.X, posRect.Y, 64, 64)) {
+										// TODO: Change these texts to something better. A description of the record type
+										if (recordSlot == 1 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
+											BossUISystem.Instance.UIHoverText = "Total times you killed the boss and total times the boss has killed you!";
+										}
+										if (recordSlot == 2) {
+											BossUISystem.Instance.UIHoverText = "The quickest time you became victorious!";
+										}
+										if (recordSlot == 3) {
+											BossUISystem.Instance.UIHoverText = "Avoid as many attacks as you can for a no-hitter!";
 										}
 									}
 								}
@@ -994,12 +986,10 @@ namespace BossChecklist.UIElements
 										}
 										spriteBatch.Draw(head, pos, faded);
 										headTextureOffsetX += head.Width + 5;
-										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + head.Width) {
-											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + head.Height) {
-												BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
-												if (Main.mouseLeft && Main.mouseLeftRelease) {
-													BossLogUI.PageNum = bosses.FindIndex(x => x.Key == info.Key);
-												}
+										if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
+											BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
+											if (Main.mouseLeft && Main.mouseLeftRelease) {
+												BossLogUI.PageNum = bosses.FindIndex(x => x.Key == info.Key);
 											}
 										}
 										if (head.Height > headTextureOffsetY) {
@@ -1060,17 +1050,15 @@ namespace BossChecklist.UIElements
 										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
 										spriteBatch.Draw(banner.Value, pos, rect, faded);
 
-										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
-											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-												bool killCountNotReached = NPC.killCount[Item.NPCtoBanner(npcID)] < ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)];
-												bool masked = BossChecklist.BossLogConfig.BossSilhouettes && killCountNotReached;
-												string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
-												string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
-												if (killCountNotReached) {
-													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
-												}
-												BossUISystem.Instance.UIHoverText = npcName + killcount;
+										if (BossLogUI.MouseIntersects(pos.X, pos.Y, 16, 16)) {
+											bool killCountNotReached = NPC.killCount[Item.NPCtoBanner(npcID)] < ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)];
+											bool masked = BossChecklist.BossLogConfig.BossSilhouettes && killCountNotReached;
+											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+											if (killCountNotReached) {
+												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
 											}
+											BossUISystem.Instance.UIHoverText = npcName + killcount;
 										}
 									}
 									offset += 25;
@@ -1132,10 +1120,8 @@ namespace BossChecklist.UIElements
 										heightOffSet += heights[j];
 										heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
 
-										if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + 16) {
-											if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + 16) {
-												BossUISystem.Instance.UIHoverText = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
-											}
+										if (BossLogUI.MouseIntersects(pos.X, pos.Y, 16, 16)) {
+											BossUISystem.Instance.UIHoverText = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
 										}
 									}
 									offset += 25;
@@ -1555,22 +1541,22 @@ namespace BossChecklist.UIElements
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
 
-				CalculatedStyle innerDimensions = GetInnerDimensions();
-				Vector2 pos = new Vector2(innerDimensions.X - 20, innerDimensions.Y - 5);
+				CalculatedStyle inner = GetInnerDimensions();
+				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
 				List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 				// name check, for when progression matches
 				// index should never be -1 since variables passed in are within bounds
 				int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == bossName || x.internalName == bossName));
 
-				bool allLoot = false;
-				bool allCollect = false;
-				bool condCollect = false;
+				bool allLoot = true;
+				bool allCollect = true;
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				Item checkItem = new Item();
 
+				// Loop through player saved loot and boss loot to see if every item was obtained
 				foreach (int loot in sortedBosses[index].loot) {
-					if (loot == 0 || loot == -1) {
-						continue;
-					}
+					// Check for corruption/crimson vanilla items, and skip them based on world evil
+					// May need new method for looking for these items.
 					if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
 						if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow)) {
 							continue;
@@ -1579,51 +1565,70 @@ namespace BossChecklist.UIElements
 							continue;
 						}
 					}
+					// Find the index of the itemID within the player saved loot
 					int indexLoot = modPlayer.BossTrophies[index].loot.FindIndex(x => x.Type == loot);
-					if (indexLoot != -1) {
-						allLoot = true;
-					}
-					else { // Item not obtained
-						Item newItem = new Item();
-						newItem.SetDefaults(loot);
-						if (newItem.expert && !Main.expertMode) {
+					// Skip expert/master mode items if the world is not in expert/master mode.
+					// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
+					if (!Main.expertMode || !Main.masterMode) {
+						checkItem.SetDefaults(loot);
+						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}
-						else {
-							allLoot = false;
-							break;
-						}
-					}
-				}
-				if (sortedBosses[index].collection.Count == 0 || sortedBosses[index].collection.All(x => x <= 0)) {
-					condCollect = true;
-				}
-				else {
-					foreach (int collectible in sortedBosses[index].collection) {
-						if (collectible == -1 || collectible == 0) {
+						if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
 							continue;
 						}
-						int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
-						if (indexCollect != -1) {
-							allCollect = true;
-						}
-						else {
-							allCollect = false;
-							break;
-						}
+					}
+					// If the item index is not found, end the loop and set allLoot to false
+					// If this never occurs, the user successfully obtained all the items!
+					if (indexLoot == -1) {
+						allLoot = false;
+						break;
 					}
 				}
 
-				Vector2 pos2 = new Vector2(innerDimensions.X + FontAssets.MouseText.Value.MeasureString(displayName).X + 6, innerDimensions.Y - 2);
+				//Repeast everything for collectibles as well
+				foreach (int collectible in sortedBosses[index].collection) {
+					if (collectible == -1 || collectible == 0) {
+						continue;
+					}
+					int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
+					if (!Main.expertMode || !Main.masterMode) {
+						checkItem.SetDefaults(collectible);
+						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
+							continue;
+						}
+						if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
+							continue;
+						}
+					}
+					if (indexCollect == -1) {
+						allCollect = false;
+						break;
+					}
+				}
 
-				if (allLoot && (allCollect || condCollect)) {
-					spriteBatch.Draw(BossLogUI.goldChestTexture.Value, pos2, Color.White);
-				}
-				else if (allLoot) {
-					spriteBatch.Draw(BossLogUI.chestTexture.Value, pos2, Color.White);
-				}
-				else if (allCollect) {
-					spriteBatch.Draw(BossLogUI.starTexture.Value, pos2, Color.White);
+				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
+					CalculatedStyle parent = this.Parent.GetInnerDimensions();
+					int hardModeOffset = sortedBosses[index].progression > BossTracker.WallOfFlesh ? 10 : 0;
+
+					if (allLoot) {
+						Texture2D texture = BossLogUI.chestTexture.Value;
+						int offsetX = allCollect ? -6 : 7;
+						Vector2 pos2 = new Vector2(parent.X + parent.Width - (texture.Bounds.Width * 2) + offsetX - hardModeOffset, inner.Y - 2);
+						spriteBatch.Draw(texture, pos2, Color.White);
+						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Bounds.Width, texture.Bounds.Height)) {
+							BossUISystem.Instance.UIHoverText = $"All Loot Obtained!\n[Localization Needed]";
+						}
+					}
+					if (allCollect) {
+						Texture2D texture = BossLogUI.goldChestTexture.Value;
+						int offsetX = allLoot ? -1 : -14;
+						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Bounds.Width + offsetX - hardModeOffset, inner.Y - 2);
+						spriteBatch.Draw(texture, pos2, Color.White);
+						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Bounds.Width, texture.Bounds.Height)) {
+							BossUISystem.Instance.UIHoverText = $"All Collectibles Obtained!\n[Localization Needed]";
+						}
+					}
 				}
 				// TODO: Hover explanation or description.txt explanation.
 
@@ -1643,7 +1648,7 @@ namespace BossChecklist.UIElements
 							Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(displayName);
 							for (int i = 0; i < stringAdjust.X + 4; i++) {
 								Asset<Texture2D> strike = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Strike");
-								Rectangle strikePos = new Rectangle((int)(innerDimensions.X + i - 3), (int)(innerDimensions.Y + (stringAdjust.Y / 4)), 4, 3);
+								Rectangle strikePos = new Rectangle((int)(inner.X + i - 3), (int)(inner.Y + (stringAdjust.Y / 4)), 4, 3);
 								Rectangle strikeSrc = new Rectangle(0, 4, 4, 3);
 								if (i == 0) {
 									strikeSrc = new Rectangle(0, 0, 4, 3);

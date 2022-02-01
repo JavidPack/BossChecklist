@@ -79,6 +79,11 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
 		public bool DrawNextMark { get; set; }
 
+		[DefaultValue(false)]
+		[Label("[Localization Needed] Enable loot/collectible checklist")]
+		[Tooltip("[Localization Needed] The table of contents will also check if you've obtained all of a boss's loot and collectible items.")]
+		public bool LootCheckVisibility { get; set; }
+
 		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.BossSilhouettes")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossSilhouettes")]
