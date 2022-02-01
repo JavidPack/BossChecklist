@@ -1034,6 +1034,8 @@ namespace BossChecklist
 			}
 			else if (eventName == "Frost Moon") {
 				return new List<int>() {
+					NPCID.PresentMimic,
+					NPCID.Flocko,
 					NPCID.GingerbreadMan,
 					NPCID.ZombieElf,
 					NPCID.ElfArcher,
@@ -1041,7 +1043,6 @@ namespace BossChecklist
 					NPCID.Yeti,
 					NPCID.ElfCopter,
 					NPCID.Krampus,
-					NPCID.Flocko,
 					NPCID.Everscream,
 					NPCID.SantaNK1,
 					NPCID.IceQueen

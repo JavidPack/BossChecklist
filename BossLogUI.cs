@@ -67,7 +67,9 @@ namespace BossChecklist
 		public static Asset<Texture2D> bookTexture;
 		public static Asset<Texture2D> borderTexture;
 		public static Asset<Texture2D> fadedTexture;
+		public static Asset<Texture2D> tabTexture;
 		public static Asset<Texture2D> colorTexture;
+		public static Asset<Texture2D> bookUITexture;
 		public static Asset<Texture2D> prevTexture;
 		public static Asset<Texture2D> nextTexture;
 		public static Asset<Texture2D> tocTexture;
@@ -158,6 +160,8 @@ namespace BossChecklist
 			borderTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Border");
 			fadedTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Faded");
 			colorTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Color");
+			bookUITexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Back");
+			tabTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab");
 
 			prevTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Prev");
 			nextTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Next");
@@ -197,42 +201,42 @@ namespace BossChecklist
 			};
 
 			BookArea = new BossLogPanel();
-			BookArea.Width.Pixels = 800;
-			BookArea.Height.Pixels = 478;
+			BookArea.Width.Pixels = bookUITexture.Value.Bounds.Width;
+			BookArea.Height.Pixels = bookUITexture.Value.Bounds.Height;
 
-			ToCTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+			ToCTab = new BookUI(tabTexture) {
 				Id = "ToCFilter_Tab"
 			};
-			ToCTab.Height.Pixels = 76;
-			ToCTab.Width.Pixels = 32;
+			ToCTab.Width.Pixels = tabTexture.Value.Bounds.Width;
+			ToCTab.Height.Pixels = tabTexture.Value.Bounds.Height;
 			ToCTab.OnClick += OpenViaTab;
 
-			BossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+			BossTab = new BookUI(tabTexture) {
 				Id = "Boss_Tab"
 			};
-			BossTab.Height.Pixels = 76;
-			BossTab.Width.Pixels = 32;
+			BossTab.Width.Pixels = tabTexture.Value.Bounds.Width;
+			BossTab.Height.Pixels = tabTexture.Value.Bounds.Height;
 			BossTab.OnClick += OpenViaTab;
 
-			MiniBossTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+			MiniBossTab = new BookUI(tabTexture) {
 				Id = "Miniboss_Tab"
 			};
-			MiniBossTab.Height.Pixels = 76;
-			MiniBossTab.Width.Pixels = 32;
+			MiniBossTab.Width.Pixels = tabTexture.Value.Bounds.Width;
+			MiniBossTab.Height.Pixels = tabTexture.Value.Bounds.Height;
 			MiniBossTab.OnClick += OpenViaTab;
 
-			EventTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+			EventTab = new BookUI(tabTexture) {
 				Id = "Event_Tab"
 			};
-			EventTab.Height.Pixels = 76;
-			EventTab.Width.Pixels = 32;
+			EventTab.Width.Pixels = tabTexture.Value.Bounds.Width;
+			EventTab.Height.Pixels = tabTexture.Value.Bounds.Height;
 			EventTab.OnClick += OpenViaTab;
 
-			CreditsTab = new BookUI(ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab")) {
+			CreditsTab = new BookUI(tabTexture) {
 				Id = "Credits_Tab"
 			};
-			CreditsTab.Height.Pixels = 76;
-			CreditsTab.Width.Pixels = 32;
+			CreditsTab.Width.Pixels = tabTexture.Value.Bounds.Width;
+			CreditsTab.Height.Pixels = tabTexture.Value.Bounds.Height;
 			CreditsTab.OnClick += OpenViaTab;
 
 			PageOne = new BossLogPanel() {
@@ -244,8 +248,8 @@ namespace BossChecklist
 			PrevPage = new BossAssistButton(prevTexture, "") {
 				Id = "Previous"
 			};
-			PrevPage.Width.Pixels = 14;
-			PrevPage.Height.Pixels = 20;
+			PrevPage.Width.Pixels = prevTexture.Value.Bounds.Width;
+			PrevPage.Height.Pixels = prevTexture.Value.Bounds.Height;
 			PrevPage.Left.Pixels = 8;
 			PrevPage.Top.Pixels = 416;
 			PrevPage.OnClick += PageChangerClicked;
@@ -262,8 +266,6 @@ namespace BossChecklist
 			};
 			PageTwo.Width.Pixels = 375;
 			PageTwo.Height.Pixels = 480;
-			PageTwo.Left.Pixels = (Main.screenWidth / 2) - 415 + 800 - PageTwo.Width.Pixels;
-			PageTwo.Top.Pixels = (Main.screenHeight / 2) - 250 + 12;
 
 			pageTwoItemList = new UIList();
 
@@ -313,9 +315,9 @@ namespace BossChecklist
 			NextPage = new BossAssistButton(nextTexture, "") {
 				Id = "Next"
 			};
-			NextPage.Width.Pixels = 14;
-			NextPage.Height.Pixels = 20;
-			NextPage.Left.Pixels = PageTwo.Width.Pixels + 15 - (int)(NextPage.Width.Pixels * 3);
+			NextPage.Width.Pixels = nextTexture.Value.Bounds.Width;
+			NextPage.Height.Pixels = nextTexture.Value.Bounds.Height;
+			NextPage.Left.Pixels = PageTwo.Width.Pixels - NextPage.Width.Pixels - 12;
 			NextPage.Top.Pixels = 416;
 			NextPage.OnClick += PageChangerClicked;
 			PageTwo.Append(NextPage);
