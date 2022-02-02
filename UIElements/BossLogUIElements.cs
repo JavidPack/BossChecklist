@@ -618,22 +618,29 @@ namespace BossChecklist.UIElements
 							int adjustment = 0;
 							Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
 							for (int h = selectedBoss.npcIDs.Count - 1; h > -1; h--) {
-								Asset<Texture2D> head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]);
-								if (head != TextureAssets.NpcHead[0]) {
-									Rectangle headPos = new Rectangle(pageRect.X + pageRect.Width - head.Width() - 10 - ((head.Width() + 2) * adjustment), pageRect.Y + 5, head.Width(), head.Height());
+								Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]).Value;
+								if (head != TextureAssets.NpcHead[0].Value) {
+									Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
+									// Weird special case for Deerclops. Its head icon has a significant amount of whitespace.
+									if (selectedBoss.Key == "Terraria Deerclops") {
+										src = new Rectangle(2, 0, 48, 40);
+									}
+									int xHeadOffset = pageRect.X + pageRect.Width - src.Width - 10 - ((src.Width + 2) * adjustment);
+									Rectangle headPos = new Rectangle(xHeadOffset, pageRect.Y + 5, src.Width, src.Height);
 									if (headsDisplayed == 0) {
 										firstHeadPos = headPos;
 									}
-									spriteBatch.Draw(head.Value, headPos, maskedHead);
+									spriteBatch.Draw(head, headPos, src, maskedHead);
 									headsDisplayed++;
 									adjustment++;
 								}
 							}
 							if (headsDisplayed == 0) {
-								Asset<Texture2D> noHead = TextureAssets.NpcHead[0];
-								Rectangle noHeadPos = new Rectangle(pageRect.X + pageRect.Width - noHead.Width() - 10 - ((noHead.Width() + 2) * adjustment), pageRect.Y + 5, noHead.Width(), noHead.Height());
+								Texture2D noHead = TextureAssets.NpcHead[0].Value;
+								int xHeadOffset = pageRect.X + pageRect.Width - noHead.Width - 10;
+								Rectangle noHeadPos = new Rectangle(xHeadOffset, pageRect.Y + 5, noHead.Width, noHead.Height);
 								firstHeadPos = noHeadPos;
-								spriteBatch.Draw(noHead.Value, noHeadPos, maskedHead);
+								spriteBatch.Draw(noHead, noHeadPos, maskedHead);
 							}
 						}
 						else {
@@ -684,7 +691,7 @@ namespace BossChecklist.UIElements
 							spriteBatch.Draw(clipboard, vec2, copied);
 
 							// Hovering and rightclick will copy to clipboard
-							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Bounds.Width, clipboard.Bounds.Height)) {
+							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Width, clipboard.Height)) {
 								BossUISystem.Instance.UIHoverText = $"Click to copy internal 'boss key' to clipboard:\n{selectedBoss.Key}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
 									Platform.Get<IClipboard>().Value = selectedBoss.Key;
@@ -695,7 +702,7 @@ namespace BossChecklist.UIElements
 							copied = (Platform.Get<IClipboard>().Value == selectedBoss.modSource) ? Color.Gold : Color.White;
 							spriteBatch.Draw(clipboard, vec2, copied);
 
-							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Bounds.Width, clipboard.Bounds.Height)) {
+							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Width, clipboard.Height)) {
 								BossUISystem.Instance.UIHoverText = $"Click to copy internal 'mod source' to clipboard:\n{selectedBoss.modSource}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
 									Platform.Get<IClipboard>().Value = selectedBoss.modSource;
@@ -1629,18 +1636,18 @@ namespace BossChecklist.UIElements
 					if (allLoot) {
 						Texture2D texture = BossLogUI.chestTexture.Value;
 						int offsetX = allCollect ? -6 : 7;
-						Vector2 pos2 = new Vector2(parent.X + parent.Width - (texture.Bounds.Width * 2) + offsetX - hardModeOffset, inner.Y - 2);
+						Vector2 pos2 = new Vector2(parent.X + parent.Width - (texture.Width * 2) + offsetX - hardModeOffset, inner.Y - 2);
 						spriteBatch.Draw(texture, pos2, Color.White);
-						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Bounds.Width, texture.Bounds.Height)) {
+						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
 							BossUISystem.Instance.UIHoverText = $"All Loot Obtained!\n[Localization Needed]";
 						}
 					}
 					if (allCollect) {
 						Texture2D texture = BossLogUI.goldChestTexture.Value;
 						int offsetX = allLoot ? -1 : -14;
-						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Bounds.Width + offsetX - hardModeOffset, inner.Y - 2);
+						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width + offsetX - hardModeOffset, inner.Y - 2);
 						spriteBatch.Draw(texture, pos2, Color.White);
-						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Bounds.Width, texture.Bounds.Height)) {
+						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
 							BossUISystem.Instance.UIHoverText = $"All Collectibles Obtained!\n[Localization Needed]";
 						}
 					}

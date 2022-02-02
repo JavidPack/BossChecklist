@@ -203,42 +203,42 @@ namespace BossChecklist
 			};
 
 			BookArea = new BossLogPanel();
-			BookArea.Width.Pixels = bookUITexture.Value.Bounds.Width;
-			BookArea.Height.Pixels = bookUITexture.Value.Bounds.Height;
+			BookArea.Width.Pixels = bookUITexture.Value.Width;
+			BookArea.Height.Pixels = bookUITexture.Value.Height;
 
 			ToCTab = new BookUI(tabTexture) {
 				Id = "ToCFilter_Tab"
 			};
-			ToCTab.Width.Pixels = tabTexture.Value.Bounds.Width;
-			ToCTab.Height.Pixels = tabTexture.Value.Bounds.Height;
+			ToCTab.Width.Pixels = tabTexture.Value.Width;
+			ToCTab.Height.Pixels = tabTexture.Value.Height;
 			ToCTab.OnClick += OpenViaTab;
 
 			BossTab = new BookUI(tabTexture) {
 				Id = "Boss_Tab"
 			};
-			BossTab.Width.Pixels = tabTexture.Value.Bounds.Width;
-			BossTab.Height.Pixels = tabTexture.Value.Bounds.Height;
+			BossTab.Width.Pixels = tabTexture.Value.Width;
+			BossTab.Height.Pixels = tabTexture.Value.Height;
 			BossTab.OnClick += OpenViaTab;
 
 			MiniBossTab = new BookUI(tabTexture) {
 				Id = "Miniboss_Tab"
 			};
-			MiniBossTab.Width.Pixels = tabTexture.Value.Bounds.Width;
-			MiniBossTab.Height.Pixels = tabTexture.Value.Bounds.Height;
+			MiniBossTab.Width.Pixels = tabTexture.Value.Width;
+			MiniBossTab.Height.Pixels = tabTexture.Value.Height;
 			MiniBossTab.OnClick += OpenViaTab;
 
 			EventTab = new BookUI(tabTexture) {
 				Id = "Event_Tab"
 			};
-			EventTab.Width.Pixels = tabTexture.Value.Bounds.Width;
-			EventTab.Height.Pixels = tabTexture.Value.Bounds.Height;
+			EventTab.Width.Pixels = tabTexture.Value.Width;
+			EventTab.Height.Pixels = tabTexture.Value.Height;
 			EventTab.OnClick += OpenViaTab;
 
 			CreditsTab = new BookUI(tabTexture) {
 				Id = "Credits_Tab"
 			};
-			CreditsTab.Width.Pixels = tabTexture.Value.Bounds.Width;
-			CreditsTab.Height.Pixels = tabTexture.Value.Bounds.Height;
+			CreditsTab.Width.Pixels = tabTexture.Value.Width;
+			CreditsTab.Height.Pixels = tabTexture.Value.Height;
 			CreditsTab.OnClick += OpenViaTab;
 
 			PageOne = new BossLogPanel() {
@@ -250,8 +250,8 @@ namespace BossChecklist
 			PrevPage = new BossAssistButton(prevTexture, "") {
 				Id = "Previous"
 			};
-			PrevPage.Width.Pixels = prevTexture.Value.Bounds.Width;
-			PrevPage.Height.Pixels = prevTexture.Value.Bounds.Height;
+			PrevPage.Width.Pixels = prevTexture.Value.Width;
+			PrevPage.Height.Pixels = prevTexture.Value.Height;
 			PrevPage.Left.Pixels = 8;
 			PrevPage.Top.Pixels = 416;
 			PrevPage.OnClick += PageChangerClicked;
@@ -317,8 +317,8 @@ namespace BossChecklist
 			NextPage = new BossAssistButton(nextTexture, "") {
 				Id = "Next"
 			};
-			NextPage.Width.Pixels = nextTexture.Value.Bounds.Width;
-			NextPage.Height.Pixels = nextTexture.Value.Bounds.Height;
+			NextPage.Width.Pixels = nextTexture.Value.Width;
+			NextPage.Height.Pixels = nextTexture.Value.Height;
 			NextPage.Left.Pixels = PageTwo.Width.Pixels - NextPage.Width.Pixels - 12;
 			NextPage.Top.Pixels = 416;
 			NextPage.OnClick += PageChangerClicked;
@@ -929,8 +929,8 @@ namespace BossChecklist
 					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
 						Id = "PrevItem"
 					};
-					PrevItem.Width.Pixels = prevTexture.Value.Bounds.Width;
-					PrevItem.Height.Pixels = prevTexture.Value.Bounds.Width;
+					PrevItem.Width.Pixels = prevTexture.Value.Width;
+					PrevItem.Height.Pixels = prevTexture.Value.Width;
 					PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
 					PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
 					PrevItem.OnClick += ChangeSpawnItem;
@@ -941,8 +941,8 @@ namespace BossChecklist
 					BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
 						Id = "NextItem"
 					};
-					NextItem.Width.Pixels = nextTexture.Value.Bounds.Width;
-					NextItem.Height.Pixels = nextTexture.Value.Bounds.Height;
+					NextItem.Width.Pixels = nextTexture.Value.Width;
+					NextItem.Height.Pixels = nextTexture.Value.Height;
 					NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
 					NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
 					NextItem.OnClick += ChangeSpawnItem;
