@@ -188,41 +188,48 @@ namespace BossChecklist.UIElements
 				float oldScale = Main.inventoryScale;
 				Main.inventoryScale = scale;
 				Rectangle rectangle = GetInnerDimensions().ToRectangle();
+				// Make backups of the original itemslot textures, as we will replace them temporarily for our visuals
 				var backup = TextureAssets.InventoryBack6;
 				var backup2 = TextureAssets.InventoryBack7;
 
 				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 				BossCollection collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
+				bool masked = BossChecklist.BossLogConfig.BossSilhouettes;
 
 				if (Id.StartsWith("loot_") || Id.StartsWith("collect_")) {
-					if (hasItem) {
+					if (masked && !selectedBoss.downed()) {
+						// Boss Silhouettes always makes itemslot background red, reguardless of obtainable
+						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
+					}
+					else if (hasItem) {
+						// Otherwise, if the item is obtained make the itemslot background green
 						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
 					}
 					else if ((item.expert && !Main.expertMode) || (item.master && !Main.masterMode)) {
+						// If not obtained and the item is mode restricted, itemslot background is red
 						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
 					}
+					// Otherwise, any unobtained items use the original trash-itemslot background color
 				}
 
 				string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
 				string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
 
-				// Prevents empty slots from being drawn
-				bool hiddenItemUnobtained = (Id.Contains("loot_") || Id.Contains("collect_")) && !collection.loot.Contains(new ItemDefinition(item.type)) && !collection.collectibles.Contains(new ItemDefinition(item.type));
-				if (BossChecklist.BossLogConfig.BossSilhouettes && !selectedBoss.downed() && hiddenItemUnobtained) {
-					spriteBatch.Draw(TextureAssets.InventoryBack13.Value, rectangle.TopLeft(), TextureAssets.InventoryBack13.Value.Bounds, Color.DimGray, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-					//Texture2D hiddenItem = TextureAssets.NpcHead[0].Value;
-					Texture2D hiddenItem = ModContent.Request<Texture2D>("Terraria/Images/UI/Bestiary/Icon_Locked").Value;
-					Vector2 vec = new Vector2(rectangle.X + (rectangle.Width * scale / 2) - (hiddenItem.Width / 2), rectangle.Y + (rectangle.Height * scale / 2) - (hiddenItem.Height / 2));
-					spriteBatch.Draw(hiddenItem, vec, Color.White);
-					if (IsMouseHovering) {
-						BossUISystem.Instance.UIHoverText = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}.\n(This can be turned off with the silhouettes config)";
-					}
+				if (masked && !selectedBoss.downed()) {
+					item.color = Color.Black;
+					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
+					string hoverText = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if (item.expert && !Main.expertMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
+						hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
 					}
 					if (item.master && !Main.masterMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
+						hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
+					}
+					if (IsMouseHovering) {
+						BossUISystem.Instance.UIHoverText = hoverText;
 					}
 					return;
 				}
@@ -230,6 +237,7 @@ namespace BossChecklist.UIElements
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 				}
 
+				// Set the itemslot textures back to their original state
 				TextureAssets.InventoryBack6 = backup;
 				TextureAssets.InventoryBack7 = backup2;
 
@@ -258,7 +266,10 @@ namespace BossChecklist.UIElements
 				Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
 				if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
 					if (hasItem) {
-						spriteBatch.Draw(BossLogUI.checkMarkTexture.Value, rect, Color.White); // hasItem first priority
+						// Obtainability check take priority over any expert/master mode restriction
+						if (!masked || (masked && selectedBoss.downed())) {
+							spriteBatch.Draw(BossLogUI.checkMarkTexture.Value, rect, Color.White);
+						}
 					}
 					else {
 						Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
@@ -320,6 +331,9 @@ namespace BossChecklist.UIElements
 							}
 							else if (!Main.masterMode && (item.master || item.masterOnly)) {
 								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
+							}
+							else {
+								BossUISystem.Instance.UIHoverText = item.HoverName;
 							}
 						}
 						else if (hoverText == crimsonAltar || hoverText == demonAltar) {

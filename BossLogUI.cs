@@ -86,6 +86,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
+		public static Rectangle slotRectRef;
 
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
@@ -179,6 +180,8 @@ namespace BossChecklist
 			checkboxTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad);
 			chestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Chest");
 			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
+
+			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
 
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
 				Id = "OpenUI"
@@ -847,11 +850,9 @@ namespace BossChecklist
 					spawn.stack = 101;
 				}
 
-				Rectangle slotRect = TextureAssets.InventoryBack.Value.Bounds;
-
 				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
-				spawnItemSlot.Width.Pixels = slotRect.Width;
-				spawnItemSlot.Height.Pixels = slotRect.Height;
+				spawnItemSlot.Width.Pixels = slotRectRef.Width;
+				spawnItemSlot.Height.Pixels = slotRectRef.Height;
 				spawnItemSlot.Left.Pixels = 48 + (56 * 2);
 				spawnItemSlot.Top.Pixels = 230;
 				PageTwo.Append(spawnItemSlot);
@@ -862,8 +863,8 @@ namespace BossChecklist
 					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem, 0.85f) {
 						Id = "ingredient_" + k
 					};
-					ingList.Width.Pixels = slotRect.Width * 0.85f;
-					ingList.Height.Pixels = slotRect.Height * 0.85f;
+					ingList.Width.Pixels = slotRectRef.Width * 0.85f;
+					ingList.Height.Pixels = slotRectRef.Height * 0.85f;
 					ingList.Left.Pixels = 20 + (48 * col);
 					ingList.Top.Pixels = 240 + (48 * (row + 1));
 					PageTwo.Append(ingList);
@@ -888,8 +889,8 @@ namespace BossChecklist
 					craft.SetDefaults(ItemID.PowerGlove);
 
 					LogItemSlot craftItem = new LogItemSlot(craft, false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
-					craftItem.Width.Pixels = slotRect.Width * 0.85f;
-					craftItem.Height.Pixels = slotRect.Height * 0.85f;
+					craftItem.Width.Pixels = slotRectRef.Width * 0.85f;
+					craftItem.Height.Pixels = slotRectRef.Height * 0.85f;
 					craftItem.Top.Pixels = 240 + (48 * (row + 2));
 					craftItem.Left.Pixels = 20;
 					PageTwo.Append(craftItem);
@@ -916,8 +917,8 @@ namespace BossChecklist
 							}
 							tileList = new LogItemSlot(craft, false, craft.HoverName, ItemSlot.Context.EquipArmorVanity, 0.85f);
 						}
-						tileList.Width.Pixels = slotRect.Width * 0.85f;
-						tileList.Height.Pixels = slotRect.Height * 0.85f;
+						tileList.Width.Pixels = slotRectRef.Width * 0.85f;
+						tileList.Height.Pixels = slotRectRef.Height * 0.85f;
 						tileList.Left.Pixels = 20 + (48 * l);
 						tileList.Top.Pixels = 240 + (48 * (row + 2));
 						PageTwo.Append(tileList);
@@ -1013,8 +1014,8 @@ namespace BossChecklist
 					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
 						Id = "loot_" + selectedItem.type
 					};
-					lootTable.Height.Pixels = 50;
-					lootTable.Width.Pixels = 50;
+					lootTable.Width.Pixels = slotRectRef.Width;
+					lootTable.Height.Pixels = slotRectRef.Height;
 					lootTable.Left.Pixels = (col * 56) + 15;
 					lootTable.OnRightDoubleClick += RemoveItem;
 					newRow.Append(lootTable);
@@ -1033,8 +1034,8 @@ namespace BossChecklist
 					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
 						Id = "loot_" + selectedItem.type
 					};
-					lootTable.Height.Pixels = 50;
-					lootTable.Width.Pixels = 50;
+					lootTable.Width.Pixels = slotRectRef.Width;
+					lootTable.Height.Pixels = slotRectRef.Height;
 					lootTable.Left.Pixels = (col * 56) + 15;
 					lootTable.OnRightDoubleClick += RemoveItem;
 					newRow.Append(lootTable);
@@ -1072,8 +1073,8 @@ namespace BossChecklist
 					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem) {
 						Id = "loot_" + loot.type
 					};
-					lootTable.Height.Pixels = 50;
-					lootTable.Width.Pixels = 50;
+					lootTable.Width.Pixels = slotRectRef.Width;
+					lootTable.Height.Pixels = slotRectRef.Height;
 					lootTable.Left.Pixels = (col * 56) + 15;
 					lootTable.OnRightDoubleClick += RemoveItem;
 					newRow.Append(lootTable);
@@ -1140,8 +1141,8 @@ namespace BossChecklist
 				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name) {
 					Id = "collect_" + collectible.type
 				};
-				collectionTable.Height.Pixels = 50;
-				collectionTable.Width.Pixels = 50;
+				collectionTable.Width.Pixels = slotRectRef.Width;
+				collectionTable.Height.Pixels = slotRectRef.Height;
 				collectionTable.Left.Pixels = (col * 56) + 15;
 				collectionTable.OnRightDoubleClick += RemoveItem;
 				newRow.Append(collectionTable);
