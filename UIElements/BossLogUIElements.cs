@@ -204,6 +204,11 @@ namespace BossChecklist.UIElements
 					else if (hasItem) {
 						// Otherwise, if the item is obtained make the itemslot background green
 						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
+						// If on the Collectibles page, the display type should be marked
+						bool OnCollectionPage = BossLogUI.CategoryPageNum == CategoryPage.Loot && BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1;
+						if (OnCollectionPage && item.type == BossLogUI.CollectibleDisplayType) {
+							TextureAssets.InventoryBack7 = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_HighlightedCollectible", AssetRequestMode.ImmediateLoad);
+						}
 					}
 					else if ((item.expert && !Main.expertMode) || (item.master && !Main.masterMode)) {
 						// If not obtained and the item is mode restricted, itemslot background is red
@@ -381,68 +386,12 @@ namespace BossChecklist.UIElements
 		internal class BossLogPanel : UIElement
 		{
 			public string Id { get; init; } = "";
-			private int itemTimer = 240;
-			private int shownPage = 0;
-			public static bool shownAltPage = false;
-			private int[] itemShown;
-			private List<List<int>> validItems;
 			public static int headNum = -1;
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				BossInfo selectedBoss;
-				// Pre-drawing
-				// PageTwo check to prevent the timer from counting down twice (once for each page)
-				if (BossLogUI.PageNum >= 0 && BossLogUI.CategoryPageNum == CategoryPage.Loot && BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 && Id == "PageTwo") {
-					// This page check allows this code to only run when the page has changed.
-					if (shownPage != BossLogUI.PageNum || !shownAltPage) {
-						shownPage = BossLogUI.PageNum;
-						shownAltPage = true;
-						selectedBoss = BossChecklist.bossTracker.SortedBosses[shownPage];
-						validItems = new List<List<int>> { new List<int>(), new List<int>(), new List<int>() };
-						for (int i = 0; i < selectedBoss.collection.Count; i++) {
-							int item = selectedBoss.collection[i];
-							CollectionType type = selectedBoss.collectType[i];
-							if (type == CollectionType.Trophy) {
-								validItems[0].Add(item);
-							}
-							if (type == CollectionType.Mask) {
-								validItems[1].Add(item);
-							}
-							if (type == CollectionType.MusicBox) {
-								validItems[2].Add(item);
-							}
-						}
-						if (validItems[0].Count == 0) {
-							validItems[0].Add(0);
-						}
-						if (validItems[1].Count == 0) {
-							validItems[1].Add(0);
-						}
-						if (validItems[2].Count == 0) {
-							validItems[2].Add(0);
-						}
-						itemShown = new int[] { 0, 0, 0 };
-						itemTimer = 240;
-					}
-
-					// The timer to cycle through multiple items in a given collection type
-					if (itemTimer <= 0) {
-						itemTimer = 240; // Items cycle through every 4 seconds
-						for (int i = 0; i < itemShown.Length; i++) {
-							if (itemShown[i] == validItems[i].Count - 1) {
-								itemShown[i] = 0;
-							}
-							else {
-								itemShown[i]++;
-							}
-						}
-					}
-					else {
-						itemTimer--;
-					}
-				}
-
 				base.Draw(spriteBatch);
+
+				BossInfo selectedBoss;
 				if (BossLogUI.PageNum >= 0) {
 					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 					if (selectedBoss.modSource == "Unknown" && Id == "PageTwo") {
@@ -1046,8 +995,7 @@ namespace BossChecklist.UIElements
 										continue;
 									}
 
-									Item newItem = new Item();
-									newItem.SetDefaults(bannerItemID);
+									Item newItem = new Item(bannerItemID);
 									if (newItem.createTile <= -1) {
 										continue;
 									}
@@ -1128,137 +1076,109 @@ namespace BossChecklist.UIElements
 						}
 						else {
 							// Collectibles Subpage
-							BossCollection Collections = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 
-							int selectedTrophy = validItems[0][itemShown[0]];
-							int selectedMask = validItems[1][itemShown[1]];
-							int selectedMusicBox = validItems[2][itemShown[2]];
-
-							bool hasTrophy = selectedTrophy > 0 && Collections.collectibles.Any(x => x.Type == selectedTrophy);
-							bool hasMask = selectedMask > 0 && Collections.collectibles.Any(x => x.Type == selectedMask);
-							bool hasMusicBox = selectedMusicBox > 0 && Collections.collectibles.Any(x => x.Type == selectedMusicBox);
-
-							int styleX = 0; // x coordinate of tile style
-							int styleY = 0; // Y coordinate of tile style
-							int top = 0; // top-left corner of tile style
-							int left = 0; // top-left corner of tile style
-							int width = 0;
-							int height = 0;
-
-							int offsetX = 0; // Offsets for multi-tiles
-							int offsetY = 0;
-
-							// PageNum already corresponds with the index of the saved player data
-
-							Asset<Texture2D> template = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CollectionTemplate", AssetRequestMode.ImmediateLoad);
-							Rectangle ctRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (template.Width() / 2) - 5, pageRect.Y + 84, template.Width(), template.Height());
-							spriteBatch.Draw(template.Value, ctRect, Color.White);
-
-							// Draw Music Boxes
-							Item musicBoxItem = new Item();
-							musicBoxItem.SetDefaults(ItemID.MusicBoxOverworldDay);
-							if (hasMusicBox) {
-								musicBoxItem.SetDefaults(selectedMusicBox);
+							// If there isn't anything to display, just end all drawing
+							if (BossLogUI.CollectibleDisplayType == -1) {
+								return;
 							}
 
-							int musicBoxStyle = musicBoxItem.placeStyle;
-							int musicBoxTileType = musicBoxItem.createTile;
+							Item DisplayedItem = new Item(BossLogUI.CollectibleDisplayType);
+							int index = selectedBoss.collection.FindIndex(x => x == DisplayedItem.type);
+							if (index == -1) {
+								return;
+							}
+							CollectionType type = selectedBoss.collectType[index];
 
-							Main.instance.LoadTiles(musicBoxTileType);
-							var musicBoxTexture = TextureAssets.Tile[musicBoxTileType];
+							// If the displayed item is generic, don't draw anything
+							if (type == CollectionType.Generic) {
+								return;
+							}
 
-							if (musicBoxItem.createTile > TileID.Dirt) {
-								TileObjectData data = TileObjectData.GetTileData(musicBoxTileType, musicBoxStyle);
+							// Draw frame
+							Asset<Texture2D> frame = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CollectibleFrame", AssetRequestMode.ImmediateLoad);
+							float frameScale = 1.5f;
+							int frameX = pageRect.X + pageRect.Width / 2 - (int)(frame.Value.Width * frameScale / 2);
+							Rectangle frameR = new Rectangle(frameX, pageRect.Y + 80, (int)(frame.Value.Width * frameScale), (int)(frame.Value.Height * frameScale));
+							spriteBatch.Draw(frame.Value, frameR, Color.White);
 
-								width = data.CoordinateWidth;
-								height = data.CoordinateHeights[0];
+							// Relics, Trophies, and Musicboxes require tile drawing
+							if (type == CollectionType.Relic || type == CollectionType.Trophy || type == CollectionType.MusicBox) {
+								// Tile data for drawing
+								int tileType = DisplayedItem.createTile;
+								int placeType = DisplayedItem.placeStyle;
+								// for vanilla relics
+								int relicStyle = placeType;
+								if (type == CollectionType.Relic) {
+									placeType = 0;
+								}
+								TileObjectData data = TileObjectData.GetTileData(tileType, placeType);
+								int width = data.CoordinateWidth;
+								int height = data.CoordinateHeights[0];
+
+								int styleX = 0; // x coordinate of tile style
+								int styleY = 0; // Y coordinate of tile style
 								if (data.StyleWrapLimit > 0) {
-									styleX = (musicBoxStyle % data.StyleWrapLimit) * data.CoordinateFullWidth;
-									styleY = (musicBoxStyle / data.StyleWrapLimit) * data.CoordinateFullHeight;
+									styleX = (placeType % data.StyleWrapLimit) * data.CoordinateFullWidth;
+									styleY = (placeType / data.StyleWrapLimit) * data.CoordinateFullHeight;
 								}
 								else {
-									styleY = musicBoxStyle * (height + 2) * data.Height;
+									styleY = placeType * (height + 2) * data.Height;
 								}
-								left = styleX;
-								top = styleY;
+
+								// top-left corner of tile style (texture)
+								int topLeftX = styleX;
+								int topLeftY = styleY;
+								// Offsets for multi-tiles
+								int offsetX = 0;
+								int offsetY = 0;
+
+								// Load our tile textures
+								Main.instance.LoadTiles(tileType);
+								Asset<Texture2D> tileTexture = TextureAssets.Tile[tileType];
+
+								// The textures being drawn will be scaled up
+								float scale = 1f;
+
+								// Start drawing the tile texture
+								for (int i = 0; i < data.Width * data.Height; i++) {
+									if (i != 0 && i % data.Width == 0) {
+										styleX = topLeftX;
+										styleY += 18;
+										offsetX = 0;
+										offsetY++;
+									}
+									int posX = frameR.X + frameR.Width / 2 - (int)(width * data.Width * scale) / 2 + (int)((styleX - topLeftX - (2 * offsetX)) * scale);
+									int posY = frameR.Y + frameR.Height / 2 - (int)(height * data.Height * scale) / 2 + (int)((styleY - topLeftY - (2 * offsetY)) * scale);
+									Rectangle posRect = new Rectangle(posX, posY, (int)(width * scale), (int)(height * scale));
+									Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
+									spriteBatch.Draw(tileTexture.Value, posRect, cutRect, Color.White);
+
+									// If the display item is a relic, we'll also need to draw the floating boss part
+									if (i == 0 && type == CollectionType.Relic) {
+										if (DisplayedItem.type < ItemID.Count) {
+											Asset<Texture2D> relics = ModContent.Request<Texture2D>("Terraria/Images/Extra_198", AssetRequestMode.ImmediateLoad);
+											// Since relics take up a 3x3 square area of the tile, the width of the texture can be used in place of the height
+											Rectangle posRect2 = new Rectangle(posRect.X, posRect.Y, (int)(relics.Value.Width * scale), (int)(relics.Value.Width * scale));
+											Rectangle cutRect2 = new Rectangle(0, relicStyle * relics.Value.Width, relics.Value.Width, relics.Value.Width);
+											spriteBatch.Draw(relics.Value, posRect2, cutRect2, Color.White);
+										}
+										else {
+											// ??
+										}
+									}
+									styleX += 18;
+									offsetX++;
+								}
 							}
 
-							offsetX = offsetY = 0;
+							if (type == CollectionType.Mask) {
 
-							for (int i = 0; i < 4; i++) {
-								if (i != 0 && i % 2 == 0) {
-									styleX = left;
-									styleY += 18;
-									offsetX = 0;
-									offsetY++;
-								}
-								Rectangle posRect = new Rectangle(pageRect.X + 225 + styleX - left - (2 * offsetX), pageRect.Y + 160 + styleY - top - (2 * offsetY), 16, 16);
-								Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
-								spriteBatch.Draw(musicBoxTexture.Value, posRect, cutRect, Color.White);
-								styleX += 18;
-								offsetX++;
 							}
+							else if (type == CollectionType.Pet) {
 
-							// Draw Masks
-							if (hasMask) {
-								Asset<Texture2D> mask;
-								if (selectedMask < ItemID.Count) {
-									Item newItem = new Item();
-									newItem.SetDefaults(selectedMask);
-									mask = ModContent.Request<Texture2D>("Terraria/Images/Armor_Head_" + newItem.headSlot);
-								}
-								else {
-									mask = ModContent.Request<Texture2D>(ItemLoader.GetItem(selectedMask).Texture + "_Head");
-								}
-
-								int frameCut = mask.Height() / 24;
-								Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - (mask.Width() / 2) + 7, pageRect.Y + (pageRect.Height / 2) - (frameCut / 2) - 86, mask.Width(), frameCut);
-								Rectangle cutRect = new Rectangle(0, 0, mask.Width(), frameCut);
-								spriteBatch.Draw(mask.Value, posRect, cutRect, Color.White);
 							}
+							else if (type == CollectionType.Mount) {
 
-							// Draw Trophies
-							styleX = styleY = top = left = width = height = 0;
-
-							Item trophyItem = new Item();
-							trophyItem.SetDefaults(hasTrophy ? selectedTrophy : ItemID.WeaponRack);
-
-							int trophyStyle = trophyItem.placeStyle;
-							int trophyTileType = trophyItem.createTile;
-
-							Main.instance.LoadTiles(trophyTileType);
-							Asset<Texture2D> trophyTexture = TextureAssets.Tile[trophyTileType];
-
-							if (trophyItem.createTile > TileID.Dirt) {
-								TileObjectData data = TileObjectData.GetTileData(trophyTileType, trophyStyle);
-
-								width = data.CoordinateWidth;
-								height = data.CoordinateHeights[0];
-								if (data.StyleWrapLimit > 0) {
-									styleX = (trophyStyle % data.StyleWrapLimit) * data.CoordinateFullWidth;
-									styleY = (trophyStyle / data.StyleWrapLimit) * data.CoordinateFullHeight;
-								}
-								else {
-									styleY = trophyStyle * (height + 2) * data.Height;
-								}
-								left = styleX;
-								top = styleY;
-							}
-
-							offsetX = offsetY = 0;
-
-							for (int i = 0; i < 9; i++) {
-								if (i != 0 && i % 3 == 0) {
-									styleX = left;
-									styleY += 18;
-									offsetX = 0;
-									offsetY++;
-								}
-								Rectangle posRect = new Rectangle(pageRect.X + 113 + styleX - left - (2 * offsetX), pageRect.Y + 126 + styleY - top - (2 * offsetY), width, height);
-								Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
-								spriteBatch.Draw(trophyTexture.Value, posRect, cutRect, Color.White);
-								styleX += 18;
-								offsetX++;
 							}
 						}
 					}

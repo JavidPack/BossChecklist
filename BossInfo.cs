@@ -216,12 +216,11 @@ namespace BossChecklist
 		internal static List<CollectionType> SetupCollectionTypes(List<int> collection) {
 			List<CollectionType> setup = new List<CollectionType>();
 			foreach (int type in collection) {
-				Item temp = new Item();
-				temp.SetDefaults(type);
+				Item temp = new Item(type);
 				if (temp.headSlot > 0 && temp.vanity) {
 					setup.Add(CollectionType.Mask);
 				}
-				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) ||  BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
 					setup.Add(CollectionType.MusicBox);
 				}
 				else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
@@ -238,9 +237,13 @@ namespace BossChecklist
 					else if (temp.master && data.Width == 3 && data.Height == 4) {
 						setup.Add(CollectionType.Relic);
 					}
-					else setup.Add(CollectionType.Generic);
+					else {
+						setup.Add(CollectionType.Generic);
+					}
 				}
-				else setup.Add(CollectionType.Generic);
+				else {
+					setup.Add(CollectionType.Generic);
+				}
 			}
 			return setup;
 		}

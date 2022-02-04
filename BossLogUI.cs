@@ -97,6 +97,8 @@ namespace BossChecklist
 		public static bool showHidden = false;
 		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
 
+		public static int CollectibleDisplayType = -1;
+
 		private bool bossLogVisible;
 		public bool BossLogVisible {
 			get { return bossLogVisible; }
@@ -628,9 +630,12 @@ namespace BossChecklist
 			// Double right-click an item slot to remove that item from the selected boss page's loot/collection list
 			// Double right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
 			// If holding Alt while right-clicking will do the above for ALL boss lists
+			if (!BossChecklist.DebugConfig.ResetLootItems)
+				return;
+
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-			if (BossChecklist.DebugConfig.ResetLootItems && CategoryPageNum == CategoryPage.Loot) {
+			if (CategoryPageNum == CategoryPage.Loot) {
 				string id = "";
 				if (listeningElement is LogItemSlot slot)
 					id = slot.Id;
@@ -995,7 +1000,6 @@ namespace BossChecklist
 
 		private void OpenLoot() {
 			ResetBothPages();
-			BossLogPanel.shownAltPage = false;
 			if (AltPageSelected[(int)CategoryPageNum] == 1) {
 				OpenCollect();
 				return;
@@ -1027,8 +1031,7 @@ namespace BossChecklist
 				if (BossChecklist.registeredBossBagTypes.Contains(loot)) {
 					continue;
 				}
-				Item selectedItem = new Item();
-				selectedItem.SetDefaults(loot);
+				Item selectedItem = new Item(loot);
 				if (selectedItem.master) {
 					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
@@ -1074,8 +1077,7 @@ namespace BossChecklist
 				if (BossChecklist.registeredBossBagTypes.Contains(itemType)) {
 					continue;
 				}
-				Item loot = new Item();
-				loot.SetDefaults(itemType);
+				Item loot = new Item(itemType);
 				if (shortcut.npcIDs[0] < NPCID.Count) {
 					if (WorldGen.crimson) {
 						if (loot.type == ItemID.DemoniteOre || loot.type == ItemID.CorruptSeeds || loot.type == ItemID.UnholyArrow) {
@@ -1130,6 +1132,9 @@ namespace BossChecklist
 				return;
 			}
 
+			// Reset Item when updating to page
+			CollectibleDisplayType = -1;
+
 			pageTwoItemList.Left.Pixels = 0;
 			pageTwoItemList.Top.Pixels = 235;
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
@@ -1146,28 +1151,50 @@ namespace BossChecklist
 				Id = "Collect0"
 			};
 
-			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
+			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 
 			int row = 0;
 			int col = 0;
-			for (int i = 0; i < shortcut.collection.Count; i++) {
-				if (shortcut.collection[i] == -1) {
+			for (int i = 0; i < boss.collection.Count; i++) {
+				if (boss.collection[i] == -1) {
 					continue;
 				}
-				Item collectible = new Item();
-				collectible.SetDefaults(shortcut.collection[i]);
+				Item collectible = new Item(boss.collection[i]);
 
-				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
-				LogItemSlot collectionTable = new LogItemSlot(collectible, Collection.collectibles.Any(x => x.Type == collectible.type), collectible.Name) {
+				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
+				foreach (ItemDefinition item in Collection.collectibles) {
+					int index = boss.collection.FindIndex(x => x == item.Type);
+					CollectionType type = boss.collectType[index];
+
+					// If we find a Relic in the player list, this should be the displayed item
+					if (type == CollectionType.Relic) {
+						CollectibleDisplayType = item.Type;
+						break;
+					}
+					// Trophy is the next top priority, but don't stop in case we find a relic
+					else if (type == CollectionType.Trophy) {
+						CollectibleDisplayType = item.Type;
+					}
+					// We'll use what ever collectible we find first that isn't Generic
+					// Keep going in case we find a trophy or relic
+					// This condition shouldn't repeat as we have set the display item
+					else if (type != CollectionType.Generic && CollectibleDisplayType == -1) {
+						CollectibleDisplayType = item.Type;
+					}
+				}
+				// The selected collectible will be highlighted by the draw method in LogItemSlot
+				bool collected = Collection.collectibles.Any(x => x.Type == collectible.type);
+				LogItemSlot collectionTable = new LogItemSlot(collectible, collected, collectible.Name) {
 					Id = "collect_" + collectible.type
 				};
 				collectionTable.Width.Pixels = slotRectRef.Width;
 				collectionTable.Height.Pixels = slotRectRef.Height;
 				collectionTable.Left.Pixels = (col * 56) + 15;
+				collectionTable.OnClick += (a, b) => CollectibleDisplayType = collected ? collectible.type : CollectibleDisplayType;
 				collectionTable.OnRightDoubleClick += RemoveItem;
 				newRow.Append(collectionTable);
 				col++;
-				if (col == 6 || i == shortcut.collection.Count - 1) {
+				if (col == 6 || i == boss.collection.Count - 1) {
 					col = 0;
 					row++;
 					pageTwoItemList.Add(newRow);
