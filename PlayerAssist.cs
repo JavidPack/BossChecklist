@@ -23,8 +23,8 @@ namespace BossChecklist
 		public List<BossCollection> BossTrophies;
 
 		// Key represents worldID, Value represents BossKeys
-		public Dictionary<string, List<string>> AllListedChecks;
-		public List<string> ChecksForWorld;
+		public Dictionary<string, List<string>> AllStoredForceDowns;
+		public List<string> ForceDownsForWorld;
 
 		// TODO: look into this 
 		public int duration_CompareValue;
@@ -42,8 +42,8 @@ namespace BossChecklist
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
 			BossTrophies = new List<BossCollection>();
-			AllListedChecks = new Dictionary<string, List<string>>();
-			ChecksForWorld = new List<string>();
+			AllStoredForceDowns = new Dictionary<string, List<string>>();
+			ForceDownsForWorld = new List<string>();
 
 			// Create new lists for each boss's loot and collections so we can apply the saved data to them
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
@@ -80,7 +80,7 @@ namespace BossChecklist
 			}
 
 			TagCompound TempChecks = new TagCompound();
-			foreach(KeyValuePair<string, List<string>> entry in AllListedChecks) {
+			foreach(KeyValuePair<string, List<string>> entry in AllStoredForceDowns) {
 				TempChecks.Add(entry.Key, entry.Value);
 			}
 
@@ -103,9 +103,9 @@ namespace BossChecklist
 
 			// Do the same for any checkmarks the user wants to force
 			TagCompound TempChecks = tag.Get<TagCompound>("ForcedChecks");
-			AllListedChecks.Clear();
+			AllStoredForceDowns.Clear();
 			foreach (KeyValuePair<string, object> entry in TempChecks) {
-				AllListedChecks.Add(entry.Key, TempChecks.GetList<string>(entry.Key).ToList());
+				AllStoredForceDowns.Add(entry.Key, TempChecks.GetList<string>(entry.Key).ToList());
 			}
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
@@ -157,11 +157,11 @@ namespace BossChecklist
 			}
 
 			// If the player has not been in this world before, create an entry for this world
-			if (!AllListedChecks.ContainsKey(WorldID)) {
-				AllListedChecks.Add(WorldID, new List<string>());
+			if (!AllStoredForceDowns.ContainsKey(WorldID)) {
+				AllStoredForceDowns.Add(WorldID, new List<string>());
 			}
 			// Then make ListedChecks the list needed for the designated world
-			AllListedChecks.TryGetValue(WorldID, out ChecksForWorld);
+			AllStoredForceDowns.TryGetValue(WorldID, out ForceDownsForWorld);
 
 			// Send the player's world-bound records to the server. The server doesn't need player records from every world.
 			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;

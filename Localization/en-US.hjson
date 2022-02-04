@@ -173,7 +173,7 @@ Mods: {
 				DrawNextMark: Next Boss Check
 				ColoredBossText: Colored Boss Text
 				BossSilhouettes: Boss Silhouettes
-				CountDownedBosses: Boss Completion Display
+				CountDownedBosses: Downed Completion Display
 				SelectedCheckmarkType: Checklist Marking Type
 				FilterBosses: Filter bosses in list
 				FilterMiniBosses: Filter mini bosses in list

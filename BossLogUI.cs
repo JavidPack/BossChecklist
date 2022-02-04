@@ -58,6 +58,8 @@ namespace BossChecklist
 
 		public UIList prehardmodeList;
 		public UIList hardmodeList;
+		public ProgressBar prehardmodeBar;
+		public ProgressBar hardmodeBar;
 		public BossLogUIElements.FixedUIScrollbar scrollOne;
 		public BossLogUIElements.FixedUIScrollbar scrollTwo;
 
@@ -83,10 +85,12 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkMarkTexture;
 		public static Asset<Texture2D> xTexture;
 		public static Asset<Texture2D> circleTexture;
+		public static Asset<Texture2D> strikeNTexture;
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
 		public static Rectangle slotRectRef;
+		public static Color faded;
 
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
@@ -177,11 +181,13 @@ namespace BossChecklist
 			checkMarkTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
 			xTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
 			circleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Next", AssetRequestMode.ImmediateLoad);
+			strikeNTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_StrikeNext", AssetRequestMode.ImmediateLoad);
 			checkboxTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad);
 			chestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Chest");
 			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
 
 			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
+			faded = new Color(128, 128, 128, 128);
 
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
 				Id = "OpenUI"
@@ -263,6 +269,13 @@ namespace BossChecklist
 			prehardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			prehardmodeList.PaddingTop = 5;
 
+			// Order matters here
+			prehardmodeBar = new ProgressBar();
+			prehardmodeBar.Left.Pixels = PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10;
+			prehardmodeBar.Height.Pixels = 14;
+			prehardmodeBar.Top.Pixels = PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2);
+			prehardmodeBar.Width.Pixels = PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2);
+
 			PageTwo = new BossLogPanel() {
 				Id = "PageTwo"
 			};
@@ -330,6 +343,13 @@ namespace BossChecklist
 			hardmodeList.Width.Pixels = PageOne.Width.Pixels - 60;
 			hardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			hardmodeList.PaddingTop = 5;
+
+			// Order matters here
+			hardmodeBar = new ProgressBar();
+			hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
+			hardmodeBar.Height.Pixels = 14;
+			hardmodeBar.Top.Pixels = NextPage.Top.Pixels + (NextPage.Height.Pixels / 2) - (hardmodeBar.Height.Pixels / 2);
+			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
 			recordButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.Records");
 			recordButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
@@ -1172,7 +1192,7 @@ namespace BossChecklist
 				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
 				bool HideHidden = boss.hidden && !showHidden;
 				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyBosses && boss.type != EntryType.Boss;
-				if (HideUnsupported || HideUnavailable || HideHidden || SkipNonBosses) {
+				if (((HideUnavailable || HideHidden) && !boss.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
 					continue;
 				}
 
@@ -1182,9 +1202,9 @@ namespace BossChecklist
 				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 
-				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && boss.downed();
-				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && boss.downed()));
-				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && boss.downed()));
+				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && boss.IsDownedOrForced;
+				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && boss.IsDownedOrForced));
+				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && boss.IsDownedOrForced));
 				if (FilterBoss || FilterMiniBoss || FilterEvent) {
 					continue;
 				}
@@ -1213,22 +1233,28 @@ namespace BossChecklist
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
 				string displayName = boss.name;
-				if (!boss.available() && !boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) {
-					displayName = "???";
+				if (BossChecklist.BossLogConfig.BossSilhouettes) {
+					bool hardMode = !Main.hardMode && boss.progression > BossTracker.WallOfFlesh;
+					bool availability = !boss.available() && !boss.IsDownedOrForced;
+					if (hardMode || availability) {
+						displayName = "???";
+					}
 				}
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				List<string> ChecksRef = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld;
-				bool forceDowned = ChecksRef.Contains(boss.Key);
+				List<string> ChecksRef = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld;
 
 				// Update forced downs. If the boss is actaully downed, remove the force check.
-				if (forceDowned && boss.downed()) {
-					ChecksRef.RemoveAll(x => x == boss.Key);
+				if (boss.ForceDownedByPlayer(Main.LocalPlayer)) {
+					displayName += "*";
+					if (boss.downed()) {
+						ChecksRef.RemoveAll(x => x == boss.Key);
+					}
 				}
 
-				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.downed() || forceDowned, nextCheck);
-				if (!boss.downed() && !forceDowned && boss.available() && !boss.hidden) {
+				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.IsDownedOrForced, nextCheck);
+				if (!boss.IsDownedOrForced && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
 				
@@ -1255,6 +1281,46 @@ namespace BossChecklist
 			}
 			PageTwo.Append(hardmodeList);
 			hardmodeList.SetScrollbar(scrollTwo);
+			// Check current progress if enabled
+			if (BossChecklist.BossLogConfig.CountDownedBosses) {
+				int[] prehDown = new int[] { 0, 0, 0 };
+				int[] prehTotal = new int[] { 0, 0, 0 };
+				int[] hardDown = new int[] { 0, 0, 0 };
+				int[] hardTotal = new int[] { 0, 0, 0 };
+
+				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+					if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) {
+						continue;
+					}
+
+					if (boss.progression <= BossTracker.WallOfFlesh) {
+						if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+							prehTotal[(int)boss.type]++;
+							if (boss.IsDownedOrForced) {
+								prehDown[(int)boss.type]++;
+							}
+						}
+					}
+					else {
+						if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+							hardTotal[(int)boss.type]++;
+							if (boss.IsDownedOrForced) {
+								hardDown[(int)boss.type]++;
+							}
+						}
+					}					
+				}
+
+				prehardmodeBar.downedEntries = prehDown;
+				prehardmodeBar.totalEntries = prehTotal;
+				hardmodeBar.downedEntries = hardDown;
+				hardmodeBar.totalEntries = hardTotal;
+
+				PageOne.Append(prehardmodeBar);
+				if (!BossChecklist.BossLogConfig.BossSilhouettes || Main.hardMode) {
+					PageTwo.Append(hardmodeBar);
+				}
+			}
 		}
 
 		private void UpdateCredits() {
@@ -1324,11 +1390,11 @@ namespace BossChecklist
 				// Right-clicking hides the boss from the list
 				BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (leftClick) {
-					List<string> list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ChecksForWorld;
+					List<string> list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld;
 					if (list.Contains(pgBoss.Key)) {
 						list.RemoveAll(x => x == pgBoss.Key);
 					}
-					else if (!pgBoss.downed()) {
+					else if (!pgBoss.IsDownedOrForced) {
 						list.Add(pgBoss.Key);
 					}
 					UpdateTableofContents();
@@ -1519,9 +1585,9 @@ namespace BossChecklist
 			}
 		}
 		
-		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.downed() && x.available() && !x.hidden && x.type == entryType);
+		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
 
-		public static Color MaskBoss(BossInfo boss) => ((!boss.downed() && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden || (!boss.downed() && !boss.available())) ? Color.Black : Color.White;
+		public static Color MaskBoss(BossInfo boss) => ((!boss.IsDownedOrForced && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden || (!boss.IsDownedOrForced && !boss.available())) ? Color.Black : Color.White;
 
 		public static Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
 
