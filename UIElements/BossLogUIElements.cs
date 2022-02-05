@@ -1096,21 +1096,27 @@ namespace BossChecklist.UIElements
 
 							// Draw frame
 							Asset<Texture2D> frame = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CollectibleFrame", AssetRequestMode.ImmediateLoad);
-							float frameScale = 1.5f;
+							float frameScale = 1.5f; // Frame scale only
+							float scale = 1.5f; // The textures being drawn will be scaled up
 							int frameX = pageRect.X + pageRect.Width / 2 - (int)(frame.Value.Width * frameScale / 2);
 							Rectangle frameR = new Rectangle(frameX, pageRect.Y + 80, (int)(frame.Value.Width * frameScale), (int)(frame.Value.Height * frameScale));
 							spriteBatch.Draw(frame.Value, frameR, Color.White);
 
+							int maskTop = 0;
+
 							// Relics, Trophies, and Musicboxes require tile drawing
-							if (type == CollectionType.Relic || type == CollectionType.Trophy || type == CollectionType.MusicBox) {
-								// Tile data for drawing
-								int tileType = DisplayedItem.createTile;
-								int placeType = DisplayedItem.placeStyle;
-								// for vanilla relics
-								int relicStyle = placeType;
-								if (type == CollectionType.Relic) {
-									placeType = 0;
+							if (type == CollectionType.Relic || type == CollectionType.Trophy || type == CollectionType.MusicBox || type == CollectionType.Mask) {
+								Item tileToDisplay = new Item(DisplayedItem.type);
+								if (type == CollectionType.Mask) {
+									tileToDisplay.SetDefaults(ItemID.Mannequin);
 								}
+								
+								// Tile data for drawing
+								// Special case for Relics needed
+								int tileType = tileToDisplay.createTile;
+								int placeType = type == CollectionType.Relic ? 0 : tileToDisplay.placeStyle;
+								int relicStyle = tileToDisplay.placeStyle;
+
 								TileObjectData data = TileObjectData.GetTileData(tileType, placeType);
 								int width = data.CoordinateWidth;
 								int height = data.CoordinateHeights[0];
@@ -1120,6 +1126,11 @@ namespace BossChecklist.UIElements
 								if (data.StyleWrapLimit > 0) {
 									styleX = (placeType % data.StyleWrapLimit) * data.CoordinateFullWidth;
 									styleY = (placeType / data.StyleWrapLimit) * data.CoordinateFullHeight;
+								}
+								else if (type == CollectionType.Mask) {
+									int genderOffset = Main.LocalPlayer.Male ? 0 : 2;
+									styleX = (data.DrawStyleOffset + genderOffset) * data.CoordinateFullWidth;
+									styleY = 0;
 								}
 								else {
 									styleY = placeType * (height + 2) * data.Height;
@@ -1136,9 +1147,6 @@ namespace BossChecklist.UIElements
 								Main.instance.LoadTiles(tileType);
 								Asset<Texture2D> tileTexture = TextureAssets.Tile[tileType];
 
-								// The textures being drawn will be scaled up
-								float scale = 1f;
-
 								// Start drawing the tile texture
 								for (int i = 0; i < data.Width * data.Height; i++) {
 									if (i != 0 && i % data.Width == 0) {
@@ -1154,16 +1162,21 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(tileTexture.Value, posRect, cutRect, Color.White);
 
 									// If the display item is a relic, we'll also need to draw the floating boss part
-									if (i == 0 && type == CollectionType.Relic) {
-										if (DisplayedItem.type < ItemID.Count) {
-											Asset<Texture2D> relics = ModContent.Request<Texture2D>("Terraria/Images/Extra_198", AssetRequestMode.ImmediateLoad);
-											// Since relics take up a 3x3 square area of the tile, the width of the texture can be used in place of the height
-											Rectangle posRect2 = new Rectangle(posRect.X, posRect.Y, (int)(relics.Value.Width * scale), (int)(relics.Value.Width * scale));
-											Rectangle cutRect2 = new Rectangle(0, relicStyle * relics.Value.Width, relics.Value.Width, relics.Value.Width);
-											spriteBatch.Draw(relics.Value, posRect2, cutRect2, Color.White);
+									if (i == 0) {
+										if (type == CollectionType.Relic) {
+											if (tileToDisplay.type < ItemID.Count) {
+												Asset<Texture2D> relics = ModContent.Request<Texture2D>("Terraria/Images/Extra_198", AssetRequestMode.ImmediateLoad);
+												// Since relics take up a 3x3 square area of the tile, the width of the texture can be used in place of the height
+												Rectangle posRect2 = new Rectangle(posRect.X, posRect.Y, (int)(relics.Value.Width * scale), (int)(relics.Value.Width * scale));
+												Rectangle cutRect2 = new Rectangle(0, relicStyle * relics.Value.Width, relics.Value.Width, relics.Value.Width);
+												spriteBatch.Draw(relics.Value, posRect2, cutRect2, Color.White);
+											}
+											else {
+												// ??
+											}
 										}
-										else {
-											// ??
+										if (type == CollectionType.Mask) {
+											maskTop = posY;
 										}
 									}
 									styleX += 18;
@@ -1172,13 +1185,41 @@ namespace BossChecklist.UIElements
 							}
 
 							if (type == CollectionType.Mask) {
+								// Setup for Mannequin drawing
+								Asset<Texture2D> headTexture = TextureAssets.ArmorHead[DisplayedItem.headSlot];
 
+								int posX = (int)(frameR.X + frameR.Width / 2 - (headTexture.Value.Width / 2 * scale));
+								int posY = maskTop;
+								Rectangle pos = new Rectangle(posX, posY, (int)(headTexture.Value.Width * scale), (int)(headTexture.Value.Height / 20 * scale));
+								Rectangle src = new Rectangle(0, 0, headTexture.Value.Width, headTexture.Value.Height / 20);
+								spriteBatch.Draw(headTexture.Value, pos, src, Color.White, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 1f);
 							}
 							else if (type == CollectionType.Pet) {
+								int projectileType = DisplayedItem.shoot;
 
+								Asset<Texture2D> itemTexture = TextureAssets.Item[DisplayedItem.type];
+								Asset<Texture2D> projTexture = TextureAssets.Projectile[projectileType];
+								Main.instance.LoadProjectile(projectileType);
+								int totalFrames = Main.projFrames[projectileType];
+
+								int posX = frameR.X + frameR.Width / 2 - (int)(projTexture.Value.Width * scale) / 2;
+								int posY = frameR.Y + frameR.Height / 2 - (int)(projTexture.Value.Height / totalFrames * scale) / 2;
+								Rectangle pos = new Rectangle(posX, posY, (int)(projTexture.Value.Width * scale), (int)(projTexture.Value.Height / totalFrames * scale));
+								Rectangle src = new Rectangle(0, 0, projTexture.Value.Width, projTexture.Value.Height / totalFrames);
+								spriteBatch.Draw(projTexture.Value, pos, src, Color.White);
+
+								posX = frameR.X + 18;
+								posY = frameR.Y + 18;
+								pos = new Rectangle(posX, posY, itemTexture.Value.Width, itemTexture.Value.Height);
+								src = new Rectangle(0, 0, itemTexture.Value.Width, itemTexture.Value.Height);
+								spriteBatch.Draw(itemTexture.Value, pos, src, Color.White);
 							}
 							else if (type == CollectionType.Mount) {
+								int mountType = DisplayedItem.mountType;
 
+								Asset<Texture2D> mountTexture = Mount.mounts[mountType].frontTexture;
+								int totalFrames = Mount.mounts[mountType].totalFrames;
+								spriteBatch.Draw(mountTexture.Value, new Rectangle(frameR.X, frameR.Y, mountTexture.Value.Width, mountTexture.Value.Height / totalFrames), Color.White);
 							}
 						}
 					}
