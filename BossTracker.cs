@@ -146,6 +146,19 @@ namespace BossChecklist
 						}
 					}
 					*/
+					// This code should do the same as above, since ModNPC.BossBag no longer exists.
+					foreach (KeyValuePair<int, Item> item in ContentSamples.ItemsByType) {
+						if (item.Key >= ItemID.Count)
+							continue;
+						if (item.Value.ModItem is ModItem modItem) {
+							if (modItem.BossBagNPC > 0) {
+								if (!BossChecklist.registeredBossBagTypes.Contains(item.Key)) {
+									BossChecklist.registeredBossBagTypes.Add(item.Key);
+									break; // We found the boss bag for this modded boss, skip the other NPC IDs and go to the next boss
+								}
+							}
+						}
+					}
 				}
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}
