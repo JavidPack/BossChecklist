@@ -129,6 +129,8 @@ namespace BossChecklist
 			BossCache = new bool[NPCLoader.NPCCount];
 			foreach (var boss in SortedBosses) {
 				if (!Main.dedServ) {
+					//TODO: commented out until boss bag tag reintroduced in alpha
+					/*
 					foreach (int npc in boss.npcIDs) {
 						if (npc < NPCID.Count) {
 							// If the id is vanilla continue in case the boss uses a servant or something
@@ -143,6 +145,7 @@ namespace BossChecklist
 							}
 						}
 					}
+					*/
 				}
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}

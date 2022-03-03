@@ -1684,7 +1684,7 @@ namespace BossChecklist.UIElements
 				CalculatedStyle inner = GetInnerDimensions();
 				int w = fullBar.Value.Width;
 				int h = fullBar.Value.Height;
-				int barWidth = (int)inner.Width - 12;
+				int barWidth = (int)inner.Width - 8;
 
 				// Beginning of bar
 				Rectangle src = new Rectangle(0, 0, w / 3, h);
@@ -1698,7 +1698,7 @@ namespace BossChecklist.UIElements
 
 				// End of bar
 				src = new Rectangle(2 * (w / 3), 0, w / 3, h);
-				pos = new Rectangle((int)inner.X + (int)inner.Width - 6, (int)inner.Y, w / 3, h);
+				pos = new Rectangle((int)inner.X + (int)inner.Width - 4, (int)inner.Y, w / 3, h);
 				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
 
 				BossLogConfiguration configs = BossChecklist.BossLogConfig;
