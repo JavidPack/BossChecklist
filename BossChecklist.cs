@@ -230,7 +230,7 @@ namespace BossChecklist
 				}
 				else {
 					if(DebugConfig.ModCallLogVerbose)
-						Logger.Info($"Could not find {orphan.internalName} from {orphan.modSource} to add OrphanInfo to.");
+						Logger.Info($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
 				}
 			}
 			foreach (BossInfo boss in bossTracker.SortedBosses) {
@@ -374,9 +374,8 @@ namespace BossChecklist
 				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
 					bossTracker.AddOrphanData(
 						message, // OrphanType
-						args[1] as string, // Mod Name
-						args[2] as string, // Boss Name
-						InterpretObjectAsListOfInt(args[3]) // ID List
+						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
+						InterpretObjectAsListOfInt(args[2]) // ID List
 					);
 				}
 				else {

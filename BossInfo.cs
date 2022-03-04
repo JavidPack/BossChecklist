@@ -23,6 +23,7 @@ namespace BossChecklist
 		internal List<int> loot;
 		internal List<int> collection;
 		internal Dictionary<int, CollectionType> collectType;
+		//internal Dictionary<int, List<string>> conditionalLoot; // TODO - implement conditional items
 
 		internal string despawnMessage;
 		internal string pageTexture;
@@ -268,17 +269,16 @@ namespace BossChecklist
 	internal class OrphanInfo
 	{
 		internal OrphanType type;
+		internal string Key;
 		internal string modSource;
-		internal string internalName;
-		internal string Key => modSource + " " + internalName;
+		internal string bossName;
 		internal List<int> values;
 
-		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : BossInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
-
-		internal OrphanInfo(OrphanType type, string modSource, string internalName, List<int> values) {
+		internal OrphanInfo(OrphanType type, string bossKey, List<int> values) {
 			this.type = type;
-			this.modSource = modSource;
-			this.internalName = internalName;
+			this.Key = bossKey;
+			modSource = bossKey.Substring(0, bossKey.IndexOf(" "));
+			bossName = bossKey.Substring(bossKey.IndexOf(" ") + 1);
 			this.values = values;
 		}
 	}

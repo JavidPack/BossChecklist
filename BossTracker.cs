@@ -1383,7 +1383,7 @@ namespace BossChecklist
 			BossChecklist.instance.Logger.Info($"{name} has been added to the Boss Log!");
 		}
 
-		internal void AddOrphanData(string type, string modName, string bossName, List<int> ids) {
+		internal void AddOrphanData(string type, string bossKey, List<int> ids) {
 			OrphanType orphanType = OrphanType.Loot;
 			if (type == "AddToBossCollection") {
 				orphanType = OrphanType.Collection;
@@ -1394,7 +1394,7 @@ namespace BossChecklist
 			else if (type == "AddToEventNPCs") {
 				orphanType = OrphanType.EventNPC;
 			}
-			ExtraData.Add(new OrphanInfo(orphanType, modName, bossName, ids));
+			ExtraData.Add(new OrphanInfo(orphanType, bossKey, ids));
 		}
 	}
 }
