@@ -289,8 +289,7 @@ namespace BossChecklist.UIElements
 
 				if (Id.StartsWith("collect_") && BossChecklist.DebugConfig.ShowCollectionType) {
 					BossInfo boss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-					int index = boss.collection.FindIndex(x => x == item.type);
-					CollectionType type = boss.collectType[index];
+					boss.collectType.TryGetValue(item.type, out CollectionType type);
 
 					if (type != CollectionType.Generic) {
 						string showType = "";
@@ -1082,11 +1081,9 @@ namespace BossChecklist.UIElements
 							}
 
 							Item DisplayedItem = new Item(BossLogUI.CollectibleDisplayType);
-							int index = selectedBoss.collection.FindIndex(x => x == DisplayedItem.type);
-							if (index == -1) {
+							if (!selectedBoss.collectType.TryGetValue(DisplayedItem.type, out CollectionType type)) {
 								return;
 							}
-							CollectionType type = selectedBoss.collectType[index];
 
 							// If the displayed item is generic, don't draw anything
 							if (type == CollectionType.Generic) {

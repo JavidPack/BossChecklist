@@ -1163,8 +1163,9 @@ namespace BossChecklist
 
 				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
 				foreach (ItemDefinition item in Collection.collectibles) {
-					int index = boss.collection.FindIndex(x => x == item.Type);
-					CollectionType type = boss.collectType[index];
+					if (!boss.collectType.TryGetValue(item.Type, out CollectionType type)) {
+						continue;
+					}
 
 					// If we find a Relic in the player list, this should be the displayed item
 					if (type == CollectionType.Relic) {
