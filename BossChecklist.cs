@@ -226,11 +226,20 @@ namespace BossChecklist
 								bossInfo.npcIDs.AddRange(orphan.values);
 							}
 							break;
+						case OrphanType.ConditionalItem:
+							foreach (KeyValuePair<int, List<string>> entry in orphan.conditionalValues) {
+								bossInfo.conditionalLoot.Add(entry.Key, entry.Value);
+							}
+							break;
 					}
 				}
-				else {
-					if(DebugConfig.ModCallLogVerbose)
+				else if (DebugConfig.ModCallLogVerbose) {
+					if (bossInfo == null) {
 						Logger.Info($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
+					}
+					if (orphan.values == null) {
+						Logger.Info($"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.");
+					}
 				}
 			}
 			foreach (BossInfo boss in bossTracker.SortedBosses) {
@@ -378,6 +387,13 @@ namespace BossChecklist
 						InterpretObjectAsListOfInt(args[2]) // ID List
 					);
 				}
+				else if (message == "AddConditionalItem") {
+					bossTracker.AddOrphanData(
+						message, // OrphanType
+						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
+						InterpretObjectAsKeyValPair(args[2]) // ID List
+					);
+				}
 				else {
 					Logger.Error($"Call Error: Unknown Message: {message}");
 				}
@@ -389,6 +405,7 @@ namespace BossChecklist
 
 			// Local functions.
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
+			KeyValuePair<int, List<string>>? InterpretObjectAsKeyValPair(object data) => data is KeyValuePair<int, List<string>> ? data as KeyValuePair<int, List<string>>? : null;
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)

@@ -1383,18 +1383,25 @@ namespace BossChecklist
 			BossChecklist.instance.Logger.Info($"{name} has been added to the Boss Log!");
 		}
 
-		internal void AddOrphanData(string type, string bossKey, List<int> ids) {
-			OrphanType orphanType = OrphanType.Loot;
-			if (type == "AddToBossCollection") {
-				orphanType = OrphanType.Collection;
+		internal void AddOrphanData(string type, string bossKey, object values) {
+			if (type == "AddToBossLoot") {
+				ExtraData.Add(new OrphanInfo(OrphanType.Loot, bossKey, values as List<int>));
+			}
+			else if (type == "AddToBossCollection") {
+				ExtraData.Add(new OrphanInfo(OrphanType.Collection, bossKey, values as List<int>));
 			}
 			else if (type == "AddToBossSpawnItems") {
-				orphanType = OrphanType.SpawnItem;
+				ExtraData.Add(new OrphanInfo(OrphanType.SpawnItem, bossKey, values as List<int>));
 			}
 			else if (type == "AddToEventNPCs") {
-				orphanType = OrphanType.EventNPC;
+				ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, bossKey, values as List<int>));
 			}
-			ExtraData.Add(new OrphanInfo(orphanType, bossKey, ids));
+			else if (type == "AddConditionalItem") {
+				ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, bossKey, values as Dictionary<int, List<string>>));
+			}
+			else {
+				BossChecklist.instance.Logger.Warn($"Invalid orphan data found. ({type} for {bossKey})");
+			}
 		}
 	}
 }

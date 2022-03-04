@@ -23,7 +23,7 @@ namespace BossChecklist
 		internal List<int> loot;
 		internal List<int> collection;
 		internal Dictionary<int, CollectionType> collectType;
-		//internal Dictionary<int, List<string>> conditionalLoot; // TODO - implement conditional items
+		internal Dictionary<int, List<string>> conditionalLoot;
 
 		internal string despawnMessage;
 		internal string pageTexture;
@@ -161,12 +161,12 @@ namespace BossChecklist
 
 			// Assign this boss's treasure bag, looking through the loot list provided
 			if (!BossTracker.vanillaBossBags.TryGetValue(npcIDs[0], out this.treasureBag)) {
-				Item lootItem = new Item();
-				foreach (int item in loot) {
-					lootItem.SetDefaults(item);
-					if (lootItem.ModItem != null && lootItem.ModItem.BossBagNPC > 0) {
-						this.treasureBag = item;
-						break;
+				foreach (int itemType in loot) {
+					if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
+						if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
+							this.treasureBag = itemType;
+							break;
+						}
 					}
 				}
 			}
@@ -272,7 +272,15 @@ namespace BossChecklist
 		internal string Key;
 		internal string modSource;
 		internal string bossName;
+
 		internal List<int> values;
+		// Use cases for values...
+		/// Adding Spawn Item IDs to a boss
+		/// Adding Loot or Collectible item IDs to a boss
+		/// Adding NPC IDs to an event
+
+		internal Dictionary<int, List<string>> conditionalValues;
+		// Specifically used for adding item conditions to boss loot/collectibles
 
 		internal OrphanInfo(OrphanType type, string bossKey, List<int> values) {
 			this.type = type;
@@ -280,6 +288,14 @@ namespace BossChecklist
 			modSource = bossKey.Substring(0, bossKey.IndexOf(" "));
 			bossName = bossKey.Substring(bossKey.IndexOf(" ") + 1);
 			this.values = values;
+		}
+
+		internal OrphanInfo(OrphanType type, string bossKey, Dictionary<int, List<string>> values) {
+			this.type = type;
+			this.Key = bossKey;
+			modSource = bossKey.Substring(0, bossKey.IndexOf(" "));
+			bossName = bossKey.Substring(bossKey.IndexOf(" ") + 1);
+			this.conditionalValues = values;
 		}
 	}
 }

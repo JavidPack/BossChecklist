@@ -14,7 +14,8 @@ namespace BossChecklist
 		Loot,
 		Collection,
 		SpawnItem,
-		EventNPC
+		EventNPC,
+		ConditionalItem
 	}
 
 	internal enum CollectionType
