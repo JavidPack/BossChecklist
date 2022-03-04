@@ -78,8 +78,10 @@ namespace BossChecklist
 				return 1;
 			}
 			else {
-				if (BossChecklist.registeredBossBagTypes.Contains(type)) {
-					return 0;
+				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+					if (boss.treasureBag == type) {
+						return 0;
+					}
 				}
 				return -1;
 			}

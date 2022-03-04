@@ -1060,19 +1060,18 @@ namespace BossChecklist.UIElements
 					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == CategoryPage.Loot) {
 						if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
 							// Loot Table Subpage
-							Asset<Texture2D> bag = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag");
-							Rectangle sourceRect = bag.Value.Bounds;
-							foreach (int bagItem in selectedBoss.loot) {
-								if (BossChecklist.registeredBossBagTypes.Contains(bagItem)) {
-									Main.instance.LoadItem(bagItem);
-									bag = TextureAssets.Item[bagItem];
-									DrawAnimation drawAnim = Main.itemAnimations[bagItem];
-									sourceRect = drawAnim != null ? sourceRect = drawAnim.GetFrame(bag.Value) : bag.Value.Bounds;
-									break;
-								}
+							Asset<Texture2D> bagTexture;
+							if (selectedBoss.treasureBag != 0) {
+								Main.instance.LoadItem(selectedBoss.treasureBag);
+								bagTexture = TextureAssets.Item[selectedBoss.treasureBag];
 							}
-							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bag.Width() / 2), pageRect.Y + 88, sourceRect.Width, sourceRect.Height);
-							spriteBatch.Draw(bag.Value, posRect, sourceRect, Color.White);
+							else {
+								bagTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag", AssetRequestMode.ImmediateLoad);
+							}
+							DrawAnimation drawAnim = Main.itemAnimations[selectedBoss.treasureBag]; // 0 is null
+							Rectangle srcRect = drawAnim != null ? srcRect = drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
+							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
+							spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 						}
 						else {
 							// Collectibles Subpage
@@ -1709,7 +1708,7 @@ namespace BossChecklist.UIElements
 						allDownedEntries += downedEntries[1];
 						allAccountedEntries += totalEntries[1];
 					}
-					if (configs.FilterMiniBosses != "Hide") {
+					if (configs.FilterEvents != "Hide") {
 						allDownedEntries += downedEntries[2];
 						allAccountedEntries += totalEntries[2];
 					}

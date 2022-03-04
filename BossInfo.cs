@@ -19,6 +19,7 @@ namespace BossChecklist
 		internal Func<bool> downed;
 
 		internal List<int> spawnItem;
+		internal int treasureBag = 0;
 		internal List<int> loot;
 		internal List<int> collection;
 		internal List<CollectionType> collectType;
@@ -75,6 +76,7 @@ namespace BossChecklist
 
 				{ "npcIDs", new List<int>(npcIDs) },
 				{ "spawnItem", new List<int>(spawnItem) },
+				{ "treasureBag", treasureBag },
 				{ "loot", new List<int>(loot) },
 				{ "collection", new List<int>(collection) }
 			};
@@ -155,6 +157,18 @@ namespace BossChecklist
 			}
 			this.available = available ?? (() => true);
 			this.hidden = false;
+
+			// Assign this boss's treasure bag, looking through the loot list provided
+			if (!BossTracker.vanillaBossBags.TryGetValue(npcIDs[0], out this.treasureBag)) {
+				Item lootItem = new Item();
+				foreach (int item in loot) {
+					lootItem.SetDefaults(item);
+					if (lootItem.ModItem != null && lootItem.ModItem.BossBagNPC > 0) {
+						this.treasureBag = item;
+						break;
+					}
+				}
+			}
 
 			// Add to Opted Mods if a new mod
 			if (modSource != "Unknown" && modSource != "Terraria") {

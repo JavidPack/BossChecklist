@@ -125,41 +125,9 @@ namespace BossChecklist
 				}
 			}
 
-			// Adding modded treasure bags preemptively to remove Mod Item checks in other parts of code
 			BossCache = new bool[NPCLoader.NPCCount];
 			foreach (var boss in SortedBosses) {
-				if (!Main.dedServ) {
-					//TODO: commented out until boss bag tag reintroduced in alpha
-					/*
-					foreach (int npc in boss.npcIDs) {
-						if (npc < NPCID.Count) {
-							// If the id is vanilla continue in case the boss uses a servant or something
-							// The first NPC should have the boss that drops the bag, but backups are needed anyways
-							continue; 
-						}
-						int bagType = NPCLoader.GetNPC(npc).BossBag;
-						if (bagType > 0) {
-							if (!BossChecklist.registeredBossBagTypes.Contains(bagType)) {
-								BossChecklist.registeredBossBagTypes.Add(bagType);
-								break; // We found the boss bag for this modded boss, skip the other NPC IDs and go to the next boss
-							}
-						}
-					}
-					*/
-				}
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
-			}
-			// This code should do the same as above, since ModNPC.BossBag no longer exists.
-			foreach (KeyValuePair<int, Item> item in ContentSamples.ItemsByType) {
-				if (item.Key < ItemID.Count)
-					continue;
-				if (item.Value.ModItem is ModItem modItem) {
-					if (modItem.BossBagNPC > 0) {
-						if (!BossChecklist.registeredBossBagTypes.Contains(item.Key)) {
-							BossChecklist.registeredBossBagTypes.Add(item.Key);
-						}
-					}
-				}
 			}
 		}
 
@@ -1340,6 +1308,27 @@ namespace BossChecklist
 			}
 			return new List<int>();
 		}
+
+		internal readonly static Dictionary<int, int> vanillaBossBags = new Dictionary<int, int>() {
+			{ NPCID.KingSlime, ItemID.KingSlimeBossBag },
+			{ NPCID.EyeofCthulhu, ItemID.EyeOfCthulhuBossBag },
+			{ NPCID.EaterofWorldsHead, ItemID.EaterOfWorldsBossBag },
+			{ NPCID.BrainofCthulhu, ItemID.BrainOfCthulhuBossBag },
+			{ NPCID.QueenBee, ItemID.QueenBeeBossBag },
+			{ NPCID.SkeletronHead, ItemID.SkeletronBossBag },
+			{ NPCID.WallofFlesh, ItemID.WallOfFleshBossBag },
+			{ NPCID.Retinazer, ItemID.TwinsBossBag },
+			{ NPCID.TheDestroyer, ItemID.DestroyerBossBag },
+			{ NPCID.SkeletronPrime, ItemID.SkeletronPrimeBossBag },
+			{ NPCID.Plantera, ItemID.PlanteraBossBag },
+			{ NPCID.Golem, ItemID.GolemBossBag },
+			{ NPCID.DukeFishron, ItemID.FishronBossBag },
+			{ NPCID.MoonLordHead, ItemID.MoonLordBossBag },
+			{ NPCID.DD2Betsy, ItemID.BossBagBetsy },
+			{ NPCID.QueenSlimeBoss, ItemID.QueenSlimeBossBag },
+			{ NPCID.HallowBoss, ItemID.FairyQueenBossBag },
+			{ NPCID.Deerclops, ItemID.DeerclopsBossBag }
+		};
 
 		// Old version compatibility methods
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {

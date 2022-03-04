@@ -1028,7 +1028,7 @@ namespace BossChecklist
 			int row = 0;
 			int col = 0;
 			foreach (int loot in shortcut.loot) {
-				if (BossChecklist.registeredBossBagTypes.Contains(loot)) {
+				if (loot == shortcut.treasureBag) {
 					continue;
 				}
 				Item selectedItem = new Item(loot);
@@ -1074,7 +1074,7 @@ namespace BossChecklist
 				}
 			}
 			foreach (int itemType in shortcut.loot) {
-				if (BossChecklist.registeredBossBagTypes.Contains(itemType)) {
+				if (itemType == shortcut.treasureBag) {
 					continue;
 				}
 				Item loot = new Item(itemType);
