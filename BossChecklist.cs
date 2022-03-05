@@ -228,7 +228,12 @@ namespace BossChecklist
 							break;
 						case OrphanType.ConditionalItem:
 							foreach (KeyValuePair<int, List<string>> entry in orphan.conditionalValues) {
-								bossInfo.conditionalLoot.Add(entry.Key, entry.Value);
+								if (!bossInfo.conditionalLoot.Keys.Contains(entry.Key)) {
+									bossInfo.conditionalLoot.Add(entry.Key, entry.Value);
+								}
+								else {
+									BossChecklist.instance.Logger.Warn($"The item '{ContentSamples.ItemsByType[entry.Key].Name}' already exists in {orphan.bossName}'s conditional items. Check your code for duplicate entries or typos.");
+								}
 							}
 							break;
 					}
@@ -388,11 +393,13 @@ namespace BossChecklist
 					);
 				}
 				else if (message == "AddConditionalItem") {
-					bossTracker.AddOrphanData(
-						message, // OrphanType
+					bossTracker.ExtraData.Add(new OrphanInfo(
+						OrphanType.ConditionalItem, // OrphanType
 						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
-						InterpretObjectAsKeyValPair(args[2]) // ID List
-					);
+						args[2] as Func<bool>, // The condition the item requires. Useful for custom modes.
+						args[3] as Dictionary<int, List<string>> // Message list
+						
+					));
 				}
 				else {
 					Logger.Error($"Call Error: Unknown Message: {message}");
@@ -405,7 +412,7 @@ namespace BossChecklist
 
 			// Local functions.
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
-			KeyValuePair<int, List<string>>? InterpretObjectAsKeyValPair(object data) => data is KeyValuePair<int, List<string>> ? data as KeyValuePair<int, List<string>>? : null;
+			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)

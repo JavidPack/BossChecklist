@@ -279,6 +279,7 @@ namespace BossChecklist
 		/// Adding Loot or Collectible item IDs to a boss
 		/// Adding NPC IDs to an event
 
+		internal Func<bool> condition;
 		internal Dictionary<int, List<string>> conditionalValues;
 		// Specifically used for adding item conditions to boss loot/collectibles
 
@@ -290,11 +291,12 @@ namespace BossChecklist
 			this.values = values;
 		}
 
-		internal OrphanInfo(OrphanType type, string bossKey, Dictionary<int, List<string>> values) {
+		internal OrphanInfo(OrphanType type, string bossKey, Func<bool> condition, Dictionary<int, List<string>> values) {
 			this.type = type;
 			this.Key = bossKey;
 			modSource = bossKey.Substring(0, bossKey.IndexOf(" "));
 			bossName = bossKey.Substring(bossKey.IndexOf(" ") + 1);
+			this.condition = condition;
 			this.conditionalValues = values;
 		}
 	}

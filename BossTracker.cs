@@ -1396,9 +1396,6 @@ namespace BossChecklist
 			else if (type == "AddToEventNPCs") {
 				ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, bossKey, values as List<int>));
 			}
-			else if (type == "AddConditionalItem") {
-				ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, bossKey, values as Dictionary<int, List<string>>));
-			}
 			else {
 				BossChecklist.instance.Logger.Warn($"Invalid orphan data found. ({type} for {bossKey})");
 			}
