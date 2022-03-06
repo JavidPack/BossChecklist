@@ -196,7 +196,7 @@ namespace BossChecklist.UIElements
 				BossCollection collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 				bool masked = BossChecklist.BossLogConfig.BossSilhouettes;
 
-				if (Id.StartsWith("loot_") || Id.StartsWith("collect_")) {
+				if (Id.StartsWith("loot_")) {
 					if (masked && !selectedBoss.IsDownedOrForced) {
 						// Boss Silhouettes always makes itemslot background red, reguardless of obtainable
 						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
@@ -204,11 +204,6 @@ namespace BossChecklist.UIElements
 					else if (hasItem) {
 						// Otherwise, if the item is obtained make the itemslot background green
 						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
-						// If on the Collectibles page, the display type should be marked
-						bool OnCollectionPage = BossLogUI.CategoryPageNum == CategoryPage.Loot && BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1;
-						if (OnCollectionPage && item.type == BossLogUI.CollectibleDisplayType) {
-							TextureAssets.InventoryBack7 = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_HighlightedCollectible", AssetRequestMode.ImmediateLoad);
-						}
 					}
 					else if ((item.expert && !Main.expertMode) || (item.master && !Main.masterMode)) {
 						// If not obtained and the item is mode restricted, itemslot background is red
@@ -225,11 +220,11 @@ namespace BossChecklist.UIElements
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 					string hoverText = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
-					if (item.expert && !Main.expertMode) {
+					if ((item.expert || item.expertOnly) && !Main.expertMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
 						hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
 					}
-					if (item.master && !Main.masterMode) {
+					if ((item.master || item.masterOnly) && !Main.masterMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
 						hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
 					}
@@ -246,6 +241,7 @@ namespace BossChecklist.UIElements
 				TextureAssets.InventoryBack6 = backup;
 				TextureAssets.InventoryBack7 = backup2;
 
+				// Draw evil altars if needed
 				if (hoverText == crimsonAltar || hoverText == demonAltar) {
 					Main.instance.LoadTiles(TileID.DemonAltar);
 					int offsetX = 0;
@@ -267,9 +263,15 @@ namespace BossChecklist.UIElements
 						}
 					}
 				}
-
+				
 				Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
-				if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_"))) {
+				if (item.type != ItemID.None && Id.StartsWith("loot_")) {
+					// Draw collectible border
+					if (selectedBoss.collection.Contains(item.type)) {
+						string texturePath = "BossChecklist/Resources/Extra_HighlightedCollectible";
+						Asset<Texture2D> border = ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad);
+						spriteBatch.Draw(border.Value, rectangle.TopLeft(), Color.White);
+					}
 					if (hasItem) {
 						// Obtainability check take priority over any expert/master mode restriction
 						if (!masked || (masked && selectedBoss.IsDownedOrForced)) {
@@ -287,7 +289,7 @@ namespace BossChecklist.UIElements
 					}
 				}
 
-				if (Id.StartsWith("collect_") && BossChecklist.DebugConfig.ShowCollectionType) {
+				if (Id.StartsWith("loot_") && BossChecklist.DebugConfig.ShowCollectionType) {
 					BossInfo boss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 					boss.collectType.TryGetValue(item.type, out CollectionType type);
 
@@ -329,7 +331,7 @@ namespace BossChecklist.UIElements
 
 				if (IsMouseHovering) {
 					if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
-						if (item.type != ItemID.None && (Id.StartsWith("loot_") || Id.StartsWith("collect_")) && !hasItem) {
+						if (item.type != ItemID.None && Id.StartsWith("loot_") && !hasItem) {
 							if (!Main.expertMode && (item.expert || item.expertOnly)) {
 								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
 							}
@@ -1072,152 +1074,6 @@ namespace BossChecklist.UIElements
 							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
 							spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 						}
-						else {
-							// Collectibles Subpage
-
-							// If there isn't anything to display, just end all drawing
-							if (BossLogUI.CollectibleDisplayType == -1) {
-								return;
-							}
-
-							Item DisplayedItem = new Item(BossLogUI.CollectibleDisplayType);
-							if (!selectedBoss.collectType.TryGetValue(DisplayedItem.type, out CollectionType type)) {
-								return;
-							}
-
-							// If the displayed item is generic, don't draw anything
-							if (type == CollectionType.Generic) {
-								return;
-							}
-
-							// Draw frame
-							Asset<Texture2D> frame = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CollectibleFrame", AssetRequestMode.ImmediateLoad);
-							float frameScale = 1.5f; // Frame scale only
-							float scale = 1.5f; // The textures being drawn will be scaled up
-							int frameX = pageRect.X + pageRect.Width / 2 - (int)(frame.Value.Width * frameScale / 2);
-							Rectangle frameR = new Rectangle(frameX, pageRect.Y + 80, (int)(frame.Value.Width * frameScale), (int)(frame.Value.Height * frameScale));
-							spriteBatch.Draw(frame.Value, frameR, Color.White);
-
-							int maskTop = 0;
-
-							// Relics, Trophies, and Musicboxes require tile drawing
-							if (type == CollectionType.Relic || type == CollectionType.Trophy || type == CollectionType.MusicBox || type == CollectionType.Mask) {
-								Item tileToDisplay = new Item(DisplayedItem.type);
-								if (type == CollectionType.Mask) {
-									tileToDisplay.SetDefaults(ItemID.Mannequin);
-								}
-								
-								// Tile data for drawing
-								// Special case for Relics needed
-								int tileType = tileToDisplay.createTile;
-								int placeType = type == CollectionType.Relic ? 0 : tileToDisplay.placeStyle;
-								int relicStyle = tileToDisplay.placeStyle;
-
-								TileObjectData data = TileObjectData.GetTileData(tileType, placeType);
-								int width = data.CoordinateWidth;
-								int height = data.CoordinateHeights[0];
-
-								int styleX = 0; // x coordinate of tile style
-								int styleY = 0; // Y coordinate of tile style
-								if (data.StyleWrapLimit > 0) {
-									styleX = (placeType % data.StyleWrapLimit) * data.CoordinateFullWidth;
-									styleY = (placeType / data.StyleWrapLimit) * data.CoordinateFullHeight;
-								}
-								else if (type == CollectionType.Mask) {
-									int genderOffset = Main.LocalPlayer.Male ? 0 : 2;
-									styleX = (data.DrawStyleOffset + genderOffset) * data.CoordinateFullWidth;
-									styleY = 0;
-								}
-								else {
-									styleY = placeType * (height + 2) * data.Height;
-								}
-
-								// top-left corner of tile style (texture)
-								int topLeftX = styleX;
-								int topLeftY = styleY;
-								// Offsets for multi-tiles
-								int offsetX = 0;
-								int offsetY = 0;
-
-								// Load our tile textures
-								Main.instance.LoadTiles(tileType);
-								Asset<Texture2D> tileTexture = TextureAssets.Tile[tileType];
-
-								// Start drawing the tile texture
-								for (int i = 0; i < data.Width * data.Height; i++) {
-									if (i != 0 && i % data.Width == 0) {
-										styleX = topLeftX;
-										styleY += 18;
-										offsetX = 0;
-										offsetY++;
-									}
-									int posX = frameR.X + frameR.Width / 2 - (int)(width * data.Width * scale) / 2 + (int)((styleX - topLeftX - (2 * offsetX)) * scale);
-									int posY = frameR.Y + frameR.Height / 2 - (int)(height * data.Height * scale) / 2 + (int)((styleY - topLeftY - (2 * offsetY)) * scale);
-									Rectangle posRect = new Rectangle(posX, posY, (int)(width * scale), (int)(height * scale));
-									Rectangle cutRect = new Rectangle(styleX, styleY, width, height);
-									spriteBatch.Draw(tileTexture.Value, posRect, cutRect, Color.White);
-
-									// If the display item is a relic, we'll also need to draw the floating boss part
-									if (i == 0) {
-										if (type == CollectionType.Relic) {
-											if (tileToDisplay.type < ItemID.Count) {
-												Asset<Texture2D> relics = ModContent.Request<Texture2D>("Terraria/Images/Extra_198", AssetRequestMode.ImmediateLoad);
-												// Since relics take up a 3x3 square area of the tile, the width of the texture can be used in place of the height
-												Rectangle posRect2 = new Rectangle(posRect.X, posRect.Y, (int)(relics.Value.Width * scale), (int)(relics.Value.Width * scale));
-												Rectangle cutRect2 = new Rectangle(0, relicStyle * relics.Value.Width, relics.Value.Width, relics.Value.Width);
-												spriteBatch.Draw(relics.Value, posRect2, cutRect2, Color.White);
-											}
-											else {
-												// ??
-											}
-										}
-										if (type == CollectionType.Mask) {
-											maskTop = posY;
-										}
-									}
-									styleX += 18;
-									offsetX++;
-								}
-							}
-
-							if (type == CollectionType.Mask) {
-								// Setup for Mannequin drawing
-								Asset<Texture2D> headTexture = TextureAssets.ArmorHead[DisplayedItem.headSlot];
-
-								int posX = (int)(frameR.X + frameR.Width / 2 - (headTexture.Value.Width / 2 * scale));
-								int posY = maskTop;
-								Rectangle pos = new Rectangle(posX, posY, (int)(headTexture.Value.Width * scale), (int)(headTexture.Value.Height / 20 * scale));
-								Rectangle src = new Rectangle(0, 0, headTexture.Value.Width, headTexture.Value.Height / 20);
-								spriteBatch.Draw(headTexture.Value, pos, src, Color.White, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 1f);
-							}
-							else if (type == CollectionType.Pet) {
-								int projectileType = DisplayedItem.shoot;
-
-								Asset<Texture2D> itemTexture = TextureAssets.Item[DisplayedItem.type];
-								Asset<Texture2D> projTexture = TextureAssets.Projectile[projectileType];
-								Main.instance.LoadProjectile(projectileType);
-								int totalFrames = Main.projFrames[projectileType];
-
-								int posX = frameR.X + frameR.Width / 2 - (int)(projTexture.Value.Width * scale) / 2;
-								int posY = frameR.Y + frameR.Height / 2 - (int)(projTexture.Value.Height / totalFrames * scale) / 2;
-								Rectangle pos = new Rectangle(posX, posY, (int)(projTexture.Value.Width * scale), (int)(projTexture.Value.Height / totalFrames * scale));
-								Rectangle src = new Rectangle(0, 0, projTexture.Value.Width, projTexture.Value.Height / totalFrames);
-								spriteBatch.Draw(projTexture.Value, pos, src, Color.White);
-
-								posX = frameR.X + 18;
-								posY = frameR.Y + 18;
-								pos = new Rectangle(posX, posY, itemTexture.Value.Width, itemTexture.Value.Height);
-								src = new Rectangle(0, 0, itemTexture.Value.Width, itemTexture.Value.Height);
-								spriteBatch.Draw(itemTexture.Value, pos, src, Color.White);
-							}
-							else if (type == CollectionType.Mount) {
-								int mountType = DisplayedItem.mountType;
-
-								Asset<Texture2D> mountTexture = Mount.mounts[mountType].frontTexture;
-								int totalFrames = Mount.mounts[mountType].totalFrames;
-								spriteBatch.Draw(mountTexture.Value, new Rectangle(frameR.X, frameR.Y, mountTexture.Value.Width, mountTexture.Value.Height / totalFrames), Color.White);
-							}
-						}
 					}
 				}
 			}
@@ -1832,35 +1688,10 @@ namespace BossChecklist.UIElements
 						}
 					}
 					else if (BossLogUI.CategoryPageNum == CategoryPage.Spawn) {
-						/* NO CURRENT ALTPAGE, BUTTON NOT NEEDED
-						if (!BossLogUI.AltPage[BossLogUI.SubPageNum]) {
-							Rectangle exclamCut = new Rectangle(34 * 2, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Click to read more info";
-						}
-						else {
-							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
-							spriteBatch.Draw(text, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) Main.hoverItemName = "Click to view spawn item recipes";
-						}
-						*/
+						// NO CURRENT ALTPAGE, BUTTON NOT NEEDED
 					}
 					else if (BossLogUI.CategoryPageNum == CategoryPage.Loot) {
-						Asset<Texture2D> texture = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievement_Categories", AssetRequestMode.ImmediateLoad);
-						if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
-							spriteBatch.Draw(texture.Value, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) {
-								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewCollect");
-							}
-						}
-						else {
-							Rectangle exclamCut = new Rectangle(34 * 1, 0, 32, 32);
-							spriteBatch.Draw(texture.Value, exclamPos, exclamCut, Color.White);
-							if (IsMouseHovering) {
-								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewLoot");
-							}
-						}
+						// NO CURRENT ALTPAGE, BUTTON NOT NEEDED
 					}
 				}
 			}

@@ -97,8 +97,6 @@ namespace BossChecklist
 		public static bool showHidden = false;
 		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
 
-		public static int CollectibleDisplayType = -1;
-
 		private bool bossLogVisible;
 		public bool BossLogVisible {
 			get { return bossLogVisible; }
@@ -205,9 +203,9 @@ namespace BossChecklist
 			};
 
 			TotalAltPages = new int[] {
-				4, // Last , Best, First, World
-				1, // Spawn
-				2 // Loot, Collectibles
+				4, // Record types have their own pages (Last, Best, First, World)
+				1, // All spawn info is on one page
+				1 // Loot and Collectibles occupy the same page
 			};
 
 			BookArea = new BossLogPanel();
@@ -1000,10 +998,6 @@ namespace BossChecklist
 
 		private void OpenLoot() {
 			ResetBothPages();
-			if (AltPageSelected[(int)CategoryPageNum] == 1) {
-				OpenCollect();
-				return;
-			}
 			if (PageNum < 0) {
 				return;
 			}
@@ -1025,92 +1019,37 @@ namespace BossChecklist
 				Id = "Loot0"
 			};
 
+			// Create the combined list of loot and collectibles. Treasure bag is skipped for this list.
+			List<int> bossItems = new List<int>(shortcut.loot.Union(shortcut.collection));
+			bossItems.Remove(shortcut.treasureBag);
+
 			int row = 0;
 			int col = 0;
-			foreach (int loot in shortcut.loot) {
-				if (loot == shortcut.treasureBag) {
-					continue;
-				}
-				Item selectedItem = new Item(loot);
-				if (selectedItem.master) {
-					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
-						Id = "loot_" + selectedItem.type
+			foreach (int item in bossItems) {
+				Item selectedItem = ContentSamples.ItemsByType[item];
+				BossCollection obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
+				bool hasObtained = obtainedItems.loot.Any(x => x.Type == item) || obtainedItems.collectibles.Any(x => x.Type == item);
+
+				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, selectedItem.Name, ItemSlot.Context.TrashItem) {
+					Id = "loot_" + item
+				};
+				itemSlot.Width.Pixels = slotRectRef.Width;
+				itemSlot.Height.Pixels = slotRectRef.Height;
+				itemSlot.Left.Pixels = (col * 56) + 15;
+				itemSlot.OnRightDoubleClick += RemoveItem;
+				newRow.Append(itemSlot);
+				col++;
+				if (col == 6) {
+					col = 0;
+					row++;
+					pageTwoItemList.Add(newRow);
+					newRow = new LootRow(row) {
+						Id = "Loot" + row
 					};
-					lootTable.Width.Pixels = slotRectRef.Width;
-					lootTable.Height.Pixels = slotRectRef.Height;
-					lootTable.Left.Pixels = (col * 56) + 15;
-					lootTable.OnRightDoubleClick += RemoveItem;
-					newRow.Append(lootTable);
-					col++;
-					if (col == 6) {
-						col = 0;
-						row++;
-						pageTwoItemList.Add(newRow);
-						newRow = new LootRow(row) {
-							Id = "Loot" + row
-						};
-					}
-				}
-				if (selectedItem.expert) {
-					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(selectedItem, Collection.loot.Any(x => x.Type == selectedItem.type), selectedItem.Name, ItemSlot.Context.TrashItem) {
-						Id = "loot_" + selectedItem.type
-					};
-					lootTable.Width.Pixels = slotRectRef.Width;
-					lootTable.Height.Pixels = slotRectRef.Height;
-					lootTable.Left.Pixels = (col * 56) + 15;
-					lootTable.OnRightDoubleClick += RemoveItem;
-					newRow.Append(lootTable);
-					col++;
-					if (col == 6) {
-						col = 0;
-						row++;
-						pageTwoItemList.Add(newRow);
-						newRow = new LootRow(row) {
-							Id = "Loot" + row
-						};
-					}
 				}
 			}
-			foreach (int itemType in shortcut.loot) {
-				if (itemType == shortcut.treasureBag) {
-					continue;
-				}
-				Item loot = new Item(itemType);
-				if (shortcut.npcIDs[0] < NPCID.Count) {
-					if (WorldGen.crimson) {
-						if (loot.type == ItemID.DemoniteOre || loot.type == ItemID.CorruptSeeds || loot.type == ItemID.UnholyArrow) {
-							continue;
-						}
-					}
-					else { // Corruption
-						if (loot.type == ItemID.CrimtaneOre || loot.type == ItemID.CrimsonSeeds) {
-							continue;
-						}
-					}
-				}
-				if (!loot.expert && !loot.master) {
-					BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-					LogItemSlot lootTable = new LogItemSlot(loot, Collection.loot.Any(x => x.Type == loot.type), loot.Name, ItemSlot.Context.TrashItem) {
-						Id = "loot_" + loot.type
-					};
-					lootTable.Width.Pixels = slotRectRef.Width;
-					lootTable.Height.Pixels = slotRectRef.Height;
-					lootTable.Left.Pixels = (col * 56) + 15;
-					lootTable.OnRightDoubleClick += RemoveItem;
-					newRow.Append(lootTable);
-					col++;
-					if (col == 6) {
-						col = 0;
-						row++;
-						pageTwoItemList.Add(newRow);
-						newRow = new LootRow(row) {
-							Id = "Loot" + row
-						};
-					}
-				}
-			}
+
+			// This adds the final row
 			if (col != 0) {
 				col = 0;
 				row++;
@@ -1119,92 +1058,9 @@ namespace BossChecklist
 					Id = "Loot" + row
 				};
 			}
+
+			// If we have more than 5 rows of items, a scroll bar is needed to access all items
 			if (row > 5) {
-				PageTwo.Append(scrollTwo);
-			}
-			PageTwo.Append(pageTwoItemList);
-			pageTwoItemList.SetScrollbar(scrollTwo);
-		}
-
-		private void OpenCollect() {
-			ResetBothPages();
-			if (PageNum < 0) {
-				return;
-			}
-
-			// Reset Item when updating to page
-			CollectibleDisplayType = -1;
-
-			pageTwoItemList.Left.Pixels = 0;
-			pageTwoItemList.Top.Pixels = 235;
-			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
-			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 240 - 75;
-
-			scrollTwo.SetView(10f, 1000f);
-			scrollTwo.Top.Pixels = 250;
-			scrollTwo.Left.Pixels = -3;
-			scrollTwo.Height.Set(-220f, 0.75f);
-			scrollTwo.HAlign = 1f;
-
-			pageTwoItemList.Clear();
-			LootRow newRow = new LootRow(0) {
-				Id = "Collect0"
-			};
-
-			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-
-			int row = 0;
-			int col = 0;
-			for (int i = 0; i < boss.collection.Count; i++) {
-				if (boss.collection[i] == -1) {
-					continue;
-				}
-				Item collectible = new Item(boss.collection[i]);
-
-				BossCollection Collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-				foreach (ItemDefinition item in Collection.collectibles) {
-					if (!boss.collectType.TryGetValue(item.Type, out CollectionType type)) {
-						continue;
-					}
-
-					// If we find a Relic in the player list, this should be the displayed item
-					if (type == CollectionType.Relic) {
-						CollectibleDisplayType = item.Type;
-						break;
-					}
-					// Trophy is the next top priority, but don't stop in case we find a relic
-					else if (type == CollectionType.Trophy) {
-						CollectibleDisplayType = item.Type;
-					}
-					// We'll use what ever collectible we find first that isn't Generic
-					// Keep going in case we find a trophy or relic
-					// This condition shouldn't repeat as we have set the display item
-					else if (type != CollectionType.Generic && CollectibleDisplayType == -1) {
-						CollectibleDisplayType = item.Type;
-					}
-				}
-				// The selected collectible will be highlighted by the draw method in LogItemSlot
-				bool collected = Collection.collectibles.Any(x => x.Type == collectible.type);
-				LogItemSlot collectionTable = new LogItemSlot(collectible, collected, collectible.Name) {
-					Id = "collect_" + collectible.type
-				};
-				collectionTable.Width.Pixels = slotRectRef.Width;
-				collectionTable.Height.Pixels = slotRectRef.Height;
-				collectionTable.Left.Pixels = (col * 56) + 15;
-				collectionTable.OnClick += (a, b) => CollectibleDisplayType = collected ? collectible.type : CollectibleDisplayType;
-				collectionTable.OnRightDoubleClick += RemoveItem;
-				newRow.Append(collectionTable);
-				col++;
-				if (col == 6 || i == boss.collection.Count - 1) {
-					col = 0;
-					row++;
-					pageTwoItemList.Add(newRow);
-					newRow = new LootRow(row) {
-						Id = "Collect" + row
-					};
-				}
-			}
-			if (row > 3) {
 				PageTwo.Append(scrollTwo);
 			}
 			PageTwo.Append(pageTwoItemList);
@@ -1531,9 +1387,10 @@ namespace BossChecklist
 				if (boss.modSource != "Unknown") {
 					// Events do not have records. Instead we create their own page with banners of the enemies in the event.
 					bool eventCheck = CategoryPageNum == CategoryPage.Record && boss.type == EntryType.Event;
+					// Spawn and Loot pages do not have alt pages currently, so skip adding them
 					if (!eventCheck) {
 						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {
-							if (CategoryPageNum == CategoryPage.Spawn) {
+							if (CategoryPageNum == CategoryPage.Spawn || CategoryPageNum == CategoryPage.Loot) {
 								break;
 							}
 							AltPageButtons[i].Width.Pixels = 32;

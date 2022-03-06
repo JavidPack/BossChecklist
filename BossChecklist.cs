@@ -226,16 +226,6 @@ namespace BossChecklist
 								bossInfo.npcIDs.AddRange(orphan.values);
 							}
 							break;
-						case OrphanType.ConditionalItem:
-							foreach (KeyValuePair<int, List<string>> entry in orphan.conditionalValues) {
-								if (!bossInfo.conditionalLoot.Keys.Contains(entry.Key)) {
-									bossInfo.conditionalLoot.Add(entry.Key, entry.Value);
-								}
-								else {
-									BossChecklist.instance.Logger.Warn($"The item '{ContentSamples.ItemsByType[entry.Key].Name}' already exists in {orphan.bossName}'s conditional items. Check your code for duplicate entries or typos.");
-								}
-							}
-							break;
 					}
 				}
 				else if (DebugConfig.ModCallLogVerbose) {
@@ -391,15 +381,6 @@ namespace BossChecklist
 						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
 						InterpretObjectAsListOfInt(args[2]) // ID List
 					);
-				}
-				else if (message == "AddConditionalItem") {
-					bossTracker.ExtraData.Add(new OrphanInfo(
-						OrphanType.ConditionalItem, // OrphanType
-						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
-						args[2] as Func<bool>, // The condition the item requires. Useful for custom modes.
-						args[3] as Dictionary<int, List<string>> // Message list
-						
-					));
 				}
 				else {
 					Logger.Error($"Call Error: Unknown Message: {message}");
