@@ -212,9 +212,11 @@ namespace BossChecklist
 				BossInfo bossInfo = bossTracker.SortedBosses.Find(boss => boss.Key == orphan.Key);
 				if (bossInfo != null && orphan.values != null) {
 					switch (orphan.type) {
+						/*
 						case OrphanType.Loot:
 							bossInfo.loot.AddRange(orphan.values);
 							break;
+						*/
 						case OrphanType.Collection:
 							bossInfo.collection.AddRange(orphan.values);
 							break;
@@ -297,7 +299,6 @@ namespace BossChecklist
 							args[5] as Func<bool>, // Downed
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Loot
 							args[9] as string, // Info
 							args[10] as string, // Despawn Message
 							args[11] as string, // Texture
@@ -328,7 +329,6 @@ namespace BossChecklist
 							args[5] as Func<bool>, // Downed
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Loot
 							args[9] as string, // Info
 							args[10] as string, // Despawn Message
 							args[11] as string, // Texture
@@ -359,7 +359,6 @@ namespace BossChecklist
 							args[5] as Func<bool>, // Downed
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Loot
 							args[9] as string, // Info
 							args[10] as string, // Despawn Message
 							args[11] as string, // Texture

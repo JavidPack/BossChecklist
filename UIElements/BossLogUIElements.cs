@@ -1385,7 +1385,7 @@ namespace BossChecklist.UIElements
 				Item checkItem = new Item();
 
 				// Loop through player saved loot and boss loot to see if every item was obtained
-				foreach (int loot in sortedBosses[index].loot) {
+				foreach (int loot in sortedBosses[index].lootItemTypes) {
 					// Check for corruption/crimson vanilla items, and skip them based on world evil
 					// May need new method for looking for these items.
 					if (sortedBosses[index].npcIDs[0] < NPCID.Count) {

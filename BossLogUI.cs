@@ -17,6 +17,7 @@ using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using static BossChecklist.UIElements.BossLogUIElements;
+using Terraria.GameContent.ItemDropRules;
 
 namespace BossChecklist
 {
@@ -1019,9 +1020,9 @@ namespace BossChecklist
 				Id = "Loot0"
 			};
 
-			// Create the combined list of loot and collectibles. Treasure bag is skipped for this list.
-			List<int> bossItems = new List<int>(shortcut.loot.Union(shortcut.collection));
-			bossItems.Remove(shortcut.treasureBag);
+			// Create the combined list of loot and collectibles.
+			List<int> bossItems = new List<int>(shortcut.collection.Union(shortcut.lootItemTypes));
+			bossItems.Remove(shortcut.treasureBag); // Skip the treasurebag. It is not needed for the loot table.
 
 			int row = 0;
 			int col = 0;

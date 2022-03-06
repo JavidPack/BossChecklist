@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using Terraria.ObjectData;
 using Terraria.ID;
+using Terraria.GameContent.ItemDropRules;
+using System.Linq;
 
 namespace BossChecklist
 {
@@ -20,7 +22,8 @@ namespace BossChecklist
 
 		internal List<int> spawnItem;
 		internal int treasureBag = 0;
-		internal List<int> loot;
+		internal List<DropRateInfo> loot;
+		internal List<int> lootItemTypes;
 		internal List<int> collection;
 		internal Dictionary<int, CollectionType> collectType;
 
@@ -77,7 +80,7 @@ namespace BossChecklist
 				{ "npcIDs", new List<int>(npcIDs) },
 				{ "spawnItem", new List<int>(spawnItem) },
 				{ "treasureBag", treasureBag },
-				{ "loot", new List<int>(loot) },
+				{ "loot", new List<DropRateInfo>(loot) },
 				{ "collection", new List<int>(collection) }
 			};
 
@@ -119,18 +122,51 @@ namespace BossChecklist
 			return editedName;
 		}
 
-		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, List<int> loot, string pageTexture, string info, string despawnMessage = "", string overrideIconTexture = "") {
+		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string pageTexture, string info, string despawnMessage = "", string overrideIconTexture = "") {
 			this.type = type;
-			this.progression = progression;
-			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
 			this.name = name;
 			this.npcIDs = npcIDs ?? new List<int>();
+			this.progression = progression;
 			this.downed = downed;
+			this.available = available ?? (() => true);
+			this.hidden = false;
+
+			this.loot = new List<DropRateInfo>();
+			this.lootItemTypes = new List<int>();
+			foreach (int npc in npcIDs) {
+				List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForNPCID(npc, false);
+				List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
+				DropRateInfoChainFeed ratesInfo = new DropRateInfoChainFeed(1f);
+				foreach (IItemDropRule item in dropRules) {
+					item.ReportDroprates(itemDropInfo, ratesInfo);
+				}
+				this.loot.AddRange(itemDropInfo);
+
+				List<int> itemIds = new List<int>();
+				foreach (DropRateInfo dropRate in itemDropInfo) {
+					itemIds.Add(dropRate.itemId);
+				}
+				this.lootItemTypes.AddRange(itemIds);
+			}
+
+			// Assign this boss's treasure bag, looking through the loot list provided
+			if (!BossTracker.vanillaBossBags.TryGetValue(npcIDs[0], out this.treasureBag)) {
+				foreach (int itemType in this.lootItemTypes) {
+					if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
+						if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
+							this.treasureBag = itemType;
+							break;
+						}
+					}
+				}
+			}
+
+			this.modSource = modSource;
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.collection = collection ?? new List<int>();
 			//this.collectType = SetupCollectionTypes(this.collection); Do this during the BossFinalization for orphan data
-			this.loot = loot ?? new List<int>();
+			//this.loot = loot ?? new List<int>();
 			this.info = info ?? "";
 			if (this.info == "") {
 				this.info = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
@@ -154,20 +190,6 @@ namespace BossChecklist
 					BossChecklist.instance.Logger.Warn($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
 				}
 				this.overrideIconTexture = "Terraria/Images/NPC_Head_0";
-			}
-			this.available = available ?? (() => true);
-			this.hidden = false;
-
-			// Assign this boss's treasure bag, looking through the loot list provided
-			if (!BossTracker.vanillaBossBags.TryGetValue(npcIDs[0], out this.treasureBag)) {
-				foreach (int itemType in loot) {
-					if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
-						if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
-							this.treasureBag = itemType;
-							break;
-						}
-					}
-				}
 			}
 
 			// Add to Opted Mods if a new mod
@@ -202,7 +224,6 @@ namespace BossChecklist
 				() => true,
 				spawnItem,
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
-				BossChecklist.bossTracker.SetupLoot(ids[0]),
 				$"BossChecklist/Resources/BossTextures/Boss{ids[0]}",
 				$"Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
 				$"Mods.BossChecklist.BossVictory{nameKey}"
@@ -221,7 +242,6 @@ namespace BossChecklist
 				() => true,
 				spawnItem,
 				BossChecklist.bossTracker.SetupEventCollectibles(name),
-				BossChecklist.bossTracker.SetupEventLoot(name),
 				$"BossChecklist/Resources/BossTextures/Event{nameKey}",
 				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}"
 			);
