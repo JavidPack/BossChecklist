@@ -513,6 +513,8 @@ namespace BossChecklist.UIElements
 
 						bool countedFirstHead = false;
 						int offset = 0;
+						int totalWidth = 0;
+						int lastX = 0;
 						foreach (Asset<Texture2D> headTexture in selectedBoss.headIconTextures) {
 							Texture2D head = headTexture.Value;
 							Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
@@ -528,6 +530,8 @@ namespace BossChecklist.UIElements
 							}
 							spriteBatch.Draw(head, headPos, src, BossLogUI.MaskBoss(selectedBoss));
 							offset++;
+							totalWidth += headPos.Width;
+							lastX = xHeadOffset;
 						}
 
 						string isDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}";
@@ -542,7 +546,7 @@ namespace BossChecklist.UIElements
 						spriteBatch.Draw(texture.Value, defeatpos, Color.White);
 
 						// Hovering over the head icon will display the defeated text
-						if (BossLogUI.MouseIntersects(firstHeadPos.X, firstHeadPos.Y, firstHeadPos.Width, firstHeadPos.Height)) {
+						if (BossLogUI.MouseIntersects(lastX, firstHeadPos.Y, totalWidth, firstHeadPos.Height)) {
 							BossUISystem.Instance.UIHoverText = selectedBoss.IsDownedOrForced ? isDefeated : notDefeated;
 							BossUISystem.Instance.UIHoverTextColor = selectedBoss.IsDownedOrForced ? Colors.RarityGreen : Colors.RarityRed;
 						}
