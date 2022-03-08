@@ -14,7 +14,6 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using Terraria.ObjectData;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -428,33 +427,14 @@ namespace BossChecklist.UIElements
 
 					if (headNum != -1) {
 						BossInfo headBoss = BossChecklist.bossTracker.SortedBosses[headNum];
-						if (headBoss.type != EntryType.Event || headBoss.internalName == "Lunar Event") {
-							int headsDisplayed = 0;
-							int adjustment = 0;
-							Color maskedHead = BossLogUI.MaskBoss(headBoss);
-							foreach (int id in headBoss.npcIDs) {
-								Asset<Texture2D> head = BossLogUI.GetBossHead(id);
-								if (headBoss.overrideIconTexture != "") {
-									head = ModContent.Request<Texture2D>(headBoss.overrideIconTexture);
-								}
-								if (head != TextureAssets.NpcHead[0]) {
-									headsDisplayed++;
-									spriteBatch.Draw(head.Value, new Rectangle(Main.mouseX + 15 + ((head.Width() + 2) * adjustment), Main.mouseY + 15, head.Width(), head.Height()), maskedHead);
-									adjustment++;
-								}
-							}
-							Asset<Texture2D> noHead = TextureAssets.NpcHead[0];
-							if (headsDisplayed == 0) {
-								spriteBatch.Draw(noHead.Value, new Rectangle(Main.mouseX + 15 + ((noHead.Width() + 2) * adjustment), Main.mouseY + 15, noHead.Width(), noHead.Height()), maskedHead);
-							}
-						}
-						else {
-							Color maskedHead = BossLogUI.MaskBoss(headBoss);
-							Asset<Texture2D> eventIcon = BossLogUI.GetEventIcon(headBoss);
-							Rectangle iconpos = new Rectangle(Main.mouseX + 15, Main.mouseY + 15, eventIcon.Width(), eventIcon.Height());
-							if (eventIcon != TextureAssets.NpcHead[0]) {
-								spriteBatch.Draw(eventIcon.Value, iconpos, maskedHead);
-							}
+						int headsDisplayed = 0;
+						int offset = 0;
+						Color maskedHead = BossLogUI.MaskBoss(headBoss);
+						foreach (Asset<Texture2D> headIcon in headBoss.headIconTextures) {
+							Texture2D head = headIcon.Value;
+							headsDisplayed++;
+							spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * offset), Main.mouseY + 15, head.Width, head.Height), maskedHead);
+							offset++;
 						}
 					}
 				}
@@ -508,9 +488,9 @@ namespace BossChecklist.UIElements
 					if (Id == "PageOne") {
 						Asset<Texture2D> bossTexture = null;
 						Rectangle bossSourceRectangle = new Rectangle();
-						if (selectedBoss.pageTexture != "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-							bossTexture = ModContent.Request<Texture2D>(selectedBoss.pageTexture);
-							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width(), bossTexture.Height());
+						if (selectedBoss.portraitTexture != null) {
+							bossTexture = selectedBoss.portraitTexture;
+							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Value.Width, bossTexture.Value.Height);
 						}
 						else if (selectedBoss.npcIDs.Count > 0) {
 							Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
@@ -531,42 +511,23 @@ namespace BossChecklist.UIElements
 
 						Rectangle firstHeadPos = new Rectangle();
 
-						if (selectedBoss.type != EntryType.Event || selectedBoss.internalName == "Lunar Event") {
-							int headsDisplayed = 0;
-							int adjustment = 0;
-							Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
-							for (int h = selectedBoss.npcIDs.Count - 1; h > -1; h--) {
-								Texture2D head = BossLogUI.GetBossHead(selectedBoss.npcIDs[h]).Value;
-								if (head != TextureAssets.NpcHead[0].Value) {
-									Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
-									// Weird special case for Deerclops. Its head icon has a significant amount of whitespace.
-									if (selectedBoss.Key == "Terraria Deerclops") {
-										src = new Rectangle(2, 0, 48, 40);
-									}
-									int xHeadOffset = pageRect.X + pageRect.Width - src.Width - 10 - ((src.Width + 2) * adjustment);
-									Rectangle headPos = new Rectangle(xHeadOffset, pageRect.Y + 5, src.Width, src.Height);
-									if (headsDisplayed == 0) {
-										firstHeadPos = headPos;
-									}
-									spriteBatch.Draw(head, headPos, src, maskedHead);
-									headsDisplayed++;
-									adjustment++;
-								}
+						bool countedFirstHead = false;
+						int offset = 0;
+						foreach (Asset<Texture2D> headTexture in selectedBoss.headIconTextures) {
+							Texture2D head = headTexture.Value;
+							Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
+							// Weird special case for Deerclops. Its head icon has a significant amount of whitespace.
+							if (selectedBoss.Key == "Terraria Deerclops") {
+								src = new Rectangle(2, 0, 48, 40);
 							}
-							if (headsDisplayed == 0) {
-								Texture2D noHead = TextureAssets.NpcHead[0].Value;
-								int xHeadOffset = pageRect.X + pageRect.Width - noHead.Width - 10;
-								Rectangle noHeadPos = new Rectangle(xHeadOffset, pageRect.Y + 5, noHead.Width, noHead.Height);
-								firstHeadPos = noHeadPos;
-								spriteBatch.Draw(noHead, noHeadPos, maskedHead);
+							int xHeadOffset = pageRect.X + pageRect.Width - src.Width - 10 - ((src.Width + 2) * offset);
+							Rectangle headPos = new Rectangle(xHeadOffset, pageRect.Y + 5, src.Width, src.Height);
+							if (!countedFirstHead) {
+								firstHeadPos = headPos;
+								countedFirstHead = true;
 							}
-						}
-						else {
-							Color maskedHead = BossLogUI.MaskBoss(selectedBoss);
-							Asset<Texture2D> eventIcon = BossLogUI.GetEventIcon(selectedBoss);
-							Rectangle iconpos = new Rectangle(pageRect.X + pageRect.Width - eventIcon.Width() - 10, pageRect.Y + 5, eventIcon.Width(), eventIcon.Height());
-							firstHeadPos = iconpos;
-							spriteBatch.Draw(eventIcon.Value, iconpos, maskedHead);
+							spriteBatch.Draw(head, headPos, src, BossLogUI.MaskBoss(selectedBoss));
+							offset++;
 						}
 
 						string isDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}";
@@ -646,7 +607,7 @@ namespace BossChecklist.UIElements
 									continue;
 								}
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
-									Texture2D icon = BossLogUI.GetEventIcon(info).Value;
+									Texture2D icon = info.headIconTextures[0].Value;
 									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + 15, GetInnerDimensions().ToRectangle().Y + 50);
 									bool masked = BossChecklist.BossLogConfig.BossSilhouettes;
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
@@ -902,31 +863,31 @@ namespace BossChecklist.UIElements
 
 							int headTextureOffsetX = 0;
 							int headTextureOffsetY = 0;
-							foreach (int npcID in selectedBoss.npcIDs) {
-								foreach (BossInfo info in bosses) {
-									if (info.type == EntryType.Event) {
-										continue;
-									}
-									if (info.npcIDs.Contains(npcID)) {
-										Texture2D head = info.overrideIconTexture == "" ? BossLogUI.GetBossHead(npcID).Value : ModContent.Request<Texture2D>(info.overrideIconTexture).Value;
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + headTextureOffsetX + 15, GetInnerDimensions().ToRectangle().Y + 100);
-										bool masked = BossChecklist.BossLogConfig.BossSilhouettes;
-										Color headColor = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 
-										spriteBatch.Draw(head, pos, headColor);
-										headTextureOffsetX += head.Width + 5;
-										if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
-											BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
-											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												BossLogUI.PageNum = bosses.FindIndex(x => x.Key == info.Key);
-											}
-										}
-										if (head.Height > headTextureOffsetY) {
-											headTextureOffsetY = head.Height;
-										}
-										break;
+							foreach (int npcID in selectedBoss.npcIDs) {
+								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event && x.Key != selectedBoss.Key);
+								if (npcIndex == -1) {
+									continue;
+								}
+
+								BossInfo addedNPC = bosses[npcIndex];
+								Texture2D head = addedNPC.headIconTextures[0].Value;
+								Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + headTextureOffsetX + 15, GetInnerDimensions().ToRectangle().Y + 100);
+								bool masked = BossChecklist.BossLogConfig.BossSilhouettes;
+								Color headColor = addedNPC.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+
+								spriteBatch.Draw(head, pos, headColor);
+								headTextureOffsetX += head.Width + 5;
+								if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
+									BossUISystem.Instance.UIHoverText = addedNPC.name + "\nClick to view page";
+									if (Main.mouseLeft && Main.mouseLeftRelease) {
+										BossLogUI.PageNum = npcIndex;
 									}
 								}
+								if (head.Height > headTextureOffsetY) {
+									headTextureOffsetY = head.Height;
+								}
+								break;
 							}
 
 							offset = 0;

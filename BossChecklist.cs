@@ -208,40 +208,8 @@ namespace BossChecklist
 
 		public override void AddRecipes() {
 			bossTracker.FinalizeLocalization();
-			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
-				BossInfo bossInfo = bossTracker.SortedBosses.Find(boss => boss.Key == orphan.Key);
-				if (bossInfo != null && orphan.values != null) {
-					switch (orphan.type) {
-						/*
-						case OrphanType.Loot:
-							bossInfo.loot.AddRange(orphan.values);
-							break;
-						*/
-						case OrphanType.Collection:
-							bossInfo.collection.AddRange(orphan.values);
-							break;
-						case OrphanType.SpawnItem:
-							bossInfo.spawnItem.AddRange(orphan.values);
-							break;
-						case OrphanType.EventNPC:
-							if (bossInfo.type == EntryType.Event) {
-								bossInfo.npcIDs.AddRange(orphan.values);
-							}
-							break;
-					}
-				}
-				else if (DebugConfig.ModCallLogVerbose) {
-					if (bossInfo == null) {
-						Logger.Info($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
-					}
-					if (orphan.values == null) {
-						Logger.Info($"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.");
-					}
-				}
-			}
-			foreach (BossInfo boss in bossTracker.SortedBosses) {
-				boss.collectType = BossInfo.SetupCollectionTypes(boss.collection);
-			}
+			bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.
+			bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
 			bossTracker.FinalizeBossData();
 		}
 
@@ -292,18 +260,16 @@ namespace BossChecklist
 					}
 					else {
 						bossTracker.AddBoss(
-							Convert.ToSingle(args[1]), // Prog
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							args[3] as Mod, // Mod
-							args[4] as string, // Boss Name
+							args[1] as Mod, // Mod
+							args[2] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[3]), // IDs
+							Convert.ToSingle(args[4]), // Prog
 							args[5] as Func<bool>, // Downed
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							args[9] as string, // Info
-							args[10] as string, // Despawn Message
-							args[11] as string, // Texture
-							args[12] as string, // Override Icon Texture
-							args[13] as Func<bool> // Available
+							InterpretObjectAsListOfInt(args[8]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
 						);
 					}
 					return "Success";
@@ -322,18 +288,16 @@ namespace BossChecklist
 					}
 					else {
 						bossTracker.AddMiniBoss(
-							Convert.ToSingle(args[1]), // Prog
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							args[3] as Mod, // Mod
-							args[4] as string, // MiniBoss Name
+							args[1] as Mod, // Mod
+							args[2] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[3]), // IDs
+							Convert.ToSingle(args[4]), // Prog
 							args[5] as Func<bool>, // Downed
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							args[9] as string, // Info
-							args[10] as string, // Despawn Message
-							args[11] as string, // Texture
-							args[12] as string, // Override Icon Texture
-							args[13] as Func<bool> // Available
+							InterpretObjectAsListOfInt(args[8]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
 						);
 					}
 					return "Success";
@@ -352,18 +316,16 @@ namespace BossChecklist
 					}
 					else {
 						bossTracker.AddEvent(
-							Convert.ToSingle(args[1]), // Prog
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							args[3] as Mod, // Mod
-							args[4] as string, // Event Name
+							args[1] as Mod, // Mod
+							args[2] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[3]), // IDs
+							Convert.ToSingle(args[4]), // Prog
 							args[5] as Func<bool>, // Downed
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							args[9] as string, // Info
-							args[10] as string, // Despawn Message
-							args[11] as string, // Texture
-							args[12] as string, // Override Icon Texture
-							args[13] as Func<bool> // Available
+							InterpretObjectAsListOfInt(args[8]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
 						);
 					}
 					return "Success";

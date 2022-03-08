@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace BossChecklist
 {
@@ -47,49 +48,105 @@ namespace BossChecklist
 		private void InitializeVanillaBosses() {
 			SortedBosses = new List<BossInfo> {
 				// Bosses -- Vanilla
-				BossInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "$NPCName.KingSlime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "$NPCName.KingSlime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.KingSlime}"),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "$NPCName.EyeofCthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.EaterofWorldsHead", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood }).WithCustomAvailability(() => !WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod)),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine }).WithCustomAvailability(() => WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod)),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.EaterofWorldsHead", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood })
+					.WithCustomAvailability(() => !WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod))
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.EaterofWorldsHead}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine })
+					.WithCustomAvailability(() => WorldGen.crimson || ModLoader.TryGetMod("BothEvils", out Mod mod)),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "$NPCName.QueenBee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "$NPCName.Deerclops", new List<int>() { NPCID.Deerclops }, () => NPC.downedDeerclops, new List<int>() { ItemID.DeerThing }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh }, () => Main.hardMode, new List<int>() { ItemID.GuideVoodooDoll }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenSlime, "$NPCName.QueenSlimeBoss", new List<int>() { NPCID.QueenSlimeBoss }, () => NPC.downedQueenSlime, new List<int>() { ItemID.QueenSlimeCrystal }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "$NPCName.TheDestroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "$NPCName.SkeletronPrime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead, NPCID.SkeletronHand }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronHead}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "$NPCName.Deerclops", new List<int>() { NPCID.Deerclops }, () => NPC.downedDeerclops, new List<int>() { ItemID.DeerThing })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Deerclops}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh, NPCID.WallofFleshEye }, () => Main.hardMode, new List<int>() { ItemID.GuideVoodooDoll })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.WallofFlesh}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, QueenSlime, "$NPCName.QueenSlimeBoss", new List<int>() { NPCID.QueenSlimeBoss }, () => NPC.downedQueenSlime, new List<int>() { ItemID.QueenSlimeCrystal })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.QueenSlimeBoss}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Retinazer}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "$NPCName.TheDestroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.TheDestroyer}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "$NPCName.SkeletronPrime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronPrime}"),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "$NPCName.Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell, ItemID.LihzahrdAltar }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }), // No despawn message due to being in an event
-				BossInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "$NPCName.HallowBoss", new List<int>() { NPCID.HallowBoss }, () => NPC.downedEmpressOfLight, new List<int>() { ItemID.EmpressButterfly }),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell, ItemID.LihzahrdAltar })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2Betsy}"),
+					// No despawn message due to being in an event
+				BossInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "$NPCName.HallowBoss", new List<int>() { NPCID.HallowBoss }, () => NPC.downedEmpressOfLight, new List<int>() { ItemID.EmpressButterfly })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.HallowBoss}"),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "$NPCName.DukeFishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "$NPCName.CultistBoss", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil }),
-				
+				BossInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "$NPCName.CultistBoss", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.CultistBoss}"),
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
+
 				// Minibosses and Events -- Vanilla
-				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "The Torch God", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch }).WithCustomTranslationKey("$NPCName.TorchGod"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter }),
-					// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard }).WithCustomTranslationKey("$LegacyInterface.88"),
-				BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand }).WithCustomTranslationKey("$DungeonDefenders2.InvasionProgressTitle"),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, EaterOfWorlds + 0.51f, "$NPCName.DD2DarkMageT3", new List<int>() { NPCID.DD2DarkMageT3 }, () => WorldAssist.downedDarkMage, new List<int>() { }),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, SkeletronPrime + 0.5f, "$NPCName.DD2OgreT3", new List<int>() { NPCID.DD2OgreT3 }, () => WorldAssist.downedOgre, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe }).WithCustomTranslationKey("$LegacyInterface.87").WithCustomAvailability(() => Main.xMas),
-				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap }).WithCustomTranslationKey("$LegacyInterface.86"),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, WallOfFlesh + 0.71f, "$NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet }),
-					// BossInfo for Mothron?? If so, a boss head icon needs to be created
-				BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon, new List<int>() { ItemID.PumpkinMoonMedallion }).WithCustomTranslationKey("$LegacyInterface.84"),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.11f, "$NPCName.MourningWood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.12f, "$NPCName.Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => WorldAssist.downedFrostMoon, new List<int>() { ItemID.NaughtyPresent }).WithCustomTranslationKey("$LegacyInterface.83"),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.14f, "$NPCName.Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.15f, "$NPCName.SantaNK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.16f, "$NPCName.IceQueen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { }).WithCustomTranslationKey("$LegacyInterface.85"),
-					BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Golem + 0.11f, "$NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "The Torch God", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch })
+					.WithCustomTranslationKey("$NPCName.TorchGod")
+					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
+					.WithCustomTranslationKey("$Bestiary_Events.BloodMoon")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventBloodMoon")
+					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventBloodMoon_Head"),
+				// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard })
+					.WithCustomTranslationKey("$LegacyInterface.88")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventGoblinArmy")
+					.WithCustomHeadIcon("Terraria/Images/Extra_9"),
+				BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
+					.WithCustomTranslationKey("$DungeonDefenders2.InvasionProgressTitle")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
+					.WithCustomHeadIcon("Terraria/Images/Extra_79"),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, EaterOfWorlds + 0.51f, "$NPCName.DD2DarkMageT3", new List<int>() { NPCID.DD2DarkMageT3 }, () => WorldAssist.downedDarkMage, new List<int>() { })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2DarkMageT3}"),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, SkeletronPrime + 0.5f, "$NPCName.DD2OgreT3", new List<int>() { NPCID.DD2OgreT3 }, () => WorldAssist.downedOgre, new List<int>() { })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2OgreT3}"),
+				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe })
+					.WithCustomTranslationKey("$LegacyInterface.87")
+					.WithCustomAvailability(() => Main.xMas)
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventFrostLegion")
+					.WithCustomHeadIcon("Terraria/Images/Extra_7"),
+				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap })
+					.WithCustomTranslationKey("$LegacyInterface.86")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventPirateInvasion")
+					.WithCustomHeadIcon("Terraria/Images/Extra_11"),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, WallOfFlesh + 0.71f, "$NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman, new List<int>() { })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.PirateShip}"),
+				BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventSolarEclipse")
+					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventSolarEclipse_Head"),
+				BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon, new List<int>() { ItemID.PumpkinMoonMedallion })
+					.WithCustomTranslationKey("$LegacyInterface.84")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventPumpkinMoon")
+					.WithCustomHeadIcon($"Terraria/Images/Extra_12"),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.11f, "$NPCName.MourningWood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.12f, "$NPCName.Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Pumpking}"),
+				BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => WorldAssist.downedFrostMoon, new List<int>() { ItemID.NaughtyPresent })
+					.WithCustomTranslationKey("$LegacyInterface.83")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventFrostMoon")
+					.WithCustomHeadIcon($"Terraria/Images/Extra_8"),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.14f, "$NPCName.Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.15f, "$NPCName.SantaNK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.16f, "$NPCName.IceQueen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { })
+					.WithCustomTranslationKey("$LegacyInterface.85")
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventMartianMadness")
+					.WithCustomHeadIcon($"Terraria/Images/Extra_10"),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Golem + 0.11f, "$NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { })
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventLunarEvent")
+					.WithCustomHeadIcon(new List<string>() {
+						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerNebula]}",
+						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerVortex]}",
+						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerSolar]}",
+						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerStardust]}"}
+					),
 			};
 		}
 
@@ -97,11 +154,80 @@ namespace BossChecklist
 			// Modded Localization keys are initialized before AddRecipes, so we need to do this late.
 			foreach (var boss in SortedBosses) {
 				boss.name = GetTextFromPossibleTranslationKey(boss.name);
-				boss.info = GetTextFromPossibleTranslationKey(boss.info);
+				boss.spawnInfo = GetTextFromPossibleTranslationKey(boss.spawnInfo);
 			}
 
 			// Local Functions
 			string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
+		}
+
+		internal void FinalizeOrphanData() {
+			foreach (OrphanInfo orphan in ExtraData) {
+				BossInfo bossInfo = SortedBosses.Find(boss => boss.Key == orphan.Key);
+				if (bossInfo != null && orphan.values != null) {
+					switch (orphan.type) {
+						/* TODO: Revisit adding loot via Orphan data
+						case OrphanType.Loot:
+							bossInfo.loot.AddRange(orphan.values);
+							break;
+						*/
+						case OrphanType.Collection:
+							bossInfo.collection.AddRange(orphan.values);
+							break;
+						case OrphanType.SpawnItem:
+							bossInfo.spawnItem.AddRange(orphan.values);
+							break;
+						case OrphanType.EventNPC:
+							if (bossInfo.type == EntryType.Event) {
+								bossInfo.npcIDs.AddRange(orphan.values);
+							}
+							break;
+					}
+				}
+				else if (BossChecklist.DebugConfig.ModCallLogVerbose) {
+					if (bossInfo == null) {
+						BossChecklist.instance.Logger.Info($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
+					}
+					if (orphan.values == null) {
+						BossChecklist.instance.Logger.Info($"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.");
+					}
+				}
+			}
+		}
+
+		internal void FinalizeCollectionTypes() {
+			foreach (BossInfo boss in SortedBosses) {
+				foreach (int type in boss.collection) {
+					Item temp = new Item(type);
+					if (temp.headSlot > 0 && temp.vanity) {
+						boss.collectType.Add(type, CollectionType.Mask);
+					}
+					else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+						boss.collectType.Add(type, CollectionType.MusicBox);
+					}
+					else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
+						boss.collectType.Add(type, CollectionType.Pet);
+					}
+					else if (temp.master && temp.mountType > MountID.None) {
+						boss.collectType.Add(type, CollectionType.Mount);
+					}
+					else if (temp.createTile > TileID.Dirt) {
+						TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
+						if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
+							boss.collectType.Add(type, CollectionType.Trophy);
+						}
+						else if (temp.master && data.Width == 3 && data.Height == 4) {
+							boss.collectType.Add(type, CollectionType.Relic);
+						}
+						else {
+							boss.collectType.Add(type, CollectionType.Generic);
+						}
+					}
+					else {
+						boss.collectType.Add(type, CollectionType.Generic);
+					}
+				}
+			}
 		}
 
 		internal void FinalizeBossData() {
@@ -130,500 +256,6 @@ namespace BossChecklist
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
 			}
 		}
-
-		/*
-		internal protected List<int> SetupLoot(int bossNum) {
-			#region Boss Loot
-			if (bossNum == NPCID.KingSlime) {
-				return new List<int>() {
-					ItemID.KingSlimeBossBag,
-					ItemID.KingSlimeMasterTrophy,
-					ItemID.KingSlimePetItem,
-					ItemID.RoyalGel,
-					ItemID.KingSlimeMask,
-					ItemID.KingSlimeTrophy,
-
-					ItemID.SlimySaddle,
-					ItemID.NinjaHood,
-					ItemID.NinjaShirt,
-					ItemID.NinjaPants,
-					ItemID.SlimeGun,
-					ItemID.SlimeHook,
-					ItemID.Solidifier,
-					ItemID.LesserHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.EyeofCthulhu) {
-				return new List<int>() {
-					ItemID.EyeOfCthulhuBossBag,
-					ItemID.EyeofCthulhuMasterTrophy,
-					ItemID.EyeOfCthulhuPetItem,
-					ItemID.EoCShield,
-					ItemID.EyeofCthulhuTrophy,
-					ItemID.EyeMask,
-
-					ItemID.BadgersHat,
-					ItemID.Binoculars,
-					ItemID.DemoniteOre,
-					ItemID.CrimtaneOre,
-					ItemID.UnholyArrow,
-					ItemID.CorruptSeeds,
-					ItemID.CrimsonSeeds,
-					ItemID.AviatorSunglasses,
-					ItemID.LesserHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.EaterofWorldsHead) {
-				return new List<int>() {
-					ItemID.EaterOfWorldsBossBag,
-					ItemID.EaterofWorldsMasterTrophy,
-					ItemID.EaterOfWorldsPetItem,
-					ItemID.WormScarf,
-					ItemID.EaterofWorldsTrophy,
-					ItemID.EaterMask,
-
-					ItemID.DemoniteOre,
-					ItemID.ShadowScale,
-					ItemID.EatersBone,
-					ItemID.LesserHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.BrainofCthulhu) {
-				return new List<int>() {
-					ItemID.BrainOfCthulhuBossBag,
-					ItemID.BrainofCthulhuMasterTrophy,
-					ItemID.BrainOfCthulhuPetItem,
-					ItemID.BrainOfConfusion,
-					ItemID.BrainofCthulhuTrophy,
-					ItemID.BrainMask,
-
-					ItemID.CrimtaneOre,
-					ItemID.TissueSample,
-					ItemID.BoneRattle,
-					ItemID.LesserHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.QueenBee) {
-				return new List<int>() {
-					ItemID.QueenBeeBossBag,
-					ItemID.QueenBeeMasterTrophy,
-					ItemID.QueenBeePetItem,
-					ItemID.HiveBackpack,
-					ItemID.QueenBeeTrophy,
-					ItemID.BeeMask,
-
-					ItemID.BeeGun,
-					ItemID.BeeKeeper,
-					ItemID.BeesKnees,
-					ItemID.HoneyComb,
-					ItemID.Nectar,
-					ItemID.HoneyedGoggles,
-					ItemID.HiveWand,
-					ItemID.BeeHat,
-					ItemID.BeeShirt,
-					ItemID.BeePants,
-					ItemID.Beenade,
-					ItemID.BeeWax,
-					ItemID.BottledHoney
-				};
-			}
-			else if (bossNum == NPCID.SkeletronHead) {
-				return new List<int>() {
-					ItemID.SkeletronBossBag,
-					ItemID.SkeletronMasterTrophy,
-					ItemID.SkeletronPetItem,
-					ItemID.BoneGlove,
-					ItemID.SkeletronTrophy,
-					ItemID.SkeletronMask,
-
-					ItemID.ChippysCouch,
-					ItemID.SkeletronHand,
-					ItemID.BookofSkulls,
-					ItemID.LesserHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.Deerclops) {
-				return new List<int>() {
-					ItemID.DeerclopsBossBag,
-					ItemID.DeerclopsMasterTrophy,
-					ItemID.DeerclopsPetItem,
-					ItemID.BoneHelm,
-					ItemID.DeerclopsTrophy,
-					ItemID.DeerclopsMask,
-
-					ItemID.ChesterPetItem,
-					ItemID.Eyebrella,
-					ItemID.DontStarveShaderItem,
-					ItemID.PewMaticHorn,
-					ItemID.WeatherPain,
-					ItemID.HoundiusShootius,
-					ItemID.LucyTheAxe
-				};
-			}
-			else if (bossNum == NPCID.WallofFlesh) {
-				return new List<int>() {
-					ItemID.WallOfFleshBossBag,
-					ItemID.WallofFleshMasterTrophy,
-					ItemID.WallOfFleshGoatMountItem,
-					ItemID.DemonHeart,
-					ItemID.WallofFleshTrophy,
-					ItemID.FleshMask,
-
-					ItemID.BadgersHat,
-					ItemID.Pwnhammer,
-					ItemID.WarriorEmblem,
-					ItemID.SorcererEmblem,
-					ItemID.RangerEmblem,
-					ItemID.SummonerEmblem,
-					ItemID.BreakerBlade,
-					ItemID.ClockworkAssaultRifle,
-					ItemID.LaserRifle,
-					ItemID.FireWhip,
-					ItemID.HealingPotion
-				};
-			}
-			else if (bossNum == NPCID.QueenSlimeBoss) {
-				return new List<int>() {
-					ItemID.QueenSlimeBossBag,
-					ItemID.QueenSlimeMasterTrophy,
-					ItemID.QueenSlimePetItem,
-					ItemID.VolatileGelatin,
-					ItemID.QueenSlimeTrophy,
-					ItemID.QueenSlimeMask,
-
-					ItemID.Smolstar,
-					ItemID.QueenSlimeMountSaddle,
-					ItemID.CrystalNinjaHelmet,
-					ItemID.CrystalNinjaChestplate,
-					ItemID.CrystalNinjaLeggings,
-					ItemID.QueenSlimeHook,
-					ItemID.GelBalloon,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.Retinazer) {
-				return new List<int>() {
-					ItemID.TwinsBossBag,
-					ItemID.TwinsMasterTrophy,
-					ItemID.TwinsPetItem,
-					ItemID.MechanicalWheelPiece,
-					ItemID.RetinazerTrophy,
-					ItemID.SpazmatismTrophy,
-					ItemID.TwinMask,
-
-					ItemID.SoulofSight,
-					ItemID.HallowedBar,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.TheDestroyer) {
-				return new List<int>() {
-					ItemID.DestroyerBossBag,
-					ItemID.DestroyerMasterTrophy,
-					ItemID.DestroyerPetItem,
-					ItemID.MechanicalWagonPiece,
-					ItemID.DestroyerTrophy,
-					ItemID.DestroyerMask,
-
-					ItemID.SoulofMight,
-					ItemID.HallowedBar,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.SkeletronPrime) {
-				return new List<int>() {
-					ItemID.SkeletronPrimeBossBag,
-					ItemID.SkeletronPrimeMasterTrophy,
-					ItemID.SkeletronPrimePetItem,
-					ItemID.MechanicalBatteryPiece,
-					ItemID.SkeletronPrimeTrophy,
-					ItemID.SkeletronPrimeMask,
-
-					ItemID.SoulofFright,
-					ItemID.HallowedBar,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.Plantera) {
-				return new List<int>() {
-					ItemID.PlanteraBossBag,
-					ItemID.PlanteraMasterTrophy,
-					ItemID.PlanteraPetItem,
-					ItemID.SporeSac,
-					ItemID.PlanteraTrophy,
-					ItemID.PlanteraMask,
-
-					ItemID.TempleKey,
-					ItemID.GrenadeLauncher,
-					ItemID.VenusMagnum,
-					ItemID.NettleBurst,
-					ItemID.LeafBlower,
-					ItemID.FlowerPow,
-					ItemID.WaspGun,
-					ItemID.Seedler,
-					ItemID.Seedling,
-					ItemID.TheAxe,
-					ItemID.PygmyStaff,
-					ItemID.ThornHook,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.Golem) {
-				return new List<int>() {
-					ItemID.GolemBossBag,
-					ItemID.GolemMasterTrophy,
-					ItemID.GolemPetItem,
-					ItemID.ShinyStone,
-					ItemID.GolemTrophy,
-					ItemID.GolemMask,
-
-					ItemID.Picksaw,
-					ItemID.Stynger,
-					ItemID.StyngerBolt,
-					ItemID.PossessedHatchet,
-					ItemID.SunStone,
-					ItemID.EyeoftheGolem,
-					ItemID.HeatRay,
-					ItemID.StaffofEarth,
-					ItemID.GolemFist,
-					ItemID.BeetleHusk,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.HallowBoss) {
-				return new List<int>() {
-					ItemID.FairyQueenBossBag,
-					ItemID.FairyQueenMasterTrophy,
-					ItemID.FairyQueenPetItem,
-					ItemID.EmpressFlightBooster,
-					ItemID.FairyQueenTrophy,
-					ItemID.FairyQueenMask,
-
-					ItemID.FairyQueenMagicItem,
-					ItemID.PiercingStarlight,
-					ItemID.RainbowWhip,
-					ItemID.FairyQueenRangedItem,
-					ItemID.RainbowWings,
-					ItemID.SparkleGuitar,
-					ItemID.RainbowCursor,
-					ItemID.HallowBossDye,
-					ItemID.EmpressBlade,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.DD2Betsy) {
-				return new List<int>() {
-					ItemID.BossBagBetsy,
-					ItemID.BetsyMasterTrophy,
-					ItemID.DD2BetsyPetItem,
-					ItemID.BossTrophyBetsy,
-					ItemID.BossMaskBetsy,
-
-					ItemID.BetsyWings,
-					ItemID.DD2BetsyBow, // Aerial Bane
-					ItemID.MonkStaffT3, // Sky Dragon's Fury
-					ItemID.ApprenticeStaffT3, // Betsy's Wrath
-					ItemID.DD2SquireBetsySword, // Flying Dragon
-					ItemID.DefenderMedal
-				};
-			}
-			else if (bossNum == NPCID.DukeFishron) {
-				return new List<int>() {
-					ItemID.FishronBossBag,
-					ItemID.DukeFishronMasterTrophy,
-					ItemID.DukeFishronPetItem,
-					ItemID.ShrimpyTruffle,
-					ItemID.DukeFishronTrophy,
-					ItemID.DukeFishronMask,
-
-					ItemID.BubbleGun,
-					ItemID.Flairon,
-					ItemID.RazorbladeTyphoon,
-					ItemID.TempestStaff,
-					ItemID.Tsunami,
-					ItemID.FishronWings,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.CultistBoss) {
-				return new List<int>() {
-					ItemID.CultistBossBag,
-					ItemID.LunaticCultistMasterTrophy,
-					ItemID.LunaticCultistPetItem,
-					ItemID.AncientCultistTrophy,
-					ItemID.BossMaskCultist,
-
-					ItemID.LunarCraftingStation,
-					ItemID.GreaterHealingPotion
-				};
-			}
-			else if (bossNum == NPCID.MoonLordHead) {
-				return new List<int>() {
-					ItemID.MoonLordBossBag,
-					ItemID.MoonLordMasterTrophy,
-					ItemID.MoonLordPetItem,
-					ItemID.GravityGlobe,
-					ItemID.MoonLordTrophy,
-					ItemID.BossMaskMoonlord,
-
-					ItemID.SuspiciousLookingTentacle,
-					ItemID.LongRainbowTrailWings,
-					ItemID.Meowmere,
-					ItemID.Terrarian,
-					ItemID.StarWrath,
-					ItemID.SDMG,
-					ItemID.LastPrism,
-					ItemID.LunarFlareBook,
-					ItemID.RainbowCrystalStaff,
-					ItemID.MoonlordTurretStaff, // Lunar Portal Staff
-					ItemID.Celeb2,
-					ItemID.PortalGun,
-					ItemID.LunarOre,
-					ItemID.MeowmereMinecart,
-					ItemID.SuperHealingPotion
-				};
-			}
-			#endregion
-			#region Mini-boss Loot
-			// MiniBosses
-			else if (bossNum == NPCID.DD2DarkMageT3) {
-				return new List<int>() {
-					ItemID.DarkMageMasterTrophy,
-					ItemID.DarkMageBookMountItem,
-					ItemID.BossTrophyDarkmage,
-					ItemID.BossMaskDarkMage,
-
-					ItemID.WarTable,
-					ItemID.WarTableBanner,
-					ItemID.DD2PetDragon,
-					ItemID.DD2PetGato,
-				};
-			}
-			else if (bossNum == NPCID.PirateShip) {
-				return new List<int>() {
-					ItemID.FlyingDutchmanMasterTrophy,
-					ItemID.PirateShipMountItem,
-					ItemID.FlyingDutchmanTrophy,
-
-					ItemID.CoinGun,
-					ItemID.LuckyCoin,
-					ItemID.DiscountCard,
-					ItemID.PirateStaff,
-					ItemID.GoldRing,
-					ItemID.PirateMinecart,
-					ItemID.Cutlass,
-				};
-			}
-			else if (bossNum == NPCID.DD2OgreT3) {
-				return new List<int>() {
-					ItemID.OgreMasterTrophy,
-					ItemID.DD2OgrePetItem,
-					ItemID.BossTrophyOgre,
-					ItemID.BossMaskOgre,
-
-					ItemID.ApprenticeScarf,
-					ItemID.SquireShield,
-					ItemID.HuntressBuckler,
-					ItemID.MonkBelt,
-					ItemID.BookStaff,
-					ItemID.DD2PhoenixBow,
-					ItemID.DD2SquireDemonSword,
-					ItemID.MonkStaffT1,
-					ItemID.MonkStaffT2,
-					ItemID.DD2PetGhost,
-				};
-			}
-			else if (bossNum == NPCID.MourningWood) {
-				return new List<int>() {
-					ItemID.MourningWoodMasterTrophy,
-					ItemID.SpookyWoodMountItem,
-					ItemID.WitchBroom,
-					ItemID.MourningWoodTrophy,
-
-					ItemID.SpookyWood,
-					ItemID.SpookyHook,
-					ItemID.SpookyTwig,
-					ItemID.StakeLauncher,
-					ItemID.Stake,
-					ItemID.CursedSapling,
-					ItemID.NecromanticScroll,
-				};
-			}
-			else if (bossNum == NPCID.Pumpking) {
-				return new List<int>() {
-					ItemID.PumpkingMasterTrophy,
-					ItemID.PumpkingPetItem,
-					ItemID.PumpkingTrophy,
-
-					ItemID.TheHorsemansBlade,
-					ItemID.BatScepter,
-					ItemID.BlackFairyDust,
-					ItemID.SpiderEgg,
-					ItemID.RavenStaff,
-					ItemID.CandyCornRifle,
-					ItemID.CandyCorn,
-					ItemID.JackOLanternLauncher,
-					ItemID.ExplosiveJackOLantern,
-					ItemID.ScytheWhip
-				};
-			}
-			else if (bossNum == NPCID.Everscream) {
-				return new List<int>() {
-					ItemID.EverscreamMasterTrophy,
-					ItemID.EverscreamPetItem,
-					ItemID.EverscreamTrophy,
-
-					ItemID.ChristmasTreeSword,
-					ItemID.ChristmasHook,
-					ItemID.Razorpine,
-					ItemID.FestiveWings,
-				};
-			}
-			else if (bossNum == NPCID.SantaNK1) {
-				return new List<int>() {
-					ItemID.SantankMasterTrophy,
-					ItemID.SantankMountItem,
-					ItemID.SantaNK1Trophy,
-
-					ItemID.EldMelter,
-					ItemID.ChainGun,
-				};
-			}
-			else if (bossNum == NPCID.IceQueen) {
-				return new List<int>() {
-					ItemID.IceQueenMasterTrophy,
-					ItemID.IceQueenPetItem,
-					ItemID.IceQueenTrophy,
-
-					ItemID.BlizzardStaff,
-					ItemID.SnowmanCannon,
-					ItemID.NorthPole,
-					ItemID.BabyGrinchMischiefWhistle,
-					ItemID.ReindeerBells,
-				};
-			}
-			else if (bossNum == NPCID.MartianSaucer) {
-				return new List<int>() {
-					ItemID.UFOMasterTrophy,
-					ItemID.MartianPetItem,
-					ItemID.MartianSaucerTrophy,
-
-					ItemID.Xenopopper,
-					ItemID.XenoStaff,
-					ItemID.LaserMachinegun,
-					ItemID.ElectrosphereLauncher,
-					ItemID.InfluxWaver,
-					ItemID.CosmicCarKey,
-					ItemID.AntiGravityHook,
-					ItemID.LaserDrill,
-					ItemID.ChargedBlasterCannon,
-					ItemID.GreaterHealingPotion,
-				};
-			}
-			#endregion
-			return new List<int>();
-		}
-		*/
 
 		internal protected List<int> SetupCollect(int bossNum) {
 			#region Boss Collectibles
@@ -915,6 +547,7 @@ namespace BossChecklist
 		}
 
 		internal List<int> SetupEventNPCList(string eventName) {
+			#region Event NPC List
 			if (eventName == "The Torch God") {
 				return new List<int>() {
 					NPCID.TorchGod,
@@ -1081,167 +714,12 @@ namespace BossChecklist
 					NPCID.StardustWormHead,
 				};
 			}
-			return new List<int>();
-		}
-
-		internal List<int> SetupEventLoot(string eventName) {
-			if (eventName == "The Torch God") {
-				return new List<int>() {
-					ItemID.TorchGodsFavor,
-				};
-			}
-			else if (eventName == "Blood Moon") {
-				return new List<int>() {
-					ItemID.BunnyHood,
-					ItemID.TopHat,
-					ItemID.TheBrideHat,
-					ItemID.TheBrideDress,
-					ItemID.MoneyTrough,
-					ItemID.SharkToothNecklace,
-					ItemID.Bananarang,
-					ItemID.BloodMoonStarter,
-					ItemID.ChumBucket,
-					ItemID.KiteBunnyCorrupt,
-					ItemID.KiteBunnyCrimson,
-					ItemID.KOCannon,
-					ItemID.SanguineStaff,
-					ItemID.BloodMoonMonolith,
-					ItemID.DripplerFlail,
-					ItemID.SharpTears,
-					ItemID.BloodHamaxe,
-					ItemID.BloodRainBow,
-					ItemID.VampireFrogStaff,
-					ItemID.BloodFishingRod,
-					ItemID.CombatBook,
-					ItemID.PedguinHat,
-					ItemID.PedguinShirt,
-					ItemID.PedguinPants,
-				};
-			}
-			else if (eventName == "Goblin Army") {
-				return new List<int>() {
-					ItemID.Harpoon,
-					ItemID.SpikyBall,
-					ItemID.ShadowFlameHexDoll,
-					ItemID.ShadowFlameKnife,
-					ItemID.ShadowFlameBow,
-				};
-			}
-			else if (eventName == "Frost Legion") {
-				return new List<int>() {
-					ItemID.SnowBlock,
-				};
-			}
-			else if (eventName == "Pirate Invasion") {
-				return new List<int>() {
-					ItemID.CoinGun,
-					ItemID.Cutlass,
-					ItemID.DiscountCard,
-					ItemID.GoldRing,
-					ItemID.LuckyCoin,
-					ItemID.PirateStaff,
-					ItemID.EyePatch,
-					ItemID.SailorHat,
-					ItemID.SailorShirt,
-					ItemID.SailorPants,
-					ItemID.BuccaneerBandana,
-					ItemID.BuccaneerShirt,
-					ItemID.BuccaneerPants,
-					ItemID.GoldenBathtub,
-					ItemID.GoldenBed,
-					ItemID.GoldenBookcase,
-					ItemID.GoldenCandelabra,
-					ItemID.GoldenCandle,
-					ItemID.GoldenChair,
-					ItemID.GoldenChest,
-					ItemID.GoldenChandelier,
-					ItemID.GoldenDoor,
-					ItemID.GoldenDresser,
-					ItemID.GoldenClock,
-					ItemID.GoldenLamp,
-					ItemID.GoldenLantern,
-					ItemID.GoldenPiano,
-					ItemID.GoldenPlatform,
-					ItemID.GoldenSink,
-					ItemID.GoldenSofa,
-					ItemID.GoldenTable,
-					ItemID.GoldenToilet,
-					ItemID.GoldenWorkbench,
-				};
-			}
-			else if (eventName == "Solar Eclipse") {
-				return new List<int>() {
-					ItemID.EyeSpring,
-					ItemID.BrokenBatWing,
-					ItemID.MoonStone,
-					ItemID.NeptunesShell,
-					ItemID.Steak,
-					ItemID.DeathSickle,
-					ItemID.ButchersChainsaw,
-					ItemID.ButcherMask,
-					ItemID.ButcherApron,
-					ItemID.ButcherPants,
-					ItemID.DeadlySphereStaff,
-					ItemID.ToxicFlask,
-					ItemID.DrManFlyMask,
-					ItemID.DrManFlyLabCoat,
-					ItemID.NailGun,
-					ItemID.Nail,
-					ItemID.PsychoKnife,
-					ItemID.BrokenHeroSword,
-					ItemID.MothronWings,
-					ItemID.TheEyeOfCthulhu,
-				};
-			}
-			else if (eventName == "Pumpkin Moon") {
-				return new List<int>() {
-					ItemID.ScarecrowHat,
-					ItemID.ScarecrowShirt,
-					ItemID.ScarecrowPants,
-					ItemID.SpookyWood,
-					ItemID.JackOLanternMask,
-				};
-			}
-			else if (eventName == "Frost Moon") {
-				return new List<int>() {
-					ItemID.ElfHat,
-					ItemID.ElfShirt,
-					ItemID.ElfPants,
-				};
-			}
-			else if (eventName == "Martian Madness") {
-				return new List<int>() {
-					ItemID.MartianConduitPlating,
-					ItemID.LaserDrill,
-					ItemID.ChargedBlasterCannon,
-					ItemID.AntiGravityHook,
-					ItemID.MartianCostumeMask,
-					ItemID.MartianCostumeShirt,
-					ItemID.MartianCostumePants,
-					ItemID.MartianUniformHelmet,
-					ItemID.MartianUniformTorso,
-					ItemID.MartianUniformPants,
-					ItemID.BrainScrambler,
-				};
-			}
-			else if (eventName == "Old One's Army") {
-				return new List<int>() {
-					ItemID.DD2EnergyCrystal,
-					ItemID.DefenderMedal
-				};
-			}
-			else if (eventName == "Lunar Event") {
-				return new List<int>() {
-					ItemID.FragmentSolar,
-					ItemID.FragmentNebula,
-					ItemID.FragmentStardust,
-					ItemID.FragmentVortex,
-				};
-			}
+			#endregion
 			return new List<int>();
 		}
 
 		internal List<int> SetupEventCollectibles(string eventName) {
+			#region Event Collectibles
 			if (eventName == "The Torch God") {
 				return new List<int>() {
 					ItemID.MusicBoxBoss3,
@@ -1308,6 +786,7 @@ namespace BossChecklist
 					ItemID.MusicBoxOWTowers
 				};
 			}
+			#endregion
 			return new List<int>();
 		}
 
@@ -1334,33 +813,33 @@ namespace BossChecklist
 
 		// Old version compatibility methods
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.Boss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
+			SortedBosses.Add(new BossInfo(EntryType.Boss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
 		}
 
 		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
 		}
 
 		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.Event, bossValue, "Unknown", bossname, new List<int>(), bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
+			SortedBosses.Add(new BossInfo(EntryType.Event, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
 		}
 
 		// New system is better
-		internal void AddBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
+		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, string despawnMessage) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.Boss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, texture, info, despawnMessage, iconTexture));
+			SortedBosses.Add(new BossInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawnMessage));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddMiniBoss(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
+		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, string despawnMessage) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, texture, info, despawnMessage, iconTexture));
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawnMessage));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddEvent(float val, List<int> id, Mod source, string name, Func<bool> down, List<int> spawn, List<int> collect, string info, string despawnMessage, string texture, string iconTexture, Func<bool> available) {
+		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, string despawnMessage) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.Event, val, source?.Name ?? "Unknown", name, id, down, available, spawn, collect, texture, info, despawnMessage, iconTexture));
+			SortedBosses.Add(new BossInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawnMessage));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
@@ -1386,21 +865,25 @@ namespace BossChecklist
 		}
 
 		internal void AddOrphanData(string type, string bossKey, object values) {
+			OrphanType orphanType;
 			if (type == "AddToBossLoot") {
-				ExtraData.Add(new OrphanInfo(OrphanType.Loot, bossKey, values as List<int>));
+				orphanType = OrphanType.Loot;
 			}
 			else if (type == "AddToBossCollection") {
-				ExtraData.Add(new OrphanInfo(OrphanType.Collection, bossKey, values as List<int>));
+				orphanType = OrphanType.Collection;
 			}
 			else if (type == "AddToBossSpawnItems") {
-				ExtraData.Add(new OrphanInfo(OrphanType.SpawnItem, bossKey, values as List<int>));
+				orphanType = OrphanType.SpawnItem;
 			}
 			else if (type == "AddToEventNPCs") {
-				ExtraData.Add(new OrphanInfo(OrphanType.EventNPC, bossKey, values as List<int>));
+				orphanType = OrphanType.EventNPC;
 			}
 			else {
 				BossChecklist.instance.Logger.Warn($"Invalid orphan data found. ({type} for {bossKey})");
+				return;
 			}
+
+			ExtraData.Add(new OrphanInfo(orphanType, bossKey, values as List<int>));
 		}
 	}
 }

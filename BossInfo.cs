@@ -3,38 +3,41 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Localization;
-using Terraria.ObjectData;
 using Terraria.ID;
 using Terraria.GameContent.ItemDropRules;
-using System.Linq;
+using Terraria.GameContent;
+using ReLogic.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BossChecklist
 {
 	internal class BossInfo // Inheritance for Event instead?
 	{
-		internal float progression;
-		internal List<int> npcIDs;
+		// This localization-ignoring string is used for cross mod queries and networking. Each key is completely unique.
+		internal string Key => modSource + " " + internalName;
+
+		internal EntryType type;
 		internal string modSource;
-		internal string name; // display name
 		internal string internalName; // This should be unique per mod.
-		internal string Key => modSource + " " + internalName; // This localization-ignoring string is used for cross mod queries and networking, is totally unique.
+		internal string name; // display name
+		internal List<int> npcIDs;
+		internal float progression;
 		internal Func<bool> downed;
-
-		internal List<int> spawnItem;
-		internal int treasureBag = 0;
-		internal List<DropRateInfo> loot;
-		internal List<int> lootItemTypes;
-		internal List<int> collection;
-		internal Dictionary<int, CollectionType> collectType;
-
-		internal string despawnMessage;
-		internal string pageTexture;
-		internal string overrideIconTexture;
-
-		internal string info;
 		internal Func<bool> available;
 		internal bool hidden;
-		internal EntryType type;
+
+		internal List<int> spawnItem;
+		internal string spawnInfo;
+		internal string despawnMessage;
+
+		internal int treasureBag = 0;
+		internal List<int> collection;
+		internal Dictionary<int, CollectionType> collectType;
+		internal List<DropRateInfo> loot;
+		internal List<int> lootItemTypes;
+
+		internal Asset<Texture2D> portraitTexture;
+		internal List<Asset<Texture2D>> headIconTextures;
 
 		/*
 		internal ExpandoObject ConvertToExpandoObject() {
@@ -122,18 +125,33 @@ namespace BossChecklist
 			return editedName;
 		}
 
-		internal BossInfo(EntryType type, float progression, string modSource, string name, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string pageTexture, string info, string despawnMessage = "", string overrideIconTexture = "") {
+		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, string despawnMessage = "") {
 			this.type = type;
+			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
 			this.name = name;
-			this.npcIDs = npcIDs ?? new List<int>();
+			this.npcIDs = npcIDs;
 			this.progression = progression;
 			this.downed = downed;
 			this.available = available ?? (() => true);
 			this.hidden = false;
 
+			this.spawnItem = spawnItem ?? new List<int>();
+			this.spawnInfo = info ?? "";
+			if (this.spawnInfo == "") {
+				this.spawnInfo = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
+			}
+			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
+			if (string.IsNullOrEmpty(this.despawnMessage) && type == EntryType.Boss) {
+				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
+			}
+
 			this.loot = new List<DropRateInfo>();
 			this.lootItemTypes = new List<int>();
+			this.collection = collection ?? new List<int>();
+			this.collectType = new Dictionary<int, CollectionType>(); // This will be set up after all orphan data is submitted in Mod.AddRecipes
+
+			// Loot is easily found through the item drop database.
 			foreach (int npc in npcIDs) {
 				List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForNPCID(npc, false);
 				List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
@@ -162,37 +180,22 @@ namespace BossChecklist
 				}
 			}
 
-			this.modSource = modSource;
-			this.spawnItem = spawnItem ?? new List<int>();
-			this.collection = collection ?? new List<int>();
-			//this.collectType = SetupCollectionTypes(this.collection); Do this during the BossFinalization for orphan data
-			//this.loot = loot ?? new List<int>();
-			this.info = info ?? "";
-			if (this.info == "") {
-				this.info = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
+			this.portraitTexture = null;
+			this.headIconTextures = new List<Asset<Texture2D>>();
+			foreach (int npc in npcIDs) {
+				if (type == EntryType.Boss || type == EntryType.MiniBoss) {
+					if (NPCID.Sets.BossHeadTextures[npc] != -1) {
+						headIconTextures.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]);
+					}
+				}
+				// No need to check for events, as events must have a custom icon to begin with.
+				// Also, any minibosses apart of the event should not count in this list.
 			}
-			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
-			if (string.IsNullOrEmpty(this.despawnMessage) && type == EntryType.Boss) {
-				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
+			if (headIconTextures.Count == 0) {
+				headIconTextures.Add(TextureAssets.NpcHead[0]);
 			}
 
-			this.pageTexture = pageTexture ?? $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
-			if (!Main.dedServ && !ModContent.HasAsset(this.pageTexture) && this.pageTexture != "BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina") {
-				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") {
-					BossChecklist.instance.Logger.Warn($"Boss Display Texture for {SourceDisplayName} {this.name} named {this.pageTexture} is missing");
-				}
-				this.pageTexture = $"BossChecklist/Resources/BossTextures/BossPlaceholder_byCorrina";
-			}
-			this.overrideIconTexture = overrideIconTexture ?? "";
-			if (!Main.dedServ && !ModContent.HasAsset(this.overrideIconTexture) && this.overrideIconTexture != "") {
-				// If unused, no overriding is needed. If used, we attempt to override the texture used for the boss head icon in the Boss Log.
-				if (SourceDisplayName != "Terraria" && SourceDisplayName != "Unknown") {
-					BossChecklist.instance.Logger.Warn($"Boss Head Icon Texture for {SourceDisplayName} {this.name} named {this.overrideIconTexture} is missing");
-				}
-				this.overrideIconTexture = "Terraria/Images/NPC_Head_0";
-			}
-
-			// Add to Opted Mods if a new mod
+			// Add the mod source to the opted mods list of the credits page if its not already.
 			if (modSource != "Unknown" && modSource != "Terraria") {
 				if (!BossUISystem.Instance.OptedModNames.Contains(SourceDisplayNameWithoutChatTags(modSource))) {
 					BossUISystem.Instance.OptedModNames.Add(SourceDisplayNameWithoutChatTags(modSource));
@@ -211,20 +214,49 @@ namespace BossChecklist
 			return this;
 		}
 
+		internal BossInfo WithCustomPortrait(string texturePath) {
+			if (ModContent.HasAsset(texturePath)) {
+				this.portraitTexture = ModContent.Request<Texture2D>(texturePath);
+			}
+			return this;
+		}
+
+		internal BossInfo WithCustomHeadIcon(string texturePath) {
+			if (ModContent.HasAsset(texturePath)) {
+				this.headIconTextures = new List<Asset<Texture2D>>() { ModContent.Request<Texture2D>(texturePath) };
+			}
+			else {
+				this.headIconTextures = new List<Asset<Texture2D>>() { TextureAssets.NpcHead[0] };
+			}
+			return this;
+		}
+
+		internal BossInfo WithCustomHeadIcon(List<string> texturePaths) {
+			this.headIconTextures = new List<Asset<Texture2D>>();
+			foreach (string path in texturePaths) {
+				if (ModContent.HasAsset(path)) {
+					this.headIconTextures.Add(ModContent.Request<Texture2D>(path));
+				}
+			}
+			if (headIconTextures.Count == 0) {
+				this.headIconTextures = new List<Asset<Texture2D>>() { TextureAssets.NpcHead[0] };
+			}
+			return this;
+		}
+
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			string nameKey = name.Substring(name.LastIndexOf("."));
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 			return new BossInfo(
 				type,
-				progression,
 				"Terraria",
 				name,
 				ids,
+				progression,
 				downed,
 				() => true,
-				spawnItem,
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
-				$"BossChecklist/Resources/BossTextures/Boss{ids[0]}",
+				spawnItem,
 				$"Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
 				$"Mods.BossChecklist.BossVictory{nameKey}"
 			);
@@ -234,52 +266,16 @@ namespace BossChecklist
 			string nameKey = name.Replace(" ", "").Replace("'", "");
 			return new BossInfo(
 				EntryType.Event,
-				progression,
 				"Terraria",
 				name,
 				BossChecklist.bossTracker.SetupEventNPCList(name),
+				progression,
 				downed,
 				() => true,
-				spawnItem,
 				BossChecklist.bossTracker.SetupEventCollectibles(name),
-				$"BossChecklist/Resources/BossTextures/Event{nameKey}",
+				spawnItem,
 				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}"
 			);
-		}
-
-		internal static Dictionary<int, CollectionType> SetupCollectionTypes(List<int> collection) {
-			Dictionary<int, CollectionType> setup = new Dictionary<int, CollectionType>();
-			foreach (int type in collection) {
-				Item temp = new Item(type);
-				if (temp.headSlot > 0 && temp.vanity) {
-					setup.Add(type, CollectionType.Mask);
-				}
-				else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
-					setup.Add(type, CollectionType.MusicBox);
-				}
-				else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
-					setup.Add(type, CollectionType.Pet);
-				}
-				else if (temp.master && temp.mountType > MountID.None) {
-					setup.Add(type, CollectionType.Mount);
-				}
-				else if (temp.createTile > TileID.Dirt) {
-					TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
-					if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
-						setup.Add(type, CollectionType.Trophy);
-					}
-					else if (temp.master && data.Width == 3 && data.Height == 4) {
-						setup.Add(type, CollectionType.Relic);
-					}
-					else {
-						setup.Add(type, CollectionType.Generic);
-					}
-				}
-				else {
-					setup.Add(type, CollectionType.Generic);
-				}
-			}
-			return setup;
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";

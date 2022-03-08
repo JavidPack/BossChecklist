@@ -17,7 +17,6 @@ using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using static BossChecklist.UIElements.BossLogUIElements;
-using Terraria.GameContent.ItemDropRules;
 
 namespace BossChecklist
 {
@@ -811,7 +810,7 @@ namespace BossChecklist
 				return;
 			}
 			
-			var message = new UIMessageBox(Language.GetTextValue(boss.info));
+			var message = new UIMessageBox(Language.GetTextValue(boss.spawnInfo));
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
@@ -1472,30 +1471,7 @@ namespace BossChecklist
 		}
 		
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
-
 		public static Color MaskBoss(BossInfo boss) => ((!boss.IsDownedOrForced && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden || (!boss.IsDownedOrForced && !boss.available())) ? Color.Black : Color.White;
-
-		public static Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
-
-		public static Asset<Texture2D> GetEventIcon(BossInfo boss) {
-			if (boss.overrideIconTexture != "" && boss.overrideIconTexture != "Terraria/Images/NPC_Head_0") {
-				return ModContent.Request<Texture2D>(boss.overrideIconTexture);
-			}
-
-			return boss.internalName switch {
-				"Frost Legion"    => ModContent.Request<Texture2D>("Terraria/Images/Extra_7"),
-				"Frost Moon"      => ModContent.Request<Texture2D>("Terraria/Images/Extra_8"),
-				"Goblin Army"     => ModContent.Request<Texture2D>("Terraria/Images/Extra_9"),
-				"Martian Madness" => ModContent.Request<Texture2D>("Terraria/Images/Extra_10"),
-				"Pirate Invasion" => ModContent.Request<Texture2D>("Terraria/Images/Extra_11"),
-				"Pumpkin Moon"    => ModContent.Request<Texture2D>("Terraria/Images/Extra_12"),
-				"Old One's Army"  => ModContent.Request<Texture2D>("Terraria/Images/Extra_79"),
-				"The Torch God"   => ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
-				"Blood Moon"      => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventBloodMoon_Head"),
-				"Solar Eclipse"   => BossChecklist.instance.Assets.Request<Texture2D>("Resources/BossTextures/EventSolarEclipse_Head"),
-				_                 => TextureAssets.NpcHead[0]
-			};
-		}
 
 		/* Currently removed due to rendering issue that is unable to replicated
 		public static Texture2D CropTexture(Texture2D texture, Rectangle snippet) {
