@@ -161,6 +161,7 @@ Mods: {
 			Header: {
 				BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
 				BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
+				BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
 				ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
 				ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
@@ -172,7 +173,6 @@ Mods: {
 				BossLogPos: Open Log Button Position
 				DrawNextMark: Next Boss Check
 				ColoredBossText: Colored Boss Text
-				BossSilhouettes: Boss Silhouettes
 				CountDownedBosses: Downed Completion Display
 				SelectedCheckmarkType: Checklist Marking Type
 				FilterBosses: Filter bosses in list
@@ -181,6 +181,12 @@ Mods: {
 				OnlyBosses: Boss Log only show bosses
 				HideUnavailable: Hide unavailable and hidden bosses
 				HideUnsupported: Hide unsupported bosses
+				ProgressionPrompt: Disable Progression Mode prompt
+				MaskTextures: Hide textures until entry is defeated
+				MaskNames: Hide names until entry is defeated
+				UnmaskNextCheck: Show the name of the next entry to fight
+				MaskBossLoot: Hide boss drops until entry is defeated
+				MaskHardMode: Hide hardmode content until in hardmode
 				DespawnMessageType: Boss Despawn Messages
 				PillarMessages: Pillar Defeated Messages
 				LimbMessages: Segment Defeated Messages
@@ -208,7 +214,9 @@ Mods: {
 					If next check is enabled, the next boss will be yellow
 					'''
 				CountDownedBosses: If enabled, the table of contents will display how many bosses were defeated compared to the total amount.
-				BossSilhouettes: Masks the images of bosses when they have not been defeated.
+				ProgressionPrompt: While enabled, this will prevent the prompt from appearing on all future characters.
+				UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
+				MaskHardMode: Hides ALL content, overriding the options you have toggled above.
 				OnlyBosses: If enabled, the checklist and page navigation will only display boss entries.
 				HideUnavailable: If enabled, unavailable and hidden bosses will be removed from the Boss Log's table of contents.
 				HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.

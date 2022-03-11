@@ -64,6 +64,7 @@ namespace BossChecklist
 		public BossLogUIElements.FixedUIScrollbar scrollTwo;
 
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
+		public UIImage PromptCheck;
 
 		// Cropped Textures
 		public static Asset<Texture2D> bookTexture;
@@ -127,7 +128,17 @@ namespace BossChecklist
 			}
 		}
 
-		public void ToggleBossLog(bool show = true, bool resetPage = false) {
+		public void ToggleBossLog(bool show = true) {
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (show && !modPlayer.hasOpenedTheBossLog) {
+				if (!BossChecklist.BossLogConfig.PromptDisabled) {
+					BossLogVisible = show;
+					OpenProgressionModePrompt();
+					Main.playerInventory = false;
+					return;
+				}
+			}
+
 			if (PageNum == -3) {
 				// Reset page, PageNum is only -3 when entering a world.
 				// This is to reset the page from what the user previously had back to the Table of Contents
@@ -155,7 +166,6 @@ namespace BossChecklist
 			if (show) {
 				// TODO: Small fix to update hidden list on open
 				Main.playerInventory = false;
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true; // Removes the 'unopened' glow
 			}
 		}
 
@@ -551,8 +561,8 @@ namespace BossChecklist
 
 		private void UpdateRecordHighlight() {
 			if (PageNum >= 0) {
-				PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				modplayer.hasNewRecord[PageNum] = false;
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				modPlayer.hasNewRecord[PageNum] = false;
 			}
 		}
 
@@ -560,10 +570,10 @@ namespace BossChecklist
 			if (listeningElement is not BookUI book)
 				return;
 
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			string id = book.Id;
-			if (!BookUI.DrawTab(id)) {
+			if (!modPlayer.hasOpenedTheBossLog || !BookUI.DrawTab(id))
 				return;
-			}
 
 			if (id == "ToCFilter_Tab" && PageNum == -1) {
 				UpdateFilterTabPos(true);
@@ -1098,6 +1108,126 @@ namespace BossChecklist
 			return visibleList;
 		}
 
+		public void OpenProgressionModePrompt() {
+			PageNum = -1;
+			ResetBothPages();
+			ResetUIPositioning();
+			PageTwo.RemoveChild(NextPage);
+
+			FittedTextPanel textBox = new FittedTextPanel("Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.");
+			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
+			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
+			textBox.Left.Pixels = 10;
+			textBox.Top.Pixels = 60;
+			PageOne.Append(textBox);
+
+			Asset<Texture2D> backdropTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
+			UIImage[] backdrops = new UIImage[] {
+				new UIImage(backdropTexture),
+				new UIImage(backdropTexture),
+				new UIImage(backdropTexture),
+				new UIImage(backdropTexture)
+			};
+
+			Asset<Texture2D>[] buttonTextures = new Asset<Texture2D>[] {
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.SteampunkGoggles}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.HiTekSunglasses}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad)
+			};
+
+			UIImage[] buttons = new UIImage[] {
+				new UIImage(buttonTextures[0]),
+				new UIImage(buttonTextures[1]),
+				new UIImage(buttonTextures[2]),
+				new UIImage(buttonTextures[3])
+			};
+
+			buttons[0].OnClick += (a,b) => ContinueDisabled();
+			buttons[1].OnClick += (a, b) => ContinueEnabled();
+			buttons[2].OnClick += (a, b) => ContinueConfig();
+			buttons[3].OnClick += (a, b) => DisablePromptMessage();
+
+			FittedTextPanel[] textOptions = new FittedTextPanel[] {
+				new FittedTextPanel("Continue with progression mode disabled..."),
+				new FittedTextPanel("Continue with progression mode fully enabled"),
+				new FittedTextPanel("Close and configure progression mode"),
+				new FittedTextPanel("Do not show me this prompt again"),
+			};
+
+			Asset<Texture2D> check = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
+			Asset<Texture2D> x = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
+
+			bool config = BossChecklist.BossLogConfig.PromptDisabled;
+			PromptCheck = new UIImage(config ? check : x);
+
+			for (int i = 0; i < buttonTextures.Length; i++) {
+				backdrops[i].Width.Pixels = backdropTexture.Value.Width;
+				backdrops[i].Height.Pixels = backdropTexture.Value.Height;
+				backdrops[i].Left.Pixels = 25;
+				backdrops[i].Top.Pixels = 75 + (75 * i);
+
+				buttons[i].Width.Pixels = buttonTextures[i].Value.Width;
+				buttons[i].Height.Pixels = buttonTextures[i].Value.Height;
+				buttons[i].Left.Pixels = 15;
+				buttons[i].Top.Pixels = backdrops[i].Height.Pixels / 2 - buttons[i].Height.Pixels / 2;
+
+				textOptions[i].Width.Pixels = backdrops[i].Width.Pixels - (buttons[i].Left.Pixels + buttons[i].Width.Pixels + 15);
+				textOptions[i].Height.Pixels = backdrops[i].Height.Pixels;
+				textOptions[i].Left.Pixels = buttons[i].Left.Pixels + buttons[i].Width.Pixels;
+				textOptions[i].Top.Pixels = -10;
+				textOptions[i].PaddingTop = 0;
+				textOptions[i].PaddingLeft = 15;
+
+				if (i == buttonTextures.Length - 1) {
+					buttons[i].Append(PromptCheck);
+				}
+				backdrops[i].Append(buttons[i]);
+				backdrops[i].Append(textOptions[i]);
+				PageTwo.Append(backdrops[i]);
+			}
+		}
+
+		public void ContinueDisabled() {
+			BossChecklist.BossLogConfig.MaskTextures = false;
+			BossChecklist.BossLogConfig.MaskNames = false;
+			BossChecklist.BossLogConfig.UnmaskNextBoss = true;
+			BossChecklist.BossLogConfig.MaskBossLoot = false;
+			BossChecklist.BossLogConfig.MaskHardMode = false;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			ToggleBossLog(true);
+		}
+
+		public void ContinueEnabled() {
+			BossChecklist.BossLogConfig.MaskTextures = true;
+			BossChecklist.BossLogConfig.MaskNames = true;
+			BossChecklist.BossLogConfig.UnmaskNextBoss = false;
+			BossChecklist.BossLogConfig.MaskBossLoot = true;
+			BossChecklist.BossLogConfig.MaskHardMode = true;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			ToggleBossLog(true);
+		}
+
+		public void ContinueConfig() {
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			ToggleBossLog(true);
+		}
+
+		public void DisablePromptMessage() {
+			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+			if (BossChecklist.BossLogConfig.PromptDisabled) {
+				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check"));
+			}
+			else {
+				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X"));
+			}
+		}
+
 		public void UpdateTableofContents() {
 			PageNum = -1;
 			ResetBothPages();
@@ -1117,11 +1247,18 @@ namespace BossChecklist
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
 				string displayName = boss.name;
-				if (BossChecklist.BossLogConfig.BossSilhouettes) {
-					bool hardMode = !Main.hardMode && boss.progression > BossTracker.WallOfFlesh;
-					bool availability = !boss.available() && !boss.IsDownedOrForced;
-					if (hardMode || availability) {
-						displayName = "???";
+				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
+
+				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
+				bool hardMode = cfg.MaskHardMode && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && !boss.IsDownedOrForced;
+				bool availability = cfg.HideUnavailable && !boss.available() && !boss.IsDownedOrForced;
+				if (namesMasked || hardMode || availability) {
+					displayName = "???";
+				}
+
+				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
+					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextCheck) {
+						displayName = boss.name;
 					}
 				}
 
@@ -1201,7 +1338,7 @@ namespace BossChecklist
 				hardmodeBar.totalEntries = hardTotal;
 
 				PageOne.Append(prehardmodeBar);
-				if (!BossChecklist.BossLogConfig.BossSilhouettes || Main.hardMode) {
+				if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {
 					PageTwo.Append(hardmodeBar);
 				}
 			}
@@ -1471,7 +1608,22 @@ namespace BossChecklist
 		}
 		
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
-		public static Color MaskBoss(BossInfo boss) => ((!boss.IsDownedOrForced && BossChecklist.BossLogConfig.BossSilhouettes) || boss.hidden || (!boss.IsDownedOrForced && !boss.available())) ? Color.Black : Color.White;
+		public static Color MaskBoss(BossInfo boss) {
+			if (!boss.IsDownedOrForced && BossChecklist.BossLogConfig.MaskTextures) {
+				return Color.Black;
+			}
+			if (!boss.IsDownedOrForced && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && BossChecklist.BossLogConfig.MaskHardMode) {
+				return Color.Black;
+			}
+			if (boss.hidden) {
+				return Color.Black;
+			}
+			if (!boss.IsDownedOrForced && !boss.available()) {
+				return Color.Black;
+			}
+
+			return Color.White;
+		}
 
 		/* Currently removed due to rendering issue that is unable to replicated
 		public static Texture2D CropTexture(Texture2D texture, Rectangle snippet) {
