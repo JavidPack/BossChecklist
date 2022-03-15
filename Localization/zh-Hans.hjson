@@ -161,6 +161,7 @@ Mods: {
 			Header: {
 				BossLogUI: "[i:149] [c/ffeb6e:Boss日志UI]"
 				BossLogChecklist: "[i:903] [c/ffeb6e:Boss日志清单]"
+				BlindMode: "[i:888] [c/ffeb6e:进度模式 - 击败Boss以解锁其条目!]"
 				ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
 				ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
@@ -172,7 +173,6 @@ Mods: {
 				BossLogPos: 开启Boss日志的按钮的位置
 				DrawNextMark: 提示下一个要挑战的Boss
 				ColoredBossText: Boss文本变色
-				BossSilhouettes: Boss剪影
 				CountDownedBosses: Boss击败数显示
 				SelectedCheckmarkType: 标记模式
 				FilterBosses: 过滤日志中不符合条件的Boss
@@ -180,6 +180,12 @@ Mods: {
 				FilterEvents: 过滤日志中不符合条件的事件
 				HideUnavailable: 隐藏不可用和被隐藏的Boss
 				HideUnsupported: 隐藏没有引用的Boss
+				ProgressionPrompt: 禁用进度模式提示
+				MaskTextures: 隐藏材质直至其条目被击败
+				MaskNames: 隐藏名称直至其条目被击败
+				UnmaskNextCheck: 显示下一进度条目的名称
+				MaskBossLoot: 隐藏Boss掉落物直至其条目被击败
+				MaskHardMode: 隐藏困难模式内容直至玩家处于困难模式
 				DespawnMessageType: Boss消失信息
 				PillarMessages: 天界柱被击败信息
 				LimbMessages: 节点击败消息
@@ -208,7 +214,9 @@ Mods: {
 					如果启用了”提示下一个要挑战的Boss“, 则下一个Boss将为黄色.
 					'''
 				CountDownedBosses: 如果启用, 目录将显示与总Boss数相比被击败的Boss数.
-				BossSilhouettes: 在没有被击败的情况下显示一个Boss形象的剪影.
+				ProgressionPrompt: 如果启用, 则阻止提示出现在所有未来的字符中.
+				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
+				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
 				OnlyBosses: 如果启用, 则清单和导航页仅会显示Boss栏目.
 				HideUnavailable: 如果启用, 则不可用和隐藏的Boss将从Boss日志的目录中被隐藏.
 				HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
