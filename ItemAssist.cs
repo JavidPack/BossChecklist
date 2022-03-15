@@ -20,7 +20,7 @@ namespace BossChecklist
 						continue;
 					}
 					// Loot Collections
-					if (BossList[i].loot.Contains(item.type)) {
+					if (BossList[i].lootItemTypes.Contains(item.type)) {
 						if (modplayer.BossTrophies[i].loot.All(x => x.Type != item.type)) {
 							modplayer.BossTrophies[i].loot.Add(new ItemDefinition(item.type));
 						}
@@ -48,7 +48,7 @@ namespace BossChecklist
 						continue;
 					}
 					// Loot Collections
-					if (BossList[i].loot.Contains(item.type)) {
+					if (BossList[i].lootItemTypes.Contains(item.type)) {
 						if (modplayer.BossTrophies[i].loot.All(x => x.Type != item.type)) {
 							modplayer.BossTrophies[i].loot.Add(new ItemDefinition(item.type));
 						}

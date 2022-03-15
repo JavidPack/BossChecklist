@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.UI;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace BossChecklist
 {
@@ -171,7 +172,7 @@ namespace BossChecklist
 					if (bossInfo.type == EntryType.Event) continue;
 					if (bossInfo.type == EntryType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
 					foreach (int id in bossInfo.npcIDs) {
-						if (!BlackListedID(id) && BossLogUI.GetBossHead(id) != TextureAssets.NpcHead[0]) idList.Add(id);
+						if (!BlackListedID(id) && GetBossHead(id) != TextureAssets.NpcHead[0]) idList.Add(id);
 					}
 				}
 				whitelistNPCs = idList.ToArray();
@@ -182,6 +183,8 @@ namespace BossChecklist
 
 			SetDrawPos();
 		}
+
+		private Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
 
 		private bool BlackListedID(int ID) {
 			return BossChecklist.ClientConfig.RadarBlacklist.Any(npcDef => npcDef.Type == ID);

@@ -83,17 +83,41 @@ namespace BossChecklist
 		[Label("[Localization Needed] Enable loot/collectible checklist")]
 		[Tooltip("[Localization Needed] The table of contents will also check if you've obtained all of a boss's loot and collectible items.")]
 		public bool LootCheckVisibility { get; set; }
-
-		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.BossSilhouettes")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.BossSilhouettes")]
-		public bool BossSilhouettes { get; set; }
 		
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.CountDownedBosses")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CountDownedBosses")]
 		public bool CountDownedBosses { get; set; }
-		
+
+		[Header("$Mods.BossChecklist.Configs.Header.BlindMode")]
+
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.ProgressionPrompt")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ProgressionPrompt")]
+		public bool PromptDisabled { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.MaskTextures")]
+		public bool MaskTextures { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.MaskNames")]
+		public bool MaskNames { get; set; }
+
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.UnmaskNextCheck")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.UnmaskNextCheck")]
+		public bool UnmaskNextBoss { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.MaskBossLoot")]
+		public bool MaskBossLoot { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.MaskHardMode")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.MaskHardMode")]
+		public bool MaskHardMode { get; set; }
+
 		// TODO Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
 		// TODO Config? Clear prev records OnEnterWorld (or maybe make it a button in boss log?)
 

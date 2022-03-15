@@ -108,7 +108,7 @@ namespace BossChecklist.UIElements
 			//Main.spriteBatch.Draw(Main.magicPixel, hitbox, Color.Red * 0.6f);
 
 			if (expanded) {
-				string info = Language.GetTextValue(boss.info);
+				string info = Language.GetTextValue(boss.spawnInfo);
 				int hoveredSnippet = -1;
 				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);

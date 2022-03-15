@@ -16,27 +16,6 @@ namespace BossChecklist
 		internal static BossTracker bossTracker;
 		internal static ModKeybind ToggleChecklistHotKey;
 		public static ModKeybind ToggleBossLog;
-		
-		public readonly static List<int> registeredBossBagTypes = new List<int>() {
-			ItemID.KingSlimeBossBag,
-			ItemID.EyeOfCthulhuBossBag,
-			ItemID.EaterOfWorldsBossBag,
-			ItemID.BrainOfCthulhuBossBag,
-			ItemID.QueenBeeBossBag,
-			ItemID.SkeletronBossBag,
-			ItemID.WallOfFleshBossBag,
-			ItemID.TwinsBossBag,
-			ItemID.DestroyerBossBag,
-			ItemID.SkeletronPrimeBossBag,
-			ItemID.PlanteraBossBag,
-			ItemID.GolemBossBag,
-			ItemID.FishronBossBag,
-			ItemID.MoonLordBossBag,
-			ItemID.BossBagBetsy,
-			ItemID.QueenSlimeBossBag,
-			ItemID.FairyQueenBossBag,
-			ItemID.DeerclopsBossBag
-		};
 
 		// Vanilla and Other World music boxes are in order given by the official Terraria wiki
 		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
@@ -229,34 +208,8 @@ namespace BossChecklist
 
 		public override void AddRecipes() {
 			bossTracker.FinalizeLocalization();
-			foreach (OrphanInfo orphan in bossTracker.ExtraData) {
-				BossInfo bossInfo = bossTracker.SortedBosses.Find(boss => boss.Key == orphan.Key);
-				if (bossInfo != null && orphan.values != null) {
-					switch (orphan.type) {
-						case OrphanType.Loot:
-							bossInfo.loot.AddRange(orphan.values);
-							break;
-						case OrphanType.Collection:
-							bossInfo.collection.AddRange(orphan.values);
-							break;
-						case OrphanType.SpawnItem:
-							bossInfo.spawnItem.AddRange(orphan.values);
-							break;
-						case OrphanType.EventNPC:
-							if (bossInfo.type == EntryType.Event) {
-								bossInfo.npcIDs.AddRange(orphan.values);
-							}
-							break;
-					}
-				}
-				else {
-					if(DebugConfig.ModCallLogVerbose)
-						Logger.Info($"Could not find {orphan.internalName} from {orphan.modSource} to add OrphanInfo to.");
-				}
-			}
-			foreach (BossInfo boss in bossTracker.SortedBosses) {
-				boss.collectType = BossInfo.SetupCollectionTypes(boss.collection);
-			}
+			bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.
+			bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
 			bossTracker.FinalizeBossData();
 		}
 
@@ -271,7 +224,7 @@ namespace BossChecklist
 			Array.Resize(ref args, 15);
 			try {
 				string message = args[0] as string;
-				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convinient. BossInfoAPI public static class for strong dependencies.
+				// TODO if requested: GetBossInfoDirect for returning a clone of BossInfo directly for strong reference. GetBossInfoExpando if convenient. BossInfoAPI public static class for strong dependencies.
 				if (message == "GetBossInfoDictionary") {
 					if (args[1] is not Mod mod) {
 						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
@@ -307,19 +260,16 @@ namespace BossChecklist
 					}
 					else {
 						bossTracker.AddBoss(
-							Convert.ToSingle(args[1]), // Prog
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							args[3] as Mod, // Mod
-							args[4] as string, // Boss Name
+							args[1] as Mod, // Mod
+							args[2] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[3]), // IDs
+							Convert.ToSingle(args[4]), // Prog
 							args[5] as Func<bool>, // Downed
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Loot
-							args[9] as string, // Info
-							args[10] as string, // Despawn Message
-							args[11] as string, // Texture
-							args[12] as string, // Override Icon Texture
-							args[13] as Func<bool> // Available
+							InterpretObjectAsListOfInt(args[8]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
 						);
 					}
 					return "Success";
@@ -338,19 +288,16 @@ namespace BossChecklist
 					}
 					else {
 						bossTracker.AddMiniBoss(
-							Convert.ToSingle(args[1]), // Prog
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							args[3] as Mod, // Mod
-							args[4] as string, // MiniBoss Name
+							args[1] as Mod, // Mod
+							args[2] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[3]), // IDs
+							Convert.ToSingle(args[4]), // Prog
 							args[5] as Func<bool>, // Downed
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Loot
-							args[9] as string, // Info
-							args[10] as string, // Despawn Message
-							args[11] as string, // Texture
-							args[12] as string, // Override Icon Texture
-							args[13] as Func<bool> // Available
+							InterpretObjectAsListOfInt(args[8]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
 						);
 					}
 					return "Success";
@@ -369,19 +316,16 @@ namespace BossChecklist
 					}
 					else {
 						bossTracker.AddEvent(
-							Convert.ToSingle(args[1]), // Prog
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							args[3] as Mod, // Mod
-							args[4] as string, // Event Name
+							args[1] as Mod, // Mod
+							args[2] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[3]), // IDs
+							Convert.ToSingle(args[4]), // Prog
 							args[5] as Func<bool>, // Downed
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Loot
-							args[9] as string, // Info
-							args[10] as string, // Despawn Message
-							args[11] as string, // Texture
-							args[12] as string, // Override Icon Texture
-							args[13] as Func<bool> // Available
+							InterpretObjectAsListOfInt(args[8]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
 						);
 					}
 					return "Success";
@@ -395,9 +339,8 @@ namespace BossChecklist
 				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
 					bossTracker.AddOrphanData(
 						message, // OrphanType
-						args[1] as string, // Mod Name
-						args[2] as string, // Boss Name
-						InterpretObjectAsListOfInt(args[3]) // ID List
+						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
+						InterpretObjectAsListOfInt(args[2]) // ID List
 					);
 				}
 				else {
@@ -411,6 +354,7 @@ namespace BossChecklist
 
 			// Local functions.
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
+			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)
