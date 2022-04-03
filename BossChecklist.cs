@@ -248,6 +248,8 @@ namespace BossChecklist
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
 				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons
 					if (argsLength < 7) {
+						bossTracker.AnyModHasOldCall = true;
+						AddToOldCalls(message, args[1] as string);
 						bossTracker.AddBoss(
 							args[1] as string, // Boss Name
 							Convert.ToSingle(args[2]), // Prog
@@ -255,8 +257,22 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
+					}
+					else if (args[1] as Mod == null) {
 						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[1] as string);
+						AddToOldCalls(message, args[4] as string);
+						bossTracker.AddBoss(
+							args[3] as Mod, // Mod
+							args[4] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[2]), // IDs
+							Convert.ToSingle(args[1]), // Prog
+							args[5] as Func<bool>, // Downed
+							args[13] as Func<bool>, // Available
+							InterpretObjectAsListOfInt(args[7]), // Collection
+							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
+						);
 					}
 					else {
 						bossTracker.AddBoss(
@@ -276,6 +292,8 @@ namespace BossChecklist
 				}
 				else if (message == "AddMiniBoss" || message == "AddMiniBossWithInfo") {
 					if (argsLength < 7) {
+						bossTracker.AnyModHasOldCall = true;
+						AddToOldCalls(message, args[1] as string);
 						bossTracker.AddMiniBoss(
 							args[1] as string, // MiniBoss Name
 							Convert.ToSingle(args[2]), // Prog
@@ -283,8 +301,22 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
+					}
+					else if (args[1] as Mod == null) {
 						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[1] as string);
+						AddToOldCalls(message, args[4] as string);
+						bossTracker.AddMiniBoss(
+							args[3] as Mod, // Mod
+							args[4] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[2]), // IDs
+							Convert.ToSingle(args[1]), // Prog
+							args[5] as Func<bool>, // Downed
+							args[13] as Func<bool>, // Available
+							InterpretObjectAsListOfInt(args[7]), // Collection
+							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
+						);
 					}
 					else {
 						bossTracker.AddMiniBoss(
@@ -304,6 +336,8 @@ namespace BossChecklist
 				}
 				else if (message == "AddEvent" || message == "AddEventWithInfo") {
 					if (argsLength < 7) {
+						bossTracker.AnyModHasOldCall = true;
+						AddToOldCalls(message, args[1] as string);
 						bossTracker.AddEvent(
 							args[1] as string, // Event Name
 							Convert.ToSingle(args[2]), // Prog
@@ -311,8 +345,22 @@ namespace BossChecklist
 							args[4] as string, // Info
 							args[5] as Func<bool> // Available
 						);
+					}
+					else if (args[1] as Mod == null) {
 						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[1] as string);
+						AddToOldCalls(message, args[4] as string);
+						bossTracker.AddEvent(
+							args[3] as Mod, // Mod
+							args[4] as string, // Boss Name
+							InterpretObjectAsListOfInt(args[2]), // IDs
+							Convert.ToSingle(args[1]), // Prog
+							args[5] as Func<bool>, // Downed
+							args[13] as Func<bool>, // Available
+							InterpretObjectAsListOfInt(args[7]), // Collection
+							InterpretObjectAsListOfInt(args[6]), // Spawn Items
+							args[9] as string, // Spawn Info
+							args[10] as string // Despawn Message
+						);
 					}
 					else {
 						bossTracker.AddEvent(

@@ -235,10 +235,10 @@ namespace BossChecklist
 			BossesFinalized = true;
 			if (AnyModHasOldCall) {
 				foreach (var oldCall in OldCalls) {
-					BossChecklist.instance.Logger.Info($"{oldCall.Key} calls for the following are not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience: {string.Join(", ", oldCall.Value)}");
+					BossChecklist.instance.Logger.Info($"{oldCall.Key} calls for the following either not utilizing Boss Log features or is using an old call method for it. Mod developers should update mod calls with proper information to improve user experience. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
 				}
 				OldCalls.Clear();
-				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
+				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/%5B1.4-alpha%5D-Mod-Call-Structure");
 			}
 			
 			if (Main.netMode == NetmodeID.Server) {
@@ -854,14 +854,21 @@ namespace BossChecklist
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("<<Boss Checklist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(mod + " has added ");
+			Console.Write("Boss Log entry added: ");
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
 			Console.Write(name);
 			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(" to the boss log!");
+			Console.Write(" from");
+			Console.ForegroundColor = ConsoleColor.Magenta;
+			Console.Write(mod);
 			Console.WriteLine();
 			Console.ResetColor();
-			BossChecklist.instance.Logger.Info($"{name} has been added to the Boss Log!");
+			if (OldCalls.Values.Any(x => x.Contains(name))) {
+				BossChecklist.instance.Logger.Info($"[Outdated Mod Call] Boss Log entry added: {name} from {mod}");
+			}
+			else {
+				BossChecklist.instance.Logger.Info($"Boss Log entry successfully added: {name} from {mod}");
+			}
 		}
 
 		internal void AddOrphanData(string type, string bossKey, object values) {
