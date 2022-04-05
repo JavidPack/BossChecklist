@@ -270,8 +270,7 @@ namespace BossChecklist
 							args[13] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
-							args[9] as string, // Spawn Info
-							args[10] as string // Despawn Message
+							args[9] as string // Spawn Info
 						);
 					}
 					else {
@@ -285,7 +284,7 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
-							args[10] as string // Despawn Message
+							InterpretObjectAsStringFunction(args[10]) // Despawn message
 						);
 					}
 					return "Success";
@@ -314,8 +313,7 @@ namespace BossChecklist
 							args[13] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
-							args[9] as string, // Spawn Info
-							args[10] as string // Despawn Message
+							args[9] as string // Spawn Info
 						);
 					}
 					else {
@@ -329,7 +327,7 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
-							args[10] as string // Despawn Message
+							InterpretObjectAsStringFunction(args[10]) // Despawn message
 						);
 					}
 					return "Success";
@@ -358,8 +356,7 @@ namespace BossChecklist
 							args[13] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[6]), // Spawn Items
-							args[9] as string, // Spawn Info
-							args[10] as string // Despawn Message
+							args[9] as string // Spawn Info
 						);
 					}
 					else {
@@ -372,8 +369,7 @@ namespace BossChecklist
 							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
-							args[9] as string, // Spawn Info
-							args[10] as string // Despawn Message
+							args[9] as string // Spawn Info
 						);
 					}
 					return "Success";
@@ -390,6 +386,7 @@ namespace BossChecklist
 						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
 						InterpretObjectAsListOfInt(args[2]) // ID List
 					);
+					return "Success";
 				}
 				else {
 					Logger.Error($"Call Error: Unknown Message: {message}");
@@ -402,7 +399,8 @@ namespace BossChecklist
 
 			// Local functions.
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
-			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
+			Func<NPC, string> InterpretObjectAsStringFunction(object data) => data is Func<NPC, string> ? data as Func<NPC, string> : (data is string ? npc => data as string : null);
+			//List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)

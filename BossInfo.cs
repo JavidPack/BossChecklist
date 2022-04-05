@@ -8,6 +8,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 namespace BossChecklist
 {
@@ -25,10 +26,10 @@ namespace BossChecklist
 		internal Func<bool> downed;
 		internal Func<bool> available;
 		internal bool hidden;
+		internal Func<NPC, string> customDespawnMessages;
 
 		internal List<int> spawnItem;
 		internal string spawnInfo;
-		internal string despawnMessage;
 
 		internal int treasureBag = 0;
 		internal List<int> collection;
@@ -125,7 +126,7 @@ namespace BossChecklist
 			return editedName;
 		}
 
-		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string info, string despawnMessage = "") {
+		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string info, Func<NPC, string> despawnMessages) {
 			this.type = type;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -136,14 +137,18 @@ namespace BossChecklist
 			this.available = available ?? (() => true);
 			this.hidden = false;
 
+			// Despawn messages for any events are currently unsupported
+			if (type != EntryType.Event) {
+				this.customDespawnMessages = despawnMessages ?? null;
+			}
+			else {
+				this.customDespawnMessages = null;
+			}
+
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.spawnInfo = info ?? "";
 			if (this.spawnInfo == "") {
 				this.spawnInfo = "Mods.BossChecklist.BossLog.DrawnText.NoInfo";
-			}
-			this.despawnMessage = despawnMessage?.StartsWith("$") == true ? despawnMessage.Substring(1) : despawnMessage;
-			if (string.IsNullOrEmpty(this.despawnMessage) && type == EntryType.Boss) {
-				this.despawnMessage = "Mods.BossChecklist.BossVictory.Generic";
 			}
 
 			this.loot = new List<DropRateInfo>();
@@ -247,6 +252,25 @@ namespace BossChecklist
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			string nameKey = name.Substring(name.LastIndexOf("."));
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
+
+			List<int> DayDespawners = new List<int>() {
+				NPCID.EyeofCthulhu,
+				NPCID.Retinazer,
+				NPCID.Spazmatism,
+				NPCID.TheDestroyer,
+			};
+
+			Func<bool> isDay = () => Main.dayTime;
+			Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
+
+			string bossCustomKillMessage = $"Mods.BossChecklist.BossVictory{nameKey}";
+			if (Language.GetTextValue(bossCustomKillMessage) == bossCustomKillMessage) {
+				// If the provided key wasn't found, default to the generic key
+				bossCustomKillMessage = $"Mods.BossChecklist.BossVictory.Generic";
+			}
+
+			Func<NPC, string> customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? "Mods.BossChecklist.BossDespawn.Day" : "Mods.BossChecklist.BossDespawn.Generic";
+
 			return new BossInfo(
 				type,
 				"Terraria",
@@ -258,7 +282,7 @@ namespace BossChecklist
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
 				spawnItem,
 				$"Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
-				$"Mods.BossChecklist.BossVictory{nameKey}"
+				customMessages
 			);
 		}
 
@@ -274,7 +298,8 @@ namespace BossChecklist
 				() => true,
 				BossChecklist.bossTracker.SetupEventCollectibles(name),
 				spawnItem,
-				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}"
+				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}",
+				null
 			);
 		}
 
