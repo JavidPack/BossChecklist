@@ -21,7 +21,7 @@ namespace BossChecklist
 		internal EntryType type;
 		internal string modSource;
 		internal string internalName; // This should be unique per mod.
-		internal string name; // display name
+		internal string name; // This should not be used for displaying purposes. Use 'BossInfo.GetDisplayName' instead.
 		internal List<int> npcIDs;
 		internal float progression;
 		internal Func<bool> downed;
@@ -309,6 +309,12 @@ namespace BossChecklist
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";
+
+		public string GetDisplayName() => GetTextFromPossibleTranslationKey(this.name);
+
+		public string GetDisplaySpawnInfo() => GetTextFromPossibleTranslationKey(this.spawnInfo);
+
+		string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
 	}
 
 	internal class OrphanInfo

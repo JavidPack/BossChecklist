@@ -153,6 +153,7 @@ namespace BossChecklist
 			};
 		}
 
+		/*
 		internal void FinalizeLocalization() {
 			// Modded Localization keys are initialized before AddRecipes, so we need to do this late.
 			foreach (var boss in SortedBosses) {
@@ -163,6 +164,7 @@ namespace BossChecklist
 			// Local Functions
 			string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
 		}
+		*/
 
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {

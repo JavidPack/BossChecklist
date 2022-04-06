@@ -19,7 +19,7 @@ namespace BossChecklist.Commands
 			foreach (var boss in sortedBosses) {
 				bool downed = boss.downed();
 				Console.ForegroundColor = downed ? ConsoleColor.Green : ConsoleColor.Yellow;
-				Console.WriteLine($"{boss.type}: {boss.name}");
+				Console.WriteLine($"{boss.type}: {boss.GetDisplayName()}");
 			}
 			Console.ResetColor();
 		}

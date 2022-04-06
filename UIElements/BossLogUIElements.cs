@@ -217,7 +217,7 @@ namespace BossChecklist.UIElements
 				if (maskedItems && !selectedBoss.IsDownedOrForced) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
-					string hoverText = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
+					string hoverText = $"Defeat {selectedBoss.GetDisplayName()} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if ((item.expert || item.expertOnly) && !Main.expertMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
@@ -570,7 +570,7 @@ namespace BossChecklist.UIElements
 
 						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && selectedBoss.modSource != "Unknown";
 						Vector2 pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 5);
-						Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
+						Utils.DrawBorderString(spriteBatch, selectedBoss.GetDisplayName(), pos, Color.Goldenrod);
 
 						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
@@ -634,7 +634,7 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
+											BossUISystem.Instance.UIHoverText = info.GetDisplayName() + "\nClick to view page";
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 											}
@@ -898,7 +898,7 @@ namespace BossChecklist.UIElements
 								spriteBatch.Draw(head, pos, headColor);
 								headTextureOffsetX += head.Width + 5;
 								if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
-									BossUISystem.Instance.UIHoverText = addedNPC.name + "\nClick to view page";
+									BossUISystem.Instance.UIHoverText = addedNPC.GetDisplayName() + "\nClick to view page";
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
 										BossLogUI.PageNum = npcIndex;
 									}
@@ -1228,13 +1228,13 @@ namespace BossChecklist.UIElements
 						List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
 						string tabMessage = "";
 						if (Id == "Boss_Tab" && BossLogUI.FindNext(EntryType.Boss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].name);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].GetDisplayName());
 						}
 						else if (Id == "Miniboss_Tab" && BossLogUI.FindNext(EntryType.MiniBoss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].name);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].GetDisplayName());
 						}
 						else if (Id == "Event_Tab" && BossLogUI.FindNext(EntryType.Event) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].name);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].GetDisplayName());
 						}
 						else if (Id == "Credits_Tab") {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
@@ -1288,16 +1288,16 @@ namespace BossChecklist.UIElements
 			float order = 0;
 			bool nextCheck;
 			bool downed;
-			string bossName;
+			string bossKey;
 			string displayName;
 
-			public TableOfContents(int pageNum, float order, string displayName, string bossName, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+			public TableOfContents(int pageNum, float order, string displayName, string bossKey, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				PageNum = pageNum;
 				this.order = order;
 				this.nextCheck = nextCheck;
 				this.downed = downed;
 				Recalculate();
-				this.bossName = bossName;
+				this.bossKey = bossKey;
 				this.displayName = displayName;
 			}
 
@@ -1308,7 +1308,7 @@ namespace BossChecklist.UIElements
 				List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 				// name check, for when progression matches
 				// index should never be -1 since variables passed in are within bounds
-				int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == bossName || x.internalName == bossName));
+				int index = sortedBosses.FindIndex(x => x.progression == order && (x.Key == bossKey));
 
 				if (order != -1) {
 					BossChecklist BA = BossChecklist.instance;

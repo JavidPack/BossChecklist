@@ -210,7 +210,7 @@ namespace BossChecklist
 		}
 
 		public override void AddRecipes() {
-			bossTracker.FinalizeLocalization();
+			//bossTracker.FinalizeLocalization();
 			bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.
 			bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
 			bossTracker.FinalizeBossData();

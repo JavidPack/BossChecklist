@@ -93,6 +93,7 @@ namespace BossChecklist
 		public static Rectangle slotRectRef;
 		public static Color faded;
 
+		public static GameCulture LangSelection;
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool showHidden = false;
@@ -820,7 +821,7 @@ namespace BossChecklist
 				return;
 			}
 			
-			var message = new UIMessageBox(Language.GetTextValue(boss.spawnInfo));
+			var message = new UIMessageBox(boss.GetDisplaySpawnInfo());
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
@@ -1246,7 +1247,7 @@ namespace BossChecklist
 				}
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
-				string displayName = boss.name;
+				string displayName = boss.GetDisplayName();
 				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
 
 				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
@@ -1258,7 +1259,7 @@ namespace BossChecklist
 
 				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
 					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextCheck) {
-						displayName = boss.name;
+						displayName = boss.GetDisplayName();
 					}
 				}
 
@@ -1274,7 +1275,7 @@ namespace BossChecklist
 					}
 				}
 
-				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.name, boss.IsDownedOrForced, nextCheck);
+				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.Key, boss.IsDownedOrForced, nextCheck);
 				if (!boss.IsDownedOrForced && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
@@ -1624,16 +1625,6 @@ namespace BossChecklist
 
 			return Color.White;
 		}
-
-		/* Currently removed due to rendering issue that is unable to replicated
-		public static Texture2D CropTexture(Texture2D texture, Rectangle snippet) {
-			Texture2D croppedTexture = new Texture2D(Main.graphics.GraphicsDevice, snippet.Width, snippet.Height);
-			Color[] data = new Color[snippet.Width * snippet.Height];
-			texture.GetData(0, snippet, data, 0, data.Length);
-			croppedTexture.SetData(data);
-			return croppedTexture;
-		}
-		*/
 
 		public static void OverrideForGroups(Recipe recipe, Item item) {
 			// This method taken from RecipeBrowser with permission.
