@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace BossChecklist
 {
@@ -38,6 +39,7 @@ namespace BossChecklist
 		internal List<int> lootItemTypes;
 
 		internal Asset<Texture2D> portraitTexture;
+		internal Action<SpriteBatch, Rectangle, Color> customDrawing;
 		internal List<Asset<Texture2D>> headIconTextures;
 
 		/*
@@ -126,7 +128,7 @@ namespace BossChecklist
 			return editedName;
 		}
 
-		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string info, Func<NPC, string> despawnMessages) {
+		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string info, Func<NPC, string> despawnMessages, Action<SpriteBatch, Rectangle, Color> customDrawing) {
 			this.type = type;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -137,9 +139,9 @@ namespace BossChecklist
 			this.available = available ?? (() => true);
 			this.hidden = false;
 
-			// Despawn messages for any events are currently unsupported
+			// Despawn messages for events are currently unsupported
 			if (type != EntryType.Event) {
-				this.customDespawnMessages = despawnMessages ?? null;
+				this.customDespawnMessages = despawnMessages;
 			}
 			else {
 				this.customDespawnMessages = null;
@@ -186,6 +188,7 @@ namespace BossChecklist
 			}
 
 			this.portraitTexture = null;
+			this.customDrawing = customDrawing;
 			this.headIconTextures = new List<Asset<Texture2D>>();
 			foreach (int npc in npcIDs) {
 				if (type == EntryType.Boss || type == EntryType.MiniBoss) {
@@ -282,7 +285,8 @@ namespace BossChecklist
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
 				spawnItem,
 				$"Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
-				customMessages
+				customMessages,
+				null
 			);
 		}
 
@@ -299,6 +303,7 @@ namespace BossChecklist
 				BossChecklist.bossTracker.SetupEventCollectibles(name),
 				spawnItem,
 				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}",
+				null,
 				null
 			);
 		}

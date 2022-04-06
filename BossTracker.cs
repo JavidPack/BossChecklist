@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -808,33 +811,33 @@ namespace BossChecklist
 
 		// Old version compatibility methods
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.Boss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null));
+			SortedBosses.Add(new BossInfo(EntryType.Boss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null, null));
 		}
 
 		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null));
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null, null));
 		}
 
 		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.Event, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null));
+			SortedBosses.Add(new BossInfo(EntryType.Event, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null, null));
 		}
 
 		// New system
-		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null) {
+		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawn));
+			SortedBosses.Add(new BossInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawn, drawing));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null) {
+		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawn));
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawn, drawing));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info) {
+		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, null));
+			SortedBosses.Add(new BossInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, null, drawing));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 

@@ -496,31 +496,38 @@ namespace BossChecklist.UIElements
 					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 					bool masked = BossLogUI.MaskBoss(selectedBoss) == Color.Black;
 					if (Id == "PageOne") {
-						Asset<Texture2D> bossTexture = null;
-						Rectangle bossSourceRectangle = new Rectangle();
-						if (selectedBoss.portraitTexture != null) {
-							bossTexture = selectedBoss.portraitTexture;
-							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Value.Width, bossTexture.Value.Height);
+						if (selectedBoss.customDrawing != null) {
+							// If a custom drawing is active, full drawing control is given to the modder within the boss portrait
+							// Nothing else will be drawn, including any base texture. Modders must supply that if they wish.
+							selectedBoss.customDrawing(spriteBatch, GetInnerDimensions().ToRectangle(), BossLogUI.MaskBoss(selectedBoss));
 						}
-						else if (selectedBoss.npcIDs.Count > 0) {
-							Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
-							bossTexture = TextureAssets.Npc[selectedBoss.npcIDs[0]];
-							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width(), bossTexture.Height() / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
-						}
-						if (bossTexture != null) {
-							float drawScale = 1f;
-							float xScale = (float)pageRect.Width / bossSourceRectangle.Width;
-							// TODO: pageRect.Height might be too much, we might want to trim off the top a bit (May need adjusting, but changed to -150)
-							float yScale = (float)(pageRect.Height - 150) / bossSourceRectangle.Height;
-							if (xScale < 1 || yScale < 1) {
-								drawScale = xScale < yScale ? xScale : yScale;
+						else {
+							Asset<Texture2D> bossTexture = null;
+							Rectangle bossSourceRectangle = new Rectangle();
+							if (selectedBoss.portraitTexture != null) {
+								bossTexture = selectedBoss.portraitTexture;
+								bossSourceRectangle = new Rectangle(0, 0, bossTexture.Value.Width, bossTexture.Value.Height);
 							}
-							Color maskedBoss = BossLogUI.MaskBoss(selectedBoss);
-							spriteBatch.Draw(bossTexture.Value, pageRect.Center(), bossSourceRectangle, maskedBoss, 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
+							else if (selectedBoss.npcIDs.Count > 0) {
+								Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
+								bossTexture = TextureAssets.Npc[selectedBoss.npcIDs[0]];
+								bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width(), bossTexture.Height() / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
+							}
+							if (bossTexture != null) {
+								float drawScale = 1f;
+								float xScale = (float)pageRect.Width / bossSourceRectangle.Width;
+								// TODO: pageRect.Height might be too much, we might want to trim off the top a bit (May need adjusting, but changed to -150)
+								float yScale = (float)(pageRect.Height - 150) / bossSourceRectangle.Height;
+								if (xScale < 1 || yScale < 1) {
+									drawScale = xScale < yScale ? xScale : yScale;
+								}
+								spriteBatch.Draw(bossTexture.Value, pageRect.Center(), bossSourceRectangle, BossLogUI.MaskBoss(selectedBoss), 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
+							}
 						}
+
+						// Everything below this point is outside of the boss portrait (Boss head icons, boss names, etc)
 
 						Rectangle firstHeadPos = new Rectangle();
-
 						bool countedFirstHead = false;
 						int offset = 0;
 						int totalWidth = 0;

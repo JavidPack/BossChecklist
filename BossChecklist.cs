@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -284,7 +287,8 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
-							InterpretObjectAsStringFunction(args[10]) // Despawn message
+							InterpretObjectAsStringFunction(args[10]), // Despawn message
+							args[11] as Action<SpriteBatch, Rectangle, Color> // Custom Drawing
 						);
 					}
 					return "Success";
@@ -327,7 +331,8 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
-							InterpretObjectAsStringFunction(args[10]) // Despawn message
+							InterpretObjectAsStringFunction(args[10]), // Despawn message
+							args[11] as Action<SpriteBatch, Rectangle, Color> // Custom Drawing
 						);
 					}
 					return "Success";
@@ -369,7 +374,8 @@ namespace BossChecklist
 							args[6] as Func<bool>, // Available
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
-							args[9] as string // Spawn Info
+							args[9] as string, // Spawn Info
+							args[10] as Action<SpriteBatch, Rectangle, Color> // Custom Drawing
 						);
 					}
 					return "Success";
