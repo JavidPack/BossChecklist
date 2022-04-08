@@ -184,6 +184,9 @@ namespace BossChecklist
 				else if (name == "$NPCName.DD2OgreT3") {
 					itemIds.Add(ItemID.BossBagOgre);
 				}
+				else if (name == "$NPCName.CultistBoss") {
+					itemIds.Add(ItemID.CultistBossBag);
+				}
 				foreach (DropRateInfo dropRate in itemDropInfo) {
 					itemIds.Add(dropRate.itemId);
 				}
