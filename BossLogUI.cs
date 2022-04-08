@@ -93,7 +93,6 @@ namespace BossChecklist
 		public static Rectangle slotRectRef;
 		public static Color faded;
 
-		public static GameCulture LangSelection;
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
 		public static bool showHidden = false;
@@ -1350,10 +1349,10 @@ namespace BossChecklist
 			ResetBothPages();
 			List<string> optedMods = BossUISystem.Instance.OptedModNames;
 
-			pageTwoItemList.Left.Pixels = 30;
-			pageTwoItemList.Top.Pixels = 75;
-			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 66;
-			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 75 - 80;
+			pageTwoItemList.Left.Pixels = 15;
+			pageTwoItemList.Top.Pixels = 65;
+			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
+			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - pageTwoItemList.Top.Pixels - 80;
 			pageTwoItemList.Clear();
 
 			scrollTwo.SetView(10f, 1000f);

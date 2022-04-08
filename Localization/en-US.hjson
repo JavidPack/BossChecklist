@@ -130,9 +130,9 @@ Mods: {
 			}
 
 			Credits: {
-				ThanksDevs: Special thanks to:
-				ThanksMods: Thanks to all the mods who opted in!
-				Notice: "[This list only contains loaded mods]"
+				ThanksDevs: Special thanks to
+				ThanksMods: Thanks to the mods who've opted in!
+				Notice: "[List only contains loaded mods]"
 			}
 
 			Terms: {

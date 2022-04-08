@@ -450,8 +450,11 @@ namespace BossChecklist.UIElements
 				else if (BossLogUI.PageNum == -2) { // Mod Developers Credits
 					if (Id == "PageOne") {
 						// Credits Page
-						Vector2 stringPos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs"), stringPos, Color.IndianRed);
+						string specialThanks = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs");
+						float textScale = 1.15f;
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(specialThanks) * textScale;
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
+						Utils.DrawBorderString(spriteBatch, specialThanks, pos, Main.DiscoColor, textScale);
 
 						Asset<Texture2D> users = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_CreditUsers");
 						string[] usernames = { "Jopojelly", "SheepishShepherd", "direwolf420", "RiverOaken", "Orian", "Panini" };
@@ -465,12 +468,12 @@ namespace BossChecklist.UIElements
 							bool left = i % 2 == 0;
 							bool panini = usernames[i] == "Panini";
 
-							Vector2 userpos = new Vector2(pageRect.X + (left ? 75 : 225) - (panini ? 10 : 0), pageRect.Y + 75 + (125 * row));
+							Vector2 userpos = new Vector2(pageRect.X + (pageRect.Width / 2) - 30 + (left ? -85 : 85) - (panini ? 10 : 0), pageRect.Y + 75 + (125 * row));
 							Rectangle userselected = new Rectangle(0 + (60 * i), 0, 60 + (panini ? 10 : 0), 58);
 							spriteBatch.Draw(users.Value, userpos, userselected, Color.White);
 							
 							Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(usernames[i]);
-							stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * nameScaling) / 2) + (panini ? 5 : 0), userpos.Y - 25);
+							Vector2 stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * nameScaling) / 2) + (panini ? 5 : 0), userpos.Y - 25);
 							Utils.DrawBorderString(spriteBatch, usernames[i], stringPos, colors[i], nameScaling);
 
 							stringAdjust = FontAssets.MouseText.Value.MeasureString(titles[i]);
@@ -485,10 +488,17 @@ namespace BossChecklist.UIElements
 
 					if (Id == "PageTwo") { // Supported Mod Credits Page
 						if (BossUISystem.Instance.OptedModNames.Count > 0) {
-							Vector2 pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 5);
-							Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods"), pos, Color.LightSkyBlue);
-							pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 35);
-							Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice"), pos, Color.LightBlue);
+							string thanksMods = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods");
+							float textScale = 1.15f;
+							Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(thanksMods) * textScale;
+							Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
+							Utils.DrawBorderString(spriteBatch, thanksMods, pos, Color.LightSkyBlue, textScale);
+
+							string notice = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
+							textScale = 0.9f;
+							Vector2 stringSize2 = FontAssets.MouseText.Value.MeasureString(notice) * textScale;
+							Vector2 pos2 = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize2.X / 2), pos.Y + stringSize2.Y + 5);
+							Utils.DrawBorderString(spriteBatch, notice, pos2, Color.LightBlue, textScale);
 						}
 					}
 				}
