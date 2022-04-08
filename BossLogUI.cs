@@ -857,7 +857,7 @@ namespace BossChecklist
 			string recipeMod = "Terraria";
 			//List<Recipe> recipes = Main.recipe.ToList();
 			Item spawn = new Item();
-			if (BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem[RecipePageNum] != 0) {
+			if (boss.spawnItem[RecipePageNum] != 0) {
 				var recipes = Main.recipe
 					.Take(Recipe.numRecipes)
 					.Where(r => r.HasResult(boss.spawnItem[RecipePageNum]));

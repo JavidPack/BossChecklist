@@ -128,7 +128,7 @@ namespace BossChecklist
 			return editedName;
 		}
 
-		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> spawnItem, List<int> collection, string info, Func<NPC, string> despawnMessages, Action<SpriteBatch, Rectangle, Color> customDrawing) {
+		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages, Action<SpriteBatch, Rectangle, Color> customDrawing) {
 			this.type = type;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -284,7 +284,7 @@ namespace BossChecklist
 				() => true,
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
 				spawnItem,
-				$"Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
+				$"$Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
 				customMessages,
 				null
 			);
@@ -302,7 +302,7 @@ namespace BossChecklist
 				() => true,
 				BossChecklist.bossTracker.SetupEventCollectibles(name),
 				spawnItem,
-				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}",
+				$"$Mods.BossChecklist.BossSpawnInfo.{nameKey}",
 				null,
 				null
 			);
