@@ -1444,6 +1444,7 @@ namespace BossChecklist
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
 			UpdateCatPage(CategoryPageNum);
+			UpdateTabNavPos();
 			UpdateFilterTabPos(false); // Clicking entry on the ToC should update filter panel
 		}
 
