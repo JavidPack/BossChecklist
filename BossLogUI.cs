@@ -91,7 +91,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
 		public static Rectangle slotRectRef;
-		public static Color faded;
+		public static readonly Color faded = new Color(128, 128, 128, 128);
 
 		public static int RecipePageNum = 0;
 		public static int RecipeShown = 0;
@@ -197,7 +197,6 @@ namespace BossChecklist
 			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
 
 			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
-			faded = new Color(128, 128, 128, 128);
 
 			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
 				Id = "OpenUI"
@@ -855,7 +854,6 @@ namespace BossChecklist
 			List<int> requiredTiles = new List<int>();
 			string recipeMod = "Terraria";
 			//List<Recipe> recipes = Main.recipe.ToList();
-			Item spawn = new Item();
 			if (boss.spawnItem[RecipePageNum] != 0) {
 				var recipes = Main.recipe
 					.Take(Recipe.numRecipes)
@@ -877,7 +875,9 @@ namespace BossChecklist
 					}
 					TotalRecipes++;
 				}
-				spawn.SetDefaults(boss.spawnItem[RecipePageNum]);
+				if (!ContentSamples.ItemsByType.TryGetValue(boss.spawnItem[RecipePageNum], out Item spawn)) {
+					return; // This return SHOULD never occur
+				}
 				// TODO: temp until figuring out what to do with Torch God info
 				if (boss.npcIDs.Contains(NPCID.TorchGod) && spawn.type == ItemID.Torch) {
 					spawn.stack = 101;
@@ -917,11 +917,8 @@ namespace BossChecklist
 					}
 				}
 
-				Item craft = new Item();
 				if (ingredients.Count > 0 && requiredTiles.Count == 0) {
-					craft.SetDefaults(ItemID.PowerGlove);
-
-					LogItemSlot craftItem = new LogItemSlot(craft, false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
+					LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
 					craftItem.Width.Pixels = slotRectRef.Width * 0.85f;
 					craftItem.Height.Pixels = slotRectRef.Height * 0.85f;
 					craftItem.Top.Pixels = 240 + (48 * (row + 2));
@@ -935,16 +932,17 @@ namespace BossChecklist
 						}
 						LogItemSlot tileList;
 						if (requiredTiles[l] == 26) {
-							craft.SetDefaults(0);
 							string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
 							string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
 							string altarType = WorldGen.crimson ? crimsonAltar : demonAltar;
-							tileList = new LogItemSlot(craft, false, altarType, ItemSlot.Context.EquipArmorVanity, 0.85f);
+							tileList = new LogItemSlot(new Item(0), false, altarType, ItemSlot.Context.EquipArmorVanity, 0.85f);
 						}
 						else {
+							Item craft = new Item(0);
 							for (int m = 0; m < ItemLoader.ItemCount; m++) {
-								craft.SetDefaults(m);
-								if (craft.createTile == requiredTiles[l]) {
+								ContentSamples.ItemsByType.TryGetValue(m, out Item craftItem); // Literally can't go wrong
+								if (craftItem.createTile == requiredTiles[l]) {
+									craft = craftItem;
 									break;
 								}
 							}
@@ -1524,7 +1522,7 @@ namespace BossChecklist
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown") {
 					// Events do not have records. Instead we create their own page with banners of the enemies in the event.
-					bool eventCheck = CategoryPageNum == CategoryPage.Record && boss.type == EntryType.Event;
+					bool eventCheck = CategoryPageNum != CategoryPage.Record || boss.type == EntryType.Event;
 					// Spawn and Loot pages do not have alt pages currently, so skip adding them
 					if (!eventCheck) {
 						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {

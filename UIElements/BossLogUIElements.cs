@@ -509,7 +509,7 @@ namespace BossChecklist.UIElements
 						if (selectedBoss.customDrawing != null) {
 							// If a custom drawing is active, full drawing control is given to the modder within the boss portrait
 							// Nothing else will be drawn, including any base texture. Modders must supply that if they wish.
-							selectedBoss.customDrawing(spriteBatch, GetInnerDimensions().ToRectangle(), BossLogUI.MaskBoss(selectedBoss));
+							selectedBoss.customDrawing(spriteBatch, pageRect, BossLogUI.MaskBoss(selectedBoss));
 						}
 						else {
 							Asset<Texture2D> bossTexture = null;
@@ -622,7 +622,7 @@ namespace BossChecklist.UIElements
 						if (selectedBoss.type != EntryType.Event) {
 							// Boss Records Subpage
 							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
-							Rectangle innerRect = GetInnerDimensions().ToRectangle();
+							Rectangle innerRect = pageRect;
 							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 60, 32, 34);
 							spriteBatch.Draw(construction.Value, conRect, Color.White);
 
@@ -639,7 +639,7 @@ namespace BossChecklist.UIElements
 								}
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = info.headIconTextures[0].Value;
-									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + 15, GetInnerDimensions().ToRectangle().Y + 50);
+									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 50);
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
@@ -895,14 +895,14 @@ namespace BossChecklist.UIElements
 							int headTextureOffsetY = 0;
 
 							foreach (int npcID in selectedBoss.npcIDs) {
-								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event && x.Key != selectedBoss.Key);
+								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event);
 								if (npcIndex == -1) {
 									continue;
 								}
 
 								BossInfo addedNPC = bosses[npcIndex];
 								Texture2D head = addedNPC.headIconTextures[0].Value;
-								Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + headTextureOffsetX + 15, GetInnerDimensions().ToRectangle().Y + 100);
+								Vector2 pos = new Vector2(pageRect.X + headTextureOffsetX + 15, pageRect.Y + 100);
 								Color headColor = addedNPC.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 
 								spriteBatch.Draw(head, pos, headColor);
@@ -916,7 +916,6 @@ namespace BossChecklist.UIElements
 								if (head.Height > headTextureOffsetY) {
 									headTextureOffsetY = head.Height;
 								}
-								break;
 							}
 
 							offset = 0;
@@ -958,7 +957,7 @@ namespace BossChecklist.UIElements
 									}
 
 									for (int j = 0; j < 3; j++) {
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset + 15, GetInnerDimensions().ToRectangle().Y + 100 + (16 * j) + offsetY);
+										Vector2 pos = new Vector2(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY);
 										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
 										spriteBatch.Draw(banner.Value, pos, rect, bannerColor);
 
@@ -981,21 +980,20 @@ namespace BossChecklist.UIElements
 									Main.instance.LoadNPC(npcID);
 
 									int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
-									if (bannerItemID <= 0) {
+									if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item)) {
 										continue;
 									}
 
-									Item newItem = new Item(bannerItemID);
-									if (newItem.createTile <= -1) {
+									if (item.createTile <= -1) {
 										continue;
 									}
 
-									Main.instance.LoadTiles(newItem.createTile);
-									Asset<Texture2D> banner = TextureAssets.Tile[newItem.createTile];
+									Main.instance.LoadTiles(item.createTile);
+									Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
 
 									// Code adapted from TileObject.DrawPreview
-									var tileData = TileObjectData.GetTileData(newItem.createTile, newItem.placeStyle);
-									int styleColumn = tileData.CalculatePlacementStyle(newItem.placeStyle, 0, 0); // adjust for StyleMultiplier
+									var tileData = TileObjectData.GetTileData(item.createTile, item.placeStyle);
+									int styleColumn = tileData.CalculatePlacementStyle(item.placeStyle, 0, 0); // adjust for StyleMultiplier
 									int styleRow = 0;
 									//int num3 = tileData.DrawYOffset;
 									if (tileData.StyleWrapLimit > 0) {
@@ -1023,7 +1021,7 @@ namespace BossChecklist.UIElements
 									int heightOffSet = 0;
 									int heightOffSetTexture = 0;
 									for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + heightOffSet + offsetY);
+										Vector2 pos = new Vector2(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY);
 										Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
 										Main.spriteBatch.Draw(banner.Value, pos, rect, bannerColor);
 										heightOffSet += heights[j];
@@ -1370,7 +1368,6 @@ namespace BossChecklist.UIElements
 
 				bool allLoot = true;
 				bool allCollect = true;
-				Item checkItem = new Item();
 
 				// Loop through player saved loot and boss loot to see if every item was obtained
 				foreach (int loot in sortedBosses[index].lootItemTypes) {
@@ -1389,7 +1386,9 @@ namespace BossChecklist.UIElements
 					// Skip expert/master mode items if the world is not in expert/master mode.
 					// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
 					if (!Main.expertMode || !Main.masterMode) {
-						checkItem.SetDefaults(loot);
+						if (!ContentSamples.ItemsByType.TryGetValue(loot, out Item checkItem)) {
+							continue;
+						}
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}
@@ -1412,7 +1411,9 @@ namespace BossChecklist.UIElements
 					}
 					int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
 					if (!Main.expertMode || !Main.masterMode) {
-						checkItem.SetDefaults(collectible);
+						if (!ContentSamples.ItemsByType.TryGetValue(collectible, out Item checkItem)) {
+							continue;
+						}
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}

@@ -198,7 +198,9 @@ namespace BossChecklist
 		internal void FinalizeCollectionTypes() {
 			foreach (BossInfo boss in SortedBosses) {
 				foreach (int type in boss.collection) {
-					Item temp = new Item(type);
+					if (!ContentSamples.ItemsByType.TryGetValue(type, out Item temp)) {
+						continue;
+					}
 					if (temp.headSlot > 0 && temp.vanity) {
 						boss.collectType.Add(type, CollectionType.Mask);
 					}
