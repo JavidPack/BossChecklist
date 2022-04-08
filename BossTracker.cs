@@ -89,11 +89,9 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
-				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "The Torch God", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch })
-					.WithCustomTranslationKey("$NPCName.TorchGod")
+				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "$NPCName.TorchGod", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch })
 					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
-					.WithCustomTranslationKey("$Bestiary_Events.BloodMoon")
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "$Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventBloodMoon")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventBloodMoon_Head"),
 				// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
@@ -550,12 +548,12 @@ namespace BossChecklist
 
 		internal List<int> SetupEventNPCList(string eventName) {
 			#region Event NPC List
-			if (eventName == "The Torch God") {
+			if (eventName == "$NPCName.TorchGod") {
 				return new List<int>() {
 					NPCID.TorchGod,
 				};
 			}
-			else if (eventName == "Blood Moon") {
+			else if (eventName == "$Bestiary_Events.BloodMoon") {
 				return new List<int>() {
 					NPCID.BloodZombie,
 					NPCID.Drippler,
@@ -722,13 +720,13 @@ namespace BossChecklist
 
 		internal List<int> SetupEventCollectibles(string eventName) {
 			#region Event Collectibles
-			if (eventName == "The Torch God") {
+			if (eventName == "$NPCName.TorchGod") {
 				return new List<int>() {
 					ItemID.MusicBoxBoss3,
 					ItemID.MusicBoxOWWallOfFlesh
 				};
 			}
-			else if (eventName == "Blood Moon") {
+			else if (eventName == "$Bestiary_Events.BloodMoon") {
 				return new List<int>() {
 					ItemID.MusicBoxEerie,
 					ItemID.MusicBoxOWBloodMoon

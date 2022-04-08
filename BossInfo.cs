@@ -169,7 +169,7 @@ namespace BossChecklist
 				this.loot.AddRange(itemDropInfo);
 
 				List<int> itemIds = new List<int>();
-				if (npcIDs.Contains(NPCID.TorchGod)) {
+				if (name == "$NPCName.TorchGod") {
 					itemIds.Add(ItemID.TorchGodsFavor); // Manually add Torch Gods Favor as it is not 'dropped' by the NPC
 				}
 				foreach (DropRateInfo dropRate in itemDropInfo) {
@@ -257,7 +257,7 @@ namespace BossChecklist
 		}
 
 		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
-			string nameKey = name.Substring(name.LastIndexOf("."));
+			string nameKey = name.Substring(name.LastIndexOf(".") + 1);
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
 			List<int> DayDespawners = new List<int>() {
@@ -288,14 +288,14 @@ namespace BossChecklist
 				() => true,
 				BossChecklist.bossTracker.SetupCollect(ids[0]),
 				spawnItem,
-				$"$Mods.BossChecklist.BossSpawnInfo{nameKey}{tremor}",
+				$"$Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}",
 				customMessages,
 				null
 			);
 		}
 
 		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
-			string nameKey = name.Replace(" ", "").Replace("'", "");
+			string nameKey = name.StartsWith("$") ? name.Substring(name.LastIndexOf(".") + 1) : name.Replace(" ", "").Replace("'", "");
 			return new BossInfo(
 				EntryType.Event,
 				"Terraria",
