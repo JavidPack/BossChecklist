@@ -169,6 +169,9 @@ namespace BossChecklist
 				this.loot.AddRange(itemDropInfo);
 
 				List<int> itemIds = new List<int>();
+				if (npcIDs.Contains(NPCID.TorchGod)) {
+					itemIds.Add(ItemID.TorchGodsFavor); // Manually add Torch Gods Favor as it is not 'dropped' by the NPC
+				}
 				foreach (DropRateInfo dropRate in itemDropInfo) {
 					itemIds.Add(dropRate.itemId);
 				}
@@ -214,6 +217,7 @@ namespace BossChecklist
 		// Workaround for vanilla events with illogical translation keys.
 		internal BossInfo WithCustomTranslationKey(string translationKey) {
 			this.name = Language.GetTextValue(translationKey.Substring(1));
+			this.internalName = translationKey.StartsWith("$") ? translationKey.Substring(translationKey.LastIndexOf('.') + 1) : name;
 			return this;
 		}
 
@@ -327,7 +331,7 @@ namespace BossChecklist
 		internal List<int> values;
 		// Use cases for values...
 		/// Adding Spawn Item IDs to a boss
-		/// Adding Loot or Collectible item IDs to a boss
+		/// Adding Collectible item IDs to a boss
 		/// Adding NPC IDs to an event
 
 		internal OrphanInfo(OrphanType type, string bossKey, List<int> values) {

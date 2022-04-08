@@ -875,10 +875,7 @@ namespace BossChecklist
 
 		internal void AddOrphanData(string type, string bossKey, object values) {
 			OrphanType orphanType;
-			if (type == "AddToBossLoot") {
-				orphanType = OrphanType.Loot;
-			}
-			else if (type == "AddToBossCollection") {
+			if (type == "AddToBossCollection") {
 				orphanType = OrphanType.Collection;
 			}
 			else if (type == "AddToBossSpawnItems") {

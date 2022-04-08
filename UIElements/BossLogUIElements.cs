@@ -1013,7 +1013,9 @@ namespace BossChecklist.UIElements
 									}
 
 									int bannerID = NPCLoader.GetNPC(npcID).Banner;
+									int bannerItem = NPCLoader.GetNPC(npcID).BannerItem;
 									string source = NPCLoader.GetNPC(npcID).Mod.DisplayName;
+									bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
 
 									Color bannerColor = NPC.killCount[bannerID] >= 50 ? Color.White : masked ? Color.Black : BossLogUI.faded;
 									
@@ -1028,7 +1030,12 @@ namespace BossChecklist.UIElements
 										heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
 
 										if (BossLogUI.MouseIntersects(pos.X, pos.Y, 16, 16)) {
-											BossUISystem.Instance.UIHoverText = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
+											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+											if (!reachedKillCount) {
+												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+											}
+											BossUISystem.Instance.UIHoverText = npcName + killcount;
 										}
 									}
 									offset += 25;

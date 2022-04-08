@@ -386,7 +386,7 @@ namespace BossChecklist
 				//	// Returns List<Tuple<string, float, int, bool>>: Name, value, bosstype(boss, miniboss, event), downed.
 				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
 				//}
-				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
+				else if (message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
 					bossTracker.AddOrphanData(
 						message, // OrphanType
 						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
