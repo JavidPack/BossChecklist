@@ -217,7 +217,7 @@ namespace BossChecklist.UIElements
 				if (maskedItems && !selectedBoss.IsDownedOrForced) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
-					string hoverText = $"Defeat {selectedBoss.GetDisplayName()} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
+					string hoverText = $"Defeat {selectedBoss.DisplayName} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if ((item.expert || item.expertOnly) && !Main.expertMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
@@ -580,7 +580,7 @@ namespace BossChecklist.UIElements
 
 						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && selectedBoss.modSource != "Unknown";
 						Vector2 pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 5);
-						Utils.DrawBorderString(spriteBatch, selectedBoss.GetDisplayName(), pos, Color.Goldenrod);
+						Utils.DrawBorderString(spriteBatch, selectedBoss.DisplayName, pos, Color.Goldenrod);
 
 						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
@@ -644,7 +644,7 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											BossUISystem.Instance.UIHoverText = info.GetDisplayName() + "\nClick to view page";
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\nClick to view page";
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 											}
@@ -908,7 +908,7 @@ namespace BossChecklist.UIElements
 								spriteBatch.Draw(head, pos, headColor);
 								headTextureOffsetX += head.Width + 5;
 								if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
-									BossUISystem.Instance.UIHoverText = addedNPC.GetDisplayName() + "\nClick to view page";
+									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\nClick to view page";
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
 										BossLogUI.PageNum = npcIndex;
 									}
@@ -1243,13 +1243,13 @@ namespace BossChecklist.UIElements
 						List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
 						string tabMessage = "";
 						if (Id == "Boss_Tab" && BossLogUI.FindNext(EntryType.Boss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].GetDisplayName());
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].DisplayName);
 						}
 						else if (Id == "Miniboss_Tab" && BossLogUI.FindNext(EntryType.MiniBoss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].GetDisplayName());
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].DisplayName);
 						}
 						else if (Id == "Event_Tab" && BossLogUI.FindNext(EntryType.Event) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].GetDisplayName());
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].DisplayName);
 						}
 						else if (Id == "Credits_Tab") {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
@@ -1393,9 +1393,7 @@ namespace BossChecklist.UIElements
 					// Skip expert/master mode items if the world is not in expert/master mode.
 					// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
 					if (!Main.expertMode || !Main.masterMode) {
-						if (!ContentSamples.ItemsByType.TryGetValue(loot, out Item checkItem)) {
-							continue;
-						}
+						Item checkItem = ContentSamples.ItemsByType[loot];
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}
@@ -1418,9 +1416,7 @@ namespace BossChecklist.UIElements
 					}
 					int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
 					if (!Main.expertMode || !Main.masterMode) {
-						if (!ContentSamples.ItemsByType.TryGetValue(collectible, out Item checkItem)) {
-							continue;
-						}
+						Item checkItem = ContentSamples.ItemsByType[collectible];
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}

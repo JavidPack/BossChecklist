@@ -93,6 +93,12 @@ namespace BossChecklist
 			return dict;
 		}
 
+		string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
+
+		internal string DisplayName => GetTextFromPossibleTranslationKey(this.name);
+
+		internal string DisplaySpawnInfo => GetTextFromPossibleTranslationKey(this.spawnInfo);
+		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
 		internal bool ForceDownedByPlayer(Player player) => player.GetModPlayer<PlayerAssist>().ForceDownsForWorld.Contains(Key);
@@ -171,6 +177,12 @@ namespace BossChecklist
 				List<int> itemIds = new List<int>();
 				if (name == "$NPCName.TorchGod") {
 					itemIds.Add(ItemID.TorchGodsFavor); // Manually add Torch Gods Favor as it is not 'dropped' by the NPC
+				}
+				else if (name == "$NPCName.DD2DarkMageT3") {
+					itemIds.Add(ItemID.BossBagDarkMage);
+				}
+				else if (name == "$NPCName.DD2OgreT3") {
+					itemIds.Add(ItemID.BossBagOgre);
 				}
 				foreach (DropRateInfo dropRate in itemDropInfo) {
 					itemIds.Add(dropRate.itemId);
@@ -313,12 +325,6 @@ namespace BossChecklist
 		}
 
 		public override string ToString() => $"{progression} {name} {modSource}";
-
-		public string GetDisplayName() => GetTextFromPossibleTranslationKey(this.name);
-
-		public string GetDisplaySpawnInfo() => GetTextFromPossibleTranslationKey(this.spawnInfo);
-
-		string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
 	}
 
 	internal class OrphanInfo
@@ -337,9 +343,18 @@ namespace BossChecklist
 		internal OrphanInfo(OrphanType type, string bossKey, List<int> values) {
 			this.type = type;
 			this.Key = bossKey;
-			modSource = bossKey.Substring(0, bossKey.IndexOf(" "));
-			bossName = bossKey.Substring(bossKey.IndexOf(" ") + 1);
 			this.values = values;
+
+			List<BossInfo> bosses = BossChecklist.bossTracker.SortedBosses;
+			int index = bosses.FindIndex(x => x.Key == this.Key);
+			if (index != -1) {
+				modSource = bosses[index].SourceDisplayName;
+				bossName = bosses[index].DisplayName;
+			}
+			else {
+				modSource = "Unknown";
+				bossName = "Unknown";
+			}
 		}
 	}
 }

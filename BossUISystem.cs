@@ -176,7 +176,7 @@ namespace BossChecklist
 						PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						int configIndex = NPCAssist.ListedBossNum(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, BossChecklist.DebugConfig.ShowTimerOrCounter.mod);
 						if (configIndex != -1) {
-							string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].GetDisplayName()} (#{configIndex + 1})" +
+							string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
 												$"\nTime: {playerAssist.Tracker_Duration[configIndex]}" +
 												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[configIndex]}" +
 												$"\nDeaths: {playerAssist.Tracker_Deaths[configIndex]}";

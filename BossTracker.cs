@@ -808,7 +808,11 @@ namespace BossChecklist
 			{ NPCID.DD2Betsy, ItemID.BossBagBetsy },
 			{ NPCID.QueenSlimeBoss, ItemID.QueenSlimeBossBag },
 			{ NPCID.HallowBoss, ItemID.FairyQueenBossBag },
-			{ NPCID.Deerclops, ItemID.DeerclopsBossBag }
+			{ NPCID.Deerclops, ItemID.DeerclopsBossBag },
+			// Unobtainable treasure bages...
+			{ NPCID.DD2DarkMageT3, ItemID.BossBagDarkMage },
+			{ NPCID.DD2OgreT3, ItemID.BossBagOgre },
+			{ NPCID.CultistBoss, ItemID.CultistBossBag }
 		};
 
 		// Old version compatibility methods

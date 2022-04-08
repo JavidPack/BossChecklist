@@ -819,7 +819,7 @@ namespace BossChecklist
 				return;
 			}
 			
-			var message = new UIMessageBox(boss.GetDisplaySpawnInfo());
+			var message = new UIMessageBox(boss.DisplaySpawnInfo);
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
@@ -875,9 +875,7 @@ namespace BossChecklist
 					}
 					TotalRecipes++;
 				}
-				if (!ContentSamples.ItemsByType.TryGetValue(boss.spawnItem[RecipePageNum], out Item spawn)) {
-					return; // This return SHOULD never occur
-				}
+				Item spawn = ContentSamples.ItemsByType[boss.spawnItem[RecipePageNum]];
 				// TODO: temp until figuring out what to do with Torch God info
 				if (boss.npcIDs.Contains(NPCID.TorchGod) && spawn.type == ItemID.Torch) {
 					spawn.stack = 101;
@@ -940,7 +938,7 @@ namespace BossChecklist
 						else {
 							Item craft = new Item(0);
 							for (int m = 0; m < ItemLoader.ItemCount; m++) {
-								ContentSamples.ItemsByType.TryGetValue(m, out Item craftItem); // Literally can't go wrong
+								Item craftItem = ContentSamples.ItemsByType[m];
 								if (craftItem.createTile == requiredTiles[l]) {
 									craft = craftItem;
 									break;
@@ -1244,7 +1242,7 @@ namespace BossChecklist
 				}
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
-				string displayName = boss.GetDisplayName();
+				string displayName = boss.DisplayName;
 				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
 
 				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
@@ -1256,7 +1254,7 @@ namespace BossChecklist
 
 				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
 					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextCheck) {
-						displayName = boss.GetDisplayName();
+						displayName = boss.DisplayName;
 					}
 				}
 
