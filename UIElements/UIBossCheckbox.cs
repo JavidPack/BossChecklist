@@ -27,7 +27,7 @@ namespace BossChecklist.UIElements
 			Width = StyleDimension.Fill;
 			Height.Pixels = 15;
 
-			checkbox = new UICheckbox(boss.progression, boss.name, 1f, false);
+			checkbox = new UICheckbox(boss.progression, boss.DisplayName, 1f, false);
 			if (boss.type == EntryType.Event)
 				checkbox.TextColor = Color.MediumPurple;
 			if (boss.type == EntryType.MiniBoss)
@@ -108,7 +108,7 @@ namespace BossChecklist.UIElements
 			//Main.spriteBatch.Draw(Main.magicPixel, hitbox, Color.Red * 0.6f);
 
 			if (expanded) {
-				string info = Language.GetTextValue(boss.spawnInfo);
+				string info = boss.DisplaySpawnInfo;
 				int hoveredSnippet = -1;
 				TextSnippet[] textSnippets = ChatManager.ParseMessage(info, Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);

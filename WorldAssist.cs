@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
@@ -31,7 +32,6 @@ namespace BossChecklist
 
 		public static List<bool> ActiveBossesList;
 		public static List<bool[]> StartingPlayers;
-		public static List<int> DayDespawners;
 
 		string EventKey = "";
 		bool isBloodMoon = false;
@@ -71,14 +71,6 @@ namespace BossChecklist
 
 			downedInvasionT2Ours = false;
 			downedInvasionT3Ours = false;
-
-			// Skeletron and Skeletron Prime are not added because they kill the player before despawning
-			DayDespawners = new List<int>() {
-				NPCID.EyeofCthulhu,
-				NPCID.Retinazer,
-				NPCID.Spazmatism,
-				NPCID.TheDestroyer,
-			};
 
 			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			ActiveBossesList = new List<bool>();
@@ -188,33 +180,29 @@ namespace BossChecklist
 			}
 		}
 
-		public string GetDespawnMessage(NPC boss, int listnum) {
-			List<BossInfo> infoList = BossChecklist.bossTracker.SortedBosses;
-			// If any player is active and alive
-			if (Main.player.Any(playerCheck => playerCheck.active && !playerCheck.dead)) {
-				// If boss is still active and alive
-				if (Main.npc.Any(x => x.life > 0 && infoList[listnum].npcIDs.IndexOf(x.type) != -1)) {
-					if (Main.dayTime && DayDespawners.Contains(boss.type)) {
-						return "Mods.BossChecklist.BossDespawn.Day";
-					}
-					else if (boss.type == NPCID.WallofFlesh) {
-						return "Mods.BossChecklist.BossVictory.WallofFlesh";
-					}
-					else {
-						return "Mods.BossChecklist.BossDespawn.Generic";
-					}
-				}
-				else {
-					return "";
+		public string GetDespawnMessage(NPC npc, int index) {
+			if (npc.life <= 0) {
+				return ""; // If the boss was killed, don't display a despawn message
+			}
+
+			List<BossInfo> bosses = BossChecklist.bossTracker.SortedBosses;
+			string messageType = BossChecklist.ClientConfig.DespawnMessageType;
+
+			if (messageType == "Unique") {
+				// Provide the npc for the custom message
+				// If null or empty, give a generic message instead of a custom one
+				string customMessage = bosses[index].customDespawnMessages(npc);
+				if (!string.IsNullOrEmpty(customMessage)) {
+					return customMessage;
 				}
 			}
-			else if (BossChecklist.ClientConfig.DespawnMessageType == "Unique") {
-				// Check already accounted for to get to this point
-				return infoList[NPCAssist.ListedBossNum(boss)].despawnMessage;
+			if (messageType != "Disabled") {
+				// If any player is still alive, use the generic despawn message.
+				// If all players are dead, use the boss victory despawn message.
+				return Main.player.Any(plr => plr.active && !plr.dead) ? "Mods.BossChecklist.BossDespawn.Generic" : "Mods.BossChecklist.BossVictory.Generic";
 			}
-			else {
-				return "Mods.BossChecklist.BossVictory.Generic";
-			}
+			// The despawn message feature was disabled. Return an empty message.
+			return "";
 		}
 
 		public bool CheckRealLife(int realNPC) => realNPC == -1 || Main.npc[realNPC].life >= 0;

@@ -217,7 +217,7 @@ namespace BossChecklist.UIElements
 				if (maskedItems && !selectedBoss.IsDownedOrForced) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
-					string hoverText = $"Defeat {selectedBoss.name} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
+					string hoverText = $"Defeat {selectedBoss.DisplayName} to view obtainable {(BossLogUI.AltPageSelected[(int)CategoryPage.Loot] == 1 ? "collectibles" : "loot")}";
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if ((item.expert || item.expertOnly) && !Main.expertMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
@@ -450,8 +450,11 @@ namespace BossChecklist.UIElements
 				else if (BossLogUI.PageNum == -2) { // Mod Developers Credits
 					if (Id == "PageOne") {
 						// Credits Page
-						Vector2 stringPos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs"), stringPos, Color.IndianRed);
+						string specialThanks = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs");
+						float textScale = 1.15f;
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(specialThanks) * textScale;
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
+						Utils.DrawBorderString(spriteBatch, specialThanks, pos, Main.DiscoColor, textScale);
 
 						Asset<Texture2D> users = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_CreditUsers");
 						string[] usernames = { "Jopojelly", "SheepishShepherd", "direwolf420", "RiverOaken", "Orian", "Panini" };
@@ -465,12 +468,12 @@ namespace BossChecklist.UIElements
 							bool left = i % 2 == 0;
 							bool panini = usernames[i] == "Panini";
 
-							Vector2 userpos = new Vector2(pageRect.X + (left ? 75 : 225) - (panini ? 10 : 0), pageRect.Y + 75 + (125 * row));
+							Vector2 userpos = new Vector2(pageRect.X + (pageRect.Width / 2) - 30 + (left ? -85 : 85) - (panini ? 10 : 0), pageRect.Y + 75 + (125 * row));
 							Rectangle userselected = new Rectangle(0 + (60 * i), 0, 60 + (panini ? 10 : 0), 58);
 							spriteBatch.Draw(users.Value, userpos, userselected, Color.White);
 							
 							Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(usernames[i]);
-							stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * nameScaling) / 2) + (panini ? 5 : 0), userpos.Y - 25);
+							Vector2 stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * nameScaling) / 2) + (panini ? 5 : 0), userpos.Y - 25);
 							Utils.DrawBorderString(spriteBatch, usernames[i], stringPos, colors[i], nameScaling);
 
 							stringAdjust = FontAssets.MouseText.Value.MeasureString(titles[i]);
@@ -485,10 +488,17 @@ namespace BossChecklist.UIElements
 
 					if (Id == "PageTwo") { // Supported Mod Credits Page
 						if (BossUISystem.Instance.OptedModNames.Count > 0) {
-							Vector2 pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 5);
-							Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods"), pos, Color.LightSkyBlue);
-							pos = new Vector2(GetInnerDimensions().X + 5, GetInnerDimensions().Y + 35);
-							Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice"), pos, Color.LightBlue);
+							string thanksMods = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods");
+							float textScale = 1.15f;
+							Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(thanksMods) * textScale;
+							Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
+							Utils.DrawBorderString(spriteBatch, thanksMods, pos, Color.LightSkyBlue, textScale);
+
+							string notice = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
+							textScale = 0.9f;
+							Vector2 stringSize2 = FontAssets.MouseText.Value.MeasureString(notice) * textScale;
+							Vector2 pos2 = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize2.X / 2), pos.Y + stringSize2.Y + 5);
+							Utils.DrawBorderString(spriteBatch, notice, pos2, Color.LightBlue, textScale);
 						}
 					}
 				}
@@ -496,31 +506,38 @@ namespace BossChecklist.UIElements
 					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 					bool masked = BossLogUI.MaskBoss(selectedBoss) == Color.Black;
 					if (Id == "PageOne") {
-						Asset<Texture2D> bossTexture = null;
-						Rectangle bossSourceRectangle = new Rectangle();
-						if (selectedBoss.portraitTexture != null) {
-							bossTexture = selectedBoss.portraitTexture;
-							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Value.Width, bossTexture.Value.Height);
+						if (selectedBoss.customDrawing != null) {
+							// If a custom drawing is active, full drawing control is given to the modder within the boss portrait
+							// Nothing else will be drawn, including any base texture. Modders must supply that if they wish.
+							selectedBoss.customDrawing(spriteBatch, pageRect, BossLogUI.MaskBoss(selectedBoss));
 						}
-						else if (selectedBoss.npcIDs.Count > 0) {
-							Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
-							bossTexture = TextureAssets.Npc[selectedBoss.npcIDs[0]];
-							bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width(), bossTexture.Height() / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
-						}
-						if (bossTexture != null) {
-							float drawScale = 1f;
-							float xScale = (float)pageRect.Width / bossSourceRectangle.Width;
-							// TODO: pageRect.Height might be too much, we might want to trim off the top a bit (May need adjusting, but changed to -150)
-							float yScale = (float)(pageRect.Height - 150) / bossSourceRectangle.Height;
-							if (xScale < 1 || yScale < 1) {
-								drawScale = xScale < yScale ? xScale : yScale;
+						else {
+							Asset<Texture2D> bossTexture = null;
+							Rectangle bossSourceRectangle = new Rectangle();
+							if (selectedBoss.portraitTexture != null) {
+								bossTexture = selectedBoss.portraitTexture;
+								bossSourceRectangle = new Rectangle(0, 0, bossTexture.Value.Width, bossTexture.Value.Height);
 							}
-							Color maskedBoss = BossLogUI.MaskBoss(selectedBoss);
-							spriteBatch.Draw(bossTexture.Value, pageRect.Center(), bossSourceRectangle, maskedBoss, 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
+							else if (selectedBoss.npcIDs.Count > 0) {
+								Main.instance.LoadNPC(selectedBoss.npcIDs[0]);
+								bossTexture = TextureAssets.Npc[selectedBoss.npcIDs[0]];
+								bossSourceRectangle = new Rectangle(0, 0, bossTexture.Width(), bossTexture.Height() / Main.npcFrameCount[selectedBoss.npcIDs[0]]);
+							}
+							if (bossTexture != null) {
+								float drawScale = 1f;
+								float xScale = (float)pageRect.Width / bossSourceRectangle.Width;
+								// TODO: pageRect.Height might be too much, we might want to trim off the top a bit (May need adjusting, but changed to -150)
+								float yScale = (float)(pageRect.Height - 150) / bossSourceRectangle.Height;
+								if (xScale < 1 || yScale < 1) {
+									drawScale = xScale < yScale ? xScale : yScale;
+								}
+								spriteBatch.Draw(bossTexture.Value, pageRect.Center(), bossSourceRectangle, BossLogUI.MaskBoss(selectedBoss), 0, bossSourceRectangle.Center(), drawScale, SpriteEffects.None, 0f);
+							}
 						}
+
+						// Everything below this point is outside of the boss portrait (Boss head icons, boss names, etc)
 
 						Rectangle firstHeadPos = new Rectangle();
-
 						bool countedFirstHead = false;
 						int offset = 0;
 						int totalWidth = 0;
@@ -563,7 +580,7 @@ namespace BossChecklist.UIElements
 
 						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && selectedBoss.modSource != "Unknown";
 						Vector2 pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 5);
-						Utils.DrawBorderString(spriteBatch, selectedBoss.name, pos, Color.Goldenrod);
+						Utils.DrawBorderString(spriteBatch, selectedBoss.DisplayName, pos, Color.Goldenrod);
 
 						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
@@ -605,7 +622,7 @@ namespace BossChecklist.UIElements
 						if (selectedBoss.type != EntryType.Event) {
 							// Boss Records Subpage
 							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
-							Rectangle innerRect = GetInnerDimensions().ToRectangle();
+							Rectangle innerRect = pageRect;
 							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 60, 32, 34);
 							spriteBatch.Draw(construction.Value, conRect, Color.White);
 
@@ -622,12 +639,12 @@ namespace BossChecklist.UIElements
 								}
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = info.headIconTextures[0].Value;
-									Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + 15, GetInnerDimensions().ToRectangle().Y + 50);
+									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 50);
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											BossUISystem.Instance.UIHoverText = info.name + "\nClick to view page";
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\nClick to view page";
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 											}
@@ -878,20 +895,20 @@ namespace BossChecklist.UIElements
 							int headTextureOffsetY = 0;
 
 							foreach (int npcID in selectedBoss.npcIDs) {
-								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event && x.Key != selectedBoss.Key);
+								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event);
 								if (npcIndex == -1) {
 									continue;
 								}
 
 								BossInfo addedNPC = bosses[npcIndex];
 								Texture2D head = addedNPC.headIconTextures[0].Value;
-								Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + headTextureOffsetX + 15, GetInnerDimensions().ToRectangle().Y + 100);
+								Vector2 pos = new Vector2(pageRect.X + headTextureOffsetX + 15, pageRect.Y + 100);
 								Color headColor = addedNPC.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 
 								spriteBatch.Draw(head, pos, headColor);
 								headTextureOffsetX += head.Width + 5;
 								if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
-									BossUISystem.Instance.UIHoverText = addedNPC.name + "\nClick to view page";
+									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\nClick to view page";
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
 										BossLogUI.PageNum = npcIndex;
 									}
@@ -899,7 +916,6 @@ namespace BossChecklist.UIElements
 								if (head.Height > headTextureOffsetY) {
 									headTextureOffsetY = head.Height;
 								}
-								break;
 							}
 
 							offset = 0;
@@ -941,7 +957,7 @@ namespace BossChecklist.UIElements
 									}
 
 									for (int j = 0; j < 3; j++) {
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset + 15, GetInnerDimensions().ToRectangle().Y + 100 + (16 * j) + offsetY);
+										Vector2 pos = new Vector2(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY);
 										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
 										spriteBatch.Draw(banner.Value, pos, rect, bannerColor);
 
@@ -964,21 +980,20 @@ namespace BossChecklist.UIElements
 									Main.instance.LoadNPC(npcID);
 
 									int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
-									if (bannerItemID <= 0) {
+									if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item)) {
 										continue;
 									}
 
-									Item newItem = new Item(bannerItemID);
-									if (newItem.createTile <= -1) {
+									if (item.createTile <= -1) {
 										continue;
 									}
 
-									Main.instance.LoadTiles(newItem.createTile);
-									Asset<Texture2D> banner = TextureAssets.Tile[newItem.createTile];
+									Main.instance.LoadTiles(item.createTile);
+									Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
 
 									// Code adapted from TileObject.DrawPreview
-									var tileData = TileObjectData.GetTileData(newItem.createTile, newItem.placeStyle);
-									int styleColumn = tileData.CalculatePlacementStyle(newItem.placeStyle, 0, 0); // adjust for StyleMultiplier
+									var tileData = TileObjectData.GetTileData(item.createTile, item.placeStyle);
+									int styleColumn = tileData.CalculatePlacementStyle(item.placeStyle, 0, 0); // adjust for StyleMultiplier
 									int styleRow = 0;
 									//int num3 = tileData.DrawYOffset;
 									if (tileData.StyleWrapLimit > 0) {
@@ -998,7 +1013,9 @@ namespace BossChecklist.UIElements
 									}
 
 									int bannerID = NPCLoader.GetNPC(npcID).Banner;
+									int bannerItem = NPCLoader.GetNPC(npcID).BannerItem;
 									string source = NPCLoader.GetNPC(npcID).Mod.DisplayName;
+									bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
 
 									Color bannerColor = NPC.killCount[bannerID] >= 50 ? Color.White : masked ? Color.Black : BossLogUI.faded;
 									
@@ -1006,14 +1023,19 @@ namespace BossChecklist.UIElements
 									int heightOffSet = 0;
 									int heightOffSetTexture = 0;
 									for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-										Vector2 pos = new Vector2(GetInnerDimensions().ToRectangle().X + offset, GetInnerDimensions().ToRectangle().Y + 100 + heightOffSet + offsetY);
+										Vector2 pos = new Vector2(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY);
 										Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
 										Main.spriteBatch.Draw(banner.Value, pos, rect, bannerColor);
 										heightOffSet += heights[j];
 										heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
 
 										if (BossLogUI.MouseIntersects(pos.X, pos.Y, 16, 16)) {
-											BossUISystem.Instance.UIHoverText = $"{Lang.GetNPCNameValue(npcID)}: {NPC.killCount[Item.NPCtoBanner(npcID)]}\n[{source}]";
+											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+											if (!reachedKillCount) {
+												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+											}
+											BossUISystem.Instance.UIHoverText = npcName + killcount;
 										}
 									}
 									offset += 25;
@@ -1221,13 +1243,13 @@ namespace BossChecklist.UIElements
 						List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
 						string tabMessage = "";
 						if (Id == "Boss_Tab" && BossLogUI.FindNext(EntryType.Boss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].name);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].DisplayName);
 						}
 						else if (Id == "Miniboss_Tab" && BossLogUI.FindNext(EntryType.MiniBoss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].name);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].DisplayName);
 						}
 						else if (Id == "Event_Tab" && BossLogUI.FindNext(EntryType.Event) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].name);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].DisplayName);
 						}
 						else if (Id == "Credits_Tab") {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
@@ -1281,16 +1303,16 @@ namespace BossChecklist.UIElements
 			float order = 0;
 			bool nextCheck;
 			bool downed;
-			string bossName;
+			string bossKey;
 			string displayName;
 
-			public TableOfContents(int pageNum, float order, string displayName, string bossName, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+			public TableOfContents(int pageNum, float order, string displayName, string bossKey, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				PageNum = pageNum;
 				this.order = order;
 				this.nextCheck = nextCheck;
 				this.downed = downed;
 				Recalculate();
-				this.bossName = bossName;
+				this.bossKey = bossKey;
 				this.displayName = displayName;
 			}
 
@@ -1301,7 +1323,7 @@ namespace BossChecklist.UIElements
 				List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
 				// name check, for when progression matches
 				// index should never be -1 since variables passed in are within bounds
-				int index = sortedBosses.FindIndex(x => x.progression == order && (x.name == bossName || x.internalName == bossName));
+				int index = sortedBosses.FindIndex(x => x.progression == order && (x.Key == bossKey));
 
 				if (order != -1) {
 					BossChecklist BA = BossChecklist.instance;
@@ -1353,7 +1375,6 @@ namespace BossChecklist.UIElements
 
 				bool allLoot = true;
 				bool allCollect = true;
-				Item checkItem = new Item();
 
 				// Loop through player saved loot and boss loot to see if every item was obtained
 				foreach (int loot in sortedBosses[index].lootItemTypes) {
@@ -1372,7 +1393,7 @@ namespace BossChecklist.UIElements
 					// Skip expert/master mode items if the world is not in expert/master mode.
 					// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
 					if (!Main.expertMode || !Main.masterMode) {
-						checkItem.SetDefaults(loot);
+						Item checkItem = ContentSamples.ItemsByType[loot];
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}
@@ -1395,7 +1416,7 @@ namespace BossChecklist.UIElements
 					}
 					int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
 					if (!Main.expertMode || !Main.masterMode) {
-						checkItem.SetDefaults(collectible);
+						Item checkItem = ContentSamples.ItemsByType[collectible];
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
 							continue;
 						}

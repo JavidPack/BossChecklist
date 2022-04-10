@@ -11,7 +11,6 @@ namespace BossChecklist
 
 	internal enum OrphanType
 	{
-		Loot,
 		Collection,
 		SpawnItem,
 		EventNPC

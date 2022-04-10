@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -86,11 +89,9 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
-				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "The Torch God", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch })
-					.WithCustomTranslationKey("$NPCName.TorchGod")
+				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "$NPCName.TorchGod", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch })
 					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "Blood Moon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
-					.WithCustomTranslationKey("$Bestiary_Events.BloodMoon")
+				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "$Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventBloodMoon")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventBloodMoon_Head"),
 				// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
@@ -150,6 +151,7 @@ namespace BossChecklist
 			};
 		}
 
+		/*
 		internal void FinalizeLocalization() {
 			// Modded Localization keys are initialized before AddRecipes, so we need to do this late.
 			foreach (var boss in SortedBosses) {
@@ -160,17 +162,13 @@ namespace BossChecklist
 			// Local Functions
 			string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
 		}
+		*/
 
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {
 				BossInfo bossInfo = SortedBosses.Find(boss => boss.Key == orphan.Key);
 				if (bossInfo != null && orphan.values != null) {
 					switch (orphan.type) {
-						/* TODO: Revisit adding loot via Orphan data
-						case OrphanType.Loot:
-							bossInfo.loot.AddRange(orphan.values);
-							break;
-						*/
 						case OrphanType.Collection:
 							bossInfo.collection.AddRange(orphan.values);
 							break;
@@ -198,7 +196,9 @@ namespace BossChecklist
 		internal void FinalizeCollectionTypes() {
 			foreach (BossInfo boss in SortedBosses) {
 				foreach (int type in boss.collection) {
-					Item temp = new Item(type);
+					if (!ContentSamples.ItemsByType.TryGetValue(type, out Item temp)) {
+						continue;
+					}
 					if (temp.headSlot > 0 && temp.vanity) {
 						boss.collectType.Add(type, CollectionType.Mask);
 					}
@@ -235,10 +235,10 @@ namespace BossChecklist
 			BossesFinalized = true;
 			if (AnyModHasOldCall) {
 				foreach (var oldCall in OldCalls) {
-					BossChecklist.instance.Logger.Info($"{oldCall.Key} calls for the following are not utilizing Boss Log features. Mod developers should update mod calls with proper information to improve user experience: {string.Join(", ", oldCall.Value)}");
+					BossChecklist.instance.Logger.Info($"{oldCall.Key} calls for the following either not utilizing Boss Log features or is using an old call method for it. Mod developers should update mod calls with proper information to improve user experience. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
 				}
 				OldCalls.Clear();
-				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist: https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call#modcalls");
+				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/%5B1.4-alpha%5D-Mod-Call-Structure");
 			}
 			
 			if (Main.netMode == NetmodeID.Server) {
@@ -548,12 +548,12 @@ namespace BossChecklist
 
 		internal List<int> SetupEventNPCList(string eventName) {
 			#region Event NPC List
-			if (eventName == "The Torch God") {
+			if (eventName == "$NPCName.TorchGod") {
 				return new List<int>() {
 					NPCID.TorchGod,
 				};
 			}
-			else if (eventName == "Blood Moon") {
+			else if (eventName == "$Bestiary_Events.BloodMoon") {
 				return new List<int>() {
 					NPCID.BloodZombie,
 					NPCID.Drippler,
@@ -720,13 +720,13 @@ namespace BossChecklist
 
 		internal List<int> SetupEventCollectibles(string eventName) {
 			#region Event Collectibles
-			if (eventName == "The Torch God") {
+			if (eventName == "$NPCName.TorchGod") {
 				return new List<int>() {
 					ItemID.MusicBoxBoss3,
 					ItemID.MusicBoxOWWallOfFlesh
 				};
 			}
-			else if (eventName == "Blood Moon") {
+			else if (eventName == "$Bestiary_Events.BloodMoon") {
 				return new List<int>() {
 					ItemID.MusicBoxEerie,
 					ItemID.MusicBoxOWBloodMoon
@@ -808,38 +808,42 @@ namespace BossChecklist
 			{ NPCID.DD2Betsy, ItemID.BossBagBetsy },
 			{ NPCID.QueenSlimeBoss, ItemID.QueenSlimeBossBag },
 			{ NPCID.HallowBoss, ItemID.FairyQueenBossBag },
-			{ NPCID.Deerclops, ItemID.DeerclopsBossBag }
+			{ NPCID.Deerclops, ItemID.DeerclopsBossBag },
+			// Unobtainable treasure bages...
+			{ NPCID.DD2DarkMageT3, ItemID.BossBagDarkMage },
+			{ NPCID.DD2OgreT3, ItemID.BossBagOgre },
+			{ NPCID.CultistBoss, ItemID.CultistBossBag }
 		};
 
 		// Old version compatibility methods
 		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.Boss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
+			SortedBosses.Add(new BossInfo(EntryType.Boss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null, null));
 		}
 
 		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null, null));
 		}
 
 		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string bossInfo = null, Func<bool> available = null) {
-			SortedBosses.Add(new BossInfo(EntryType.Event, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), null, bossInfo));
+			SortedBosses.Add(new BossInfo(EntryType.Event, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), bossInfo, null, null));
 		}
 
-		// New system is better
-		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, string despawnMessage) {
+		// New system
+		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawnMessage));
+			SortedBosses.Add(new BossInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, despawn, drawing));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, string despawnMessage) {
+		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawnMessage));
+			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, despawn, drawing));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
-		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, string despawnMessage) {
+		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedBosses.Add(new BossInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, spawn, collect, info, despawnMessage));
+			SortedBosses.Add(new BossInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, null, drawing));
 			LogNewBoss(source?.Name ?? "Unknown", name);
 		}
 
@@ -854,22 +858,26 @@ namespace BossChecklist
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("<<Boss Checklist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(mod + " has added ");
+			Console.Write("Boss Log entry added: ");
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
 			Console.Write(name);
 			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(" to the boss log!");
+			Console.Write(" from");
+			Console.ForegroundColor = ConsoleColor.Magenta;
+			Console.Write(mod);
 			Console.WriteLine();
 			Console.ResetColor();
-			BossChecklist.instance.Logger.Info($"{name} has been added to the Boss Log!");
+			if (OldCalls.Values.Any(x => x.Contains(name))) {
+				BossChecklist.instance.Logger.Info($"[Outdated Mod Call] Boss Log entry added: {name} from {mod}");
+			}
+			else {
+				BossChecklist.instance.Logger.Info($"Boss Log entry successfully added: {name} from {mod}");
+			}
 		}
 
 		internal void AddOrphanData(string type, string bossKey, object values) {
 			OrphanType orphanType;
-			if (type == "AddToBossLoot") {
-				orphanType = OrphanType.Loot;
-			}
-			else if (type == "AddToBossCollection") {
+			if (type == "AddToBossCollection") {
 				orphanType = OrphanType.Collection;
 			}
 			else if (type == "AddToBossSpawnItems") {
