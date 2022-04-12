@@ -250,6 +250,9 @@ namespace BossChecklist
 		}
 	}
 
+	// TODO: Combine the loot and collectibles at some point as there is no reason to have them separated
+	// Might be worth removing it and saving it under ModPlayer as a KeyValuePair
+	// Currently hesitating because it would "erase" existing player info.
 	public class BossCollection : TagSerializable
 	{
 		internal string bossKey;

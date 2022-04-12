@@ -832,19 +832,19 @@ namespace BossChecklist
 		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
 			SortedBosses.Add(new BossInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, despawn, drawing));
-			LogNewBoss(source?.Name ?? "Unknown", name);
+			LogNewBoss(source?.Name ?? "Unknown", Language.GetTextValue(name.StartsWith("?") ? name.Substring(1) : name));
 		}
 
 		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
 			SortedBosses.Add(new BossInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, despawn, drawing));
-			LogNewBoss(source?.Name ?? "Unknown", name);
+			LogNewBoss(source?.Name ?? "Unknown", Language.GetTextValue(name.StartsWith("?") ? name.Substring(1) : name));
 		}
 
 		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Action<SpriteBatch, Rectangle, Color> drawing = null) {
 			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
 			SortedBosses.Add(new BossInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, null, drawing));
-			LogNewBoss(source?.Name ?? "Unknown", name);
+			LogNewBoss(source?.Name ?? "Unknown", Language.GetTextValue(name.StartsWith("?") ? name.Substring(1) : name));
 		}
 
 		internal void EnsureBossIsNotDuplicate(string mod, string bossname) {
