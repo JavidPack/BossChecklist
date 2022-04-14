@@ -410,24 +410,41 @@ namespace BossChecklist.UIElements
 					Main.ItemIconCacheUpdate(0);
 				}
 
+				if (BossLogUI.PageNum == -3) {
+					if (Id == "PageOne") {
+						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
+						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Before you begin..."), pos, Color.White, 0.8f);
+
+						float textScale = 1f;
+						string message = Language.GetTextValue("Do you want to enable Progression Mode?");
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
+						pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
+						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
+					}
+					else if (Id == "PageTwo") {
+						float textScale = 1f;
+						string message = Language.GetTextValue("Please select an option below...");
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
+						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
+					}
+				}
 				if (BossLogUI.PageNum == -1) { // Table of Contents
 					List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
 					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 					if (Id == "PageOne") {
-						if (modPlayer.hasOpenedTheBossLog) {
-							Vector2 pos = new Vector2(GetInnerDimensions().X + 30, GetInnerDimensions().Y + 15);
-							Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode"), pos, Colors.RarityAmber, 0.6f);
-						}
-						else {
-							Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
-							Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Before you begin..."), pos, Color.White, 0.3f);
-							pos = new Vector2(GetInnerDimensions().X + 20, GetInnerDimensions().Y + 40);
-							Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Do you want to enable Progression Mode?"), pos, Colors.RarityAmber, 0.4f);
-						}
+						float textScale = 0.6f;
+						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
+						Vector2 stringSize = FontAssets.DeathText.Value.MeasureString(message) * textScale;
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 15);
+						Utils.DrawBorderStringBig(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
-					else if (Id == "PageTwo" && modPlayer.hasOpenedTheBossLog) {
-						Vector2 pos = new Vector2(GetInnerDimensions().X + 35, GetInnerDimensions().Y + 15);
-						Utils.DrawBorderStringBig(spriteBatch, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode"), pos, Colors.RarityAmber, 0.6f);
+					else if (Id == "PageTwo") {
+						float textScale = 0.6f;
+						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode");
+						Vector2 stringSize = FontAssets.DeathText.Value.MeasureString(message) * textScale;
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 15);
+						Utils.DrawBorderStringBig(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 
 					if (!IsMouseHovering) {
@@ -1181,7 +1198,7 @@ namespace BossChecklist.UIElements
 					}
 					color = Color.Tan;
 
-					if (DrawTab(Id)) {
+					if (DrawTab(Id) && BossLogUI.PageNum != -3) {
 						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), color, 0f, Vector2.Zero, effect, 0f);
 					}
 				}
@@ -1205,7 +1222,7 @@ namespace BossChecklist.UIElements
 					Main.ItemIconCacheUpdate(0);
 				}
 
-				if (Id.EndsWith("_Tab")) {
+				if (Id.EndsWith("_Tab") && BossLogUI.PageNum != -3) {
 					// Tab Icon
 					Asset<Texture2D> texture = BossLogUI.tocTexture;
 

@@ -12,6 +12,8 @@ namespace BossChecklist
 	{
 		// For the 'never opened' button glow for players who haven't noticed the new feature yet.
 		public bool hasOpenedTheBossLog;
+		// When players jon a different world, the boss log PageNum should reset back to its original state
+		public bool enteredWorldReset;
 
 		// Records are bound to characters, but records are independent between worlds as well.
 		// AllStored records contains every player record from every world
@@ -38,6 +40,7 @@ namespace BossChecklist
 
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
+			enteredWorldReset = false;
 
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
@@ -118,8 +121,11 @@ namespace BossChecklist
 		}
 
 		public override void OnEnterWorld(Player player) {
+			// If the boss log has been fully opened before or the prompt is disabled, set the pagenum to the Table of Contents instead of the prompt.
+			BossLogUI.PageNum = hasOpenedTheBossLog || BossChecklist.BossLogConfig.PromptDisabled ? -1 : -3;
+
 			// PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
-			BossLogUI.PageNum = -3;
+			enteredWorldReset = true;
 
 			// Reset record tracker numbers
 			duration_CompareValue = -1; //TODO: find out why hitstaken isnt reset and why its set to -1

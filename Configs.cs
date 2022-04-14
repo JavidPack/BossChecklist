@@ -118,9 +118,6 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.MaskHardMode")]
 		public bool MaskHardMode { get; set; }
 
-		// TODO Config? Show Prev Records: [Show if available, show if not beaten, show if beaten, never show]
-		// TODO Config? Clear prev records OnEnterWorld (or maybe make it a button in boss log?)
-
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}

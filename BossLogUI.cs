@@ -130,27 +130,29 @@ namespace BossChecklist
 
 		public void ToggleBossLog(bool show = true) {
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (show && !modPlayer.hasOpenedTheBossLog) {
-				if (!BossChecklist.BossLogConfig.PromptDisabled) {
-					BossLogVisible = show;
+			if (PageNum == -3) {
+				BossLogVisible = show;
+				if (show) {
 					OpenProgressionModePrompt();
 					Main.playerInventory = false;
-					return;
 				}
-			}
-
-			if (PageNum == -3) {
-				// Reset page, PageNum is only -3 when entering a world.
-				// This is to reset the page from what the user previously had back to the Table of Contents
-				PageNum = -1;
-				CategoryPageNum = 0;
-				UpdateTableofContents();
-			}
-			else {
-				UpdateCatPage(CategoryPageNum);
+				return;
 			}
 
 			if (show) {
+				modPlayer.hasOpenedTheBossLog = true;
+				// If the prompt isn't shown, try checking for a reset.
+				// This is to reset the page from what the user previously had back to the Table of Contents
+				if (modPlayer.enteredWorldReset) {
+					modPlayer.enteredWorldReset = false;
+					PageNum = -1;
+					CategoryPageNum = 0;
+					UpdateTableofContents();
+				}
+				else {
+					UpdateCatPage(CategoryPageNum);
+				}
+
 				// Update UI Element positioning before marked visible
 				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
 				ResetUIPositioning();
@@ -453,6 +455,9 @@ namespace BossChecklist
 		}
 
 		private void UpdateTabNavPos() {
+			if (PageNum == -3) {
+				return;
+			}
 			// Updating tabs to proper positions
 			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
 			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
@@ -569,9 +574,8 @@ namespace BossChecklist
 			if (listeningElement is not BookUI book)
 				return;
 
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			string id = book.Id;
-			if (!modPlayer.hasOpenedTheBossLog || !BookUI.DrawTab(id))
+			if (PageNum == -3 || !BookUI.DrawTab(id))
 				return;
 
 			if (id == "ToCFilter_Tab" && PageNum == -1) {
@@ -1102,12 +1106,11 @@ namespace BossChecklist
 		}
 
 		public void OpenProgressionModePrompt() {
-			PageNum = -1;
+			PageNum = -3;
 			ResetBothPages();
 			ResetUIPositioning();
-			PageTwo.RemoveChild(NextPage);
 
-			FittedTextPanel textBox = new FittedTextPanel("Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.");
+			FittedTextPanel textBox = new FittedTextPanel("Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.\n\nNote, the Boss Log is disabled until one of the options is selected!");
 			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
 			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
 			textBox.Left.Pixels = 10;
@@ -1122,10 +1125,28 @@ namespace BossChecklist
 				new UIImage(backdropTexture)
 			};
 
+			Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
+
+			backdrops[0].OnClick += (a, b) => ContinueDisabled();
+			backdrops[0].OnMouseOver += (a, b) => { backdrops[0].Color = bookColor; };
+			backdrops[0].OnMouseOut += (a, b) => { backdrops[0].Color = Color.White; };
+
+			backdrops[1].OnClick += (a, b) => ContinueEnabled();
+			backdrops[1].OnMouseOver += (a, b) => { backdrops[1].Color = bookColor; };
+			backdrops[1].OnMouseOut += (a, b) => { backdrops[1].Color = Color.White; };
+
+			backdrops[2].OnClick += (a, b) => CloseAndConfigure();
+			backdrops[2].OnMouseOver += (a, b) => { backdrops[2].Color = bookColor; };
+			backdrops[2].OnMouseOut += (a, b) => { backdrops[2].Color = Color.White; };
+
+			backdrops[3].OnClick += (a, b) => DisablePromptMessage();
+			backdrops[3].OnMouseOver += (a, b) => { backdrops[3].Color = bookColor; };
+			backdrops[3].OnMouseOut += (a, b) => { backdrops[3].Color = Color.White; };
+
 			Asset<Texture2D>[] buttonTextures = new Asset<Texture2D>[] {
 				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.SteampunkGoggles}", AssetRequestMode.ImmediateLoad),
 				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.HiTekSunglasses}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Wrench}", AssetRequestMode.ImmediateLoad),
 				ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad)
 			};
 
@@ -1136,16 +1157,11 @@ namespace BossChecklist
 				new UIImage(buttonTextures[3])
 			};
 
-			buttons[0].OnClick += (a,b) => ContinueDisabled();
-			buttons[1].OnClick += (a, b) => ContinueEnabled();
-			buttons[2].OnClick += (a, b) => ContinueConfig();
-			buttons[3].OnClick += (a, b) => DisablePromptMessage();
-
 			FittedTextPanel[] textOptions = new FittedTextPanel[] {
 				new FittedTextPanel("Continue with progression mode disabled..."),
 				new FittedTextPanel("Continue with progression mode fully enabled"),
-				new FittedTextPanel("Close and configure progression mode"),
-				new FittedTextPanel("Do not show me this prompt again"),
+				new FittedTextPanel("Close Boss Log and configure progression mode"),
+				new FittedTextPanel("Don't show this again\n(For future characters)"),
 			};
 
 			Asset<Texture2D> check = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
@@ -1190,6 +1206,7 @@ namespace BossChecklist
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			PageNum = -1;
 			ToggleBossLog(true);
 		}
 
@@ -1202,12 +1219,15 @@ namespace BossChecklist
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			PageNum = -1;
 			ToggleBossLog(true);
 		}
 
-		public void ContinueConfig() {
+		public void CloseAndConfigure() {
+			ToggleBossLog(false);
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			ToggleBossLog(true);
+			PageNum = -1;
+
 		}
 
 		public void DisablePromptMessage() {
@@ -1507,6 +1527,9 @@ namespace BossChecklist
 				PageTwo.RemoveChild(AltPageButtons[i]);
 			}
 
+			if (PageNum == -3) {
+				return;
+			}
 			if (PageNum == -2) {
 				PageOne.Append(PrevPage);
 			}
@@ -1602,20 +1625,22 @@ namespace BossChecklist
 		}
 		
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
+		
 		public static Color MaskBoss(BossInfo boss) {
-			if (!boss.IsDownedOrForced && BossChecklist.BossLogConfig.MaskTextures) {
+			if (!boss.IsDownedOrForced) {
+				if (BossChecklist.BossLogConfig.MaskTextures) {
+					return Color.Black;
+				}
+				else if (!Main.hardMode && boss.progression > BossTracker.WallOfFlesh && BossChecklist.BossLogConfig.MaskHardMode) {
+					return Color.Black;
+				}
+				else if (!boss.available()) {
+					return Color.Black;
+				}
+			}
+			else if (boss.hidden) {
 				return Color.Black;
 			}
-			if (!boss.IsDownedOrForced && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && BossChecklist.BossLogConfig.MaskHardMode) {
-				return Color.Black;
-			}
-			if (boss.hidden) {
-				return Color.Black;
-			}
-			if (!boss.IsDownedOrForced && !boss.available()) {
-				return Color.Black;
-			}
-
 			return Color.White;
 		}
 
