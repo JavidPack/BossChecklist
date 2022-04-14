@@ -17,6 +17,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.UI;
 using Terraria.UI.Chat;
+using Terraria.ModLoader.Config;
 
 namespace BossChecklist.UIElements
 {
@@ -192,7 +193,6 @@ namespace BossChecklist.UIElements
 				var backup2 = TextureAssets.InventoryBack7;
 
 				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-				BossCollection collection = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[BossLogUI.PageNum];
 				bool maskedItems = BossChecklist.BossLogConfig.MaskBossLoot || (BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && selectedBoss.progression > BossTracker.WallOfFlesh);
 
 				if (Id.StartsWith("loot_")) {
@@ -1373,64 +1373,65 @@ namespace BossChecklist.UIElements
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
 
-				bool allLoot = true;
-				bool allCollect = true;
+				bool ItemDataExists = modPlayer.BossItemsCollected.TryGetValue(sortedBosses[index].Key, out List<ItemDefinition> items);
+				if (BossChecklist.BossLogConfig.LootCheckVisibility && ItemDataExists) {
+					bool allLoot = true;
+					bool allCollect = true;
 
-				// Loop through player saved loot and boss loot to see if every item was obtained
-				foreach (int loot in sortedBosses[index].lootItemTypes) {
-					// Check for corruption/crimson vanilla items, and skip them based on world evil
-					// May need new method for looking for these items.
-					if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
-						if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow)) {
-							continue;
+					// Loop through player saved loot and boss loot to see if every item was obtained
+					foreach (int loot in sortedBosses[index].lootItemTypes) {
+						// Check for corruption/crimson vanilla items, and skip them based on world evil
+						// May need new method for looking for these items.
+						if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
+							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow)) {
+								continue;
+							}
+							else if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds)) {
+								continue;
+							}
 						}
-						else if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds)) {
-							continue;
+						// Find the index of the itemID within the player saved loot
+						int indexLoot = items.FindIndex(x => x.Type == loot);
+						// Skip expert/master mode items if the world is not in expert/master mode.
+						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
+						if (!Main.expertMode || !Main.masterMode) {
+							Item checkItem = ContentSamples.ItemsByType[loot];
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
+								continue;
+							}
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
+								continue;
+							}
+						}
+						// If the item index is not found, end the loop and set allLoot to false
+						// If this never occurs, the user successfully obtained all the items!
+						if (indexLoot == -1) {
+							allLoot = false;
+							break;
 						}
 					}
-					// Find the index of the itemID within the player saved loot
-					int indexLoot = modPlayer.BossTrophies[index].loot.FindIndex(x => x.Type == loot);
-					// Skip expert/master mode items if the world is not in expert/master mode.
-					// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
-					if (!Main.expertMode || !Main.masterMode) {
-						Item checkItem = ContentSamples.ItemsByType[loot];
-						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
-							continue;
-						}
-						if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
-							continue;
-						}
-					}
-					// If the item index is not found, end the loop and set allLoot to false
-					// If this never occurs, the user successfully obtained all the items!
-					if (indexLoot == -1) {
-						allLoot = false;
-						break;
-					}
-				}
 
-				//Repeast everything for collectibles as well
-				foreach (int collectible in sortedBosses[index].collection) {
-					if (collectible == -1 || collectible == 0) {
-						continue;
-					}
-					int indexCollect = modPlayer.BossTrophies[index].collectibles.FindIndex(x => x.Type == collectible);
-					if (!Main.expertMode || !Main.masterMode) {
-						Item checkItem = ContentSamples.ItemsByType[collectible];
-						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
+					//Repeast everything for collectibles as well
+					foreach (int collectible in sortedBosses[index].collection) {
+						if (collectible == -1 || collectible == 0) {
 							continue;
 						}
-						if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
-							continue;
+						int indexCollect = items.FindIndex(x => x.Type == collectible);
+						if (!Main.expertMode || !Main.masterMode) {
+							Item checkItem = ContentSamples.ItemsByType[collectible];
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
+								continue;
+							}
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
+								continue;
+							}
+						}
+						if (indexCollect == -1) {
+							allCollect = false;
+							break;
 						}
 					}
-					if (indexCollect == -1) {
-						allCollect = false;
-						break;
-					}
-				}
 
-				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
 					CalculatedStyle parent = this.Parent.GetInnerDimensions();
 					int hardModeOffset = sortedBosses[index].progression > BossTracker.WallOfFlesh ? 10 : 0;
 

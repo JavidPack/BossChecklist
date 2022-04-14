@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
@@ -247,36 +245,6 @@ namespace BossChecklist
 				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
 			}
-		}
-	}
-
-	// TODO: Combine the loot and collectibles at some point as there is no reason to have them separated
-	// Might be worth removing it and saving it under ModPlayer as a KeyValuePair
-	// Currently hesitating because it would "erase" existing player info.
-	public class BossCollection : TagSerializable
-	{
-		internal string bossKey;
-		internal List<ItemDefinition> loot;
-		internal List<ItemDefinition> collectibles;
-
-		public static Func<TagCompound, BossCollection> DESERIALIZER = tag => new BossCollection(tag);
-
-		private BossCollection(TagCompound tag) {
-			bossKey = tag.Get<string>(nameof(bossKey));
-			loot = tag.Get<List<ItemDefinition>>(nameof(loot));
-			collectibles = tag.Get<List<ItemDefinition>>(nameof(collectibles));
-		}
-
-		public BossCollection(string boss) {
-			bossKey = boss;
-		}
-
-		public TagCompound SerializeData() {
-			return new TagCompound {
-				{ nameof(bossKey), bossKey },
-				{ nameof(loot), loot },
-				{ nameof(collectibles), collectibles },
-			};
 		}
 	}
 }

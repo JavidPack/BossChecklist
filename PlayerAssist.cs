@@ -20,7 +20,7 @@ namespace BossChecklist
 		public Dictionary<string, List<BossRecord>> AllStoredRecords;
 		public List<BossRecord> RecordsForWorld;
 
-		public List<BossCollection> BossTrophies;
+		public Dictionary<string, List<ItemDefinition>> BossItemsCollected;
 
 		// Key represents worldID, Value represents BossKeys
 		public Dictionary<string, List<string>> AllStoredForceDowns;
@@ -41,16 +41,12 @@ namespace BossChecklist
 
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
-			BossTrophies = new List<BossCollection>();
+			BossItemsCollected = new Dictionary<string, List<ItemDefinition>>();
 			AllStoredForceDowns = new Dictionary<string, List<string>>();
 			ForceDownsForWorld = new List<string>();
 
-			// Create new lists for each boss's loot and collections so we can apply the saved data to them
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				BossTrophies.Add(new BossCollection(boss.Key));
-				int index = BossTrophies.FindIndex(x => x.bossKey == boss.Key);
-				BossTrophies[index].loot = new List<ItemDefinition>();
-				BossTrophies[index].collectibles = new List<ItemDefinition>();
+				BossItemsCollected.Add(boss.Key, new List<ItemDefinition>());
 			}
 
 			// TODO: Reimplement how this works. Best record becomes Prev Best on new record until another fight overwrites it with a new previous attempt?
@@ -84,9 +80,14 @@ namespace BossChecklist
 				TempChecks.Add(entry.Key, entry.Value);
 			}
 
+			TagCompound TempItemsCollected = new TagCompound();
+			foreach (KeyValuePair<string, List<ItemDefinition>> entry in BossItemsCollected) {
+				TempItemsCollected.Add(entry.Key, entry.Value);
+			}
+
 			tag["BossLogPrompt"] = hasOpenedTheBossLog;
 			tag["StoredRecords"] = TempRecords;
-			tag["Collection"] = BossTrophies;
+			tag["BossItemsCollected"] = TempItemsCollected;
 			tag["ForcedChecks"] = TempChecks;
 		}
 
@@ -94,30 +95,25 @@ namespace BossChecklist
 			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt");
 
 			// Grab the player's record data so we can grab what we need in OnEnterWorld().
-			TagCompound TempStoredRecords = tag.Get<TagCompound>("StoredRecords");
+			TagCompound SavedStoredRecords = tag.Get<TagCompound>("StoredRecords");
 			// Clear the list so we can convert our TagCompund back to a Dictionary
 			AllStoredRecords.Clear();
-			foreach (KeyValuePair<string, object> bossRecords in TempStoredRecords) {
-				AllStoredRecords.Add(bossRecords.Key, TempStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
+			foreach (KeyValuePair<string, object> bossRecords in SavedStoredRecords) {
+				AllStoredRecords.Add(bossRecords.Key, SavedStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
 			}
 
 			// Do the same for any checkmarks the user wants to force
-			TagCompound TempChecks = tag.Get<TagCompound>("ForcedChecks");
+			TagCompound SavedChecks = tag.Get<TagCompound>("ForcedChecks");
 			AllStoredForceDowns.Clear();
-			foreach (KeyValuePair<string, object> entry in TempChecks) {
-				AllStoredForceDowns.Add(entry.Key, TempChecks.GetList<string>(entry.Key).ToList());
+			foreach (KeyValuePair<string, object> entry in SavedChecks) {
+				AllStoredForceDowns.Add(entry.Key, SavedChecks.GetList<string>(entry.Key).ToList());
 			}
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
-			List<BossCollection> SavedCollections = tag.Get<List<BossCollection>>("Collection");
-			foreach (BossCollection collection in SavedCollections) {
-				int index = BossTrophies.FindIndex(x => x.bossKey == collection.bossKey);
-				if (index == -1) {
-					BossTrophies.Add(collection);
-				}
-				else {
-					BossTrophies[index] = collection;
-				}
+			TagCompound SavedItemsCollected = tag.Get<TagCompound>("BossItemsCollected");
+			BossItemsCollected.Clear();
+			foreach (KeyValuePair<string, object> entry in SavedItemsCollected) {
+				BossItemsCollected.Add(entry.Key, SavedItemsCollected.GetList<ItemDefinition>(entry.Key).ToList());
 			}
 		}
 
@@ -132,9 +128,15 @@ namespace BossChecklist
 			Tracker_HitsTaken = new List<int>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				// Add values to all record trackers
 				Tracker_Duration.Add(0);
 				Tracker_Deaths.Add(false);
 				Tracker_HitsTaken.Add(0);
+
+				// Add any new bosses missing inside of BossItemsCollected
+				if (!BossItemsCollected.TryGetValue(boss.Key, out List<ItemDefinition> value)) {
+					BossItemsCollected.Add(boss.Key, new List<ItemDefinition>());
+				}
 			}
 
 			// Upon entering a world, determine if records already exist for a player and copy them into a variable.

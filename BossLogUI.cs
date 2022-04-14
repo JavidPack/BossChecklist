@@ -642,53 +642,44 @@ namespace BossChecklist
 
 			Player player = Main.LocalPlayer;
 			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
+
 			if (CategoryPageNum == CategoryPage.Loot) {
 				string id = "";
-				if (listeningElement is LogItemSlot slot)
+				int itemType = -1;
+				if (listeningElement is LogItemSlot slot) {
 					id = slot.Id;
+					itemType = slot.item.type;
+				}
+
 
 				if (id == "") {
+					// If an Alt key is held while double right-clicking the Loot tab, all items from every boss will be cleared.
+					// Otherwise, only the items for the selected page's boss will be cleared.
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						foreach (BossCollection trophy in modPlayer.BossTrophies) {
-							if (AltPageSelected[2] == 1) {
-								trophy.collectibles.Clear();
-							}
-							else if (AltPageSelected[2] == 0) {
-								trophy.loot.Clear();
-							}
+						foreach (KeyValuePair<string, List<ItemDefinition>> entry in modPlayer.BossItemsCollected) {
+							entry.Value.Clear();
 						}
 					}
 					else {
-						if (AltPageSelected[2] == 1) {
-							modPlayer.BossTrophies[PageNum].collectibles.Clear();
+						BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
+						if (modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> items)) {
+							items.Clear();
 						}
-						else if (AltPageSelected[2] == 0) {
-							modPlayer.BossTrophies[PageNum].loot.Clear();
-						}
-					}
-				}
-				else if (id.StartsWith("collect_")) {
-					int itemType = Convert.ToInt32(id.Substring(8));
-					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						foreach (BossCollection trophy in modPlayer.BossTrophies) {
-							trophy.collectibles.RemoveAll(x => x.Type == itemType);
-						}
-					}
-					else {
-						List<ItemDefinition> collection = modPlayer.BossTrophies[PageNum].collectibles;
-						collection.RemoveAll(x => x.Type == itemType);
 					}
 				}
 				else if (id.StartsWith("loot_")) {
-					int itemType = Convert.ToInt32(id.Substring(5));
+					// If an Alt key is held while double right-clicking an item slot, that item will be cleared from all boss item lists.
+					// Otherwise, only the selected page's boss will have that item cleared.
 					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						foreach (BossCollection trophy in modPlayer.BossTrophies) {
-							trophy.loot.RemoveAll(x => x.Type == itemType);
+						foreach (KeyValuePair<string, List<ItemDefinition>> entry in modPlayer.BossItemsCollected) {
+							entry.Value.RemoveAll(x => x.Type == itemType);
 						}
 					}
 					else {
-						List<ItemDefinition> loot = modPlayer.BossTrophies[PageNum].loot;
-						loot.RemoveAll(x => x.Type == itemType);
+						BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
+						if (modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> items)) {
+							items.RemoveAll(x => x.Type == itemType);
+						}
 					}
 				}
 				OpenLoot();
@@ -1020,21 +1011,27 @@ namespace BossChecklist
 			scrollTwo.HAlign = 1f;
 
 			pageTwoItemList.Clear();
-			BossInfo shortcut = BossChecklist.bossTracker.SortedBosses[PageNum];
+
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
+			if (!modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> obtainedItems)) {
+				return;
+			}
+
 			LootRow newRow = new LootRow(0) {
 				Id = "Loot0"
 			};
 
 			// Create the combined list of loot and collectibles.
-			List<int> bossItems = new List<int>(shortcut.collection.Union(shortcut.lootItemTypes));
-			bossItems.Remove(shortcut.treasureBag); // Skip the treasurebag. It is not needed for the loot table.
+			List<int> bossItems = new List<int>(selectedBoss.collection.Union(selectedBoss.lootItemTypes));
+			bossItems.Remove(selectedBoss.treasureBag); // Skip the treasurebag. It is not needed for the loot table.
 
 			int row = 0;
 			int col = 0;
 			foreach (int item in bossItems) {
 				Item selectedItem = ContentSamples.ItemsByType[item];
-				BossCollection obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossTrophies[PageNum];
-				bool hasObtained = obtainedItems.loot.Any(x => x.Type == item) || obtainedItems.collectibles.Any(x => x.Type == item);
+				
+				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, selectedItem.Name, ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item
