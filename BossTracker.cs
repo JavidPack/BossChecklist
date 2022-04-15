@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -254,6 +255,51 @@ namespace BossChecklist
 			BossCache = new bool[NPCLoader.NPCCount];
 			foreach (var boss in SortedBosses) {
 				boss.npcIDs.ForEach(x => BossCache[x] = true);
+			}
+		}
+
+		internal void FinalizeBossLootTables() {
+			foreach (BossInfo boss in SortedBosses) {
+				// Loot is easily found through the item drop database.
+				foreach (int npc in boss.npcIDs) {
+					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForNPCID(npc, false);
+					List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
+					DropRateInfoChainFeed ratesInfo = new DropRateInfoChainFeed(1f);
+					foreach (IItemDropRule item in dropRules) {
+						item.ReportDroprates(itemDropInfo, ratesInfo);
+					}
+					boss.loot.AddRange(itemDropInfo);
+
+					List<int> itemIds = new List<int>();
+					if (boss.name == "$NPCName.TorchGod") {
+						itemIds.Add(ItemID.TorchGodsFavor); // Manually add Torch Gods Favor as it is not 'dropped' by the NPC
+					}
+					else if (boss.name == "$NPCName.DD2DarkMageT3") {
+						itemIds.Add(ItemID.BossBagDarkMage);
+					}
+					else if (boss.name == "$NPCName.DD2OgreT3") {
+						itemIds.Add(ItemID.BossBagOgre);
+					}
+					else if (boss.name == "$NPCName.CultistBoss") {
+						itemIds.Add(ItemID.CultistBossBag);
+					}
+					foreach (DropRateInfo dropRate in itemDropInfo) {
+						itemIds.Add(dropRate.itemId);
+					}
+					boss.lootItemTypes.AddRange(itemIds);
+				}
+
+				// Assign this boss's treasure bag, looking through the loot list provided
+				if (!BossTracker.vanillaBossBags.TryGetValue(boss.npcIDs[0], out boss.treasureBag)) {
+					foreach (int itemType in boss.lootItemTypes) {
+						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
+							if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
+								boss.treasureBag = itemType;
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 

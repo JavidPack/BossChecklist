@@ -164,47 +164,6 @@ namespace BossChecklist
 			this.collection = collection ?? new List<int>();
 			this.collectType = new Dictionary<int, CollectionType>(); // This will be set up after all orphan data is submitted in Mod.AddRecipes
 
-			// Loot is easily found through the item drop database.
-			foreach (int npc in npcIDs) {
-				List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForNPCID(npc, false);
-				List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
-				DropRateInfoChainFeed ratesInfo = new DropRateInfoChainFeed(1f);
-				foreach (IItemDropRule item in dropRules) {
-					item.ReportDroprates(itemDropInfo, ratesInfo);
-				}
-				this.loot.AddRange(itemDropInfo);
-
-				List<int> itemIds = new List<int>();
-				if (name == "$NPCName.TorchGod") {
-					itemIds.Add(ItemID.TorchGodsFavor); // Manually add Torch Gods Favor as it is not 'dropped' by the NPC
-				}
-				else if (name == "$NPCName.DD2DarkMageT3") {
-					itemIds.Add(ItemID.BossBagDarkMage);
-				}
-				else if (name == "$NPCName.DD2OgreT3") {
-					itemIds.Add(ItemID.BossBagOgre);
-				}
-				else if (name == "$NPCName.CultistBoss") {
-					itemIds.Add(ItemID.CultistBossBag);
-				}
-				foreach (DropRateInfo dropRate in itemDropInfo) {
-					itemIds.Add(dropRate.itemId);
-				}
-				this.lootItemTypes.AddRange(itemIds);
-			}
-
-			// Assign this boss's treasure bag, looking through the loot list provided
-			if (!BossTracker.vanillaBossBags.TryGetValue(npcIDs[0], out this.treasureBag)) {
-				foreach (int itemType in this.lootItemTypes) {
-					if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
-						if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
-							this.treasureBag = itemType;
-							break;
-						}
-					}
-				}
-			}
-
 			this.portraitTexture = null;
 			this.customDrawing = customDrawing;
 			this.headIconTextures = new List<Asset<Texture2D>>();
