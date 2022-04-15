@@ -270,27 +270,30 @@ namespace BossChecklist
 					}
 					boss.loot.AddRange(itemDropInfo);
 
-					List<int> itemIds = new List<int>();
+					foreach (DropRateInfo dropRate in itemDropInfo) {
+						if (!boss.lootItemTypes.Contains(dropRate.itemId)) {
+							boss.lootItemTypes.Add(dropRate.itemId);
+						}
+					}
+
+					// Add Torch God's Favor since its not technically an NPC drop.
+					// The rest of added items are unobtainable vanilla boss bags, and are added only for visual purposes
 					if (boss.name == "$NPCName.TorchGod") {
-						itemIds.Add(ItemID.TorchGodsFavor); // Manually add Torch Gods Favor as it is not 'dropped' by the NPC
+						boss.lootItemTypes.Add(ItemID.TorchGodsFavor);
 					}
 					else if (boss.name == "$NPCName.DD2DarkMageT3") {
-						itemIds.Add(ItemID.BossBagDarkMage);
+						boss.lootItemTypes.Add(ItemID.BossBagDarkMage);
 					}
 					else if (boss.name == "$NPCName.DD2OgreT3") {
-						itemIds.Add(ItemID.BossBagOgre);
+						boss.lootItemTypes.Add(ItemID.BossBagOgre);
 					}
 					else if (boss.name == "$NPCName.CultistBoss") {
-						itemIds.Add(ItemID.CultistBossBag);
+						boss.lootItemTypes.Add(ItemID.CultistBossBag);
 					}
-					foreach (DropRateInfo dropRate in itemDropInfo) {
-						itemIds.Add(dropRate.itemId);
-					}
-					boss.lootItemTypes.AddRange(itemIds);
 				}
 
 				// Assign this boss's treasure bag, looking through the loot list provided
-				if (!BossTracker.vanillaBossBags.TryGetValue(boss.npcIDs[0], out boss.treasureBag)) {
+				if (!vanillaBossBags.TryGetValue(boss.Key, out boss.treasureBag)) {
 					foreach (int itemType in boss.lootItemTypes) {
 						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
 							if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
@@ -836,29 +839,29 @@ namespace BossChecklist
 			return new List<int>();
 		}
 
-		internal readonly static Dictionary<int, int> vanillaBossBags = new Dictionary<int, int>() {
-			{ NPCID.KingSlime, ItemID.KingSlimeBossBag },
-			{ NPCID.EyeofCthulhu, ItemID.EyeOfCthulhuBossBag },
-			{ NPCID.EaterofWorldsHead, ItemID.EaterOfWorldsBossBag },
-			{ NPCID.BrainofCthulhu, ItemID.BrainOfCthulhuBossBag },
-			{ NPCID.QueenBee, ItemID.QueenBeeBossBag },
-			{ NPCID.SkeletronHead, ItemID.SkeletronBossBag },
-			{ NPCID.WallofFlesh, ItemID.WallOfFleshBossBag },
-			{ NPCID.Retinazer, ItemID.TwinsBossBag },
-			{ NPCID.TheDestroyer, ItemID.DestroyerBossBag },
-			{ NPCID.SkeletronPrime, ItemID.SkeletronPrimeBossBag },
-			{ NPCID.Plantera, ItemID.PlanteraBossBag },
-			{ NPCID.Golem, ItemID.GolemBossBag },
-			{ NPCID.DukeFishron, ItemID.FishronBossBag },
-			{ NPCID.MoonLordHead, ItemID.MoonLordBossBag },
-			{ NPCID.DD2Betsy, ItemID.BossBagBetsy },
-			{ NPCID.QueenSlimeBoss, ItemID.QueenSlimeBossBag },
-			{ NPCID.HallowBoss, ItemID.FairyQueenBossBag },
-			{ NPCID.Deerclops, ItemID.DeerclopsBossBag },
+		internal readonly static Dictionary<string, int> vanillaBossBags = new Dictionary<string, int>() {
+			{ "Terraria KingSlime", ItemID.KingSlimeBossBag },
+			{ "Terraria EyeofCthulhu", ItemID.EyeOfCthulhuBossBag },
+			{ "Terraria EaterofWorlds", ItemID.EaterOfWorldsBossBag },
+			{ "Terraria BrainofCthulhu", ItemID.BrainOfCthulhuBossBag },
+			{ "Terraria QueenBee", ItemID.QueenBeeBossBag },
+			{ "Terraria SkeletronHead", ItemID.SkeletronBossBag },
+			{ "Terraria WallofFlesh", ItemID.WallOfFleshBossBag },
+			{ "Terraria TheTwins", ItemID.TwinsBossBag },
+			{ "Terraria TheDestroyer", ItemID.DestroyerBossBag },
+			{ "Terraria SkeletronPrime", ItemID.SkeletronPrimeBossBag },
+			{ "Terraria Plantera", ItemID.PlanteraBossBag },
+			{ "Terraria Golem", ItemID.GolemBossBag },
+			{ "Terraria DukeFishron", ItemID.FishronBossBag },
+			{ "Terraria MoonLord", ItemID.MoonLordBossBag },
+			{ "Terraria DD2Betsy", ItemID.BossBagBetsy },
+			{ "Terraria QueenSlimeBoss", ItemID.QueenSlimeBossBag },
+			{ "Terraria HallowBoss", ItemID.FairyQueenBossBag },
+			{ "Terraria Deerclops", ItemID.DeerclopsBossBag },
 			// Unobtainable treasure bages...
-			{ NPCID.DD2DarkMageT3, ItemID.BossBagDarkMage },
-			{ NPCID.DD2OgreT3, ItemID.BossBagOgre },
-			{ NPCID.CultistBoss, ItemID.CultistBossBag }
+			{ "Terraria DD2DarkMageT3", ItemID.BossBagDarkMage },
+			{ "Terraria DD2OgreT3", ItemID.BossBagOgre },
+			{ "Terraria CultistBoss", ItemID.CultistBossBag }
 		};
 
 		// Old version compatibility methods

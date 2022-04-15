@@ -244,7 +244,7 @@ namespace BossChecklist
 			Func<bool> isDay = () => Main.dayTime;
 			Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
 
-			string bossCustomKillMessage = $"Mods.BossChecklist.BossVictory{nameKey}";
+			string bossCustomKillMessage = $"Mods.BossChecklist.BossVictory.{nameKey}";
 			if (Language.GetTextValue(bossCustomKillMessage) == bossCustomKillMessage) {
 				// If the provided key wasn't found, default to the generic key
 				bossCustomKillMessage = $"Mods.BossChecklist.BossVictory.Generic";
