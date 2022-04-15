@@ -119,7 +119,7 @@ namespace BossChecklist
 					.WithCustomHeadIcon("Terraria/Images/Extra_11"),
 				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, WallOfFlesh + 0.71f, "$NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.PirateShip}"),
-				BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "Solar Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet })
+				BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "$Bestiary_Events.Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventSolarEclipse")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventSolarEclipse_Head"),
 				BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon, new List<int>() { ItemID.PumpkinMoonMedallion })
@@ -203,7 +203,7 @@ namespace BossChecklist
 					if (temp.headSlot > 0 && temp.vanity) {
 						boss.collectType.Add(type, CollectionType.Mask);
 					}
-					else if (BossChecklist.vanillaMusicBoxTypes.Contains(type) || BossChecklist.otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+					else if (vanillaMusicBoxTypes.Contains(type) || otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
 						boss.collectType.Add(type, CollectionType.MusicBox);
 					}
 					else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
@@ -278,16 +278,16 @@ namespace BossChecklist
 
 					// Add Torch God's Favor since its not technically an NPC drop.
 					// The rest of added items are unobtainable vanilla boss bags, and are added only for visual purposes
-					if (boss.name == "$NPCName.TorchGod") {
+					if (boss.Key == "Terraria TorchGod") {
 						boss.lootItemTypes.Add(ItemID.TorchGodsFavor);
 					}
-					else if (boss.name == "$NPCName.DD2DarkMageT3") {
+					else if (boss.Key == "Terraria DD2DarkMageT3") {
 						boss.lootItemTypes.Add(ItemID.BossBagDarkMage);
 					}
-					else if (boss.name == "$NPCName.DD2OgreT3") {
+					else if (boss.Key == "Terraria DD2OgreT3") {
 						boss.lootItemTypes.Add(ItemID.BossBagOgre);
 					}
-					else if (boss.name == "$NPCName.CultistBoss") {
+					else if (boss.Key == "Terraria CultistBoss") {
 						boss.lootItemTypes.Add(ItemID.CultistBossBag);
 					}
 				}
@@ -306,20 +306,20 @@ namespace BossChecklist
 			}
 		}
 
-		internal protected List<int> SetupCollect(int bossNum) {
+		internal readonly Dictionary<string, List<int>> BossCollections = new Dictionary<string, List<int>>() {
 			#region Boss Collectibles
-			if (bossNum == NPCID.KingSlime) {
-				return new List<int>() {
+			{ "Terraria KingSlime",
+				new List<int>(){
 					ItemID.KingSlimeMasterTrophy,
 					ItemID.KingSlimePetItem,
 					ItemID.KingSlimeTrophy,
 					ItemID.KingSlimeMask,
 					ItemID.MusicBoxBoss1,
 					ItemID.MusicBoxOWBoss1
-				};
-			}
-			else if (bossNum == NPCID.EyeofCthulhu) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria EyeofCthulhu",
+				new List<int>(){
 					ItemID.EyeofCthulhuMasterTrophy,
 					ItemID.EyeOfCthulhuPetItem,
 					ItemID.EyeofCthulhuTrophy,
@@ -328,10 +328,10 @@ namespace BossChecklist
 					ItemID.MusicBoxOWBoss1,
 					ItemID.AviatorSunglasses,
 					ItemID.BadgersHat
-				};
-			}
-			else if (bossNum == NPCID.EaterofWorldsHead) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria EaterofWorlds",
+				new List<int>() {
 					ItemID.EaterofWorldsMasterTrophy,
 					ItemID.EaterOfWorldsPetItem,
 					ItemID.EaterofWorldsTrophy,
@@ -339,10 +339,10 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss1,
 					ItemID.MusicBoxOWBoss1,
 					ItemID.EatersBone
-				};
-			}
-			else if (bossNum == NPCID.BrainofCthulhu) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria BrainofCthulhu",
+				new List<int>() {
 					ItemID.BrainofCthulhuMasterTrophy,
 					ItemID.BrainOfCthulhuPetItem,
 					ItemID.BrainofCthulhuTrophy,
@@ -350,21 +350,21 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss3,
 					ItemID.MusicBoxOWBoss1,
 					ItemID.BoneRattle
-				};
-			}
-			else if (bossNum == NPCID.QueenBee) {
-				return new List<int>() {
-					ItemID.QueenBeeMasterTrophy, 
+				}
+			},
+			{ "Terraria QueenBee",
+				new List<int>() {
+					ItemID.QueenBeeMasterTrophy,
 					ItemID.QueenBeePetItem,
 					ItemID.QueenBeeTrophy,
 					ItemID.BeeMask,
 					ItemID.MusicBoxBoss5,
 					ItemID.MusicBoxOWBoss1,
 					ItemID.Nectar,
-				};
-			}
-			else if (bossNum == NPCID.SkeletronHead) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria SkeletronHead",
+				new List<int>() {
 					ItemID.SkeletronMasterTrophy,
 					ItemID.SkeletronPetItem,
 					ItemID.SkeletronTrophy,
@@ -372,20 +372,20 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss1,
 					ItemID.MusicBoxOWBoss1,
 					ItemID.ChippysCouch
-				};
-			}
-			else if (bossNum == NPCID.Deerclops) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria Deerclops",
+				new List<int>() {
 					ItemID.DeerclopsMasterTrophy,
 					ItemID.DeerclopsPetItem,
 					ItemID.DeerclopsTrophy,
 					ItemID.DeerclopsMask,
 					ItemID.MusicBoxDeerclops,
 					ItemID.MusicBoxOWBoss1
-				};
-			}
-			else if (bossNum == NPCID.WallofFlesh) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria WallofFlesh",
+				new List<int>() {
 					ItemID.WallofFleshMasterTrophy,
 					ItemID.WallOfFleshGoatMountItem,
 					ItemID.WallofFleshTrophy,
@@ -393,20 +393,20 @@ namespace BossChecklist
 					ItemID.MusicBoxBoss2,
 					ItemID.MusicBoxOWWallOfFlesh,
 					ItemID.BadgersHat
-				};
-			}
-			else if (bossNum == NPCID.QueenSlimeBoss) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria QueenSlimeBoss",
+				new List<int>() {
 					ItemID.QueenSlimeMasterTrophy,
 					ItemID.QueenSlimePetItem,
 					ItemID.QueenSlimeTrophy,
 					ItemID.QueenSlimeMask,
 					ItemID.MusicBoxQueenSlime,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.Retinazer) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria TheTwins",
+				new List<int>() {
 					ItemID.TwinsMasterTrophy,
 					ItemID.TwinsPetItem,
 					ItemID.RetinazerTrophy,
@@ -414,30 +414,30 @@ namespace BossChecklist
 					ItemID.TwinMask,
 					ItemID.MusicBoxBoss2,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.TheDestroyer) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria TheDestroyer",
+				new List<int>() {
 					ItemID.DestroyerMasterTrophy,
 					ItemID.DestroyerPetItem,
 					ItemID.DestroyerTrophy,
 					ItemID.DestroyerMask,
 					ItemID.MusicBoxBoss3,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.SkeletronPrime) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria SkeletronPrime",
+				new List<int>() {
 					ItemID.SkeletronPrimeMasterTrophy,
 					ItemID.SkeletronPrimePetItem,
 					ItemID.SkeletronPrimeTrophy,
 					ItemID.SkeletronPrimeMask,
 					ItemID.MusicBoxBoss1,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.Plantera) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria Plantera",
+				new List<int>() {
 					ItemID.PlanteraMasterTrophy,
 					ItemID.PlanteraPetItem,
 					ItemID.PlanteraTrophy,
@@ -445,20 +445,20 @@ namespace BossChecklist
 					ItemID.MusicBoxPlantera,
 					ItemID.MusicBoxOWPlantera,
 					ItemID.Seedling
-				};
-			}
-			else if (bossNum == NPCID.Golem) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria Golem",
+				new List<int>() {
 					ItemID.GolemMasterTrophy,
 					ItemID.GolemPetItem,
 					ItemID.GolemTrophy,
 					ItemID.GolemMask,
 					ItemID.MusicBoxBoss5,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.HallowBoss) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria HallowBoss",
+				new List<int>() {
 					ItemID.FairyQueenMasterTrophy,
 					ItemID.FairyQueenPetItem,
 					ItemID.FairyQueenTrophy,
@@ -467,52 +467,52 @@ namespace BossChecklist
 					ItemID.MusicBoxOWBoss2,
 					ItemID.HallowBossDye,
 					ItemID.RainbowCursor,
-				};
-			}
-			else if (bossNum == NPCID.DD2Betsy) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria DD2Betsy",
+				new List<int>() {
 					ItemID.BetsyMasterTrophy,
 					ItemID.DD2BetsyPetItem,
 					ItemID.BossTrophyBetsy,
 					ItemID.BossMaskBetsy,
 					ItemID.MusicBoxDD2,
 					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (bossNum == NPCID.DukeFishron) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria DukeFishron",
+				new List<int>() {
 					ItemID.DukeFishronMasterTrophy,
 					ItemID.DukeFishronPetItem,
 					ItemID.DukeFishronTrophy,
 					ItemID.DukeFishronMask,
 					ItemID.MusicBoxDukeFishron,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.CultistBoss) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria CultistBoss",
+				new List<int>() {
 					ItemID.LunaticCultistMasterTrophy,
 					ItemID.LunaticCultistPetItem,
 					ItemID.AncientCultistTrophy,
 					ItemID.BossMaskCultist,
 					ItemID.MusicBoxBoss5,
 					ItemID.MusicBoxOWBoss2
-				};
-			}
-			else if (bossNum == NPCID.MoonLordHead) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria MoonLord",
+				new List<int>() {
 					ItemID.MoonLordMasterTrophy,
 					ItemID.MoonLordPetItem,
 					ItemID.MoonLordTrophy,
 					ItemID.BossMaskMoonlord,
 					ItemID.MusicBoxLunarBoss,
 					ItemID.MusicBoxOWMoonLord
-				};
-			}
+				}
+			},
 			#endregion
 			#region Mini-boss Collectibles
-			else if (bossNum == NPCID.DD2DarkMageT3) {
-				return new List<int>() {
+			{ "Terraria DD2DarkMageT3",
+				new List<int>() {
 					ItemID.DarkMageMasterTrophy,
 					ItemID.DarkMageBookMountItem,
 					ItemID.BossTrophyDarkmage,
@@ -520,90 +520,156 @@ namespace BossChecklist
 					ItemID.MusicBoxDD2,
 					ItemID.DD2PetDragon,
 					ItemID.DD2PetGato
-				};
-			}
-			else if (bossNum == NPCID.PirateShip) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria PirateShip",
+				new List<int>() {
 					ItemID.FlyingDutchmanMasterTrophy,
 					ItemID.PirateShipMountItem,
 					ItemID.FlyingDutchmanTrophy,
 					ItemID.MusicBoxPirates
-				};
-			}
-			else if (bossNum == NPCID.DD2OgreT3) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria DD2OgreT3",
+				new List<int>() {
 					ItemID.OgreMasterTrophy,
 					ItemID.DD2OgrePetItem,
 					ItemID.BossTrophyOgre,
 					ItemID.BossMaskOgre,
 					ItemID.MusicBoxDD2,
 					ItemID.DD2PetGhost
-				};
-			}
-			else if (bossNum == NPCID.MourningWood) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria MourningWood",
+				new List<int>() {
 					ItemID.MourningWoodMasterTrophy,
 					ItemID.SpookyWoodMountItem,
 					ItemID.MourningWoodTrophy,
 					ItemID.MusicBoxPumpkinMoon,
 					ItemID.CursedSapling
-				};
-			}
-			else if (bossNum == NPCID.Pumpking) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria Pumpking",
+				new List<int>() {
 					ItemID.PumpkingMasterTrophy,
 					ItemID.PumpkingPetItem,
 					ItemID.PumpkingTrophy,
 					ItemID.MusicBoxPumpkinMoon,
 					ItemID.SpiderEgg
-				};
-			}
-			else if (bossNum == NPCID.Everscream) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria Everscream",
+				new List<int>() {
 					ItemID.EverscreamMasterTrophy,
 					ItemID.EverscreamPetItem,
 					ItemID.EverscreamTrophy,
 					ItemID.MusicBoxFrostMoon
-				};
-			}
-			else if (bossNum == NPCID.SantaNK1) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria SantaNK1",
+				new List<int>() {
 					ItemID.SantankMasterTrophy,
 					ItemID.SantankMountItem,
 					ItemID.SantaNK1Trophy,
 					ItemID.MusicBoxFrostMoon
-				};
-			}
-			else if (bossNum == NPCID.IceQueen) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria IceQueen",
+				new List<int>() {
 					ItemID.IceQueenMasterTrophy,
 					ItemID.IceQueenPetItem,
 					ItemID.IceQueenTrophy,
 					ItemID.MusicBoxFrostMoon,
 					ItemID.BabyGrinchMischiefWhistle
-				};
-			}
-			else if (bossNum == NPCID.MartianSaucer) {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria MartianSaucer",
+				new List<int>() {
 					ItemID.UFOMasterTrophy,
 					ItemID.MartianPetItem,
 					ItemID.MartianSaucerTrophy,
 					ItemID.MusicBoxMartians
-				};
+				}
+			},
+			#endregion
+			#region Event Collectibles
+			{ "Terraria TorchGod",
+				new List<int>() {
+					ItemID.MusicBoxBoss3,
+					ItemID.MusicBoxOWWallOfFlesh
+				}
+			},
+			{ "Terraria BloodMoon",
+				new List<int>() {
+					ItemID.MusicBoxEerie,
+					ItemID.MusicBoxOWBloodMoon
+				}
+			},
+			{ "Terraria GoblinArmy",
+				new List<int>() {
+					ItemID.MusicBoxGoblins,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria OldOnesArmy",
+				new List<int>() {
+					ItemID.MusicBoxDD2,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria FrostLegion",
+				new List<int>() {
+					ItemID.MusicBoxBoss3,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria Eclipse",
+				new List<int>() {
+					ItemID.MusicBoxEclipse,
+					ItemID.MusicBoxOWBloodMoon
+				}
+			},
+			{ "Terraria PirateInvasion",
+				new List<int>() {
+					ItemID.MusicBoxPirates,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria PumpkinMoon",
+				new List<int>() {
+					ItemID.MusicBoxPumpkinMoon,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria FrostMoon",
+				new List<int>() {
+					ItemID.MusicBoxFrostMoon,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria MartianMadness",
+				new List<int>() {
+					ItemID.MusicBoxMartians,
+					ItemID.MusicBoxOWInvasion
+				}
+			},
+			{ "Terraria LunarEvent",
+				new List<int>() {
+					ItemID.MusicBoxTowers,
+					ItemID.MusicBoxOWTowers
+				}
 			}
 			#endregion
-			return new List<int>();
-		}
+		};
 
-		internal List<int> SetupEventNPCList(string eventName) {
-			#region Event NPC List
-			if (eventName == "$NPCName.TorchGod") {
-				return new List<int>() {
+		internal readonly Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
+			{ "Terraria TorchGod",
+				new List<int>() {
 					NPCID.TorchGod,
-				};
-			}
-			else if (eventName == "$Bestiary_Events.BloodMoon") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria BloodMoon",
+				new List<int>() {
 					NPCID.BloodZombie,
 					NPCID.Drippler,
 					NPCID.TheGroom,
@@ -622,10 +688,10 @@ namespace BossChecklist
 					NPCID.BloodEelHead,
 					NPCID.BloodSquid,
 					NPCID.BloodNautilus,
-				};
-			}
-			else if (eventName == "Goblin Army") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria GoblinArmy",
+					new List<int>() {
 					NPCID.GoblinScout,
 					NPCID.GoblinPeon,
 					NPCID.GoblinSorcerer,
@@ -633,10 +699,10 @@ namespace BossChecklist
 					NPCID.GoblinWarrior,
 					NPCID.GoblinArcher,
 					NPCID.GoblinSummoner,
-				};
-			}
-			else if (eventName == "Old One's Army") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria OldOnesArmy",
+				new List<int>() {
 					NPCID.DD2GoblinT3,
 					NPCID.DD2GoblinBomberT3,
 					NPCID.DD2JavelinstT3,
@@ -649,17 +715,17 @@ namespace BossChecklist
 					NPCID.DD2DarkMageT3,
 					NPCID.DD2OgreT3,
 					NPCID.DD2Betsy
-				};
-			}
-			else if (eventName == "Frost Legion") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria FrostLegion",
+				new List<int>() {
 					NPCID.MisterStabby,
 					NPCID.SnowmanGangsta,
 					NPCID.SnowBalla,
-				};
-			}
-			else if (eventName == "Solar Eclipse") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria Eclipse",
+				new List<int>() {
 					NPCID.Eyezor,
 					NPCID.Frankenstein,
 					NPCID.SwampThing,
@@ -675,10 +741,10 @@ namespace BossChecklist
 					NPCID.Psycho,
 					NPCID.Mothron,
 					NPCID.MothronSpawn,
-				};
-			}
-			else if (eventName == "Pirate Invasion") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria PirateInvasion",
+				new List<int>() {
 					NPCID.PirateDeckhand,
 					NPCID.PirateDeadeye,
 					NPCID.PirateCorsair,
@@ -686,10 +752,10 @@ namespace BossChecklist
 					NPCID.PirateCaptain,
 					NPCID.Parrot,
 					NPCID.PirateShip,
-				};
-			}
-			else if (eventName == "Pumpkin Moon") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria PumpkinMoon",
+				new List<int>() {
 					NPCID.Scarecrow1,
 					NPCID.Splinterling,
 					NPCID.Hellhound,
@@ -697,10 +763,10 @@ namespace BossChecklist
 					NPCID.HeadlessHorseman,
 					NPCID.MourningWood,
 					NPCID.Pumpking,
-				};
-			}
-			else if (eventName == "Frost Moon") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria FrostMoon",
+				new List<int>() {
 					NPCID.PresentMimic,
 					NPCID.Flocko,
 					NPCID.GingerbreadMan,
@@ -713,10 +779,10 @@ namespace BossChecklist
 					NPCID.Everscream,
 					NPCID.SantaNK1,
 					NPCID.IceQueen
-				};
-			}
-			else if (eventName == "Martian Madness") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria MartianMadness",
+				new List<int>() {
 					NPCID.MartianSaucerCore,
 					NPCID.Scutlix,
 					NPCID.ScutlixRider,
@@ -729,10 +795,10 @@ namespace BossChecklist
 					NPCID.RayGunner,
 					NPCID.GrayGrunt,
 					NPCID.BrainScrambler
-				};
-			}
-			else if (eventName == "Lunar Event") {
-				return new List<int>() {
+				}
+			},
+			{ "Terraria LunarEvent",
+				new List<int>() {
 					NPCID.LunarTowerSolar,
 					NPCID.SolarSolenian,
 					NPCID.SolarSpearman,
@@ -761,83 +827,9 @@ namespace BossChecklist
 					NPCID.StardustSoldier,
 					NPCID.StardustSpiderBig,
 					NPCID.StardustWormHead,
-				};
+				}
 			}
-			#endregion
-			return new List<int>();
-		}
-
-		internal List<int> SetupEventCollectibles(string eventName) {
-			#region Event Collectibles
-			if (eventName == "$NPCName.TorchGod") {
-				return new List<int>() {
-					ItemID.MusicBoxBoss3,
-					ItemID.MusicBoxOWWallOfFlesh
-				};
-			}
-			else if (eventName == "$Bestiary_Events.BloodMoon") {
-				return new List<int>() {
-					ItemID.MusicBoxEerie,
-					ItemID.MusicBoxOWBloodMoon
-				};
-			}
-			else if (eventName == "Goblin Army") {
-				return new List<int>() {
-					ItemID.MusicBoxGoblins,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Old One's Army") {
-				return new List<int>() {
-					ItemID.MusicBoxDD2,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Frost Legion") {
-				return new List<int>() {
-					ItemID.MusicBoxBoss3,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Solar Eclipse") {
-				return new List<int>() {
-					ItemID.MusicBoxEclipse,
-					ItemID.MusicBoxOWBloodMoon
-				};
-			}
-			else if (eventName == "Pirate Invasion") {
-				return new List<int>() {
-					ItemID.MusicBoxPirates,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Pumpkin Moon") {
-				return new List<int>() {
-					ItemID.MusicBoxPumpkinMoon,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Frost Moon") {
-				return new List<int>() {
-					ItemID.MusicBoxFrostMoon,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Martian Madness") {
-				return new List<int>() {
-					ItemID.MusicBoxMartians,
-					ItemID.MusicBoxOWInvasion
-				};
-			}
-			else if (eventName == "Lunar Event") {
-				return new List<int>() {
-					ItemID.MusicBoxTowers,
-					ItemID.MusicBoxOWTowers
-				};
-			}
-			#endregion
-			return new List<int>();
-		}
+		};
 
 		internal readonly static Dictionary<string, int> vanillaBossBags = new Dictionary<string, int>() {
 			{ "Terraria KingSlime", ItemID.KingSlimeBossBag },
@@ -862,6 +854,100 @@ namespace BossChecklist
 			{ "Terraria DD2DarkMageT3", ItemID.BossBagDarkMage },
 			{ "Terraria DD2OgreT3", ItemID.BossBagOgre },
 			{ "Terraria CultistBoss", ItemID.CultistBossBag }
+		};
+
+		// Vanilla and Other World music boxes are in order given by the official Terraria wiki
+		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
+			ItemID.MusicBoxOverworldDay,
+			ItemID.MusicBoxAltOverworldDay,
+			ItemID.MusicBoxNight,
+			ItemID.MusicBoxRain,
+			ItemID.MusicBoxSnow,
+			ItemID.MusicBoxIce,
+			ItemID.MusicBoxDesert,
+			ItemID.MusicBoxOcean,
+			ItemID.MusicBoxOceanAlt,
+			ItemID.MusicBoxSpace,
+			ItemID.MusicBoxSpaceAlt,
+			ItemID.MusicBoxUnderground,
+			ItemID.MusicBoxAltUnderground,
+			ItemID.MusicBoxMushrooms,
+			ItemID.MusicBoxJungle,
+			ItemID.MusicBoxCorruption,
+			ItemID.MusicBoxUndergroundCorruption,
+			ItemID.MusicBoxCrimson,
+			ItemID.MusicBoxUndergroundCrimson,
+			ItemID.MusicBoxTheHallow,
+			ItemID.MusicBoxUndergroundHallow,
+			ItemID.MusicBoxHell,
+			ItemID.MusicBoxDungeon,
+			ItemID.MusicBoxTemple,
+			ItemID.MusicBoxBoss1,
+			ItemID.MusicBoxBoss2,
+			ItemID.MusicBoxBoss3,
+			ItemID.MusicBoxBoss4,
+			ItemID.MusicBoxBoss5,
+			ItemID.MusicBoxDeerclops,
+			ItemID.MusicBoxQueenSlime,
+			ItemID.MusicBoxPlantera,
+			ItemID.MusicBoxEmpressOfLight,
+			ItemID.MusicBoxDukeFishron,
+			ItemID.MusicBoxEerie,
+			ItemID.MusicBoxEclipse,
+			ItemID.MusicBoxGoblins,
+			ItemID.MusicBoxPirates,
+			ItemID.MusicBoxMartians,
+			ItemID.MusicBoxPumpkinMoon,
+			ItemID.MusicBoxFrostMoon,
+			ItemID.MusicBoxTowers,
+			ItemID.MusicBoxLunarBoss,
+			ItemID.MusicBoxSandstorm,
+			ItemID.MusicBoxDD2,
+			ItemID.MusicBoxSlimeRain,
+			ItemID.MusicBoxTownDay,
+			ItemID.MusicBoxTownNight,
+			ItemID.MusicBoxWindyDay,
+			ItemID.MusicBoxDayRemix,
+			ItemID.MusicBoxTitleAlt, // Journey's Beginning
+			ItemID.MusicBoxStorm,
+			ItemID.MusicBoxGraveyard,
+			ItemID.MusicBoxUndergroundJungle,
+			ItemID.MusicBoxJungleNight,
+			ItemID.MusicBoxMorningRain,
+			ItemID.MusicBoxConsoleTitle,
+			ItemID.MusicBoxUndergroundDesert,
+			ItemID.MusicBoxCredits, // Journey's End
+			ItemID.MusicBoxTitle,
+		};
+
+		public readonly static List<int> otherWorldMusicBoxTypes = new List<int>() {
+			ItemID.MusicBoxOWRain,
+			ItemID.MusicBoxOWDay,
+			ItemID.MusicBoxOWNight,
+			ItemID.MusicBoxOWUnderground,
+			ItemID.MusicBoxOWDesert,
+			ItemID.MusicBoxOWOcean,
+			ItemID.MusicBoxOWMushroom,
+			ItemID.MusicBoxOWDungeon,
+			ItemID.MusicBoxOWSpace,
+			ItemID.MusicBoxOWUnderworld,
+			ItemID.MusicBoxOWSnow,
+			ItemID.MusicBoxOWCorruption,
+			ItemID.MusicBoxOWUndergroundCorruption,
+			ItemID.MusicBoxOWCrimson,
+			ItemID.MusicBoxOWUndergroundCrimson,
+			ItemID.MusicBoxOWUndergroundSnow, // Ice
+			ItemID.MusicBoxOWUndergroundHallow,
+			ItemID.MusicBoxOWBloodMoon, // Eerie
+			ItemID.MusicBoxOWBoss2,
+			ItemID.MusicBoxOWBoss1,
+			ItemID.MusicBoxOWInvasion,
+			ItemID.MusicBoxOWTowers,
+			ItemID.MusicBoxOWMoonLord,
+			ItemID.MusicBoxOWPlantera,
+			ItemID.MusicBoxOWJungle,
+			ItemID.MusicBoxOWWallOfFlesh,
+			ItemID.MusicBoxOWHallow,
 		};
 
 		// Old version compatibility methods

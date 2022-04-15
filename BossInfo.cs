@@ -93,7 +93,7 @@ namespace BossChecklist
 			return dict;
 		}
 
-		string GetTextFromPossibleTranslationKey(string input) => input?.StartsWith("$") == true ? Language.GetTextValue(input.Substring(1)) : input;
+		string GetTextFromPossibleTranslationKey(string input) => Language.GetTextValue(input.Substring(input.StartsWith("$") == true ? 1 : 0));
 
 		internal string DisplayName => GetTextFromPossibleTranslationKey(this.name);
 
@@ -190,8 +190,10 @@ namespace BossChecklist
 
 		// Workaround for vanilla events with illogical translation keys.
 		internal BossInfo WithCustomTranslationKey(string translationKey) {
-			this.name = Language.GetTextValue(translationKey.Substring(1));
-			this.internalName = translationKey.StartsWith("$") ? translationKey.Substring(translationKey.LastIndexOf('.') + 1) : name;
+			// BossInfo.name should remain as a translation key.
+			this.name = translationKey;
+			// Replace internal name (which would originally be illogicgal) with the printed name
+			this.internalName = Language.GetTextValue(translationKey.Substring(1)).Replace(" ", "").Replace("'", "");
 			return this;
 		}
 
@@ -260,9 +262,9 @@ namespace BossChecklist
 				progression,
 				downed,
 				() => true,
-				BossChecklist.bossTracker.SetupCollect(ids[0]),
+				BossChecklist.bossTracker.BossCollections.GetValueOrDefault($"Terraria {nameKey}"),
 				spawnItem,
-				$"$Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}",
+				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}",
 				customMessages,
 				null
 			);
@@ -274,13 +276,13 @@ namespace BossChecklist
 				EntryType.Event,
 				"Terraria",
 				name,
-				BossChecklist.bossTracker.SetupEventNPCList(name),
+				BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				progression,
 				downed,
 				() => true,
-				BossChecklist.bossTracker.SetupEventCollectibles(name),
+				BossChecklist.bossTracker.BossCollections.GetValueOrDefault($"Terraria {nameKey}"),
 				spawnItem,
-				$"$Mods.BossChecklist.BossSpawnInfo.{nameKey}",
+				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}",
 				null,
 				null
 			);
