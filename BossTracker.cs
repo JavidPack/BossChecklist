@@ -523,7 +523,6 @@ namespace BossChecklist
 					ItemID.DarkMageBookMountItem,
 					ItemID.BossTrophyDarkmage,
 					ItemID.BossMaskDarkMage,
-					ItemID.MusicBoxDD2,
 					ItemID.DD2PetDragon,
 					ItemID.DD2PetGato
 				}
@@ -532,8 +531,7 @@ namespace BossChecklist
 				new List<int>() {
 					ItemID.FlyingDutchmanMasterTrophy,
 					ItemID.PirateShipMountItem,
-					ItemID.FlyingDutchmanTrophy,
-					ItemID.MusicBoxPirates
+					ItemID.FlyingDutchmanTrophy
 				}
 			},
 			{ "Terraria DD2OgreT3",
@@ -542,7 +540,6 @@ namespace BossChecklist
 					ItemID.DD2OgrePetItem,
 					ItemID.BossTrophyOgre,
 					ItemID.BossMaskOgre,
-					ItemID.MusicBoxDD2,
 					ItemID.DD2PetGhost
 				}
 			},
@@ -551,7 +548,6 @@ namespace BossChecklist
 					ItemID.MourningWoodMasterTrophy,
 					ItemID.SpookyWoodMountItem,
 					ItemID.MourningWoodTrophy,
-					ItemID.MusicBoxPumpkinMoon,
 					ItemID.CursedSapling
 				}
 			},
@@ -560,7 +556,6 @@ namespace BossChecklist
 					ItemID.PumpkingMasterTrophy,
 					ItemID.PumpkingPetItem,
 					ItemID.PumpkingTrophy,
-					ItemID.MusicBoxPumpkinMoon,
 					ItemID.SpiderEgg
 				}
 			},
@@ -568,16 +563,14 @@ namespace BossChecklist
 				new List<int>() {
 					ItemID.EverscreamMasterTrophy,
 					ItemID.EverscreamPetItem,
-					ItemID.EverscreamTrophy,
-					ItemID.MusicBoxFrostMoon
+					ItemID.EverscreamTrophy
 				}
 			},
 			{ "Terraria SantaNK1",
 				new List<int>() {
 					ItemID.SantankMasterTrophy,
 					ItemID.SantankMountItem,
-					ItemID.SantaNK1Trophy,
-					ItemID.MusicBoxFrostMoon
+					ItemID.SantaNK1Trophy
 				}
 			},
 			{ "Terraria IceQueen",
@@ -585,7 +578,6 @@ namespace BossChecklist
 					ItemID.IceQueenMasterTrophy,
 					ItemID.IceQueenPetItem,
 					ItemID.IceQueenTrophy,
-					ItemID.MusicBoxFrostMoon,
 					ItemID.BabyGrinchMischiefWhistle
 				}
 			},
@@ -593,8 +585,7 @@ namespace BossChecklist
 				new List<int>() {
 					ItemID.UFOMasterTrophy,
 					ItemID.MartianPetItem,
-					ItemID.MartianSaucerTrophy,
-					ItemID.MusicBoxMartians
+					ItemID.MartianSaucerTrophy
 				}
 			},
 			#endregion

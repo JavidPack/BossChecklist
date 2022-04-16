@@ -1028,7 +1028,12 @@ namespace BossChecklist
 
 			// Create the combined list of loot and collectibles.
 			List<int> bossItems = new List<int>(selectedBoss.collection.Union(selectedBoss.lootItemTypes));
-			bossItems.Remove(selectedBoss.treasureBag); // Skip the treasurebag. It is not needed for the loot table.
+			// Skip any treasurebag as they should not be display within the loot table.
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				if (bossItems.Contains(boss.treasureBag)) {
+					bossItems.Remove(boss.treasureBag);
+				}
+			}
 
 			int row = 0;
 			int col = 0;
