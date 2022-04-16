@@ -170,6 +170,9 @@ namespace BossChecklist
 				BossInfo bossInfo = SortedBosses.Find(boss => boss.Key == orphan.Key);
 				if (bossInfo != null && orphan.values != null) {
 					switch (orphan.type) {
+						case OrphanType.Loot:
+							bossInfo.lootItemTypes.AddRange(orphan.values);
+							break;
 						case OrphanType.Collection:
 							bossInfo.collection.AddRange(orphan.values);
 							break;
@@ -180,15 +183,18 @@ namespace BossChecklist
 							if (bossInfo.type == EntryType.Event) {
 								bossInfo.npcIDs.AddRange(orphan.values);
 							}
+							else {
+								BossChecklist.instance.Logger.Info($"{orphan.bossName} from {orphan.modSource} is not an Event entry. AddToEventNPCs must be added to Events.");
+							}
 							break;
 					}
 				}
 				else if (BossChecklist.DebugConfig.ModCallLogVerbose) {
 					if (bossInfo == null) {
-						BossChecklist.instance.Logger.Info($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
+						BossChecklist.instance.Logger.Warn($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
 					}
 					if (orphan.values == null) {
-						BossChecklist.instance.Logger.Info($"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.");
+						BossChecklist.instance.Logger.Warn($"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.");
 					}
 				}
 			}
@@ -1012,7 +1018,10 @@ namespace BossChecklist
 
 		internal void AddOrphanData(string type, string bossKey, object values) {
 			OrphanType orphanType;
-			if (type == "AddToBossCollection") {
+			if (type == "AddToBossLoot") {
+				orphanType = OrphanType.Loot;
+			}
+			else if (type == "AddToBossCollection") {
 				orphanType = OrphanType.Collection;
 			}
 			else if (type == "AddToBossSpawnItems") {
