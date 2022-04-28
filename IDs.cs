@@ -48,8 +48,8 @@ namespace BossChecklist
 	internal enum RecordID : int
 	{
 		None = 0,
-		ShortestFightTime = 1,
-		LeastHits = 2,
+		Duration = 1,
+		HitsTaken = 2,
 		ResetAll = 4
 	}
 }

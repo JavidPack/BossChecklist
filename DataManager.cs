@@ -131,16 +131,16 @@ namespace BossChecklist
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 			if (!brokenRecords.HasFlag(RecordID.ResetAll)) {
 				// Determine if a new record was made (Prev records need to change still)
-				bool newRecord = brokenRecords.HasFlag(RecordID.ShortestFightTime) || brokenRecords.HasFlag(RecordID.LeastHits);
+				bool newRecord = brokenRecords.HasFlag(RecordID.Duration) || brokenRecords.HasFlag(RecordID.HitsTaken);
 
 				kills++; // Kills always increase by 1, since records can only be made when a boss is defeated
 
-				if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+				if (brokenRecords.HasFlag(RecordID.Duration)) {
 					durationBest = reader.ReadInt32();
 				}
 				durationPrev = reader.ReadInt32();
 
-				if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+				if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
 					hitsTakenBest = reader.ReadInt32();
 				}
 				hitsTakenPrev = reader.ReadInt32();
@@ -162,11 +162,11 @@ namespace BossChecklist
 			if (!specificRecord.HasFlag(RecordID.ResetAll)) {
 				// If ResetAll is flagged there is no need to write the rest
 				// Prev records ALWAYS are written. They always update as either record attempts or old records
-				if (specificRecord.HasFlag(RecordID.ShortestFightTime)) {
+				if (specificRecord.HasFlag(RecordID.Duration)) {
 					writer.Write(durationBest);
 				}
 				writer.Write(durationPrev);
-				if (specificRecord.HasFlag(RecordID.LeastHits)) {
+				if (specificRecord.HasFlag(RecordID.HitsTaken)) {
 					writer.Write(hitsTakenBest);
 				}
 				writer.Write(hitsTakenPrev);
@@ -224,11 +224,11 @@ namespace BossChecklist
 		internal void NetRecieve(BinaryReader reader) {
 			RecordID brokenRecords = (RecordID)reader.ReadInt32();
 
-			if (brokenRecords.HasFlag(RecordID.ShortestFightTime)) {
+			if (brokenRecords.HasFlag(RecordID.Duration)) {
 				durationHolder = reader.ReadString();
 				durationWorld = reader.ReadInt32();
 			}
-			if (brokenRecords.HasFlag(RecordID.LeastHits)) {
+			if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
 				hitsTakenHolder = reader.ReadString();
 				hitsTakenWorld = reader.ReadInt32();
 			}
@@ -237,11 +237,11 @@ namespace BossChecklist
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
 			writer.Write((int)specificRecord); // We need this for NetRecieve as well
 			// Packet should have any beaten records written on it
-			if (specificRecord.HasFlag(RecordID.ShortestFightTime)) {
+			if (specificRecord.HasFlag(RecordID.Duration)) {
 				writer.Write(durationHolder);
 				writer.Write(durationWorld);
 			}
-			if (specificRecord.HasFlag(RecordID.LeastHits)) {
+			if (specificRecord.HasFlag(RecordID.HitsTaken)) {
 				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
 			}

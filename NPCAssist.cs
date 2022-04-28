@@ -203,7 +203,7 @@ namespace BossChecklist
 				// If it is beaten, we add a flag to specificRecord to allow newRecord's numbers to override the current record
 				if (newRecord.durationPrev < oldRecord.durationBest || oldRecord.durationBest <= 0) {
 					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationPrev} (Previous Record: {oldRecord.durationBest})");
-					specificRecord |= RecordID.ShortestFightTime;
+					specificRecord |= RecordID.Duration;
 					oldRecord.durationPrev = oldRecord.durationBest;
 					oldRecord.durationBest = newRecord.durationPrev;
 				}
@@ -213,7 +213,7 @@ namespace BossChecklist
 
 				if (newRecord.hitsTakenPrev < oldRecord.hitsTakenBest || oldRecord.hitsTakenBest < 0) {
 					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenPrev} (Previous Record: {oldRecord.hitsTakenBest})");
-					specificRecord |= RecordID.LeastHits;
+					specificRecord |= RecordID.HitsTaken;
 					oldRecord.hitsTakenPrev = oldRecord.hitsTakenBest;
 					oldRecord.hitsTakenBest = newRecord.hitsTakenPrev;
 				}
@@ -232,12 +232,12 @@ namespace BossChecklist
 				WorldStats worldStats = WorldAssist.worldRecords[recordIndex].stat;
 				RecordID specificRecord = RecordID.None;
 				if (newRecordHolders[0] != "") {
-					specificRecord |= RecordID.ShortestFightTime;
+					specificRecord |= RecordID.Duration;
 					worldStats.durationHolder = newRecordHolders[0];
 					worldStats.durationWorld = newWorldRecords[0];
 				}
 				if (newRecordHolders[1] != "") {
-					specificRecord |= RecordID.LeastHits;
+					specificRecord |= RecordID.HitsTaken;
 					worldStats.hitsTakenHolder = newRecordHolders[1];
 					worldStats.hitsTakenWorld = newWorldRecords[1];
 				}
