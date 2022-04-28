@@ -177,7 +177,7 @@ namespace BossChecklist
 #if TML_2022_03
 						int configIndex = NPCAssist.ListedBossNum(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, BossChecklist.DebugConfig.ShowTimerOrCounter.mod);
 #else
-						int configIndex = NPCAssist.ListedBossNum(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, BossChecklist.DebugConfig.ShowTimerOrCounter.Mod);
+						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
 #endif
 						if (configIndex != -1) {
 							string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +

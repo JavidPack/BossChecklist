@@ -7,6 +7,7 @@ using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace BossChecklist
 {
@@ -68,9 +69,9 @@ namespace BossChecklist
 
 			// Setting a record for fastest boss kill, and counting boss kills
 			// Twins check makes sure the other is not around before counting towards the record
-			int index = ListedBossNum(npc);
+			int index = GetBossInfoIndex(npc);
 			if (index != -1) {
-				if (TrulyDead(npc)) {
+				if (TrulyDead(npc, index)) {
 					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
 						if (Main.netMode == NetmodeID.SinglePlayer) {
 							CheckRecords(npc, index);
@@ -80,7 +81,7 @@ namespace BossChecklist
 						}
 					}
 					if (BossChecklist.DebugConfig.ShowTDC) {
-						Main.NewText(npc.FullName + ": " + TrulyDead(npc));
+						Main.NewText(npc.FullName + ": " + TrulyDead(npc, index));
 					}
 					WorldAssist.worldRecords[index].stat.totalKills++;
 				}
@@ -93,7 +94,7 @@ namespace BossChecklist
 			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) {
 				return true; // Checks for multi-segmented bosses?
 			}
-			int listNum = ListedBossNum(npc);
+			int listNum = GetBossInfoIndex(npc);
 			if (listNum != -1) {
 				if (!WorldAssist.ActiveBossesList[listNum]) {
 					for (int j = 0; j < Main.maxPlayers; j++) {
@@ -289,47 +290,50 @@ namespace BossChecklist
 			return limbNPCs.Contains(npcType.type) || isTwinsRet || isTwinsSpaz;
 		}
 
-		public static int ListedBossNum(NPC boss, bool skipEventCheck = true) { // Skipcheck incase we need it to account for events
+		public static int GetBossInfoIndex(NPC boss, bool skipEventCheck = true) { // Skipcheck incase we need it to account for events
 			if (!BossChecklist.bossTracker.BossCache[boss.type]) {
 				return -1;
 			}
-			
-			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
-			if (boss.type < NPCID.Count) {
-				int index = BL.FindIndex(x => x.npcIDs.Any(y => y == boss.type));
-				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) {
-					return -1;
+
+			List<BossInfo> BossInfoList = BossChecklist.bossTracker.SortedBosses;
+			for (int index = 0; index < BossInfoList.Count; index++) {
+				if (BossInfoList[index].type == EntryType.Event && skipEventCheck) {
+					continue;
 				}
-				return index;
-			}
-			else {
-				int index = BL.FindIndex(x => x.modSource == boss.ModNPC.Mod.Name && x.npcIDs.Any(y => y == boss.type));
-				if (index != -1 && skipEventCheck && BL[index].type == EntryType.Event) {
-					return -1;
+				if (BossInfoList[index].npcIDs.Contains(boss.type)) {
+					return index;
 				}
-				return index;
 			}
+			return -1;
 		}
 
-		public static int ListedBossNum(int type, string modSource) {
-			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
-			if (type < NPCID.Count) {
-				return BL.FindIndex(x => x.npcIDs.Any(y => y == type));
+		public static int GetBossInfoIndex(NPCDefinition npc) {
+			if (!BossChecklist.bossTracker.BossCache[npc.Type]) {
+				return -1;
 			}
-			else {
-				return BL.FindIndex(x => x.modSource == modSource && x.npcIDs.Any(y => y == type));
+
+			List<BossInfo> BossInfoList = BossChecklist.bossTracker.SortedBosses;
+			for (int index = 0; index < BossInfoList.Count; index++) {
+				if (BossInfoList[index].type == EntryType.Event) {
+					continue;
+				}
+				if (BossInfoList[index].npcIDs.Contains(npc.Type)) {
+					return index;
+				}
 			}
+			return -1;
 		}
 
-		public static bool TrulyDead(NPC npc) {
-			// Check all multibosses
-			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
-			int index = ListedBossNum(npc);
-			if (index != -1) {
-				foreach (int id in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
-					if (Main.npc.Any(x => x != npc && x.type == id && x.active)) {
-						return false;
-					}
+		public static bool TrulyDead(NPC npc, int index) {
+			// Check all multibosses to see if the NPC is truly dead
+			// index should be checked for a value of -1 before submitting, but just in case...
+			if (index == -1) {
+				return !npc.active;
+			}
+
+			foreach (int id in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
+				if (Main.npc.Any(x => x != npc && x.type == id && x.active)) {
+					return false;
 				}
 			}
 			return true;

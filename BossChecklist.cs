@@ -399,7 +399,7 @@ namespace BossChecklist
 					}
 					packet.Send(); // To server (ORDER MATTERS FOR reader)
 					break;
-				case (PacketMessageType.WorldRecordUpdate):
+				case PacketMessageType.WorldRecordUpdate:
 					npcPos = reader.ReadInt32();
 					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stat; // Get the Player's records
 					worldRecords.NetRecieve(reader); // The records will be updated through the reader (player and npcPos needed for new record)

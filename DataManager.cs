@@ -42,8 +42,8 @@ namespace BossChecklist
 			stat = tag.Get<BossStats>(nameof(stat));
 		}
 
-		public BossRecord(string boss) {
-			bossKey = boss;
+		public BossRecord(string bossKey) {
+			this.bossKey = bossKey;
 		}
 
 		public TagCompound SerializeData() {
@@ -56,23 +56,23 @@ namespace BossChecklist
 
 	public class WorldRecord : TagSerializable
 	{
-		internal string bossName;
+		internal string bossKey;
 		internal WorldStats stat = new WorldStats();
 
 		public static Func<TagCompound, WorldRecord> DESERIALIZER = tag => new WorldRecord(tag);
 
 		private WorldRecord(TagCompound tag) {
-			bossName = tag.Get<string>(nameof(bossName));
+			bossKey = tag.Get<string>(nameof(bossKey));
 			stat = tag.Get<WorldStats>(nameof(stat));
 		}
 
-		public WorldRecord(string boss) {
-			bossName = boss;
+		public WorldRecord(string bossKey) {
+			this.bossKey = bossKey;
 		}
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
-				{ nameof(bossName), bossName },
+				{ nameof(bossKey), bossKey },
 				{ nameof(stat), stat }
 			};
 		}

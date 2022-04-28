@@ -259,18 +259,22 @@ namespace BossChecklist
 		[Label("Disable updating new records")]
 		[Tooltip("Only 'previous attempt' will be updated.")]
 		public bool NewRecordsDisabled {
-			get { return processRecord == 1 && nrEnabled; }
+			get => processRecord == 1 && nrEnabled;
 			set {
 				if (!Main.gameMenu) {
 					for (int i = 0; i < Main.maxNPCs; i++) {
-						if (!Main.npc[i].active) continue;
-						if (NPCAssist.ListedBossNum(Main.npc[i]) != -1) {
+						if (!Main.npc[i].active) {
+							continue;
+						}
+						if (NPCAssist.GetBossInfoIndex(Main.npc[i]) != -1) {
 							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
 							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 						}
 					}
 				}
-				if (value) processRecord = 1;
+				if (value) {
+					processRecord = 1;
+				}
 				nrEnabled = value;
 			}
 		}
@@ -279,18 +283,22 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		[Label("Disable records from being tracked entirely.")]
 		public bool RecordTrackingDisabled {
-			get { return processRecord == 2 && rtEnabled; }
+			get => processRecord == 2 && rtEnabled;
 			set {
 				if (!Main.gameMenu) {
 					for (int i = 0; i < Main.maxNPCs; i++) {
-						if (!Main.npc[i].active) continue;
-						if (NPCAssist.ListedBossNum(Main.npc[i]) != -1) {
+						if (!Main.npc[i].active) {
+							continue;
+						}
+						if (NPCAssist.GetBossInfoIndex(Main.npc[i]) != -1) {
 							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
 							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 						}
 					}
 				}
-				if (value) processRecord = 2;
+				if (value) {
+					processRecord = 2;
+				}
 				rtEnabled = value;
 			}
 		}

@@ -227,10 +227,10 @@ namespace BossChecklist
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
-					if (!Main.npc[i].active || NPCAssist.ListedBossNum(Main.npc[i]) == -1) {
+					if (!Main.npc[i].active || NPCAssist.GetBossInfoIndex(Main.npc[i]) == -1) {
 						continue;
 					}
-					int listNum = NPCAssist.ListedBossNum(Main.npc[i]);
+					int listNum = NPCAssist.GetBossInfoIndex(Main.npc[i]);
 					Tracker_HitsTaken[listNum]++;
 				}
 			}

@@ -14,6 +14,7 @@ namespace BossChecklist
 {
 	public class WorldAssist : ModSystem
 	{
+		// Since only 1 set of records is saved per boss, there is no need to put it into a dictionary.
 		public static List<WorldRecord> worldRecords;
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
 
@@ -85,7 +86,7 @@ namespace BossChecklist
 		public override void PreUpdateWorld() {
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC b = Main.npc[n];
-				int listNum = NPCAssist.ListedBossNum(b);
+				int listNum = NPCAssist.GetBossInfoIndex(b);
 				if (listNum != -1) {
 					if (b.active) {
 						for (int i = 0; i < Main.maxPlayers; i++) {
@@ -100,7 +101,7 @@ namespace BossChecklist
 						// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 					}
 					else if (ActiveBossesList[listNum]) {
-						if (NPCAssist.TrulyDead(b)) {
+						if (NPCAssist.TrulyDead(b, listNum)) {
 							string message = GetDespawnMessage(b, listNum);
 							if (message != "") {
 								if (Main.netMode == NetmodeID.SinglePlayer) {
@@ -232,9 +233,9 @@ namespace BossChecklist
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
-			List<WorldRecord> TempRecordStorage = tag.Get<List<WorldRecord>>("Records");
-			foreach (WorldRecord record in TempRecordStorage) {
-				int index = worldRecords.FindIndex(x => x.bossName == record.bossName);
+			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("Records").ToList();
+			foreach (WorldRecord record in SavedWorldRecords) {
+				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
 				if (index == -1) {
 					worldRecords.Add(record);
 				}
