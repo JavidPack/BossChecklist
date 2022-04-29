@@ -90,7 +90,7 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
-				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "$NPCName.TorchGod", () => Main.LocalPlayer.unlockedBiomeTorches, new List<int>() { ItemID.Torch })
+				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "$NPCName.TorchGod", () => WorldAssist.downedTorchGod, new List<int>() { ItemID.Torch })
 					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
 				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "$Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventBloodMoon")
