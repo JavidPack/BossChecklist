@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
@@ -34,7 +33,6 @@ namespace BossChecklist
 		public static List<bool> ActiveBossesList;
 		public static List<bool[]> StartingPlayers;
 
-		string EventKey = "";
 		bool isBloodMoon = false;
 		bool isPumpkinMoon = false;
 		bool isFrostMoon = false;
@@ -73,11 +71,10 @@ namespace BossChecklist
 			downedInvasionT2Ours = false;
 			downedInvasionT3Ours = false;
 
-			List<BossInfo> BL = BossChecklist.bossTracker.SortedBosses;
 			ActiveBossesList = new List<bool>();
 			StartingPlayers = new List<bool[]>();
 			// Includes events, even though they wont be accounted for
-			for (int i = 0; i < BL.Count; i++) {
+			for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
 				ActiveBossesList.Add(false);
 				StartingPlayers.Add(new bool[Main.maxPlayers]);
 			}
@@ -122,13 +119,13 @@ namespace BossChecklist
 		}
 
 		public override void PostUpdateWorld() {
-			// Event Ending Messages
-			if (Main.bloodMoon) isBloodMoon = true;
-			if (Main.snowMoon) isFrostMoon = true;
-			if (Main.pumpkinMoon) isPumpkinMoon = true;
-			if (Main.eclipse) isEclipse = true;
+			string EventKey = "";
 
-			if (!Main.bloodMoon && isBloodMoon) {
+			// Blood Moon
+			if (Main.bloodMoon) {
+				isBloodMoon = true;
+			}
+			else if (isBloodMoon) {
 				isBloodMoon = false;
 				EventKey = "Mods.BossChecklist.EventEnd.BloodMoon";
 				if (!downedBloodMoon) {
@@ -138,7 +135,12 @@ namespace BossChecklist
 					}
 				}
 			}
-			else if (!Main.snowMoon && isFrostMoon) {
+
+			// Frost Moon
+			if (Main.snowMoon) {
+				isFrostMoon = true;
+			}
+			else if (isFrostMoon) {
 				isFrostMoon = false;
 				EventKey = "Mods.BossChecklist.EventEnd.FrostMoon";
 				if (!downedFrostMoon) {
@@ -148,7 +150,12 @@ namespace BossChecklist
 					}
 				}
 			}
-			else if (!Main.pumpkinMoon && isPumpkinMoon) {
+
+			// Pumpkin Moon
+			if (Main.pumpkinMoon) {
+				isPumpkinMoon = true;
+			}
+			else if (isPumpkinMoon) {
 				isPumpkinMoon = false;
 				EventKey = "Mods.BossChecklist.EventEnd.PumpkinMoon";
 				if (!downedPumpkinMoon) {
@@ -158,7 +165,12 @@ namespace BossChecklist
 					}
 				}
 			}
-			else if (!Main.eclipse && isEclipse) {
+
+			// Solar Eclipse
+			if (Main.eclipse) {
+				isEclipse = true;
+			}
+			else if (isEclipse) {
 				isEclipse = false;
 				EventKey = "Mods.BossChecklist.EventEnd.SolarEclipse";
 				if (!downedSolarEclipse) {
@@ -169,6 +181,7 @@ namespace BossChecklist
 				}
 			}
 
+			// Event Ending Messages
 			if (EventKey != "") {
 				NetworkText message = NetworkText.FromKey(EventKey);
 				if (Main.netMode == NetmodeID.SinglePlayer) {
@@ -177,7 +190,6 @@ namespace BossChecklist
 				else {
 					ChatHelper.BroadcastChatMessage(message, Colors.RarityGreen);
 				}
-				EventKey = "";
 			}
 		}
 
@@ -206,21 +218,30 @@ namespace BossChecklist
 			return "";
 		}
 
-		public bool CheckRealLife(int realNPC) => realNPC == -1 || Main.npc[realNPC].life >= 0;
-
 		public override void SaveWorldData(TagCompound tag) {
 			var HiddenBossesList = new List<string>(HiddenBosses);
+
 			var downed = new List<string>();
-			if (downedBloodMoon) downed.Add("bloodmoon");
-			if (downedFrostMoon) downed.Add("frostmoon");
-			if (downedPumpkinMoon) downed.Add("pumpkinmoon");
-			if (downedSolarEclipse) downed.Add("solareclipse");
-			if (downedDarkMage) downed.Add("darkmage");
-			if (downedOgre) downed.Add("ogre");
-			if (downedFlyingDutchman) downed.Add("flyingdutchman");
-			if (downedMartianSaucer) downed.Add("martiansaucer");
-			if (downedInvasionT2Ours) downed.Add("invasionT2Ours");
-			if (downedInvasionT3Ours) downed.Add("invasionT3Ours");
+			if (downedBloodMoon)
+				downed.Add("bloodmoon");
+			if (downedFrostMoon)
+				downed.Add("frostmoon");
+			if (downedPumpkinMoon)
+				downed.Add("pumpkinmoon");
+			if (downedSolarEclipse)
+				downed.Add("solareclipse");
+			if (downedDarkMage)
+				downed.Add("darkmage");
+			if (downedOgre)
+				downed.Add("ogre");
+			if (downedFlyingDutchman)
+				downed.Add("flyingdutchman");
+			if (downedMartianSaucer)
+				downed.Add("martiansaucer");
+			if (downedInvasionT2Ours)
+				downed.Add("invasionT2Ours");
+			if (downedInvasionT3Ours)
+				downed.Add("invasionT3Ours");
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;

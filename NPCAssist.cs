@@ -20,28 +20,29 @@ namespace BossChecklist
 					NetMessage.SendData(MessageID.WorldData);
 				}
 			}
-			if ((npc.type == NPCID.DD2OgreT2 || npc.type == NPCID.DD2OgreT3) && !WorldAssist.downedOgre) {
+			else if ((npc.type == NPCID.DD2OgreT2 || npc.type == NPCID.DD2OgreT3) && !WorldAssist.downedOgre) {
 				WorldAssist.downedOgre = true;
 				if (Main.netMode == NetmodeID.Server) {
 					NetMessage.SendData(MessageID.WorldData);
 				}
 			}
-			if (npc.type == NPCID.PirateShip && !WorldAssist.downedFlyingDutchman) {
+			else if (npc.type == NPCID.PirateShip && !WorldAssist.downedFlyingDutchman) {
 				WorldAssist.downedFlyingDutchman = true;
 				if (Main.netMode == NetmodeID.Server) {
 					NetMessage.SendData(MessageID.WorldData);
 				}
 			}
-			if (npc.type == NPCID.MartianSaucerCore && !WorldAssist.downedMartianSaucer) {
+			else if (npc.type == NPCID.MartianSaucerCore && !WorldAssist.downedMartianSaucer) {
 				WorldAssist.downedMartianSaucer = true;
 				if (Main.netMode == NetmodeID.Server) {
 					NetMessage.SendData(MessageID.WorldData);
 				}
 			}
+
 			if (!Main.dedServ && Main.gameMenu) {
 				return;
 			}
-			string partName = npc.GetFullNetName().ToString();
+
 			if (BossChecklist.ClientConfig.PillarMessages) {
 				if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
 					string defeatedTower = "Mods.BossChecklist.BossDefeated.Tower";
@@ -54,7 +55,9 @@ namespace BossChecklist
 					}
 				}
 			}
+
 			if (NPCisLimb(npc) && BossChecklist.ClientConfig.LimbMessages) {
+				string partName = npc.GetFullNetName().ToString();
 				if (npc.type == NPCID.SkeletronHand) {
 					partName = "Skeletron Hand"; // TODO: translation?
 				}
@@ -94,17 +97,17 @@ namespace BossChecklist
 			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) {
 				return true; // Checks for multi-segmented bosses?
 			}
-			int listNum = GetBossInfoIndex(npc);
-			if (listNum != -1) {
-				if (!WorldAssist.ActiveBossesList[listNum]) {
+			int index = GetBossInfoIndex(npc);
+			if (index != -1) {
+				if (!WorldAssist.ActiveBossesList[index]) {
 					for (int j = 0; j < Main.maxPlayers; j++) {
 						if (!Main.player[j].active) {
 							continue;
 						}
 						// Reset Timers and counters so we can start recording the next fight
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-						modPlayer.Tracker_Duration[listNum] = 0;
-						modPlayer.Tracker_HitsTaken[listNum] = 0;
+						modPlayer.Tracker_Duration[index] = 0;
+						modPlayer.Tracker_HitsTaken[index] = 0;
 					}
 				}
 			}

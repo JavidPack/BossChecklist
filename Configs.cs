@@ -138,15 +138,15 @@ namespace BossChecklist
 		[DefaultValue("Generic")]
 		public string DespawnMessageType { get; set; }
 
-		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.PillarMessages")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.PillarMessages")]
-		public bool PillarMessages { get; set; }
-
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.LimbMessages")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LimbMessages")]
 		public bool LimbMessages { get; set; }
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.PillarMessages")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.PillarMessages")]
+		public bool PillarMessages { get; set; }
 
 		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.TimerSounds")]
