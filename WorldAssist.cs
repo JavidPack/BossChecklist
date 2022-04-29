@@ -63,6 +63,11 @@ namespace BossChecklist
 			downedPumpkinMoon = false;
 			downedSolarEclipse = false;
 
+			isBloodMoon = false;
+			isFrostMoon = false;
+			isPumpkinMoon = false;
+			isEclipse = false;
+
 			downedDarkMage = false;
 			downedOgre = false;
 			downedFlyingDutchman = false;
