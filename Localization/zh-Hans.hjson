@@ -99,10 +99,24 @@ Mods: {
 					下个事件: 
 					{0}
 					'''
-				ViewCollect: 点击以显示可收集物品
+				ViewCollect: 点击以显示收藏品
 				ViewLoot: 点击以显示所有掉落物
 				ItemIsExpertOnly: 此物品仅在专家模式下可获得
 				ItemIsMasterOnly: 此物品仅在大师模式下可获得
+				CopyKey: 点击以复制内部'Boss键值'至剪切板
+				CopySource: 点击以复制内部'Mod源'至剪切板
+				UnderConstruction:
+					'''
+					Boss日志的这一部分仍在施工中.
+					与此页面相关的任何功能或配置都可能不会工作.
+					'''
+				ViewPage: 点击以查看页面
+				KDRDescription: 你击败该Boss和该Boss击败你的总次数!
+				DurationDescription: 你击败该Boss所用的最短时间!
+				HitsTakenDescription: 尽可能的闪避攻击! 试着无伤击败该Boss!
+				ToggleVisibility: 切换隐藏可见性
+				AllLoot: 已获得所有的战利品!
+				AllCollectibles: 已获得所有的收藏品!
 			}
 
 			DrawnText: {
@@ -112,11 +126,13 @@ Mods: {
 				Undefeated: 在{0}中未被击败
 				Records: 挑战记录
 				SpawnInfo: 生成信息
-				LootCollect: 掉落物 & 可收集物品
+				LootCollect: 掉落物 & 收藏品
 				KDR: KD比
 				Duration: 战斗持续时间
-				Health: 生命剩余
 				Dodge: 受击数
+				KDRWorld: 全球击败和死亡次数
+				DurationWorld: 最短时间的战斗
+				DodgeWorld: 最低受击次数
 				RecipeFrom: 此合成配方来自: {0}
 				CycleRecipe: 切换至其他合成配方
 				Noncraftable: 此物品不可被合成
@@ -127,6 +143,9 @@ Mods: {
 				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
 				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
 				NoModsSupported: 您已加载的Mod均未将页面添加到Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请向Mod作者提议添加相关信息到Boss Checklist.
+				BeforeYouBegin: 在你开始之前...
+				EnableProgressionMode: 你想要开启进度模式吗?
+				SelectAnOption: 请在下方选择一项...
 			}
 
 			Credits: {
@@ -148,6 +167,13 @@ Mods: {
 				Bosses: Boss
 				MiniBosses: 小Boss
 				Events: 事件
+				Total: 总计
+				PreviousRecord: 上次尝试
+				FirstRecord: 首次胜利
+				BestRecord: 最佳记录
+				WorldRecord: 世界纪录
+				NewRecord: 新纪录!
+				NewWorldRecord: 世界纪录!
 			}
 		}
 
@@ -165,13 +191,15 @@ Mods: {
 				ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
 				ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
-				Debug: "[i:3625] [c/ffeb6e:调试选项以供开发者调试]"
+				Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
+				DebugBossLogFeatures: "[i:3619] [c/ffeb6e:Boss日志功能调试]"
 			}
 
 			Label: {
 				BossLogColor: Boss日志颜色
 				BossLogPos: 开启Boss日志的按钮的位置
 				DrawNextMark: 提示下一个要挑战的Boss
+				LootChecklist: 开启战利品/收藏品清单
 				ColoredBossText: Boss文本变色
 				CountDownedBosses: Boss击败数显示
 				SelectedCheckmarkType: 标记模式
@@ -198,6 +226,15 @@ Mods: {
 				RadarMiniBosses: 定位小Boss
 				RadarOpacity: Boss雷达不透明度
 				RadarBlacklist: 雷达黑名单
+				ModCallVerbose: Mod.Call日志详细信息
+				AccessInternalNames: 访问内部名称
+				CollectionTypeDetection: 显示自动检测的集合类型
+				ResetLoot: 开启重置战利品和收藏品选项
+				ResetRecords: 开启重置记录选项
+				InactiveBossCheck: 检查不活跃的Boss
+				DisableNewRecords: 禁用更新新记录
+				DisableRecordTracking: 禁用完整的跟踪记录
+				ShowRecordTracking: 显示所选Boss的记录计时器和记录器
 			}
 
 			Tooltip: {
@@ -205,13 +242,14 @@ Mods: {
 				BossLogPos:
 					'''
 					在游戏中按住鼠标右键单击即可轻松将按钮移动到任意位置!
-					位置从屏幕右下角开始测量
+					位置从屏幕右下角开始测量.
 					'''
-				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss
+				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
+				LootChecklist: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
 				ColoredBossText:
 					'''
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
-					如果启用了”提示下一个要挑战的Boss“, 则下一个Boss将为黄色.
+					如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
 					'''
 				CountDownedBosses: 如果启用, 目录将显示与总Boss数相比被击败的Boss数.
 				ProgressionPrompt: 如果启用, 则阻止提示出现在所有未来的字符中.
@@ -235,10 +273,36 @@ Mods: {
 				RadarMiniBosses: 注意: 此选项仅用于有小地图图像的小Boss
 				RadarOpacity: 调整雷达图标的透明度
 				RadarBlacklist: 以下被选中的生物将不会被雷达定位
+				ModCallVerbose: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
+				AccessInternalNames:
+					'''
+					在Boss的条目页面上添加一个按钮, 其可以将Boss键值和Mod源复制到游戏中的剪贴板.
+					对于制作跨Mod内容的Mod开发人员很有用."
+					'''
+				CollectionTypeDetection: Boss的收藏品物品栏会被标记为指定的集合类型
+				ResetLoot: 
+					'''
+					右键双击所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
+					右键双击'战利品&收藏品'按钮会清除Boss的整个战利品/收藏品列表.
+					长按Alt键会移除所有可移除的Boss物品.
+					'''
+				ResetRecords: 
+					'''
+					右键双击所选Boss页面上的记录会重置记录.
+					右键双击所选Boss页面上的'记录'按钮会重置所有Boss的记录.
+					'''
+				InactiveBossCheck: 
+					'''
+					当一位Boss NPC死亡或消失时, 会在聊天栏中提示一个活跃的Boss是否会变得不活跃.
+					此检查会在完成记录和显示消失消息之前发生.
+					'''
+				DisableNewRecords: 仍会更新以前的尝试记录
+				ShowRecordTracking: 必须启用记录跟踪才会显示
 			}
 
 			Notice: {
 				InvalidChange: 你不能在任何一个Boss存在时启用这个!
+				HostChange: 仅允许主机更改此配置.
 			}
 		}
 	}
