@@ -332,10 +332,10 @@ namespace BossChecklist.UIElements
 					if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
 						if (item.type != ItemID.None && Id.StartsWith("loot_") && !hasItem) {
 							if (!Main.expertMode && (item.expert || item.expertOnly)) {
-								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
+								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
 							}
 							else if (!Main.masterMode && (item.master || item.masterOnly)) {
-								BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
+								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
 							}
 							else {
 								BossUISystem.Instance.UIHoverText = item.HoverName;
@@ -413,17 +413,18 @@ namespace BossChecklist.UIElements
 				if (BossLogUI.PageNum == -3) {
 					if (Id == "PageOne") {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
-						Utils.DrawBorderString(spriteBatch, Language.GetTextValue("Before you begin..."), pos, Color.White, 0.8f);
+						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.BeforeYouBegin");
+						Utils.DrawBorderString(spriteBatch, message, pos, Color.White, 0.8f);
 
 						float textScale = 1f;
-						string message = Language.GetTextValue("Do you want to enable Progression Mode?");
+						message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.EnableProgressionMode");
 						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
 						pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 					else if (Id == "PageTwo") {
 						float textScale = 1f;
-						string message = Language.GetTextValue("Please select an option below...");
+						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.SelectAnOption");
 						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
 						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
@@ -617,7 +618,8 @@ namespace BossChecklist.UIElements
 
 							// Hovering and rightclick will copy to clipboard
 							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Width, clipboard.Height)) {
-								BossUISystem.Instance.UIHoverText = $"Click to copy internal 'boss key' to clipboard:\n{selectedBoss.Key}";
+								string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.CopyKey");
+								BossUISystem.Instance.UIHoverText = $"{translated}:\n{selectedBoss.Key}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
 									Platform.Get<IClipboard>().Value = selectedBoss.Key;
 								}
@@ -628,7 +630,8 @@ namespace BossChecklist.UIElements
 							spriteBatch.Draw(clipboard, vec2, copied);
 
 							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Width, clipboard.Height)) {
-								BossUISystem.Instance.UIHoverText = $"Click to copy internal 'mod source' to clipboard:\n{selectedBoss.modSource}";
+								string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.CopySource");
+								BossUISystem.Instance.UIHoverText = $"{translated}:\n{selectedBoss.modSource}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
 									Platform.Get<IClipboard>().Value = selectedBoss.modSource;
 								}
@@ -645,7 +648,8 @@ namespace BossChecklist.UIElements
 
 							if (Main.mouseX >= conRect.X && Main.mouseX < conRect.X + conRect.Width) {
 								if (Main.mouseY >= conRect.Y && Main.mouseY < conRect.Y + conRect.Height) {
-									BossUISystem.Instance.UIHoverText = "Boss records is still under construction and may not work.\nThis includes any configs related to boss records.";
+									string translated = 
+									BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.UnderConstruction";
 									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
 								}
 							}
@@ -661,7 +665,8 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(icon, pos, faded);
 									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
 										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											BossUISystem.Instance.UIHoverText = info.DisplayName + "\nClick to view page";
+											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 											}
@@ -688,16 +693,16 @@ namespace BossChecklist.UIElements
 									// Which sub-category are we in?
 									achCoord = new int[] { -1, -1 }; // No achievement drawing
 									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-										recordTitle = "Previous Attempt";
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousRecord");
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
-										recordTitle = "First Victory";
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.FirstRecord");
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
-										recordTitle = "Personal Best";
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BestRecord");
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
-										recordTitle = $"World Records";
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.WorldRecord");
 										recordValue = $"{Main.worldName}";
 									}
 								}
@@ -771,6 +776,7 @@ namespace BossChecklist.UIElements
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
 										// World Record
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DurationWorld");
 										achCoord = new int[] { 2, 12 };
 										if (wldRecord.durationWorld < 0) {
 											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
@@ -829,6 +835,7 @@ namespace BossChecklist.UIElements
 									}
 									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
 										// World Record
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");
 										achCoord = new int[] { 0, 7 };
 										recordValue = wldRecord.hitsTakenWorld.ToString();
 
@@ -853,13 +860,13 @@ namespace BossChecklist.UIElements
 									if (BossLogUI.MouseIntersects(posRect.X, posRect.Y, 64, 64)) {
 										// TODO: Change these texts to something better. A description of the record type
 										if (recordSlot == 1 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-											BossUISystem.Instance.UIHoverText = "Total times you killed the boss and total times the boss has killed you!";
+											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
 										}
 										if (recordSlot == 2) {
-											BossUISystem.Instance.UIHoverText = "The quickest time you became victorious!";
+											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.DurationDescription";
 										}
 										if (recordSlot == 3) {
-											BossUISystem.Instance.UIHoverText = "Avoid as many attacks as you can for a no-hitter!";
+											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.HitsTakenDescription";
 										}
 									}
 								}
@@ -925,7 +932,8 @@ namespace BossChecklist.UIElements
 								spriteBatch.Draw(head, pos, headColor);
 								headTextureOffsetX += head.Width + 5;
 								if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
-									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\nClick to view page";
+									string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
 										BossLogUI.PageNum = npcIndex;
 									}
@@ -1307,8 +1315,7 @@ namespace BossChecklist.UIElements
 						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
 					}
 					if (Id == "F_3") {
-						//TODO: lang
-						BossUISystem.Instance.UIHoverText = "Toggle hidden visibility";
+						BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ToggleVisibility";
 					}
 				}
 			}
@@ -1458,7 +1465,7 @@ namespace BossChecklist.UIElements
 						Vector2 pos2 = new Vector2(parent.X + parent.Width - (texture.Width * 2) + offsetX - hardModeOffset, inner.Y - 2);
 						spriteBatch.Draw(texture, pos2, Color.White);
 						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
-							BossUISystem.Instance.UIHoverText = $"All Loot Obtained!\n[Localization Needed]";
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.AllLoot";
 						}
 					}
 					if (allCollect) {
@@ -1467,7 +1474,7 @@ namespace BossChecklist.UIElements
 						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width + offsetX - hardModeOffset, inner.Y - 2);
 						spriteBatch.Draw(texture, pos2, Color.White);
 						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
-							BossUISystem.Instance.UIHoverText = $"All Collectibles Obtained!\n[Localization Needed]";
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.AllCollectibles";
 						}
 					}
 				}
@@ -1593,16 +1600,20 @@ namespace BossChecklist.UIElements
 				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
 
 				if (BossLogUI.MouseIntersects(inner.X, inner.Y, (int)inner.Width, (int)inner.Height)) {
-					BossUISystem.Instance.UIHoverText = $"Total: {allDownedEntries}/{allAccountedEntries}";
+					string total = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Total");
+					string bosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Bosses");
+					string miniBosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.MiniBosses");
+					string events = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Events");
+					BossUISystem.Instance.UIHoverText = $"{total}: {allDownedEntries}/{allAccountedEntries}";
 					if (!configs.OnlyBosses) {
 						if (configs.FilterMiniBosses != "Hide" || configs.FilterEvents != "Hide") {
-							BossUISystem.Instance.UIHoverText += $"\nBosses: {downedEntries[0]}/{totalEntries[0]}";
+							BossUISystem.Instance.UIHoverText += $"\n{bosses}: {downedEntries[0]}/{totalEntries[0]}";
 						}
 						if (configs.FilterMiniBosses != "Hide") {
-							BossUISystem.Instance.UIHoverText += $"\nMini-Bosses: {downedEntries[1]}/{totalEntries[1]}";
+							BossUISystem.Instance.UIHoverText += $"\n{miniBosses}: {downedEntries[1]}/{totalEntries[1]}";
 						}
 						if (configs.FilterEvents != "Hide") {
-							BossUISystem.Instance.UIHoverText += $"\nEvents: {downedEntries[2]}/{totalEntries[2]}";
+							BossUISystem.Instance.UIHoverText += $"\n{events}: {downedEntries[2]}/{totalEntries[2]}";
 						}
 					}
 				}
@@ -1674,10 +1685,10 @@ namespace BossChecklist.UIElements
 				if (AltButtonNum >= 0) {
 					if (BossLogUI.CategoryPageNum == CategoryPage.Record) {
 						string[] hoverTexts = {
-							"Previous Attempt",
-							"First Record",
-							"Best Record",
-							"World Record"
+							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousRecord"),
+							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.FirstRecord"),
+							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BestRecord"),
+							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.WorldRecord")
 						};
 
 						int selected = 0;

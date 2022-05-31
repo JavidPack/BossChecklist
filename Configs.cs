@@ -62,7 +62,12 @@ namespace BossChecklist
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents { get; set; }
-		
+
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
+		public bool DrawNextMark { get; set; }
+
 		[DefaultValue(true)]
 		[Label("$Mods.BossChecklist.Configs.Label.ColoredBossText")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ColoredBossText")]
@@ -74,14 +79,9 @@ namespace BossChecklist
 		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 
-		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
-		public bool DrawNextMark { get; set; }
-
 		[DefaultValue(false)]
-		[Label("[Localization Needed] Enable loot/collectible checklist")]
-		[Tooltip("[Localization Needed] The table of contents will also check if you've obtained all of a boss's loot and collectible items.")]
+		[Label("$Mods.BossChecklist.Configs.Label.LootChecklist")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LootChecklist")]
 		public bool LootCheckVisibility { get; set; }
 		
 		[DefaultValue(false)]
@@ -219,45 +219,44 @@ namespace BossChecklist
 		[Header("$Mods.BossChecklist.Configs.Header.Debug")]
 
 		[DefaultValue(false)]
-		[Label("Mod.Call Log Verbose")]
-		[Tooltip("If true, logs will display all bosses added to Boss Checklist within the server console")]
+		[Label("$Mods.BossChecklist.Configs.Label.ModCallVerbose")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ModCallVerbose")]
 		public bool ModCallLogVerbose { get; set; }
 
-		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
-		[Label("Reset Loot/Collection")]
-		[Tooltip("Remove a selected item from your saved loot/collection by double right-clicking the selected item slot\nClear the entire loot/collection list by double right-clicking the 'Loot / Collection' button\nHold Alt for either of these to apply the effect to ALL bosses")]
-		public bool ResetLootItems { get; set; }
-
-		[Header("[i:3619] [c/ffeb6e:Mod Developer Tools]")]
-
-		[DefaultValue(false)]
-		[Label("Access Internal Names")]
-		[Tooltip("Adds a button on a boss entry's page to copy boss keys and mod sources to clipboard.\nUseful for cross-mod content")]
+		[Label("$Mods.BossChecklist.Configs.Label.AccessInternalNames")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.AccessInternalNames")]
 		public bool AccessInternalNames { get; set; }
 
 		[DefaultValue(false)]
-		[Label("Show auto-detected collection type")]
-		[Tooltip("This will show what items our system has found as a specific collection type.")]
+		[Label("$Mods.BossChecklist.Configs.Label.CollectionTypeDetection")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CollectionTypeDetection")]
 		public bool ShowCollectionType { get; set; }
 
+		[BackgroundColor(55, 85, 120)]
 		[DefaultValue(false)]
-		[Label("Truly Dead Check")]
-		[Tooltip("When a boss NPC dies, it mentions in chat if the boss is completely gone")]
-		public bool ShowTDC { get; set; }
+		[Label("$Mods.BossChecklist.Configs.Label.InactiveBossCheck")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.InactiveBossCheck")]
+		public bool ShowInactiveBossCheck { get; set; }
 
-		[Header("[i:3619] [c/ffeb6e:Boss Records]")]
+		[Header("$Mods.BossChecklist.Configs.Header.DebugBossLogFeatures")]
 
 		[BackgroundColor(85, 55, 120)]
 		[DefaultValue(false)]
-		[Label("Reset Records Option")]
-		[Tooltip("Reset records with a boss by double right-clicking the 'Records' button of the selected boss page")]
+		[Label("$Mods.BossChecklist.Configs.Label.ResetLoot")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetLoot")]
+		public bool ResetLootItems { get; set; }
+
+		[BackgroundColor(85, 55, 120)]
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.ResetRecords")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetRecords")]
 		public bool ResetRecordsBool { get; set; }
 
 		[BackgroundColor(55, 85, 120)]
 		[DefaultValue(false)]
-		[Label("Disable updating new records")]
-		[Tooltip("Only 'previous attempt' will be updated.")]
+		[Label("$Mods.BossChecklist.Configs.Label.DisableNewRecords")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DisableNewRecords")]
 		public bool NewRecordsDisabled {
 			get => processRecord == 1 && nrEnabled;
 			set {
@@ -281,7 +280,7 @@ namespace BossChecklist
 
 		[BackgroundColor(55, 85, 120)]
 		[DefaultValue(false)]
-		[Label("Disable records from being tracked entirely.")]
+		[Label("$Mods.BossChecklist.Configs.Label.DisableRecordTracking")]
 		public bool RecordTrackingDisabled {
 			get => processRecord == 2 && rtEnabled;
 			set {
@@ -305,8 +304,8 @@ namespace BossChecklist
 
 		// TODO: Get timers and counters to properly visualize itself in Multiplayer
 		[BackgroundColor(55, 85, 120)]
-		[Label("Show record timers and counters of selected NPC")]
-		[Tooltip("This will only show if Record Tracking is NOT disabled\nNOTE: This debug feature only works in singleplayer currently!")]
+		[Label("$Mods.BossChecklist.Configs.Label.ShowRecordTracking")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ShowRecordTracking")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
 		// Code created by Jopojelly, taken from CheatSheet
@@ -325,7 +324,7 @@ namespace BossChecklist
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			if (!IsPlayerLocalServerOwner(Main.player[whoAmI])) {
-				message = "Only the host is allowed to change this config.";
+				message = Language.GetTextValue("Mods.BossChecklist.Configs.Notice.HostChange");
 				return false;
 			}
 			return true;

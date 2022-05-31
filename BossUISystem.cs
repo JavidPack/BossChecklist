@@ -6,6 +6,7 @@ using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -158,7 +159,13 @@ namespace BossChecklist
 				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
 					delegate {
 						if (UIHoverText != "") {
-							BossLogUI.DrawTooltipBG(Main.spriteBatch, UIHoverText, UIHoverTextColor);
+							// Detect if the hover text is a single localization key
+							if (UIHoverText.StartsWith("$Mods.")) {
+								BossLogUI.DrawTooltipBG(Main.spriteBatch, Language.GetTextValue(UIHoverText.Substring(1)), UIHoverTextColor);
+							}
+							else {
+								BossLogUI.DrawTooltipBG(Main.spriteBatch, UIHoverText, UIHoverTextColor);
+							}
 						}
 						UIHoverText = "";
 						UIHoverTextColor = default;

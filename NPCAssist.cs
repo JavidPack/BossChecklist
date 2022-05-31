@@ -74,7 +74,7 @@ namespace BossChecklist
 			// Twins check makes sure the other is not around before counting towards the record
 			int index = GetBossInfoIndex(npc);
 			if (index != -1) {
-				if (TrulyDead(npc, index)) {
+				if (TrulyInactive(npc, index)) {
 					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
 						if (Main.netMode == NetmodeID.SinglePlayer) {
 							CheckRecords(npc, index);
@@ -83,8 +83,8 @@ namespace BossChecklist
 							CheckRecordsMultiplayer(npc, index);
 						}
 					}
-					if (BossChecklist.DebugConfig.ShowTDC) {
-						Main.NewText(npc.FullName + ": " + TrulyDead(npc, index));
+					if (BossChecklist.DebugConfig.ShowInactiveBossCheck) {
+						Main.NewText(npc.FullName + ": " + TrulyInactive(npc, index));
 					}
 					WorldAssist.worldRecords[index].stat.totalKills++;
 				}
@@ -170,7 +170,9 @@ namespace BossChecklist
 				modPlayer.hasNewRecord[recordIndex] = true;
 				// Compare records to World Records. Logically, you can only beat the world records if you have beaten your own record
 				// TODO: Move World Record texts to Multiplayer exclusively. Check should still happen.
-				string message = CheckWorldRecords(recordIndex) ? "World Record!" : "New Record!";
+				string recordType = "BossChecklist.BossLog.Terms.";
+				recordType += CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
+				string message = Language.GetTextValue(recordType);
 				CombatText.NewText(player.getRect(), Color.LightYellow, message, true);
 			}
 		}
@@ -327,7 +329,7 @@ namespace BossChecklist
 			return -1;
 		}
 
-		public static bool TrulyDead(NPC npc, int index) {
+		public static bool TrulyInactive(NPC npc, int index) {
 			// Check all multibosses to see if the NPC is truly dead
 			// index should be checked for a value of -1 before submitting, but just in case...
 			if (index == -1) {

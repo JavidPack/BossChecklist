@@ -103,6 +103,20 @@ Mods: {
 				ViewLoot: Click to view all loot
 				ItemIsExpertOnly: This item is only obtainable in expert mode
 				ItemIsMasterOnly: This item is only obtainable in master mode
+				CopyKey: Click to copy internal 'boss key' to clipboard
+				CopySource: Click to copy internal 'mod source' to clipboard
+				UnderConstruction:
+					'''
+					This section of the Boss Log is still under construction.
+					Any features or configs related to this page may not work.
+					'''
+				ViewPage: Click to view page
+				KDRDescription: Total times you killed this boss and total times this boss has killed you!
+				DurationDescription: The quickest time you became defeated this boss!
+				HitsTakenDescription: Avoid as many attacks as you can! Try to defeat this boss untouched!
+				ToggleVisibility: Toggle hidden visibility
+				AllLoot: All Loot Obtained!
+				AllCollectibles: All Collectibles Obtained!
 			}
 
 			DrawnText: {
@@ -115,8 +129,10 @@ Mods: {
 				LootCollect: Loot & Collection
 				KDR: Kill Death Ratio
 				Duration: Fight Duration
-				Health: Lowest Health State
 				Dodge: Hits Received
+				KDRWorld: Global Kills and Deaths
+				DurationWorld: Quickest Fight
+				DodgeWorld: Lowest Hits Taken
 				RecipeFrom: Recipe from: {0}
 				CycleRecipe: Cycle alternative recipes
 				Noncraftable: This item is not craftable
@@ -127,6 +143,9 @@ Mods: {
 				NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
 				LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
 				NoModsSupported: None of your loaded mods have added pages to the Boss Log. If you want your favorite mods to be included, suggest adding their own boss pages to the mod's discord or forums page!
+				BeforeYouBegin: Before you begin...
+				EnableProgressionMode: Do you want to enable Progression Mode?
+				SelectAnOption: Please select an option below...
 			}
 
 			Credits: {
@@ -148,6 +167,13 @@ Mods: {
 				Bosses: Bosses
 				MiniBosses: Mini bosses
 				Events: Events
+				Total: Total
+				PreviousRecord: Previous Attempt
+				FirstRecord: First Victory
+				BestRecord: Best Record
+				WorldRecord: World Records
+				NewRecord: New Record!
+				NewWorldRecord: World Record!
 			}
 		}
 
@@ -165,13 +191,15 @@ Mods: {
 				ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
 				ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
-				Debug: "[i:3625] [c/ffeb6e:Debug]"
+				Debug: "[i:3625] [c/ffeb6e:Debugging and Mod Developer Tools]"
+				DebugBossLogFeatures: "[i:3619] [c/ffeb6e:Boss Log Feature Debugging]"
 			}
 
 			Label: {
 				BossLogColor: Boss Log Color
 				BossLogPos: Open Log Button Position
 				DrawNextMark: Next Boss Check
+				LootChecklist: Enable loot/collectible checklist
 				ColoredBossText: Colored Boss Text
 				CountDownedBosses: Downed Completion Display
 				SelectedCheckmarkType: Checklist Marking Type
@@ -198,6 +226,15 @@ Mods: {
 				RadarMiniBosses: Whitelist mini bosses
 				RadarOpacity: Radar Opacity
 				RadarBlacklist: Radar Blacklist
+				ModCallVerbose: Mod.Call Log Verbose
+				AccessInternalNames: Access Internal Names
+				CollectionTypeDetection: Show Auto-detected Collection Type
+				ResetLoot: Enable Reset Loot and Collection Items Option
+				ResetRecords: Enable Reset Record Option
+				InactiveBossCheck: Inactive Boss Check
+				DisableNewRecords: Disable updating new records
+				DisableRecordTracking: Disable records from being tracked entirely
+				ShowRecordTracking: Show record timers and counters of a selected Boss
 			}
 
 			Tooltip: {
@@ -205,13 +242,14 @@ Mods: {
 				BossLogPos:
 					'''
 					Hold right-click in-game to move the button wherever you like with ease!
-					Position is measured from bottom right corner of screen
+					Position is measured from bottom right corner of screen.
 					'''
-				DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight
+				DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
+				LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
 				ColoredBossText:
 					'''
 					The boss text in the table of contents will be green when defeated and red when not.
-					If next check is enabled, the next boss will be yellow
+					If next check is enabled, the next boss will be yellow.
 					'''
 				CountDownedBosses: If enabled, the table of contents will display how many bosses were defeated compared to the total amount.
 				ProgressionPrompt: While enabled, this will prevent the prompt from appearing on all future characters.
@@ -235,10 +273,36 @@ Mods: {
 				RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
 				RadarOpacity: Adjust how transparent the radar's icon will be
 				RadarBlacklist: The selected NPCs will not be tracked by the radar
+				ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
+				AccessInternalNames:
+					'''
+					Adds a button on a boss entry's page to copy boss keys and mod sources to in-game clipboard.
+					Useful for mod developers making cross-mod content."
+					'''
+				CollectionTypeDetection: Boss collection itemslots will be marked with the assigned collection type
+				ResetLoot: 
+					'''
+					Remove a selected item from your saved loot/collection by double right-clicking the selected item slot.
+					Clear the entire loot/collection list of a boss by double right-clicking the 'Loot & Collection' button.
+					Hold Alt to remove the applicable items from ALL bosses.
+					'''
+				ResetRecords: 
+					'''
+					Reset a records by double right-clicking a record on the selected boss page.
+					Reset all records for a boss by double right-clicking the 'Records' button of the selected boss page.
+					'''
+				InactiveBossCheck: 
+					'''
+					When a boss NPC dies or despawns, it mentions in chat if an active boss becomes inactive.
+					This check occurs before finalizing records and displaying despawn messages.
+					'''
+				DisableNewRecords: Previous Attempt records will still be updated
+				ShowRecordTracking: Record Tracking must be enabled for this to show
 			}
 
 			Notice: {
 				InvalidChange: You cannot change this while a boss is active!
+				HostChange: Only the host is allowed to change this config.
 			}
 		}
 	}
