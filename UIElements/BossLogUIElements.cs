@@ -837,7 +837,13 @@ namespace BossChecklist.UIElements
 										// World Record
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");
 										achCoord = new int[] { 0, 7 };
-										recordValue = wldRecord.hitsTakenWorld.ToString();
+										
+										if (wldRecord.durationWorld < 0) {
+											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+										}
+										else {
+											recordValue = wldRecord.hitsTakenWorld.ToString();
+										}
 
 										if (BossLogUI.CompareState != -1 && wldRecord.hitsTakenWorld >= 0) {
 											// If comparing is on
@@ -867,6 +873,23 @@ namespace BossChecklist.UIElements
 										}
 										if (recordSlot == 3) {
 											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.HitsTakenDescription";
+										}
+									}
+
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3 && (recordSlot == 2 || recordSlot == 3)) {
+										Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad);
+										Vector2 trophyPos = new Vector2(posRect.X + slot.Value.Width - trophy.Value.Width / 2, posRect.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
+										spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
+
+										string message = "Be the first to claim the world record!";
+										if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
+											if (recordSlot == 2 && !string.IsNullOrEmpty(wldRecord.durationHolder)) {
+												message = "Record Holder:\n" + wldRecord.durationHolder;
+											}
+											else if (recordSlot == 3 && !string.IsNullOrEmpty(wldRecord.hitsTakenHolder)) {
+												message = "Record Holder:\n" + wldRecord.hitsTakenHolder;
+											}
+											BossUISystem.Instance.UIHoverText = message;
 										}
 									}
 								}

@@ -388,15 +388,19 @@ namespace BossChecklist
 			// These will serve as a reservation for our AltPage buttons
 			SubpageButton zero = new SubpageButton(0);
 			zero.OnClick += (a, b) => ButtonClicked(0);
+			zero.OnRightClick += (a, b) => ButtonClicked(0, false);
 
 			SubpageButton one = new SubpageButton(1);
 			one.OnClick += (a, b) => ButtonClicked(1);
+			one.OnRightClick += (a, b) => ButtonClicked(1, false);
 
 			SubpageButton two = new SubpageButton(2);
 			two.OnClick += (a, b) => ButtonClicked(2);
+			two.OnRightClick += (a, b) => ButtonClicked(2, false);
 
 			SubpageButton three = new SubpageButton(3);
 			three.OnClick += (a, b) => ButtonClicked(3);
+			three.OnRightClick += (a, b) => ButtonClicked(3, false);
 
 			AltPageButtons = new SubpageButton[] {
 				zero,
@@ -1570,9 +1574,12 @@ namespace BossChecklist
 			}
 		}
 
-		public void ButtonClicked(int num) {
+		public void ButtonClicked(int num, bool leftClick = true) {
 			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
-			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
+			if (!leftClick) {
+				if (AltPageSelected[(int)CategoryPageNum] == num) {
+					return;
+				}
 				if (CompareState == AltPageSelected[(int)CategoryPageNum]) {
 					CompareState = -1;
 				}
@@ -1582,7 +1589,7 @@ namespace BossChecklist
 				else {
 					CompareState = -1;
 				}
-				Main.NewText($"Set compare value to {CompareState}");
+				//Main.NewText($"Set compare value to {CompareState}");
 			}
 			else {
 				// If selecting the compared state altpage, reset compare state

@@ -83,6 +83,7 @@ namespace BossChecklist
 		/// Boss Kills and Player Deaths
 		public int kills;
 		public int deaths;
+		// TODO: Add 'deathsFirs' to show the death count until the first victory
 
 		/// Fight Duration
 		public int durationPrev = -1;
@@ -187,6 +188,7 @@ namespace BossChecklist
 		public int totalKills;
 		public int totalDeaths;
 
+		// TODO: Make a list of record holders for players who match (more for hits Taken)
 		public string durationHolder = "";
 		public int durationWorld = -1;
 		
