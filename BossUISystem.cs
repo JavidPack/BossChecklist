@@ -6,6 +6,7 @@ using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -182,7 +183,9 @@ namespace BossChecklist
 					delegate {
 						PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
-						if (configIndex != -1) {
+						// Currently, this debug feature is limited to singleplayer
+						// TODO: Possibly make it functional in MP? No real good use for it as of now.
+						if (configIndex != -1 && Main.netMode == NetmodeID.SinglePlayer) {
 							string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
 												$"\nTime: {playerAssist.Tracker_Duration[configIndex]}" +
 												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[configIndex]}" +

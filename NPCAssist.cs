@@ -170,7 +170,7 @@ namespace BossChecklist
 				modPlayer.hasNewRecord[recordIndex] = true;
 				// Compare records to World Records. Logically, you can only beat the world records if you have beaten your own record
 				// TODO: Move World Record texts to Multiplayer exclusively. Check should still happen.
-				string recordType = "BossChecklist.BossLog.Terms.";
+				string recordType = "Mods.BossChecklist.BossLog.Terms.";
 				recordType += CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
 				string message = Language.GetTextValue(recordType);
 				CombatText.NewText(player.getRect(), Color.LightYellow, message, true);

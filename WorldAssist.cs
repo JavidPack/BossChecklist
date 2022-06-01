@@ -31,7 +31,11 @@ namespace BossChecklist
 		public static bool downedInvasionT3Ours;
 		public static bool downedTorchGod;
 
+		// Bosses will be set to true when they spawn and will only be set back to false when the boss despawns or dies
 		public static List<bool> ActiveBossesList;
+
+		// Players that are in the server when a boss fight starts
+		// Prevents players that join a server mid bossfight from messing up records
 		public static List<bool[]> StartingPlayers;
 
 		bool isBloodMoon = false;
@@ -95,32 +99,32 @@ namespace BossChecklist
 					if (b.active) {
 						for (int i = 0; i < Main.maxPlayers; i++) {
 							if (!ActiveBossesList[listNum]) {
+								// If the boss is not already marked active (first instance), set all active players to true within StartingPlayers
 								StartingPlayers[listNum][i] = Main.player[i].active;
 							}
 							else if (!Main.player[i].active) {
+								// Otherwise, if any players become inactive during the fight, remove them from the list
 								StartingPlayers[listNum][i] = false;
 							}
 						}
-						ActiveBossesList[listNum] = true;
-						// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 					}
-					else if (ActiveBossesList[listNum]) {
-						if (NPCAssist.TrulyInactive(b, listNum)) {
-							string message = GetDespawnMessage(b, listNum);
-							if (message != "") {
-								if (Main.netMode == NetmodeID.SinglePlayer) {
-									if (BossChecklist.ClientConfig.DespawnMessageType != "Disabled") {
-										Main.NewText(Language.GetTextValue(message, b.FullName), Colors.RarityPurple);
-									}
-								}
-								else {
-									ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
-								}
+					else if (ActiveBossesList[listNum] && NPCAssist.TrulyInactive(b, listNum)) {
+						// If the boss is marked active, but is no longer active, check for other potential npcs assigned to the boss
+						// If the boss is truly inactive, but not killed, display a despawn message
+						string message = GetDespawnMessage(b, listNum);
+						if (message != "") {
+							if (Main.netMode == NetmodeID.SinglePlayer) {
+								Main.NewText(Language.GetTextValue(message, b.FullName), Colors.RarityPurple);
 							}
-							ActiveBossesList[listNum] = false;
-							// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+							else {
+								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
+							}
 						}
 					}
+
+					// Set to active or inactive accordingly
+					ActiveBossesList[listNum] = b.active;
+					// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
 				}
 			}
 		}
