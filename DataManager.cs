@@ -84,6 +84,7 @@ namespace BossChecklist
 		public int kills;
 		public int deaths;
 		// TODO: Add 'deathsFirs' to show the death count until the first victory
+		// TODO: Add 'killsBest' to show which attempt was the best
 
 		/// Fight Duration
 		public int durationPrev = -1;

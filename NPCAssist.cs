@@ -59,7 +59,7 @@ namespace BossChecklist
 			if (NPCisLimb(npc) && BossChecklist.ClientConfig.LimbMessages) {
 				string partName = npc.GetFullNetName().ToString();
 				if (npc.type == NPCID.SkeletronHand) {
-					partName = "Skeletron Hand"; // TODO: translation?
+					partName = "Skeletron Hand"; // TODO: Localization needed
 				}
 				string defeatedLimb = "Mods.BossChecklist.BossDefeated.Limb";
 				if (Main.netMode == NetmodeID.SinglePlayer) {

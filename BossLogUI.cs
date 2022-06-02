@@ -365,7 +365,7 @@ namespace BossChecklist
 			recordButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.Records");
 			recordButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			recordButton.Height.Pixels = 25;
-			recordButton.Left.Pixels = 15;
+			recordButton.Left.Pixels = PageTwo.Width.Pixels / 2 - recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 15;
 			recordButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Record);
 			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
@@ -373,12 +373,12 @@ namespace BossChecklist
 			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
 			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
 			spawnButton.Height.Pixels = 25;
-			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 - 8 + 15;
+			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 + 8;
 			spawnButton.Top.Pixels = 15;
 			spawnButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Spawn);
 
 			lootButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.LootCollect");
-			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24 + 15;
+			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24 + 16;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 50;
@@ -1552,19 +1552,28 @@ namespace BossChecklist
 					bool eventCheck = CategoryPageNum != CategoryPage.Record || boss.type == EntryType.Event;
 					// Spawn and Loot pages do not have alt pages currently, so skip adding them
 					if (!eventCheck) {
+						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						BossStats record = modPlayer.RecordsForWorld[PageNum].stat;
 						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {
 							if (CategoryPageNum == CategoryPage.Spawn || CategoryPageNum == CategoryPage.Loot) {
 								break;
 							}
+							if ((i == 1 || i == 2) && record.kills == 0) {
+								// If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
+								continue;
+							}
 							AltPageButtons[i].Width.Pixels = 32;
 							AltPageButtons[i].Height.Pixels = 32;
 							if (CategoryPageNum == CategoryPage.Record) {
-								AltPageButtons[i].Left.Pixels = (PageTwo.Width.Pixels / 2) - 74 + ((AltPageButtons[0].Width.Pixels + 6) * i);
+								// If First or Best buttons were skipped account for the positioning of Previous and World
+								if (i < 2) {
+									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels - 8 - 32 + (record.kills == 0 ? -16 : (i - 1) * 36);
+								}
+								else {
+									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + 8 + (record.kills == 0 ? 16 : (i - 2) * 36);
+								}
 							}
-							else {
-								AltPageButtons[i].Left.Pixels = PageTwo.Width.Pixels - 24 - AltPageButtons[0].Width.Pixels;
-							}
-							AltPageButtons[i].Top.Pixels = 86;
+							AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 16;
 							PageTwo.Append(AltPageButtons[i]);
 						}
 					}

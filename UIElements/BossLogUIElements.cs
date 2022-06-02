@@ -643,7 +643,7 @@ namespace BossChecklist.UIElements
 							// Boss Records Subpage
 							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
 							Rectangle innerRect = pageRect;
-							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 60, 32, 34);
+							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 100, 32, 34);
 							spriteBatch.Draw(construction.Value, conRect, Color.White);
 
 							if (Main.mouseX >= conRect.X && Main.mouseX < conRect.X + conRect.Width) {
@@ -707,7 +707,43 @@ namespace BossChecklist.UIElements
 									}
 								}
 								if (recordSlot == 1) {
-									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] != 3) {
+									if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
+										// World Global Kills & Deaths
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDRWorld");
+										achCoord = wldRecord.totalKills >= wldRecord.totalDeaths ? new int[] { 4, 10 } : new int[] { 4, 8 };
+										if (wldRecord.totalKills == 0 && wldRecord.totalDeaths == 0) {
+											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+										}
+										else {
+											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
+											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
+											recordValue = $"{wldRecord.totalKills} {killTerm} / {wldRecord.totalDeaths} {deathTerm}";
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
+										// TODO: Localization needed
+										recordTitle = Language.GetTextValue("Attempt #");
+										achCoord = new int[] { 0, 9 };
+										if (record.kills == 0) {
+											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+										}
+										else {
+											recordValue = $"#{record.kills}";
+										}
+									}
+									else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
+										// TODO: Localization needed
+										recordTitle = Language.GetTextValue("Deaths Until First Victory");
+										achCoord = new int[] { 4, 8 };
+										if (record.kills == 0) {
+											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+										}
+										else {
+											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
+											recordValue = $"{record.deaths} {deathTerm}";
+										}
+									}
+									else {
 										// Kills & Deaths
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
 										achCoord = new int[] { 0, 3 };
@@ -718,19 +754,6 @@ namespace BossChecklist.UIElements
 											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
 											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
 											recordValue = $"{record.kills} {killTerm} / {record.deaths} {deathTerm}";
-										}
-									}
-									else {
-										// World Kills & Deaths
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDRWorld");
-										achCoord = wldRecord.totalKills >= wldRecord.totalDeaths ? new int[] { 4, 10 } : new int[] { 4, 8 };
-										if (wldRecord.totalKills == 0 && wldRecord.totalDeaths == 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
-										}
-										else {
-											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
-											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
-											recordValue = $"{wldRecord.totalKills} {killTerm} / {wldRecord.totalDeaths} {deathTerm}";
 										}
 									}
 								}
@@ -856,7 +879,7 @@ namespace BossChecklist.UIElements
 								}
 
 								if (achCoord[0] != -1) {
-									Rectangle posRect = new Rectangle(pageRect.X + 15, pageRect.Y + 125 + (75 * recordSlot), 64, 64);
+									Rectangle posRect = new Rectangle(pageRect.X + 15, pageRect.Y + 100 + (75 * recordSlot), 64, 64);
 									Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
 
 									Asset<Texture2D> slot = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
@@ -865,8 +888,22 @@ namespace BossChecklist.UIElements
 
 									if (BossLogUI.MouseIntersects(posRect.X, posRect.Y, 64, 64)) {
 										// TODO: Change these texts to something better. A description of the record type
-										if (recordSlot == 1 && BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
-											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
+										if (recordSlot == 1) {
+											if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 0) {
+												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
+											}
+											else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 1) {
+												//TODO: Localization needed
+												BossUISystem.Instance.UIHoverText = "How many deaths you had before defeating this boss for the first time";
+											}
+											else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 2) {
+												//TODO: Localization needed
+												BossUISystem.Instance.UIHoverText = "How many attempts it took for you to achieve your best record";
+											}
+											else if (BossLogUI.AltPageSelected[(int)BossLogUI.CategoryPageNum] == 3) {
+												//TODO: Localization needed
+												BossUISystem.Instance.UIHoverText = "Global kills and deaths with this boss";
+											}
 										}
 										if (recordSlot == 2) {
 											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.DurationDescription";
@@ -901,7 +938,7 @@ namespace BossChecklist.UIElements
 								}
 								*/
 
-								int offsetY = 135 + (recordSlot * 75);
+								int offsetY = 110 + (recordSlot * 75);
 								CalculatedStyle inner = GetInnerDimensions();
 
 								Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(recordTitle);
