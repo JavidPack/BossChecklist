@@ -654,6 +654,29 @@ namespace BossChecklist.UIElements
 								}
 							}
 
+							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
+								if (info.type != EntryType.Event) {
+									continue;
+								}
+								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+									Texture2D icon = info.headIconTextures[0].Value;
+									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
+									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+									spriteBatch.Draw(icon, pos, faded);
+									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
+										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
+											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+											if (Main.mouseLeft && Main.mouseLeftRelease) {
+												// Reset UI positions when changing the page
+												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+												BossUISystem.Instance.BossLog.ResetUIPositioning();
+											}
+										}
+									}
+								}
+							}
+
 							// Beginning of record drawing
 							Asset<Texture2D> achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
