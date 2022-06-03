@@ -287,6 +287,12 @@ namespace BossChecklist
 					if (boss.Key == "Terraria TorchGod") {
 						boss.lootItemTypes.Add(ItemID.TorchGodsFavor);
 					}
+					else if (boss.Key == "Terraria EaterofWorldsHead") {
+						boss.lootItemTypes.Add(ItemID.ShadowScale);
+					}
+					else if (boss.Key == "Terraria BrainofCthulhu") {
+						boss.lootItemTypes.Add(ItemID.TissueSample);
+					}
 					else if (boss.Key == "Terraria DD2DarkMageT3") {
 						boss.lootItemTypes.Add(ItemID.BossBagDarkMage);
 					}
