@@ -150,7 +150,7 @@ namespace BossChecklist
 			if (AllStoredRecords.ContainsKey(WorldID) && AllStoredRecords.TryGetValue(WorldID, out RecordsForWorld)) {
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 					// If we added mod bosses since we last generated this, be sure to add them
-					if (!RecordsForWorld.Exists(x => x.bossKey == boss.Key)) {
+					if (!RecordsForWorld.Exists(x => x.bossKey == boss.Key) && boss.type == EntryType.Boss) {
 						RecordsForWorld.Add(new BossRecord(boss.Key));
 					}
 				}
@@ -159,7 +159,9 @@ namespace BossChecklist
 				// If records dont exist (player is new to the world) create a new entry for the player to use.
 				RecordsForWorld = new List<BossRecord>();
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-					RecordsForWorld.Add(new BossRecord(boss.Key));
+					if (boss.type == EntryType.Boss) {
+						RecordsForWorld.Add(new BossRecord(boss.Key));
+					}
 				}
 				AllStoredRecords.Add(WorldID, RecordsForWorld);
 			}

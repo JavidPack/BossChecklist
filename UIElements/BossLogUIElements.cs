@@ -639,7 +639,7 @@ namespace BossChecklist.UIElements
 						}
 					}
 					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == 0 && selectedBoss.modSource != "Unknown") {
-						if (selectedBoss.type != EntryType.Event) {
+						if (selectedBoss.type == EntryType.Boss) {
 							// Boss Records Subpage
 							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
 							Rectangle innerRect = pageRect;
@@ -651,27 +651,6 @@ namespace BossChecklist.UIElements
 									string translated = 
 									BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.UnderConstruction";
 									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
-								}
-							}
-
-							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-								if (info.type != EntryType.Event) {
-									continue;
-								}
-								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
-									Texture2D icon = info.headIconTextures[0].Value;
-									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 50);
-									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									spriteBatch.Draw(icon, pos, faded);
-									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
-										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
-											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-											}
-										}
-									}
 								}
 							}
 
@@ -970,7 +949,31 @@ namespace BossChecklist.UIElements
 								}
 							}
 						}
-						else {
+						else if (selectedBoss.type == EntryType.MiniBoss) {
+							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
+								if (info.type != EntryType.Event) {
+									continue;
+								}
+								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+									Texture2D icon = info.headIconTextures[0].Value;
+									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
+									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+									spriteBatch.Draw(icon, pos, faded);
+									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
+										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
+											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+											if (Main.mouseLeft && Main.mouseLeftRelease) {
+												// Reset UI positions when changing the page
+												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+												BossUISystem.Instance.BossLog.ResetUIPositioning();
+											}
+										}
+									}
+								}
+							}
+						}
+						else if (selectedBoss.type == EntryType.Event) {
 							var bosses = BossChecklist.bossTracker.SortedBosses;
 							int offset = 0;
 							int offsetY = 0;
@@ -995,7 +998,9 @@ namespace BossChecklist.UIElements
 									string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
+										// Reset UI positions when changing the page
 										BossLogUI.PageNum = npcIndex;
+										BossUISystem.Instance.BossLog.ResetUIPositioning();
 									}
 								}
 								if (head.Height > headTextureOffsetY) {

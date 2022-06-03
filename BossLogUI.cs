@@ -1548,10 +1548,10 @@ namespace BossChecklist
 			else {
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown") {
-					// Events do not have records. Instead we create their own page with banners of the enemies in the event.
-					bool eventCheck = CategoryPageNum != CategoryPage.Record || boss.type == EntryType.Event;
+					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
+					bool bossCheck = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
 					// Spawn and Loot pages do not have alt pages currently, so skip adding them
-					if (!eventCheck) {
+					if (!bossCheck) {
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						BossStats record = modPlayer.RecordsForWorld[PageNum].stat;
 						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {
