@@ -339,7 +339,7 @@ namespace BossChecklist
 					ItemID.BadgersHat
 				}
 			},
-			{ "Terraria EaterofWorlds",
+			{ "Terraria EaterofWorldsHead",
 				new List<int>() {
 					ItemID.EaterofWorldsMasterTrophy,
 					ItemID.EaterOfWorldsPetItem,
