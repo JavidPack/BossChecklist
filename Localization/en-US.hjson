@@ -112,7 +112,7 @@ Mods: {
 					'''
 				ViewPage: Click to view page
 				KDRDescription: Total times you killed this boss and total times this boss has killed you!
-				DurationDescription: The quickest time you became defeated this boss!
+				DurationDescription: The quickest time you defeated this boss!
 				HitsTakenDescription: Avoid as many attacks as you can! Try to defeat this boss untouched!
 				ToggleVisibility: Toggle hidden visibility
 				AllLoot: All Loot Obtained!
