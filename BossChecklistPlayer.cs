@@ -27,9 +27,15 @@ namespace BossChecklist
 		}
 
 		public override void SetControls() {
-			if (BossUISystem.Instance.BossLog.BossLogVisible && Main.LocalPlayer.controlInv) {
-				BossUISystem.Instance.BossLog.ToggleBossLog(false);
-				Main.LocalPlayer.releaseInventory = false;
+			if (BossUISystem.Instance.BossLog.BossLogVisible) {
+				if (Main.LocalPlayer.controlInv) {
+					BossUISystem.Instance.BossLog.ToggleBossLog(false);
+					Main.LocalPlayer.releaseInventory = false;
+				}
+				else if (Main.LocalPlayer.controlCreativeMenu) {
+					BossUISystem.Instance.BossLog.ToggleBossLog(false);
+					Main.LocalPlayer.releaseCreativeMenu = false;
+				}
 			}
 		}
 
