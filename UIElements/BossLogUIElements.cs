@@ -1546,23 +1546,23 @@ namespace BossChecklist.UIElements
 
 					CalculatedStyle parent = this.Parent.GetInnerDimensions();
 					int hardModeOffset = sortedBosses[index].progression > BossTracker.WallOfFlesh ? 10 : 0;
+					string looted = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllLoot");
+					string collected = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllCollectibles");
 
-					if (allLoot) {
-						Texture2D texture = BossLogUI.chestTexture.Value;
-						int offsetX = allCollect ? -6 : 7;
-						Vector2 pos2 = new Vector2(parent.X + parent.Width - (texture.Width * 2) + offsetX - hardModeOffset, inner.Y - 2);
+					if (allLoot && allCollect) {
+						Texture2D texture = BossLogUI.goldChestTexture.Value;
+						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2);
 						spriteBatch.Draw(texture, pos2, Color.White);
 						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.AllLoot";
+							BossUISystem.Instance.UIHoverText = $"{looted}\n{collected}";
 						}
 					}
-					if (allCollect) {
-						Texture2D texture = BossLogUI.goldChestTexture.Value;
-						int offsetX = allLoot ? -1 : -14;
-						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width + offsetX - hardModeOffset, inner.Y - 2);
+					else if (allLoot || allCollect) {
+						Texture2D texture = BossLogUI.chestTexture.Value;
+						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2);
 						spriteBatch.Draw(texture, pos2, Color.White);
 						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.AllCollectibles";
+							BossUISystem.Instance.UIHoverText = allLoot ? looted : collected;
 						}
 					}
 				}
