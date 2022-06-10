@@ -39,9 +39,10 @@ namespace BossChecklist
 		public SubpageButton lootButton;
 
 		public SubpageButton[] AltPageButtons;
-		public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
-		public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
-		public static int CompareState = -1; // Compare record values to one another. Value '-1' means not showing.
+		public static RecordType RecordPageSelected = RecordType.PreviousAttempt;
+		public static RecordType CompareState = RecordType.None; // Compare record values to one another
+		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
+		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
@@ -209,15 +210,13 @@ namespace BossChecklist
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
 
-			AltPageSelected = new int[] {
-				0, 0, 0
-			};
-
+			/* Keep incase more alt pages are reintroduced
 			TotalAltPages = new int[] {
 				4, // Record types have their own pages (Last, Best, First, World)
 				1, // All spawn info is on one page
 				1 // Loot and Collectibles occupy the same page
 			};
+			*/
 
 			BookArea = new BossLogPanel();
 			BookArea.Width.Pixels = bookUITexture.Value.Width;
@@ -386,27 +385,27 @@ namespace BossChecklist
 			lootButton.OnRightDoubleClick += RemoveItem;
 
 			// These will serve as a reservation for our AltPage buttons
-			SubpageButton zero = new SubpageButton(0);
-			zero.OnClick += (a, b) => ButtonClicked(0);
-			zero.OnRightClick += (a, b) => ButtonClicked(0, false);
+			SubpageButton PrevRecordButton = new SubpageButton(0);
+			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.PreviousAttempt);
+			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.PreviousAttempt, false);
 
-			SubpageButton one = new SubpageButton(1);
-			one.OnClick += (a, b) => ButtonClicked(1);
-			one.OnRightClick += (a, b) => ButtonClicked(1, false);
+			SubpageButton FirstRecordButton = new SubpageButton(1);
+			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.FirstRecord);
+			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.FirstRecord, false);
 
-			SubpageButton two = new SubpageButton(2);
-			two.OnClick += (a, b) => ButtonClicked(2);
-			two.OnRightClick += (a, b) => ButtonClicked(2, false);
+			SubpageButton BestRecordButton = new SubpageButton(2);
+			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.BestRecord);
+			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.BestRecord, false);
 
-			SubpageButton three = new SubpageButton(3);
-			three.OnClick += (a, b) => ButtonClicked(3);
-			three.OnRightClick += (a, b) => ButtonClicked(3, false);
+			SubpageButton WorldRecordButton = new SubpageButton(3);
+			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.WorldRecord);
+			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.WorldRecord, false);
 
 			AltPageButtons = new SubpageButton[] {
-				zero,
-				one,
-				two,
-				three
+				PrevRecordButton,
+				FirstRecordButton,
+				BestRecordButton,
+				WorldRecordButton
 			};
 		}
 
@@ -616,7 +615,6 @@ namespace BossChecklist
 			}
 		}
 
-		// TODO: Test both ResetStats and RemoveItem() in multiplayer
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
 				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[PageNum].stat;
@@ -631,11 +629,10 @@ namespace BossChecklist
 				OpenRecord();
 				
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
-					RecordID specificRecord = RecordID.ResetAll;
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
 					packet.Write((int)PageNum);
-					stats.NetSend(packet, specificRecord);
+					stats.NetSend(packet, RecordID.ResetAll);
 					packet.Send(toClient: Main.LocalPlayer.whoAmI);
 				}
 			}
@@ -875,8 +872,7 @@ namespace BossChecklist
 					TotalRecipes++;
 				}
 				Item spawn = ContentSamples.ItemsByType[boss.spawnItem[RecipePageNum]];
-				// TODO: temp until figuring out what to do with Torch God info
-				if (boss.npcIDs.Contains(NPCID.TorchGod) && spawn.type == ItemID.Torch) {
+				if (boss.Key == "Terraria TorchGod" && spawn.type == ItemID.Torch) {
 					spawn.stack = 101;
 				}
 
@@ -908,8 +904,7 @@ namespace BossChecklist
 						row++;
 					}
 					else if (k == 13) {
-						// Hopefully no mod uses more than 14 items to craft this spawn item
-						// If so, cut off the remaining row to prevent the itemslots from overflowing below the page. TODO? change this?
+						// No mods should be able to use more than 14 items to craft this spawn item, so break incase it goes beyond that
 						break;
 					}
 				}
@@ -1119,7 +1114,7 @@ namespace BossChecklist
 			ResetBothPages();
 			ResetUIPositioning();
 
-			FittedTextPanel textBox = new FittedTextPanel("Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.\n\nNote, the Boss Log is disabled until one of the options is selected!");
+			FittedTextPanel textBox = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ProgressionModeDescription");
 			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
 			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
 			textBox.Left.Pixels = 10;
@@ -1167,10 +1162,10 @@ namespace BossChecklist
 			};
 
 			FittedTextPanel[] textOptions = new FittedTextPanel[] {
-				new FittedTextPanel("Continue with progression mode disabled..."),
-				new FittedTextPanel("Continue with progression mode fully enabled"),
-				new FittedTextPanel("Close Boss Log and configure progression mode"),
-				new FittedTextPanel("Don't show this again\n(For future characters)"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressMode"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.EnableProgressMode"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ConfigProgressMode"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressPrompt"),
 			};
 
 			Asset<Texture2D> check = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
@@ -1406,7 +1401,7 @@ namespace BossChecklist
 				brokenPanel.Left.Pixels = 18;
 				PageTwo.Append(brokenPanel);
 
-				FittedTextPanel brokenDisplay = new FittedTextPanel(Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.NoModsSupported"));
+				FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NoModsSupported");
 				brokenDisplay.Height.Pixels = 200;
 				brokenDisplay.Width.Pixels = 340;
 				brokenDisplay.Top.Pixels = 0;
@@ -1503,7 +1498,7 @@ namespace BossChecklist
 					brokenPanel.Left.Pixels = 3;
 					PageTwo.Append(brokenPanel);
 
-					FittedTextPanel brokenDisplay = new FittedTextPanel(Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.LogFeaturesNotAvailable"));
+					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.LogFeaturesNotAvailable");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = -12;
@@ -1519,7 +1514,7 @@ namespace BossChecklist
 					brokenPanel.Left.Pixels = 14;
 					PageOne.Append(brokenPanel);
 
-					FittedTextPanel brokenDisplay = new FittedTextPanel(Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.NotImplemented"));
+					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NotImplemented");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = 0;
@@ -1549,15 +1544,13 @@ namespace BossChecklist
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown") {
 					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
-					bool bossCheck = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
 					// Spawn and Loot pages do not have alt pages currently, so skip adding them
-					if (!bossCheck) {
+					bool validRecordPage = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
+					if (!validRecordPage) {
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						BossStats record = modPlayer.RecordsForWorld[PageNum].stat;
-						for (int i = 0; i < TotalAltPages[(int)CategoryPageNum]; i++) {
-							if (CategoryPageNum == CategoryPage.Spawn || CategoryPageNum == CategoryPage.Loot) {
-								break;
-							}
+						int totalRecords = (int)RecordType.None;
+						for (int i = 0; i < totalRecords; i++) {
 							if ((i == 1 || i == 2) && record.kills == 0) {
 								// If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
 								continue;
@@ -1583,47 +1576,38 @@ namespace BossChecklist
 			}
 		}
 
-		public void ButtonClicked(int num, bool leftClick = true) {
+		public void HandleRecordTypeButton(RecordType type, bool leftClick = true) {
 			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
 			if (!leftClick) {
-				if (AltPageSelected[(int)CategoryPageNum] == num) {
+				if (RecordPageSelected == type) {
 					return;
 				}
-				if (CompareState == AltPageSelected[(int)CategoryPageNum]) {
-					CompareState = -1;
+
+				if (CompareState == RecordPageSelected) {
+					CompareState = RecordType.None;
 				}
-				else if (CompareState != num) {
-					CompareState = num;
+				else if (CompareState != type) {
+					CompareState = type;
 				}
 				else {
-					CompareState = -1;
+					CompareState = RecordType.None;
 				}
 				//Main.NewText($"Set compare value to {CompareState}");
 			}
 			else {
 				// If selecting the compared state altpage, reset compare state
-				if (CompareState == num) {
-					CompareState = -1;
+				if (CompareState == type) {
+					CompareState = RecordType.None;
 				}
-				UpdateCatPage(CategoryPageNum, num);
+				UpdateCatPage(CategoryPageNum, type);
 			}
 		}
 
-		public void UpdateCatPage(CategoryPage catPage, int altPage = -1) {
+		public void UpdateCatPage(CategoryPage catPage, RecordType altPage = RecordType.None) {
 			CategoryPageNum = catPage;
 			// If altPage doesn't want to be changed use -1
-			if (altPage != -1) {
-				if (catPage == CategoryPage.Loot) {
-					if (AltPageSelected[(int)catPage] == 0) {
-						AltPageSelected[(int)catPage] = 1;
-					}
-					else if (AltPageSelected[(int)catPage] == 1) {
-						AltPageSelected[(int)catPage] = 0;
-					}
-				}
-				else {
-					AltPageSelected[(int)catPage] = altPage;
-				}
+			if (altPage != RecordType.None) {
+				RecordPageSelected = altPage;
 			}
 
 			if (PageNum == -1) {

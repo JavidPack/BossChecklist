@@ -132,10 +132,6 @@ namespace BossChecklist
 			int hitsTakenAttempt = modPlayer.Tracker_HitsTaken[recordIndex];
 			int currentBestHitsTaken = bossStats.hitsTakenBest;
 
-			// Setup player's last fight attempt numbers
-			modPlayer.duration_CompareValue = durationAttempt;
-			modPlayer.hitsTaken_CompareValue = hitsTakenAttempt;
-
 			bossStats.kills++; // Kills always go up, since comparing only occurs if boss was defeated
 
 			// If the player has beaten their best record, we change BEST to PREV and make the current attempt the new BEST
@@ -199,10 +195,6 @@ namespace BossChecklist
 					durationPrev = modPlayer.Tracker_Duration[recordIndex],
 					hitsTakenPrev = modPlayer.Tracker_HitsTaken[recordIndex]
 				};
-
-				// Setup player's last fight attempt numbers
-				modPlayer.duration_CompareValue = newRecord.durationPrev;
-				modPlayer.hitsTaken_CompareValue = newRecord.hitsTakenPrev;
 
 				RecordID specificRecord = RecordID.None;
 				// For each record type we check if its beats the current record or if it is not set already

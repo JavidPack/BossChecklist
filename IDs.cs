@@ -52,4 +52,13 @@ namespace BossChecklist
 		HitsTaken = 2,
 		ResetAll = 4
 	}
+
+	internal enum RecordType : int
+	{
+		PreviousAttempt,
+		FirstRecord,
+		BestRecord,
+		WorldRecord,
+		None
+	}
 }

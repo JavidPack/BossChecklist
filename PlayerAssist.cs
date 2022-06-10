@@ -28,10 +28,6 @@ namespace BossChecklist
 		public Dictionary<string, List<string>> AllStoredForceDowns;
 		public List<string> ForceDownsForWorld;
 
-		// TODO: look into this 
-		public int duration_CompareValue;
-		public int hitsTaken_CompareValue;
-
 		// The 'in progress' values for records. This is what is updated during boss fights.
 		public List<int> Tracker_Duration;
 		public List<int> Tracker_HitsTaken;
@@ -51,11 +47,6 @@ namespace BossChecklist
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				BossItemsCollected.Add(boss.Key, new List<ItemDefinition>());
 			}
-
-			// TODO: Reimplement how this works. Best record becomes Prev Best on new record until another fight overwrites it with a new previous attempt?
-			// This will be the attempt records of the players last fight (Not saved!)
-			// This is only used for the UI, to determine whether the PrevRecord is a "last attempt" or a "beaten record"
-			duration_CompareValue = hitsTaken_CompareValue = -1;
 
 			// For being able to complete records in Multiplayer
 			Tracker_Duration = new List<int>();
@@ -128,7 +119,6 @@ namespace BossChecklist
 			enteredWorldReset = true;
 
 			// Reset record tracker numbers
-			duration_CompareValue = -1; //TODO: find out why hitstaken isnt reset and why its set to -1
 			Tracker_Duration = new List<int>();
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();
@@ -225,7 +215,6 @@ namespace BossChecklist
 		}
 
 		// Whenever the player is hurt, add to the HitsTaken tracker.
-		// TODO: Test debuff damage. Would rather that not count.
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {

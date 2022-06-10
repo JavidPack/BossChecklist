@@ -115,8 +115,13 @@ Mods: {
 				DurationDescription: The quickest time you defeated this boss!
 				HitsTakenDescription: Avoid as many attacks as you can! Try to defeat this boss untouched!
 				ToggleVisibility: Toggle hidden visibility
-				AllLoot: All Loot Obtained!
-				AllCollectibles: All Collectibles Obtained!
+				AllLoot: All Boss Loot Obtained!
+				AllCollectibles: All Boss Collectibles Obtained!
+				MaskedItems: Defeat {0} to view obtainable loot and collectibles
+				FirstKDRDescription: How many times you were defeated before achieving your first victory
+				BestKDRDescription: How many attempts it took for you to achieve your best record
+				GlobalKDRDescription: Global kills and deaths with this boss
+				ClaimRecord: Be the first to claim the world record!
 			}
 
 			DrawnText: {
@@ -146,6 +151,20 @@ Mods: {
 				BeforeYouBegin: Before you begin...
 				EnableProgressionMode: Do you want to enable Progression Mode?
 				SelectAnOption: Please select an option below...
+				DisableProgressMode: Continue with progression mode disabled...
+				EnableProgressMode: Continue with progression mode fully enabled...
+				ConfigProgressMode: Close Boss Log and configure progression mode...
+				DisableProgressPrompt: 
+					'''
+					Don't show this again
+					(For future characters)
+					'''
+				ProgressionModeDescription:
+					'''
+					Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.
+					
+					Note, the Boss Log is disabled until one of the options is selected!
+					'''
 			}
 
 			Credits: {
@@ -174,6 +193,9 @@ Mods: {
 				WorldRecord: World Records
 				NewRecord: New Record!
 				NewWorldRecord: World Record!
+				Attempt: Attempt
+				Defeats: Defeats
+				RecordHolder: Record Holder(s):
 			}
 		}
 
