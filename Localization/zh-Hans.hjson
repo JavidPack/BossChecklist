@@ -117,6 +117,11 @@ Mods: {
 				ToggleVisibility: 切换隐藏可见性
 				AllLoot: 已获得所有的战利品!
 				AllCollectibles: 已获得所有的收藏品!
+				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
+				FirstKDRDescription: 首次胜利之前你被击败的次数
+				BestKDRDescription: 取得最好成绩之前你尝试的次数
+				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数
+				ClaimRecord: 成为第一个打破世界纪录的人!
 			}
 
 			DrawnText: {
@@ -146,6 +151,20 @@ Mods: {
 				BeforeYouBegin: 在你开始之前...
 				EnableProgressionMode: 你想要开启进度模式吗?
 				SelectAnOption: 请在下方选择一项...
+				DisableProgressMode: 继续并禁用进度模式...
+				EnableProgressMode: 继续并完全开启进度模式...
+				ConfigProgressMode: 关闭Boss日志并配置进度模式...
+				DisableProgressPrompt: 
+					'''
+					不再显示此内容
+					(对于将来的人物)
+					'''
+				ProgressionModeDescription:
+					'''
+					进度模式隐藏了很多Boss内容, 直至你击败对应的Boss或满足条件. 本模式及其适合盲打通关.
+
+					注意, 在选择任意选项之前, Boss日志将被禁用!
+					'''
 			}
 
 			Credits: {
@@ -174,6 +193,9 @@ Mods: {
 				WorldRecord: 世界纪录
 				NewRecord: 新纪录!
 				NewWorldRecord: 世界纪录!
+				Attempt: 尝试
+				Defeats: 击败
+				RecordHolder: 记录保持者:
 			}
 		}
 
