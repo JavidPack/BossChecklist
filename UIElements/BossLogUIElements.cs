@@ -214,7 +214,7 @@ namespace BossChecklist.UIElements
 				string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
 				string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
 
-				if (maskedItems && !selectedBoss.IsDownedOrForced) {
+				if (maskedItems && !selectedBoss.IsDownedOrForced && Id.StartsWith("loot_")) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 					string hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.MaskedItems", selectedBoss.DisplayName);
@@ -232,7 +232,7 @@ namespace BossChecklist.UIElements
 					}
 					return;
 				}
-				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar || Id.StartsWith("ingredient_")) {
+				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar) {
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 				}
 
