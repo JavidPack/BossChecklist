@@ -164,12 +164,11 @@ namespace BossChecklist
 			AllStoredForceDowns.TryGetValue(WorldID, out ForceDownsForWorld);
 
 			// Send the player's world-bound records to the server. The server doesn't need player records from every world.
-			int bossCount = BossChecklist.bossTracker.SortedBosses.Count;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
-				for (int i = 0; i < bossCount; i++) {
+				for (int i = 0; i < RecordsForWorld.Count; i++) {
 					BossStats stat = RecordsForWorld[i].stat;
 					packet.Write(stat.kills);
 					packet.Write(stat.deaths);
