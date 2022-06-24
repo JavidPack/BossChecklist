@@ -340,6 +340,7 @@ namespace BossChecklist.UIElements
 							else {
 								BossUISystem.Instance.UIHoverText = item.HoverName;
 							}
+							Main.HoverItem = item;
 						}
 						else if (hoverText == crimsonAltar || hoverText == demonAltar) {
 							BossUISystem.Instance.UIHoverText = hoverText;
