@@ -127,13 +127,15 @@ namespace BossChecklist
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();
 
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				// Add values to all record trackers
+			// Add values to all record trackers
+			foreach (BossRecord boss in RecordsForWorld) {
 				Tracker_Duration.Add(0);
 				Tracker_Deaths.Add(false);
 				Tracker_HitsTaken.Add(0);
+			}
 
-				// Add any new bosses missing inside of BossItemsCollected
+			// Add any new bosses missing inside of BossItemsCollected
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				if (!BossItemsCollected.TryGetValue(boss.Key, out List<ItemDefinition> value)) {
 					BossItemsCollected.Add(boss.Key, new List<ItemDefinition>());
 				}
