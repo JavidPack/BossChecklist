@@ -55,6 +55,10 @@ namespace BossChecklist
 			hasNewRecord = new List<bool>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				// skip any entries that are not a boss
+				if (boss.type != EntryType.Boss) {
+					continue;
+				}
 				Tracker_Duration.Add(0);
 				Tracker_Deaths.Add(false);
 				Tracker_HitsTaken.Add(0);
@@ -149,6 +153,7 @@ namespace BossChecklist
 				// If records dont exist (player is new to the world) create a new entry for the player to use.
 				RecordsForWorld = new List<BossRecord>();
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+					// Skip any entries that aren't a boss
 					if (boss.type == EntryType.Boss) {
 						RecordsForWorld.Add(new BossRecord(boss.Key));
 					}

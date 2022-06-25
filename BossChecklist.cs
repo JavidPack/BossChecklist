@@ -385,7 +385,7 @@ namespace BossChecklist
 					// TODO? send it as a single entry?
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
-					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
+					for (int i = 0; i < modPlayer.RecordsForWorld.Count; i++) {
 						BossStats stat = modPlayer.RecordsForWorld[i].stat;
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);

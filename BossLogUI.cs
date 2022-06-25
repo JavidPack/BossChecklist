@@ -617,7 +617,8 @@ namespace BossChecklist
 
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
-				BossStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[PageNum].stat;
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				BossStats stats = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
 				stats.kills = 0;
 				stats.deaths = 0;
 
@@ -631,7 +632,7 @@ namespace BossChecklist
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
-					packet.Write((int)PageNum);
+					packet.Write((int)PageNumToRecordIndex(modPlayer.RecordsForWorld));
 					stats.NetSend(packet, RecordID.ResetAll);
 					packet.Send(toClient: Main.LocalPlayer.whoAmI);
 				}
@@ -1548,7 +1549,7 @@ namespace BossChecklist
 					bool validRecordPage = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
 					if (!validRecordPage) {
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						BossStats record = modPlayer.RecordsForWorld[PageNum].stat;
+						BossStats record = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
 						int totalRecords = (int)RecordType.None;
 						for (int i = 0; i < totalRecords; i++) {
 							if ((i == 1 || i == 2) && record.kills == 0) {
@@ -1628,7 +1629,10 @@ namespace BossChecklist
 				}
 			}
 		}
-		
+
+		public static int PageNumToRecordIndex(List<BossRecord> records, int bossIndex = -1) => records.FindIndex(x => x.bossKey == BossChecklist.bossTracker.SortedBosses[bossIndex == -1 ? PageNum : bossIndex].Key);
+		public static int PageNumToRecordIndex(List<WorldRecord> records, int bossIndex = -1) => records.FindIndex(x => x.bossKey == BossChecklist.bossTracker.SortedBosses[bossIndex == -1 ? PageNum : bossIndex].Key);
+
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
 		
 		public static Color MaskBoss(BossInfo boss) {

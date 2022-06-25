@@ -114,16 +114,15 @@ namespace BossChecklist
 			return true;
 		}
 
-		public void CheckRecords(NPC npc, int recordIndex) {
-			Player player = Main.LocalPlayer;
-			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-
+		public void CheckRecords(NPC npc, int bossIndex) {
 			// Player must have contributed to the boss fight
 			if (!npc.playerInteraction[Main.myPlayer]) {
 				return;
 			}
 
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			bool newRecordSet = false;
+			int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, bossIndex);
 			BossStats bossStats = modPlayer.RecordsForWorld[recordIndex].stat;
 
 			int durationAttempt = modPlayer.Tracker_Duration[recordIndex];
@@ -169,15 +168,17 @@ namespace BossChecklist
 				string recordType = "Mods.BossChecklist.BossLog.Terms.";
 				recordType += CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
 				string message = Language.GetTextValue(recordType);
-				CombatText.NewText(player.getRect(), Color.LightYellow, message, true);
+				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
 			}
 		}
 
-		public void CheckRecordsMultiplayer(NPC npc, int recordIndex) {
+		public void CheckRecordsMultiplayer(NPC npc, int bossIndex) {
+			int recordIndex = BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, bossIndex);
+			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stat;
 			string[] newRecordHolders = new string[] { "", "" };
 			int[] newWorldRecords = new int[]{
-				WorldAssist.worldRecords[recordIndex].stat.durationWorld,
-				WorldAssist.worldRecords[recordIndex].stat.hitsTakenWorld
+				worldRecords.durationWorld,
+				worldRecords.hitsTakenWorld
 			};
 			for (int i = 0; i < 255; i++) {
 				Player player = Main.player[i];
@@ -187,8 +188,8 @@ namespace BossChecklist
 					continue;
 				}
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				List<BossStats> list = BossChecklist.ServerCollectedRecords[i];
-				BossStats oldRecord = list[recordIndex];
+				List<BossStats> serverRecords = BossChecklist.ServerCollectedRecords[i];
+				BossStats oldRecord = serverRecords[recordIndex];
 
 				// Establish the new records for comparing
 				BossStats newRecord = new BossStats() {
@@ -227,31 +228,29 @@ namespace BossChecklist
 				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
 			}
 			if (newRecordHolders.Any(x => x != "")) {
-				WorldStats worldStats = WorldAssist.worldRecords[recordIndex].stat;
 				RecordID specificRecord = RecordID.None;
 				if (newRecordHolders[0] != "") {
 					specificRecord |= RecordID.Duration;
-					worldStats.durationHolder = newRecordHolders[0];
-					worldStats.durationWorld = newWorldRecords[0];
+					worldRecords.durationHolder = newRecordHolders[0];
+					worldRecords.durationWorld = newWorldRecords[0];
 				}
 				if (newRecordHolders[1] != "") {
 					specificRecord |= RecordID.HitsTaken;
-					worldStats.hitsTakenHolder = newRecordHolders[1];
-					worldStats.hitsTakenWorld = newWorldRecords[1];
+					worldRecords.hitsTakenHolder = newRecordHolders[1];
+					worldRecords.hitsTakenWorld = newWorldRecords[1];
 				}
 				
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.WorldRecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
-				worldStats.NetSend(packet, specificRecord);
+				worldRecords.NetSend(packet, specificRecord);
 				packet.Send(); // To server (world data for everyone)
 			}
 		}
 
 		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from appearing to show World Record! instead
 			Player player = Main.LocalPlayer;
-			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-			BossStats playerRecord = modPlayer.RecordsForWorld[recordIndex].stat;
+			BossStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stat;
 			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stat;
 			bool newRecord = false;
 

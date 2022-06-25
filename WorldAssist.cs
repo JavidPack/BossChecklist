@@ -58,7 +58,8 @@ namespace BossChecklist
 		public override void OnWorldLoad() {
 			worldRecords = new List<WorldRecord>();
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				worldRecords.Add(new WorldRecord(boss.Key));
+				if (boss.type == EntryType.Boss)
+					worldRecords.Add(new WorldRecord(boss.Key));
 			}
 
 			HiddenBosses.Clear();
@@ -270,12 +271,16 @@ namespace BossChecklist
 			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("Records").ToList();
 			foreach (WorldRecord record in SavedWorldRecords) {
 				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
-				if (index == -1) {
+				// Check to see if the boss is assigned within the SotredBoss list
+				// If we know an entry was added that isn't a boss (old player data) skip adding this entry, effectively removing it when next saved.
+				int sortedIndex = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == record.bossKey);
+				if (sortedIndex != -1 && BossChecklist.bossTracker.SortedBosses[sortedIndex].type != EntryType.Boss)
+					continue;
+
+				if (index == -1)
 					worldRecords.Add(record);
-				}
-				else {
+				else
 					worldRecords[index] = record;
-				}
 			}
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");

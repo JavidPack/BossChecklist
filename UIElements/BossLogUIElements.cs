@@ -681,8 +681,8 @@ namespace BossChecklist.UIElements
 							// Beginning of record drawing
 							Asset<Texture2D> achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNum].stat;
-							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
+							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
+							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stat;
 
 							string recordTitle = "";
 							string recordValue = "";
@@ -1179,8 +1179,9 @@ namespace BossChecklist.UIElements
 			}
 
 			public int GetRecordValue(RecordType type, RecordID id) {
-				BossStats records = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[BossLogUI.PageNum].stat;
-				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNum].stat;
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				BossStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
+				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stat;
 				if (id == RecordID.None || id == RecordID.ResetAll) {
 					return -1;
 				}
