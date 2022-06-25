@@ -190,12 +190,9 @@ namespace BossChecklist
 					}
 				}
 				else if (BossChecklist.DebugConfig.ModCallLogVerbose) {
-					if (bossInfo == null) {
-						BossChecklist.instance.Logger.Warn($"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.");
-					}
-					if (orphan.values == null) {
-						BossChecklist.instance.Logger.Warn($"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.");
-					}
+					string nullBossInfo = $"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.";
+					string emptyValues = $"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.";
+					BossChecklist.instance.Logger.Warn((bossInfo == null ? nullBossInfo : "") + (orphan.values == null ? emptyValues : ""));
 				}
 			}
 		}
@@ -994,19 +991,17 @@ namespace BossChecklist
 			Console.Write("<<Boss Checklist>> ");
 			Console.ForegroundColor = ConsoleColor.DarkGray;
 			Console.Write("Boss Log entry added: ");
+			Console.ForegroundColor = ConsoleColor.Magenta;
+			Console.Write("[" + mod + "]");
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
 			Console.Write(name);
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.Write(" from");
-			Console.ForegroundColor = ConsoleColor.Magenta;
-			Console.Write(mod);
 			Console.WriteLine();
 			Console.ResetColor();
 			if (OldCalls.Values.Any(x => x.Contains(name))) {
-				BossChecklist.instance.Logger.Info($"[Outdated Mod Call] Boss Log entry added: {name} from {mod}");
+				BossChecklist.instance.Logger.Info($"[Outdated Mod Call] Boss Log entry added: [{mod}] {name}");
 			}
 			else {
-				BossChecklist.instance.Logger.Info($"Boss Log entry successfully added: {name} from {mod}");
+				BossChecklist.instance.Logger.Info($"Boss Log entry successfully added: [{mod}] {name}");
 			}
 		}
 
