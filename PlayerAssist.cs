@@ -129,13 +129,6 @@ namespace BossChecklist
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();
 
-			// Add values to all record trackers
-			foreach (BossRecord boss in RecordsForWorld) {
-				Tracker_Duration.Add(0);
-				Tracker_Deaths.Add(false);
-				Tracker_HitsTaken.Add(0);
-			}
-
 			// Add any new bosses missing inside of BossItemsCollected
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				if (!BossItemsCollected.TryGetValue(boss.Key, out List<ItemDefinition> value)) {
@@ -163,6 +156,13 @@ namespace BossChecklist
 					}
 				}
 				AllStoredRecords.Add(WorldID, RecordsForWorld);
+			}
+
+			// Add values to all record trackers after RecordsForWorld are determined
+			foreach (BossRecord boss in RecordsForWorld) {
+				Tracker_Duration.Add(0);
+				Tracker_Deaths.Add(false);
+				Tracker_HitsTaken.Add(0);
 			}
 
 			// If the player has not been in this world before, create an entry for this world
