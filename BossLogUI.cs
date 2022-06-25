@@ -1259,6 +1259,8 @@ namespace BossChecklist
 			for (int i = 0; i < visibleList.Length; i++) {
 				BossInfo boss = referenceList[i];
 				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
+
+				// If the boss should not be visible on the Table of Contents, skip the entry in the list
 				if (!visibleList[i]) {
 					continue;
 				}

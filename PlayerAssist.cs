@@ -55,6 +55,9 @@ namespace BossChecklist
 			hasNewRecord = new List<bool>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
+				hasNewRecord.Add(false);
+
 				// skip any entries that are not a boss
 				if (boss.type != EntryType.Boss) {
 					continue;
@@ -62,7 +65,6 @@ namespace BossChecklist
 				Tracker_Duration.Add(0);
 				Tracker_Deaths.Add(false);
 				Tracker_HitsTaken.Add(0);
-				hasNewRecord.Add(false);
 			}
 		}
 
