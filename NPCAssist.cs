@@ -138,7 +138,7 @@ namespace BossChecklist
 			// Otherwise, just overwrite PREV with the current attempt
 			if (durationAttempt < currentBestDuration || currentBestDuration == -1) {
 				// New Record should not appear on first boss kill, which would appear as -1
-				if (bossStats.durationBest == -1) {
+				if (bossStats.durationBest != -1) {
 					newRecordSet = true;
 				}
 				bossStats.durationPrev = currentBestDuration;
@@ -150,7 +150,7 @@ namespace BossChecklist
 
 			// Empty check should be less than 0 because 0 is achievable (No Hit)
 			if (hitsTakenAttempt < currentBestHitsTaken || currentBestHitsTaken == -1) {
-				if (bossStats.hitsTakenBest == -1) {
+				if (bossStats.hitsTakenBest != -1) {
 					newRecordSet = true;
 				}
 				bossStats.hitsTakenPrev = currentBestHitsTaken;
@@ -163,7 +163,7 @@ namespace BossChecklist
 			// If a new record was made, notify the player
 			// This will not show for newly set records
 			if (newRecordSet) {
-				modPlayer.hasNewRecord[recordIndex] = true;
+				modPlayer.hasNewRecord[bossIndex] = true;
 				// Compare records to World Records. Logically, you can only beat the world records if you have beaten your own record
 				// TODO: Move World Record texts to Multiplayer exclusively. Check should still happen.
 				string recordType = "Mods.BossChecklist.BossLog.Terms.";

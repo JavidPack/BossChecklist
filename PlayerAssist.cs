@@ -52,19 +52,11 @@ namespace BossChecklist
 			Tracker_Duration = new List<int>();
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();
+
+			// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
 			hasNewRecord = new List<bool>();
-
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
 				hasNewRecord.Add(false);
-
-				// skip any entries that are not a boss
-				if (boss.type != EntryType.Boss) {
-					continue;
-				}
-				Tracker_Duration.Add(0);
-				Tracker_Deaths.Add(false);
-				Tracker_HitsTaken.Add(0);
 			}
 		}
 
@@ -200,9 +192,9 @@ namespace BossChecklist
 					}
 					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
 						if (Player.dead) {
-							Tracker_Deaths[listNum] = true;
+							Tracker_Deaths[BossLogUI.PageNumToRecordIndex(RecordsForWorld, listNum)] = true;
 						}
-						Tracker_Duration[listNum]++;
+						Tracker_Duration[BossLogUI.PageNumToRecordIndex(RecordsForWorld, listNum)]++;
 					}
 				}
 			}
@@ -211,14 +203,14 @@ namespace BossChecklist
 		// When a player is dead they are marked as such in the Death tracker.
 		// On respawn, add to the total deaths towards marked bosses.
 		public override void OnRespawn(Player player) {
-			for (int i = 0; i < Tracker_Deaths.Count; i++) {
-				if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				for (int i = 0; i < Tracker_Deaths.Count; i++) {
 					if (Tracker_Deaths[i]) {
 						RecordsForWorld[i].stat.deaths++;
+						WorldAssist.worldRecords[i].stat.totalDeaths++;
 					}
 					Tracker_Deaths[i] = false;
 				}
-				WorldAssist.worldRecords[i].stat.totalDeaths++;
 			}
 		}
 
@@ -229,8 +221,7 @@ namespace BossChecklist
 					if (!Main.npc[i].active || NPCAssist.GetBossInfoIndex(Main.npc[i]) == -1) {
 						continue;
 					}
-					int listNum = NPCAssist.GetBossInfoIndex(Main.npc[i]);
-					Tracker_HitsTaken[listNum]++;
+					Tracker_HitsTaken[BossLogUI.PageNumToRecordIndex(RecordsForWorld, NPCAssist.GetBossInfoIndex(Main.npc[i]))]++;
 				}
 			}
 		}
