@@ -270,13 +270,13 @@ namespace BossChecklist
 		public override void LoadWorldData(TagCompound tag) {
 			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("Records").ToList();
 			foreach (WorldRecord record in SavedWorldRecords) {
-				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
 				// Check to see if the boss is assigned within the SotredBoss list
 				// If we know an entry was added that isn't a boss (old player data) skip adding this entry, effectively removing it when next saved.
 				int sortedIndex = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == record.bossKey);
 				if (sortedIndex != -1 && BossChecklist.bossTracker.SortedBosses[sortedIndex].type != EntryType.Boss)
 					continue;
 
+				int index = worldRecords.FindIndex(x => x.bossKey == record.bossKey);
 				if (index == -1)
 					worldRecords.Add(record);
 				else
