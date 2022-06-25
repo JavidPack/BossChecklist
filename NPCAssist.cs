@@ -106,8 +106,9 @@ namespace BossChecklist
 						}
 						// Reset Timers and counters so we can start recording the next fight
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-						modPlayer.Tracker_Duration[index] = 0;
-						modPlayer.Tracker_HitsTaken[index] = 0;
+						int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, index);
+						modPlayer.Tracker_Duration[recordIndex] = 0;
+						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 					}
 				}
 			}
