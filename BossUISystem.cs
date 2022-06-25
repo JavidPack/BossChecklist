@@ -181,17 +181,21 @@ namespace BossChecklist
 			if (playerChatIndex != -1) {
 				layers.Insert(playerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Debug Timers and Counters",
 					delegate {
-						PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
-						int recordIndex = BossLogUI.PageNumToRecordIndex(playerAssist.RecordsForWorld, configIndex);
 						// Currently, this debug feature is limited to singleplayer
 						// TODO: Possibly make it functional in MP? No real good use for it as of now.
-						if (configIndex != -1 && Main.netMode == NetmodeID.SinglePlayer) {
-							string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
-												$"\nTime: {playerAssist.Tracker_Duration[recordIndex]}" +
-												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[recordIndex]}" +
-												$"\nDeaths: {playerAssist.Tracker_Deaths[recordIndex]}";
-							Main.spriteBatch.DrawString(FontAssets.MouseText.Value, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
+						if (Main.netMode == NetmodeID.SinglePlayer) {
+							int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
+							if (configIndex != -1) {
+								PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+								int recordIndex = BossLogUI.PageNumToRecordIndex(playerAssist.RecordsForWorld, configIndex);
+								if (recordIndex != -1) {
+									string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
+													$"\nTime: {playerAssist.Tracker_Duration[recordIndex]}" +
+													$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[recordIndex]}" +
+													$"\nDeaths: {playerAssist.Tracker_Deaths[recordIndex]}";
+									Main.spriteBatch.DrawString(FontAssets.MouseText.Value, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
+								}
+							}
 						}
 						return true;
 					},

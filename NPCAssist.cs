@@ -305,6 +305,9 @@ namespace BossChecklist
 		}
 
 		public static int GetBossInfoIndex(NPCDefinition npc) {
+			if (npc.IsUnloaded || npc.Type == -1 || npc.Type == NPCID.None) {
+				return -1;
+			}
 			if (!BossChecklist.bossTracker.BossCache[npc.Type]) {
 				return -1;
 			}
