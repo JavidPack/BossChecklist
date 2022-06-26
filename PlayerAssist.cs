@@ -116,11 +116,6 @@ namespace BossChecklist
 			// PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
 			enteredWorldReset = true;
 
-			// Reset record tracker numbers
-			Tracker_Duration = new List<int>();
-			Tracker_Deaths = new List<bool>();
-			Tracker_HitsTaken = new List<int>();
-
 			// Add any new bosses missing inside of BossItemsCollected
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				if (!BossItemsCollected.TryGetValue(boss.Key, out List<ItemDefinition> value)) {
@@ -150,7 +145,12 @@ namespace BossChecklist
 				AllStoredRecords.Add(WorldID, RecordsForWorld);
 			}
 
+			// Reset record tracker numbers
 			// Add values to all record trackers after RecordsForWorld are determined
+			Tracker_Duration = new List<int>();
+			Tracker_Deaths = new List<bool>();
+			Tracker_HitsTaken = new List<int>();
+
 			foreach (BossRecord boss in RecordsForWorld) {
 				Tracker_Duration.Add(0);
 				Tracker_Deaths.Add(false);

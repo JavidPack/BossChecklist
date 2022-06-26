@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Chat;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -74,7 +75,7 @@ namespace BossChecklist
 			// Twins check makes sure the other is not around before counting towards the record
 			int index = GetBossInfoIndex(npc);
 			if (index != -1) {
-				if (TrulyInactive(npc, index)) {
+				if (FullyInactive(npc, index)) {
 					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
 						if (Main.netMode == NetmodeID.SinglePlayer) {
 							CheckRecords(npc, index);
@@ -84,35 +85,46 @@ namespace BossChecklist
 						}
 					}
 					if (BossChecklist.DebugConfig.ShowInactiveBossCheck) {
-						Main.NewText(npc.FullName + ": " + TrulyInactive(npc, index));
+						Main.NewText(npc.FullName + ": " + FullyInactive(npc, index));
 					}
 					WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, index)].stat.totalKills++;
+
+					// Reset world variables after record checking takes place
+					WorldAssist.ActiveBossesList[index] = false;
+					WorldAssist.StartingPlayers[index] = new bool[Main.maxPlayers];
 				}
 			}
 		}
 
 		public override bool InstancePerEntity => true;
 
-		public override bool PreAI(NPC npc) {
+		public override void OnSpawn(NPC npc, IEntitySource source) {
 			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) {
-				return true; // Checks for multi-segmented bosses?
+				return; // Checks for multi-segmented bosses?
 			}
+
 			int index = GetBossInfoIndex(npc);
-			if (index != -1) {
-				if (!WorldAssist.ActiveBossesList[index]) {
-					for (int j = 0; j < Main.maxPlayers; j++) {
-						if (!Main.player[j].active) {
-							continue;
-						}
-						// Reset Timers and counters so we can start recording the next fight
-						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-						int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, index);
-						modPlayer.Tracker_Duration[recordIndex] = 0;
-						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+			if (index == -1) {
+				return; // Make sure the npc is an entry
+			}
+
+			// If not marked active, set to active and reset trackers for all players to start tracking records for this fight
+			if (!WorldAssist.ActiveBossesList[index]) {
+				WorldAssist.ActiveBossesList[index] = true;
+				for (int j = 0; j < Main.maxPlayers; j++) {
+					if (!Main.player[j].active) {
+						continue; // skip any inactive players
 					}
+					else {
+						WorldAssist.StartingPlayers[index][j] = true; // Active players when the boss spawns will be counted
+					}
+					// Reset Timers and counters so we can start recording the next fight
+					PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
+					int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, index);
+					modPlayer.Tracker_Duration[recordIndex] = 0;
+					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 				}
 			}
-			return true;
 		}
 
 		public void CheckRecords(NPC npc, int bossIndex) {
@@ -324,15 +336,15 @@ namespace BossChecklist
 			return -1;
 		}
 
-		public static bool TrulyInactive(NPC npc, int index) {
+		public static bool FullyInactive(NPC npc, int index) {
 			// Check all multibosses to see if the NPC is truly dead
 			// index should be checked for a value of -1 before submitting, but just in case...
 			if (index == -1) {
 				return !npc.active;
 			}
 
-			foreach (int id in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
-				if (Main.npc.Any(x => x != npc && x.type == id && x.active)) {
+			foreach (int bossType in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
+				if (Main.npc.Any(nPC => nPC != npc && nPC.active && nPC.type == bossType)) {
 					return false;
 				}
 			}

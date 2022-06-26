@@ -94,38 +94,34 @@ namespace BossChecklist
 
 		public override void PreUpdateWorld() {
 			for (int n = 0; n < Main.maxNPCs; n++) {
-				NPC b = Main.npc[n];
-				int listNum = NPCAssist.GetBossInfoIndex(b);
-				if (listNum != -1) {
-					if (b.active) {
-						for (int i = 0; i < Main.maxPlayers; i++) {
-							if (!ActiveBossesList[listNum]) {
-								// If the boss is not already marked active (first instance), set all active players to true within StartingPlayers
-								StartingPlayers[listNum][i] = Main.player[i].active;
-							}
-							else if (!Main.player[i].active) {
-								// Otherwise, if any players become inactive during the fight, remove them from the list
-								StartingPlayers[listNum][i] = false;
-							}
-						}
-					}
-					else if (ActiveBossesList[listNum] && NPCAssist.TrulyInactive(b, listNum)) {
-						// If the boss is marked active, but is no longer active, check for other potential npcs assigned to the boss
-						// If the boss is truly inactive, but not killed, display a despawn message
-						string message = GetDespawnMessage(b, listNum);
-						if (message != "") {
-							if (Main.netMode == NetmodeID.SinglePlayer) {
-								Main.NewText(Language.GetTextValue(message, b.FullName), Colors.RarityPurple);
-							}
-							else {
-								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, b.FullName), Colors.RarityPurple);
-							}
+				NPC npc = Main.npc[n];
+				int listNum = NPCAssist.GetBossInfoIndex(npc);
+				if (listNum == -1) {
+					continue;
+				}
+
+				if (ActiveBossesList[listNum]) {
+					// If any players become inactive during the fight, remove them from the list
+					for (int i = 0; i < Main.maxPlayers; i++) {
+						if (!Main.player[i].active) {
+							StartingPlayers[listNum][i] = false;
 						}
 					}
 
-					// Set to active or inactive accordingly
-					ActiveBossesList[listNum] = b.active;
-					// if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+					// If the boss is marked active, but is no longer active, check for other potential npcs assigned to the boss
+					// If the boss is fully inactive, but not killed, display a despawn message
+					if (!npc.active && NPCAssist.FullyInactive(npc, listNum)) {
+						ActiveBossesList[listNum] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
+						string message = GetDespawnMessage(npc, listNum);
+						if (message != "") {
+							if (Main.netMode == NetmodeID.SinglePlayer) {
+								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
+							}
+							else {
+								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, npc.FullName), Colors.RarityPurple);
+							}
+						}
+					}
 				}
 			}
 		}
