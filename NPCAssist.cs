@@ -86,7 +86,7 @@ namespace BossChecklist
 					if (BossChecklist.DebugConfig.ShowInactiveBossCheck) {
 						Main.NewText(npc.FullName + ": " + TrulyInactive(npc, index));
 					}
-					WorldAssist.worldRecords[index].stat.totalKills++;
+					WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, index)].stat.totalKills++;
 				}
 			}
 		}
