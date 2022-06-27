@@ -164,6 +164,10 @@ namespace BossChecklist
 			// Then make ListedChecks the list needed for the designated world
 			AllStoredForceDowns.TryGetValue(WorldID, out ForceDownsForWorld);
 
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
+
 			// Send the player's world-bound records to the server. The server doesn't need player records from every world.
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
@@ -185,6 +189,9 @@ namespace BossChecklist
 		// Continually track the duration of boss fights while boss NPCs are active.
 		// If a player dies at any point while a boss is active, add to the death tracker for later.
 		public override void PreUpdate() {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
 				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
 					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) {
@@ -203,19 +210,25 @@ namespace BossChecklist
 		// When a player is dead they are marked as such in the Death tracker.
 		// On respawn, add to the total deaths towards marked bosses.
 		public override void OnRespawn(Player player) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 				for (int i = 0; i < Tracker_Deaths.Count; i++) {
 					if (Tracker_Deaths[i]) {
+						Tracker_Deaths[i] = false;
 						RecordsForWorld[i].stat.deaths++;
 						WorldAssist.worldRecords[i].stat.totalDeaths++;
 					}
-					Tracker_Deaths[i] = false;
 				}
 			}
 		}
 
 		// Whenever the player is hurt, add to the HitsTaken tracker.
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					if (!Main.npc[i].active || NPCAssist.GetBossInfoIndex(Main.npc[i]) == -1) {

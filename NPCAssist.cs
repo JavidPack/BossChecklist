@@ -73,6 +73,9 @@ namespace BossChecklist
 
 			// Setting a record for fastest boss kill, and counting boss kills
 			// Twins check makes sure the other is not around before counting towards the record
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			int index = GetBossInfoIndex(npc);
 			if (index != -1) {
 				if (FullyInactive(npc, index)) {
@@ -99,6 +102,9 @@ namespace BossChecklist
 		public override bool InstancePerEntity => true;
 
 		public override void OnSpawn(NPC npc, IEntitySource source) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			if (npc.realLife != -1 && npc.realLife != npc.whoAmI) {
 				return; // Checks for multi-segmented bosses?
 			}

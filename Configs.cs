@@ -302,6 +302,15 @@ namespace BossChecklist
 			}
 		}
 
+		[BackgroundColor(55, 85, 120)]
+		[DefaultValue(true)]
+		[Label("KEEP THIS CONFIG ENABLED FOR NOW")]
+		[Tooltip("Boss Checklist is currently going through some issues right now related to Boss Records." +
+			"\nThis is a temporary config to prevent any Record Tracking code from running and will be removed when the issue is fully resolved." +
+			"\nPlease keep this config ENABLED unless you are helping test to see if things run smoothly again before this config is removed." +
+			"\nSorry for any trouble this has caused. -SheepishShepherd ")]
+		public bool DISABLERECORDTRACKINGCODE { get; set; }
+
 		// TODO: Get timers and counters to properly visualize itself in Multiplayer
 		[BackgroundColor(55, 85, 120)]
 		[Label("$Mods.BossChecklist.Configs.Label.ShowRecordTracking")]

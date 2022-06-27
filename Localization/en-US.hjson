@@ -109,6 +109,7 @@ Mods: {
 					'''
 					This section of the Boss Log is still under construction.
 					Any features or configs related to this page may not work.
+					[c/FF0000:FULLY DISABLED DUE TO RECENT ISSUES]
 					'''
 				ViewPage: Click to view page
 				KDRDescription: Total times you killed this boss and total times this boss has killed you!

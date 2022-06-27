@@ -93,6 +93,9 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdateWorld() {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC npc = Main.npc[n];
 				int listNum = NPCAssist.GetBossInfoIndex(npc);

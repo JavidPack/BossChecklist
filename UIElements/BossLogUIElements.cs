@@ -681,6 +681,11 @@ namespace BossChecklist.UIElements
 							// Beginning of record drawing
 							Asset<Texture2D> achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+
+							if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+								return;
+							}
+
 							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
 							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stat;
 

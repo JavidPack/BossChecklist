@@ -616,6 +616,9 @@ namespace BossChecklist
 		}
 
 		private void ResetStats() {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
 			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				BossStats stats = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
@@ -1545,7 +1548,7 @@ namespace BossChecklist
 			}
 			else {
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-				if (boss.modSource != "Unknown") {
+				if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
 					// Spawn and Loot pages do not have alt pages currently, so skip adding them
 					bool validRecordPage = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
