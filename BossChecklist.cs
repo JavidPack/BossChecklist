@@ -372,11 +372,13 @@ namespace BossChecklist
 					}
 					break;
 				case PacketMessageType.RecordUpdate:
-					player = Main.LocalPlayer;
-					modPlayer = player.GetModPlayer<PlayerAssist>();
 					//Server just sent us information about what boss just got killed and its records shall be updated
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
 					int npcPos = reader.ReadInt32();
+					int playerNum = reader.ReadInt32();
+
+					player = Main.player[playerNum];
+					modPlayer = player.GetModPlayer<PlayerAssist>();
 
 					PersonalStats specificRecord = modPlayer.RecordsForWorld[npcPos].stats; // Get the Player's records
 					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)

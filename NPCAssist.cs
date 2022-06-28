@@ -243,6 +243,7 @@ namespace BossChecklist
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
+				packet.Write((int)player.whoAmI); // Player index
 				newRecord.NetSend(packet, specificRecord); // Writes all the variables needed
 				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
 			}
