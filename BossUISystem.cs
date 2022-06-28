@@ -140,13 +140,14 @@ namespace BossChecklist
 			//	layers.RemoveAll(x => LayersToHideWhenChecklistVisible.Contains(x.Name));
 			//}
 			if (mouseTextIndex != -1) {
-				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
+				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log UI",
 					delegate {
 						BossLogInterface.Draw(Main.spriteBatch, new GameTime());
 						return true;
 					},
 					InterfaceScaleType.UI)
 				);
+
 				layers.Insert(++mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Radar",
 					delegate {
 						BossRadarUIInterface.Draw(Main.spriteBatch, new GameTime());
@@ -154,20 +155,15 @@ namespace BossChecklist
 					},
 					InterfaceScaleType.UI)
 				);
-			}
 
-			if (mouseTextIndex != -1) {
-				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log",
+				layers.Insert(++mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Custom UI Hover Text",
 					delegate {
+						// Detect if the hover text is a single localization key and draw the hover text accordingly
 						if (UIHoverText != "") {
-							// Detect if the hover text is a single localization key
-							if (UIHoverText.StartsWith("$Mods.")) {
-								BossLogUI.DrawTooltipBG(Main.spriteBatch, Language.GetTextValue(UIHoverText.Substring(1)), UIHoverTextColor);
-							}
-							else {
-								BossLogUI.DrawTooltipBG(Main.spriteBatch, UIHoverText, UIHoverTextColor);
-							}
+							string text = UIHoverText.StartsWith("$Mods.") ? Language.GetTextValue(UIHoverText.Substring(1)) : UIHoverText;
+							BossLogUI.DrawTooltipBG(Main.spriteBatch, text, UIHoverTextColor);
 						}
+						// Reset text and color back to default state
 						UIHoverText = "";
 						UIHoverTextColor = default;
 						return true;
@@ -176,25 +172,30 @@ namespace BossChecklist
 				);
 			}
 
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+				return;
+			}
+
 			#region DEBUG
 			int playerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
 			if (playerChatIndex != -1) {
-				layers.Insert(playerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Debug Timers and Counters",
+				layers.Insert(playerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Record Tracker Debugger",
 					delegate {
 						// Currently, this debug feature is limited to singleplayer
 						// TODO: Possibly make it functional in MP? No real good use for it as of now.
-						if (!BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-							int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
-							if (configIndex != -1) {
-								PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-								int recordIndex = BossLogUI.PageNumToRecordIndex(playerAssist.RecordsForWorld, configIndex);
-								if (recordIndex != -1) {
-									string textKingSlime = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
-													$"\nTime: {playerAssist.Tracker_Duration[recordIndex]}" +
-													$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[recordIndex]}" +
-													$"\nDeaths: {playerAssist.Tracker_Deaths[recordIndex]}";
-									Main.spriteBatch.DrawString(FontAssets.MouseText.Value, textKingSlime, new Vector2(20, Main.screenHeight - 175), new Color(1f, 0.388f, 0.278f), 0f, default(Vector2), 1, SpriteEffects.None, 0f);
-								}
+						if (Main.netMode != NetmodeID.SinglePlayer) {
+							return true;
+						}
+						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
+						if (configIndex != -1) {
+							PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+							int recordIndex = BossLogUI.PageNumToRecordIndex(playerAssist.RecordsForWorld, configIndex);
+							if (recordIndex != -1) {
+								string debugText = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
+												$"\nTime: {playerAssist.Tracker_Duration[recordIndex]}" +
+												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[recordIndex]}" +
+												$"\nDeaths: {playerAssist.Tracker_Deaths[recordIndex]}";
+								Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
 							}
 						}
 						return true;
