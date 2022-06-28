@@ -7,31 +7,8 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
-	/* Summary of Records : SheepishShepherd
-	 * 
-	 * Kills represent the amount of times a player has particiapted in killing a boss.
-	 * Deaths represent the amount of deaths a player has accumulated during a participated boss fight
-	 *		Kills MUST have player participation
-	 *		Note that the player does not need to die by damage from the boss.
-	 *		Also keep in mind players that are not anywhere near the boss fight and may die from other sources.
-	 * 
-	 * Prev represents the last attempt/previous best record for comparison
-	 *		Whenever a player defeats a boss, we record their records and keep them stored.
-	 *		There is no need to 'reset' these stats as they are only meant to tell you what you just got.
-	 * 
-	 * Firs represents the first successful attempt made for records
-	 *		If a player has nothing recorded we keep the Prev Records records stored in the First Records as well.
-	 *		Ideally, First Records will never change and cannot be 'reset'.
-	 *		They can be restricted to a certain extent, but something to prevent abuse is needed. 
-	 *		TODO: Looking for thoughts on the issue above.
-	 * 
-	 * Best represents the best record
-	 *		Compare the Prev Records numbers to the current Best Records and determine if its better to record.
-	 *		Best Records can be reset 
-	 */
-
 	/// <summary>
-	/// Boss records are player-based and all personal records will be stored here and save to a ModPlayer.
+	/// Record container for player-based records. All personal records should be stored here and saved to a ModPlayer.
 	/// </summary>
 	public class BossRecord : TagSerializable
 	{
@@ -58,7 +35,7 @@ namespace BossChecklist
 	}
 
 	/// <summary>
-	/// As the name implies, world records are world-based. All world records will be stored here and saved to a ModSystem.
+	/// Record container for world-based records. All world records should be stored here and saved to a ModSystem.
 	/// </summary>
 	public class WorldRecord : TagSerializable
 	{
@@ -123,15 +100,15 @@ namespace BossChecklist
 		private PersonalStats(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
-			deaths = tag.Get<int>(nameof(attempts));
+			attempts = tag.Get<int>(nameof(attempts));
 
 			durationPrev = tag.Get<int>(nameof(durationPrev));
-			durationFirst = tag.Get<int>(nameof(durationFirst));
 			durationBest = tag.Get<int>(nameof(durationBest));
+			durationFirst = tag.Get<int>(nameof(durationFirst));
 
 			hitsTakenPrev = tag.Get<int>(nameof(hitsTakenPrev));
-			hitsTakenFirst = tag.Get<int>(nameof(hitsTakenFirst));
 			hitsTakenBest = tag.Get<int>(nameof(hitsTakenBest));
+			hitsTakenFirst = tag.Get<int>(nameof(hitsTakenFirst));
 		}
 
 		public TagCompound SerializeData() {
@@ -141,12 +118,12 @@ namespace BossChecklist
 				{ nameof(attempts), attempts },
 
 				{ nameof(durationPrev), durationPrev },
-				{ nameof(durationFirst), durationFirst },
 				{ nameof(durationBest), durationBest },
+				{ nameof(durationFirst), durationFirst },
 
 				{ nameof(hitsTakenPrev), hitsTakenPrev },
-				{ nameof(hitsTakenFirst), hitsTakenFirst },
 				{ nameof(hitsTakenBest), hitsTakenBest },
+				{ nameof(hitsTakenFirst), hitsTakenFirst },
 			};
 		}
 
@@ -168,14 +145,13 @@ namespace BossChecklist
 			}
 		}
 
-		//TODO: Change NetSend/NetRecieve to account for FirstRecord
-		// is player and boss parameters necessary?
+		// TODO: is player and boss parameters necessary?
 		internal void NetRecieve(BinaryReader reader, Player player, int boss) {
 			RecordID recordType = (RecordID)reader.ReadInt32();
 			if (recordType.HasFlag(RecordID.ResetAll)) {
 				// ResetAll resets all fields to their default value
 				kills = deaths = attempts = 0;
-				durationBest = durationPrev = hitsTakenBest = hitsTakenPrev = -1;
+				durationPrev = durationBest = durationFirst = hitsTakenPrev = hitsTakenBest = hitsTakenFirst = -1;
 			}
 			else {
 				// Determine if a new record was made (Prev records need to change still)
@@ -198,17 +174,15 @@ namespace BossChecklist
 		}
 	}
 
-	/* Summary of World Records : SheepishShepherd
-	 * 
+	/* Plans for World Records
 	 * All players that join a "world" are recorded to a list
 	 * Server Host can remove anyone from this list (ex. Troll, wrong character join)
 	 * Server grabs BEST Records from the list of players and determines which one is the best
-	 * The player's name and record will be displayed on the World Record alt page for everyone to see and try to beat.
 	 */
 
 	/// <summary>
 	/// In multiplayer, players are able to set world records against other players.
-	/// This will contain record values the respective record holders.
+	/// This will contain global kills and deaths as well as the best record's value and holder.
 	/// </summary>
 	public class WorldStats : TagSerializable
 	{
