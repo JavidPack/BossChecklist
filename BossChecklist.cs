@@ -35,7 +35,7 @@ namespace BossChecklist
 		internal static ClientConfiguration ClientConfig;
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
-		public static List<BossStats>[] ServerCollectedRecords;
+		public static List<PersonalStats>[] ServerCollectedRecords;
 
 		public BossChecklist() {
 		}
@@ -358,7 +358,7 @@ namespace BossChecklist
 					player = Main.player[whoAmI];
 					Console.WriteLine($"Receiving boss records from the joined player {player.name}!");
 					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
-						BossStats bossStats = ServerCollectedRecords[whoAmI][i];
+						PersonalStats bossStats = ServerCollectedRecords[whoAmI][i];
 						bossStats.kills = reader.ReadInt32();
 						bossStats.deaths = reader.ReadInt32();
 
@@ -378,7 +378,7 @@ namespace BossChecklist
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
 					int npcPos = reader.ReadInt32();
 
-					BossStats specificRecord = modPlayer.RecordsForWorld[npcPos].stats; // Get the Player's records
+					PersonalStats specificRecord = modPlayer.RecordsForWorld[npcPos].stats; // Get the Player's records
 					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)
 
 					//Update the serverrecords too so they can be used later
@@ -386,7 +386,7 @@ namespace BossChecklist
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
 					for (int i = 0; i < modPlayer.RecordsForWorld.Count; i++) {
-						BossStats stat = modPlayer.RecordsForWorld[i].stats;
+						PersonalStats stat = modPlayer.RecordsForWorld[i].stats;
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);
 

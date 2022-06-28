@@ -142,7 +142,7 @@ namespace BossChecklist
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			bool newRecordSet = false;
 			int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, bossIndex);
-			BossStats bossStats = modPlayer.RecordsForWorld[recordIndex].stats;
+			PersonalStats bossStats = modPlayer.RecordsForWorld[recordIndex].stats;
 
 			int durationAttempt = modPlayer.Tracker_Duration[recordIndex];
 			int currentBestDuration = bossStats.durationBest;
@@ -207,11 +207,11 @@ namespace BossChecklist
 					continue;
 				}
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				List<BossStats> serverRecords = BossChecklist.ServerCollectedRecords[i];
-				BossStats oldRecord = serverRecords[recordIndex];
+				List<PersonalStats> serverRecords = BossChecklist.ServerCollectedRecords[i];
+				PersonalStats oldRecord = serverRecords[recordIndex];
 
 				// Establish the new records for comparing
-				BossStats newRecord = new BossStats() {
+				PersonalStats newRecord = new PersonalStats() {
 					durationPrev = modPlayer.Tracker_Duration[recordIndex],
 					hitsTakenPrev = modPlayer.Tracker_HitsTaken[recordIndex]
 				};
@@ -269,7 +269,7 @@ namespace BossChecklist
 
 		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from appearing to show World Record! instead
 			Player player = Main.LocalPlayer;
-			BossStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+			PersonalStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
 			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stats;
 			bool newRecord = false;
 

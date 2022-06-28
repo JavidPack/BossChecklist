@@ -246,11 +246,11 @@ namespace BossChecklist
 			}
 			
 			if (Main.netMode == NetmodeID.Server) {
-				BossChecklist.ServerCollectedRecords = new List<BossStats>[255];
+				BossChecklist.ServerCollectedRecords = new List<PersonalStats>[255];
 				for (int i = 0; i < 255; i++) {
-					BossChecklist.ServerCollectedRecords[i] = new List<BossStats>();
+					BossChecklist.ServerCollectedRecords[i] = new List<PersonalStats>();
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses.Count; j++) {
-						BossChecklist.ServerCollectedRecords[i].Add(new BossStats());
+						BossChecklist.ServerCollectedRecords[i].Add(new PersonalStats());
 					}
 				}
 			}

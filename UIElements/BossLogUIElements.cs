@@ -686,7 +686,7 @@ namespace BossChecklist.UIElements
 								return;
 							}
 
-							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
+							PersonalStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
 							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stats;
 
 							string recordTitle = "";
@@ -1185,7 +1185,7 @@ namespace BossChecklist.UIElements
 
 			public int GetRecordValue(RecordType type, RecordID id) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				BossStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
+				PersonalStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
 				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stats;
 				if (id == RecordID.None || id == RecordID.ResetAll) {
 					return -1;

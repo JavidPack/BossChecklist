@@ -179,7 +179,7 @@ namespace BossChecklist
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
 				for (int i = 0; i < RecordsForWorld.Count; i++) {
-					BossStats stat = RecordsForWorld[i].stats;
+					PersonalStats stat = RecordsForWorld[i].stats;
 					packet.Write(stat.kills);
 					packet.Write(stat.deaths);
 					packet.Write(stat.durationBest);

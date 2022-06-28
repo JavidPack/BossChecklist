@@ -30,16 +30,19 @@ namespace BossChecklist
 	 *		Best Records can be reset 
 	 */
 
+	/// <summary>
+	/// Boss records are player-based and all personal records will be stored here and save to a ModPlayer.
+	/// </summary>
 	public class BossRecord : TagSerializable
 	{
 		internal string bossKey;
-		internal BossStats stats = new BossStats();
+		internal PersonalStats stats = new PersonalStats();
 
 		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
 
 		private BossRecord(TagCompound tag) {
 			bossKey = tag.Get<string>(nameof(bossKey));
-			stats = tag.Get<BossStats>(nameof(stats));
+			stats = tag.Get<PersonalStats>(nameof(stats));
 		}
 
 		public BossRecord(string bossKey) {
@@ -54,6 +57,9 @@ namespace BossChecklist
 		}
 	}
 
+	/// <summary>
+	/// As the name implies, world records are world-based. All world records will be stored here and saved to a ModSystem.
+	/// </summary>
 	public class WorldRecord : TagSerializable
 	{
 		internal string bossKey;
@@ -81,19 +87,19 @@ namespace BossChecklist
 	/// <summary>
 	/// Players are able to set personal records for boss fights.
 	/// This will hold the statistics and records of those fights, including the player's previous fight, first victory, and personal best.
-	/// <para>Statistics:</para>
+	/// <para>[Statistics]</para>
 	/// <list type="bullet">
 	/// <item> <term>Kills</term> <description>The total amount of fights that the player has won against the boss</description> </item>
 	/// <item> <term>Deaths</term> <description>The total amount of deaths a player has experienced while fighting the boss</description> </item>
 	/// <item> <term>Attempts</term> <description>The amount of fights a player has died in (up until the first victory) while fighting the boss</description> </item>
 	/// </list>
-	/// <para>Records:</para>
+	/// <para>[Records]</para>
 	/// <list type="bullet">
 	/// <item> <term>Duration</term> <description>The amount of time it took to defeat the boss</description> </item>
 	/// <item> <term>HitsTaken</term> <description>The amount of times a player has taken damage while fighting the boss</description> </item>
 	/// </list>
 	/// </summary>
-	public class BossStats : TagSerializable
+	public class PersonalStats : TagSerializable
 	{
 		/// Boss Kills and Player Deaths
 		public int kills;
@@ -110,13 +116,14 @@ namespace BossChecklist
 		public int hitsTakenBest = -1;
 		public int hitsTakenFirst = -1;
 
-		public static Func<TagCompound, BossStats> DESERIALIZER = tag => new BossStats(tag);
+		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
 
-		public BossStats() { }
+		public PersonalStats() { }
 
-		private BossStats(TagCompound tag) {
+		private PersonalStats(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
+			deaths = tag.Get<int>(nameof(attempts));
 
 			durationPrev = tag.Get<int>(nameof(durationPrev));
 			durationFirst = tag.Get<int>(nameof(durationFirst));
@@ -131,6 +138,7 @@ namespace BossChecklist
 			return new TagCompound {
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
+				{ nameof(attempts), attempts },
 
 				{ nameof(durationPrev), durationPrev },
 				{ nameof(durationFirst), durationFirst },
@@ -140,6 +148,22 @@ namespace BossChecklist
 				{ nameof(hitsTakenFirst), hitsTakenFirst },
 				{ nameof(hitsTakenBest), hitsTakenBest },
 			};
+		}
+
+		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
+			writer.Write((int)specificRecord); // We need this for NetRecieve as well
+			if (!specificRecord.HasFlag(RecordID.ResetAll)) {
+				// If ResetAll is flagged there is no need to write the rest
+				// Prev records ALWAYS are written. They always update as either record attempts or old records
+				if (specificRecord.HasFlag(RecordID.Duration)) {
+					writer.Write(durationBest);
+				}
+				writer.Write(durationPrev);
+				if (specificRecord.HasFlag(RecordID.HitsTaken)) {
+					writer.Write(hitsTakenBest);
+				}
+				writer.Write(hitsTakenPrev);
+			}
 		}
 
 		//TODO: Change NetSend/NetRecieve to account for FirstRecord
@@ -166,26 +190,10 @@ namespace BossChecklist
 					CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
 				}
 			}
-			else { // If ResetAll was flagged, change all variables to their default
-				kills = deaths = 0;
-				durationBest = durationPrev = -1;
-				hitsTakenBest = hitsTakenPrev = -1;
-			}
-		}
-
-		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
-			writer.Write((int)specificRecord); // We need this for NetRecieve as well
-			if (!specificRecord.HasFlag(RecordID.ResetAll)) {
-				// If ResetAll is flagged there is no need to write the rest
-				// Prev records ALWAYS are written. They always update as either record attempts or old records
-				if (specificRecord.HasFlag(RecordID.Duration)) {
-					writer.Write(durationBest);
-				}
-				writer.Write(durationPrev);
-				if (specificRecord.HasFlag(RecordID.HitsTaken)) {
-					writer.Write(hitsTakenBest);
-				}
-				writer.Write(hitsTakenPrev);
+			else {
+				// If ResetAll was flagged, change all variables to their default
+				kills = deaths = attempts = 0;
+				durationBest = durationPrev = hitsTakenBest = hitsTakenPrev = -1;
 			}
 		}
 	}
