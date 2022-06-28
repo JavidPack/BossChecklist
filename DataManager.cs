@@ -66,29 +66,30 @@ namespace BossChecklist
 	/// This will hold the statistics and records of those fights, including the player's previous fight, first victory, and personal best.
 	/// <para>[Statistics]</para>
 	/// <list type="bullet">
-	/// <item> <term>Kills</term> <description>The total amount of fights that the player has won against the boss</description> </item>
-	/// <item> <term>Deaths</term> <description>The total amount of deaths a player has experienced while fighting the boss</description> </item>
-	/// <item> <term>Attempts</term> <description>The amount of fights a player has died in (up until the first victory) while fighting the boss</description> </item>
+	/// <item> <term>Kills</term> <description>The total amount of fights that the player has won against the boss.</description> </item>
+	/// <item> <term>Deaths</term> <description>The total amount of deaths a player has experienced while fighting the boss.</description> </item>
+	/// <item> <term>Attempts</term> <description>The amount of fights a player has started against the boss, win or loss.</description> </item>
+	/// <item> <term>Failures</term> <description>The amount of fights a player has died in (up until the first victory) while fighting the boss.</description> </item>
 	/// </list>
 	/// <para>[Records]</para>
 	/// <list type="bullet">
-	/// <item> <term>Duration</term> <description>The amount of time it took to defeat the boss</description> </item>
-	/// <item> <term>HitsTaken</term> <description>The amount of times a player has taken damage while fighting the boss</description> </item>
+	/// <item> <term>Duration</term> <description>The amount of time it took to defeat the boss.</description> </item>
+	/// <item> <term>HitsTaken</term> <description>The amount of times a player has taken damage while fighting the boss.</description> </item>
 	/// </list>
 	/// </summary>
 	public class PersonalStats : TagSerializable
 	{
-		/// Boss Kills and Player Deaths
+		/// Statistics
 		public int kills;
 		public int deaths;
 		public int attempts;
+		public int failures;
 
-		/// Fight Duration
+		/// Records
 		public int durationPrev = -1;
 		public int durationBest = -1;
 		public int durationFirst = -1;
 
-		/// Total Hits Taken
 		public int hitsTakenPrev = -1;
 		public int hitsTakenBest = -1;
 		public int hitsTakenFirst = -1;
@@ -101,6 +102,7 @@ namespace BossChecklist
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
 			attempts = tag.Get<int>(nameof(attempts));
+			failures = tag.Get<int>(nameof(failures));
 
 			durationPrev = tag.Get<int>(nameof(durationPrev));
 			durationBest = tag.Get<int>(nameof(durationBest));
@@ -116,6 +118,7 @@ namespace BossChecklist
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
 				{ nameof(attempts), attempts },
+				{ nameof(failures), failures },
 
 				{ nameof(durationPrev), durationPrev },
 				{ nameof(durationBest), durationBest },
@@ -150,7 +153,7 @@ namespace BossChecklist
 			RecordID recordType = (RecordID)reader.ReadInt32();
 			if (recordType.HasFlag(RecordID.ResetAll)) {
 				// ResetAll resets all fields to their default value
-				kills = deaths = attempts = 0;
+				kills = deaths = attempts = failures = 0;
 				durationPrev = durationBest = durationFirst = hitsTakenPrev = hitsTakenBest = hitsTakenFirst = -1;
 			}
 			else {
