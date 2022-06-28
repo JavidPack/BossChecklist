@@ -621,7 +621,7 @@ namespace BossChecklist
 			}
 			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				BossStats stats = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
+				BossStats stats = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
 				stats.kills = 0;
 				stats.deaths = 0;
 
@@ -1554,7 +1554,7 @@ namespace BossChecklist
 					bool validRecordPage = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
 					if (!validRecordPage) {
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						BossStats record = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
+						BossStats record = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
 						int totalRecords = (int)RecordType.None;
 						for (int i = 0; i < totalRecords; i++) {
 							if ((i == 1 || i == 2) && record.kills == 0) {

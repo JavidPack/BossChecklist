@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader.IO;
@@ -29,17 +30,16 @@ namespace BossChecklist
 	 *		Best Records can be reset 
 	 */
 
-	// Migrating data from BossAssist is possible, but is vastly unecessary. Going to be doing a clean slate for merge.
 	public class BossRecord : TagSerializable
 	{
 		internal string bossKey;
-		internal BossStats stat = new BossStats();
+		internal BossStats stats = new BossStats();
 
 		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
 
 		private BossRecord(TagCompound tag) {
 			bossKey = tag.Get<string>(nameof(bossKey));
-			stat = tag.Get<BossStats>(nameof(stat));
+			stats = tag.Get<BossStats>(nameof(stats));
 		}
 
 		public BossRecord(string bossKey) {
@@ -49,7 +49,7 @@ namespace BossChecklist
 		public TagCompound SerializeData() {
 			return new TagCompound {
 				{ nameof(bossKey), bossKey },
-				{ nameof(stat), stat }
+				{ nameof(stats), stats }
 			};
 		}
 	}
@@ -57,13 +57,13 @@ namespace BossChecklist
 	public class WorldRecord : TagSerializable
 	{
 		internal string bossKey;
-		internal WorldStats stat = new WorldStats();
+		internal WorldStats stats = new WorldStats();
 
 		public static Func<TagCompound, WorldRecord> DESERIALIZER = tag => new WorldRecord(tag);
 
 		private WorldRecord(TagCompound tag) {
 			bossKey = tag.Get<string>(nameof(bossKey));
-			stat = tag.Get<WorldStats>(nameof(stat));
+			stats = tag.Get<WorldStats>(nameof(stats));
 		}
 
 		public WorldRecord(string bossKey) {
@@ -73,28 +73,42 @@ namespace BossChecklist
 		public TagCompound SerializeData() {
 			return new TagCompound {
 				{ nameof(bossKey), bossKey },
-				{ nameof(stat), stat }
+				{ nameof(stats), stats }
 			};
 		}
 	}
 
+	/// <summary>
+	/// Players are able to set personal records for boss fights.
+	/// This will hold the statistics and records of those fights, including the player's previous fight, first victory, and personal best.
+	/// <para>Statistics:</para>
+	/// <list type="bullet">
+	/// <item> <term>Kills</term> <description>The total amount of fights that the player has won against the boss</description> </item>
+	/// <item> <term>Deaths</term> <description>The total amount of deaths a player has experienced while fighting the boss</description> </item>
+	/// <item> <term>Attempts</term> <description>The amount of fights a player has died in (up until the first victory) while fighting the boss</description> </item>
+	/// </list>
+	/// <para>Records:</para>
+	/// <list type="bullet">
+	/// <item> <term>Duration</term> <description>The amount of time it took to defeat the boss</description> </item>
+	/// <item> <term>HitsTaken</term> <description>The amount of times a player has taken damage while fighting the boss</description> </item>
+	/// </list>
+	/// </summary>
 	public class BossStats : TagSerializable
 	{
 		/// Boss Kills and Player Deaths
 		public int kills;
 		public int deaths;
-		// TODO: Add 'deathsFirs' to show the death count until the first victory
-		// TODO: Add 'killsBest' to show which attempt was the best
+		public int attempts;
 
 		/// Fight Duration
 		public int durationPrev = -1;
-		public int durationFirs = -1;
 		public int durationBest = -1;
+		public int durationFirst = -1;
 
 		/// Total Hits Taken
 		public int hitsTakenPrev = -1;
-		public int hitsTakenFirs = -1;
 		public int hitsTakenBest = -1;
+		public int hitsTakenFirst = -1;
 
 		public static Func<TagCompound, BossStats> DESERIALIZER = tag => new BossStats(tag);
 
@@ -105,11 +119,11 @@ namespace BossChecklist
 			deaths = tag.Get<int>(nameof(deaths));
 
 			durationPrev = tag.Get<int>(nameof(durationPrev));
-			durationFirs = tag.Get<int>(nameof(durationFirs));
+			durationFirst = tag.Get<int>(nameof(durationFirst));
 			durationBest = tag.Get<int>(nameof(durationBest));
 
 			hitsTakenPrev = tag.Get<int>(nameof(hitsTakenPrev));
-			hitsTakenFirs = tag.Get<int>(nameof(hitsTakenFirs));
+			hitsTakenFirst = tag.Get<int>(nameof(hitsTakenFirst));
 			hitsTakenBest = tag.Get<int>(nameof(hitsTakenBest));
 		}
 
@@ -119,11 +133,11 @@ namespace BossChecklist
 				{ nameof(deaths), deaths },
 
 				{ nameof(durationPrev), durationPrev },
-				{ nameof(durationFirs), durationFirs },
+				{ nameof(durationFirst), durationFirst },
 				{ nameof(durationBest), durationBest },
 
 				{ nameof(hitsTakenPrev), hitsTakenPrev },
-				{ nameof(hitsTakenFirs), hitsTakenFirs },
+				{ nameof(hitsTakenFirst), hitsTakenFirst },
 				{ nameof(hitsTakenBest), hitsTakenBest },
 			};
 		}
@@ -184,6 +198,10 @@ namespace BossChecklist
 	 * The player's name and record will be displayed on the World Record alt page for everyone to see and try to beat.
 	 */
 
+	/// <summary>
+	/// In multiplayer, players are able to set world records against other players.
+	/// This will contain record values the respective record holders.
+	/// </summary>
 	public class WorldStats : TagSerializable
 	{
 		public int totalKills;
@@ -224,19 +242,6 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetRecieve(BinaryReader reader) {
-			RecordID brokenRecords = (RecordID)reader.ReadInt32();
-
-			if (brokenRecords.HasFlag(RecordID.Duration)) {
-				durationHolder = reader.ReadString();
-				durationWorld = reader.ReadInt32();
-			}
-			if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
-				hitsTakenHolder = reader.ReadString();
-				hitsTakenWorld = reader.ReadInt32();
-			}
-		}
-
 		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
 			writer.Write((int)specificRecord); // We need this for NetRecieve as well
 			// Packet should have any beaten records written on it
@@ -247,6 +252,19 @@ namespace BossChecklist
 			if (specificRecord.HasFlag(RecordID.HitsTaken)) {
 				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
+			}
+		}
+
+		internal void NetRecieve(BinaryReader reader) {
+			RecordID brokenRecords = (RecordID)reader.ReadInt32();
+
+			if (brokenRecords.HasFlag(RecordID.Duration)) {
+				durationHolder = reader.ReadString();
+				durationWorld = reader.ReadInt32();
+			}
+			if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
+				hitsTakenHolder = reader.ReadString();
+				hitsTakenWorld = reader.ReadInt32();
 			}
 		}
 	}

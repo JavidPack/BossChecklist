@@ -90,7 +90,7 @@ namespace BossChecklist
 					if (BossChecklist.DebugConfig.ShowInactiveBossCheck) {
 						Main.NewText(npc.FullName + ": " + FullyInactive(npc, index));
 					}
-					WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, index)].stat.totalKills++;
+					WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, index)].stats.totalKills++;
 
 					// Reset world variables after record checking takes place
 					WorldAssist.ActiveBossesList[index] = false;
@@ -142,7 +142,7 @@ namespace BossChecklist
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			bool newRecordSet = false;
 			int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, bossIndex);
-			BossStats bossStats = modPlayer.RecordsForWorld[recordIndex].stat;
+			BossStats bossStats = modPlayer.RecordsForWorld[recordIndex].stats;
 
 			int durationAttempt = modPlayer.Tracker_Duration[recordIndex];
 			int currentBestDuration = bossStats.durationBest;
@@ -193,7 +193,7 @@ namespace BossChecklist
 
 		public void CheckRecordsMultiplayer(NPC npc, int bossIndex) {
 			int recordIndex = BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, bossIndex);
-			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stat;
+			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
 			string[] newRecordHolders = new string[] { "", "" };
 			int[] newWorldRecords = new int[]{
 				worldRecords.durationWorld,
@@ -269,8 +269,8 @@ namespace BossChecklist
 
 		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from appearing to show World Record! instead
 			Player player = Main.LocalPlayer;
-			BossStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stat;
-			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stat;
+			BossStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stats;
 			bool newRecord = false;
 
 			if (playerRecord.durationBest < worldRecord.durationWorld || worldRecord.durationWorld <= 0) {

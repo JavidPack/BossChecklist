@@ -686,8 +686,8 @@ namespace BossChecklist.UIElements
 								return;
 							}
 
-							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
-							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stat;
+							BossStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
+							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stats;
 
 							string recordTitle = "";
 							string recordValue = "";
@@ -777,11 +777,11 @@ namespace BossChecklist.UIElements
 									}
 									else if (BossLogUI.RecordPageSelected == RecordType.FirstRecord) {
 										// First Victory
-										if (record.durationFirs == -1) {
+										if (record.durationFirst == -1) {
 											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
-											recordValue = RecordTimeConversion(record.durationFirs);
+											recordValue = RecordTimeConversion(record.durationFirst);
 										}
 									}
 									else if (BossLogUI.RecordPageSelected == RecordType.BestRecord) {
@@ -820,11 +820,11 @@ namespace BossChecklist.UIElements
 									}
 									else if (BossLogUI.RecordPageSelected == RecordType.FirstRecord) {
 										// First Victory
-										if (record.hitsTakenFirs == -1) {
+										if (record.hitsTakenFirst == -1) {
 											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
-											recordValue = record.hitsTakenFirs.ToString();
+											recordValue = record.hitsTakenFirst.ToString();
 										}
 									}
 									else if (BossLogUI.RecordPageSelected == RecordType.BestRecord) {
@@ -1185,8 +1185,8 @@ namespace BossChecklist.UIElements
 
 			public int GetRecordValue(RecordType type, RecordID id) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				BossStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stat;
-				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stat;
+				BossStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
+				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stats;
 				if (id == RecordID.None || id == RecordID.ResetAll) {
 					return -1;
 				}
@@ -1195,7 +1195,7 @@ namespace BossChecklist.UIElements
 					return id == RecordID.Duration ? records.durationPrev : records.hitsTakenPrev;
 				}
 				else if (type == RecordType.FirstRecord) {
-					return id == RecordID.Duration ? records.durationFirs : records.hitsTakenFirs;
+					return id == RecordID.Duration ? records.durationFirst : records.hitsTakenFirst;
 				}
 				else if (type == RecordType.BestRecord) {
 					return id == RecordID.Duration ? records.durationBest : records.hitsTakenBest;

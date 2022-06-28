@@ -378,7 +378,7 @@ namespace BossChecklist
 					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
 					int npcPos = reader.ReadInt32();
 
-					BossStats specificRecord = modPlayer.RecordsForWorld[npcPos].stat; // Get the Player's records
+					BossStats specificRecord = modPlayer.RecordsForWorld[npcPos].stats; // Get the Player's records
 					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)
 
 					//Update the serverrecords too so they can be used later
@@ -386,7 +386,7 @@ namespace BossChecklist
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
 					for (int i = 0; i < modPlayer.RecordsForWorld.Count; i++) {
-						BossStats stat = modPlayer.RecordsForWorld[i].stat;
+						BossStats stat = modPlayer.RecordsForWorld[i].stats;
 						packet.Write(stat.kills);
 						packet.Write(stat.deaths);
 
@@ -400,7 +400,7 @@ namespace BossChecklist
 					break;
 				case PacketMessageType.WorldRecordUpdate:
 					npcPos = reader.ReadInt32();
-					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stat; // Get the Player's records
+					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stats; // Get the Player's records
 					worldRecords.NetRecieve(reader); // The records will be updated through the reader (player and npcPos needed for new record)
 					break;
 				default:

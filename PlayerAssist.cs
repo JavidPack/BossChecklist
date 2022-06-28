@@ -123,9 +123,9 @@ namespace BossChecklist
 				}
 			}
 
-			// Upon entering a world, determine if records already exist for a player and copy them into a variable.
+			// Upon entering a world, determine if records already exist for a player and copy them into 'RecordsForWorld'.
 			string WorldID = Main.ActiveWorldFileData.UniqueId.ToString();
-			if (AllStoredRecords.ContainsKey(WorldID) && AllStoredRecords.TryGetValue(WorldID, out RecordsForWorld)) {
+			if (AllStoredRecords.TryGetValue(WorldID, out RecordsForWorld)) {
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 					// If we added mod bosses since we last generated this, be sure to add them
 					if (!RecordsForWorld.Exists(x => x.bossKey == boss.Key) && boss.type == EntryType.Boss) {
@@ -145,16 +145,20 @@ namespace BossChecklist
 				AllStoredRecords.Add(WorldID, RecordsForWorld);
 			}
 
-			// Reset record tracker numbers
+			// Reset record tracker numbers. Has to be reset after entering a world.
 			// Add values to all record trackers after RecordsForWorld are determined
 			Tracker_Duration = new List<int>();
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();
 
 			foreach (BossRecord boss in RecordsForWorld) {
-				Tracker_Duration.Add(0);
-				Tracker_Deaths.Add(false);
-				Tracker_HitsTaken.Add(0);
+				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == boss.bossKey);
+				// Only add trackers for bosses that are currently loaded for the world
+				if (index != -1) {
+					Tracker_Duration.Add(0);
+					Tracker_Deaths.Add(false);
+					Tracker_HitsTaken.Add(0);
+				}
 			}
 
 			// If the player has not been in this world before, create an entry for this world
@@ -168,13 +172,14 @@ namespace BossChecklist
 				return;
 			}
 
+			return;
 			// Send the player's world-bound records to the server. The server doesn't need player records from every world.
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
 				for (int i = 0; i < RecordsForWorld.Count; i++) {
-					BossStats stat = RecordsForWorld[i].stat;
+					BossStats stat = RecordsForWorld[i].stats;
 					packet.Write(stat.kills);
 					packet.Write(stat.deaths);
 					packet.Write(stat.durationBest);
@@ -217,8 +222,8 @@ namespace BossChecklist
 				for (int i = 0; i < Tracker_Deaths.Count; i++) {
 					if (Tracker_Deaths[i]) {
 						Tracker_Deaths[i] = false;
-						RecordsForWorld[i].stat.deaths++;
-						WorldAssist.worldRecords[i].stat.totalDeaths++;
+						RecordsForWorld[i].stats.deaths++;
+						WorldAssist.worldRecords[i].stats.totalDeaths++;
 					}
 				}
 			}
