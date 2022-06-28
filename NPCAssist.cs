@@ -199,44 +199,39 @@ namespace BossChecklist
 				worldRecords.durationWorld,
 				worldRecords.hitsTakenWorld
 			};
-			for (int i = 0; i < 255; i++) {
+			for (int i = 0; i < Main.maxPlayers; i++) {
 				Player player = Main.player[i];
 
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (!player.active || !npc.playerInteraction[i]) {
 					continue;
 				}
+				PersonalStats serverRecord = BossChecklist.ServerCollectedRecords[i][recordIndex];
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-				List<PersonalStats> serverRecords = BossChecklist.ServerCollectedRecords[i];
-				PersonalStats oldRecord = serverRecords[recordIndex];
+				int durationNew = modPlayer.Tracker_Duration[recordIndex];
+				int hitsTakenNew = modPlayer.Tracker_HitsTaken[recordIndex];
 
-				// Establish the new records for comparing
-				PersonalStats newRecord = new PersonalStats() {
-					durationPrev = modPlayer.Tracker_Duration[recordIndex],
-					hitsTakenPrev = modPlayer.Tracker_HitsTaken[recordIndex]
-				};
-
-				RecordID specificRecord = RecordID.None;
+				RecordID recordType = RecordID.None;
 				// For each record type we check if its beats the current record or if it is not set already
 				// If it is beaten, we add a flag to specificRecord to allow newRecord's numbers to override the current record
-				if (newRecord.durationPrev < oldRecord.durationBest || oldRecord.durationBest <= 0) {
-					Console.WriteLine($"{player.name} set a new record for DURATION: {newRecord.durationPrev} (Previous Record: {oldRecord.durationBest})");
-					specificRecord |= RecordID.Duration;
-					oldRecord.durationPrev = oldRecord.durationBest;
-					oldRecord.durationBest = newRecord.durationPrev;
+				if (durationNew < serverRecord.durationBest || serverRecord.durationBest <= 0) {
+					Console.WriteLine($"{player.name} set a new record for DURATION: {durationNew} (Previous Record: {serverRecord.durationBest})");
+					recordType |= RecordID.Duration;
+					serverRecord.durationPrev = serverRecord.durationBest;
+					serverRecord.durationBest = durationNew;
 				}
 				else {
-					oldRecord.durationPrev = newRecord.durationPrev;
+					serverRecord.durationPrev = durationNew;
 				}
 
-				if (newRecord.hitsTakenPrev < oldRecord.hitsTakenBest || oldRecord.hitsTakenBest < 0) {
-					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {newRecord.hitsTakenPrev} (Previous Record: {oldRecord.hitsTakenBest})");
-					specificRecord |= RecordID.HitsTaken;
-					oldRecord.hitsTakenPrev = oldRecord.hitsTakenBest;
-					oldRecord.hitsTakenBest = newRecord.hitsTakenPrev;
+				if (hitsTakenNew < serverRecord.hitsTakenBest || serverRecord.hitsTakenBest < 0) {
+					Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {hitsTakenNew} (Previous Record: {serverRecord.hitsTakenBest})");
+					recordType |= RecordID.HitsTaken;
+					serverRecord.hitsTakenPrev = serverRecord.hitsTakenBest;
+					serverRecord.hitsTakenBest = hitsTakenNew;
 				}
 				else {
-					oldRecord.hitsTakenPrev = newRecord.hitsTakenPrev;
+					serverRecord.hitsTakenPrev = hitsTakenNew;
 				}
 				
 				// Make and send the packet
@@ -244,7 +239,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
 				packet.Write((int)player.whoAmI); // Player index
-				newRecord.NetSend(packet, specificRecord); // Writes all the variables needed
+				modPlayer.RecordsForWorld[recordIndex].stats.NetSend(packet, recordType); // Writes all the variables needed
 				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
 			}
 			if (newRecordHolders.Any(x => x != "")) {

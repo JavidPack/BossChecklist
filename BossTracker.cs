@@ -245,9 +245,10 @@ namespace BossChecklist
 				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/%5B1.4-alpha%5D-Mod-Call-Structure");
 			}
 			
+			// The server must populate for collected records after all bosses have been counted and sorted.
 			if (Main.netMode == NetmodeID.Server) {
-				BossChecklist.ServerCollectedRecords = new List<PersonalStats>[255];
-				for (int i = 0; i < 255; i++) {
+				BossChecklist.ServerCollectedRecords = new List<PersonalStats>[Main.maxPlayers];
+				for (int i = 0; i < Main.maxPlayers; i++) {
 					BossChecklist.ServerCollectedRecords[i] = new List<PersonalStats>();
 					for (int j = 0; j < BossChecklist.bossTracker.SortedBosses.Count; j++) {
 						BossChecklist.ServerCollectedRecords[i].Add(new PersonalStats());
