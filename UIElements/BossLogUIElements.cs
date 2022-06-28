@@ -672,6 +672,7 @@ namespace BossChecklist.UIElements
 												// Reset UI positions when changing the page
 												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 												BossUISystem.Instance.BossLog.ResetUIPositioning();
+												// TODO: does this need to return??
 											}
 										}
 									}
@@ -686,8 +687,8 @@ namespace BossChecklist.UIElements
 								return;
 							}
 
-							PersonalStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
-							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stats;
+							PersonalStats record = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, BossLogUI.PageNum)].stats;
+							WorldStats wldRecord = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, BossLogUI.PageNum)].stats;
 
 							string recordTitle = "";
 							string recordValue = "";
@@ -1185,8 +1186,8 @@ namespace BossChecklist.UIElements
 
 			public int GetRecordValue(RecordType type, RecordID id) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				PersonalStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
-				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords)].stats;
+				PersonalStats records = modPlayer.RecordsForWorld[BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, BossLogUI.PageNum)].stats;
+				WorldStats worldRecords = WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, BossLogUI.PageNum)].stats;
 				if (id == RecordID.None || id == RecordID.ResetAll) {
 					return -1;
 				}

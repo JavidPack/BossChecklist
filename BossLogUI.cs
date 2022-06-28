@@ -621,7 +621,7 @@ namespace BossChecklist
 			}
 			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				PersonalStats stats = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
+				PersonalStats stats = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld, PageNum)].stats;
 				stats.kills = 0;
 				stats.deaths = 0;
 
@@ -635,7 +635,7 @@ namespace BossChecklist
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
-					packet.Write((int)PageNumToRecordIndex(modPlayer.RecordsForWorld));
+					packet.Write((int)PageNumToRecordIndex(modPlayer.RecordsForWorld, PageNum));
 					packet.Write((int)Main.LocalPlayer.whoAmI); // Player index
 					stats.NetSend(packet, RecordID.ResetAll);
 					packet.Send(toClient: Main.LocalPlayer.whoAmI);
@@ -1555,7 +1555,7 @@ namespace BossChecklist
 					bool validRecordPage = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
 					if (!validRecordPage) {
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						PersonalStats record = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld)].stats;
+						PersonalStats record = modPlayer.RecordsForWorld[PageNumToRecordIndex(modPlayer.RecordsForWorld, PageNum)].stats;
 						int totalRecords = (int)RecordType.None;
 						for (int i = 0; i < totalRecords; i++) {
 							if ((i == 1 || i == 2) && record.kills == 0) {
@@ -1636,8 +1636,27 @@ namespace BossChecklist
 			}
 		}
 
-		public static int PageNumToRecordIndex(List<BossRecord> records, int bossIndex = -1) => records.FindIndex(x => x.bossKey == BossChecklist.bossTracker.SortedBosses[bossIndex == -1 ? PageNum : bossIndex].Key);
-		public static int PageNumToRecordIndex(List<WorldRecord> records, int bossIndex = -1) => records.FindIndex(x => x.bossKey == BossChecklist.bossTracker.SortedBosses[bossIndex == -1 ? PageNum : bossIndex].Key);
+		public static int PageNumToRecordIndex(List<BossRecord> records, int bossIndex) {
+			if (bossIndex < 0) {
+				throw new Exception($"PageNumToRecordIndex passed an invalid number for bossIndex ({bossIndex})");
+			}
+			int newIndex = records.FindIndex(x => x.bossKey == BossChecklist.bossTracker.SortedBosses[bossIndex].Key);
+			if (newIndex == -1) {
+				throw new Exception($"PageNumToRecordIndex could not find the specified boss with the given bossIndex ({bossIndex})");
+			}
+			return newIndex;
+		}
+
+		public static int PageNumToRecordIndex(List<WorldRecord> records, int bossIndex) {
+			if (bossIndex < 0) {
+				throw new Exception($"PageNumToRecordIndex passed an invalid number for bossIndex ({bossIndex})");
+			}
+			int newIndex = records.FindIndex(x => x.bossKey == BossChecklist.bossTracker.SortedBosses[bossIndex].Key);
+			if (newIndex == -1) {
+				throw new Exception($"PageNumToRecordIndex could not find the specified boss with the given bossIndex ({bossIndex})");
+			}
+			return newIndex;
+		}
 
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
 		
