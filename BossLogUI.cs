@@ -636,9 +636,8 @@ namespace BossChecklist
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
 					packet.Write((int)PageNumToRecordIndex(modPlayer.RecordsForWorld, PageNum));
-					packet.Write((int)Main.LocalPlayer.whoAmI); // Player index
 					stats.NetSend(packet, RecordID.ResetAll);
-					packet.Send(toClient: Main.LocalPlayer.whoAmI);
+					packet.Send(toClient: Main.LocalPlayer.whoAmI); // Multiplayer client --> Multiplayer client
 				}
 			}
 		}

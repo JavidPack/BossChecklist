@@ -206,7 +206,7 @@ namespace BossChecklist
 				if (!player.active || !npc.playerInteraction[i]) {
 					continue;
 				}
-				PersonalStats serverRecord = BossChecklist.ServerCollectedRecords[i][recordIndex];
+				PersonalStats serverRecord = BossChecklist.ServerCollectedRecords[i][recordIndex].stats;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				int durationNew = modPlayer.Tracker_Duration[recordIndex];
 				int hitsTakenNew = modPlayer.Tracker_HitsTaken[recordIndex];
@@ -238,9 +238,8 @@ namespace BossChecklist
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
-				packet.Write((int)player.whoAmI); // Player index
 				modPlayer.RecordsForWorld[recordIndex].stats.NetSend(packet, recordType); // Writes all the variables needed
-				packet.Send(toClient: i); // We send to the player. Only they need to see their own records
+				packet.Send(toClient: i); // Server --> Multiplayer client // We send to the player as only they need to see their own records
 			}
 			if (newRecordHolders.Any(x => x != "")) {
 				RecordID specificRecord = RecordID.None;
@@ -259,7 +258,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.WorldRecordUpdate);
 				packet.Write((int)recordIndex); // Which boss record are we changing?
 				worldRecords.NetSend(packet, specificRecord);
-				packet.Send(); // To server (world data for everyone)
+				packet.Send(); // Server --> Server (world data for everyone)
 			}
 		}
 

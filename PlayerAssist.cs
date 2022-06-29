@@ -172,27 +172,28 @@ namespace BossChecklist
 				return;
 			}
 
-			return;
-			// Send the player's world-bound records to the server. The server doesn't need player records from every world.
+			// When a player joins a world, their Records will need to be sent to the server
+			// The server doesn't need player records from every world, just the current one
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				// Essentially to get "BossAssist.ServerCollectedRecords[player.whoAmI] = AllBossRecords;"
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
+				packet.Write(RecordsForWorld.Count);
 				for (int i = 0; i < RecordsForWorld.Count; i++) {
+					// Only records that we need to compare between other players are needed
+					// The statisctics and First recrods are strictly personal with no comparing involved
 					PersonalStats stat = RecordsForWorld[i].stats;
-					packet.Write(stat.kills);
-					packet.Write(stat.deaths);
+					packet.Write(RecordsForWorld[i].bossKey);
 					packet.Write(stat.durationBest);
 					packet.Write(stat.durationPrev);
 					packet.Write(stat.hitsTakenBest);
 					packet.Write(stat.hitsTakenPrev);
 				}
-				packet.Send(); // To server
+				packet.Send(); // Multiplayer client --> Server
 			}
 		}
 
-		// Continually track the duration of boss fights while boss NPCs are active.
-		// If a player dies at any point while a boss is active, add to the death tracker for later.
+		// Continually track the duration of boss fights while boss NPCs are active
+		// If a player dies at any point while a boss is active, add to the death tracker for later
 		public override void PreUpdate() {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;
@@ -212,8 +213,8 @@ namespace BossChecklist
 			}
 		}
 
-		// When a player is dead they are marked as such in the Death tracker.
-		// On respawn, add to the total deaths towards marked bosses.
+		// When a player is dead they are marked as such in the Death tracker
+		// On respawn, add to the total deaths towards marked bosses
 		public override void OnRespawn(Player player) {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;
@@ -229,7 +230,7 @@ namespace BossChecklist
 			}
 		}
 
-		// Whenever the player is hurt, add to the HitsTaken tracker.
+		// Whenever the player is hurt, add to the HitsTaken tracker
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;

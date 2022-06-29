@@ -35,7 +35,7 @@ namespace BossChecklist
 		internal static ClientConfiguration ClientConfig;
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
-		public static List<PersonalStats>[] ServerCollectedRecords;
+		public static List<BossRecord>[] ServerCollectedRecords;
 
 		public BossChecklist() {
 		}
@@ -323,7 +323,6 @@ namespace BossChecklist
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			PacketMessageType msgType = (PacketMessageType)reader.ReadByte();
-			Player player;
 			PlayerAssist modPlayer;
 			switch (msgType) {
 				// Sent from Client to Server
@@ -355,55 +354,54 @@ namespace BossChecklist
 					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
 					break;
 				case PacketMessageType.SendRecordsToServer:
-					player = Main.player[whoAmI];
-					Console.WriteLine($"Receiving boss records from the joined player {player.name}!");
-					for (int i = 0; i < bossTracker.SortedBosses.Count; i++) {
-						PersonalStats bossStats = ServerCollectedRecords[whoAmI][i];
-						bossStats.kills = reader.ReadInt32();
-						bossStats.deaths = reader.ReadInt32();
+					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
+					Console.WriteLine($"Attempting to receive personal records from the connected player {Main.player[whoAmI].name}...");
+					int totalCount = reader.ReadInt32();
+					for (int i = 0; i < totalCount; i++) {
+						// Read the bossKey and attempt to locate its position within the server's collection of records
+						// If index is invalid (which it shouldn't be), send a relay message and continue the process
+						string key = reader.ReadString();
+						int index = ServerCollectedRecords[whoAmI].FindIndex(x => x.bossKey == key);
+						if (index == -1) {
+							Console.WriteLine($"Ran into trouble receiving personal records from {Main.player[whoAmI].name}");
+							continue;
+						}
 
+						// Read the stats sent to the server and update them
+						PersonalStats bossStats = ServerCollectedRecords[whoAmI][index].stats;
 						bossStats.durationPrev = reader.ReadInt32();
 						bossStats.durationBest = reader.ReadInt32();
-
 						bossStats.hitsTakenPrev = reader.ReadInt32();
 						bossStats.hitsTakenBest = reader.ReadInt32();
-
-						//Console.WriteLine($"Establishing {player.name}'s records for {bossTracker.SortedBosses[i].name} to the server");
 					}
+					Console.WriteLine($"Personal records for {Main.player[whoAmI].name} has successfully been retrieved!");
 					break;
 				case PacketMessageType.RecordUpdate:
-					//Server just sent us information about what boss just got killed and its records shall be updated
-					//Since we did packet.Send(toClient: i);, you can use LocalPlayer here
+					// Server just sent us information about what boss just got killed and its records should be updated
+					// Grab the player's records and update them through the reader (player and npcPos needed for new record)
+					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
 					int npcPos = reader.ReadInt32();
-					int playerNum = reader.ReadInt32();
+					modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					BossRecord record = modPlayer.RecordsForWorld[npcPos];
+					record.stats.NetRecieve(reader, Main.LocalPlayer, npcPos); 
 
-					player = Main.player[playerNum];
-					modPlayer = player.GetModPlayer<PlayerAssist>();
-
-					PersonalStats specificRecord = modPlayer.RecordsForWorld[npcPos].stats; // Get the Player's records
-					specificRecord.NetRecieve(reader, player, npcPos); // The records will be updated through the reader (player and npcPos needed for new record)
-
-					//Update the serverrecords too so they can be used later
-					// TODO? send it as a single entry?
+					// Whenever records are updated, the server will need to have this updated information as well
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendRecordsToServer);
-					for (int i = 0; i < modPlayer.RecordsForWorld.Count; i++) {
-						PersonalStats stat = modPlayer.RecordsForWorld[i].stats;
-						packet.Write(stat.kills);
-						packet.Write(stat.deaths);
-
-						packet.Write(stat.durationPrev);
-						packet.Write(stat.durationBest);
-
-						packet.Write(stat.hitsTakenPrev);
-						packet.Write(stat.hitsTakenBest);
-					}
-					packet.Send(); // To server (ORDER MATTERS FOR reader)
+					packet.Write(1); // Since RecordUpdate only updates one record at a time, the count is set to 1
+					packet.Write(record.bossKey);
+					packet.Write(record.stats.durationPrev);
+					packet.Write(record.stats.durationBest);
+					packet.Write(record.stats.hitsTakenPrev);
+					packet.Write(record.stats.hitsTakenBest);
+					packet.Send(); // Multiplayer client --> Server
 					break;
 				case PacketMessageType.WorldRecordUpdate:
+					// World Record updates are sent from the server to the server so its data can be sent to all players
+					// Grab the world records of the selected boss and update them through the reader
 					npcPos = reader.ReadInt32();
-					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stats; // Get the Player's records
-					worldRecords.NetRecieve(reader); // The records will be updated through the reader (player and npcPos needed for new record)
+					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stats;
+					worldRecords.NetRecieve(reader);
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");
