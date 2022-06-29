@@ -105,6 +105,8 @@ namespace BossChecklist
 
 		internal bool IsDownedOrForced => downed() || ForceDownedByPlayer(Main.LocalPlayer);
 
+		internal int GetRecordIndex => BossChecklist.bossTracker.BossRecordKeys.FindIndex(key => key == this.Key);
+
 		internal static string SourceDisplayNameWithoutChatTags(string modSource) {
 			string editedName = "";
 

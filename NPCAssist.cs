@@ -90,7 +90,7 @@ namespace BossChecklist
 					if (BossChecklist.DebugConfig.ShowInactiveBossCheck) {
 						Main.NewText(npc.FullName + ": " + FullyInactive(npc, index));
 					}
-					WorldAssist.worldRecords[BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, index)].stats.totalKills++;
+					WorldAssist.worldRecords[BossChecklist.bossTracker.SortedBosses[index].GetRecordIndex].stats.totalKills++;
 
 					// Reset world variables after record checking takes place
 					WorldAssist.ActiveBossesList[index] = false;
@@ -126,7 +126,7 @@ namespace BossChecklist
 					}
 					// Reset Timers and counters so we can start recording the next fight
 					PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-					int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, index);
+					int recordIndex = BossChecklist.bossTracker.SortedBosses[index].GetRecordIndex;
 					modPlayer.Tracker_Duration[recordIndex] = 0;
 					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 				}
@@ -141,7 +141,7 @@ namespace BossChecklist
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			bool newRecordSet = false;
-			int recordIndex = BossLogUI.PageNumToRecordIndex(modPlayer.RecordsForWorld, bossIndex);
+			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
 			PersonalStats bossStats = modPlayer.RecordsForWorld[recordIndex].stats;
 
 			int durationAttempt = modPlayer.Tracker_Duration[recordIndex];
@@ -192,7 +192,7 @@ namespace BossChecklist
 		}
 
 		public void CheckRecordsMultiplayer(NPC npc, int bossIndex) {
-			int recordIndex = BossLogUI.PageNumToRecordIndex(WorldAssist.worldRecords, bossIndex);
+			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
 			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
 			string[] newRecordHolders = new string[] { "", "" };
 			int[] newWorldRecords = new int[]{
@@ -327,7 +327,7 @@ namespace BossChecklist
 
 			List<BossInfo> BossInfoList = BossChecklist.bossTracker.SortedBosses;
 			for (int index = 0; index < BossInfoList.Count; index++) {
-				if (BossInfoList[index].type == EntryType.Event) {
+				if (BossInfoList[index].type != EntryType.Boss) {
 					continue;
 				}
 				if (BossInfoList[index].npcIDs.Contains(npc.Type)) {

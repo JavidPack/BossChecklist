@@ -42,11 +42,13 @@ namespace BossChecklist
 		internal bool BossesFinalized = false;
 		internal bool AnyModHasOldCall = false;
 		internal Dictionary<string, List<string>> OldCalls = new();
+		internal List<string> BossRecordKeys;
 
 		public BossTracker() {
 			BossChecklist.bossTracker = this;
 			InitializeVanillaBosses();
 			ExtraData = new List<OrphanInfo>();
+			BossRecordKeys = new List<string>();
 		}
 
 		private void InitializeVanillaBosses() {
@@ -236,6 +238,13 @@ namespace BossChecklist
 
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
+			// 
+			for (int i = 0; i < SortedBosses.Count; i++) {
+				if (SortedBosses[i].type == EntryType.Boss)
+					BossRecordKeys.Add(SortedBosses[i].Key);
+			}
+
+			// Bosses are now finalized. Entries can no longer be added or edited through Mod Calls.
 			BossesFinalized = true;
 			if (AnyModHasOldCall) {
 				foreach (var oldCall in OldCalls) {
@@ -244,7 +253,7 @@ namespace BossChecklist
 				OldCalls.Clear();
 				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/%5B1.4-alpha%5D-Mod-Call-Structure");
 			}
-			
+
 			// The server must populate for collected records after all bosses have been counted and sorted.
 			if (Main.netMode == NetmodeID.Server) {
 				BossChecklist.ServerCollectedRecords = new List<BossRecord>[Main.maxPlayers];

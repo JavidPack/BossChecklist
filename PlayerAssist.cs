@@ -151,14 +151,10 @@ namespace BossChecklist
 			Tracker_Deaths = new List<bool>();
 			Tracker_HitsTaken = new List<int>();
 
-			foreach (BossRecord boss in RecordsForWorld) {
-				int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == boss.bossKey);
-				// Only add trackers for bosses that are currently loaded for the world
-				if (index != -1) {
-					Tracker_Duration.Add(0);
-					Tracker_Deaths.Add(false);
-					Tracker_HitsTaken.Add(0);
-				}
+			for (int i = 0; i < BossChecklist.bossTracker.BossRecordKeys.Count; i++) {
+				Tracker_Duration.Add(0);
+				Tracker_Deaths.Add(false);
+				Tracker_HitsTaken.Add(0);
 			}
 
 			// If the player has not been in this world before, create an entry for this world
@@ -199,15 +195,13 @@ namespace BossChecklist
 				return;
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
-				for (int listNum = 0; listNum < BossChecklist.bossTracker.SortedBosses.Count; listNum++) {
-					if (WorldAssist.ActiveBossesList.Count == 0 || !WorldAssist.ActiveBossesList[listNum]) {
-						continue;
-					}
-					else if (WorldAssist.StartingPlayers[listNum][Main.myPlayer]) {
+				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
+					// If a boss is marked active and this player is a 'starting player'
+					if (WorldAssist.ActiveBossesList[recordIndex] && WorldAssist.StartingPlayers[recordIndex][Main.myPlayer]) {
 						if (Player.dead) {
-							Tracker_Deaths[BossLogUI.PageNumToRecordIndex(RecordsForWorld, listNum)] = true;
+							Tracker_Deaths[recordIndex] = true;
 						}
-						Tracker_Duration[BossLogUI.PageNumToRecordIndex(RecordsForWorld, listNum)]++;
+						Tracker_Duration[recordIndex]++;
 					}
 				}
 			}
@@ -215,16 +209,17 @@ namespace BossChecklist
 
 		// When a player is dead they are marked as such in the Death tracker
 		// On respawn, add to the total deaths towards marked bosses
+		// ActiveBossesList and StartingPlayers doesn't need to be checked since it was checked when setting the tracker bool to true
 		public override void OnRespawn(Player player) {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int i = 0; i < Tracker_Deaths.Count; i++) {
-					if (Tracker_Deaths[i]) {
-						Tracker_Deaths[i] = false;
-						RecordsForWorld[i].stats.deaths++;
-						WorldAssist.worldRecords[i].stats.totalDeaths++;
+				for (int recordIndex = 0; recordIndex < Tracker_Deaths.Count; recordIndex++) {
+					if (Tracker_Deaths[recordIndex]) {
+						Tracker_Deaths[recordIndex] = false;
+						RecordsForWorld[recordIndex].stats.deaths++;
+						WorldAssist.worldRecords[recordIndex].stats.totalDeaths++;
 					}
 				}
 			}
@@ -236,11 +231,10 @@ namespace BossChecklist
 				return;
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
-				for (int i = 0; i < Main.maxNPCs; i++) {
-					if (!Main.npc[i].active || NPCAssist.GetBossInfoIndex(Main.npc[i]) == -1) {
-						continue;
+				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
+					if (WorldAssist.ActiveBossesList[recordIndex] && WorldAssist.StartingPlayers[recordIndex][Main.myPlayer]) {
+						Tracker_HitsTaken[recordIndex]++;
 					}
-					Tracker_HitsTaken[BossLogUI.PageNumToRecordIndex(RecordsForWorld, NPCAssist.GetBossInfoIndex(Main.npc[i]))]++;
 				}
 			}
 		}

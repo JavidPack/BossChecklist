@@ -15,6 +15,14 @@ namespace BossChecklist
 	{
 		// Since only 1 set of records is saved per boss, there is no need to put it into a dictionary.
 		public static List<WorldRecord> worldRecords;
+
+		// Bosses will be set to true when they spawn and will only be set back to false when the boss despawns or dies
+		public static List<bool> ActiveBossesList;
+
+		// Players that are in the server when a boss fight starts
+		// Prevents players that join a server mid bossfight from messing up records
+		public static List<bool[]> StartingPlayers;
+
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
 
 		public static bool downedBloodMoon;
@@ -30,13 +38,6 @@ namespace BossChecklist
 		public static bool downedInvasionT2Ours;
 		public static bool downedInvasionT3Ours;
 		public static bool downedTorchGod;
-
-		// Bosses will be set to true when they spawn and will only be set back to false when the boss despawns or dies
-		public static List<bool> ActiveBossesList;
-
-		// Players that are in the server when a boss fight starts
-		// Prevents players that join a server mid bossfight from messing up records
-		public static List<bool[]> StartingPlayers;
 
 		bool isBloodMoon = false;
 		bool isPumpkinMoon = false;
@@ -56,12 +57,6 @@ namespace BossChecklist
 		}
 
 		public override void OnWorldLoad() {
-			worldRecords = new List<WorldRecord>();
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.type == EntryType.Boss)
-					worldRecords.Add(new WorldRecord(boss.Key));
-			}
-
 			HiddenBosses.Clear();
 
 			downedBloodMoon = false;
@@ -83,10 +78,13 @@ namespace BossChecklist
 			downedInvasionT3Ours = false;
 			downedTorchGod = false;
 
+			// Record related lists that should be the same count of record tracking entries
+			worldRecords = new List<WorldRecord>();
 			ActiveBossesList = new List<bool>();
 			StartingPlayers = new List<bool[]>();
-			// Includes events, even though they wont be accounted for
-			for (int i = 0; i < BossChecklist.bossTracker.SortedBosses.Count; i++) {
+
+			for (int i = 0; i < BossChecklist.bossTracker.BossRecordKeys.Count; i++) {
+				worldRecords.Add(new WorldRecord(BossChecklist.bossTracker.BossRecordKeys[i]));
 				ActiveBossesList.Add(false);
 				StartingPlayers.Add(new bool[Main.maxPlayers]);
 			}
@@ -98,24 +96,25 @@ namespace BossChecklist
 			}
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC npc = Main.npc[n];
-				int listNum = NPCAssist.GetBossInfoIndex(npc);
-				if (listNum == -1) {
+				int bossIndex = NPCAssist.GetBossInfoIndex(npc);
+				int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
+				if (bossIndex == -1 || recordIndex == -1) {
 					continue;
 				}
 
-				if (ActiveBossesList[listNum]) {
+				if (ActiveBossesList[recordIndex]) {
 					// If any players become inactive during the fight, remove them from the list
 					for (int i = 0; i < Main.maxPlayers; i++) {
 						if (!Main.player[i].active) {
-							StartingPlayers[listNum][i] = false;
+							StartingPlayers[recordIndex][i] = false;
 						}
 					}
 
 					// If the boss is marked active, but is no longer active, check for other potential npcs assigned to the boss
 					// If the boss is fully inactive, but not killed, display a despawn message
-					if (!npc.active && NPCAssist.FullyInactive(npc, listNum)) {
-						ActiveBossesList[listNum] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-						string message = GetDespawnMessage(npc, listNum);
+					if (!npc.active && NPCAssist.FullyInactive(npc, bossIndex)) {
+						ActiveBossesList[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
+						string message = GetDespawnMessage(npc, bossIndex);
 						if (message != "") {
 							if (Main.netMode == NetmodeID.SinglePlayer) {
 								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
@@ -258,6 +257,7 @@ namespace BossChecklist
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
+			// TODO: unloaded entry data must be preserved
 			if (worldRecords == null) {
 				tag["Records"] = new List<WorldRecord>();
 			}

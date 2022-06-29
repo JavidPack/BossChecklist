@@ -188,13 +188,13 @@ namespace BossChecklist
 						}
 						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter);
 						if (configIndex != -1) {
-							PlayerAssist playerAssist = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-							int recordIndex = BossLogUI.PageNumToRecordIndex(playerAssist.RecordsForWorld, configIndex);
+							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+							int recordIndex = BossChecklist.bossTracker.SortedBosses[configIndex].GetRecordIndex;
 							if (recordIndex != -1) {
 								string debugText = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
-												$"\nTime: {playerAssist.Tracker_Duration[recordIndex]}" +
-												$"\nTimes Hit: {playerAssist.Tracker_HitsTaken[recordIndex]}" +
-												$"\nDeaths: {playerAssist.Tracker_Deaths[recordIndex]}";
+												$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +
+												$"\nTimes Hit: {modPlayer.Tracker_HitsTaken[recordIndex]}" +
+												$"\nDeaths: {modPlayer.Tracker_Deaths[recordIndex]}";
 								Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
 							}
 						}
