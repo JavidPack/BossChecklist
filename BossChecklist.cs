@@ -355,15 +355,22 @@ namespace BossChecklist
 					break;
 				case PacketMessageType.SendRecordsToServer:
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
-					Console.WriteLine($"Attempting to receive personal records from the connected player {Main.player[whoAmI].name}...");
+					// If total count is equal to 1, a record update must be taking place
+					// If total count is greater than 1, the packet must have been sent from a newly connected player
 					int totalCount = reader.ReadInt32();
+					if (totalCount > 1) {
+						Console.ForegroundColor = ConsoleColor.DarkYellow;
+						Console.WriteLine($"Attempting to receive personal records from the connected player '{Main.player[whoAmI].name}'...");
+					}
+
+					int invalidConflicts = 0;
 					for (int i = 0; i < totalCount; i++) {
 						// Read the bossKey and attempt to locate its position within the server's collection of records
 						// If index is invalid (which it shouldn't be), send a relay message and continue the process
 						string key = reader.ReadString();
 						int index = ServerCollectedRecords[whoAmI].FindIndex(x => x.bossKey == key);
 						if (index == -1) {
-							Console.WriteLine($"Ran into trouble receiving personal records from {Main.player[whoAmI].name}");
+							invalidConflicts++;
 							continue;
 						}
 
@@ -374,7 +381,18 @@ namespace BossChecklist
 						bossStats.hitsTakenPrev = reader.ReadInt32();
 						bossStats.hitsTakenBest = reader.ReadInt32();
 					}
-					Console.WriteLine($"Personal records for {Main.player[whoAmI].name} has successfully been retrieved!");
+
+					if (totalCount > 1) {
+						if (invalidConflicts > 0) {
+							Console.ForegroundColor = ConsoleColor.DarkRed;
+							Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has been retrieved with {invalidConflicts} conflicts");
+						}
+						else {
+							Console.ForegroundColor = ConsoleColor.Green;
+							Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has successfully been retrieved!");
+						}
+						Console.ResetColor();
+					}
 					break;
 				case PacketMessageType.RecordUpdate:
 					// Server just sent us information about what boss just got killed and its records should be updated
@@ -383,7 +401,11 @@ namespace BossChecklist
 					int npcPos = reader.ReadInt32();
 					modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 					BossRecord record = modPlayer.RecordsForWorld[npcPos];
-					record.stats.NetRecieve(reader, Main.LocalPlayer, npcPos); 
+					record.stats.NetRecieve(reader, Main.LocalPlayer, npcPos);
+
+					Console.ForegroundColor = ConsoleColor.DarkCyan;
+					Console.WriteLine($"Updated a boss record for player '{Main.LocalPlayer.name}'");
+					Console.ResetColor();
 
 					// Whenever records are updated, the server will need to have this updated information as well
 					ModPacket packet = GetPacket();
@@ -402,6 +424,10 @@ namespace BossChecklist
 					npcPos = reader.ReadInt32();
 					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stats;
 					worldRecords.NetRecieve(reader);
+
+					Console.ForegroundColor = ConsoleColor.Cyan;
+					Console.WriteLine($"World records have been updated!");
+					Console.ResetColor();
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");

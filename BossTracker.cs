@@ -992,12 +992,12 @@ namespace BossChecklist
 			if (!BossChecklist.DebugConfig.ModCallLogVerbose)
 				return;
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.Write("<<Boss Checklist>> ");
-			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.Write("[Boss Checklist] ");
+			Console.ResetColor();
 			Console.Write("Boss Log entry added: ");
-			Console.ForegroundColor = ConsoleColor.Magenta;
-			Console.Write("[" + mod + "]");
 			Console.ForegroundColor = ConsoleColor.DarkMagenta;
+			Console.Write("[" + mod + "] ");
+			Console.ForegroundColor = ConsoleColor.Magenta;
 			Console.Write(name);
 			Console.WriteLine();
 			Console.ResetColor();
