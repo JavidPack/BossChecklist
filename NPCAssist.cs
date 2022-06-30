@@ -76,7 +76,7 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;
 			}
-			int index = GetBossInfoIndex(npc);
+			int index = GetBossInfoIndex(npc.type, true);
 			if (index != -1) {
 				if (FullyInactive(npc, index)) {
 					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
@@ -109,7 +109,7 @@ namespace BossChecklist
 				return; // Checks for multi-segmented bosses?
 			}
 
-			int index = GetBossInfoIndex(npc);
+			int index = GetBossInfoIndex(npc.type, true);
 			if (index == -1) {
 				return; // Make sure the npc is an entry
 			}
@@ -300,37 +300,21 @@ namespace BossChecklist
 			return limbNPCs.Contains(npcType.type) || isTwinsRet || isTwinsSpaz;
 		}
 
-		public static int GetBossInfoIndex(NPC boss, bool skipEventCheck = true) { // Skipcheck incase we need it to account for events
-			if (!BossChecklist.bossTracker.BossCache[boss.type]) {
+		/// <summary>
+		/// Loops through all entries in BossTracker.SortedBosses to find BossInfo that contains the specified npc type.
+		/// </summary>
+		/// <param name="bossesOnly">Leave false to use this for any entry. Set to true while using this for boss record purposes.</param>
+		/// <returns>The index within BossTracker.SortedBosses. Returns -1 if searching for an invalid npc type.</returns>
+		public static int GetBossInfoIndex(int npcType, bool bossesOnly = false) {
+			if (!BossChecklist.bossTracker.BossCache[npcType])
 				return -1;
-			}
 
 			List<BossInfo> BossInfoList = BossChecklist.bossTracker.SortedBosses;
 			for (int index = 0; index < BossInfoList.Count; index++) {
-				if (BossInfoList[index].type == EntryType.Event && skipEventCheck) {
+				if (bossesOnly && BossInfoList[index].type != EntryType.Boss) {
 					continue;
 				}
-				if (BossInfoList[index].npcIDs.Contains(boss.type)) {
-					return index;
-				}
-			}
-			return -1;
-		}
-
-		public static int GetBossInfoIndex(NPCDefinition npc) {
-			if (npc.IsUnloaded || npc.Type == -1 || npc.Type == NPCID.None) {
-				return -1;
-			}
-			if (!BossChecklist.bossTracker.BossCache[npc.Type]) {
-				return -1;
-			}
-
-			List<BossInfo> BossInfoList = BossChecklist.bossTracker.SortedBosses;
-			for (int index = 0; index < BossInfoList.Count; index++) {
-				if (BossInfoList[index].type != EntryType.Boss) {
-					continue;
-				}
-				if (BossInfoList[index].npcIDs.Contains(npc.Type)) {
+				if (BossInfoList[index].npcIDs.Contains(npcType)) {
 					return index;
 				}
 			}

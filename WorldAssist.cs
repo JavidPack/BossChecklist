@@ -96,7 +96,7 @@ namespace BossChecklist
 			}
 			for (int n = 0; n < Main.maxNPCs; n++) {
 				NPC npc = Main.npc[n];
-				int bossIndex = NPCAssist.GetBossInfoIndex(npc);
+				int bossIndex = NPCAssist.GetBossInfoIndex(npc.type, true);
 				int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
 				if (bossIndex == -1 || recordIndex == -1) {
 					continue;
