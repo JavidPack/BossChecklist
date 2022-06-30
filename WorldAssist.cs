@@ -17,11 +17,11 @@ namespace BossChecklist
 		public static List<WorldRecord> worldRecords;
 
 		// Bosses will be set to true when they spawn and will only be set back to false when the boss despawns or dies
-		public static List<bool> ActiveBossesList;
+		public static List<bool> Tracker_ActiveEntry;
 
 		// Players that are in the server when a boss fight starts
 		// Prevents players that join a server mid bossfight from messing up records
-		public static List<bool[]> StartingPlayers;
+		public static List<bool[]> Tracker_StartingPlayers;
 
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
 
@@ -80,51 +80,13 @@ namespace BossChecklist
 
 			// Record related lists that should be the same count of record tracking entries
 			worldRecords = new List<WorldRecord>();
-			ActiveBossesList = new List<bool>();
-			StartingPlayers = new List<bool[]>();
+			Tracker_ActiveEntry = new List<bool>();
+			Tracker_StartingPlayers = new List<bool[]>();
 
 			for (int i = 0; i < BossChecklist.bossTracker.BossRecordKeys.Count; i++) {
 				worldRecords.Add(new WorldRecord(BossChecklist.bossTracker.BossRecordKeys[i]));
-				ActiveBossesList.Add(false);
-				StartingPlayers.Add(new bool[Main.maxPlayers]);
-			}
-		}
-
-		public override void PreUpdateWorld() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-				return;
-			}
-			for (int n = 0; n < Main.maxNPCs; n++) {
-				NPC npc = Main.npc[n];
-				int bossIndex = NPCAssist.GetBossInfoIndex(npc.type, true);
-				int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
-				if (bossIndex == -1 || recordIndex == -1) {
-					continue;
-				}
-
-				if (ActiveBossesList[recordIndex]) {
-					// If any players become inactive during the fight, remove them from the list
-					for (int i = 0; i < Main.maxPlayers; i++) {
-						if (!Main.player[i].active) {
-							StartingPlayers[recordIndex][i] = false;
-						}
-					}
-
-					// If the boss is marked active, but is no longer active, check for other potential npcs assigned to the boss
-					// If the boss is fully inactive, but not killed, display a despawn message
-					if (!npc.active && NPCAssist.FullyInactive(npc, bossIndex)) {
-						ActiveBossesList[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-						string message = GetDespawnMessage(npc, bossIndex);
-						if (message != "") {
-							if (Main.netMode == NetmodeID.SinglePlayer) {
-								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
-							}
-							else {
-								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, npc.FullName), Colors.RarityPurple);
-							}
-						}
-					}
-				}
+				Tracker_ActiveEntry.Add(false);
+				Tracker_StartingPlayers.Add(new bool[Main.maxPlayers]);
 			}
 		}
 
@@ -201,31 +163,6 @@ namespace BossChecklist
 					ChatHelper.BroadcastChatMessage(message, Colors.RarityGreen);
 				}
 			}
-		}
-
-		public string GetDespawnMessage(NPC npc, int index) {
-			if (npc.life <= 0) {
-				return ""; // If the boss was killed, don't display a despawn message
-			}
-
-			List<BossInfo> bosses = BossChecklist.bossTracker.SortedBosses;
-			string messageType = BossChecklist.ClientConfig.DespawnMessageType;
-
-			if (messageType == "Unique") {
-				// Provide the npc for the custom message
-				// If null or empty, give a generic message instead of a custom one
-				string customMessage = bosses[index].customDespawnMessages(npc);
-				if (!string.IsNullOrEmpty(customMessage)) {
-					return customMessage;
-				}
-			}
-			if (messageType != "Disabled") {
-				// If any player is still alive, use the generic despawn message.
-				// If all players are dead, use the boss victory despawn message.
-				return Main.player.Any(plr => plr.active && !plr.dead) ? "Mods.BossChecklist.BossDespawn.Generic" : "Mods.BossChecklist.BossVictory.Generic";
-			}
-			// The despawn message feature was disabled. Return an empty message.
-			return "";
 		}
 
 		public override void SaveWorldData(TagCompound tag) {

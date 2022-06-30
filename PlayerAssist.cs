@@ -204,7 +204,7 @@ namespace BossChecklist
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
 				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
 					// If a boss is marked active and this player is a 'starting player'
-					if (WorldAssist.ActiveBossesList[recordIndex] && WorldAssist.StartingPlayers[recordIndex][Main.myPlayer]) {
+					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
 						if (Player.dead) {
 							Tracker_Deaths[recordIndex] = true;
 						}
@@ -239,7 +239,7 @@ namespace BossChecklist
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
-					if (WorldAssist.ActiveBossesList[recordIndex] && WorldAssist.StartingPlayers[recordIndex][Main.myPlayer]) {
+					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
 						Tracker_HitsTaken[recordIndex]++;
 					}
 				}
