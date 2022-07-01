@@ -23,6 +23,8 @@ namespace BossChecklist
 		// Prevents players that join a server mid bossfight from messing up records
 		public static List<bool[]> Tracker_StartingPlayers;
 
+		public static bool[] CheckedRecordIndexes;
+
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
 
 		public static bool downedBloodMoon;
@@ -82,6 +84,7 @@ namespace BossChecklist
 			worldRecords = new List<WorldRecord>();
 			Tracker_ActiveEntry = new List<bool>();
 			Tracker_StartingPlayers = new List<bool[]>();
+			CheckedRecordIndexes = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
 			for (int i = 0; i < BossChecklist.bossTracker.BossRecordKeys.Count; i++) {
 				worldRecords.Add(new WorldRecord(BossChecklist.bossTracker.BossRecordKeys[i]));
@@ -96,8 +99,11 @@ namespace BossChecklist
 				if (bossIndex == -1)
 					continue;
 				int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
-				if (recordIndex == -1)
+				if (recordIndex == -1 || CheckedRecordIndexes[recordIndex])
 					continue;
+
+				// Prevents checking and updating NPCs within the same entry npc pool for performance
+				CheckedRecordIndexes[recordIndex] = true;
 
 				// If marked as active...
 				if (Tracker_ActiveEntry[recordIndex]) {
@@ -109,7 +115,7 @@ namespace BossChecklist
 					}
 
 					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
-					if (NPCAssist.FullyInactive(npc, bossIndex)) {
+					if (NPCAssist.FullyInactive(npc, bossIndex, true)) {
 						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
 						string message = NPCAssist.GetDespawnMessage(npc, bossIndex);
 						if (message != "") {
@@ -122,6 +128,10 @@ namespace BossChecklist
 						}
 					}
 				}
+			}
+			// Resets all to false
+			for (int i = 0; i < CheckedRecordIndexes.Length; i++) {
+				CheckedRecordIndexes[i] = false;
 			}
 		}
 

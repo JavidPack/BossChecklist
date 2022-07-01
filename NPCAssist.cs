@@ -100,10 +100,10 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Searches for all npc types of a given SortedBosses index and checks their active status within Main.npc.
+		/// Searches for all npc types of a given SortedBosses index and checks their active status within Main.npc. Does not include the passed NPC itself unless specified.
 		/// </summary>
 		/// <returns>Whether or not an npc listed in the specified entry's npc pool is active or not.</returns>
-		public static bool FullyInactive(NPC npc, int index) {
+		public static bool FullyInactive(NPC npc, int index, bool includePassedNPC = false) {
 			// Check all multibosses to see if the NPC is truly dead
 			// index should be checked for a value of -1 before submitting, but just in case...
 			if (index == -1)
@@ -116,7 +116,7 @@ namespace BossChecklist
 			}
 
 			// If none of the npc types are active, return the NPC's own active state
-			return !npc.active;
+			return !includePassedNPC || !npc.active;
 		}
 
 		/// <summary>
@@ -158,54 +158,44 @@ namespace BossChecklist
 				return;
 			}
 
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			bool newRecordSet = false;
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
-			PersonalStats bossStats = modPlayer.RecordsForWorld[recordIndex].stats;
 
-			int durationAttempt = modPlayer.Tracker_Duration[recordIndex];
-			int currentBestDuration = bossStats.durationBest;
-			
-			int hitsTakenAttempt = modPlayer.Tracker_HitsTaken[recordIndex];
-			int currentBestHitsTaken = bossStats.hitsTakenBest;
+			ref PersonalStats statistics = ref modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
+			int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
+			int trackedhitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
 
-			bossStats.kills++; // Kills always go up, since comparing only occurs if boss was defeated
+			statistics.kills++; // Kills always go up, since record checking only occurs if boss was defeated
 
-			// If the player has beaten their best record, we change BEST to PREV and make the current attempt the new BEST
-			// Otherwise, just overwrite PREV with the current attempt
-			if (durationAttempt < currentBestDuration || currentBestDuration == -1) {
-				// New Record should not appear on first boss kill, which would appear as -1
-				if (bossStats.durationBest != -1) {
-					newRecordSet = true;
+			// Check if the tracked duration was better than the current best OR if the current best has not yet been achieved
+			if (trackedDuration < statistics.durationBest || statistics.durationBest == -1) {
+				if (statistics.durationBest != -1) {
+					newRecordSet = true; // New Record should not appear above the player on the first record achieved
 				}
-				bossStats.durationPrev = currentBestDuration;
-				bossStats.durationBest = durationAttempt;
+				statistics.durationBest = trackedDuration;
 			}
 			else {
-				bossStats.durationPrev = durationAttempt;
+				statistics.durationPrev = trackedDuration;
 			}
 
-			// Empty check should be less than 0 because 0 is achievable (No Hit)
-			if (hitsTakenAttempt < currentBestHitsTaken || currentBestHitsTaken == -1) {
-				if (bossStats.hitsTakenBest != -1) {
+			// Repeat the same logic with the Hits Taken record
+			if (trackedhitsTaken < statistics.hitsTakenBest || statistics.hitsTakenBest == -1) {
+				if (statistics.hitsTakenBest != -1) {
 					newRecordSet = true;
 				}
-				bossStats.hitsTakenPrev = currentBestHitsTaken;
-				bossStats.hitsTakenBest = hitsTakenAttempt;
+				statistics.hitsTakenBest = trackedhitsTaken;
 			}
 			else {
-				bossStats.hitsTakenPrev = hitsTakenAttempt;
+				statistics.hitsTakenPrev = trackedhitsTaken;
 			}
 
-			// If a new record was made, notify the player
-			// This will not show for newly set records
+			// If a new record was made, notify the player. Again, this will not show for newly set records
 			if (newRecordSet) {
 				modPlayer.hasNewRecord[bossIndex] = true;
-				// Compare records to World Records. Logically, you can only beat the world records if you have beaten your own record
-				// TODO: Move World Record texts to Multiplayer exclusively. Check should still happen.
-				string recordType = "Mods.BossChecklist.BossLog.Terms.";
-				recordType += CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
-				string message = Language.GetTextValue(recordType);
+				// Compare records to World Records. Players must have beaten their own records to beat a world record
+				string recordType = CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
+				string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms." + recordType);
 				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
 			}
 		}

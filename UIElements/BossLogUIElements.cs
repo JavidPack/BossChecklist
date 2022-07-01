@@ -885,21 +885,42 @@ namespace BossChecklist.UIElements
 									}
 
 									// Draw trophies hoverover for World Record holder names
-									if (BossLogUI.RecordPageSelected == RecordType.WorldRecord && (recordSlot == 2 || recordSlot == 3)) {
-										Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad);
-										Vector2 trophyPos = new Vector2(slotPos.X + slot.Value.Width - trophy.Value.Width / 2, slotPos.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
-										spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
+									if (recordSlot == 2 || recordSlot == 3) {
+										if (BossLogUI.RecordPageSelected == RecordType.WorldRecord && (recordSlot == 2 || recordSlot == 3)) {
+											Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad);
+											Vector2 trophyPos = new Vector2(slotPos.X + slot.Value.Width - trophy.Value.Width / 2, slotPos.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
+											spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
 
-										string message = "$Mods.BossChecklist.BossLog.HoverText.ClaimRecord";
-										if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
-											string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
-											if (recordSlot == 2 && !string.IsNullOrEmpty(wldRecord.durationHolder)) {
-												message = $"{holderText}\n" + wldRecord.durationHolder;
+											string message = "$Mods.BossChecklist.BossLog.HoverText.ClaimRecord";
+											if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
+												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+												if (recordSlot == 2 && !string.IsNullOrEmpty(wldRecord.durationHolder)) {
+													message = $"{holderText}\n" + wldRecord.durationHolder;
+												}
+												else if (recordSlot == 3 && !string.IsNullOrEmpty(wldRecord.hitsTakenHolder)) {
+													message = $"{holderText}\n" + wldRecord.hitsTakenHolder;
+												}
+												BossUISystem.Instance.UIHoverText = message;
 											}
-											else if (recordSlot == 3 && !string.IsNullOrEmpty(wldRecord.hitsTakenHolder)) {
-												message = $"{holderText}\n" + wldRecord.hitsTakenHolder;
+										}
+										else if (BossLogUI.RecordPageSelected == RecordType.BestRecord) {
+											Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophySilver}", AssetRequestMode.ImmediateLoad);
+											Vector2 trophyPos = new Vector2(slotPos.X + slot.Value.Width - trophy.Value.Width / 2, slotPos.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
+											spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
+
+											// TODO: Localization needed
+											// TODO: Implement the functionality of Previous Best Records
+											string message = "Your previous best";
+											if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
+												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+												if (recordSlot == 2 && !string.IsNullOrEmpty(wldRecord.durationHolder)) {
+													message = $"{holderText}\n" + wldRecord.durationHolder;
+												}
+												else if (recordSlot == 3 && !string.IsNullOrEmpty(wldRecord.hitsTakenHolder)) {
+													message = $"{holderText}\n" + wldRecord.hitsTakenHolder;
+												}
+												BossUISystem.Instance.UIHoverText = message;
 											}
-											BossUISystem.Instance.UIHoverText = message;
 										}
 									}
 

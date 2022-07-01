@@ -94,6 +94,8 @@ namespace BossChecklist
 		public int hitsTakenBest = -1;
 		public int hitsTakenFirst = -1;
 
+		// TODO: Figure out how Previous Best record should be implemented before adding them here
+
 		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
 
 		public PersonalStats() { }
