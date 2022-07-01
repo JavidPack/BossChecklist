@@ -90,6 +90,41 @@ namespace BossChecklist
 			}
 		}
 
+		public override void PreUpdateWorld() {
+			foreach (NPC npc in Main.npc) {
+				int bossIndex = NPCAssist.GetBossInfoIndex(npc.type, true);
+				if (bossIndex == -1)
+					continue;
+				int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
+				if (recordIndex == -1)
+					continue;
+
+				// If marked as active...
+				if (Tracker_ActiveEntry[recordIndex]) {
+					// ...remove any players that become inactive during the fight
+					for (int i = 0; i < Main.maxPlayers; i++) {
+						if (!Main.player[i].active) {
+							Tracker_StartingPlayers[recordIndex][i] = false;
+						}
+					}
+
+					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
+					if (NPCAssist.FullyInactive(npc, bossIndex)) {
+						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
+						string message = NPCAssist.GetDespawnMessage(npc, bossIndex);
+						if (message != "") {
+							if (Main.netMode == NetmodeID.SinglePlayer) {
+								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
+							}
+							else {
+								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, npc.FullName), Colors.RarityPurple);
+							}
+						}
+					}
+				}
+			}
+		}
+
 		public override void PostUpdateWorld() {
 			string EventKey = "";
 

@@ -47,40 +47,6 @@ namespace BossChecklist
 			}
 		}
 
-		// Allow world trackers to update within the NPC
-		public override void PostAI(NPC npc) {
-			// Check to see if this npc is used within an BossInfo entry and a BossRecord entry
-			int bossIndex = GetBossInfoIndex(npc.type, true);
-			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
-			if (bossIndex == -1 || recordIndex == -1) {
-				return;
-			}
-
-			// If marked as active we should...
-			if (WorldAssist.Tracker_ActiveEntry[recordIndex]) {
-				// ...remove any players that become inactive during the fight
-				for (int i = 0; i < Main.maxPlayers; i++) {
-					if (!Main.player[i].active) {
-						WorldAssist.Tracker_StartingPlayers[recordIndex][i] = false;
-					}
-				}
-
-				// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
-				if (FullyInactive(npc, bossIndex)) {
-					WorldAssist.Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-					string message = GetDespawnMessage(npc, bossIndex);
-					if (message != "") {
-						if (Main.netMode == NetmodeID.SinglePlayer) {
-							Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
-						}
-						else {
-							ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, npc.FullName), Colors.RarityPurple);
-						}
-					}
-				}
-			}
-		}
-
 		// When an NPC is killed and fully inactive, the fight has ended, stopping record trackers
 		public override void OnKill(NPC npc) {
 			HandleDownedNPCs(npc); // Custom downed bool code
@@ -157,7 +123,7 @@ namespace BossChecklist
 		/// Uses an entry's custom despawn message logic to determine what string or localization key should be sent.
 		/// </summary>
 		/// <returns>The despawn message of the provided npc.</returns>
-		public string GetDespawnMessage(NPC npc, int index) {
+		public static string GetDespawnMessage(NPC npc, int index) {
 			if (npc.life <= 0) {
 				return ""; // If the boss was killed, don't display a despawn message
 			}

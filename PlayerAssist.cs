@@ -15,6 +15,8 @@ namespace BossChecklist
 		// When players jon a different world, the boss log PageNum should reset back to its original state
 		public bool enteredWorldReset;
 
+		public bool TrackersSetup;
+
 		// Records are bound to characters, but records are independent between worlds as well.
 		// AllStored records contains every player record from every world
 		// RecordsForWorld is a reference to the specfic player records of the current world
@@ -37,6 +39,7 @@ namespace BossChecklist
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
 			enteredWorldReset = false;
+			TrackersSetup = false;
 
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
@@ -163,6 +166,9 @@ namespace BossChecklist
 				Tracker_Deaths.Add(false);
 				Tracker_HitsTaken.Add(0);
 			}
+
+			// Trackers are set up // TODO: Does this need to be reset?
+			TrackersSetup = true;
 
 			// If the player has not been in this world before, create an entry for this world
 			if (!AllStoredForceDowns.ContainsKey(WorldID)) {

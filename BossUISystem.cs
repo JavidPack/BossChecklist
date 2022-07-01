@@ -183,12 +183,13 @@ namespace BossChecklist
 					delegate {
 						// Currently, this debug feature is limited to singleplayer
 						// TODO: Possibly make it functional in MP? No real good use for it as of now.
-						if (Main.netMode != NetmodeID.SinglePlayer) {
+						// entered
+						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						if (Main.netMode != NetmodeID.SinglePlayer || !modPlayer.TrackersSetup) {
 							return true;
 						}
 						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, true);
 						if (configIndex != -1) {
-							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 							int recordIndex = BossChecklist.bossTracker.SortedBosses[configIndex].GetRecordIndex;
 							if (recordIndex != -1) {
 								string debugText = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +

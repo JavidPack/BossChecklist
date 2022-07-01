@@ -265,7 +265,7 @@ namespace BossChecklist
 						if (!Main.npc[i].active) {
 							continue;
 						}
-						if (NPCAssist.GetBossInfoIndex(Main.npc[i]) != -1) {
+						if (NPCAssist.GetBossInfoIndex(Main.npc[i].type) != -1) {
 							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
 							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 						}
@@ -289,7 +289,7 @@ namespace BossChecklist
 						if (!Main.npc[i].active) {
 							continue;
 						}
-						if (NPCAssist.GetBossInfoIndex(Main.npc[i]) != -1) {
+						if (NPCAssist.GetBossInfoIndex(Main.npc[i].type) != -1) {
 							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
 							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 						}
