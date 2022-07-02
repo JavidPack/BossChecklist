@@ -17,7 +17,7 @@ namespace BossChecklist
 		public static List<WorldRecord> worldRecords;
 
 		// Bosses will be set to true when they spawn and will only be set back to false when the boss despawns or dies
-		public static List<bool> Tracker_ActiveEntry;
+		public static bool[] Tracker_ActiveEntry;
 
 		// Players that are in the server when a boss fight starts
 		// Prevents players that join a server mid bossfight from messing up records
@@ -82,18 +82,19 @@ namespace BossChecklist
 
 			// Record related lists that should be the same count of record tracking entries
 			worldRecords = new List<WorldRecord>();
-			Tracker_ActiveEntry = new List<bool>();
-			Tracker_StartingPlayers = new List<bool[]>();
 			CheckedRecordIndexes = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-
-			for (int i = 0; i < BossChecklist.bossTracker.BossRecordKeys.Count; i++) {
-				worldRecords.Add(new WorldRecord(BossChecklist.bossTracker.BossRecordKeys[i]));
-				Tracker_ActiveEntry.Add(false);
+			Tracker_ActiveEntry = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_StartingPlayers = new List<bool[]>();
+			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+				worldRecords.Add(new WorldRecord(key));
 				Tracker_StartingPlayers.Add(new bool[Main.maxPlayers]);
 			}
 		}
 
 		public override void PreUpdateWorld() {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+				return;
+
 			foreach (NPC npc in Main.npc) {
 				int bossIndex = NPCAssist.GetBossInfoIndex(npc.type, true);
 				if (bossIndex == -1)

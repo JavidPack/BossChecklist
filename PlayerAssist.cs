@@ -31,9 +31,9 @@ namespace BossChecklist
 		public List<string> ForceDownsForWorld;
 
 		// The 'in progress' values for records. This is what is updated during boss fights.
-		public List<int> Tracker_Duration;
-		public List<int> Tracker_HitsTaken;
-		public List<bool> Tracker_Deaths;
+		public int[] Tracker_Duration;
+		public int[] Tracker_HitsTaken;
+		public bool[] Tracker_Deaths;
 		public List<bool> hasNewRecord;
 
 		public override void Initialize() {
@@ -52,9 +52,9 @@ namespace BossChecklist
 			}
 
 			// For being able to complete records in Multiplayer
-			Tracker_Duration = new List<int>();
-			Tracker_Deaths = new List<bool>();
-			Tracker_HitsTaken = new List<int>();
+			Tracker_Duration = System.Array.Empty<int>();
+			Tracker_Deaths = System.Array.Empty<bool>();
+			Tracker_HitsTaken = System.Array.Empty<int>();
 
 			// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
 			hasNewRecord = new List<bool>();
@@ -157,15 +157,9 @@ namespace BossChecklist
 
 			// Reset record tracker numbers. Has to be reset after entering a world.
 			// Add values to all record trackers after RecordsForWorld are determined
-			Tracker_Duration = new List<int>();
-			Tracker_Deaths = new List<bool>();
-			Tracker_HitsTaken = new List<int>();
-
-			for (int i = 0; i < BossChecklist.bossTracker.BossRecordKeys.Count; i++) {
-				Tracker_Duration.Add(0);
-				Tracker_Deaths.Add(false);
-				Tracker_HitsTaken.Add(0);
-			}
+			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 
 			// Trackers are set up // TODO: Does this need to be reset?
 			TrackersSetup = true;
@@ -228,7 +222,7 @@ namespace BossChecklist
 				return;
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int recordIndex = 0; recordIndex < Tracker_Deaths.Count; recordIndex++) {
+				for (int recordIndex = 0; recordIndex < Tracker_Deaths.Length; recordIndex++) {
 					if (Tracker_Deaths[recordIndex]) {
 						Tracker_Deaths[recordIndex] = false;
 						RecordsForWorld[recordIndex].stats.deaths++;

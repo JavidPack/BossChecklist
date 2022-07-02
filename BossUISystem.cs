@@ -185,20 +185,23 @@ namespace BossChecklist
 						// TODO: Possibly make it functional in MP? No real good use for it as of now.
 						// entered
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						if (Main.netMode != NetmodeID.SinglePlayer || !modPlayer.TrackersSetup) {
+						if (!modPlayer.TrackersSetup)
 							return true;
-						}
+
 						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, true);
-						if (configIndex != -1) {
-							int recordIndex = BossChecklist.bossTracker.SortedBosses[configIndex].GetRecordIndex;
-							if (recordIndex != -1) {
-								string debugText = $"{BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} (#{configIndex + 1})" +
-												$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +
-												$"\nTimes Hit: {modPlayer.Tracker_HitsTaken[recordIndex]}" +
-												$"\nDeaths: {modPlayer.Tracker_Deaths[recordIndex]}";
-								Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
-							}
-						}
+						if (configIndex == -1)
+							return true;
+
+						int recordIndex = BossChecklist.bossTracker.SortedBosses[configIndex].GetRecordIndex;
+						if (recordIndex == -1)
+							return true;
+
+						string debugText =
+							$"[#{configIndex}] {BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} [{recordIndex}]" +
+							$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +
+							$"\nTimes Hit: {modPlayer.Tracker_HitsTaken[recordIndex]}" +
+							$"\nDeaths: {modPlayer.Tracker_Deaths[recordIndex]}";
+						Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
 						return true;
 					},
 					InterfaceScaleType.UI)
