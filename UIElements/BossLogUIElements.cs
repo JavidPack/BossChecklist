@@ -189,7 +189,6 @@ namespace BossChecklist.UIElements
 				Main.inventoryScale = scale;
 				Rectangle rectangle = GetInnerDimensions().ToRectangle();
 				// Make backups of the original itemslot textures, as we will replace them temporarily for our visuals
-				var backup = TextureAssets.InventoryBack6;
 				var backup2 = TextureAssets.InventoryBack7;
 
 				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
@@ -217,6 +216,7 @@ namespace BossChecklist.UIElements
 				if (maskedItems && !selectedBoss.IsDownedOrForced && Id.StartsWith("loot_")) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
+					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
 					string hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.MaskedItems", selectedBoss.DisplayName);
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if ((item.expert || item.expertOnly) && !Main.expertMode) {
@@ -236,11 +236,8 @@ namespace BossChecklist.UIElements
 					if (item.color == Color.Black)
 						item.color = default;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
+					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
 				}
-
-				// Set the itemslot textures back to their original state
-				TextureAssets.InventoryBack6 = backup;
-				TextureAssets.InventoryBack7 = backup2;
 
 				// Draw evil altars if needed
 				if (hoverText == crimsonAltar || hoverText == demonAltar) {
