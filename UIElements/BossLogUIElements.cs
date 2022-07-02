@@ -233,6 +233,8 @@ namespace BossChecklist.UIElements
 					return;
 				}
 				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar) {
+					if (item.color == Color.Black)
+						item.color = default;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 				}
 
