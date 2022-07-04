@@ -1563,8 +1563,8 @@ namespace BossChecklist
 								// If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
 								continue;
 							}
-							AltPageButtons[i].Width.Pixels = 32;
-							AltPageButtons[i].Height.Pixels = 32;
+							AltPageButtons[i].Width.Pixels = 36;
+							AltPageButtons[i].Height.Pixels = 36;
 							if (CategoryPageNum == CategoryPage.Record) {
 								// If First or Best buttons were skipped account for the positioning of Previous and World
 								if (i < 2) {
