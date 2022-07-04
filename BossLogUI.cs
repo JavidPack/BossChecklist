@@ -385,26 +385,26 @@ namespace BossChecklist
 			lootButton.OnRightDoubleClick += RemoveItem;
 
 			// These will serve as a reservation for our AltPage buttons
-			SubpageButton PrevRecordButton = new SubpageButton(0);
+			SubpageButton PrevRecordButton = new SubpageButton((int)RecordType.PreviousAttempt);
 			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.PreviousAttempt);
 			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.PreviousAttempt, false);
 
-			SubpageButton FirstRecordButton = new SubpageButton(1);
+			SubpageButton FirstRecordButton = new SubpageButton((int)RecordType.FirstRecord);
 			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.FirstRecord);
 			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.FirstRecord, false);
 
-			SubpageButton BestRecordButton = new SubpageButton(2);
+			SubpageButton BestRecordButton = new SubpageButton((int)RecordType.BestRecord);
 			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.BestRecord);
 			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.BestRecord, false);
 
-			SubpageButton WorldRecordButton = new SubpageButton(3);
+			SubpageButton WorldRecordButton = new SubpageButton((int)RecordType.WorldRecord);
 			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.WorldRecord);
 			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.WorldRecord, false);
 
 			AltPageButtons = new SubpageButton[] {
 				PrevRecordButton,
-				FirstRecordButton,
 				BestRecordButton,
+				FirstRecordButton,
 				WorldRecordButton
 			};
 		}

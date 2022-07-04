@@ -56,8 +56,8 @@ namespace BossChecklist
 	internal enum RecordType : int
 	{
 		PreviousAttempt,
-		FirstRecord,
 		BestRecord,
+		FirstRecord,
 		WorldRecord,
 		None
 	}

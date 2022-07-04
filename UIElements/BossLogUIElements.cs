@@ -1174,21 +1174,19 @@ namespace BossChecklist.UIElements
 					}
 
 					if (Id == "PageTwo" && BossLogUI.CategoryPageNum == CategoryPage.Loot) {
-						if (BossLogUI.RecordPageSelected == RecordType.PreviousAttempt) {
-							// Loot Table Subpage
-							Asset<Texture2D> bagTexture;
-							if (selectedBoss.treasureBag != 0) {
-								Main.instance.LoadItem(selectedBoss.treasureBag);
-								bagTexture = TextureAssets.Item[selectedBoss.treasureBag];
-							}
-							else {
-								bagTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag", AssetRequestMode.ImmediateLoad);
-							}
-							DrawAnimation drawAnim = Main.itemAnimations[selectedBoss.treasureBag]; // 0 is null
-							Rectangle srcRect = drawAnim != null ? srcRect = drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
-							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
-							spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
+						// Loot Table Subpage
+						Asset<Texture2D> bagTexture;
+						if (selectedBoss.treasureBag != 0) {
+							Main.instance.LoadItem(selectedBoss.treasureBag);
+							bagTexture = TextureAssets.Item[selectedBoss.treasureBag];
 						}
+						else {
+							bagTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag", AssetRequestMode.ImmediateLoad);
+						}
+						DrawAnimation drawAnim = Main.itemAnimations[selectedBoss.treasureBag]; // 0 is null
+						Rectangle srcRect = drawAnim != null ? srcRect = drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
+						Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
+						spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 					}
 				}
 			}
@@ -1805,14 +1803,14 @@ namespace BossChecklist.UIElements
 					spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 				}
 
-				Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 32, 32);
+				Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 36, 36);
 
 				if (AltButtonNum >= 0) {
 					if (BossLogUI.CategoryPageNum == CategoryPage.Record) {
 						string[] hoverTexts = {
 							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousRecord"),
-							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.FirstRecord"),
 							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BestRecord"),
+							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.FirstRecord"),
 							Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.WorldRecord")
 						};
 
@@ -1826,11 +1824,12 @@ namespace BossChecklist.UIElements
 						}
 
 						Asset<Texture2D> texture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordTabs", AssetRequestMode.ImmediateLoad);
-						Rectangle exclamCut = new Rectangle(32 * AltButtonNum, 32 * selected, 32, 32);
+						Rectangle exclamCut = new Rectangle(36 * AltButtonNum, 36 * selected, 36, 36);
 						spriteBatch.Draw(texture.Value, exclamPos, exclamCut, Color.White);
 
 						if (IsMouseHovering) {
 							BossUISystem.Instance.UIHoverText = hoverTexts[AltButtonNum];
+							BossUISystem.Instance.UIHoverTextColor = Colors.RarityGreen;
 						}
 					}
 					else if (BossLogUI.CategoryPageNum == CategoryPage.Spawn) {
