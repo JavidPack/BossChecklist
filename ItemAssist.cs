@@ -24,7 +24,7 @@ namespace BossChecklist
 					items.Add(new ItemDefinition(item.type));
 				}
 			}
-			if (item.type == ItemID.TorchGodsFavor) {
+			if (item.type == ItemID.TorchGodsFavor && !WorldAssist.downedTorchGod) {
 				WorldAssist.downedTorchGod = true;
 				if (Main.netMode == NetmodeID.Server) {
 					NetMessage.SendData(MessageID.WorldData);
@@ -52,7 +52,7 @@ namespace BossChecklist
 		}
 
 		public override bool? UseItem(Item item, Player player) {
-			if (item.type == ItemID.TorchGodsFavor) {
+			if (item.type == ItemID.TorchGodsFavor && !WorldAssist.downedTorchGod) {
 				WorldAssist.downedTorchGod = true;
 				if (Main.netMode == NetmodeID.Server) {
 					NetMessage.SendData(MessageID.WorldData);
