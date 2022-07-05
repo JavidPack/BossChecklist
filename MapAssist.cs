@@ -6,7 +6,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace BossChecklist
 {
@@ -30,8 +29,9 @@ namespace BossChecklist
 			whitelistType.Clear();
 
 			for (int i = 0; i < Main.maxItems; i++) {
-				if (!Main.item[i].active) continue;
-				if (WhiteListType(Main.item[i].type) != -1) {
+				if (!Main.item[i].active)
+					continue;
+				if (IsWhitelistedItem(Main.item[i].type)) {
 					whitelistPos.Add(Main.item[i].Center);
 					whitelistType.Add(Main.item[i].type);
 				}
@@ -40,10 +40,8 @@ namespace BossChecklist
 
 		private static void DrawIcons() {
 			for (int v = 0; v < whitelistPos.Count; v++) {
-				int type = WhiteListType(whitelistType[v]);
-				if (type == -1) continue;
-				if (type == 1 && !BossChecklist.ClientConfig.FragmentsBool) continue;
-				if (type == 2 && !BossChecklist.ClientConfig.ScalesBool) continue;
+				if (!IsWhitelistedItem(whitelistType[v])) 
+					continue;
 
 				Texture2D drawTexture = TextureAssets.Item[whitelistType[v]].Value;
 				DrawAnimation drawAnim = Main.itemAnimations[whitelistType[v]];
@@ -70,21 +68,21 @@ namespace BossChecklist
 			Main.spriteBatch.Draw(texture, drawPos, source, Color.White, 0f, originLoc, SpriteEffects.None, 0f);
 		}
 
-		public static int WhiteListType(int type) {
-			if (type == ItemID.ShadowScale || type == ItemID.TissueSample) {
-				return 2;
+		public static bool IsWhitelistedItem(int type) {
+			if (BossChecklist.ClientConfig.ScalesBool && (type == ItemID.ShadowScale || type == ItemID.TissueSample)) {
+				return true;
 			}
-			else if (RecipeGroup.recipeGroups[RecipeGroupID.Fragment].ValidItems.Any(x => x == type)) {
-				return 1;
+			else if (BossChecklist.ClientConfig.FragmentsBool && RecipeGroup.recipeGroups[RecipeGroupID.Fragment].ValidItems.Any(x => x == type)) {
+				return true;
 			}
-			else {
+			else if (BossChecklist.ClientConfig.TreasureBagsBool) {
 				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 					if (boss.treasureBag == type) {
-						return 0;
+						return true;
 					}
 				}
-				return -1;
 			}
+			return false;
 		}
 	}
 }
