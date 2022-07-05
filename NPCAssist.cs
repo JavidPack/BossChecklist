@@ -60,7 +60,7 @@ namespace BossChecklist
 						Main.NewText(npc.FullName + ": " + FullyInactive(npc, index));
 
 					int recordIndex = BossChecklist.bossTracker.SortedBosses[index].GetRecordIndex;
-					WorldAssist.worldRecords[BossChecklist.bossTracker.SortedBosses[recordIndex].GetRecordIndex].stats.totalKills++;
+					WorldAssist.worldRecords[recordIndex].stats.totalKills++;
 
 					// Reset world variables after record checking takes place
 					WorldAssist.Tracker_ActiveEntry[recordIndex] = false;
