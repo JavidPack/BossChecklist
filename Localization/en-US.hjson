@@ -123,6 +123,14 @@ Mods: {
 				BestKDRDescription: How many attempts it took for you to achieve your best record
 				GlobalKDRDescription: Global kills and deaths with this boss
 				ClaimRecord: Be the first to claim the world record!
+				ProgressionModeIsEnabled:
+					'''
+					[i:888] Progression Mode is fully or partially enabled!
+					This will mask some information about bosses until they have been defeated.
+					To disable or configure progression mode go to:
+					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
+					and scroll down to the Progress Mode configs
+					'''
 			}
 
 			DrawnText: {

@@ -118,6 +118,8 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.MaskHardMode")]
 		public bool MaskHardMode { get; set; }
 
+		internal bool AnyProgressionModeConfigUsed => MaskTextures || MaskNames || MaskBossLoot || MaskHardMode;
+
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}

@@ -1285,7 +1285,24 @@ namespace BossChecklist.UIElements
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
-				if (Id == "ToCFilter_Tab") {
+				if (Id == "Info_Tab") {
+					if (BossChecklist.BossLogConfig.AnyProgressionModeConfigUsed) {
+						Rectangle rect = GetDimensions().ToRectangle();
+						spriteBatch.Draw(book.Value, rect, Color.Firebrick);
+
+						Texture2D texture = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad).Value;
+						float scale = 0.85f;
+						Vector2 pos = new Vector2(rect.X + rect.Width / 2 - texture.Width * scale / 2, rect.Y + rect.Height / 2 - texture.Height * scale / 2);
+						spriteBatch.Draw(texture, pos, texture.Bounds, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+						if (IsMouseHovering) {
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ProgressionModeIsEnabled";
+							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
+						}
+					}
+					return;
+				}
+				else if (Id == "ToCFilter_Tab") {
 					// The hardback part of the UIPanel should be layered under all of the tabs, so it is drawn here
 					Asset<Texture2D> pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Back");
 					BossLogPanel panel = BossUISystem.Instance.BossLog.BookArea;
@@ -1455,7 +1472,7 @@ namespace BossChecklist.UIElements
 				this.order = order;
 				this.nextCheck = nextCheck;
 				this.downed = downed;
-				Recalculate();
+				//Recalculate(); unnecessary?
 				this.bossKey = bossKey;
 				this.displayName = displayName;
 			}

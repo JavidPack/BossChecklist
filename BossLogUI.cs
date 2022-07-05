@@ -55,6 +55,7 @@ namespace BossChecklist
 		public BookUI BossTab;
 		public BookUI MiniBossTab;
 		public BookUI EventTab;
+		public BookUI InfoTab;
 		public bool filterOpen = false;
 
 		public UIList prehardmodeList;
@@ -72,6 +73,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> borderTexture;
 		public static Asset<Texture2D> fadedTexture;
 		public static Asset<Texture2D> tabTexture;
+		public static Asset<Texture2D> infoTexture;
 		public static Asset<Texture2D> colorTexture;
 		public static Asset<Texture2D> bookUITexture;
 		public static Asset<Texture2D> prevTexture;
@@ -105,6 +107,7 @@ namespace BossChecklist
 			set {
 				if (value) {
 					Append(BookArea);
+					Append(InfoTab);
 					Append(ToCTab);
 					Append(filterPanel);
 					Append(CreditsTab);
@@ -123,6 +126,7 @@ namespace BossChecklist
 					RemoveChild(CreditsTab);
 					RemoveChild(filterPanel);
 					RemoveChild(ToCTab);
+					RemoveChild(InfoTab);
 					RemoveChild(BookArea);
 				}
 				bossLogVisible = value;
@@ -179,6 +183,7 @@ namespace BossChecklist
 			colorTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Color");
 			bookUITexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Back");
 			tabTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab");
+			infoTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_InfoTab");
 
 			prevTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Prev");
 			nextTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Next");
@@ -221,6 +226,12 @@ namespace BossChecklist
 			BookArea = new BossLogPanel();
 			BookArea.Width.Pixels = bookUITexture.Value.Width;
 			BookArea.Height.Pixels = bookUITexture.Value.Height;
+
+			InfoTab = new BookUI(infoTexture) {
+				Id = "Info_Tab"
+			};
+			InfoTab.Width.Pixels = infoTexture.Value.Width;
+			InfoTab.Height.Pixels = infoTexture.Value.Height;
 
 			ToCTab = new BookUI(tabTexture) {
 				Id = "ToCFilter_Tab"
@@ -439,6 +450,9 @@ namespace BossChecklist
 			PageOne.Top.Pixels = BookArea.Top.Pixels + 12;
 			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = BookArea.Top.Pixels + 12;
+
+			InfoTab.Left.Pixels = BookArea.Left.Pixels + 40;
+			InfoTab.Top.Pixels = BookArea.Top.Pixels - infoTexture.Value.Height + 8;
 
 			int offsetY = 50;
 
