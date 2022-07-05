@@ -84,11 +84,6 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LootChecklist")]
 		public bool LootCheckVisibility { get; set; }
 		
-		[DefaultValue(false)]
-		[Label("$Mods.BossChecklist.Configs.Label.CountDownedBosses")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CountDownedBosses")]
-		public bool CountDownedBosses { get; set; }
-
 		[Header("$Mods.BossChecklist.Configs.Header.BlindMode")]
 
 		[DefaultValue(false)]

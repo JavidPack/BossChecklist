@@ -1680,9 +1680,15 @@ namespace BossChecklist.UIElements
 			internal readonly Asset<Texture2D> fullBar = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_ProgressBar", AssetRequestMode.ImmediateLoad);
 			internal int[] downedEntries;
 			internal int[] totalEntries;
+			internal Dictionary<string, int[]> modAllEntries;
+			internal bool ModSourceMode = false;
 
 			public ProgressBar() {
 				downedEntries = totalEntries = new int[] { 0, 0, 0 };
+			}
+
+			public override void Click(UIMouseEvent evt) {
+				ModSourceMode = !ModSourceMode;
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -1736,21 +1742,42 @@ namespace BossChecklist.UIElements
 				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
 
 				if (BossLogUI.MouseIntersects(inner.X, inner.Y, (int)inner.Width, (int)inner.Height)) {
-					string total = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Total");
-					string bosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Bosses");
-					string miniBosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.MiniBosses");
-					string events = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Events");
-					BossUISystem.Instance.UIHoverText = $"{total}: {allDownedEntries}/{allAccountedEntries}";
-					if (!configs.OnlyBosses) {
-						if (configs.FilterMiniBosses != "Hide" || configs.FilterEvents != "Hide") {
-							BossUISystem.Instance.UIHoverText += $"\n{bosses}: {downedEntries[0]}/{totalEntries[0]}";
+					if (ModSourceMode) {
+						int[] value = modAllEntries["Terraria"];
+						float entryPercentage = (float)((float)value[0] / (float)value[1]) * 100;
+						BossUISystem.Instance.UIHoverText = $"Terraria: {value[0]}/{value[1]} ({entryPercentage.ToString("#0.0")}%)";
+						foreach (KeyValuePair<string, int[]> entry in modAllEntries) {
+							if (entry.Key == "Unknown" || entry.Key == "Terraria")
+								continue;
+
+							entryPercentage = (float)((float)entry.Value[0] / (float)entry.Value[1]) * 100;
+							BossUISystem.Instance.UIHoverText += $"\n{entry.Key}: {entry.Value[0]}/{entry.Value[1]} ({entryPercentage.ToString("#0.0")}%)";
 						}
-						if (configs.FilterMiniBosses != "Hide") {
-							BossUISystem.Instance.UIHoverText += $"\n{miniBosses}: {downedEntries[1]}/{totalEntries[1]}";
+						if (modAllEntries.ContainsKey("Unknown")) {
+							value = modAllEntries["Unknown"];
+							entryPercentage = (float)((float)value[0] / (float)value[1]) * 100;
+							BossUISystem.Instance.UIHoverText = $"\nUnknown: {value[0]}/{value[1]} ({entryPercentage.ToString("#0.0")}%)";
 						}
-						if (configs.FilterEvents != "Hide") {
-							BossUISystem.Instance.UIHoverText += $"\n{events}: {downedEntries[2]}/{totalEntries[2]}";
+						BossUISystem.Instance.UIHoverText += $"\n[{Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.EntryCompletion")}]";
+					}
+					else {
+						string total = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Total");
+						string bosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Bosses");
+						string miniBosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.MiniBosses");
+						string events = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Events");
+						BossUISystem.Instance.UIHoverText = $"{total}: {allDownedEntries}/{allAccountedEntries}";
+						if (!configs.OnlyBosses) {
+							if (configs.FilterMiniBosses != "Hide" || configs.FilterEvents != "Hide") {
+								BossUISystem.Instance.UIHoverText += $"\n{bosses}: {downedEntries[0]}/{totalEntries[0]}";
+							}
+							if (configs.FilterMiniBosses != "Hide") {
+								BossUISystem.Instance.UIHoverText += $"\n{miniBosses}: {downedEntries[1]}/{totalEntries[1]}";
+							}
+							if (configs.FilterEvents != "Hide") {
+								BossUISystem.Instance.UIHoverText += $"\n{events}: {downedEntries[2]}/{totalEntries[2]}";
+							}
 						}
+						BossUISystem.Instance.UIHoverText += $"\n[{Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ModCompletion")}]";
 					}
 				}
 			}

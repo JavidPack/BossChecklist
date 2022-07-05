@@ -131,6 +131,8 @@ Mods: {
 					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
 					and scroll down to the Progress Mode configs
 					'''
+				ModCompletion: Click to switch to Mod List mode
+				EntryCompletion: Click to switch to Entry Type mode
 			}
 
 			DrawnText: {
@@ -232,7 +234,6 @@ Mods: {
 				DrawNextMark: Next Boss Check
 				LootChecklist: Enable loot/collectible checklist
 				ColoredBossText: Colored Boss Text
-				CountDownedBosses: Downed Completion Display
 				SelectedCheckmarkType: Checklist Marking Type
 				FilterBosses: Filter bosses in list
 				FilterMiniBosses: Filter mini bosses in list
@@ -282,7 +283,6 @@ Mods: {
 					The boss text in the table of contents will be green when defeated and red when not.
 					If next check is enabled, the next boss will be yellow.
 					'''
-				CountDownedBosses: If enabled, the table of contents will display how many bosses were defeated compared to the total amount.
 				ProgressionPrompt: While enabled, this will prevent the prompt from appearing on all future characters.
 				UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
 				MaskHardMode: Hides ALL content, overriding the options you have toggled above.

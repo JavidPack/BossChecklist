@@ -1340,45 +1340,67 @@ namespace BossChecklist
 			}
 			PageTwo.Append(hardmodeList);
 			hardmodeList.SetScrollbar(scrollTwo);
-			// Check current progress if enabled
-			if (BossChecklist.BossLogConfig.CountDownedBosses) {
-				int[] prehDown = new int[] { 0, 0, 0 };
-				int[] prehTotal = new int[] { 0, 0, 0 };
-				int[] hardDown = new int[] { 0, 0, 0 };
-				int[] hardTotal = new int[] { 0, 0, 0 };
 
-				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-					if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) {
-						continue;
-					}
+			// Calculate Progress Bar downed entries
+			int[] prehDown = new int[] { 0, 0, 0 };
+			int[] prehTotal = new int[] { 0, 0, 0 };
+			int[] hardDown = new int[] { 0, 0, 0 };
+			int[] hardTotal = new int[] { 0, 0, 0 };
+			Dictionary<string, int[]> prehEntries = new Dictionary<string, int[]>();
+			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
 
-					if (boss.progression <= BossTracker.WallOfFlesh) {
-						if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-							prehTotal[(int)boss.type]++;
-							if (boss.IsDownedOrForced) {
-								prehDown[(int)boss.type]++;
-							}
-						}
-					}
-					else {
-						if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-							hardTotal[(int)boss.type]++;
-							if (boss.IsDownedOrForced) {
-								hardDown[(int)boss.type]++;
-							}
-						}
-					}					
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) {
+					continue;
 				}
 
-				prehardmodeBar.downedEntries = prehDown;
-				prehardmodeBar.totalEntries = prehTotal;
-				hardmodeBar.downedEntries = hardDown;
-				hardmodeBar.totalEntries = hardTotal;
+				if (boss.progression <= BossTracker.WallOfFlesh) {
+					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+						if (!prehEntries.ContainsKey(boss.modSource)) {
+							prehEntries.Add(boss.modSource, new int[] { 0, 0 });
+						}
+						prehTotal[(int)boss.type]++;
+						prehEntries[boss.modSource][1] += 1;
 
-				PageOne.Append(prehardmodeBar);
-				if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {
-					PageTwo.Append(hardmodeBar);
+						if (boss.IsDownedOrForced) {
+							prehDown[(int)boss.type]++;
+							prehEntries[boss.modSource][0] += 1;
+						}
+					}
 				}
+				else {
+					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+						if (!hardEntries.ContainsKey(boss.modSource)) {
+							hardEntries.Add(boss.modSource, new int[] { 0, 0 });
+						}
+						hardTotal[(int)boss.type]++;
+						hardEntries[boss.modSource][1] += 1;
+
+						if (boss.IsDownedOrForced) {
+							if (!hardEntries.ContainsKey(boss.modSource)) {
+								hardEntries.Add(boss.modSource, new int[] { 0, 0 });
+							}
+							hardDown[(int)boss.type]++;
+							hardEntries[boss.modSource][0] += 1;
+						}
+					}
+				}					
+			}
+
+			prehardmodeBar.downedEntries = prehDown;
+			prehardmodeBar.totalEntries = prehTotal;
+			prehEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
+			prehardmodeBar.modAllEntries = prehEntries;
+
+			hardmodeBar.downedEntries = hardDown;
+			hardmodeBar.totalEntries = hardTotal;
+			hardEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
+			hardmodeBar.modAllEntries = hardEntries;
+
+
+			PageOne.Append(prehardmodeBar);
+			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {
+				PageTwo.Append(hardmodeBar);
 			}
 		}
 
