@@ -123,6 +123,14 @@ Mods: {
 				BestKDRDescription: 取得最好成绩之前你尝试的次数
 				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数
 				ClaimRecord: 成为第一个打破世界纪录的人!
+				ProgressionModeIsEnabled:
+					'''
+					[i:888] 进度模式已完全或部分启用!
+					这会隐藏一些与Boss相关的信息, 直至它们被击败.
+					若想禁用或配置进度模式, 请前往:
+					设置 > Mod设置 > Boss清单: 自定义Boss日志
+					并向下滚动至进度模式设置
+					'''
 			}
 
 			DrawnText: {
