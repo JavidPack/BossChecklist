@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -218,9 +219,9 @@ namespace BossChecklist
 		// On respawn, add to the total deaths towards marked bosses
 		// ActiveBossesList and StartingPlayers doesn't need to be checked since it was checked when setting the tracker bool to true
 		public override void OnRespawn(Player player) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+			if (player.whoAmI != Player.whoAmI || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
-			}
+
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 				for (int recordIndex = 0; recordIndex < Tracker_Deaths.Length; recordIndex++) {
 					if (Tracker_Deaths[recordIndex]) {
@@ -242,6 +243,18 @@ namespace BossChecklist
 					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
 						Tracker_HitsTaken[recordIndex]++;
 					}
+				}
+			}
+		}
+
+		// Timer sounds when a player is about to respawn
+		public override void UpdateDead() {
+			if (Main.netMode != NetmodeID.Server && BossChecklist.ClientConfig.TimerSounds) {
+				if (Player.respawnTimer == 60) {
+					SoundEngine.PlaySound(SoundID.Item6);
+				}
+				else if (Player.respawnTimer <= 240 && Player.respawnTimer % 60 == 0) {
+					SoundEngine.PlaySound(SoundID.MaxMana);
 				}
 			}
 		}
