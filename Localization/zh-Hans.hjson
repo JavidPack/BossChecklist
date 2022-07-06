@@ -131,6 +131,8 @@ Mods: {
 					设置 > Mod设置 > Boss清单: 自定义Boss日志
 					并向下滚动至进度模式设置
 					'''
+				ModCompletion: 点击以切换至Mod列表模式
+				EntryCompletion: 点击以切换至条目类型模式
 			}
 
 			DrawnText: {
@@ -232,7 +234,6 @@ Mods: {
 				DrawNextMark: 提示下一个要挑战的Boss
 				LootChecklist: 开启战利品/收藏品清单
 				ColoredBossText: Boss文本变色
-				CountDownedBosses: Boss击败数显示
 				SelectedCheckmarkType: 标记模式
 				FilterBosses: 过滤日志中不符合条件的Boss
 				FilterMiniBosses: 过滤日志中不符合条件的小Boss
@@ -282,7 +283,6 @@ Mods: {
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
 					如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
 					'''
-				CountDownedBosses: 如果启用, 目录将显示与总Boss数相比被击败的Boss数.
 				ProgressionPrompt: 如果启用, 则阻止提示出现在所有未来的字符中.
 				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
 				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
