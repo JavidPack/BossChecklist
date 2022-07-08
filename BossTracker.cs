@@ -35,6 +35,7 @@ namespace BossChecklist
 		public const float Moonlord = 18f;
 
 		// Mini-bosses and Events
+		public const float TorchGod = 1.5f;
 		public const float BloodMoon = 2.5f;
 		public const float GoblinArmy = 3.33f;
 		public const float OldOnesArmy = 3.66f;
