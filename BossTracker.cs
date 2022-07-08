@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,7 @@ namespace BossChecklist
 {
 	internal class BossTracker
 	{
+		// Bosses
 		public const float KingSlime = 1f;
 		public const float EyeOfCthulhu = 2f;
 		public const float EaterOfWorlds = 3f;
@@ -28,10 +28,32 @@ namespace BossChecklist
 		public const float SkeletronPrime = 11f;
 		public const float Plantera = 12f;
 		public const float Golem = 13f;
-		public const float EmpressOfLight = 14f;
-		public const float DukeFishron = 15f;
-		public const float LunaticCultist = 16f;
-		public const float Moonlord = 17f;
+		public const float Betsy = 14f;
+		public const float EmpressOfLight = 15f;
+		public const float DukeFishron = 16f;
+		public const float LunaticCultist = 17f;
+		public const float Moonlord = 18f;
+
+		// Mini-bosses and Events
+		public const float BloodMoon = 2.5f;
+		public const float GoblinArmy = 3.33f;
+		public const float OldOnesArmy = 3.66f;
+		public const float DarkMage = OldOnesArmy + 0.01f;
+		public const float Ogre = SkeletronPrime + 0.01f; // Unlocked once a mechanical boss has been defeated
+		public const float FrostLegion = 7.33f;
+		public const float PirateInvasion = 7.66f;
+		public const float PirateShip = PirateInvasion + 0.01f;
+		public const float SolarEclipse = 11.5f;
+		public const float PumpkinMoon = 12.33f;
+		public const float MourningWood = PumpkinMoon + 0.01f;
+		public const float Pumpking = PumpkinMoon + 0.02f;
+		public const float FrostMoon = 12.66f;
+		public const float Everscream = FrostMoon + 0.01f;
+		public const float SantaNK1 = FrostMoon + 0.02f;
+		public const float IceQueen = FrostMoon + 0.03f;
+		public const float MartianMadness = 13.5f;
+		public const float MartianSaucer = MartianMadness + 0.01f;
+		public const float LunarEvent = LunaticCultist + 0.01f; // Happens immediately after the defeation of the Lunatic Cultist
 
 		/// <summary>
 		/// All currently loaded bosses/minibosses/events sorted in progression order.
@@ -80,7 +102,7 @@ namespace BossChecklist
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "$NPCName.Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
 				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell, ItemID.LihzahrdAltar })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}"),
-				BossInfo.MakeVanillaBoss(EntryType.Boss, Golem + 0.5f, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
+				BossInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2Betsy}"),
 					// No despawn message due to being in an event
 				BossInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "$NPCName.HallowBoss", new List<int>() { NPCID.HallowBoss }, () => NPC.downedEmpressOfLight, new List<int>() { ItemID.EmpressButterfly })
@@ -92,58 +114,58 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
-				BossInfo.MakeVanillaEvent(KingSlime + 0.2f, "$NPCName.TorchGod", () => WorldAssist.downedTorchGod, new List<int>() { ItemID.Torch })
+				BossInfo.MakeVanillaEvent(TorchGod, "$NPCName.TorchGod", () => WorldAssist.downedTorchGod, new List<int>() { ItemID.Torch })
 					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.2f, "$Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
+				BossInfo.MakeVanillaEvent(BloodMoon, "$Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventBloodMoon")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventBloodMoon_Head"),
 				// BossInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-				BossInfo.MakeVanillaEvent(EyeOfCthulhu + 0.5f, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard })
+				BossInfo.MakeVanillaEvent(GoblinArmy, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard })
 					.WithCustomTranslationKey("$LegacyInterface.88")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventGoblinArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_9"),
-				BossInfo.MakeVanillaEvent(EaterOfWorlds + 0.5f, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
+				BossInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
 					.WithCustomTranslationKey("$DungeonDefenders2.InvasionProgressTitle")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_79"),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, EaterOfWorlds + 0.51f, "$NPCName.DD2DarkMageT3", new List<int>() { NPCID.DD2DarkMageT3 }, () => WorldAssist.downedDarkMage, new List<int>() { })
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, DarkMage, "$NPCName.DD2DarkMageT3", new List<int>() { NPCID.DD2DarkMageT3 }, () => WorldAssist.downedDarkMage, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2DarkMageT3}"),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, SkeletronPrime + 0.5f, "$NPCName.DD2OgreT3", new List<int>() { NPCID.DD2OgreT3 }, () => WorldAssist.downedOgre, new List<int>() { })
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Ogre, "$NPCName.DD2OgreT3", new List<int>() { NPCID.DD2OgreT3 }, () => WorldAssist.downedOgre, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2OgreT3}"),
-				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.6f, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe })
+				BossInfo.MakeVanillaEvent(FrostLegion, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe })
 					.WithCustomTranslationKey("$LegacyInterface.87")
 					.WithCustomAvailability(() => Main.xMas)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventFrostLegion")
 					.WithCustomHeadIcon("Terraria/Images/Extra_7"),
-				BossInfo.MakeVanillaEvent(WallOfFlesh + 0.7f, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap })
+				BossInfo.MakeVanillaEvent(PirateInvasion, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap })
 					.WithCustomTranslationKey("$LegacyInterface.86")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventPirateInvasion")
 					.WithCustomHeadIcon("Terraria/Images/Extra_11"),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, WallOfFlesh + 0.71f, "$NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman, new List<int>() { })
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, PirateShip, "$NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.PirateShip}"),
-				BossInfo.MakeVanillaEvent(SkeletronPrime + 0.2f, "$Bestiary_Events.Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet })
+				BossInfo.MakeVanillaEvent(SolarEclipse, "$Bestiary_Events.Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventSolarEclipse")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventSolarEclipse_Head"),
-				BossInfo.MakeVanillaEvent(Plantera + 0.1f, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon, new List<int>() { ItemID.PumpkinMoonMedallion })
+				BossInfo.MakeVanillaEvent(PumpkinMoon, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon, new List<int>() { ItemID.PumpkinMoonMedallion })
 					.WithCustomTranslationKey("$LegacyInterface.84")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventPumpkinMoon")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_12"),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.11f, "$NPCName.MourningWood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.12f, "$NPCName.Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { })
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, MourningWood, "$NPCName.MourningWood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Pumpking, "$NPCName.Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Pumpking}"),
-				BossInfo.MakeVanillaEvent(Plantera + 0.13f, "Frost Moon", () => WorldAssist.downedFrostMoon, new List<int>() { ItemID.NaughtyPresent })
+				BossInfo.MakeVanillaEvent(FrostMoon, "Frost Moon", () => WorldAssist.downedFrostMoon, new List<int>() { ItemID.NaughtyPresent })
 					.WithCustomTranslationKey("$LegacyInterface.83")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventFrostMoon")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_8"),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.14f, "$NPCName.Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.15f, "$NPCName.SantaNK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Plantera + 0.16f, "$NPCName.IceQueen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(Golem + 0.1f, "Martian Madness", () => NPC.downedMartians, new List<int>() { })
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Everscream, "$NPCName.Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, SantaNK1, "$NPCName.SantaNK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, IceQueen, "$NPCName.IceQueen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(MartianMadness, "Martian Madness", () => NPC.downedMartians, new List<int>() { })
 					.WithCustomTranslationKey("$LegacyInterface.85")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventMartianMadness")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_10"),
-				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, Golem + 0.11f, "$NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(LunaticCultist + 0.01f, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { })
+				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, MartianSaucer, "$NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer, new List<int>() { }),
+				BossInfo.MakeVanillaEvent(LunarEvent, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventLunarEvent")
 					.WithCustomHeadIcon(new List<string>() {
 						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerNebula]}",
