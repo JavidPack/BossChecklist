@@ -239,6 +239,7 @@ namespace BossChecklist
 			ToCTab.Width.Pixels = tabTexture.Value.Width;
 			ToCTab.Height.Pixels = tabTexture.Value.Height;
 			ToCTab.OnClick += OpenViaTab;
+			ToCTab.OnRightDoubleClick += (a, b) => ClearForcedDowns();
 
 			BossTab = new BookUI(tabTexture) {
 				Id = "Boss_Tab"
@@ -336,6 +337,9 @@ namespace BossChecklist
 				newCheckBox.Top.Pixels = (34 * i) + 15;
 				newCheckBox.Left.Pixels = (25) - (filterNav[i].Value.Width / 2);
 				newCheckBox.OnClick += ChangeFilter;
+				if (filterNav[i] == hiddenTexture) {
+					newCheckBox.OnRightDoubleClick += (a, b) => ClearHiddenList();
+				}
 				newCheckBox.Append(filterCheckMark[i]);
 				filterCheck.Add(newCheckBox);
 			}
@@ -578,6 +582,28 @@ namespace BossChecklist
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			Filters_SetImage();
 			UpdateTableofContents();
+		}
+
+		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Forced Downs, Clear Records, Clear Boss Loot, etc
+
+		private void ClearHiddenList() {
+			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenBosses.Count == 0)
+				return;
+
+			WorldAssist.HiddenBosses.Clear();
+			showHidden = false;
+
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.RequestClearHidden);
+				packet.Send();
+			}
+			UpdateTableofContents();
+		}
+
+		private void ClearForcedDowns() {
+			// Shouldn't need updating through server as Forced Down checks are visually client-sided
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld.Clear();
 		}
 
 		private void UpdateRecordHighlight() {

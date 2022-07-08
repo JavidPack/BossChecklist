@@ -224,8 +224,9 @@ Mods: {
 				ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
 				ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
-				Debug: "[i:3625] [c/ffeb6e:Debugging and Mod Developer Tools]"
-				DebugBossLogFeatures: "[i:3619] [c/ffeb6e:Boss Log Feature Debugging]"
+				Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
+				DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
+				DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
 			}
 
 			Label: {
@@ -263,9 +264,11 @@ Mods: {
 				CollectionTypeDetection: Show Auto-detected Collection Type
 				ResetLoot: Enable Reset Loot and Collection Items Option
 				ResetRecords: Enable Reset Record Option
+				ResetForcedDowns: Enable Reset All Forced Downs Option
+				ResetHiddenEntries: Enable Reset Hidden Entries
 				InactiveBossCheck: Inactive Boss Check
-				DisableNewRecords: Disable updating new records
-				DisableRecordTracking: Disable records from being tracked entirely
+				DisableNewRecords: Disable updating personal records
+				DisableRecordTracking: Disable record tracking
 				ShowRecordTracking: Show record timers and counters of a selected Boss
 			}
 
@@ -273,7 +276,7 @@ Mods: {
 				BossLogColor: Choose the color of your Boss Log!
 				BossLogPos:
 					'''
-					Hold right-click in-game to move the button wherever you like with ease!
+					Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
 					Position is measured from bottom right corner of screen.
 					'''
 				DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
@@ -307,10 +310,10 @@ Mods: {
 				ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
 				AccessInternalNames:
 					'''
-					Adds a button on a boss entry's page to copy boss keys and mod sources to in-game clipboard.
-					Useful for mod developers making cross-mod content."
+					Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
+					Useful for mod developers making cross-mod content.
 					'''
-				CollectionTypeDetection: Boss collection itemslots will be marked with the assigned collection type
+				CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
 				ResetLoot: 
 					'''
 					Remove a selected item from your saved loot/collection by double right-clicking the selected item slot.
@@ -319,15 +322,22 @@ Mods: {
 					'''
 				ResetRecords: 
 					'''
-					Reset a records by double right-clicking a record on the selected boss page.
+					Reset a singular record by double right-clicking on the image of the record on the selected boss page.
 					Reset all records for a boss by double right-clicking the 'Records' button of the selected boss page.
 					'''
+				ResetForcedDowns: Reset all world forced downs by double right-clicking on the filters tab on the Table of Contents pages.
+				ResetHiddenEntries: Reset all hidden entries by double right-clicking on the show/hide hidden entries button, located in the filters tab.
 				InactiveBossCheck: 
 					'''
-					When a boss NPC dies or despawns, it mentions in chat if an active boss becomes inactive.
-					This check occurs before finalizing records and displaying despawn messages.
+					While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
+					This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
+					These messages should appear when a boss has been defeated or a boss has despawned, respectively.
 					'''
-				DisableNewRecords: Previous Attempt records will still be updated
+				DisableNewRecords:
+					'''
+					While enabled, all personal records will not be overwritten except for Previous Attempt.
+					This will also disable sending record data to the server for world records.
+					'''
 				ShowRecordTracking: Record Tracking must be enabled for this to show
 			}
 
