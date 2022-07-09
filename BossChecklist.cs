@@ -432,6 +432,14 @@ namespace BossChecklist
 					Console.WriteLine($"World records have been updated!");
 					Console.ResetColor();
 					break;
+				case PacketMessageType.ResetTrackers:
+					// When a boss spawns, all player's need their trackers reset for that boss
+					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
+					modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					int recordIndex = reader.ReadInt32();
+					modPlayer.Tracker_Duration[recordIndex] = 0;
+					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");
 					break;

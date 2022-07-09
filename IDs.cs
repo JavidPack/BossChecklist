@@ -41,7 +41,8 @@ namespace BossChecklist
 		RequestClearHidden,
 		SendRecordsToServer,
 		RecordUpdate,
-		WorldRecordUpdate
+		WorldRecordUpdate,
+		ResetTrackers
 	}
 
 	[Flags]

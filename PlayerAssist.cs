@@ -53,9 +53,9 @@ namespace BossChecklist
 			}
 
 			// For being able to complete records in Multiplayer
-			Tracker_Duration = System.Array.Empty<int>();
-			Tracker_Deaths = System.Array.Empty<bool>();
-			Tracker_HitsTaken = System.Array.Empty<int>();
+			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 
 			// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
 			hasNewRecord = new List<bool>();
@@ -158,9 +158,10 @@ namespace BossChecklist
 
 			// Reset record tracker numbers. Has to be reset after entering a world.
 			// Add values to all record trackers after RecordsForWorld are determined
-			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			// Not working for MP?
+			///Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			///Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			///Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 
 			// Trackers are set up // TODO: Does this need to be reset?
 			TrackersSetup = true;
@@ -199,13 +200,13 @@ namespace BossChecklist
 		// Continually track the duration of boss fights while boss NPCs are active
 		// If a player dies at any point while a boss is active, add to the death tracker for later
 		public override void PreUpdate() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255) {
 				return;
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
 				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
 					// If a boss is marked active and this player is a 'starting player'
-					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
+					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Player.whoAmI]) {
 						if (Player.dead) {
 							Tracker_Deaths[recordIndex] = true;
 						}
@@ -219,7 +220,7 @@ namespace BossChecklist
 		// On respawn, add to the total deaths towards marked bosses
 		// ActiveBossesList and StartingPlayers doesn't need to be checked since it was checked when setting the tracker bool to true
 		public override void OnRespawn(Player player) {
-			if (player.whoAmI != Player.whoAmI || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+			if (player.whoAmI != Player.whoAmI || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
 				return;
 
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
@@ -235,12 +236,12 @@ namespace BossChecklist
 
 		// Whenever the player is hurt, add to the HitsTaken tracker
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255) {
 				return;
 			}
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
-					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
+					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Player.whoAmI]) {
 						Tracker_HitsTaken[recordIndex]++;
 					}
 				}

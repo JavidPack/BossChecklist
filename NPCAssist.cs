@@ -15,11 +15,9 @@ namespace BossChecklist
 	{
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight
 		public override void OnSpawn(NPC npc, IEntitySource source) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+			// Only single player and server should be starting the record tracking process
+			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
-
-			if (npc.realLife != -1 && npc.realLife != npc.whoAmI)
-				return; // Checks for multi-segmented bosses?
 
 			int index = GetBossInfoIndex(npc.type, true);
 			if (index == -1)
@@ -34,10 +32,18 @@ namespace BossChecklist
 						continue; // skip any inactive players
 
 					WorldAssist.Tracker_StartingPlayers[recordIndex][j] = true; // Active players when the boss spawns will be counted
-					// Reset Timers and counters so we can start recording the next fight
-					PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
-					modPlayer.Tracker_Duration[recordIndex] = 0;
-					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+					if (Main.netMode == NetmodeID.SinglePlayer) {
+						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						modPlayer.Tracker_Duration[recordIndex] = 0;
+						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+					}
+					else {
+						// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
+						ModPacket packet = Mod.GetPacket();
+						packet.Write((byte)PacketMessageType.ResetTrackers);
+						packet.Write(recordIndex);
+						packet.Send(toClient: Main.player[j].whoAmI); // Server --> Multiplayer client
+					}
 				}
 			}
 		}
