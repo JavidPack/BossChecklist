@@ -598,7 +598,8 @@ namespace BossChecklist.UIElements
 
 						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && selectedBoss.modSource != "Unknown";
 						Vector2 pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 5);
-						Utils.DrawBorderString(spriteBatch, selectedBoss.DisplayName, pos, Color.Goldenrod);
+						string progression = BossChecklist.DebugConfig.ShowProgressionValue ? $"[{selectedBoss.progression}f] " : "";
+						Utils.DrawBorderString(spriteBatch, progression + selectedBoss.DisplayName, pos, Color.Goldenrod);
 
 						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
@@ -1460,21 +1461,29 @@ namespace BossChecklist.UIElements
 
 		internal class TableOfContents : UIText
 		{
-			public int PageNum { get; init; }
+			public int index { get; init; }
 			float order = 0;
 			bool nextCheck;
 			bool downed;
-			string bossKey;
 			string displayName;
 
-			public TableOfContents(int pageNum, float order, string displayName, string bossKey, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
-				PageNum = pageNum;
+			public TableOfContents(int index, float order, string displayName, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+				this.index = index;
 				this.order = order;
 				this.nextCheck = nextCheck;
 				this.downed = downed;
-				//Recalculate(); unnecessary?
-				this.bossKey = bossKey;
 				this.displayName = displayName;
+			}
+
+			public override void MouseOver(UIMouseEvent evt) {
+				if (BossChecklist.DebugConfig.ShowProgressionValue)
+					SetText($"[{order}f] {displayName}");
+				base.MouseOver(evt);
+			}
+
+			public override void MouseOut(UIMouseEvent evt) {
+				SetText(displayName);
+				base.MouseOut(evt);
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -1482,13 +1491,10 @@ namespace BossChecklist.UIElements
 				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
-				// name check, for when progression matches
-				// index should never be -1 since variables passed in are within bounds
-				int index = sortedBosses.FindIndex(x => x.progression == order && (x.Key == bossKey));
 
 				if (order != -1) {
 					BossChecklist BA = BossChecklist.instance;
-					BossInfo selectedBoss = sortedBosses[PageNum];
+					BossInfo selectedBoss = sortedBosses[index];
 					// Use the appropriate text color for conditions
 					if (BossChecklist.BossLogConfig.ColoredBossText) {
 						if (IsMouseHovering) {
@@ -1497,17 +1503,12 @@ namespace BossChecklist.UIElements
 						//if (IsMouseHovering && sortedBosses[pageNum].IsDownedOrForced) TextColor = Color.DarkSeaGreen;
 						//else if (IsMouseHovering && !sortedBosses[pageNum].IsDownedOrForced) TextColor = Color.IndianRed;
 						else if (!downed) {
-							if (nextCheck && BossChecklist.BossLogConfig.DrawNextMark) {
-								TextColor = new Color(248, 235, 91);
-							}
-							else {
-								TextColor = Colors.RarityRed;
-							}
+							TextColor = nextCheck && BossChecklist.BossLogConfig.DrawNextMark ? new Color(248, 235, 91) : Colors.RarityRed;
 						}
 						else if (downed) {
 							TextColor = Colors.RarityGreen;
 						}
-						if (modPlayer.hasNewRecord[PageNum]) {
+						if (modPlayer.hasNewRecord[index]) {
 							TextColor = Main.DiscoColor;
 						}
 					}
@@ -1527,7 +1528,7 @@ namespace BossChecklist.UIElements
 						TextColor = Color.DimGray;
 					}
 					if (IsMouseHovering) {
-						BossLogPanel.headNum = PageNum;
+						BossLogPanel.headNum = index;
 					}
 				}
 
@@ -1618,7 +1619,7 @@ namespace BossChecklist.UIElements
 
 				if (order != -1f) {
 					BossChecklist BA = BossChecklist.instance;
-					BossInfo selectedBoss = sortedBosses[PageNum];
+					BossInfo selectedBoss = sortedBosses[index];
 					Asset<Texture2D> checkGrid = BossLogUI.checkboxTexture;
 					string checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
 

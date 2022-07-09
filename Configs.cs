@@ -252,17 +252,23 @@ namespace BossChecklist
 
 		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.ShowProgressionValue")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ShowProgressionValue")]
+		public bool ShowProgressionValue { get; set; }
+
+		[BackgroundColor(80, 80, 80)]
+		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.AccessInternalNames")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.AccessInternalNames")]
 		public bool AccessInternalNames { get; set; }
 
-		[BackgroundColor(80, 80, 80)]
+		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.CollectionTypeDetection")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CollectionTypeDetection")]
 		public bool ShowCollectionType { get; set; }
 
-		[BackgroundColor(255, 250, 250)]
+		[BackgroundColor(80, 80, 80)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.InactiveBossCheck")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.InactiveBossCheck")]
@@ -270,7 +276,7 @@ namespace BossChecklist
 
 		[Header("$Mods.BossChecklist.Configs.Header.DebugRecordTracker")]
 
-		[BackgroundColor(80, 80, 80)]
+		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.DisableNewRecords")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DisableNewRecords")]
@@ -295,7 +301,7 @@ namespace BossChecklist
 			}
 		}
 
-		[BackgroundColor(255, 250, 250)]
+		[BackgroundColor(80, 80, 80)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.DisableRecordTracking")]
 		public bool RecordTrackingDisabled {
@@ -320,32 +326,32 @@ namespace BossChecklist
 		}
 
 		// TODO: Get timers and counters to properly visualize itself in Multiplayer
-		[BackgroundColor(80, 80, 80)]
+		[BackgroundColor(255, 250, 250)]
 		[Label("$Mods.BossChecklist.Configs.Label.ShowRecordTracking")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ShowRecordTracking")]
 		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
 		[Header("$Mods.BossChecklist.Configs.Header.DebugResetData")]
 
-		[BackgroundColor(255, 250, 250)]
+		[BackgroundColor(80, 80, 80)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.ResetLoot")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetLoot")]
 		public bool ResetLootItems { get; set; }
 
-		[BackgroundColor(80, 80, 80)]
+		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.ResetRecords")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetRecords")]
 		public bool ResetRecordsBool { get; set; }
 
-		[BackgroundColor(255, 250, 250)]
+		[BackgroundColor(80, 80, 80)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.ResetForcedDowns")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetForcedDowns")]
 		public bool ResetForcedDowns { get; set; }
 
-		[BackgroundColor(80, 80, 80)]
+		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.ResetHiddenEntries")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetHiddenEntries")]

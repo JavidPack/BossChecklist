@@ -260,6 +260,7 @@ Mods: {
 				RadarOpacity: Radar Opacity
 				RadarBlacklist: Radar Blacklist
 				ModCallVerbose: Mod.Call Log Verbose
+				ShowProgressionValue: Access Progression Values
 				AccessInternalNames: Access Internal Names
 				CollectionTypeDetection: Show Auto-detected Collection Type
 				ResetLoot: Enable Reset Loot and Collection Items Option
@@ -308,6 +309,11 @@ Mods: {
 				RadarOpacity: Adjust how transparent the radar's icon will be
 				RadarBlacklist: The selected NPCs will not be tracked by the radar
 				ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
+				ShowProgressionValue:
+					'''
+					Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
+					The progression value is what determines how entries are ordered in the checklist.
+					'''
 				AccessInternalNames:
 					'''
 					Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.

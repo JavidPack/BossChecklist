@@ -1300,12 +1300,12 @@ namespace BossChecklist
 			List<BossInfo> referenceList = BossChecklist.bossTracker.SortedBosses;
 			bool[] visibleList = CalculateTableOfContents(referenceList);
 
-			for (int i = 0; i < visibleList.Length; i++) {
-				BossInfo boss = referenceList[i];
+			for (int bossIndex = 0; bossIndex < referenceList.Count; bossIndex++) {
+				BossInfo boss = referenceList[bossIndex];
 				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
 
 				// If the boss should not be visible on the Table of Contents, skip the entry in the list
-				if (!visibleList[i]) {
+				if (!visibleList[bossIndex]) {
 					continue;
 				}
 
@@ -1338,7 +1338,7 @@ namespace BossChecklist
 					}
 				}
 
-				TableOfContents next = new TableOfContents(i, boss.progression, displayName, boss.Key, boss.IsDownedOrForced, nextCheck);
+				TableOfContents next = new TableOfContents(bossIndex, boss.progression, displayName, boss.IsDownedOrForced, nextCheck);
 				if (!boss.IsDownedOrForced && boss.available() && !boss.hidden) {
 					nextCheck = false;
 				}
@@ -1481,12 +1481,12 @@ namespace BossChecklist
 
 		internal void HideBoss(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.PageNum, false);
+				JumpToBossPage(table.index, false);
 		}
 
 		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.PageNum, true);
+				JumpToBossPage(table.index, true);
 		}
 
 		internal void JumpToBossPage(int index, bool leftClick = true) {
