@@ -309,7 +309,7 @@ Mods: {
 				ShowProgressionValue:
 					'''
 					当光标悬停在目录中的条目上以及查看条目的页面时, 显示其进度值.
-					进度值决定了条目在清单中的排序方式.
+					进度值决定了条目在清单中的排序.
 					'''
 				AccessInternalNames:
 					'''
