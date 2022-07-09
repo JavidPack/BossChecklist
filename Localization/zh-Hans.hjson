@@ -123,6 +123,16 @@ Mods: {
 				BestKDRDescription: 取得最好成绩之前你尝试的次数
 				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数
 				ClaimRecord: 成为第一个打破世界纪录的人!
+				ProgressionModeIsEnabled:
+					'''
+					[i:888] 进度模式已完全或部分启用!
+					这会隐藏一些与Boss相关的信息, 直至它们被击败.
+					若想禁用或配置进度模式, 请前往:
+					设置 > Mod设置 > Boss清单: 自定义Boss日志
+					并向下滚动至进度模式设置
+					'''
+				ModCompletion: 点击以切换至Mod列表模式
+				EntryCompletion: 点击以切换至条目类型模式
 			}
 
 			DrawnText: {
@@ -224,7 +234,6 @@ Mods: {
 				DrawNextMark: 提示下一个要挑战的Boss
 				LootChecklist: 开启战利品/收藏品清单
 				ColoredBossText: Boss文本变色
-				CountDownedBosses: Boss击败数显示
 				SelectedCheckmarkType: 标记模式
 				FilterBosses: 过滤日志中不符合条件的Boss
 				FilterMiniBosses: 过滤日志中不符合条件的小Boss
@@ -250,6 +259,7 @@ Mods: {
 				RadarOpacity: Boss雷达不透明度
 				RadarBlacklist: 雷达黑名单
 				ModCallVerbose: Mod.Call日志详细信息
+				ShowProgressionValue: 使用进度值
 				AccessInternalNames: 访问内部名称
 				CollectionTypeDetection: 显示自动检测的集合类型
 				ResetLoot: 开启重置战利品和收藏品选项
@@ -274,7 +284,6 @@ Mods: {
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
 					如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
 					'''
-				CountDownedBosses: 如果启用, 目录将显示与总Boss数相比被击败的Boss数.
 				ProgressionPrompt: 如果启用, 则阻止提示出现在所有未来的字符中.
 				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
 				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
@@ -297,6 +306,11 @@ Mods: {
 				RadarOpacity: 调整雷达图标的透明度
 				RadarBlacklist: 以下被选中的生物将不会被雷达定位
 				ModCallVerbose: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
+				ShowProgressionValue:
+					'''
+					当光标悬停在目录中的条目上以及查看条目的页面时, 显示其进度值.
+					进度值决定了条目在清单中的排序.
+					'''
 				AccessInternalNames:
 					'''
 					在Boss的条目页面上添加一个按钮, 其可以将Boss键值和Mod源复制到游戏中的剪贴板.
