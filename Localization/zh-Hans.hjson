@@ -259,6 +259,7 @@ Mods: {
 				RadarOpacity: Boss雷达不透明度
 				RadarBlacklist: 雷达黑名单
 				ModCallVerbose: Mod.Call日志详细信息
+				ShowProgressionValue: 使用进度值
 				AccessInternalNames: 访问内部名称
 				CollectionTypeDetection: 显示自动检测的集合类型
 				ResetLoot: 开启重置战利品和收藏品选项
@@ -305,6 +306,11 @@ Mods: {
 				RadarOpacity: 调整雷达图标的透明度
 				RadarBlacklist: 以下被选中的生物将不会被雷达定位
 				ModCallVerbose: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
+				ShowProgressionValue:
+					'''
+					当光标悬停在目录中的条目上以及查看条目的页面时, 显示其进度值.
+					进度值决定了条目在清单中的排序方式.
+					'''
 				AccessInternalNames:
 					'''
 					在Boss的条目页面上添加一个按钮, 其可以将Boss键值和Mod源复制到游戏中的剪贴板.
