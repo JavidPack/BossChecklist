@@ -193,7 +193,8 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
 							InterpretObjectAsStringFunction(args[10]), // Despawn message
-							args[11] as Action<SpriteBatch, Rectangle, Color> // Custom Drawing
+							args[11] as Action<SpriteBatch, Rectangle, Color>, // Custom Drawing
+							InterpretObjectAsListOfStrings(args[12])
 						);
 					}
 					return "Success";
@@ -237,7 +238,8 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
 							InterpretObjectAsStringFunction(args[10]), // Despawn message
-							args[11] as Action<SpriteBatch, Rectangle, Color> // Custom Drawing
+							args[11] as Action<SpriteBatch, Rectangle, Color>, // Custom Drawing
+							InterpretObjectAsListOfStrings(args[12])
 						);
 					}
 					return "Success";
@@ -280,7 +282,8 @@ namespace BossChecklist
 							InterpretObjectAsListOfInt(args[7]), // Collection
 							InterpretObjectAsListOfInt(args[8]), // Spawn Items
 							args[9] as string, // Spawn Info
-							args[10] as Action<SpriteBatch, Rectangle, Color> // Custom Drawing
+							args[10] as Action<SpriteBatch, Rectangle, Color>, // Custom Drawing
+							InterpretObjectAsListOfStrings(args[11])
 						);
 					}
 					return "Success";
@@ -311,7 +314,7 @@ namespace BossChecklist
 			// Local functions.
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : null);
 			Func<NPC, string> InterpretObjectAsStringFunction(object data) => data is Func<NPC, string> ? data as Func<NPC, string> : (data is string ? npc => data as string : null);
-			//List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
+			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
 
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)

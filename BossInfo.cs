@@ -136,7 +136,7 @@ namespace BossChecklist
 			return editedName;
 		}
 
-		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages, Action<SpriteBatch, Rectangle, Color> customDrawing) {
+		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages = null, Action<SpriteBatch, Rectangle, Color> customDrawing = null, List<string> overrideHeadTextures = null) {
 			this.type = type;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -169,14 +169,20 @@ namespace BossChecklist
 			this.portraitTexture = null;
 			this.customDrawing = customDrawing;
 			this.headIconTextures = new List<Asset<Texture2D>>();
-			foreach (int npc in npcIDs) {
-				if (type == EntryType.Boss || type == EntryType.MiniBoss) {
-					if (NPCID.Sets.BossHeadTextures[npc] != -1) {
-						headIconTextures.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]);
+			if (overrideHeadTextures == null) {
+				foreach (int npc in npcIDs) {
+					// No need to check for events, as events must have a custom icon to begin with.
+					if (type == EntryType.Boss || type == EntryType.MiniBoss) {
+						if (NPCID.Sets.BossHeadTextures[npc] != -1) {
+							headIconTextures.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]);
+						}
 					}
 				}
-				// No need to check for events, as events must have a custom icon to begin with.
-				// Also, any minibosses apart of the event should not count in this list.
+			}
+			else {
+				foreach (string texturePath in overrideHeadTextures) {
+					headIconTextures.Add(ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad));
+				}
 			}
 			if (headIconTextures.Count == 0) {
 				headIconTextures.Add(TextureAssets.NpcHead[0]);
@@ -267,8 +273,7 @@ namespace BossChecklist
 				BossChecklist.bossTracker.BossCollections.GetValueOrDefault($"Terraria {nameKey}"),
 				spawnItem,
 				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}",
-				customMessages,
-				null
+				customMessages
 			);
 		}
 
@@ -284,9 +289,7 @@ namespace BossChecklist
 				() => true,
 				BossChecklist.bossTracker.BossCollections.GetValueOrDefault($"Terraria {nameKey}"),
 				spawnItem,
-				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}",
-				null,
-				null
+				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}"
 			);
 		}
 
