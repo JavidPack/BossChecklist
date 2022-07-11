@@ -250,6 +250,9 @@ namespace BossChecklist
 
 		// Timer sounds when a player is about to respawn
 		public override void UpdateDead() {
+			if (BossUISystem.Instance.BossLog.BossLogVisible)
+				BossUISystem.Instance.BossLog.ToggleBossLog(false); // Toggle off UI when player dies
+
 			if (Main.netMode != NetmodeID.Server && BossChecklist.ClientConfig.TimerSounds) {
 				if (Player.respawnTimer == 60) {
 					SoundEngine.PlaySound(SoundID.Item6);
