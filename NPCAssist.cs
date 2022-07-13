@@ -27,17 +27,20 @@ namespace BossChecklist
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[index].GetRecordIndex;
 			if (!WorldAssist.Tracker_ActiveEntry[recordIndex]) {
 				WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
-				for (int j = 0; j < Main.maxPlayers; j++) {
-					if (!Main.player[j].active)
-						continue; // skip any inactive players
 
-					WorldAssist.Tracker_StartingPlayers[recordIndex][j] = true; // Active players when the boss spawns will be counted
-					if (Main.netMode == NetmodeID.SinglePlayer) {
-						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						modPlayer.Tracker_Duration[recordIndex] = 0;
-						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
-					}
-					else {
+				if (Main.netMode == NetmodeID.SinglePlayer) {
+					WorldAssist.Tracker_StartingPlayers[recordIndex][Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted
+					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					modPlayer.Tracker_Duration[recordIndex] = 0;
+					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+				}
+				else if (Main.netMode == NetmodeID.Server) {
+					for (int j = 0; j < Main.maxPlayers; j++) {
+						if (!Main.player[j].active)
+							continue; // skip any inactive players
+
+						WorldAssist.Tracker_StartingPlayers[recordIndex][j] = true; // Active players when the boss spawns will be counted
+
 						// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
 						ModPacket packet = Mod.GetPacket();
 						packet.Write((byte)PacketMessageType.ResetTrackers);
