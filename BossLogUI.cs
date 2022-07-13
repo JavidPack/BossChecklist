@@ -39,8 +39,8 @@ namespace BossChecklist
 		public SubpageButton lootButton;
 
 		public SubpageButton[] AltPageButtons;
-		public static RecordType RecordPageSelected = RecordType.PreviousAttempt;
-		public static RecordType CompareState = RecordType.None; // Compare record values to one another
+		public static RecordCategory RecordPageSelected = RecordCategory.PreviousAttempt;
+		public static RecordCategory CompareState = RecordCategory.None; // Compare record values to one another
 		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
 		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
@@ -400,21 +400,21 @@ namespace BossChecklist
 			lootButton.OnRightDoubleClick += RemoveItem;
 
 			// These will serve as a reservation for our AltPage buttons
-			SubpageButton PrevRecordButton = new SubpageButton((int)RecordType.PreviousAttempt);
-			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.PreviousAttempt);
-			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.PreviousAttempt, false);
+			SubpageButton PrevRecordButton = new SubpageButton((int)RecordCategory.PreviousAttempt);
+			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.PreviousAttempt);
+			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.PreviousAttempt, false);
 
-			SubpageButton FirstRecordButton = new SubpageButton((int)RecordType.FirstRecord);
-			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.FirstRecord);
-			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.FirstRecord, false);
+			SubpageButton FirstRecordButton = new SubpageButton((int)RecordCategory.FirstRecord);
+			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.FirstRecord);
+			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.FirstRecord, false);
 
-			SubpageButton BestRecordButton = new SubpageButton((int)RecordType.BestRecord);
-			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.BestRecord);
-			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.BestRecord, false);
+			SubpageButton BestRecordButton = new SubpageButton((int)RecordCategory.BestRecord);
+			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.BestRecord);
+			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.BestRecord, false);
 
-			SubpageButton WorldRecordButton = new SubpageButton((int)RecordType.WorldRecord);
-			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordType.WorldRecord);
-			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordType.WorldRecord, false);
+			SubpageButton WorldRecordButton = new SubpageButton((int)RecordCategory.WorldRecord);
+			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.WorldRecord);
+			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.WorldRecord, false);
 
 			AltPageButtons = new SubpageButton[] {
 				PrevRecordButton,
@@ -1619,7 +1619,7 @@ namespace BossChecklist
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
 						PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
-						int totalRecords = (int)RecordType.None;
+						int totalRecords = (int)RecordCategory.None;
 						for (int i = 0; i < totalRecords; i++) {
 							if ((i == 1 || i == 2) && record.kills == 0) {
 								// If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
@@ -1646,7 +1646,7 @@ namespace BossChecklist
 			}
 		}
 
-		public void HandleRecordTypeButton(RecordType type, bool leftClick = true) {
+		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
 			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
 			if (!leftClick) {
 				if (RecordPageSelected == type) {
@@ -1654,29 +1654,29 @@ namespace BossChecklist
 				}
 
 				if (CompareState == RecordPageSelected) {
-					CompareState = RecordType.None;
+					CompareState = RecordCategory.None;
 				}
 				else if (CompareState != type) {
 					CompareState = type;
 				}
 				else {
-					CompareState = RecordType.None;
+					CompareState = RecordCategory.None;
 				}
 				//Main.NewText($"Set compare value to {CompareState}");
 			}
 			else {
 				// If selecting the compared state altpage, reset compare state
 				if (CompareState == type) {
-					CompareState = RecordType.None;
+					CompareState = RecordCategory.None;
 				}
 				UpdateCatPage(CategoryPageNum, type);
 			}
 		}
 
-		public void UpdateCatPage(CategoryPage catPage, RecordType altPage = RecordType.None) {
+		public void UpdateCatPage(CategoryPage catPage, RecordCategory altPage = RecordCategory.None) {
 			CategoryPageNum = catPage;
 			// If altPage doesn't want to be changed use -1
-			if (altPage != RecordType.None) {
+			if (altPage != RecordCategory.None) {
 				RecordPageSelected = altPage;
 			}
 

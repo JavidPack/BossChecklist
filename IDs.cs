@@ -54,7 +54,7 @@ namespace BossChecklist
 		ResetAll = 4
 	}
 
-	internal enum RecordType : int
+	internal enum RecordCategory : int
 	{
 		PreviousAttempt,
 		BestRecord,
