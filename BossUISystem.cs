@@ -181,11 +181,8 @@ namespace BossChecklist
 			if (playerChatIndex != -1) {
 				layers.Insert(playerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Record Tracker Debugger",
 					delegate {
-						// Currently, this debug feature is limited to singleplayer
-						// TODO: Possibly make it functional in MP? No real good use for it as of now.
-						// entered
-						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						if (!modPlayer.TrackersSetup)
+						// Currently, this debug feature is limited to singleplayer as the server does not display its info.
+						if (Main.netMode == NetmodeID.SinglePlayer)
 							return true;
 
 						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, true);
@@ -196,6 +193,7 @@ namespace BossChecklist
 						if (recordIndex == -1)
 							return true;
 
+						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						string debugText =
 							$"[#{configIndex}] {BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} [{recordIndex}]" +
 							$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +

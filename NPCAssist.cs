@@ -41,6 +41,12 @@ namespace BossChecklist
 
 						WorldAssist.Tracker_StartingPlayers[recordIndex][j] = true; // Active players when the boss spawns will be counted
 
+						// This is updated serverside
+						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
+						modPlayer.Tracker_Duration[recordIndex] = 0;
+						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+
+						// Needs to be updated client side as well
 						// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
 						ModPacket packet = Mod.GetPacket();
 						packet.Write((byte)PacketMessageType.ResetTrackers);
@@ -63,6 +69,14 @@ namespace BossChecklist
 				if (FullyInactive(npc, index)) {
 					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
 						CheckRecords(npc, index);
+						if (Main.netMode == NetmodeID.Server) {
+							foreach (Player player in Main.player) {
+								if (!player.active) {
+									continue;
+								}
+								ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(player.GetModPlayer<PlayerAssist>().Tracker_Duration[BossChecklist.bossTracker.SortedBosses[index].GetRecordIndex].ToString()), Color.White);
+							}
+						}
 					}
 
 					if (BossChecklist.DebugConfig.ShowInactiveBossCheck)

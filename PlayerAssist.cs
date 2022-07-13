@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -15,8 +16,6 @@ namespace BossChecklist
 		public bool hasOpenedTheBossLog;
 		// When players jon a different world, the boss log PageNum should reset back to its original state
 		public bool enteredWorldReset;
-
-		public bool TrackersSetup;
 
 		// Records are bound to characters, but records are independent between worlds as well.
 		// AllStored records contains every player record from every world
@@ -40,7 +39,6 @@ namespace BossChecklist
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
 			enteredWorldReset = false;
-			TrackersSetup = false;
 
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
@@ -53,9 +51,9 @@ namespace BossChecklist
 			}
 
 			// For being able to complete records in Multiplayer
-			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_Duration = Array.Empty<int>();
+			Tracker_Deaths = Array.Empty<bool>();
+			Tracker_HitsTaken = Array.Empty<int>();
 
 			// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
 			hasNewRecord = new List<bool>();
@@ -158,13 +156,16 @@ namespace BossChecklist
 
 			// Reset record tracker numbers. Has to be reset after entering a world.
 			// Add values to all record trackers after RecordsForWorld are determined
-			// Not working for MP?
-			///Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
-			///Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			///Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 
-			// Trackers are set up // TODO: Does this need to be reset?
-			TrackersSetup = true;
+			// Send this info to the server to populate the arrays server-sided
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				ModPacket packet = Mod.GetPacket();
+				packet.Write((byte)PacketMessageType.ResetTrackers);
+				packet.Send(); // Multiplayer client --> Server
+			}
 
 			// If the player has not been in this world before, create an entry for this world
 			if (!AllStoredForceDowns.ContainsKey(WorldID)) {
@@ -200,10 +201,10 @@ namespace BossChecklist
 		// Continually track the duration of boss fights while boss NPCs are active
 		// If a player dies at any point while a boss is active, add to the death tracker for later
 		public override void PreUpdate() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
 				return;
-			}
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && Main.netMode != NetmodeID.Server) {
+
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
 					// If a boss is marked active and this player is a 'starting player'
 					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Player.whoAmI]) {
@@ -220,7 +221,7 @@ namespace BossChecklist
 		// On respawn, add to the total deaths towards marked bosses
 		// ActiveBossesList and StartingPlayers doesn't need to be checked since it was checked when setting the tracker bool to true
 		public override void OnRespawn(Player player) {
-			if (player.whoAmI != Player.whoAmI || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255 || player.whoAmI != Player.whoAmI)
 				return;
 
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
@@ -236,9 +237,9 @@ namespace BossChecklist
 
 		// Whenever the player is hurt, add to the HitsTaken tracker
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
 				return;
-			}
+
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
 				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
 					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex][Player.whoAmI]) {
@@ -248,12 +249,15 @@ namespace BossChecklist
 			}
 		}
 
-		// Timer sounds when a player is about to respawn
 		public override void UpdateDead() {
+			if (Main.netMode == NetmodeID.Server)
+				return;
+
 			if (BossUISystem.Instance.BossLog.BossLogVisible)
 				BossUISystem.Instance.BossLog.ToggleBossLog(false); // Toggle off UI when player dies
 
-			if (Main.netMode != NetmodeID.Server && BossChecklist.ClientConfig.TimerSounds) {
+			// Timer sounds when a player is about to respawn
+			if (BossChecklist.ClientConfig.TimerSounds) {
 				if (Player.respawnTimer == 60) {
 					SoundEngine.PlaySound(SoundID.Item6);
 				}
