@@ -68,14 +68,11 @@ namespace BossChecklist
 			if (index != -1) {
 				if (FullyInactive(npc, index)) {
 					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
-						CheckRecords(npc, index);
 						if (Main.netMode == NetmodeID.Server) {
-							foreach (Player player in Main.player) {
-								if (!player.active) {
-									continue;
-								}
-								ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(player.GetModPlayer<PlayerAssist>().Tracker_Duration[BossChecklist.bossTracker.SortedBosses[index].GetRecordIndex].ToString()), Color.White);
-							}
+							CheckRecordsForServer(npc, index);
+						}
+						else if (Main.netMode == NetmodeID.SinglePlayer) {
+							CheckRecords(npc, index);
 						}
 					}
 
@@ -176,7 +173,6 @@ namespace BossChecklist
 			}
 
 			bool newRecordSet = false;
-			RecordID recordType = RecordID.None;
 			ref PersonalStats statistics = ref modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
 			int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
 			int trackedhitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
@@ -190,7 +186,6 @@ namespace BossChecklist
 					newRecordSet = true; // New Record should not appear above the player on the first record achieved
 				}
 				statistics.durationBest = trackedDuration;
-				recordType |= RecordID.Duration;
 			}
 
 			// Repeat the same logic with the Hits Taken record
@@ -200,17 +195,6 @@ namespace BossChecklist
 					newRecordSet = true;
 				}
 				statistics.hitsTakenBest = trackedhitsTaken;
-				recordType |= RecordID.HitsTaken;
-			}
-
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				// Make and send the packet
-				Main.NewText("Sending record packet");
-				ModPacket packet = Mod.GetPacket();
-				packet.Write((byte)PacketMessageType.RecordUpdate);
-				packet.Write(recordIndex); // Which boss record are we changing?
-				modPlayer.RecordsForWorld[recordIndex].stats.NetSend(packet, recordType); // Writes all the variables needed
-				packet.Send(toClient: Main.LocalPlayer.whoAmI); // Server --> Multiplayer client // We send to the player as only they need to see their own records
 			}
 
 			// If a new record was made, notify the player. Again, this will not show for newly set records
@@ -243,21 +227,21 @@ namespace BossChecklist
 
 				// For each record type we check if its beats the current record or if it is not set already
 				// If it is beaten, we add a flag to recordType to allow the record tracker numbers to override the current record
-				RecordID recordType = RecordID.None;
+				NetRecordID recordType = NetRecordID.None;
 
 				serverStatistics.kills++;
 
 				serverStatistics.durationPrev = trackedDuration;
 				if (trackedDuration < serverStatistics.durationBest || serverStatistics.durationBest <= 0) {
 					//Console.WriteLine($"{player.name} set a new record for DURATION: {trackedDuration} (Previous Record: {serverStatistics.durationBest})");
-					recordType |= RecordID.Duration;
+					recordType |= NetRecordID.Duration_Best;
 					serverStatistics.durationBest = trackedDuration;
 				}
 
 				serverStatistics.hitsTakenPrev = trackedHitsTaken;
 				if (trackedHitsTaken < serverStatistics.hitsTakenBest || serverStatistics.hitsTakenBest < 0) {
 					//Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {trackedHitsTaken} (Previous Record: {serverStatistics.hitsTakenBest})");
-					recordType |= RecordID.HitsTaken;
+					recordType |= NetRecordID.HitsTaken_Best;
 					serverStatistics.hitsTakenBest = trackedHitsTaken;
 				}
 				

@@ -132,49 +132,51 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetSend(BinaryWriter writer, RecordID recordType) {
+		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {
 			// Write the record type(s) we are changing. NetRecieve will need to read this value.
 			writer.Write((int)recordType);
 
 			// If the record type is a reset, nothing else needs to be done, as the records will be wiped. Otherwise...
-			if (!recordType.HasFlag(RecordID.ResetAll)) {
+			if (!recordType.HasFlag(NetRecordID.ResetAll)) {
 				// ...previous records are always overwritten for the player to view...
 				writer.Write(durationPrev);
 				writer.Write(hitsTakenPrev);
 
-				// ... and any new records we set will be flagged for sending
-				if (recordType.HasFlag(RecordID.Duration))
+				// ... and any first or new records we set will be flagged for sending
+				if (recordType.HasFlag(NetRecordID.Duration_Best))
 					writer.Write(durationBest);
-				if (recordType.HasFlag(RecordID.HitsTaken))
+				if (recordType.HasFlag(NetRecordID.HitsTaken_Best))
 					writer.Write(hitsTakenBest);
+				if (recordType.HasFlag(NetRecordID.Duration_First))
+					writer.Write(durationFirst);
+				if (recordType.HasFlag(NetRecordID.HitsTaken_First))
+					writer.Write(hitsTakenFirst);
 			}
 		}
 
-		// TODO: is player and boss parameters necessary?
-		internal void NetRecieve(BinaryReader reader, Player player, int boss) {
-			RecordID recordType = (RecordID)reader.ReadInt32();
-			if (recordType.HasFlag(RecordID.ResetAll)) {
+		internal void NetRecieve(BinaryReader reader) {
+			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
+			if (recordType.HasFlag(NetRecordID.ResetAll)) {
 				// ResetAll resets all fields to their default value
 				kills = deaths = attempts = failures = 0;
 				durationPrev = durationBest = durationFirst = hitsTakenPrev = hitsTakenBest = hitsTakenFirst = -1;
 			}
 			else {
 				// Determine if a new record was made (Prev records need to change still)
-				bool newRecord = recordType.HasFlag(RecordID.Duration) || recordType.HasFlag(RecordID.HitsTaken);
+				bool newRecord = recordType.HasFlag(NetRecordID.Duration_Best) || recordType.HasFlag(NetRecordID.HitsTaken_Best);
 
 				kills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
 				durationPrev = reader.ReadInt32();
 				hitsTakenPrev = reader.ReadInt32();
 
-				if (recordType.HasFlag(RecordID.Duration))
+				if (recordType.HasFlag(NetRecordID.Duration_Best))
 					durationBest = reader.ReadInt32();
-				if (recordType.HasFlag(RecordID.HitsTaken))
+				if (recordType.HasFlag(NetRecordID.HitsTaken_Best))
 					hitsTakenBest = reader.ReadInt32();
-				
-				if (newRecord) {
-					player.GetModPlayer<PlayerAssist>().hasNewRecord[boss] = true;
-					CombatText.NewText(player.getRect(), Color.LightYellow, "New Record!", true);
-				}
+				if (recordType.HasFlag(NetRecordID.Duration_First))
+					durationFirst = reader.ReadInt32();
+				if (recordType.HasFlag(NetRecordID.HitsTaken_First))
+					hitsTakenFirst = reader.ReadInt32();
 			}
 		}
 	}
@@ -229,16 +231,16 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetSend(BinaryWriter writer, RecordID specificRecord) {
+		internal void NetSend(BinaryWriter writer, NetRecordID specificRecord) {
 			// Write the record type(s) we are changing. NetRecieve will need to read this value.
 			writer.Write((int)specificRecord);
 
 			// Packet should have any beaten record values and holders written on it
-			if (specificRecord.HasFlag(RecordID.Duration)) {
+			if (specificRecord.HasFlag(NetRecordID.Duration_Best)) {
 				writer.Write(durationHolder);
 				writer.Write(durationWorld);
 			}
-			if (specificRecord.HasFlag(RecordID.HitsTaken)) {
+			if (specificRecord.HasFlag(NetRecordID.HitsTaken_Best)) {
 				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
 			}
@@ -246,14 +248,16 @@ namespace BossChecklist
 
 		internal void NetRecieve(BinaryReader reader) {
 			// Read the type of record being updated
-			RecordID brokenRecords = (RecordID)reader.ReadInt32();
+			NetRecordID brokenRecords = (NetRecordID)reader.ReadInt32();
+
+			// Since 'totalKills' are shared between all players, it will be updated outside of NetRecieve
 
 			// Set the world record values and holders
-			if (brokenRecords.HasFlag(RecordID.Duration)) {
+			if (brokenRecords.HasFlag(NetRecordID.Duration_Best)) {
 				durationHolder = reader.ReadString();
 				durationWorld = reader.ReadInt32();
 			}
-			if (brokenRecords.HasFlag(RecordID.HitsTaken)) {
+			if (brokenRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
 				hitsTakenHolder = reader.ReadString();
 				hitsTakenWorld = reader.ReadInt32();
 			}

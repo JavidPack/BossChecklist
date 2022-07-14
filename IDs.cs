@@ -46,11 +46,13 @@ namespace BossChecklist
 	}
 
 	[Flags]
-	internal enum RecordID : int
+	internal enum NetRecordID : int
 	{
 		None = 0,
-		Duration = 1,
-		HitsTaken = 2,
+		Duration_Best = 1,
+		HitsTaken_Best = 2,
+		Duration_First = 4,
+		HitsTaken_First = 8,
 		ResetAll = 4
 	}
 

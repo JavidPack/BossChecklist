@@ -655,6 +655,7 @@ namespace BossChecklist
 			}
 		}
 
+		// Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;
@@ -677,7 +678,7 @@ namespace BossChecklist
 					ModPacket packet = BossChecklist.instance.GetPacket();
 					packet.Write((byte)PacketMessageType.RecordUpdate);
 					packet.Write(recordIndex);
-					stats.NetSend(packet, RecordID.ResetAll);
+					stats.NetSend(packet, NetRecordID.ResetAll);
 					packet.Send(toClient: Main.LocalPlayer.whoAmI); // Multiplayer client --> Multiplayer client
 				}
 			}
