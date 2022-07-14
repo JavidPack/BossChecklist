@@ -404,7 +404,7 @@ namespace BossChecklist
 					int npcPos = reader.ReadInt32();
 					modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 					BossRecord record = modPlayer.RecordsForWorld[npcPos];
-					record.stats.NetRecieve(reader, Main.LocalPlayer, npcPos);
+					record.stats.NetRecieve(reader);
 
 					Console.ForegroundColor = ConsoleColor.DarkCyan;
 					Console.WriteLine($"Updated a boss record for player '{Main.LocalPlayer.name}'");
