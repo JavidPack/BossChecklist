@@ -932,14 +932,14 @@ namespace BossChecklist.UIElements
 
 										if (recordSlot == 2) {
 											// Duration comparison
-											initialRecordValue = GetRecordValue(BossLogUI.RecordPageSelected, RecordID.Duration);
-											compareRecordValue = GetRecordValue(BossLogUI.CompareState, RecordID.Duration);
+											initialRecordValue = GetRecordValue(BossLogUI.RecordPageSelected, recordSlot);
+											compareRecordValue = GetRecordValue(BossLogUI.CompareState, recordSlot);
 											comparisonValue = RecordTimeConversion(initialRecordValue - compareRecordValue);
 										}
 										else if (recordSlot == 3) {
 											// Hits Taken comparison
-											initialRecordValue = GetRecordValue(BossLogUI.RecordPageSelected, RecordID.HitsTaken);
-											compareRecordValue = GetRecordValue(BossLogUI.CompareState, RecordID.HitsTaken);
+											initialRecordValue = GetRecordValue(BossLogUI.RecordPageSelected, recordSlot);
+											compareRecordValue = GetRecordValue(BossLogUI.CompareState, recordSlot);
 											comparisonValue = (initialRecordValue - compareRecordValue).ToString();
 										}
 
@@ -1204,26 +1204,24 @@ namespace BossChecklist.UIElements
 				return $"{sign}{minutes}:{seconds00.ToString("00.00")}";
 			}
 
-			public int GetRecordValue(RecordCategory type, RecordID id) {
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			public int GetRecordValue(RecordCategory type, int id) {
 				int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
-				PersonalStats records = modPlayer.RecordsForWorld[recordIndex].stats;
-				WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
-				if (id == RecordID.None || id == RecordID.ResetAll) {
+				if (id != 2 && id != 3)
 					return -1;
-				}
 
-				if (type == RecordCategory.PreviousAttempt) {
-					return id == RecordID.Duration ? records.durationPrev : records.hitsTakenPrev;
+				if (type == RecordCategory.WorldRecord) {
+					WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
+					return id == 2 ? worldRecords.durationWorld : worldRecords.hitsTakenWorld;
 				}
-				else if (type == RecordCategory.FirstRecord) {
-					return id == RecordID.Duration ? records.durationFirst : records.hitsTakenFirst;
-				}
-				else if (type == RecordCategory.BestRecord) {
-					return id == RecordID.Duration ? records.durationBest : records.hitsTakenBest;
-				}
-				else if (type == RecordCategory.WorldRecord) {
-					return id == RecordID.Duration ? worldRecords.durationWorld : worldRecords.hitsTakenWorld;
+				else {
+					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					PersonalStats records = modPlayer.RecordsForWorld[recordIndex].stats;
+					if (type == RecordCategory.PreviousAttempt)
+						return id == 2 ? records.durationPrev : records.hitsTakenPrev;
+					else if (type == RecordCategory.FirstRecord)
+						return id == 2 ? records.durationFirst : records.hitsTakenFirst;
+					else if (type == RecordCategory.BestRecord)
+						return id == 2 ? records.durationBest : records.hitsTakenBest;
 				}
 
 				return -1;
