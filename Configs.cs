@@ -357,14 +357,14 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ResetHiddenEntries")]
 		public bool ResetHiddenEntries { get; set; }
 
-		[Header("[i:1281][c/ffeb6e:DO NOT TOUCH]")]
+		[Header("[i:2172] [c/ffeb6e:Feature Testing]")]
 
-		[BackgroundColor(255, 0, 0)]
+		[BackgroundColor(255, 99, 71)]
 		[DefaultValue(true)]
-		[Label("KEEP THIS CONFIG ENABLED")]
-		[Tooltip("Boss Checklist is currently going through some issues right now related to Boss Records." +
-			"\nThis is a temporary config to prevent any Record Tracking code from running and will be removed when the issue is fully resolved." +
-			"\nPlease keep this config ENABLED unless you are helping test to see if things run smoothly again before this config is removed.")]
+		[Label("Disable Boss Record feature testing")]
+		[Tooltip("Boss Checklist may currently have issues related to Boss Records feature." +
+			"\nThis is a temporary config to prevent any Record Tracking code from running and will be removed when the feature is fully developed and out of the testing phase." +
+			"\nPlease keep this config enabled unless you are helping test out the feature and are willing to send reports to the mod developers.")]
 		public bool DISABLERECORDTRACKINGCODE { get; set; }
 
 		// Code created by Jopojelly, taken from CheatSheet
