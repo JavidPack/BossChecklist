@@ -147,10 +147,10 @@ namespace BossChecklist
 					writer.Write(durationBest);
 				if (recordType.HasFlag(NetRecordID.HitsTaken_Best))
 					writer.Write(hitsTakenBest);
-				if (recordType.HasFlag(NetRecordID.Duration_First))
+				if (recordType.HasFlag(NetRecordID.FirstRecord)) {
 					writer.Write(durationFirst);
-				if (recordType.HasFlag(NetRecordID.HitsTaken_First))
 					writer.Write(hitsTakenFirst);
+				}
 			}
 		}
 
@@ -173,10 +173,10 @@ namespace BossChecklist
 					durationBest = reader.ReadInt32();
 				if (recordType.HasFlag(NetRecordID.HitsTaken_Best))
 					hitsTakenBest = reader.ReadInt32();
-				if (recordType.HasFlag(NetRecordID.Duration_First))
+				if (recordType.HasFlag(NetRecordID.FirstRecord)) {
 					durationFirst = reader.ReadInt32();
-				if (recordType.HasFlag(NetRecordID.HitsTaken_First))
 					hitsTakenFirst = reader.ReadInt32();
+				}
 			}
 		}
 	}
