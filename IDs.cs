@@ -51,9 +51,8 @@ namespace BossChecklist
 		None = 0,
 		Duration_Best = 1,
 		HitsTaken_Best = 2,
-		Duration_First = 4,
-		HitsTaken_First = 8,
-		ResetAll = 4
+		FirstRecord = 4,
+		ResetAll = 8
 	}
 
 	internal enum RecordCategory : int

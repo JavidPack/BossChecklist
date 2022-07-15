@@ -185,8 +185,8 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.SendRecordsToServer);
 				packet.Write(RecordsForWorld.Count);
 				for (int i = 0; i < RecordsForWorld.Count; i++) {
-					// Only records that we need to compare between other players are needed
-					// The statisctics and First recrods are strictly personal with no comparing involved
+					// The only records that we need to compare between other players are previous and best records
+					// The statisctics and first records are strictly for the assigned client
 					PersonalStats stat = RecordsForWorld[i].stats;
 					packet.Write(RecordsForWorld[i].bossKey);
 					packet.Write(stat.durationBest);

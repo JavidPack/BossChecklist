@@ -173,7 +173,7 @@ namespace BossChecklist
 			}
 
 			bool newRecordSet = false;
-			ref PersonalStats statistics = ref modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
+			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
 			int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
 			int trackedhitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
 
@@ -220,7 +220,7 @@ namespace BossChecklist
 					continue;
 				}
 
-				ref PersonalStats serverStatistics = ref BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+				PersonalStats serverStatistics = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
 				PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 				int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
 				int trackedHitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
@@ -231,25 +231,31 @@ namespace BossChecklist
 
 				serverStatistics.kills++;
 
+				// If this was the first record made for the boss, set add them to the recordType
+				if (serverStatistics.durationFirst == -1 && serverStatistics.hitsTakenFirst == -1) {
+					recordType |= NetRecordID.FirstRecord;
+					serverStatistics.durationFirst = trackedDuration;
+					serverStatistics.hitsTakenFirst = trackedDuration;
+				}
+
+				// Check for best records as well (This would apply on first records as well)
 				serverStatistics.durationPrev = trackedDuration;
-				if (trackedDuration < serverStatistics.durationBest || serverStatistics.durationBest <= 0) {
-					//Console.WriteLine($"{player.name} set a new record for DURATION: {trackedDuration} (Previous Record: {serverStatistics.durationBest})");
+				if (trackedDuration < serverStatistics.durationBest || serverStatistics.durationBest == -1) {
 					recordType |= NetRecordID.Duration_Best;
 					serverStatistics.durationBest = trackedDuration;
 				}
 
 				serverStatistics.hitsTakenPrev = trackedHitsTaken;
-				if (trackedHitsTaken < serverStatistics.hitsTakenBest || serverStatistics.hitsTakenBest < 0) {
-					//Console.WriteLine($"{player.name} set a new record for HITS TAKEN: {trackedHitsTaken} (Previous Record: {serverStatistics.hitsTakenBest})");
+				if (trackedHitsTaken < serverStatistics.hitsTakenBest || serverStatistics.hitsTakenBest == -1) {
 					recordType |= NetRecordID.HitsTaken_Best;
 					serverStatistics.hitsTakenBest = trackedHitsTaken;
 				}
-				
+
 				// Make and send the packet
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RecordUpdate);
 				packet.Write(recordIndex); // Which boss record are we changing?
-				modPlayer.RecordsForWorld[recordIndex].stats.NetSend(packet, recordType); // Writes all the variables needed
+				serverStatistics.NetSend(packet, recordType);
 				packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client // We send to the player as only they need to see their own records
 			}
 			/*

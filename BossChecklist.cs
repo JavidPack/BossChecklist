@@ -358,14 +358,7 @@ namespace BossChecklist
 					break;
 				case PacketMessageType.SendRecordsToServer:
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
-					// If total count is equal to 1, a record update must be taking place
-					// If total count is greater than 1, the packet must have been sent from a newly connected player
 					int totalCount = reader.ReadInt32();
-					if (totalCount > 1) {
-						Console.ForegroundColor = ConsoleColor.DarkYellow;
-						Console.WriteLine($"Attempting to receive personal records from the connected player '{Main.player[whoAmI].name}'...");
-					}
-
 					int invalidConflicts = 0;
 					for (int i = 0; i < totalCount; i++) {
 						// Read the bossKey and attempt to locate its position within the server's collection of records
@@ -385,47 +378,27 @@ namespace BossChecklist
 						bossStats.hitsTakenBest = reader.ReadInt32();
 					}
 
-					if (totalCount > 1) {
-						if (invalidConflicts > 0) {
-							Console.ForegroundColor = ConsoleColor.DarkRed;
-							Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has been retrieved with {invalidConflicts} conflicts");
-						}
-						else {
-							Console.ForegroundColor = ConsoleColor.Green;
-							Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has successfully been retrieved!");
-						}
-						Console.ResetColor();
+					if (invalidConflicts > 0) {
+						Console.ForegroundColor = ConsoleColor.DarkRed;
+						Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has been retrieved with {invalidConflicts} conflicts");
 					}
+					else {
+						Console.ForegroundColor = ConsoleColor.Green;
+						Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has successfully been retrieved!");
+					}
+					Console.ResetColor();
 					break;
 				case PacketMessageType.RecordUpdate:
-					// Server just sent us information about what boss just got killed and its records should be updated
-					// Grab the player's records and update them through the reader (player and npcPos needed for new record)
+					// The server just sent updated information for a player's records and it will be used to update the records for the client as well
 					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
-					int npcPos = reader.ReadInt32();
-					modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-					BossRecord record = modPlayer.RecordsForWorld[npcPos];
-					record.stats.NetRecieve(reader);
-
-					Console.ForegroundColor = ConsoleColor.DarkCyan;
-					Console.WriteLine($"Updated a boss record for player '{Main.LocalPlayer.name}'");
-					Console.ResetColor();
-
-					// Whenever records are updated, the server will need to have this updated information as well
-					ModPacket packet = GetPacket();
-					packet.Write((byte)PacketMessageType.SendRecordsToServer);
-					packet.Write(1); // Since RecordUpdate only updates one record at a time, the count is set to 1
-					packet.Write(record.bossKey);
-					packet.Write(record.stats.durationPrev);
-					packet.Write(record.stats.durationBest);
-					packet.Write(record.stats.hitsTakenPrev);
-					packet.Write(record.stats.hitsTakenBest);
-					packet.Send(); // Multiplayer client --> Server
+					int recordIndex = reader.ReadInt32();
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.WorldRecordUpdate:
 					// World Record updates are sent from the server to the server so its data can be sent to all players
 					// Grab the world records of the selected boss and update them through the reader
-					npcPos = reader.ReadInt32();
-					WorldStats worldRecords = WorldAssist.worldRecords[npcPos].stats;
+					recordIndex = reader.ReadInt32();
+					WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
 					worldRecords.NetRecieve(reader);
 
 					Console.ForegroundColor = ConsoleColor.Cyan;
@@ -438,7 +411,7 @@ namespace BossChecklist
 						// When a boss spawns, all player's need their trackers reset for that boss
 						// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
 						modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						int recordIndex = reader.ReadInt32();
+						recordIndex = reader.ReadInt32();
 						modPlayer.Tracker_Duration[recordIndex] = 0;
 						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 					}
