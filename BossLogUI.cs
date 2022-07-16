@@ -1740,8 +1740,10 @@ namespace BossChecklist
 			int padd = 20;
 			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(text);
 			Rectangle bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd - 5);
-			
-			Vector2 textPos = new Vector2(Main.mouseX + 20 + padd / 2, Main.mouseY + 20 + padd / 2);
+			bgPos.X = Utils.Clamp(bgPos.X, 0, Main.screenWidth - bgPos.Width);
+			bgPos.Y = Utils.Clamp(bgPos.Y, 0, Main.screenHeight - bgPos.Height);
+
+			Vector2 textPos = new Vector2(bgPos.X + padd / 2, bgPos.Y + padd / 2);
 			if (textColor == default) {
 				textColor = Main.MouseTextColorReal;
 			}
