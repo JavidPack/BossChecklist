@@ -242,15 +242,15 @@ namespace BossChecklist
 			tag["HiddenBossesList"] = HiddenBossesList;
 			// TODO: unloaded entry data must be preserved
 			if (worldRecords == null) {
-				tag["Records"] = new List<WorldRecord>();
+				tag["WorldRecords"] = new List<WorldRecord>();
 			}
 			else {
-				tag["Records"] = new List<WorldRecord>(worldRecords);
+				tag["WorldRecords"] = new List<WorldRecord>(worldRecords);
 			}
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
-			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("Records").ToList();
+			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("WorldRecords").ToList();
 			foreach (WorldRecord record in SavedWorldRecords) {
 				// Check to see if the boss is assigned within the SotredBoss list
 				// If we know an entry was added that isn't a boss (old player data) skip adding this entry, effectively removing it when next saved.

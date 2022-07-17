@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader.IO;
 
@@ -88,10 +89,12 @@ namespace BossChecklist
 		/// Records
 		public int durationPrev = -1;
 		public int durationBest = -1;
+		//public int durationPrevBest = -1;
 		public int durationFirst = -1;
 
 		public int hitsTakenPrev = -1;
 		public int hitsTakenBest = -1;
+		// public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
 
 		// TODO: Figure out how Previous Best record should be implemented before adding them here
@@ -197,11 +200,14 @@ namespace BossChecklist
 		public int totalDeaths;
 
 		// TODO: Make a list of record holders for players who match (more for hits Taken)
-		public string durationHolder = "";
+		public List<string> durationHolder = new List<string> { };
 		public int durationWorld = -1;
 		
-		public string hitsTakenHolder = "";
+		public List<string> hitsTakenHolder = new List<string> { };
 		public int hitsTakenWorld = -1;
+
+		public bool DurationEmpty => durationHolder.Count == 0 && durationWorld == -1;
+		public bool HitsTakenEmpty => hitsTakenHolder.Count == 0 && hitsTakenWorld == -1;
 
 		public static Func<TagCompound, WorldStats> DESERIALIZER = tag => new WorldStats(tag);
 
@@ -211,10 +217,10 @@ namespace BossChecklist
 			totalKills = tag.Get<int>(nameof(totalKills));
 			totalDeaths = tag.Get<int>(nameof(totalDeaths));
 
-			durationHolder = tag.Get<string>(nameof(durationHolder));
+			durationHolder = tag.GetList<string>(nameof(durationHolder)).ToList();
 			durationWorld = tag.Get<int>(nameof(durationWorld));
 
-			hitsTakenHolder = tag.Get<string>(nameof(hitsTakenHolder));
+			hitsTakenHolder = tag.GetList<string>(nameof(hitsTakenHolder)).ToList();
 			hitsTakenWorld = tag.Get<int>(nameof(hitsTakenWorld));
 		}
 
@@ -237,29 +243,45 @@ namespace BossChecklist
 
 			// Packet should have any beaten record values and holders written on it
 			if (specificRecord.HasFlag(NetRecordID.Duration_Best)) {
-				writer.Write(durationHolder);
 				writer.Write(durationWorld);
+				writer.Write(durationHolder.Count);
+				foreach (string name in durationHolder) {
+					writer.Write(name);
+				}
 			}
 			if (specificRecord.HasFlag(NetRecordID.HitsTaken_Best)) {
-				writer.Write(hitsTakenHolder);
 				writer.Write(hitsTakenWorld);
+				writer.Write(hitsTakenHolder.Count);
+				foreach (string name in hitsTakenHolder) {
+					writer.Write(name);
+				}
 			}
 		}
 
-		internal void NetRecieve(BinaryReader reader) {
+		internal void NetRecieve(BinaryReader reader, bool durationBeaten, bool hitsTakenBeaten) {
 			// Read the type of record being updated
 			NetRecordID brokenRecords = (NetRecordID)reader.ReadInt32();
 
-			// Since 'totalKills' are shared between all players, it will be updated outside of NetRecieve
+			totalKills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
 
 			// Set the world record values and holders
 			if (brokenRecords.HasFlag(NetRecordID.Duration_Best)) {
-				durationHolder = reader.ReadString();
 				durationWorld = reader.ReadInt32();
+				if (durationBeaten)
+					durationHolder.Clear();
+				int durationHolderTotal = reader.ReadInt32();
+				for (int i = 0; i < durationHolderTotal; i++) {
+					durationHolder.Add(reader.ReadString());
+				}
 			}
 			if (brokenRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
-				hitsTakenHolder = reader.ReadString();
 				hitsTakenWorld = reader.ReadInt32();
+				if (hitsTakenBeaten)
+					hitsTakenHolder.Clear();
+				int hitsTakenHolderTotal = reader.ReadInt32();
+				for (int i = 0; i < hitsTakenHolderTotal; i++) {
+					hitsTakenHolder.Add(reader.ReadString());
+				}
 			}
 		}
 	}

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
@@ -395,15 +396,25 @@ namespace BossChecklist
 					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.WorldRecordUpdate:
-					// World Record updates are sent from the server to the server so its data can be sent to all players
-					// Grab the world records of the selected boss and update them through the reader
+					// World Records should be shared for all clients
+					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
 					recordIndex = reader.ReadInt32();
-					WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
-					worldRecords.NetRecieve(reader);
+					bool durationBeaten = reader.ReadBoolean();
+					bool hitsTakenBeaten = reader.ReadBoolean();
+					WorldAssist.worldRecords[recordIndex].stats.NetRecieve(reader, durationBeaten, hitsTakenBeaten);
 
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"World records have been updated!");
-					Console.ResetColor();
+					// Display 'New World Record!' text if the player was within the new list of record holders
+					// Otherwise, if the player got a new personal best record, display the 'New Record!' text
+					bool clientNewRecord = reader.ReadBoolean();
+					bool clientWorldRecord = reader.ReadBoolean();
+					if (clientWorldRecord) {
+						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NewWorldRecord");
+						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
+					}
+					else if (clientNewRecord) {
+						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NewRecord");
+						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
+					}
 					break;
 				case PacketMessageType.ResetTrackers:
 					if (whoAmI == -1) {

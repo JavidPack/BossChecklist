@@ -161,9 +161,9 @@ namespace BossChecklist
 
 		/// <summary>
 		/// Takes the data from record trackers and updates the player's saved records accordingly.
-		/// <para>Only runs in the Singleplayer and Multiplayer netmodes.</para>
+		/// <para>Only runs in the Singleplayer netmode.</para>
 		/// </summary>
-		public void CheckRecords(NPC npc, int bossIndex) {
+		private void CheckRecords(NPC npc, int bossIndex) {
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
 
@@ -172,29 +172,33 @@ namespace BossChecklist
 				return;
 			}
 
-			bool newRecordSet = false;
 			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
 			int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
 			int trackedhitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
+			bool newRecordSet = false;
 
 			statistics.kills++; // Kills always go up, since record checking only occurs if boss was defeated
+
+			// If this was the first record made for the boss, set add them to the recordType
+			if (statistics.durationFirst == -1 && statistics.hitsTakenFirst == -1) {
+				statistics.durationFirst = trackedDuration;
+				statistics.hitsTakenFirst = trackedDuration;
+			}
 
 			// Check if the tracked duration was better than the current best OR if the current best has not yet been achieved
 			statistics.durationPrev = trackedDuration;
 			if (trackedDuration < statistics.durationBest || statistics.durationBest == -1) {
-				if (statistics.durationBest != -1) {
-					newRecordSet = true; // New Record should not appear above the player on the first record achieved
-				}
 				statistics.durationBest = trackedDuration;
+				if (statistics.durationBest != -1)
+					newRecordSet = true; // New Record should not appear above the player on the first record achieved
 			}
 
 			// Repeat the same logic with the Hits Taken record
 			statistics.hitsTakenPrev = trackedhitsTaken;
 			if (trackedhitsTaken < statistics.hitsTakenBest || statistics.hitsTakenBest == -1) {
-				if (statistics.hitsTakenBest != -1) {
-					newRecordSet = true;
-				}
 				statistics.hitsTakenBest = trackedhitsTaken;
+				if (statistics.hitsTakenBest != -1)
+					newRecordSet = true;
 			}
 
 			// If a new record was made, notify the player. Again, this will not show for newly set records
@@ -207,13 +211,22 @@ namespace BossChecklist
 			}
 		}
 
-		// TODO: update method to improve what it needs to do
 		/// <summary>
-		/// Takes the record data from all players and updates them where needed.
+		/// Compares the record tracker data from all players and updates all records accordingly to the server.
+		/// A ModPacket will be sent to update the personal record data for player clients afterwards.
+		/// World Records will be checked and updated once all records are finalized and sent.
 		/// <para>Only runs in the Server netmode.</para>
 		/// </summary>
-		public void CheckRecordsForServer(NPC npc, int bossIndex) {
+		private void CheckRecordsForServer(NPC npc, int bossIndex) {
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
+
+			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
+			bool newRecordSet = false;
+			List<int> dHolders = new List<int>();
+			List<int> htHolders = new List<int>();
+			int dCompareValue = -1;
+			int htCompareValue = -1;
+
 			foreach (Player player in Main.player) {
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
 				if (!player.active || !npc.playerInteraction[player.whoAmI] || !WorldAssist.Tracker_StartingPlayers[recordIndex][player.whoAmI]) {
@@ -243,12 +256,16 @@ namespace BossChecklist
 				if (trackedDuration < serverStatistics.durationBest || serverStatistics.durationBest == -1) {
 					recordType |= NetRecordID.Duration_Best;
 					serverStatistics.durationBest = trackedDuration;
+					if (serverStatistics.durationBest != -1)
+						newRecordSet = true;
 				}
 
 				serverStatistics.hitsTakenPrev = trackedHitsTaken;
 				if (trackedHitsTaken < serverStatistics.hitsTakenBest || serverStatistics.hitsTakenBest == -1) {
 					recordType |= NetRecordID.HitsTaken_Best;
 					serverStatistics.hitsTakenBest = trackedHitsTaken;
+					if (serverStatistics.durationBest != -1)
+						newRecordSet = true;
 				}
 
 				// Make and send the packet
@@ -257,60 +274,121 @@ namespace BossChecklist
 				packet.Write(recordIndex); // Which boss record are we changing?
 				serverStatistics.NetSend(packet, recordType);
 				packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client // We send to the player as only they need to see their own records
-			}
-			/*
-			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
-			string[] newRecordHolders = new string[] { "", "" };
-			int[] newWorldRecords = new int[]{
-				worldRecords.durationWorld,
-				worldRecords.hitsTakenWorld
-			};
-			
-			if (newRecordHolders.Any(x => x != "")) {
-				RecordID specificRecord = RecordID.None;
-				if (newRecordHolders[0] != "") {
-					specificRecord |= RecordID.Duration;
-					worldRecords.durationHolder = newRecordHolders[0];
-					worldRecords.durationWorld = newWorldRecords[0];
+
+				// Check for world records
+				int hitsTakenValue = htCompareValue == -1 ? worldRecords.hitsTakenWorld : htCompareValue;
+
+				if (worldRecords.durationWorld == -1 || trackedDuration <= worldRecords.durationWorld) {
+					dHolders.Add(player.whoAmI); // Duration is the same for every player, since this code is ran on GlobalNPC.OnKill
+					dCompareValue = trackedDuration;
 				}
-				if (newRecordHolders[1] != "") {
-					specificRecord |= RecordID.HitsTaken;
-					worldRecords.hitsTakenHolder = newRecordHolders[1];
-					worldRecords.hitsTakenWorld = newWorldRecords[1];
+				if (hitsTakenValue == -1 || trackedHitsTaken <= hitsTakenValue) {
+					htCompareValue = trackedHitsTaken;
+					if (trackedHitsTaken < hitsTakenValue) {
+						htHolders.Clear();
+					}
+					htHolders.Add(player.whoAmI);
 				}
-				
-				ModPacket packet = Mod.GetPacket();
-				packet.Write((byte)PacketMessageType.WorldRecordUpdate);
-				packet.Write(recordIndex); // Which boss record are we changing?
-				worldRecords.NetSend(packet, specificRecord);
-				packet.Send(); // Server --> Server (world data for everyone)
 			}
-			*/
+
+			// If no world records were made, skip the update process
+			if (dCompareValue == -1 && htCompareValue == -1)
+				return;
+
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.WriteLine($"World records have been updated!");
+			Console.ResetColor();
+
+			NetRecordID worldRecordType = NetRecordID.None;
+			bool durationBeaten = false;
+			bool hitsTakenBeaten = false;
+
+			// Apply new world record values and send them through packets for player clients
+			if (dCompareValue == -1 && dHolders.Count > 0) {
+				worldRecordType |= NetRecordID.Duration_Best;
+
+				// If the compare value is better than the original record, clear the holders list
+				// New names should just be added without clearing the list and this will need to be communicated within PcketHandling
+				if (dCompareValue < worldRecords.durationWorld) {
+					worldRecords.durationHolder.Clear();
+					durationBeaten = true;
+				}
+				for (int i = 0; i < dHolders.Count; i++) {
+					if (!worldRecords.durationHolder.Contains(Main.player[dHolders[i]].name))
+						worldRecords.durationHolder.Add(Main.player[dHolders[i]].name);
+				}
+				worldRecords.durationWorld = dCompareValue;
+				//CheckWorldRecordsForServer(recordIndex, Main.pla.whoAmI); ?????????????????????????????????????????????????????????????????????????????????????????
+			}
+			if (htCompareValue == -1 && htHolders.Count > 0) {
+				worldRecordType |= NetRecordID.HitsTaken_Best;
+
+				if (htCompareValue < worldRecords.hitsTakenWorld) {
+					worldRecords.hitsTakenHolder.Clear();
+					hitsTakenBeaten = true;
+				}
+				for (int i = 0; i < htHolders.Count; i++) {
+					if (!worldRecords.hitsTakenHolder.Contains(Main.player[htHolders[i]].name))
+						worldRecords.hitsTakenHolder.Add(Main.player[htHolders[i]].name);
+				}
+				worldRecords.hitsTakenWorld = htCompareValue;
+			}
+
+			foreach (Player player in Main.player) {
+				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
+				if (!player.active || !npc.playerInteraction[player.whoAmI] || !WorldAssist.Tracker_StartingPlayers[recordIndex][player.whoAmI]) {
+					continue;
+				}
+
+				ModPacket packet2 = Mod.GetPacket();
+				packet2.Write((int)PacketMessageType.WorldRecordUpdate);
+				packet2.Write(recordIndex);
+				packet2.Write(durationBeaten);
+				packet2.Write(hitsTakenBeaten);
+				worldRecords.NetSend(packet2, worldRecordType);
+				packet2.Write(newRecordSet);
+				packet2.Write(dHolders.Contains(player.whoAmI) || htHolders.Contains(player.whoAmI));
+				packet2.Send(toClient: player.whoAmI);
+			}
 		}
 
-		// TODO: update method to be compatible with both CheckRecords and CheckRecordsMultiplayer
 		/// <summary>
-		/// Takes the world records with the updated player record data, updating the world records if they were beaten.
+		/// Compares the updated player record data with the current world records and updating them if the records were beaten.
+		/// <para>Only runs in the Singleplayer netmode.</para>
 		/// </summary>
-		/// <returns>Whether or not the world record was beaten</returns>
-		public bool CheckWorldRecords(int recordIndex) { // Returns whether or not to stop the New Record! text from appearing to show World Record! instead
+		/// <returns>Whether or not a world record was beaten or matched</returns>
+		private bool CheckWorldRecords(int recordIndex) {
 			Player player = Main.LocalPlayer;
 			PersonalStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-			WorldStats worldRecord = WorldAssist.worldRecords[recordIndex].stats;
-			bool newRecord = false;
+			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
+			bool newWorldRecord = false;
 
-			if (playerRecord.durationBest < worldRecord.durationWorld || worldRecord.durationWorld <= 0) {
-				// only say World Record if you the player is on a server OR if the player wasn't holding the previoes record
-				newRecord = (worldRecord.durationHolder != player.name && worldRecord.durationHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
-				worldRecord.durationWorld = playerRecord.durationBest;
-				worldRecord.durationHolder = player.name;
+			// World records should NOT update if the world record is empty and the user is in SinglePlayer
+			if (!worldRecords.DurationEmpty && playerRecord.durationBest <= worldRecords.durationWorld) {
+				// If the world record was beaten, clear the list entirely
+				if (playerRecord.durationBest < worldRecords.durationWorld) {
+					worldRecords.durationHolder.Clear(); 
+				}
+				// Add the player name if the list does not contain it
+				if (!worldRecords.durationHolder.Contains(player.name)) {
+					worldRecords.durationHolder.Add(player.name);
+				}
+				worldRecords.durationWorld = playerRecord.durationBest;
+				newWorldRecord = true;
 			}
-			if (playerRecord.hitsTakenBest < worldRecord.hitsTakenWorld || worldRecord.hitsTakenWorld < 0) {
-				newRecord = (worldRecord.hitsTakenHolder != player.name && worldRecord.hitsTakenHolder != "") || Main.netMode == NetmodeID.MultiplayerClient;
-				worldRecord.hitsTakenWorld = playerRecord.hitsTakenBest;
-				worldRecord.hitsTakenHolder = player.name;
+			if (!worldRecords.HitsTakenEmpty && playerRecord.hitsTakenBest <= worldRecords.hitsTakenWorld) {
+				// If the world record was beaten, clear the list entirely
+				if (playerRecord.hitsTakenBest < worldRecords.hitsTakenWorld) {
+					worldRecords.hitsTakenHolder.Clear();
+				}
+				// Add the player name if the list does not contain it
+				if (!worldRecords.hitsTakenHolder.Contains(player.name)) {
+					worldRecords.hitsTakenHolder.Add(player.name);
+				}
+				worldRecords.hitsTakenWorld = playerRecord.hitsTakenBest;
+				newWorldRecord = true;
 			}
-			return newRecord;
+			return newWorldRecord; // Will be used to display CombatTexts of "New Record!" or "New World Record!"
 		}
 
 		// All of BossChecklist's custom downed variables will be handled here

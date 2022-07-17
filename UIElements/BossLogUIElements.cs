@@ -894,11 +894,17 @@ namespace BossChecklist.UIElements
 											string message = "$Mods.BossChecklist.BossLog.HoverText.ClaimRecord";
 											if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
 												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
-												if (recordSlot == 2 && !string.IsNullOrEmpty(wldRecord.durationHolder)) {
-													message = $"{holderText}\n" + wldRecord.durationHolder;
+												if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
+													message = $"{holderText}";
+													foreach (string name in wldRecord.durationHolder) {
+														message += $"\n{name}";
+													}
 												}
-												else if (recordSlot == 3 && !string.IsNullOrEmpty(wldRecord.hitsTakenHolder)) {
-													message = $"{holderText}\n" + wldRecord.hitsTakenHolder;
+												else if (recordSlot == 3 && wldRecord.hitsTakenHolder.Count > 0) {
+													message = $"{holderText}";
+													foreach (string name in wldRecord.hitsTakenHolder) {
+														message += $"\n{name}";
+													}
 												}
 												BossUISystem.Instance.UIHoverText = message;
 											}
@@ -913,11 +919,17 @@ namespace BossChecklist.UIElements
 											string message = "Your previous best";
 											if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
 												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
-												if (recordSlot == 2 && !string.IsNullOrEmpty(wldRecord.durationHolder)) {
-													message = $"{holderText}\n" + wldRecord.durationHolder;
+												if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
+													message = $"{holderText}";
+													foreach (string name in wldRecord.durationHolder) {
+														message += $"\n{name}";
+													}
 												}
-												else if (recordSlot == 3 && !string.IsNullOrEmpty(wldRecord.hitsTakenHolder)) {
-													message = $"{holderText}\n" + wldRecord.hitsTakenHolder;
+												else if (recordSlot == 3 && wldRecord.hitsTakenHolder.Count > 0) {
+													message = $"{holderText}";
+													foreach (string name in wldRecord.hitsTakenHolder) {
+														message += $"\n{name}";
+													}
 												}
 												BossUISystem.Instance.UIHoverText = message;
 											}
