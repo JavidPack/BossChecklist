@@ -89,15 +89,13 @@ namespace BossChecklist
 		/// Records
 		public int durationPrev = -1;
 		public int durationBest = -1;
-		//public int durationPrevBest = -1;
+		public int durationPrevBest = -1;
 		public int durationFirst = -1;
 
 		public int hitsTakenPrev = -1;
 		public int hitsTakenBest = -1;
-		// public int hitsTakenPrevBest = -1;
+		public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
-
-		// TODO: Figure out how Previous Best record should be implemented before adding them here
 
 		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
 
@@ -111,10 +109,12 @@ namespace BossChecklist
 
 			durationPrev = tag.Get<int>(nameof(durationPrev));
 			durationBest = tag.Get<int>(nameof(durationBest));
+			durationPrevBest = tag.Get<int>(nameof(durationPrevBest));
 			durationFirst = tag.Get<int>(nameof(durationFirst));
 
 			hitsTakenPrev = tag.Get<int>(nameof(hitsTakenPrev));
 			hitsTakenBest = tag.Get<int>(nameof(hitsTakenBest));
+			hitsTakenPrevBest = tag.Get<int>(nameof(hitsTakenPrevBest));
 			hitsTakenFirst = tag.Get<int>(nameof(hitsTakenFirst));
 		}
 
@@ -127,10 +127,12 @@ namespace BossChecklist
 
 				{ nameof(durationPrev), durationPrev },
 				{ nameof(durationBest), durationBest },
+				{ nameof(durationPrevBest), durationPrevBest },
 				{ nameof(durationFirst), durationFirst },
 
 				{ nameof(hitsTakenPrev), hitsTakenPrev },
 				{ nameof(hitsTakenBest), hitsTakenBest },
+				{ nameof(hitsTakenPrevBest), hitsTakenPrevBest },
 				{ nameof(hitsTakenFirst), hitsTakenFirst },
 			};
 		}
@@ -146,10 +148,14 @@ namespace BossChecklist
 				writer.Write(hitsTakenPrev);
 
 				// ... and any first or new records we set will be flagged for sending
-				if (recordType.HasFlag(NetRecordID.Duration_Best))
+				if (recordType.HasFlag(NetRecordID.Duration_Best)) {
 					writer.Write(durationBest);
-				if (recordType.HasFlag(NetRecordID.HitsTaken_Best))
+					writer.Write(durationPrevBest);
+				}
+				if (recordType.HasFlag(NetRecordID.HitsTaken_Best)) {
 					writer.Write(hitsTakenBest);
+					writer.Write(hitsTakenPrevBest);
+				}
 				if (recordType.HasFlag(NetRecordID.FirstRecord)) {
 					writer.Write(durationFirst);
 					writer.Write(hitsTakenFirst);
@@ -165,17 +171,18 @@ namespace BossChecklist
 				durationPrev = durationBest = durationFirst = hitsTakenPrev = hitsTakenBest = hitsTakenFirst = -1;
 			}
 			else {
-				// Determine if a new record was made (Prev records need to change still)
-				bool newRecord = recordType.HasFlag(NetRecordID.Duration_Best) || recordType.HasFlag(NetRecordID.HitsTaken_Best);
-
 				kills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
 				durationPrev = reader.ReadInt32();
 				hitsTakenPrev = reader.ReadInt32();
 
-				if (recordType.HasFlag(NetRecordID.Duration_Best))
+				if (recordType.HasFlag(NetRecordID.Duration_Best)) {
 					durationBest = reader.ReadInt32();
-				if (recordType.HasFlag(NetRecordID.HitsTaken_Best))
+					durationPrevBest = reader.ReadInt32();
+				}
+				if (recordType.HasFlag(NetRecordID.HitsTaken_Best)) {
 					hitsTakenBest = reader.ReadInt32();
+					hitsTakenPrevBest = reader.ReadInt32();
+				}
 				if (recordType.HasFlag(NetRecordID.FirstRecord)) {
 					durationFirst = reader.ReadInt32();
 					hitsTakenFirst = reader.ReadInt32();

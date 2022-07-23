@@ -186,8 +186,11 @@ namespace BossChecklist
 			}
 
 			// Check if the tracked duration was better than the current best OR if the current best has not yet been achieved
+			// Overwrite PrevBest records with the 'current' one first
+			// If the current Best is -1, it was a first record, which means there was no prevBest (logic still works!)
 			statistics.durationPrev = trackedDuration;
 			if (trackedDuration < statistics.durationBest || statistics.durationBest == -1) {
+				statistics.durationPrevBest = statistics.durationBest;
 				statistics.durationBest = trackedDuration;
 				if (statistics.durationBest != -1)
 					newRecordSet = true; // New Record should not appear above the player on the first record achieved
@@ -196,6 +199,7 @@ namespace BossChecklist
 			// Repeat the same logic with the Hits Taken record
 			statistics.hitsTakenPrev = trackedHitsTaken;
 			if (trackedHitsTaken < statistics.hitsTakenBest || statistics.hitsTakenBest == -1) {
+				statistics.hitsTakenPrevBest = statistics.hitsTakenBest;
 				statistics.hitsTakenBest = trackedHitsTaken;
 				if (statistics.hitsTakenBest != -1)
 					newRecordSet = true;
@@ -252,9 +256,12 @@ namespace BossChecklist
 				}
 
 				// Check for best records as well (This would apply on first records as well)
+				// Overwrite PrevBest records with the 'current' one first
+				// If the current Best is -1, it was a first record, which means there was no prevBest (logic still works!)
 				serverStatistics.durationPrev = trackedDuration;
 				if (trackedDuration < serverStatistics.durationBest || serverStatistics.durationBest == -1) {
 					recordType |= NetRecordID.Duration_Best;
+					serverStatistics.durationPrevBest = serverStatistics.durationBest;
 					serverStatistics.durationBest = trackedDuration;
 					if (serverStatistics.durationBest != -1)
 						newRecordSet = true;
@@ -263,6 +270,7 @@ namespace BossChecklist
 				serverStatistics.hitsTakenPrev = trackedHitsTaken;
 				if (trackedHitsTaken < serverStatistics.hitsTakenBest || serverStatistics.hitsTakenBest == -1) {
 					recordType |= NetRecordID.HitsTaken_Best;
+					serverStatistics.hitsTakenPrevBest = serverStatistics.hitsTakenBest;
 					serverStatistics.hitsTakenBest = trackedHitsTaken;
 					if (serverStatistics.durationBest != -1)
 						newRecordSet = true;

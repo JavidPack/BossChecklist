@@ -897,13 +897,13 @@ namespace BossChecklist.UIElements
 												if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
 													message = $"{holderText}";
 													foreach (string name in wldRecord.durationHolder) {
-														message += $"\n{name}";
+														message += $":\n{name}";
 													}
 												}
 												else if (recordSlot == 3 && wldRecord.hitsTakenHolder.Count > 0) {
 													message = $"{holderText}";
 													foreach (string name in wldRecord.hitsTakenHolder) {
-														message += $"\n{name}";
+														message += $":\n{name}";
 													}
 												}
 												BossUISystem.Instance.UIHoverText = message;
@@ -912,26 +912,20 @@ namespace BossChecklist.UIElements
 										else if (BossLogUI.RecordPageSelected == RecordCategory.BestRecord) {
 											Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophySilver}", AssetRequestMode.ImmediateLoad);
 											Vector2 trophyPos = new Vector2(slotPos.X + slot.Value.Width - trophy.Value.Width / 2, slotPos.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
-											spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
 
-											// TODO: Localization needed
-											// TODO: Implement the functionality of Previous Best Records
-											string message = "Your previous best";
-											if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
-												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
-												if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
-													message = $"{holderText}";
-													foreach (string name in wldRecord.durationHolder) {
-														message += $"\n{name}";
-													}
+											// Do not draw the trophy unless a Previous Best record is available
+											if ((recordSlot == 2 && record.durationPrevBest != -1) || (recordSlot == 3 && record.hitsTakenPrevBest != -1)) {
+												spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
+
+												string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousBest");
+												if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
+													if (recordSlot == 2)
+														message += $":\n{RecordTimeConversion(record.durationPrevBest)}";
+													else if (recordSlot == 3)
+														message += $":\n{record.hitsTakenPrevBest}";
+
+													BossUISystem.Instance.UIHoverText = message;
 												}
-												else if (recordSlot == 3 && wldRecord.hitsTakenHolder.Count > 0) {
-													message = $"{holderText}";
-													foreach (string name in wldRecord.hitsTakenHolder) {
-														message += $"\n{name}";
-													}
-												}
-												BossUISystem.Instance.UIHoverText = message;
 											}
 										}
 									}

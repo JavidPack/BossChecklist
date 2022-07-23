@@ -1752,13 +1752,6 @@ namespace BossChecklist
 			Utils.DrawBorderString(sb, text, textPos, textColor);
 		}
 
-		public static bool MouseIntersects(float posX, float posY, int width, int height) {
-			if (Main.mouseX >= posX && Main.mouseX < posX + width) {
-				if (Main.mouseY >= posY && Main.mouseY < posY + height) {
-					return true;
-				}
-			}
-			return false;
-		}
+		public static bool MouseIntersects(float x, float y, int width, int height) => Main.MouseScreen.Between(new Vector2(x, y), new Vector2(x + width, y + height));
 	}
 }

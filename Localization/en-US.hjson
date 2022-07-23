@@ -206,7 +206,8 @@ Mods: {
 				NewWorldRecord: World Record!
 				Attempt: Attempt
 				Defeats: Defeats
-				RecordHolder: Record Holder(s):
+				RecordHolder: Record Holder(s)
+				PreviousBest: Your Previous Best
 			}
 		}
 
