@@ -728,7 +728,7 @@ namespace BossChecklist.UIElements
 											recordValue = $"{wldRecord.totalKills} {killTerm} / {wldRecord.totalDeaths} {deathTerm}";
 										}
 									}
-									else if (BossLogUI.RecordPageSelected == RecordCategory.BestRecord) {
+									else if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Attempt");
 										achCoord = new int[] { 0, 9 };
 										if (record.kills == 0) {

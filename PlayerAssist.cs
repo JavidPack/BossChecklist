@@ -139,8 +139,22 @@ namespace BossChecklist
 					// If the index was found, copy it to our list
 					// Otherwise the index must be invalid so a new entry must be created
 					int grabIndex = tempRecords.FindIndex(x => x.bossKey == BossChecklist.bossTracker.BossRecordKeys[i]);
-					if (grabIndex != -1)
+					if (grabIndex != -1) {
+						// Temp fix for records 'resetting' to 0 instead of -1. TODO: figure out how to avoid that properly
+						if (tempRecords[grabIndex].stats.durationBest == 0 && tempRecords[grabIndex].stats.hitsTakenBest == 0) {
+							tempRecords[grabIndex].stats.durationBest = tempRecords[grabIndex].stats.hitsTakenBest = -1;
+						}
+						if (tempRecords[grabIndex].stats.durationFirst == 0 && tempRecords[grabIndex].stats.hitsTakenFirst == 0) {
+							tempRecords[grabIndex].stats.durationFirst = tempRecords[grabIndex].stats.hitsTakenFirst = -1;
+						}
+						if (tempRecords[grabIndex].stats.durationPrev == 0 && tempRecords[grabIndex].stats.hitsTakenPrev == 0) {
+							tempRecords[grabIndex].stats.durationPrev = tempRecords[grabIndex].stats.hitsTakenPrev = -1;
+						}
+						if (tempRecords[grabIndex].stats.durationPrevBest == 0 && tempRecords[grabIndex].stats.hitsTakenPrevBest == 0) {
+							tempRecords[grabIndex].stats.durationPrevBest = tempRecords[grabIndex].stats.hitsTakenPrevBest = -1;
+						}
 						RecordsForWorld.Add(tempRecords[grabIndex]);
+					}
 					else
 						RecordsForWorld.Add(new BossRecord(BossChecklist.bossTracker.BossRecordKeys[i]));
 				}
