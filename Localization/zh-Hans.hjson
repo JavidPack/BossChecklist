@@ -206,7 +206,8 @@ Mods: {
 				NewWorldRecord: 世界纪录!
 				Attempt: 尝试
 				Defeats: 击败
-				RecordHolder: 记录保持者:
+				RecordHolder: 记录保持者
+				PreviousBest: 你以前的最佳纪录
 			}
 		}
 
