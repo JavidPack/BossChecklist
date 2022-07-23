@@ -338,7 +338,11 @@ namespace BossChecklist
 				if (!vanillaBossBags.TryGetValue(boss.Key, out boss.treasureBag)) {
 					foreach (int itemType in boss.lootItemTypes) {
 						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
+#if TML_2022_06
 							if (item.ModItem != null && item.ModItem.BossBagNPC > 0) {
+#else
+							if (ItemID.Sets.BossBag[item.type]) {
+#endif
 								boss.treasureBag = itemType;
 								break;
 							}
