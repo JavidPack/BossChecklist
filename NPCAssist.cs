@@ -174,7 +174,7 @@ namespace BossChecklist
 
 			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
 			int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
-			int trackedhitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
+			int trackedHitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
 			bool newRecordSet = false;
 
 			statistics.kills++; // Kills always go up, since record checking only occurs if boss was defeated
@@ -182,7 +182,7 @@ namespace BossChecklist
 			// If this was the first record made for the boss, set add them to the recordType
 			if (statistics.durationFirst == -1 && statistics.hitsTakenFirst == -1) {
 				statistics.durationFirst = trackedDuration;
-				statistics.hitsTakenFirst = trackedDuration;
+				statistics.hitsTakenFirst = trackedHitsTaken;
 			}
 
 			// Check if the tracked duration was better than the current best OR if the current best has not yet been achieved
@@ -194,9 +194,9 @@ namespace BossChecklist
 			}
 
 			// Repeat the same logic with the Hits Taken record
-			statistics.hitsTakenPrev = trackedhitsTaken;
-			if (trackedhitsTaken < statistics.hitsTakenBest || statistics.hitsTakenBest == -1) {
-				statistics.hitsTakenBest = trackedhitsTaken;
+			statistics.hitsTakenPrev = trackedHitsTaken;
+			if (trackedHitsTaken < statistics.hitsTakenBest || statistics.hitsTakenBest == -1) {
+				statistics.hitsTakenBest = trackedHitsTaken;
 				if (statistics.hitsTakenBest != -1)
 					newRecordSet = true;
 			}
@@ -248,7 +248,7 @@ namespace BossChecklist
 				if (serverStatistics.durationFirst == -1 && serverStatistics.hitsTakenFirst == -1) {
 					recordType |= NetRecordID.FirstRecord;
 					serverStatistics.durationFirst = trackedDuration;
-					serverStatistics.hitsTakenFirst = trackedDuration;
+					serverStatistics.hitsTakenFirst = trackedHitsTaken;
 				}
 
 				// Check for best records as well (This would apply on first records as well)

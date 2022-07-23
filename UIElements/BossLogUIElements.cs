@@ -843,7 +843,7 @@ namespace BossChecklist.UIElements
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");
 										achCoord = new int[] { 0, 7 };
 										
-										if (wldRecord.durationWorld < 0) {
+										if (wldRecord.hitsTakenWorld < 0) {
 											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 										}
 										else {
