@@ -648,12 +648,9 @@ namespace BossChecklist.UIElements
 							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 100, 32, 34);
 							spriteBatch.Draw(construction.Value, conRect, Color.White);
 
-							if (Main.mouseX >= conRect.X && Main.mouseX < conRect.X + conRect.Width) {
-								if (Main.mouseY >= conRect.Y && Main.mouseY < conRect.Y + conRect.Height) {
-									string translated = 
-									BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.UnderConstruction";
-									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
-								}
+							if (BossLogUI.MouseIntersects(conRect.X, conRect.Y, conRect.Width, conRect.Height)) {
+								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.UnderConstruction";
+								BossUISystem.Instance.UIHoverTextColor = Color.Gold;
 							}
 
 							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
@@ -665,16 +662,14 @@ namespace BossChecklist.UIElements
 									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 									spriteBatch.Draw(icon, pos, faded);
-									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
-										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
-											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												// Reset UI positions when changing the page
-												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-												BossUISystem.Instance.BossLog.ResetUIPositioning();
-												// TODO: does this need to return??
-											}
+									if (BossLogUI.MouseIntersects(pos.X, pos.Y, icon.Width, icon.Height)) {
+										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+										BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+										if (Main.mouseLeft && Main.mouseLeftRelease) {
+											// Reset UI positions when changing the page
+											BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+											BossUISystem.Instance.BossLog.ResetUIPositioning();
+											// TODO: does this need to return??
 										}
 									}
 								}
@@ -998,15 +993,13 @@ namespace BossChecklist.UIElements
 									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 									spriteBatch.Draw(icon, pos, faded);
-									if (Main.mouseX >= pos.X && Main.mouseX <= pos.X + icon.Width) {
-										if (Main.mouseY >= pos.Y && Main.mouseY <= pos.Y + icon.Height) {
-											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
-											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												// Reset UI positions when changing the page
-												BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-												BossUISystem.Instance.BossLog.ResetUIPositioning();
-											}
+									if (BossLogUI.MouseIntersects(pos.X, pos.Y + icon.Height, icon.Width, icon.Height)) {
+										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+										BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+										if (Main.mouseLeft && Main.mouseLeftRelease) {
+											// Reset UI positions when changing the page
+											BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+											BossUISystem.Instance.BossLog.ResetUIPositioning();
 										}
 									}
 								}
