@@ -70,7 +70,7 @@ namespace BossChecklist
 	/// <item> <term>Kills</term> <description>The total amount of fights that the player has won against the boss.</description> </item>
 	/// <item> <term>Deaths</term> <description>The total amount of deaths a player has experienced while fighting the boss.</description> </item>
 	/// <item> <term>Attempts</term> <description>The amount of fights a player has started against the boss, win or loss.</description> </item>
-	/// <item> <term>Failures</term> <description>The amount of fights a player has died in (up until the first victory) while fighting the boss.</description> </item>
+	/// <item> <term>Play Time First</term> <description>The amount of play time that has passed up until the first kill of the boss.</description> </item>
 	/// </list>
 	/// <para>[Records]</para>
 	/// <list type="bullet">
@@ -84,7 +84,7 @@ namespace BossChecklist
 		public int kills;
 		public int deaths;
 		public int attempts;
-		public int failures;
+		public long playTimeFirst = -1;
 
 		/// Records
 		public int durationPrev = -1;
@@ -105,7 +105,7 @@ namespace BossChecklist
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
 			attempts = tag.Get<int>(nameof(attempts));
-			failures = tag.Get<int>(nameof(failures));
+			playTimeFirst = tag.Get<long>(nameof(playTimeFirst));
 
 			durationPrev = tag.Get<int>(nameof(durationPrev));
 			durationBest = tag.Get<int>(nameof(durationBest));
@@ -123,7 +123,7 @@ namespace BossChecklist
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
 				{ nameof(attempts), attempts },
-				{ nameof(failures), failures },
+				{ nameof(playTimeFirst), playTimeFirst },
 
 				{ nameof(durationPrev), durationPrev },
 				{ nameof(durationBest), durationBest },
@@ -167,7 +167,8 @@ namespace BossChecklist
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
 			if (recordType.HasFlag(NetRecordID.ResetAll)) {
 				// ResetAll resets all fields to their default value
-				kills = deaths = attempts = failures = 0;
+				kills = deaths = attempts = 0;
+				playTimeFirst = -1;
 				durationPrev = durationBest = durationFirst = hitsTakenPrev = hitsTakenBest = hitsTakenFirst = -1;
 			}
 			else {

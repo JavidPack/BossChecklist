@@ -42,7 +42,8 @@ namespace BossChecklist
 		SendRecordsToServer,
 		RecordUpdate,
 		WorldRecordUpdate,
-		ResetTrackers
+		ResetTrackers,
+		PlayTimeRecordUpdate
 	}
 
 	[Flags]

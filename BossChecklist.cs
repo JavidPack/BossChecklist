@@ -420,6 +420,11 @@ namespace BossChecklist
 						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
 					}
 					break;
+				case PacketMessageType.PlayTimeRecordUpdate:
+					recordIndex = reader.ReadInt32();
+					long playTime = reader.ReadInt64();
+					Main.player[whoAmI].GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.playTimeFirst = playTime;
+					break;
 				case PacketMessageType.ResetTrackers:
 					if (whoAmI == -1) {
 						// whoAmI == -1 means the packet was sent from the server

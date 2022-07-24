@@ -74,6 +74,9 @@ namespace BossChecklist
 						else if (Main.netMode == NetmodeID.SinglePlayer) {
 							CheckRecords(npc, index);
 						}
+						else if (Main.netMode == NetmodeID.MultiplayerClient) {
+							SubmitPlayTimeFirstStat(npc, index);
+						}
 					}
 
 					if (BossChecklist.DebugConfig.ShowInactiveBossCheck)
@@ -172,7 +175,7 @@ namespace BossChecklist
 				return;
 			}
 
-			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats; // Use a ref to properly update records
+			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats;
 			int trackedDuration = modPlayer.Tracker_Duration[recordIndex];
 			int trackedHitsTaken = modPlayer.Tracker_HitsTaken[recordIndex];
 			bool newRecordSet = false;
@@ -183,6 +186,7 @@ namespace BossChecklist
 			if (statistics.durationFirst == -1 && statistics.hitsTakenFirst == -1) {
 				statistics.durationFirst = trackedDuration;
 				statistics.hitsTakenFirst = trackedHitsTaken;
+				statistics.playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks;
 			}
 
 			// Check if the tracked duration was better than the current best OR if the current best has not yet been achieved
@@ -356,7 +360,7 @@ namespace BossChecklist
 				worldRecords.NetSend(packet2, worldRecordType);
 				packet2.Write(newRecordSet);
 				packet2.Write(dHolders.Contains(player.whoAmI) || htHolders.Contains(player.whoAmI));
-				packet2.Send(toClient: player.whoAmI);
+				packet2.Send(toClient: player.whoAmI); // Server --> Multiplayer client
 			}
 		}
 
@@ -397,6 +401,28 @@ namespace BossChecklist
 				newWorldRecord = true;
 			}
 			return newWorldRecord; // Will be used to display CombatTexts of "New Record!" or "New World Record!"
+		}
+
+		public void SubmitPlayTimeFirstStat(NPC npc, int bossIndex) {
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
+
+			// Player must have contributed to the boss fight
+			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
+				return;
+			}
+
+			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats;
+			if (statistics.playTimeFirst == -1) {
+				statistics.playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks;
+
+				// Send the data to the server
+				ModPacket packet = Mod.GetPacket();
+				packet.Write((int)PacketMessageType.PlayTimeRecordUpdate);
+				packet.Write(recordIndex);
+				packet.Write(statistics.playTimeFirst);
+				packet.Send(); // Multiplayer client --> Server
+			}
 		}
 
 		// All of BossChecklist's custom downed variables will be handled here

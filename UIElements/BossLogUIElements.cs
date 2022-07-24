@@ -18,6 +18,7 @@ using Terraria.ObjectData;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using Terraria.ModLoader.Config;
+using System;
 
 namespace BossChecklist.UIElements
 {
@@ -739,14 +740,13 @@ namespace BossChecklist.UIElements
 										}
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.FirstRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Defeats");
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PlayTime");
 										achCoord = new int[] { 4, 8 };
 										if (record.kills == 0) {
 											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
 										}
 										else {
-											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
-											recordValue = $"{record.deaths} {deathTerm}";
+											recordValue = $"{TicksToPlayTime(record.playTimeFirst)}";
 										}
 									}
 									else {
@@ -1208,6 +1208,19 @@ namespace BossChecklist.UIElements
 					sign = "-";
 				}
 				return $"{sign}{minutes}:{seconds00.ToString("00.00")}";
+			}
+
+			public string TicksToPlayTime(long ticks) {
+				double seconds = (double)ticks / TimeSpan.TicksPerSecond;
+				double seconds00 = seconds % 60;
+				int minutes = (int)seconds / 60;
+				int hours = ticks >= TimeSpan.TicksPerHour ? minutes / 60 : 0;
+				string sign = "";
+				if (seconds00 < 0) {
+					seconds00 *= -1;
+					sign = "-";
+				}
+				return $"{sign}{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds00.ToString("00.00")}";
 			}
 
 			public int GetRecordValue(RecordCategory type, int id) {
