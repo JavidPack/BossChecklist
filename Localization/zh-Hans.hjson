@@ -119,7 +119,7 @@ Mods: {
 				AllLoot: 已获得所有的战利品!
 				AllCollectibles: 已获得所有的收藏品!
 				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
-				FirstKDRDescription: 首次胜利之前你被击败的次数
+				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间
 				BestKDRDescription: 取得最好成绩之前你尝试的次数
 				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数
 				ClaimRecord: 成为第一个打破世界纪录的人!
@@ -205,7 +205,7 @@ Mods: {
 				NewRecord: 新纪录!
 				NewWorldRecord: 世界纪录!
 				Attempt: 尝试
-				Defeats: 击败
+				PlayTime: 游戏时间
 				RecordHolder: 记录保持者
 				PreviousBest: 你以前的最佳纪录
 			}
