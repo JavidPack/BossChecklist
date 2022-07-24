@@ -46,10 +46,6 @@ namespace BossChecklist
 			AllStoredForceDowns = new Dictionary<string, List<string>>();
 			ForceDownsForWorld = new List<string>();
 
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				BossItemsCollected.Add(boss.Key, new List<ItemDefinition>());
-			}
-
 			// For being able to complete records in Multiplayer
 			Tracker_Duration = Array.Empty<int>();
 			Tracker_Deaths = Array.Empty<bool>();
