@@ -834,6 +834,9 @@ namespace BossChecklist
 
 		private void OpenRecord() {
 			ResetBothPages();
+			if (!PageTwo.HasChild(AltPageButtons[(int)RecordPageSelected])) {
+				RecordPageSelected = RecordCategory.PreviousAttempt;
+			}
 			if (PageNum < 0) {
 				return;
 			}
