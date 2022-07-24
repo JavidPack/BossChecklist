@@ -426,19 +426,14 @@ namespace BossChecklist
 					Main.player[whoAmI].GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.playTimeFirst = playTime;
 					break;
 				case PacketMessageType.ResetTrackers:
-					if (whoAmI == -1) {
-						// whoAmI == -1 means the packet was sent from the server
-						// When a boss spawns, all player's need their trackers reset for that boss
-						// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
-						modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						recordIndex = reader.ReadInt32();
+					recordIndex = reader.ReadInt32();
+					int plrIndex = reader.ReadInt32();
+					modPlayer = Main.player[plrIndex].GetModPlayer<PlayerAssist>();
+					if (recordIndex != -1) {
 						modPlayer.Tracker_Duration[recordIndex] = 0;
 						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 					}
 					else {
-						// whoAmI != -1 means the packet was sent from a client
-						// The trackers need to be populated on the server-side as well
-						modPlayer = Main.player[whoAmI].GetModPlayer<PlayerAssist>();
 						modPlayer.Tracker_Duration = new int[bossTracker.BossRecordKeys.Count];
 						modPlayer.Tracker_Deaths = new bool[bossTracker.BossRecordKeys.Count];
 						modPlayer.Tracker_HitsTaken = new int[bossTracker.BossRecordKeys.Count];

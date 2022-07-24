@@ -174,6 +174,8 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.ResetTrackers);
+				packet.Write(-1);
+				packet.Write(Player.whoAmI);
 				packet.Send(); // Multiplayer client --> Server
 			}
 

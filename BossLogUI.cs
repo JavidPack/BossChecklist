@@ -673,14 +673,6 @@ namespace BossChecklist
 				stats.hitsTakenBest = -1;
 				stats.hitsTakenPrev = -1;
 				OpenRecord();
-				
-				if (Main.netMode == NetmodeID.MultiplayerClient) {
-					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)PacketMessageType.RecordUpdate);
-					packet.Write(recordIndex);
-					stats.NetSend(packet, NetRecordID.ResetAll);
-					packet.Send(toClient: Main.LocalPlayer.whoAmI); // Multiplayer client --> Multiplayer client
-				}
 			}
 		}
 
