@@ -67,6 +67,18 @@ namespace BossChecklist
 			UICheckbox.checkmarkTexture = null;
 		}
 
+#if TML_2022_06
+		// TODO: Remove after preview becomes stable in August
+#else
+		public override void AddRecipes() {
+			//bossTracker.FinalizeLocalization();
+			BossChecklist.bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.
+			BossChecklist.bossTracker.FinalizeBossLootTables(); // Generate boss loot data. Treasurebag is also determined in this.
+			BossChecklist.bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
+			BossChecklist.bossTracker.FinalizeBossData(); // Finalize all boss data. Entries cannot be further edited beyond this point.
+		}
+#endif
+
 		public override void UpdateUI(GameTime gameTime) {
 			bossChecklistInterface?.Update(gameTime);
 			BossLogInterface?.Update(gameTime);
