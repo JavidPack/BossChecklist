@@ -361,11 +361,17 @@ namespace BossChecklist
 
 		[BackgroundColor(255, 99, 71)]
 		[DefaultValue(true)]
-		[Label("Disable Boss Record feature testing")]
-		[Tooltip("Boss Checklist may currently have issues related to Boss Records feature." +
-			"\nThis is a temporary config to prevent any Record Tracking code from running and will be removed when the feature is fully developed and out of the testing phase." +
-			"\nPlease keep this config enabled unless you are helping test out the feature and are willing to send reports to the mod developers.")]
+		[Label("Disable 'Boss Record' feature testing")]
+		[Tooltip("Prevents Boss Records code from running, effectively disabling it while its in feature testing." +
+			"\nThis feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.")]
 		public bool DISABLERECORDTRACKINGCODE { get; set; }
+
+		[BackgroundColor(255, 99, 71)]
+		[DefaultValue(true)]
+		[Label("Disable 'World Record' feature testing")]
+		[Tooltip("Prevents World Records code from running, effectively disabling it while its in feature testing." +
+			"\nAs of now this feature is known to not work and may cause issues.")]
+		public bool DisableWorldRecords { get; set; }
 
 		// Code created by Jopojelly, taken from CheatSheet
 		private bool IsPlayerLocalServerOwner(Player player) {

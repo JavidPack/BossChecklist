@@ -288,6 +288,10 @@ namespace BossChecklist
 				serverStatistics.NetSend(packet, recordType);
 				packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client // We send to the player as only they need to see their own records
 
+
+				if (BossChecklist.DebugConfig.DisableWorldRecords)
+					continue;
+
 				// Check for world records
 				int hitsTakenValue = htCompareValue == -1 ? worldRecords.hitsTakenWorld : htCompareValue;
 
@@ -303,6 +307,9 @@ namespace BossChecklist
 					htHolders.Add(player.whoAmI);
 				}
 			}
+
+			if (BossChecklist.DebugConfig.DisableWorldRecords)
+				return;
 
 			// If no world records were made, skip the update process
 			if (dCompareValue == -1 && htCompareValue == -1)
@@ -371,6 +378,9 @@ namespace BossChecklist
 		/// </summary>
 		/// <returns>Whether or not a world record was beaten or matched</returns>
 		private bool CheckWorldRecords(int recordIndex) {
+			if (BossChecklist.DebugConfig.DisableWorldRecords)
+				return false;
+
 			Player player = Main.LocalPlayer;
 			PersonalStats playerRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
 			WorldStats worldRecords = WorldAssist.worldRecords[recordIndex].stats;
