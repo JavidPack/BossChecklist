@@ -29,8 +29,6 @@ namespace BossChecklist.UIElements
 			public string Id { get; init; } = "";
 			internal string buttonType;
 			internal Asset<Texture2D> texture;
-			internal int cycleFrame = 0;
-			internal bool slowDown = true;
 			private Vector2 offset;
 			internal bool dragging;
 
@@ -73,12 +71,12 @@ namespace BossChecklist.UIElements
 
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
-				if (Id != "OpenUI") {
-					return;
-				}
-				if (ContainsPoint(Main.MouseScreen)) {
+
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
 					Main.LocalPlayer.mouseInterface = true;
-				}
+
+				if (Id != "OpenUI")
+					return;
 
 				if (dragging) {
 					Left.Set(Main.mouseX - Main.screenWidth - offset.X, 1f);
@@ -119,29 +117,23 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(cover.Value, innerDimensions.ToRectangle(), coverColor);
 
 					// Border Selection
-					PlayerAssist myPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-					if (!myPlayer.hasOpenedTheBossLog) {
-						spriteBatch.Draw(BossLogUI.borderTexture.Value, innerDimensions.ToRectangle(), Main.DiscoColor);
+					PlayerAssist player = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					Color? borderColor = null;
+
+					if (IsMouseHovering) {
+						borderColor = Color.Goldenrod;
 					}
 					else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled) {
-						spriteBatch.Draw(BossLogUI.borderTexture.Value, innerDimensions.ToRectangle(), Color.IndianRed);
+						borderColor = Color.Firebrick;
+					}
+					else if (!player.hasOpenedTheBossLog || player.hasNewRecord.Any(x => x == true)) {
+						float modifier = Main.masterColor / 200f;
+						borderColor = new Color(coverColor.R * modifier, coverColor.G * modifier, coverColor.B * modifier);
 					}
 
-					if (myPlayer.hasNewRecord.Any(x => x == true)) {
-						slowDown = !slowDown;
-						if (slowDown) {
-							cycleFrame++;
-						}
-						if (cycleFrame >= 19) {
-							cycleFrame = 0;
-						}
-
-						Asset<Texture2D> bookBorder = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_ButtonBorder");
-						Rectangle source = new Rectangle(0, 40 * cycleFrame, 34, 38);
-						spriteBatch.Draw(bookBorder.Value, innerDimensions.ToRectangle(), source, BossChecklist.BossLogConfig.BossLogColor);
-					}
-					else if (IsMouseHovering) {
-						spriteBatch.Draw(BossLogUI.borderTexture.Value, innerDimensions.ToRectangle(), Color.Goldenrod);
+					// Draw a colored border if one was set
+					if (borderColor.HasValue) {
+						spriteBatch.Draw(BossLogUI.borderTexture.Value, innerDimensions.ToRectangle(), borderColor.Value);
 					}
 
 					// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
@@ -158,9 +150,6 @@ namespace BossChecklist.UIElements
 					else {
 						BossUISystem.Instance.UIHoverText = translated;
 					}
-				}
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
-					Main.player[Main.myPlayer].mouseInterface = true;
 				}
 			}
 		}
@@ -234,8 +223,9 @@ namespace BossChecklist.UIElements
 					return;
 				}
 				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar) {
-					if (item.color == Color.Black)
+					if (item.color == Color.Black) {
 						item.color = default;
+					}
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
 				}
@@ -395,9 +385,8 @@ namespace BossChecklist.UIElements
 				BossInfo selectedBoss;
 				if (BossLogUI.PageNum >= 0) {
 					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-					if (selectedBoss.modSource == "Unknown" && Id == "PageTwo") {
+					if (selectedBoss.modSource == "Unknown" && Id == "PageTwo")
 						return; // Prevents drawings on the page if the boss has no info
-					}
 				}
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
 
@@ -654,9 +643,9 @@ namespace BossChecklist.UIElements
 							}
 
 							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-								if (info.type != EntryType.Event) {
+								if (info.type != EntryType.Event)
 									continue;
-								}
+
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = info.headIconTextures[0].Value;
 									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
@@ -679,9 +668,8 @@ namespace BossChecklist.UIElements
 							Asset<Texture2D> achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements");
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
-							if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+							if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 								return;
-							}
 
 							int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
 							PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
@@ -689,13 +677,13 @@ namespace BossChecklist.UIElements
 
 							string recordTitle = "";
 							string recordValue = "";
-							int[] achCoord = new int[] { 0, 0 };
+							int[] achCoord = new int[] { -1, -1 };
+							string NoRecord = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 
 							for (int recordSlot = 0; recordSlot < 4; recordSlot++) { // 4 spots total
 								if (recordSlot == 0) {
 									recordValue = Main.LocalPlayer.name;
 									// Which sub-category are we in?
-									achCoord = new int[] { -1, -1 }; // No achievement drawing
 									if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousRecord");
 									}
@@ -711,12 +699,13 @@ namespace BossChecklist.UIElements
 									}
 								}
 								if (recordSlot == 1) {
+									string Unchallenged = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
 									if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord) {
 										// World Global Kills & Deaths
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDRWorld");
 										achCoord = wldRecord.totalKills >= wldRecord.totalDeaths ? new int[] { 4, 10 } : new int[] { 4, 8 };
 										if (wldRecord.totalKills == 0 && wldRecord.totalDeaths == 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+											recordValue = Unchallenged;
 										}
 										else {
 											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
@@ -727,29 +716,19 @@ namespace BossChecklist.UIElements
 									else if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Attempt");
 										achCoord = new int[] { 0, 9 };
-										if (record.kills == 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
-										}
-										else {
-											recordValue = $"#{record.kills}";
-										}
+										recordValue = record.kills == 0 ? Unchallenged : recordValue = $"#{record.kills}";
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.FirstRecord) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PlayTime");
-										achCoord = new int[] { 4, 8 };
-										if (record.kills == 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
-										}
-										else {
-											recordValue = $"{TicksToPlayTime(record.playTimeFirst)}";
-										}
+										achCoord = new int[] { 7, 10 };
+										recordValue = record.kills == 0 ? Unchallenged : recordValue = $"{TicksToPlayTime(record.playTimeFirst)}";
 									}
 									else {
 										// Kills & Deaths
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
 										achCoord = new int[] { 0, 3 };
 										if (record.kills == 0 && record.deaths == 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+											recordValue = Unchallenged;
 										}
 										else {
 											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
@@ -764,42 +743,18 @@ namespace BossChecklist.UIElements
 									achCoord = new int[] { 4, 9 };
 
 									if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
-										// Last Attempt
-										if (record.durationPrev == -1) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = RecordTimeConversion(record.durationPrev);
-										}
+										recordValue = record.durationPrev == -1 ? NoRecord : recordValue = RecordTimeConversion(record.durationPrev);
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.FirstRecord) {
-										// First Victory
-										if (record.durationFirst == -1) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = RecordTimeConversion(record.durationFirst);
-										}
+										recordValue = record.durationFirst == -1 ? NoRecord : RecordTimeConversion(record.durationFirst);
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.BestRecord) {
-										// Personal Best
-										if (record.durationBest == -1) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = RecordTimeConversion(record.durationBest);
-										}
+										recordValue = record.durationBest == -1 ? NoRecord : RecordTimeConversion(record.durationBest);
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord) {
-										// World Record
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DurationWorld");
 										achCoord = new int[] { 2, 12 };
-										if (wldRecord.durationWorld < 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = RecordTimeConversion(wldRecord.durationWorld);
-										}
+										recordValue = wldRecord.durationWorld < 0 ? NoRecord : recordValue = RecordTimeConversion(wldRecord.durationWorld);
 									}
 								}
 								else if (recordSlot == 3) { // Hits Taken
@@ -807,43 +762,18 @@ namespace BossChecklist.UIElements
 									achCoord = new int[] { 3, 0 };
 
 									if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
-										// Last Attempt
-										if (record.hitsTakenPrev == -1) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = record.hitsTakenPrev.ToString();
-										}
+										recordValue = record.hitsTakenPrev == -1 ? NoRecord : record.hitsTakenPrev.ToString();
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.FirstRecord) {
-										// First Victory
-										if (record.hitsTakenFirst == -1) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = record.hitsTakenFirst.ToString();
-										}
+										recordValue = record.hitsTakenFirst == -1 ? NoRecord : record.hitsTakenFirst.ToString();
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.BestRecord) {
-										// Personal Best
-										if (record.hitsTakenBest == -1) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = record.hitsTakenBest.ToString();
-										}
+										recordValue = record.hitsTakenBest == -1 ? NoRecord : recordValue = record.hitsTakenBest.ToString();
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord) {
-										// World Record
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");
 										achCoord = new int[] { 0, 7 };
-										
-										if (wldRecord.hitsTakenWorld < 0) {
-											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-										}
-										else {
-											recordValue = wldRecord.hitsTakenWorld.ToString();
-										}
+										recordValue = wldRecord.hitsTakenWorld < 0 ? NoRecord : wldRecord.hitsTakenWorld.ToString();
 									}
 								}
 
@@ -968,26 +898,21 @@ namespace BossChecklist.UIElements
 								CalculatedStyle inner = GetInnerDimensions();
 
 								Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(recordTitle);
-								float strScale = 1.2f;
-								Vector2 firstTitle = new Vector2(stringAdjust.X * strScale, stringAdjust.Y * strScale);
-
-								float len = recordSlot == 0 ? firstTitle.Length() : stringAdjust.Length();
 								Color col = recordSlot == 0 ? Color.Goldenrod : Color.Gold;
-								float scl = recordSlot == 0 ? strScale : 1f;
-
-								Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (len / 2) + 2, inner.Y + offsetY);
+								float scl = recordSlot == 0 ? 1.15f : 1f;
+								Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.Length() * scl / 2) + 2, inner.Y + offsetY);
 								Utils.DrawBorderString(spriteBatch, recordTitle, pos, col, scl);
 
 								stringAdjust = FontAssets.MouseText.Value.MeasureString(recordValue);
-								pos = new Vector2(inner.X + (inner.Width / 2) - ((int)stringAdjust.Length() / 2) + 2, inner.Y + offsetY + 25);
+								pos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.Length() / 2) + 2, inner.Y + offsetY + 25);
 								Utils.DrawBorderString(spriteBatch, recordValue, pos, Color.White);
 							}
 						}
 						else if (selectedBoss.type == EntryType.MiniBoss) {
 							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-								if (info.type != EntryType.Event) {
+								if (info.type != EntryType.Event)
 									continue;
-								}
+
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = info.headIconTextures[0].Value;
 									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
@@ -1015,9 +940,8 @@ namespace BossChecklist.UIElements
 
 							foreach (int npcID in selectedBoss.npcIDs) {
 								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event);
-								if (npcIndex == -1) {
+								if (npcIndex == -1)
 									continue;
-								}
 
 								BossInfo addedNPC = bosses[npcIndex];
 								Texture2D head = addedNPC.headIconTextures[0].Value;
@@ -1046,15 +970,13 @@ namespace BossChecklist.UIElements
 							}
 
 							foreach (int npcID in selectedBoss.npcIDs) {
-								if (offset == 0 && offsetY == 4) {
+								if (offset == 0 && offsetY == 4)
 									break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
-								}
 
 								if (npcID < NPCID.Count) {
 									int init = Item.NPCtoBanner(npcID) + 21;
-									if (init <= 21) {
+									if (init <= 21)
 										continue;
-									}
 
 									Main.instance.LoadNPC(npcID);
 									Main.instance.LoadTiles(TileID.Banners);
@@ -1102,13 +1024,11 @@ namespace BossChecklist.UIElements
 									Main.instance.LoadNPC(npcID);
 
 									int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
-									if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item)) {
+									if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item))
 										continue;
-									}
 
-									if (item.createTile <= -1) {
+									if (item.createTile <= -1)
 										continue;
-									}
 
 									Main.instance.LoadTiles(item.createTile);
 									Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
@@ -1555,12 +1475,11 @@ namespace BossChecklist.UIElements
 						// Check for corruption/crimson vanilla items, and skip them based on world evil
 						// May need new method for looking for these items.
 						if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
-							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow)) {
+							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
 								continue;
-							}
-							else if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds)) {
+
+							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
 								continue;
-							}
 						}
 						// Find the index of the itemID within the player saved loot
 						int indexLoot = items.FindIndex(x => x.Type == loot);
@@ -1568,12 +1487,11 @@ namespace BossChecklist.UIElements
 						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
 						if (!Main.expertMode || !Main.masterMode) {
 							Item checkItem = ContentSamples.ItemsByType[loot];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
 								continue;
-							}
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
+
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue;
-							}
 						}
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
@@ -1585,18 +1503,17 @@ namespace BossChecklist.UIElements
 
 					//Repeast everything for collectibles as well
 					foreach (int collectible in sortedBosses[index].collection) {
-						if (collectible == -1 || collectible == 0) {
+						if (collectible == -1 || collectible == 0)
 							continue;
-						}
+
 						int indexCollect = items.FindIndex(x => x.Type == collectible);
 						if (!Main.expertMode || !Main.masterMode) {
 							Item checkItem = ContentSamples.ItemsByType[collectible];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly)) {
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
 								continue;
-							}
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly)) {
+
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue;
-							}
 						}
 						if (indexCollect == -1) {
 							allCollect = false;
