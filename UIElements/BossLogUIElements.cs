@@ -1129,28 +1129,26 @@ namespace BossChecklist.UIElements
 			}
 
 			internal static string RecordTimeConversion(int ticks) {
-				double seconds = (double)ticks / 60;
-				double seconds00 = seconds % 60;
-				int minutes = (int)seconds / 60;
-				string sign = "";
-				if (seconds00 < 0) {
-					seconds00 *= -1;
+				const int TicksPerSecond = 60;
+				const int TicksPerMinute = TicksPerSecond * 60;
+
+				// If a negative value is given (can happen when comparing records), avoid giving both minutes and seconds values a negative sign
+				string sign = ""; 
+				if (ticks < 0) {
+					ticks *= -1;
 					sign = "-";
 				}
-				return $"{sign}{minutes}:{seconds00.ToString("00.00")}";
+
+				int minutes = ticks / TicksPerMinute; // Minutes will still show if 0
+				float seconds = (float)(ticks - (float)(minutes * TicksPerMinute)) / TicksPerSecond;
+				return $"{sign}{minutes}:{seconds.ToString("00.00")}";
 			}
 
 			internal static string TicksToPlayTime(long ticks) {
-				double seconds = (double)ticks / TimeSpan.TicksPerSecond;
-				double seconds00 = seconds % 60;
-				int minutes = (int)seconds / 60;
-				int hours = ticks >= TimeSpan.TicksPerHour ? minutes / 60 : 0;
-				string sign = "";
-				if (seconds00 < 0) {
-					seconds00 *= -1;
-					sign = "-";
-				}
-				return $"{sign}{(hours > 0 ? hours + ":" : "")}{(hours > 0 ? minutes.ToString("00") : minutes)}:{seconds00.ToString("00.00")}";
+				int hours = (int)(ticks / TimeSpan.TicksPerHour);
+				int minutes = (int)((ticks - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
+				float seconds = (float)((ticks - (float)(hours * TimeSpan.TicksPerHour) - (float)(minutes * TimeSpan.TicksPerMinute)) / TimeSpan.TicksPerSecond);
+				return $"{(hours > 0 ? hours + ":" : "")}{(hours > 0 ? minutes.ToString("00") : minutes)}:{seconds.ToString("00.00")}";
 			}
 
 			internal static int GetRecordValue(RecordCategory type, int id) {
