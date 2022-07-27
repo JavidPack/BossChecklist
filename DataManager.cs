@@ -207,7 +207,6 @@ namespace BossChecklist
 		public int totalKills;
 		public int totalDeaths;
 
-		// TODO: Make a list of record holders for players who match (more for hits Taken)
 		public List<string> durationHolder = new List<string> { };
 		public int durationWorld = -1;
 		
