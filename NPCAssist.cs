@@ -212,7 +212,7 @@ namespace BossChecklist
 
 			// If a new record was made, notify the player. Again, this will not show for newly set records
 			if (newRecordSet) {
-				modPlayer.hasNewRecord[bossIndex] = true;
+				modPlayer.hasNewRecord[recordIndex] = true;
 				// Compare records to World Records. Players must have beaten their own records to beat a world record
 				string recordSet = CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
 				string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms." + recordSet);

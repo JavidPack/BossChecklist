@@ -34,7 +34,7 @@ namespace BossChecklist
 		public int[] Tracker_Duration;
 		public int[] Tracker_HitsTaken;
 		public bool[] Tracker_Deaths;
-		public List<bool> hasNewRecord;
+		public bool[] hasNewRecord;
 
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
@@ -50,12 +50,7 @@ namespace BossChecklist
 			Tracker_Duration = Array.Empty<int>();
 			Tracker_Deaths = Array.Empty<bool>();
 			Tracker_HitsTaken = Array.Empty<int>();
-
-			// Has to contain all entries, even if they arent a boss //TODO: maybe look into again at some point, for now its fine.
-			hasNewRecord = new List<bool>();
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				hasNewRecord.Add(false);
-			}
+			hasNewRecord = Array.Empty<bool>();
 		}
 
 		public override void SaveData(TagCompound tag) {
@@ -169,6 +164,7 @@ namespace BossChecklist
 			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
+			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
 			// Send this info to the server to populate the arrays server-sided
 			if (Main.netMode == NetmodeID.MultiplayerClient) {

@@ -608,7 +608,9 @@ namespace BossChecklist
 		private static void UpdateRecordHighlight() {
 			if (PageNum >= 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				modPlayer.hasNewRecord[PageNum] = false;
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
+					modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
+				}
 			}
 		}
 

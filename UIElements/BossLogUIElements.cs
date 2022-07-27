@@ -1441,7 +1441,9 @@ namespace BossChecklist.UIElements
 						else if (downed) {
 							TextColor = Colors.RarityGreen;
 						}
-						if (modPlayer.hasNewRecord[Index]) {
+
+						int recordIndex = BossChecklist.bossTracker.SortedBosses[Index].GetRecordIndex;
+						if (recordIndex != -1 && modPlayer.hasNewRecord[recordIndex]) {
 							TextColor = Main.DiscoColor;
 						}
 					}
