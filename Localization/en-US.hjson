@@ -106,16 +106,16 @@ Mods: {
 				CopyKey: Click to copy internal 'boss key' to clipboard
 				CopySource: Click to copy internal 'mod source' to clipboard
 				ViewPage: Click to view page
-				KDRDescription: Total times you killed this boss and total times this boss has killed you!
 				DurationDescription: The quickest time you defeated this boss!
 				HitsTakenDescription: Avoid as many attacks as you can! Try to defeat this boss untouched!
 				ToggleVisibility: Toggle hidden visibility
 				AllLoot: All Boss Loot Obtained!
 				AllCollectibles: All Boss Collectibles Obtained!
 				MaskedItems: Defeat {0} to view obtainable loot and collectibles
-				FirstKDRDescription: The total play time your character has been active up until the first boss kill
-				BestKDRDescription: How many attempts it took for you to achieve your best record
-				GlobalKDRDescription: Global kills and deaths with this boss
+				KDRDescription: Total times you have encountered this boss!
+				BestKDRDescription: Total times you killed this boss and total times this boss has killed you!
+				FirstKDRDescription: Total play time your character has been active, up until the first boss kill!
+				GlobalKDRDescription: Global kills and deaths from all players for this boss!
 				ClaimRecord: Be the first to claim the world record!
 				ProgressionModeIsEnabled:
 					'''

@@ -805,7 +805,6 @@ namespace BossChecklist.UIElements
 									spriteBatch.Draw(achievements, achPos, cutRect, Color.White);
 
 									if (Main.MouseScreen.Between(achPos.TopLeft(), achPos.BottomRight())) {
-										// TODO: Change these texts to something better. A description of the record type
 										if (recordSlot == 1) {
 											if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
 												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
