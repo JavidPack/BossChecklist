@@ -105,11 +105,6 @@ Mods: {
 				ItemIsMasterOnly: Este objeto solo puede obtenerse en Modo Maestro
 				CopyKey: Haz clic para copiar la 'llave del jefe' interna al portapapeles
 				CopySource: Haz clic para copiar la "fuente del mod" interna al portapapeles
-				UnderConstruction:
-					'''
-					Esta sección del Registro de jefes está todavía siendo desarrollada.
-					Cualquier característica o configuración relacionada con esta página podría no funcionar.
-					'''
 				ViewPage: Haz clic para ver la página
 				KDRDescription: Número de veces que has matado a este jefe y número de veces que este jefe te ha matado a ti.
 				DurationDescription: ¡La vez más rápida en la que derrotaste a este jefe!

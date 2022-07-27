@@ -1035,9 +1035,8 @@ namespace BossChecklist
 
 		private void OpenLoot() {
 			ResetBothPages();
-			if (PageNum < 0) {
+			if (PageNum < 0)
 				return;
-			}
 
 			pageTwoItemList.Left.Pixels = 0;
 			pageTwoItemList.Top.Pixels = 125;
@@ -1054,9 +1053,8 @@ namespace BossChecklist
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (!modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> obtainedItems)) {
+			if (!modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> obtainedItems))
 				return;
-			}
 
 			LootRow newRow = new LootRow(0) {
 				Id = "Loot0"
@@ -1592,9 +1590,9 @@ namespace BossChecklist
 				PageTwo.RemoveChild(AltPageButtons[i]);
 			}
 
-			if (PageNum == -3) {
+			if (PageNum == -3)
 				return;
-			}
+
 			if (PageNum == -2) {
 				PageOne.Append(PrevPage);
 			}
@@ -1641,9 +1639,8 @@ namespace BossChecklist
 		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
 			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
 			if (!leftClick) {
-				if (RecordPageSelected == type) {
+				if (RecordPageSelected == type)
 					return;
-				}
 
 				if (CompareState == RecordPageSelected) {
 					CompareState = RecordCategory.None;

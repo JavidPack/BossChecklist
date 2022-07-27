@@ -105,12 +105,6 @@ Mods: {
 				ItemIsMasterOnly: 此物品仅在大师模式下可获得
 				CopyKey: 点击以复制内部'Boss键值'至剪切板
 				CopySource: 点击以复制内部'Mod源'至剪切板
-				UnderConstruction:
-					'''
-					Boss日志的这一部分仍在施工中.
-					与此页面相关的任何功能或配置都可能不会工作.
-					[c/FF0000:由于最近的问题而完全禁用]
-					'''
 				ViewPage: 点击以查看页面
 				KDRDescription: 你击败该Boss和该Boss击败你的总次数!
 				DurationDescription: 你击败该Boss所用的最短时间!

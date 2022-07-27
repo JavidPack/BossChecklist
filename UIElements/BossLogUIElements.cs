@@ -123,7 +123,7 @@ namespace BossChecklist.UIElements
 					if (IsMouseHovering) {
 						borderColor = Color.Goldenrod;
 					}
-					else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled) {
+					else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 						borderColor = Color.Firebrick;
 					}
 					else if (!player.hasOpenedTheBossLog || player.hasNewRecord.Any(x => x == true)) {
@@ -635,11 +635,24 @@ namespace BossChecklist.UIElements
 							// Boss Records Subpage
 							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
 							Rectangle innerRect = pageRect;
-							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 100, construction.Value.Width, construction.Value.Height);
+							Rectangle conRect = new Rectangle(innerRect.X + 30, innerRect.Y + 100, construction.Value.Width, construction.Value.Height);
 							spriteBatch.Draw(construction.Value, conRect, Color.White);
 
 							if (Main.MouseScreen.Between(conRect.TopLeft(), conRect.BottomRight())) {
-								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.UnderConstruction";
+								string noticeText;
+								if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord) {
+									noticeText = $"World Records is currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+										"\nThe World Records feature is still under construction." +
+										"\nThis feature is known to not work and cause issues, so enable at your own risk." +
+										$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
+								}
+								else {
+									noticeText = $"Boss Records is currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+										"\nThis section of the Boss Log is still under construction." +
+										"\nAny features or configs related to this page may not work or cause issues." +
+										$"\nBoss Records can be {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? "enabled" : "disabled")} under the Feature Testing configs.";
+								}
+								BossUISystem.Instance.UIHoverText = noticeText;
 								BossUISystem.Instance.UIHoverTextColor = Color.Gold;
 							}
 

@@ -105,12 +105,6 @@ Mods: {
 				ItemIsMasterOnly: This item is only obtainable in master mode
 				CopyKey: Click to copy internal 'boss key' to clipboard
 				CopySource: Click to copy internal 'mod source' to clipboard
-				UnderConstruction:
-					'''
-					This section of the Boss Log is still under construction.
-					Any features or configs related to this page may not work.
-					[c/FF0000:FULLY DISABLED DUE TO RECENT ISSUES]
-					'''
 				ViewPage: Click to view page
 				KDRDescription: Total times you killed this boss and total times this boss has killed you!
 				DurationDescription: The quickest time you defeated this boss!
