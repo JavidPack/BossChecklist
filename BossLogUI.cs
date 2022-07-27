@@ -476,9 +476,9 @@ namespace BossChecklist
 		}
 
 		private void UpdateTabNavPos() {
-			if (PageNum == -3) {
+			if (PageNum == -3)
 				return;
-			}
+
 			// Updating tabs to proper positions
 			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
 			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
@@ -657,9 +657,9 @@ namespace BossChecklist
 
 		// Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)
 		private void ResetStats() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
-			}
+
 			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
@@ -837,24 +837,20 @@ namespace BossChecklist
 			if (!PageTwo.HasChild(AltPageButtons[(int)RecordPageSelected])) {
 				RecordPageSelected = RecordCategory.PreviousAttempt;
 			}
-			if (PageNum < 0) {
+			if (PageNum < 0)
 				return;
-			}
-			// Incase we want to put any UI stuff on these pages
 		}
 
 		private void OpenSpawn() {
 			ResetBothPages();
 			int TotalRecipes = 0;
-			if (PageNum < 0) {
+			if (PageNum < 0)
 				return;
-			}
-			pageTwoItemList.Clear();
 
+			pageTwoItemList.Clear();
 			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (boss.modSource == "Unknown") {
+			if (boss.modSource == "Unknown")
 				return;
-			}
 			
 			var message = new UIMessageBox(boss.DisplaySpawnInfo);
 			message.Width.Set(-34f, 1f);
@@ -1617,22 +1613,22 @@ namespace BossChecklist
 						PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
 						int totalRecords = (int)RecordCategory.None;
 						for (int i = 0; i < totalRecords; i++) {
-							if ((i == 1 || i == 2) && record.kills == 0) {
-								// If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-								continue;
-							}
-							AltPageButtons[i].Width.Pixels = 36;
-							AltPageButtons[i].Height.Pixels = 36;
+							if ((i == 1 || i == 2) && record.kills == 0)
+								continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
+
+							AltPageButtons[i].Width.Pixels = 25;
+							AltPageButtons[i].Height.Pixels = 25;
+							int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
 							if (CategoryPageNum == CategoryPage.Record) {
 								// If First or Best buttons were skipped account for the positioning of Previous and World
 								if (i < 2) {
-									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels - 8 - 32 + (record.kills == 0 ? -16 : (i - 1) * 36);
+									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
 								}
 								else {
-									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + 8 + (record.kills == 0 ? 16 : (i - 2) * 36);
+									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + (i - 2) * 25 + offset;
 								}
 							}
-							AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 16;
+							AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
 							PageTwo.Append(AltPageButtons[i]);
 						}
 					}
@@ -1728,9 +1724,8 @@ namespace BossChecklist
 
 		// Use Main.HoverItemName to get text value
 		public static void DrawTooltipBG(SpriteBatch sb, string text, Color textColor = default) {
-			if (text == "") {
+			if (text == "")
 				return;
-			}
 
 			int padd = 20;
 			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(text);
@@ -1746,7 +1741,5 @@ namespace BossChecklist
 			Utils.DrawInvBG(sb, bgPos, new Color(23, 25, 81, 255) * 0.925f);
 			Utils.DrawBorderString(sb, text, textPos, textColor);
 		}
-
-		public static bool MouseIntersects(float x, float y, int width, int height) => Main.MouseScreen.Between(new Vector2(x, y), new Vector2(x + width, y + height));
 	}
 }

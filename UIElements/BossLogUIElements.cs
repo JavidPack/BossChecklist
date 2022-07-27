@@ -581,7 +581,8 @@ namespace BossChecklist.UIElements
 						spriteBatch.Draw(texture.Value, defeatpos, Color.White);
 
 						// Hovering over the head icon will display the defeated text
-						if (BossLogUI.MouseIntersects(lastX, firstHeadPos.Y, totalWidth, firstHeadPos.Height)) {
+						Rectangle hoverRect = new Rectangle(lastX, firstHeadPos.Y, totalWidth, firstHeadPos.Height);
+						if (Main.MouseScreen.Between(hoverRect.TopLeft(), hoverRect.BottomRight())) {
 							BossUISystem.Instance.UIHoverText = selectedBoss.IsDownedOrForced ? isDefeated : notDefeated;
 							BossUISystem.Instance.UIHoverTextColor = selectedBoss.IsDownedOrForced ? Colors.RarityGreen : Colors.RarityRed;
 						}
@@ -602,13 +603,13 @@ namespace BossChecklist.UIElements
 
 						if (enabledCopyButtons) {
 							Texture2D clipboard = ModContent.Request<Texture2D>("Terraria/Images/UI/CharCreation/Copy", AssetRequestMode.ImmediateLoad).Value;
-							Vector2 vec2 = new Vector2(pageRect.X + 5, pageRect.Y + 5);
+							Rectangle clipRect = new Rectangle(pageRect.X + 5, pageRect.Y + 5, clipboard.Width, clipboard.Height);
 
 							Color copied = (Platform.Get<IClipboard>().Value == selectedBoss.Key) ? Color.Gold : Color.White;
-							spriteBatch.Draw(clipboard, vec2, copied);
+							spriteBatch.Draw(clipboard, clipRect, copied);
 
 							// Hovering and rightclick will copy to clipboard
-							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Width, clipboard.Height)) {
+							if (Main.MouseScreen.Between(clipRect.TopLeft(), clipRect.BottomRight())) {
 								string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.CopyKey");
 								BossUISystem.Instance.UIHoverText = $"{translated}:\n{selectedBoss.Key}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
@@ -616,11 +617,11 @@ namespace BossChecklist.UIElements
 								}
 							}
 
-							vec2 = new Vector2(pageRect.X + 5, pageRect.Y + 30);
+							clipRect.Y += 25;
 							copied = (Platform.Get<IClipboard>().Value == selectedBoss.modSource) ? Color.Gold : Color.White;
-							spriteBatch.Draw(clipboard, vec2, copied);
+							spriteBatch.Draw(clipboard, clipRect, copied);
 
-							if (BossLogUI.MouseIntersects(vec2.X, vec2.Y, clipboard.Width, clipboard.Height)) {
+							if (Main.MouseScreen.Between(clipRect.TopLeft(), clipRect.BottomRight())) {
 								string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.CopySource");
 								BossUISystem.Instance.UIHoverText = $"{translated}:\n{selectedBoss.modSource}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
@@ -634,10 +635,10 @@ namespace BossChecklist.UIElements
 							// Boss Records Subpage
 							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
 							Rectangle innerRect = pageRect;
-							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 100, 32, 34);
+							Rectangle conRect = new Rectangle(innerRect.X + innerRect.Width - 32 - 30, innerRect.Y + 100, construction.Value.Width, construction.Value.Height);
 							spriteBatch.Draw(construction.Value, conRect, Color.White);
 
-							if (BossLogUI.MouseIntersects(conRect.X, conRect.Y, conRect.Width, conRect.Height)) {
+							if (Main.MouseScreen.Between(conRect.TopLeft(), conRect.BottomRight())) {
 								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.UnderConstruction";
 								BossUISystem.Instance.UIHoverTextColor = Color.Gold;
 							}
@@ -648,10 +649,10 @@ namespace BossChecklist.UIElements
 
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = info.headIconTextures[0].Value;
-									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
+									Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									spriteBatch.Draw(icon, pos, faded);
-									if (BossLogUI.MouseIntersects(pos.X, pos.Y, icon.Width, icon.Height)) {
+									spriteBatch.Draw(icon, headPos, faded);
+									if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
 										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 										BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
 										if (Main.mouseLeft && Main.mouseLeftRelease) {
@@ -665,7 +666,7 @@ namespace BossChecklist.UIElements
 							}
 
 							// Beginning of record drawing
-							Asset<Texture2D> achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements");
+							Texture2D achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements").Value;
 							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
 							if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
@@ -778,14 +779,14 @@ namespace BossChecklist.UIElements
 								}
 
 								if (achCoord[0] != -1) {
-									Rectangle slotPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100 + (75 * recordSlot), 64, 64);
+									Rectangle achPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100 + (75 * recordSlot), 64, 64);
 									Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
 
-									Asset<Texture2D> slot = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
-									spriteBatch.Draw(slot.Value, new Vector2(slotPos.X, slotPos.Y), new Color(175, 175, 125));
-									spriteBatch.Draw(achievements.Value, slotPos, cutRect, Color.White);
+									Texture2D slot = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad).Value;
+									spriteBatch.Draw(slot, new Vector2(achPos.X, achPos.Y), new Color(175, 175, 125));
+									spriteBatch.Draw(achievements, achPos, cutRect, Color.White);
 
-									if (BossLogUI.MouseIntersects(slotPos.X, slotPos.Y, 64, 64)) {
+									if (Main.MouseScreen.Between(achPos.TopLeft(), achPos.BottomRight())) {
 										// TODO: Change these texts to something better. A description of the record type
 										if (recordSlot == 1) {
 											if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
@@ -812,12 +813,12 @@ namespace BossChecklist.UIElements
 									// Draw trophies hoverover for World Record holder names
 									if (recordSlot == 2 || recordSlot == 3) {
 										if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord && (recordSlot == 2 || recordSlot == 3)) {
-											Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad);
-											Vector2 trophyPos = new Vector2(slotPos.X + slot.Value.Width - trophy.Value.Width / 2, slotPos.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
-											spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
+											Texture2D trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad).Value;
+											Rectangle trophyPos = new Rectangle(achPos.X + slot.Width - trophy.Width / 2, achPos.Y + slot.Height / 2 - trophy.Height / 2, trophy.Width, trophy.Height);
+											spriteBatch.Draw(trophy, trophyPos, Color.White);
 
 											string message = "$Mods.BossChecklist.BossLog.HoverText.ClaimRecord";
-											if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
+											if (Main.MouseScreen.Between(trophyPos.TopLeft(), trophyPos.BottomRight())) {
 												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
 												if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
 													message = $"{holderText}";
@@ -835,15 +836,15 @@ namespace BossChecklist.UIElements
 											}
 										}
 										else if (BossLogUI.RecordPageSelected == RecordCategory.BestRecord) {
-											Asset<Texture2D> trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophySilver}", AssetRequestMode.ImmediateLoad);
-											Vector2 trophyPos = new Vector2(slotPos.X + slot.Value.Width - trophy.Value.Width / 2, slotPos.Y + slot.Value.Height / 2 - trophy.Value.Height / 2);
+											Texture2D trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophySilver}", AssetRequestMode.ImmediateLoad).Value;
+											Rectangle trophyPos = new Rectangle(achPos.X + slot.Width - trophy.Width / 2, achPos.Y + slot.Height / 2 - trophy.Height / 2, trophy.Width, trophy.Height);
 
 											// Do not draw the trophy unless a Previous Best record is available
 											if ((recordSlot == 2 && record.durationPrevBest != -1) || (recordSlot == 3 && record.hitsTakenPrevBest != -1)) {
-												spriteBatch.Draw(trophy.Value, trophyPos, Color.White);
+												spriteBatch.Draw(trophy, trophyPos, Color.White);
 
 												string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousBest");
-												if (BossLogUI.MouseIntersects(trophyPos.X, trophyPos.Y, trophy.Value.Width, trophy.Value.Height)) {
+												if (Main.MouseScreen.Between(trophyPos.TopLeft(), trophyPos.BottomRight())) {
 													if (recordSlot == 2)
 														message += $":\n{RecordTimeConversion(record.durationPrevBest)}";
 													else if (recordSlot == 3)
@@ -881,13 +882,13 @@ namespace BossChecklist.UIElements
 
 											float textScale = 0.65f;
 											Vector2 textSize = FontAssets.MouseText.Value.MeasureString(comparisonValue) * textScale;
-											Vector2 textPos = new Vector2(slotPos.X + slot.Value.Width - 50 - (textSize.X / 2), slotPos.Y + slot.Value.Height - textSize.Y);
+											Vector2 textPos = new Vector2(achPos.X + slot.Width - 50 - (textSize.X / 2), achPos.Y + slot.Height - textSize.Y);
 											Color textColor = badRecord ? Color.LightSalmon : Color.LightGreen;
 											Utils.DrawBorderString(spriteBatch, comparisonValue, textPos, textColor, textScale);
 
 											string compareRecordString = recordSlot == 2 ? RecordTimeConversion(compareRecordValue) : compareRecordValue.ToString();
 											textSize = FontAssets.MouseText.Value.MeasureString(compareRecordString) * textScale;
-											textPos = new Vector2(slotPos.X + slot.Value.Width - 50 - (textSize.X / 2), slotPos.Y + 6);
+											textPos = new Vector2(achPos.X + slot.Width - 50 - (textSize.X / 2), achPos.Y + 6);
 											Utils.DrawBorderString(spriteBatch, compareRecordString, textPos, Color.SkyBlue, textScale);
 										}
 
@@ -915,10 +916,10 @@ namespace BossChecklist.UIElements
 
 								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
 									Texture2D icon = info.headIconTextures[0].Value;
-									Vector2 pos = new Vector2(pageRect.X + 15, pageRect.Y + 100);
+									Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
 									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									spriteBatch.Draw(icon, pos, faded);
-									if (BossLogUI.MouseIntersects(pos.X, pos.Y + icon.Height, icon.Width, icon.Height)) {
+									spriteBatch.Draw(icon, headPos, faded);
+									if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
 										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 										BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
 										if (Main.mouseLeft && Main.mouseLeftRelease) {
@@ -945,12 +946,12 @@ namespace BossChecklist.UIElements
 
 								BossInfo addedNPC = bosses[npcIndex];
 								Texture2D head = addedNPC.headIconTextures[0].Value;
-								Vector2 pos = new Vector2(pageRect.X + headTextureOffsetX + 15, pageRect.Y + 100);
+								Rectangle headPos = new Rectangle(pageRect.X + headTextureOffsetX + 15, pageRect.Y + 100, head.Width, head.Height);
 								Color headColor = addedNPC.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 
-								spriteBatch.Draw(head, pos, headColor);
+								spriteBatch.Draw(head, headPos, headColor);
 								headTextureOffsetX += head.Width + 5;
-								if (BossLogUI.MouseIntersects(pos.X, pos.Y, head.Width, head.Height)) {
+								if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
 									string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 									if (Main.mouseLeft && Main.mouseLeftRelease) {
@@ -996,16 +997,15 @@ namespace BossChecklist.UIElements
 									int bannerItem = Item.BannerToItem(bannerID);
 									bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
 									Color bannerColor = reachedKillCount ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									if (bannerID <= 0 || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)]) {
+									if (bannerID <= 0 || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
 										continue;
-									}
 
 									for (int j = 0; j < 3; j++) {
-										Vector2 pos = new Vector2(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY);
+										Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY, 16, 16);
 										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
-										spriteBatch.Draw(banner.Value, pos, rect, bannerColor);
+										spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
 
-										if (BossLogUI.MouseIntersects(pos.X, pos.Y, 16, 16)) {
+										if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
 											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
 											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
 											if (!reachedKillCount) {
@@ -1065,13 +1065,13 @@ namespace BossChecklist.UIElements
 									int heightOffSet = 0;
 									int heightOffSetTexture = 0;
 									for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-										Vector2 pos = new Vector2(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY);
+										Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY, 16, 16);
 										Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
-										Main.spriteBatch.Draw(banner.Value, pos, rect, bannerColor);
+										Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
 										heightOffSet += heights[j];
 										heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
 
-										if (BossLogUI.MouseIntersects(pos.X, pos.Y, 16, 16)) {
+										if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
 											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
 											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
 											if (!reachedKillCount) {
@@ -1325,12 +1325,10 @@ namespace BossChecklist.UIElements
 					int offsetX = inner.X < Main.screenWidth / 2 ? 2 : -2;
 					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (texture.Value.Width / 2) + offsetX, inner.Y + (inner.Height / 2) - (texture.Value.Height / 2));
 
-					if (DrawTab(Id)) {
+					if (DrawTab(Id))
 						spriteBatch.Draw(texture.Value, pos, Color.White);
-					}
-					else {
+					else
 						return;
-					}
 
 					if (IsMouseHovering) {
 						List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
@@ -1417,7 +1415,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				CalculatedStyle inner = GetInnerDimensions();
+				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				List<BossInfo> sortedBosses = BossChecklist.bossTracker.SortedBosses;
@@ -1521,25 +1519,27 @@ namespace BossChecklist.UIElements
 						}
 					}
 
-					CalculatedStyle parent = this.Parent.GetInnerDimensions();
+					Rectangle parent = this.Parent.GetInnerDimensions().ToRectangle();
 					int hardModeOffset = sortedBosses[index].progression > BossTracker.WallOfFlesh ? 10 : 0;
 					string looted = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllLoot");
 					string collected = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllCollectibles");
+					Texture2D texture = null;
+					string hoverText = "";
 
 					if (allLoot && allCollect) {
-						Texture2D texture = BossLogUI.goldChestTexture.Value;
-						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2);
-						spriteBatch.Draw(texture, pos2, Color.White);
-						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
-							BossUISystem.Instance.UIHoverText = $"{looted}\n{collected}";
-						}
+						texture = BossLogUI.goldChestTexture.Value;
+						hoverText = $"{looted}\n{collected}";
 					}
 					else if (allLoot || allCollect) {
-						Texture2D texture = BossLogUI.chestTexture.Value;
-						Vector2 pos2 = new Vector2(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2);
-						spriteBatch.Draw(texture, pos2, Color.White);
-						if (BossLogUI.MouseIntersects(pos2.X, pos2.Y, texture.Width, texture.Height)) {
-							BossUISystem.Instance.UIHoverText = allLoot ? looted : collected;
+						texture = BossLogUI.chestTexture.Value;
+						hoverText = allLoot ? looted : collected;
+					}
+
+					if (texture != null) {
+						Rectangle chestPos = new Rectangle(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2, texture.Width, texture.Height);
+						spriteBatch.Draw(texture, chestPos, Color.White);
+						if (Main.MouseScreen.Between(chestPos.TopLeft(), chestPos.BottomRight())) {
+							BossUISystem.Instance.UIHoverText = hoverText;
 						}
 					}
 				}
@@ -1566,15 +1566,15 @@ namespace BossChecklist.UIElements
 							Color hoverColor = IsMouseHovering ? BossLogUI.faded : Color.White;
 							int offsetY = (int)(inner.Y + (stringAdjust.Y / 3) - h / 2);
 
-							Rectangle strikePos = new Rectangle((int)(inner.X - w), offsetY, w, h);
+							Rectangle strikePos = new Rectangle(inner.X - w, offsetY, w, h);
 							Rectangle strikeSrc = new Rectangle(0, 0, w, h);
 							spriteBatch.Draw(strike.Value, strikePos, strikeSrc, hoverColor);
 
-							strikePos = new Rectangle((int)inner.X, offsetY, (int)stringAdjust.X, h);
+							strikePos = new Rectangle(inner.X, offsetY, (int)stringAdjust.X, h);
 							strikeSrc = new Rectangle(w, 0, w, h);
 							spriteBatch.Draw(strike.Value, strikePos, strikeSrc, IsMouseHovering ? Color.Transparent : Color.White);
 
-							strikePos = new Rectangle((int)(inner.X + (int)stringAdjust.X), offsetY, w, h);
+							strikePos = new Rectangle(inner.X + (int)stringAdjust.X, offsetY, w, h);
 							strikeSrc = new Rectangle(w * 2, 0, w, h);
 							spriteBatch.Draw(strike.Value, strikePos, strikeSrc, hoverColor);
 						}
@@ -1620,24 +1620,24 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				CalculatedStyle inner = GetInnerDimensions();
+				Rectangle inner = GetInnerDimensions().ToRectangle();
 				int w = fullBar.Value.Width;
 				int h = fullBar.Value.Height;
-				int barWidth = (int)inner.Width - 8;
+				int barWidth = inner.Width - 8;
 
 				// Beginning of bar
 				Rectangle src = new Rectangle(0, 0, w / 3, h);
-				Rectangle pos = new Rectangle((int)inner.X, (int)inner.Y, w / 3, h);
+				Rectangle pos = new Rectangle(inner.X, inner.Y, w / 3, h);
 				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
 
 				// Center of bar
 				src = new Rectangle(w / 3, 0, w / 3, h);
-				pos = new Rectangle((int)inner.X + 6, (int)inner.Y, barWidth, h);
+				pos = new Rectangle(inner.X + 6, inner.Y, barWidth, h);
 				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
 
 				// End of bar
 				src = new Rectangle(2 * (w / 3), 0, w / 3, h);
-				pos = new Rectangle((int)inner.X + (int)inner.Width - 4, (int)inner.Y, w / 3, h);
+				pos = new Rectangle(inner.X + inner.Width - 4, inner.Y, w / 3, h);
 				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
 
 				BossLogConfiguration configs = BossChecklist.BossLogConfig;
@@ -1657,7 +1657,7 @@ namespace BossChecklist.UIElements
 				float percentage = (float)allDownedEntries / (float)allAccountedEntries;
 				int meterWidth = (int)(barWidth * percentage); 
 
-				Rectangle meterPos = new Rectangle((int)inner.X + 4, (int)inner.Y + 4, meterWidth + 2, (int)inner.Height - 8);
+				Rectangle meterPos = new Rectangle(inner.X + 4, inner.Y + 4, meterWidth + 2, (int)inner.Height - 8);
 				Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
 				bookColor.A = 180;
 				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, Color.White);
@@ -1669,7 +1669,7 @@ namespace BossChecklist.UIElements
 				Vector2 percentPos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.X / 2), inner.Y - stringAdjust.Y);
 				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
 
-				if (BossLogUI.MouseIntersects(inner.X, inner.Y, (int)inner.Width, (int)inner.Height)) {
+				if (Main.MouseScreen.Between(inner.TopLeft(), inner.BottomRight())) {
 					if (ModSourceMode) {
 						int[] value = modAllEntries["Terraria"];
 						float entryPercentage = (float)((float)value[0] / (float)value[1]) * 100;
@@ -1752,9 +1752,8 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				if (BossLogUI.PageNum < 0) {
+				if (BossLogUI.PageNum < 0)
 					return;
-				}
 
 				if (buttonString == "Mods.BossChecklist.BossLog.DrawnText.Records" || buttonString == "LegacyInterface.101") {
 					EntryType BossType = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type;
@@ -1765,6 +1764,7 @@ namespace BossChecklist.UIElements
 					BackgroundColor = Color.Transparent;
 					BorderColor = Color.Transparent;
 				}
+
 				base.DrawSelf(spriteBatch);
 
 				CalculatedStyle innerDimensions = GetInnerDimensions();
@@ -1774,8 +1774,6 @@ namespace BossChecklist.UIElements
 				if (AltButtonNum == -1) {
 					spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 				}
-
-				Rectangle exclamPos = new Rectangle((int)GetInnerDimensions().X - 12, (int)GetInnerDimensions().Y - 12, 36, 36);
 
 				if (AltButtonNum >= 0) {
 					if (BossLogUI.CategoryPageNum == CategoryPage.Record) {
@@ -1795,9 +1793,11 @@ namespace BossChecklist.UIElements
 							selected = 2;
 						}
 
-						Asset<Texture2D> texture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordTabs", AssetRequestMode.ImmediateLoad);
+						Rectangle inner = GetInnerDimensions().ToRectangle();
+						Texture2D texture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordTabs", AssetRequestMode.ImmediateLoad).Value;
+						Rectangle exclamPos = new Rectangle(inner.X + (inner.Width / 2) - 18, inner.Y + (inner.Height / 2) - 18, 36, 36);
 						Rectangle exclamCut = new Rectangle(36 * AltButtonNum, 36 * selected, 36, 36);
-						spriteBatch.Draw(texture.Value, exclamPos, exclamCut, Color.White);
+						spriteBatch.Draw(texture, exclamPos, exclamCut, Color.White);
 
 						if (IsMouseHovering) {
 							BossUISystem.Instance.UIHoverText = hoverTexts[AltButtonNum];
