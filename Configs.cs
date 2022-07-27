@@ -325,7 +325,6 @@ namespace BossChecklist
 			}
 		}
 
-		// TODO: Get timers and counters to properly visualize itself in Multiplayer
 		[BackgroundColor(255, 250, 250)]
 		[Label("$Mods.BossChecklist.Configs.Label.ShowRecordTracking")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ShowRecordTracking")]
