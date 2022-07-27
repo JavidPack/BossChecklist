@@ -103,7 +103,7 @@ namespace BossChecklist
 
 		private bool bossLogVisible;
 		public bool BossLogVisible {
-			get { return bossLogVisible; }
+			get => bossLogVisible;
 			set {
 				if (value) {
 					Append(BookArea);
@@ -601,12 +601,11 @@ namespace BossChecklist
 			UpdateTableofContents();
 		}
 
-		private void ClearForcedDowns() {
-			// Shouldn't need updating through server as Forced Down checks are visually client-sided
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld.Clear();
-		}
+		// Shouldn't need updating through server as Forced Down checks are visually client-sided
+		// TODO: Make it server sided as well similar to Hidden bosses?
+		private static void ClearForcedDowns() => Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld.Clear();
 
-		private void UpdateRecordHighlight() {
+		private static void UpdateRecordHighlight() {
 			if (PageNum >= 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				modPlayer.hasNewRecord[PageNum] = false;
@@ -1113,7 +1112,7 @@ namespace BossChecklist
 			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
-		public bool[] CalculateTableOfContents(List<BossInfo> bossList) {
+		public static bool[] CalculateTableOfContents(List<BossInfo> bossList) {
 			bool[] visibleList = new bool[bossList.Count];
 			for (int i = 0; i < bossList.Count; i++) {
 				BossInfo boss = bossList[i];
@@ -1471,12 +1470,12 @@ namespace BossChecklist
 
 		internal void HideBoss(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.index, false);
+				JumpToBossPage(table.Index, false);
 		}
 
 		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.index, true);
+				JumpToBossPage(table.Index, true);
 		}
 
 		internal void JumpToBossPage(int index, bool leftClick = true) {
@@ -1710,8 +1709,7 @@ namespace BossChecklist
 
 		public static void OverrideForGroups(Recipe recipe, Item item) {
 			// This method taken from RecipeBrowser with permission.
-			string nameOverride;
-			if (recipe.ProcessGroupsForText(item.type, out nameOverride)) {
+			if (recipe.ProcessGroupsForText(item.type, out string nameOverride)) {
 				//Main.toolTip.name = name;
 			}
 			if (nameOverride != "") {

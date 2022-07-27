@@ -336,10 +336,15 @@ namespace BossChecklist.UIElements
 							BossUISystem.Instance.UIHoverText = hoverText;
 						}
 						else if (item.type != ItemID.None || hoverText != "") {
-							Color newcolor = ItemRarity.GetColor(item.rare);
-							float num3 = (float)(int)Main.mouseTextColor / 255f;
+							Color newcolor;
 							if (item.expert || item.expertOnly) {
 								newcolor = Main.DiscoColor;
+							}
+							else if (item.master || item.masterOnly) {
+								newcolor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor);
+							}
+							else {
+								newcolor = ItemRarity.GetColor(item.rare);
 							}
 							Main.HoverItem = item;
 							Main.hoverItemName = $"[c/{newcolor.Hex3()}: {hoverText}]";
@@ -360,7 +365,7 @@ namespace BossChecklist.UIElements
 		{
 			public string Id { get; init; } = "";
 			// Had to put the itemslots in a row in order to be put in a UIList with scroll functionality
-			int order;
+			readonly int order;
 
 			public LootRow(int order) {
 				this.order = order;
@@ -1124,7 +1129,7 @@ namespace BossChecklist.UIElements
 				}
 			}
 
-			public string RecordTimeConversion(int ticks) {
+			internal static string RecordTimeConversion(int ticks) {
 				double seconds = (double)ticks / 60;
 				double seconds00 = seconds % 60;
 				int minutes = (int)seconds / 60;
@@ -1136,7 +1141,7 @@ namespace BossChecklist.UIElements
 				return $"{sign}{minutes}:{seconds00.ToString("00.00")}";
 			}
 
-			public string TicksToPlayTime(long ticks) {
+			internal static string TicksToPlayTime(long ticks) {
 				double seconds = (double)ticks / TimeSpan.TicksPerSecond;
 				double seconds00 = seconds % 60;
 				int minutes = (int)seconds / 60;
@@ -1146,10 +1151,10 @@ namespace BossChecklist.UIElements
 					seconds00 *= -1;
 					sign = "-";
 				}
-				return $"{sign}{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds00.ToString("00.00")}";
+				return $"{sign}{(hours > 0 ? hours + ":" : "")}{(hours > 0 ? minutes.ToString("00") : minutes)}:{seconds00.ToString("00.00")}";
 			}
 
-			public int GetRecordValue(RecordCategory type, int id) {
+			internal static int GetRecordValue(RecordCategory type, int id) {
 				int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
 				if (id != 2 && id != 3)
 					return -1;
@@ -1214,7 +1219,7 @@ namespace BossChecklist.UIElements
 		internal class BookUI : UIImage
 		{
 			public string Id { get; init; } = "";
-			private Asset<Texture2D> book;
+			readonly Asset<Texture2D> book;
 
 			public BookUI(Asset<Texture2D> texture) : base(texture) {
 				book = texture;
@@ -1253,44 +1258,31 @@ namespace BossChecklist.UIElements
 					Vector2 pagePos = new Vector2(panel.Left.Pixels, panel.Top.Pixels);
 					spriteBatch.Draw(pages.Value, pagePos, BossChecklist.BossLogConfig.BossLogColor);
 				}
+
 				if (!Id.EndsWith("_Tab")) {
 					base.DrawSelf(spriteBatch);
 				}
 				else {
 					// Tab drawing
 					SpriteEffects effect = SpriteEffects.FlipHorizontally;
-
-					Color color = new Color(153, 199, 255);
-					if (Id == "Boss_Tab") {
-						color = new Color(255, 168, 168);
-						if (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Boss) || BossLogUI.PageNum == -2) {
-							effect = SpriteEffects.None;
-						}
+					if (Id == "Boss_Tab" && (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Boss) || BossLogUI.PageNum == -2)) {
+						effect = SpriteEffects.None;
 					}
-					else if (Id == "Miniboss_Tab") {
-						color = new Color(153, 253, 119);
-						if (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.MiniBoss) || BossLogUI.PageNum == -2) {
-							effect = SpriteEffects.None;
-						}
+					else if (Id == "Miniboss_Tab" && (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.MiniBoss) || BossLogUI.PageNum == -2)) {
+						effect = SpriteEffects.None;
 					}
-					else if (Id == "Event_Tab") {
-						color = new Color(196, 171, 254);
-						if (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Event) || BossLogUI.PageNum == -2) {
-							effect = SpriteEffects.None;
-						}
-					}
-					else if (Id == "Credits_Tab") {
-						color = new Color(218, 175, 133);
+					else if (Id == "Event_Tab" && (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Event) || BossLogUI.PageNum == -2)) {
+						effect = SpriteEffects.None;
 					}
 					else if (Id == "ToCFilter_Tab") {
 						effect = SpriteEffects.None;
 					}
-					color = Color.Tan;
 
 					if (DrawTab(Id) && BossLogUI.PageNum != -3) {
-						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), color, 0f, Vector2.Zero, effect, 0f);
+						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), Color.Tan, 0f, Vector2.Zero, effect, 0f);
 					}
 				}
+
 				if (Id == "Event_Tab") {
 					// Paper Drawing
 					// The paper part of the UIPanel should be layered on top of all tabs, so it is drawn here
@@ -1402,14 +1394,14 @@ namespace BossChecklist.UIElements
 
 		internal class TableOfContents : UIText
 		{
-			public int index { get; init; }
-			float order = 0;
-			bool nextCheck;
-			bool downed;
-			string displayName;
+			public int Index { get; init; }
+			readonly float order = 0;
+			readonly bool nextCheck;
+			readonly bool downed;
+			readonly string displayName;
 
 			public TableOfContents(int index, float order, string displayName, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
-				this.index = index;
+				this.Index = index;
 				this.order = order;
 				this.nextCheck = nextCheck;
 				this.downed = downed;
@@ -1435,7 +1427,7 @@ namespace BossChecklist.UIElements
 
 				if (order != -1) {
 					BossChecklist BA = BossChecklist.instance;
-					BossInfo selectedBoss = sortedBosses[index];
+					BossInfo selectedBoss = sortedBosses[Index];
 					// Use the appropriate text color for conditions
 					if (BossChecklist.BossLogConfig.ColoredBossText) {
 						if (IsMouseHovering) {
@@ -1449,7 +1441,7 @@ namespace BossChecklist.UIElements
 						else if (downed) {
 							TextColor = Colors.RarityGreen;
 						}
-						if (modPlayer.hasNewRecord[index]) {
+						if (modPlayer.hasNewRecord[Index]) {
 							TextColor = Main.DiscoColor;
 						}
 					}
@@ -1469,23 +1461,23 @@ namespace BossChecklist.UIElements
 						TextColor = Color.DimGray;
 					}
 					if (IsMouseHovering) {
-						BossLogPanel.headNum = index;
+						BossLogPanel.headNum = Index;
 					}
 				}
 
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
 
-				bool ItemDataExists = modPlayer.BossItemsCollected.TryGetValue(sortedBosses[index].Key, out List<ItemDefinition> items);
+				bool ItemDataExists = modPlayer.BossItemsCollected.TryGetValue(sortedBosses[Index].Key, out List<ItemDefinition> items);
 				if (BossChecklist.BossLogConfig.LootCheckVisibility && ItemDataExists) {
 					bool allLoot = true;
 					bool allCollect = true;
 
 					// Loop through player saved loot and boss loot to see if every item was obtained
-					foreach (int loot in sortedBosses[index].lootItemTypes) {
+					foreach (int loot in sortedBosses[Index].lootItemTypes) {
 						// Check for corruption/crimson vanilla items, and skip them based on world evil
 						// May need new method for looking for these items.
-						if (sortedBosses[index].npcIDs[0] < NPCID.Count) {
+						if (sortedBosses[Index].npcIDs[0] < NPCID.Count) {
 							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
 								continue;
 
@@ -1513,7 +1505,7 @@ namespace BossChecklist.UIElements
 					}
 
 					//Repeast everything for collectibles as well
-					foreach (int collectible in sortedBosses[index].collection) {
+					foreach (int collectible in sortedBosses[Index].collection) {
 						if (collectible == -1 || collectible == 0)
 							continue;
 
@@ -1533,7 +1525,7 @@ namespace BossChecklist.UIElements
 					}
 
 					Rectangle parent = this.Parent.GetInnerDimensions().ToRectangle();
-					int hardModeOffset = sortedBosses[index].progression > BossTracker.WallOfFlesh ? 10 : 0;
+					int hardModeOffset = sortedBosses[Index].progression > BossTracker.WallOfFlesh ? 10 : 0;
 					string looted = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllLoot");
 					string collected = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllCollectibles");
 					Texture2D texture = null;
@@ -1559,7 +1551,7 @@ namespace BossChecklist.UIElements
 
 				if (order != -1f) {
 					BossChecklist BA = BossChecklist.instance;
-					BossInfo selectedBoss = sortedBosses[index];
+					BossInfo selectedBoss = sortedBosses[Index];
 					Asset<Texture2D> checkGrid = BossLogUI.checkboxTexture;
 					string checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
 
@@ -1628,9 +1620,7 @@ namespace BossChecklist.UIElements
 				downedEntries = totalEntries = new int[] { 0, 0, 0 };
 			}
 
-			public override void Click(UIMouseEvent evt) {
-				ModSourceMode = !ModSourceMode;
-			}
+			public override void Click(UIMouseEvent evt) => ModSourceMode = !ModSourceMode;
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle inner = GetInnerDimensions().ToRectangle();
@@ -1726,7 +1716,7 @@ namespace BossChecklist.UIElements
 
 		internal class FittedTextPanel : UITextPanel<string>
 		{
-			string text;
+			readonly string text;
 			public FittedTextPanel(string text, float textScale = 1, bool large = false) : base(text, textScale, large) {
 				this.text = text;
 			}
@@ -1744,15 +1734,16 @@ namespace BossChecklist.UIElements
 					ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft() + direction * 1,
 						Color.Black, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), hitbox.Width - (7 * 2), 1);
 				}
-				Vector2 size = ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets,
-					new Vector2(2, 15 + 3) + hitbox.TopLeft(), Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out int hoveredSnippet, hitbox.Width - (7 * 2), false);
+
+				ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft(),
+					Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out _, hitbox.Width - (7 * 2), false);
 			}
 		}
 
 		internal class SubpageButton : UIPanel
 		{
 			string buttonString;
-			int AltButtonNum;
+			readonly int AltButtonNum;
 
 			public SubpageButton(string type) {
 				buttonString = type;
