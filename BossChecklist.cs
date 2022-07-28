@@ -361,6 +361,26 @@ namespace BossChecklist
 					//else
 					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
 					break;
+				case PacketMessageType.RequestForceDownBoss:
+					bossKey = reader.ReadString();
+					bool mark = reader.ReadBoolean();
+					if (mark) {
+						WorldAssist.ForcedMarkedEntries.Add(bossKey);
+					}
+					else {
+						WorldAssist.ForcedMarkedEntries.Remove(bossKey);
+					}
+
+					if (Main.netMode == NetmodeID.Server) {
+						NetMessage.SendData(MessageID.WorldData);
+					}
+					break;
+				case PacketMessageType.RequestClearForceDowns:
+					WorldAssist.ForcedMarkedEntries.Clear();
+					if (Main.netMode == NetmodeID.Server) {
+						NetMessage.SendData(MessageID.WorldData);
+					}
+					break;
 				case PacketMessageType.SendRecordsToServer:
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
 					int totalCount = reader.ReadInt32();

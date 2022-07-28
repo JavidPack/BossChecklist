@@ -260,8 +260,8 @@ Mods: {
 				CollectionTypeDetection: Show Auto-detected Collection Type
 				ResetLoot: Enable Reset Loot and Collection Items Option
 				ResetRecords: Enable Reset Record Option
-				ResetForcedDowns: Enable Reset All Forced Downs Option
-				ResetHiddenEntries: Enable Reset Hidden Entries
+				ResetForcedDowns: Enable Reset Forced Downed Entries Options
+				ResetHiddenEntries: Enable Reset Hidden Entries Option
 				InactiveBossCheck: Inactive Boss Check
 				DisableNewRecords: Disable updating personal records
 				DisableRecordTracking: Disable record tracking

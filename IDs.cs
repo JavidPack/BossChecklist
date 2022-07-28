@@ -39,6 +39,8 @@ namespace BossChecklist
 	{
 		RequestHideBoss,
 		RequestClearHidden,
+		RequestForceDownBoss,
+		RequestClearForceDowns,
 		SendRecordsToServer,
 		RecordUpdate,
 		WorldRecordUpdate,

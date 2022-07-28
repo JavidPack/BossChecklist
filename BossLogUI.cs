@@ -601,9 +601,18 @@ namespace BossChecklist
 			UpdateTableofContents();
 		}
 
-		// Shouldn't need updating through server as Forced Down checks are visually client-sided
-		// TODO: Make it server sided as well similar to Hidden bosses?
-		private static void ClearForcedDowns() => Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld.Clear();
+		private void ClearForcedDowns() {
+			if (!BossChecklist.DebugConfig.ResetForcedDowns || WorldAssist.ForcedMarkedEntries.Count == 0)
+				return;
+
+			WorldAssist.ForcedMarkedEntries.Clear();
+			if (Main.netMode == NetmodeID.MultiplayerClient) {
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.RequestClearForceDowns);
+				packet.Send();
+			}
+			UpdateTableofContents();
+		}
 
 		private static void UpdateRecordHighlight() {
 			if (PageNum >= 0) {
@@ -1319,13 +1328,11 @@ namespace BossChecklist
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				List<string> ChecksRef = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld;
-
 				// Update forced downs. If the boss is actaully downed, remove the force check.
-				if (boss.ForceDownedByPlayer(Main.LocalPlayer)) {
+				if (boss.ForceDowned) {
 					displayName += "*";
 					if (boss.downed()) {
-						ChecksRef.RemoveAll(x => x == boss.Key);
+						WorldAssist.ForcedMarkedEntries.Remove(boss.Key);
 					}
 				}
 
@@ -1481,42 +1488,48 @@ namespace BossChecklist
 		}
 
 		internal void JumpToBossPage(int index, bool leftClick = true) {
-			PageNum = index;
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				// While holding alt, a user can interact with any boss list entry
 				// Left-clicking forces a completion check on or off
 				// Right-clicking hides the boss from the list
-				BossInfo pgBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
+				BossInfo entry = BossChecklist.bossTracker.SortedBosses[index];
 				if (leftClick) {
-					List<string> list = Main.LocalPlayer.GetModPlayer<PlayerAssist>().ForceDownsForWorld;
-					if (list.Contains(pgBoss.Key)) {
-						list.RemoveAll(x => x == pgBoss.Key);
+					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
+						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
 					}
-					else if (!pgBoss.IsDownedOrForced) {
-						list.Add(pgBoss.Key);
+					else if (!entry.downed()) {
+						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
 					}
 					UpdateTableofContents();
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
+						packet.Write(entry.Key);
+						packet.Write(entry.ForceDowned);
+						packet.Send();
+					}
 				}
 				else {
-					pgBoss.hidden = !pgBoss.hidden;
-					if (pgBoss.hidden) {
-						WorldAssist.HiddenBosses.Add(pgBoss.Key);
+					entry.hidden = !entry.hidden;
+					if (entry.hidden) {
+						WorldAssist.HiddenBosses.Add(entry.Key);
 					}
 					else {
-						WorldAssist.HiddenBosses.Remove(pgBoss.Key);
+						WorldAssist.HiddenBosses.Remove(entry.Key);
 					}
 					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 					UpdateTableofContents();
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestHideBoss);
-						packet.Write(pgBoss.Key);
-						packet.Write(pgBoss.hidden);
+						packet.Write(entry.Key);
+						packet.Write(entry.hidden);
 						packet.Send();
 					}
 				}
 				return; // Alt-clicking should never jump to a boss page
 			}
+			PageNum = index;
 			PageOne.RemoveAllChildren();
 			ResetPageButtons();
 			UpdateCatPage(CategoryPageNum);

@@ -28,6 +28,7 @@ namespace BossChecklist
 		public static bool[] CheckedRecordIndexes;
 
 		public static HashSet<string> HiddenBosses = new HashSet<string>();
+		public static HashSet<string> ForcedMarkedEntries = new HashSet<string>();
 
 		public static bool downedBloodMoon;
 		public static bool downedFrostMoon;
@@ -62,6 +63,7 @@ namespace BossChecklist
 
 		public override void OnWorldLoad() {
 			HiddenBosses.Clear();
+			ForcedMarkedEntries.Clear();
 
 			downedBloodMoon = false;
 			downedFrostMoon = false;
@@ -97,6 +99,7 @@ namespace BossChecklist
 
 		public override void SaveWorldData(TagCompound tag) {
 			var HiddenBossesList = new List<string>(HiddenBosses);
+			var ForcedMarkedList = new List<string>(ForcedMarkedEntries);
 
 			var downed = new List<string>();
 			if (downedBloodMoon)
@@ -124,6 +127,7 @@ namespace BossChecklist
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
+			tag["downed_Forced"] = ForcedMarkedList;
 
 			if (worldRecords != null) {
 				tag["WorldRecords"] = worldRecords.Concat(unloadedWorldRecords).ToList(); // Combine loaded and unloaded data to prevent lost world record data
@@ -150,6 +154,11 @@ namespace BossChecklist
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {
 				HiddenBosses.Add(bossKey);
+			}
+
+			var ForcedMarkedList = tag.GetList<string>("downed_Forced");
+			foreach (var bossKey in ForcedMarkedList) {
+				ForcedMarkedEntries.Add(bossKey);
 			}
 
 			var downed = tag.GetList<string>("downed");
@@ -197,6 +206,11 @@ namespace BossChecklist
 			foreach (var bossKey in HiddenBosses) {
 				writer.Write(bossKey);
 			}
+
+			writer.Write(ForcedMarkedEntries.Count);
+			foreach (var bossKey in ForcedMarkedEntries) {
+				writer.Write(bossKey);
+			}
 		}
 
 		public override void NetReceive(BinaryReader reader) {
@@ -224,6 +238,14 @@ namespace BossChecklist
 			for (int i = 0; i < count; i++) {
 				HiddenBosses.Add(reader.ReadString());
 			}
+
+			ForcedMarkedEntries.Clear();
+			count = reader.ReadInt32();
+			for (int i = 0; i < count; i++) {
+				ForcedMarkedEntries.Add(reader.ReadString());
+			}
+
+			// Update checklist to match Hidden and Forced Downed entries
 			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) {
 				BossUISystem.Instance.BossLog.UpdateTableofContents();

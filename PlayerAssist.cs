@@ -26,10 +26,6 @@ namespace BossChecklist
 
 		public Dictionary<string, List<ItemDefinition>> BossItemsCollected;
 
-		// Key represents worldID, Value represents BossKeys
-		public Dictionary<string, List<string>> AllStoredForceDowns;
-		public List<string> ForceDownsForWorld;
-
 		// The 'in progress' values for records. This is what is updated during boss fights.
 		public int[] Tracker_Duration;
 		public int[] Tracker_HitsTaken;
@@ -43,8 +39,6 @@ namespace BossChecklist
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
 			BossItemsCollected = new Dictionary<string, List<ItemDefinition>>();
-			AllStoredForceDowns = new Dictionary<string, List<string>>();
-			ForceDownsForWorld = new List<string>();
 
 			// For being able to complete records in Multiplayer
 			Tracker_Duration = Array.Empty<int>();
@@ -66,11 +60,6 @@ namespace BossChecklist
 				TempRecords.Add(bossRecord.Key, bossRecord.Value);
 			}
 
-			TagCompound TempChecks = new TagCompound();
-			foreach(KeyValuePair<string, List<string>> entry in AllStoredForceDowns) {
-				TempChecks.Add(entry.Key, entry.Value);
-			}
-
 			TagCompound TempItemsCollected = new TagCompound();
 			foreach (KeyValuePair<string, List<ItemDefinition>> entry in BossItemsCollected) {
 				TempItemsCollected.Add(entry.Key, entry.Value);
@@ -79,7 +68,6 @@ namespace BossChecklist
 			tag["BossLogPrompt"] = hasOpenedTheBossLog;
 			tag["StoredRecords"] = TempRecords;
 			tag["BossItemsCollected"] = TempItemsCollected;
-			tag["ForcedChecks"] = TempChecks;
 		}
 
 		public override void LoadData(TagCompound tag) {
@@ -91,13 +79,6 @@ namespace BossChecklist
 			AllStoredRecords.Clear();
 			foreach (KeyValuePair<string, object> bossRecords in SavedStoredRecords) {
 				AllStoredRecords.Add(bossRecords.Key, SavedStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
-			}
-
-			// Do the same for any checkmarks the user wants to force
-			TagCompound SavedChecks = tag.Get<TagCompound>("ForcedChecks");
-			AllStoredForceDowns.Clear();
-			foreach (KeyValuePair<string, object> entry in SavedChecks) {
-				AllStoredForceDowns.Add(entry.Key, SavedChecks.GetList<string>(entry.Key).ToList());
 			}
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
@@ -162,13 +143,6 @@ namespace BossChecklist
 				packet.Write(Player.whoAmI);
 				packet.Send(); // Multiplayer client --> Server
 			}
-
-			// If the player has not been in this world before, create an entry for this world
-			if (!AllStoredForceDowns.ContainsKey(WorldID)) {
-				AllStoredForceDowns.Add(WorldID, new List<string>());
-			}
-			// Then make ListedChecks the list needed for the designated world
-			AllStoredForceDowns.TryGetValue(WorldID, out ForceDownsForWorld);
 
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;

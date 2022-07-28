@@ -577,7 +577,7 @@ namespace BossChecklist.UIElements
 						string isDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}";
 						string notDefeated = $"{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Undefeated", Main.worldName)}";
 
-						if (selectedBoss.ForceDownedByPlayer(Main.LocalPlayer)) {
+						if (selectedBoss.ForceDowned) {
 							isDefeated = $"''{Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Defeated", Main.worldName)}''";
 						}
 
