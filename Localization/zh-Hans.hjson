@@ -106,16 +106,16 @@ Mods: {
 				CopyKey: 点击以复制内部'Boss键值'至剪切板
 				CopySource: 点击以复制内部'Mod源'至剪切板
 				ViewPage: 点击以查看页面
-				KDRDescription: 你击败该Boss和该Boss击败你的总次数!
 				DurationDescription: 你击败该Boss所用的最短时间!
 				HitsTakenDescription: 尽可能的闪避攻击! 试着无伤击败该Boss!
 				ToggleVisibility: 切换隐藏可见性
 				AllLoot: 已获得所有的战利品!
 				AllCollectibles: 已获得所有的收藏品!
 				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
-				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间
-				BestKDRDescription: 取得最好成绩之前你尝试的次数
-				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数
+				KDRDescription: 你遭遇该Boss的总次数!
+				BestKDRDescription: 你击败该Boss和该Boss击败你的总次数!
+				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间!
+				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数!
 				ClaimRecord: 成为第一个打破世界纪录的人!
 				ProgressionModeIsEnabled:
 					'''
