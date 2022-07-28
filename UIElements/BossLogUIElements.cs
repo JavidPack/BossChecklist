@@ -677,7 +677,7 @@ namespace BossChecklist.UIElements
 											// Reset UI positions when changing the page
 											BossLogUI.PageNum = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 											BossUISystem.Instance.BossLog.ResetUIPositioning();
-											// TODO: does this need to return??
+											return; // New page, start drawing from beginning
 										}
 									}
 								}
