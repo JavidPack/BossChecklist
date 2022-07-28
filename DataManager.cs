@@ -26,6 +26,7 @@ namespace BossChecklist
 		public BossRecord(string bossKey) {
 			this.bossKey = bossKey;
 		}
+		public override string ToString() => $"Personal Records for: '{bossKey}'";
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
@@ -36,7 +37,7 @@ namespace BossChecklist
 	}
 
 	/// <summary>
-	/// Record container for world-based records. All world records should be stored here and saved to a ModSystem.
+	/// Record container for world-based records. All world records should be stored within this class and saved to a ModSystem.
 	/// </summary>
 	public class WorldRecord : TagSerializable
 	{
@@ -60,6 +61,8 @@ namespace BossChecklist
 				{ nameof(stats), stats }
 			};
 		}
+
+		public override string ToString() => $"World Records for: '{bossKey}'";
 	}
 
 	/// <summary>

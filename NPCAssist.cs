@@ -29,7 +29,7 @@ namespace BossChecklist
 				WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
 
 				if (Main.netMode == NetmodeID.SinglePlayer) {
-					WorldAssist.Tracker_StartingPlayers[recordIndex][Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted
+					WorldAssist.Tracker_StartingPlayers[recordIndex, Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted
 					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 					modPlayer.Tracker_Duration[recordIndex] = 0;
 					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
@@ -39,7 +39,7 @@ namespace BossChecklist
 						if (!Main.player[j].active)
 							continue; // skip any inactive players
 
-						WorldAssist.Tracker_StartingPlayers[recordIndex][j] = true; // Active players when the boss spawns will be counted
+						WorldAssist.Tracker_StartingPlayers[recordIndex, j] = true; // Active players when the boss spawns will be counted
 
 						// This is updated serverside
 						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
@@ -88,7 +88,9 @@ namespace BossChecklist
 
 					// Reset world variables after record checking takes place
 					WorldAssist.Tracker_ActiveEntry[recordIndex] = false;
-					WorldAssist.Tracker_StartingPlayers[recordIndex] = new bool[Main.maxPlayers];
+					for (int i = 0; i < Main.maxPlayers; i++) {
+						WorldAssist.Tracker_StartingPlayers[recordIndex, i] = false;
+					}
 				}
 			}
 		}
@@ -172,7 +174,7 @@ namespace BossChecklist
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
 
 			// Player must have contributed to the boss fight
-			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
+			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex, Main.myPlayer]) {
 				return;
 			}
 
@@ -238,7 +240,7 @@ namespace BossChecklist
 
 			foreach (Player player in Main.player) {
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				if (!player.active || !npc.playerInteraction[player.whoAmI] || !WorldAssist.Tracker_StartingPlayers[recordIndex][player.whoAmI]) {
+				if (!player.active || !npc.playerInteraction[player.whoAmI] || !WorldAssist.Tracker_StartingPlayers[recordIndex, player.whoAmI]) {
 					continue;
 				}
 
@@ -356,7 +358,7 @@ namespace BossChecklist
 
 			foreach (Player player in Main.player) {
 				// Players must be active AND have interacted with the boss AND cannot have recordingstats disabled
-				if (!player.active || !npc.playerInteraction[player.whoAmI] || !WorldAssist.Tracker_StartingPlayers[recordIndex][player.whoAmI]) {
+				if (!player.active || !npc.playerInteraction[player.whoAmI] || !WorldAssist.Tracker_StartingPlayers[recordIndex, player.whoAmI]) {
 					continue;
 				}
 
@@ -419,7 +421,7 @@ namespace BossChecklist
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
 
 			// Player must have contributed to the boss fight
-			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex][Main.myPlayer]) {
+			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex, Main.myPlayer]) {
 				return;
 			}
 

@@ -194,7 +194,7 @@ namespace BossChecklist
 				layers.Insert(playerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Record Tracker Debugger",
 					delegate {
 						// Currently, this debug feature is limited to singleplayer as the server does not display its info.
-						if (Main.netMode == NetmodeID.SinglePlayer)
+						if (Main.netMode != NetmodeID.SinglePlayer)
 							return true;
 
 						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, true);
