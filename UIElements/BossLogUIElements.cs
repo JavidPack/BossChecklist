@@ -735,12 +735,12 @@ namespace BossChecklist.UIElements
 									else if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Attempt");
 										achCoord = new int[] { 0, 9 };
-										recordValue = record.kills == 0 ? Unchallenged : recordValue = $"#{record.kills}";
+										recordValue = record.kills == 0 ? Unchallenged : $"#{record.kills}";
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.FirstRecord) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PlayTime");
 										achCoord = new int[] { 7, 10 };
-										recordValue = record.kills == 0 ? Unchallenged : recordValue = $"{TicksToPlayTime(record.playTimeFirst)}";
+										recordValue = record.kills == 0 ? Unchallenged : $"{TicksToPlayTime(record.playTimeFirst)}";
 									}
 									else {
 										// Kills & Deaths
@@ -762,7 +762,7 @@ namespace BossChecklist.UIElements
 									achCoord = new int[] { 4, 9 };
 
 									if (BossLogUI.RecordPageSelected == RecordCategory.PreviousAttempt) {
-										recordValue = record.durationPrev == -1 ? NoRecord : recordValue = RecordTimeConversion(record.durationPrev);
+										recordValue = record.durationPrev == -1 ? NoRecord : RecordTimeConversion(record.durationPrev);
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.FirstRecord) {
 										recordValue = record.durationFirst == -1 ? NoRecord : RecordTimeConversion(record.durationFirst);
@@ -773,7 +773,7 @@ namespace BossChecklist.UIElements
 									else if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DurationWorld");
 										achCoord = new int[] { 2, 12 };
-										recordValue = wldRecord.durationWorld < 0 ? NoRecord : recordValue = RecordTimeConversion(wldRecord.durationWorld);
+										recordValue = wldRecord.durationWorld == -1 ? NoRecord : RecordTimeConversion(wldRecord.durationWorld);
 									}
 								}
 								else if (recordSlot == 3) { // Hits Taken
@@ -787,7 +787,7 @@ namespace BossChecklist.UIElements
 										recordValue = record.hitsTakenFirst == -1 ? NoRecord : record.hitsTakenFirst.ToString();
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.BestRecord) {
-										recordValue = record.hitsTakenBest == -1 ? NoRecord : recordValue = record.hitsTakenBest.ToString();
+										recordValue = record.hitsTakenBest == -1 ? NoRecord : record.hitsTakenBest.ToString();
 									}
 									else if (BossLogUI.RecordPageSelected == RecordCategory.WorldRecord) {
 										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");

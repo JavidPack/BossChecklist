@@ -206,6 +206,9 @@ namespace BossChecklist
 							return true;
 
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						if (modPlayer.Tracker_Duration == null || modPlayer.Tracker_Duration.Length == 0)
+							return true; // fixes a silent error on servers when the trackers have not yet been populated
+						
 						string debugText =
 							$"[#{configIndex}] {BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} [{recordIndex}]" +
 							$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +

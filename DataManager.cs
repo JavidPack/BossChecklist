@@ -247,19 +247,19 @@ namespace BossChecklist
 			};
 		}
 
-		internal void NetSend(BinaryWriter writer, NetRecordID specificRecord) {
+		internal void NetSend(BinaryWriter writer, NetRecordID netRecords) {
 			// Write the record type(s) we are changing. NetRecieve will need to read this value.
-			writer.Write((int)specificRecord);
+			writer.Write((int)netRecords);
 
 			// Packet should have any beaten record values and holders written on it
-			if (specificRecord.HasFlag(NetRecordID.Duration_Best)) {
+			if (netRecords.HasFlag(NetRecordID.Duration_Best)) {
 				writer.Write(durationWorld);
 				writer.Write(durationHolder.Count);
 				foreach (string name in durationHolder) {
 					writer.Write(name);
 				}
 			}
-			if (specificRecord.HasFlag(NetRecordID.HitsTaken_Best)) {
+			if (netRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
 				writer.Write(hitsTakenWorld);
 				writer.Write(hitsTakenHolder.Count);
 				foreach (string name in hitsTakenHolder) {
@@ -268,27 +268,25 @@ namespace BossChecklist
 			}
 		}
 
-		internal void NetRecieve(BinaryReader reader, bool durationBeaten, bool hitsTakenBeaten) {
+		internal void NetRecieve(BinaryReader reader) {
 			// Read the type of record being updated
-			NetRecordID brokenRecords = (NetRecordID)reader.ReadInt32();
+			NetRecordID netRecords = (NetRecordID)reader.ReadInt32();
 
 			totalKills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
 
 			// Set the world record values and holders
-			if (brokenRecords.HasFlag(NetRecordID.Duration_Best)) {
+			if (netRecords.HasFlag(NetRecordID.Duration_Best)) {
 				durationWorld = reader.ReadInt32();
-				if (durationBeaten)
-					durationHolder.Clear();
 				int durationHolderTotal = reader.ReadInt32();
+				durationHolder.Clear();
 				for (int i = 0; i < durationHolderTotal; i++) {
 					durationHolder.Add(reader.ReadString());
 				}
 			}
-			if (brokenRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
+			if (netRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
 				hitsTakenWorld = reader.ReadInt32();
-				if (hitsTakenBeaten)
-					hitsTakenHolder.Clear();
 				int hitsTakenHolderTotal = reader.ReadInt32();
+				hitsTakenHolder.Clear();
 				for (int i = 0; i < hitsTakenHolderTotal; i++) {
 					hitsTakenHolder.Add(reader.ReadString());
 				}
