@@ -260,7 +260,7 @@ Mods: {
 				CollectionTypeDetection: 显示自动检测的集合类型
 				ResetLoot: 开启重置战利品和收藏品选项
 				ResetRecords: 开启重置记录选项
-				ResetForcedDowns: 开启重置被强行击败的条目选项
+				ResetForcedDowns: 开启重置被手动标记击败的条目选项
 				ResetHiddenEntries: 开启重置隐藏的条目选项
 				InactiveBossCheck: 检查不活跃的Boss
 				DisableNewRecords: 禁用更新新记录
@@ -326,7 +326,7 @@ Mods: {
 					右键双击所选Boss页面上的记录会重置记录.
 					右键双击所选Boss页面上的'记录'按钮会重置所有Boss的记录.
 					'''
-				ResetForcedDowns: 右键点击目录页上的过滤标签以重置所有世界中的强行击败.
+				ResetForcedDowns: 右键点击目录页上的过滤标签以重置所有世界中的被手动标记击败.
 				ResetHiddenEntries: 右键双击'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
 				InactiveBossCheck: 
 					'''
