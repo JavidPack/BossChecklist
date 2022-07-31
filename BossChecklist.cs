@@ -423,7 +423,6 @@ namespace BossChecklist
 					// World Records should be shared for all clients
 					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
 					recordIndex = reader.ReadInt32();
-					Main.NewText(reader.ToString());
 					WorldAssist.worldRecords[recordIndex].stats.NetRecieve(reader);
 
 					// Display 'New World Record!' text if the player was within the new list of record holders

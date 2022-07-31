@@ -232,7 +232,7 @@ namespace BossChecklist
 
 			// Timer sounds when a player is about to respawn
 			if (BossChecklist.ClientConfig.TimerSounds) {
-				if (Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0) {
+				if (Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0) {
 					SoundEngine.PlaySound(SoundID.MaxMana);
 				}
 			}
