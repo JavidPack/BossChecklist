@@ -1374,9 +1374,11 @@ namespace BossChecklist
 			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported) {
+				if (boss.hidden)
 					continue;
-				}
+
+				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
+					continue;
 
 				if (boss.progression <= BossTracker.WallOfFlesh) {
 					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
