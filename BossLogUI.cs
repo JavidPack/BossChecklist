@@ -693,47 +693,15 @@ namespace BossChecklist
 			if (!BossChecklist.DebugConfig.ResetLootItems)
 				return;
 
-			Player player = Main.LocalPlayer;
-			PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-
 			if (CategoryPageNum == CategoryPage.Loot) {
-				string id = "";
-				int itemType = -1;
-				if (listeningElement is LogItemSlot slot) {
-					id = slot.Id;
-					itemType = slot.item.type;
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				// If tthe page button was double right-clicked, clear all items from the player's boss loot list
+				// If an item slot was double right-clicked, remove only that item from the boss loot list
+				if (listeningElement is SubpageButton) {
+					modPlayer.BossItemsCollected.Clear();
 				}
-
-
-				if (id == "") {
-					// If an Alt key is held while double right-clicking the Loot tab, all items from every boss will be cleared.
-					// Otherwise, only the items for the selected page's boss will be cleared.
-					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						foreach (KeyValuePair<string, List<ItemDefinition>> entry in modPlayer.BossItemsCollected) {
-							entry.Value.Clear();
-						}
-					}
-					else {
-						BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
-						if (modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> items)) {
-							items.Clear();
-						}
-					}
-				}
-				else if (id.StartsWith("loot_")) {
-					// If an Alt key is held while double right-clicking an item slot, that item will be cleared from all boss item lists.
-					// Otherwise, only the selected page's boss will have that item cleared.
-					if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-						foreach (KeyValuePair<string, List<ItemDefinition>> entry in modPlayer.BossItemsCollected) {
-							entry.Value.RemoveAll(x => x.Type == itemType);
-						}
-					}
-					else {
-						BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
-						if (modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> items)) {
-							items.RemoveAll(x => x.Type == itemType);
-						}
-					}
+				else if (listeningElement is LogItemSlot slot) {
+					modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
 				}
 				OpenLoot();
 			}
@@ -1061,10 +1029,8 @@ namespace BossChecklist
 
 			pageTwoItemList.Clear();
 
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (!modPlayer.BossItemsCollected.TryGetValue(selectedBoss.Key, out List<ItemDefinition> obtainedItems))
-				return;
+			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
 
 			LootRow newRow = new LootRow(0) {
 				Id = "Loot0"

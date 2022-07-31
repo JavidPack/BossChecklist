@@ -60,7 +60,8 @@ namespace BossChecklist
 		/// All currently loaded bosses/minibosses/events sorted in progression order.
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
-		internal bool[] BossCache; 
+		internal bool[] BossCache;
+		internal bool[] BossLootCache;
 		internal List<OrphanInfo> ExtraData;
 		internal bool BossesFinalized = false;
 		internal bool AnyModHasOldCall = false;
@@ -298,6 +299,7 @@ namespace BossChecklist
 		}
 
 		internal void FinalizeBossLootTables() {
+			BossLootCache = new bool[ItemLoader.ItemCount];
 			foreach (BossInfo boss in SortedBosses) {
 				// Loot is easily found through the item drop database.
 				foreach (int npc in boss.npcIDs) {
@@ -333,6 +335,9 @@ namespace BossChecklist
 						boss.lootItemTypes.Add(ItemID.CultistBossBag);
 					}
 				}
+
+				// After loot is assigned, mark the item types as boss loot
+				boss.lootItemTypes.ForEach(x => BossLootCache[x] = true);
 
 				// Assign this boss's treasure bag, looking through the loot list provided
 				if (!vanillaBossBags.TryGetValue(boss.Key, out boss.treasureBag)) {

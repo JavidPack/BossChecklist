@@ -10,20 +10,11 @@ namespace BossChecklist
 	class ItemAssist : GlobalItem
 	{
 		public override bool OnPickup(Item item, Player player) {
-			if (Main.netMode != NetmodeID.Server && Main.myPlayer == player.whoAmI) {
-				// Loot and Collections Updating
-				List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
-				PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
-				foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
-					if (entry.loot.Any(x => x.itemId == item.type)) {
-						if (!modplayer.BossItemsCollected.TryGetValue(entry.Key, out List<ItemDefinition> items))
-							continue; // Skip to next entry if this entry does not exist within BossItemsCollected
-
-						// Add the item to the list if it is not already present
-						if (!items.Any(x => x.Type == item.type)) {
-							items.Add(new ItemDefinition(item.type));
-						}
-					}
+			if (Main.netMode != NetmodeID.Server && Main.myPlayer == player.whoAmI && BossChecklist.bossTracker.BossLootCache[item.type]) {
+				// Add the item to the list if it is not already present
+				List<ItemDefinition> itemsList = player.GetModPlayer<PlayerAssist>().BossItemsCollected;
+				if (!itemsList.Any(x => x.Type == item.type)) {
+					itemsList.Add(new ItemDefinition(item.type));
 				}
 			}
 			if (item.type == ItemID.TorchGodsFavor && !WorldAssist.downedTorchGod) {
@@ -37,20 +28,9 @@ namespace BossChecklist
 
 		public override void OnCreate(Item item, ItemCreationContext context) {
 			if (Main.netMode != NetmodeID.Server) {
-				Player player = Main.LocalPlayer;
-				// Loot and Collections Updating
-				List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
-				PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
-				foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
-					if (entry.loot.Any(x => x.itemId == item.type)) {
-						if (!modplayer.BossItemsCollected.TryGetValue(entry.Key, out List<ItemDefinition> items))
-							continue; // Skip to next entry if this entry does not exist within BossItemsCollected
-
-						// Add the item to the list if it is not already present
-						if (!items.Any(x => x.Type == item.type)) {
-							items.Add(new ItemDefinition(item.type));
-						}
-					}
+				List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
+				if (!itemsList.Any(x => x.Type == item.type)) {
+					itemsList.Add(new ItemDefinition(item.type));
 				}
 			}
 		}

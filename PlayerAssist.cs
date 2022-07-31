@@ -23,8 +23,7 @@ namespace BossChecklist
 		// We split up AllStoredRecords with 'Main.ActiveWorldFileData.UniqueId.ToString()' as keys
 		public Dictionary<string, List<BossRecord>> AllStoredRecords;
 		public List<BossRecord> RecordsForWorld;
-
-		public Dictionary<string, List<ItemDefinition>> BossItemsCollected;
+		public List<ItemDefinition> BossItemsCollected;
 
 		// The 'in progress' values for records. This is what is updated during boss fights.
 		public int[] Tracker_Duration;
@@ -38,7 +37,7 @@ namespace BossChecklist
 
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
 			RecordsForWorld = new List<BossRecord>();
-			BossItemsCollected = new Dictionary<string, List<ItemDefinition>>();
+			BossItemsCollected = new List<ItemDefinition>();
 
 			// For being able to complete records in Multiplayer
 			Tracker_Duration = Array.Empty<int>();
@@ -60,14 +59,9 @@ namespace BossChecklist
 				TempRecords.Add(bossRecord.Key, bossRecord.Value);
 			}
 
-			TagCompound TempItemsCollected = new TagCompound();
-			foreach (KeyValuePair<string, List<ItemDefinition>> entry in BossItemsCollected) {
-				TempItemsCollected.Add(entry.Key, entry.Value);
-			}
-
 			tag["BossLogPrompt"] = hasOpenedTheBossLog;
 			tag["StoredRecords"] = TempRecords;
-			tag["BossItemsCollected"] = TempItemsCollected;
+			tag["BossLootObtained"] = BossItemsCollected;
 		}
 
 		public override void LoadData(TagCompound tag) {
@@ -75,17 +69,20 @@ namespace BossChecklist
 
 			// Grab the player's record data so we can grab what we need in OnEnterWorld().
 			TagCompound SavedStoredRecords = tag.Get<TagCompound>("StoredRecords");
-			// Clear the list so we can convert our TagCompund back to a Dictionary
-			AllStoredRecords.Clear();
+			AllStoredRecords.Clear(); // Clear the list so we can convert our TagCompund back to a Dictionary
 			foreach (KeyValuePair<string, object> bossRecords in SavedStoredRecords) {
 				AllStoredRecords.Add(bossRecords.Key, SavedStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
 			}
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
-			TagCompound SavedItemsCollected = tag.Get<TagCompound>("BossItemsCollected");
-			BossItemsCollected.Clear();
-			foreach (KeyValuePair<string, object> entry in SavedItemsCollected) {
-				BossItemsCollected.Add(entry.Key, SavedItemsCollected.GetList<ItemDefinition>(entry.Key).ToList());
+			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList();
+
+			// Recover old data to convert to new data // TODO: Remove in future update
+			TagCompound oldData = tag.Get<TagCompound>("BossItemsCollected");
+			if (oldData.Count != 0) {
+				foreach (KeyValuePair<string, object> bossRecords in oldData) {
+					BossItemsCollected.AddRange(oldData.GetList<ItemDefinition>(bossRecords.Key).ToList());
+				}
 			}
 		}
 
@@ -95,13 +92,6 @@ namespace BossChecklist
 
 			// PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
 			enteredWorldReset = true;
-
-			// Add any new bosses missing inside of BossItemsCollected
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (!BossItemsCollected.TryGetValue(boss.Key, out List<ItemDefinition> value)) {
-					BossItemsCollected.Add(boss.Key, new List<ItemDefinition>());
-				}
-			}
 
 			// Upon entering a world, determine if records already exist for a player and copy them into 'RecordsForWorld'
 			RecordsForWorld.Clear(); // The list must be cleared first, otherwise the list will contain items from previously entered worlds

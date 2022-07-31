@@ -1467,8 +1467,7 @@ namespace BossChecklist.UIElements
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
 
-				bool ItemDataExists = modPlayer.BossItemsCollected.TryGetValue(sortedBosses[Index].Key, out List<ItemDefinition> items);
-				if (BossChecklist.BossLogConfig.LootCheckVisibility && ItemDataExists) {
+				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
 					bool allLoot = true;
 					bool allCollect = true;
 
@@ -1483,8 +1482,7 @@ namespace BossChecklist.UIElements
 							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
 								continue;
 						}
-						// Find the index of the itemID within the player saved loot
-						int indexLoot = items.FindIndex(x => x.Type == loot);
+
 						// Skip expert/master mode items if the world is not in expert/master mode.
 						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
 						if (!Main.expertMode || !Main.masterMode) {
@@ -1495,20 +1493,20 @@ namespace BossChecklist.UIElements
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue;
 						}
+
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
-						if (indexLoot == -1) {
+						if (modPlayer.BossItemsCollected.Any(x => x.Type == loot)) {
 							allLoot = false;
 							break;
 						}
 					}
 
-					//Repeast everything for collectibles as well
+					//Repeat everything for collectibles as well
 					foreach (int collectible in sortedBosses[Index].collection) {
 						if (collectible == -1 || collectible == 0)
 							continue;
 
-						int indexCollect = items.FindIndex(x => x.Type == collectible);
 						if (!Main.expertMode || !Main.masterMode) {
 							Item checkItem = ContentSamples.ItemsByType[collectible];
 							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
@@ -1517,7 +1515,7 @@ namespace BossChecklist.UIElements
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue;
 						}
-						if (indexCollect == -1) {
+						if (modPlayer.BossItemsCollected.Any(x => x.Type == collectible)) {
 							allCollect = false;
 							break;
 						}

@@ -322,8 +322,8 @@ Mods: {
 				ResetLoot: 
 					'''
 					Remove a selected item from your saved loot/collection by double right-clicking the selected item slot.
-					Clear the entire loot/collection list of a boss by double right-clicking the 'Loot & Collection' button.
-					Hold Alt to remove the applicable items from ALL bosses.
+					Clear the entire loot/collection list by double right-clicking the 'Loot & Collection' button.
+					This will apply to ALL boss loot lists.
 					'''
 				ResetRecords: 
 					'''
