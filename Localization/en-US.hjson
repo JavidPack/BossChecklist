@@ -287,10 +287,10 @@ Mods: {
 				MaskHardMode: Hides ALL content, overriding the options you have toggled above.
 				OnlyBosses: If enabled, the checklist and page navigation will only display boss entries.
 				HideUnavailable: 
-					```
+					'''
 					If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
 					Ex. Frost Legion while it is not Xmas
-					```
+					'''
 				HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
 				DespawnMessageType:
 					'''
