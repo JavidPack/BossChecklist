@@ -97,6 +97,14 @@ namespace BossChecklist
 			}
 		}
 
+		public override void OnWorldUnload() {
+			// Reset back to false on world unload to ensure event completions do not bleed over into the next world load
+			isBloodMoon = false;
+			isEclipse = false;
+			isFrostMoon = false;
+			isPumpkinMoon = false;
+		}
+
 		public override void SaveWorldData(TagCompound tag) {
 			var HiddenBossesList = new List<string>(HiddenBosses);
 			var ForcedMarkedList = new List<string>(ForcedMarkedEntries);
