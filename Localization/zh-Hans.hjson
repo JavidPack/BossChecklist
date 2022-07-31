@@ -106,16 +106,16 @@ Mods: {
 				CopyKey: 点击以复制内部'Boss键值'至剪切板
 				CopySource: 点击以复制内部'Mod源'至剪切板
 				ViewPage: 点击以查看页面
-				KDRDescription: 你击败该Boss和该Boss击败你的总次数!
 				DurationDescription: 你击败该Boss所用的最短时间!
 				HitsTakenDescription: 尽可能的闪避攻击! 试着无伤击败该Boss!
 				ToggleVisibility: 切换隐藏可见性
 				AllLoot: 已获得所有的战利品!
 				AllCollectibles: 已获得所有的收藏品!
 				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
-				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间
-				BestKDRDescription: 取得最好成绩之前你尝试的次数
-				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数
+				KDRDescription: 你遭遇该Boss的总次数!
+				BestKDRDescription: 你击败该Boss和该Boss击败你的总次数!
+				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间!
+				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数!
 				ClaimRecord: 成为第一个打破世界纪录的人!
 				ProgressionModeIsEnabled:
 					'''
@@ -220,7 +220,8 @@ Mods: {
 				ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
 				BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
 				Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
-				DebugBossLogFeatures: "[i:3619] [c/ffeb6e:Boss日志功能调试]"
+				DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
+				DebugResetData: "[i:575] [c/ffeb6e:重置数据选项]"
 			}
 
 			Label: {
@@ -259,6 +260,8 @@ Mods: {
 				CollectionTypeDetection: 显示自动检测的集合类型
 				ResetLoot: 开启重置战利品和收藏品选项
 				ResetRecords: 开启重置记录选项
+				ResetForcedDowns: 开启重置被手动标记击败的条目选项
+				ResetHiddenEntries: 开启重置隐藏的条目选项
 				InactiveBossCheck: 检查不活跃的Boss
 				DisableNewRecords: 禁用更新新记录
 				DisableRecordTracking: 禁用完整的跟踪记录
@@ -269,7 +272,7 @@ Mods: {
 				BossLogColor: 自定义你的Boss日志的颜色!
 				BossLogPos:
 					'''
-					在游戏中按住鼠标右键单击即可轻松将按钮移动到任意位置!
+					在游戏中按住鼠标右键即可轻松将按钮移动到任意位置!
 					位置从屏幕右下角开始测量.
 					'''
 				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
@@ -279,7 +282,7 @@ Mods: {
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
 					如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
 					'''
-				ProgressionPrompt: 如果启用, 则阻止提示出现在所有未来的字符中.
+				ProgressionPrompt: 启用后会阻止提示出现在所有未来的字符中.
 				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
 				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
 				OnlyBosses: 如果启用, 则清单和导航页仅会显示Boss栏目.
@@ -323,12 +326,19 @@ Mods: {
 					右键双击所选Boss页面上的记录会重置记录.
 					右键双击所选Boss页面上的'记录'按钮会重置所有Boss的记录.
 					'''
+				ResetForcedDowns: 右键点击目录页上的过滤标签以重置所有世界中的被手动标记击败.
+				ResetHiddenEntries: 右键双击'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
 				InactiveBossCheck: 
 					'''
-					当一位Boss NPC死亡或消失时, 会在聊天栏中提示一个活跃的Boss是否会变得不活跃.
-					此检查会在完成记录和显示消失消息之前发生.
+					启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
+					如果启用了Boss消失信息，则当显Boss消失信息时，这也应该在聊框天中显示一条消息.
+					这些信息应该分别在Boss被击败或Boss消失时出现.
 					'''
-				DisableNewRecords: 仍会更新以前的尝试记录
+				DisableNewRecords: 
+					'''
+					启用后除了除了上次的尝试外所有的个人记录都不会被覆盖.
+					这也会禁止向世界记录服务器发送记录数据.
+					'''
 				ShowRecordTracking: 必须启用记录跟踪才会显示
 			}
 
