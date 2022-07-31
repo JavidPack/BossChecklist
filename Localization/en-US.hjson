@@ -235,7 +235,7 @@ Mods: {
 				FilterMiniBosses: Filter mini bosses in list
 				FilterEvents: Filter events in list
 				OnlyBosses: Boss Log only show bosses
-				HideUnavailable: Hide unavailable and hidden bosses
+				HideUnavailable: Hide unavailable bosses
 				HideUnsupported: Hide unsupported bosses
 				ProgressionPrompt: Disable Progression Mode prompt
 				MaskTextures: Hide textures until entry is defeated
@@ -286,7 +286,11 @@ Mods: {
 				UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
 				MaskHardMode: Hides ALL content, overriding the options you have toggled above.
 				OnlyBosses: If enabled, the checklist and page navigation will only display boss entries.
-				HideUnavailable: If enabled, unavailable and hidden bosses will be removed from the Boss Log's table of contents.
+				HideUnavailable: 
+					```
+					If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
+					Ex. Frost Legion while it is not Xmas
+					```
 				HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
 				DespawnMessageType:
 					'''
