@@ -234,7 +234,7 @@ Mods: {
 				FilterBosses: 过滤日志中不符合条件的Boss
 				FilterMiniBosses: 过滤日志中不符合条件的小Boss
 				FilterEvents: 过滤日志中不符合条件的事件
-				HideUnavailable: 隐藏不可用和被隐藏的Boss
+				HideUnavailable: 隐藏不可用的Boss
 				HideUnsupported: 隐藏没有引用的Boss
 				ProgressionPrompt: 禁用进度模式提示
 				MaskTextures: 隐藏材质直至其条目被击败
@@ -286,7 +286,11 @@ Mods: {
 				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
 				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
 				OnlyBosses: 如果启用, 则清单和导航页仅会显示Boss栏目.
-				HideUnavailable: 如果启用, 则不可用和隐藏的Boss将从Boss日志的目录中被隐藏.
+				HideUnavailable: 
+					'''
+					如果启用, 则在Boss日志的目录中移除不可用的Boss.
+					例如非圣诞节时的雪人军团
+					'''
 				HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
 				DespawnMessageType:
 					'''
@@ -318,8 +322,8 @@ Mods: {
 				ResetLoot: 
 					'''
 					右键双击所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
-					右键双击'战利品&收藏品'按钮会清除Boss的整个战利品/收藏品列表.
-					长按Alt键会移除所有可移除的Boss物品.
+					右键双击'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
+					这会应用于所有Boss战利品列表.
 					'''
 				ResetRecords: 
 					'''
