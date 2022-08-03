@@ -1496,7 +1496,7 @@ namespace BossChecklist.UIElements
 
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
-						if (modPlayer.BossItemsCollected.Any(x => x.Type == loot)) {
+						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
 							allLoot = false;
 							break;
 						}
@@ -1515,7 +1515,7 @@ namespace BossChecklist.UIElements
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue;
 						}
-						if (modPlayer.BossItemsCollected.Any(x => x.Type == collectible)) {
+						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
 							allCollect = false;
 							break;
 						}
@@ -1669,7 +1669,7 @@ namespace BossChecklist.UIElements
 				Vector2 percentPos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.X / 2), inner.Y - stringAdjust.Y);
 				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
 
-				if (Main.MouseScreen.Between(inner.TopLeft(), inner.BottomRight())) {
+				if (IsMouseHovering) {
 					if (ModSourceMode) {
 						int[] value = modAllEntries["Terraria"];
 						float entryPercentage = (float)((float)value[0] / (float)value[1]) * 100;
