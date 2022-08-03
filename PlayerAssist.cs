@@ -210,7 +210,7 @@ namespace BossChecklist
 		}
 
 		public override void UpdateDead() {
-			if (Main.netMode == NetmodeID.Server)
+			if (Main.netMode == NetmodeID.Server || Main.myPlayer != Player.whoAmI)
 				return;
 
 			if (BossUISystem.Instance.BossLog.BossLogVisible)
