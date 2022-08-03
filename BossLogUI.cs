@@ -616,9 +616,8 @@ namespace BossChecklist
 
 		private static void UpdateRecordHighlight() {
 			if (PageNum >= 0) {
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
-					modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
 				}
 			}
 		}
@@ -1259,7 +1258,7 @@ namespace BossChecklist
 		public void UpdateTableofContents() {
 			PageNum = -1;
 			ResetBothPages();
-			bool nextCheck = true;
+			string nextBoss = "";
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
 
@@ -1279,6 +1278,10 @@ namespace BossChecklist
 				string displayName = boss.DisplayName;
 				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
 
+				if (nextBoss == "" && !boss.IsDownedOrForced) {
+					nextBoss = boss.Key;
+				}
+
 				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
 				bool hardMode = cfg.MaskHardMode && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && !boss.IsDownedOrForced;
 				bool availability = cfg.HideUnavailable && !boss.available() && !boss.IsDownedOrForced;
@@ -1287,7 +1290,7 @@ namespace BossChecklist
 				}
 
 				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
-					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextCheck) {
+					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextBoss == boss.Key) {
 						displayName = boss.DisplayName;
 					}
 				}
@@ -1302,11 +1305,7 @@ namespace BossChecklist
 					}
 				}
 
-				TableOfContents next = new TableOfContents(bossIndex, boss.progression, displayName, boss.IsDownedOrForced, nextCheck);
-				if (!boss.IsDownedOrForced && boss.available() && !boss.hidden) {
-					nextCheck = false;
-				}
-				
+				TableOfContents next = new TableOfContents(bossIndex, boss.progression, displayName, boss.IsDownedOrForced, nextBoss == boss.Key);				
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0);
 				next.OnClick += JumpToBossPage;
