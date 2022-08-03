@@ -237,6 +237,8 @@ Mods: {
 				OnlyBosses: Boss Log only show bosses
 				HideUnavailable: Hide unavailable bosses
 				HideUnsupported: Hide unsupported bosses
+				EnableProgressionMode: Enable Progression Mode
+				DisableProgressionMode: Disable Progression Mode
 				ProgressionPrompt: Disable Progression Mode prompt
 				MaskTextures: Hide textures until entry is defeated
 				MaskNames: Hide names until entry is defeated

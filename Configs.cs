@@ -109,6 +109,36 @@ namespace BossChecklist
 		[Header("$Mods.BossChecklist.Configs.Header.BlindMode")]
 
 		[BackgroundColor(255, 99, 71)]
+		[Label("$Mods.BossChecklist.Configs.Label.EnableProgressionMode")]
+		public bool ProgressionModeEnable {
+			get => MaskTextures && MaskNames && !UnmaskNextBoss && MaskBossLoot && MaskHardMode;
+			set {
+				if (value) {
+					MaskTextures = true;
+					MaskNames = true;
+					UnmaskNextBoss = false;
+					MaskBossLoot = true;
+					MaskHardMode = true;
+				}
+			}
+		}
+
+		[BackgroundColor(255, 99, 71)]
+		[Label("$Mods.BossChecklist.Configs.Label.DisableProgressionMode")]
+		public bool ProgressionModeDisable {
+			get => !MaskTextures && !MaskNames && !MaskBossLoot && !MaskHardMode;
+			set {
+				if (value) {
+					MaskTextures = false;
+					MaskNames = false;
+					UnmaskNextBoss = true; // unneeded? keep for consistency? add to getter?
+					MaskBossLoot = false;
+					MaskHardMode = false;
+				}
+			}
+		}
+
+		[BackgroundColor(255, 99, 71)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.ProgressionPrompt")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.ProgressionPrompt")]
