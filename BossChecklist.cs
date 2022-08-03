@@ -114,18 +114,6 @@ namespace BossChecklist
 			}
 		}
 
-#if TML_2022_06
-		public override void AddRecipes() {
-			//bossTracker.FinalizeLocalization();
-			bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.
-			bossTracker.FinalizeBossLootTables(); // Generate boss loot data. Treasurebag is also determined in this.
-			bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
-			bossTracker.FinalizeBossData(); // Finalize all boss data. Entries cannot be further edited beyond this point.
-		}
-#else
-		// TODO: Remove after preview becomes stable in August
-#endif
-
 		// Messages:
 		// string:"AddBoss" - string:Bossname - float:bossvalue - Func<bool>:BossDowned
 		// 0.2: added 6th parameter to AddBossWithInfo/AddMiniBossWithInfo/AddEventWithInfo: Func<bool> available

@@ -196,11 +196,7 @@ namespace BossChecklist
 		}
 
 		// Whenever the player is hurt, add to the HitsTaken tracker
-#if TML_2022_06
-		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit) {
-#else
 		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit, int cooldownCounter) {
-#endif
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
 				return;
 
