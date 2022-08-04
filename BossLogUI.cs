@@ -146,8 +146,8 @@ namespace BossChecklist
 				return;
 			}
 
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			if (show) {
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				modPlayer.hasOpenedTheBossLog = true;
 				// If the prompt isn't shown, try checking for a reset.
 				// This is to reset the page from what the user previously had back to the Table of Contents
@@ -165,8 +165,11 @@ namespace BossChecklist
 			}
 
 			// If UI is closed on a new record page, remove the new record from the list
-			if (BossLogVisible && show == false && PageNum >= 0) {
-				UpdateRecordHighlight();
+			if (PageNum >= 0) {
+				BossInfo selectedEntry = BossChecklist.bossTracker.SortedBosses[PageNum];
+				if (BossLogVisible && show == false && selectedEntry.GetRecordIndex != -1) {
+					modPlayer.hasNewRecord[selectedEntry.GetRecordIndex] = false;
+				}
 			}
 
 			BossLogVisible = show;
@@ -614,12 +617,6 @@ namespace BossChecklist
 			UpdateSelectedPage(Page_TableOfContents);
 		}
 
-		private static void UpdateRecordHighlight() {
-			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
-			}
-		}
-
 		// Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
@@ -853,11 +850,6 @@ namespace BossChecklist
 			}
 		}
 
-		internal void HideBoss(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.Index, false);
-		}
-
 		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
 			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
 			if (!leftClick) {
@@ -882,11 +874,6 @@ namespace BossChecklist
 				}
 				UpdateSelectedPage(PageNum, CategoryPageType, type);
 			}
-		}
-
-		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.Index, true);
 		}
 
 		internal void JumpToBossPage(int index, bool leftClick = true) {
@@ -947,8 +934,11 @@ namespace BossChecklist
 				return;
 			}
 
-			// Remove new records when navigating from a new record page
-			UpdateRecordHighlight();
+			// Remove new records when navigating from a page with a new record
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
+				modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
+			}
 
 			if (id == "Boss_Tab") {
 				UpdateSelectedPage(FindNext(EntryType.Boss), CategoryPageType);
@@ -971,8 +961,11 @@ namespace BossChecklist
 			if (listeningElement is not BossAssistButton button)
 				return;
 
-			// Remove new records when navigating from a new record page
-			UpdateRecordHighlight();
+			// Remove new records when navigating from a page with a new record
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
+				modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
+			}
 
 			pageTwoItemList.Clear();
 			prehardmodeList.Clear();
@@ -1296,8 +1289,8 @@ namespace BossChecklist
 					PaddingTop = 5,
 					PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0)
 				};
-				next.OnClick += JumpToBossPage;
-				next.OnRightClick += HideBoss;
+				next.OnClick += (a, b) => JumpToBossPage(next.Index);
+				next.OnRightClick += (a, b) => JumpToBossPage(next.Index, false);
 
 				if (boss.progression <= BossTracker.WallOfFlesh) {
 					prehardmodeList.Add(next);
