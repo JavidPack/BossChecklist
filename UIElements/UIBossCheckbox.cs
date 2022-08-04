@@ -63,7 +63,7 @@ namespace BossChecklist.UIElements
 					WorldAssist.HiddenBosses.Remove(boss.Key);
 				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				if (BossChecklist.BossLogConfig.HideUnavailable) {
-					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossLogUI.TableOfContents);
+					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossLogUI.Page_TableOfContents);
 				}
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();

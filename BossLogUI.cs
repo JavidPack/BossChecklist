@@ -28,8 +28,9 @@ namespace BossChecklist
 		// All contents are within these areas
 		// The selected boss page starts out with an invalid number for the initial check
 		public static int PageNum = -3;
-		public const int TableOfContents = -1;
-		public const int Credits = -2;
+		public const int Page_TableOfContents = -1;
+		public const int Page_Credits = -2;
+		public const int Page_Prompt = -3;
 		public BossLogPanel BookArea;
 		public BossLogPanel PageOne;
 		public BossLogPanel PageTwo;
@@ -136,7 +137,7 @@ namespace BossChecklist
 		}
 
 		public void ToggleBossLog(bool show = true) {
-			if (PageNum == -3) {
+			if (PageNum == Page_Prompt) {
 				BossLogVisible = show;
 				if (show) {
 					OpenProgressionModePrompt();
@@ -152,9 +153,7 @@ namespace BossChecklist
 				// This is to reset the page from what the user previously had back to the Table of Contents
 				if (modPlayer.enteredWorldReset) {
 					modPlayer.enteredWorldReset = false;
-					PageNum = -1;
-					CategoryPageType = 0;
-					UpdateSelectedPage(TableOfContents);
+					UpdateSelectedPage(Page_TableOfContents);
 				}
 				else {
 					UpdateSelectedPage(PageNum, CategoryPageType);
@@ -477,13 +476,13 @@ namespace BossChecklist
 		}
 
 		private void UpdateTabNavPos() {
-			if (PageNum == -3)
+			if (PageNum == Page_Prompt)
 				return;
 
 			// Updating tabs to proper positions
-			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
+			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
 			UpdateFilterTabPos(false); // Update filter tab visibility
 		}
 
@@ -491,7 +490,7 @@ namespace BossChecklist
 			if (tabClicked) {
 				filterOpen = !filterOpen;
 			}
-			if (PageNum != -1) {
+			if (PageNum != Page_TableOfContents) {
 				filterOpen = false;
 			}
 
@@ -582,7 +581,7 @@ namespace BossChecklist
 			}
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			Filters_SetImage();
-			UpdateSelectedPage(TableOfContents);
+			UpdateSelectedPage(Page_TableOfContents);
 		}
 
 		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Forced Downs, Clear Records, Clear Boss Loot, etc
@@ -599,7 +598,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearHidden);
 				packet.Send();
 			}
-			UpdateSelectedPage(TableOfContents);
+			UpdateSelectedPage(Page_TableOfContents);
 		}
 
 		private void ClearForcedDowns() {
@@ -612,7 +611,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearForceDowns);
 				packet.Send();
 			}
-			UpdateSelectedPage(TableOfContents);
+			UpdateSelectedPage(Page_TableOfContents);
 		}
 
 		private static void UpdateRecordHighlight() {
@@ -720,7 +719,7 @@ namespace BossChecklist
 		}
 
 		public void OpenProgressionModePrompt() {
-			PageNum = -3;
+			PageNum = Page_Prompt;
 			ResetBothPages();
 			ResetUIPositioning();
 
@@ -820,7 +819,7 @@ namespace BossChecklist
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			PageNum = -1;
+			PageNum = Page_TableOfContents;
 			ToggleBossLog(true);
 		}
 
@@ -833,15 +832,14 @@ namespace BossChecklist
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			PageNum = -1;
+			PageNum = Page_TableOfContents;
 			ToggleBossLog(true);
 		}
 
 		public void CloseAndConfigure() {
 			ToggleBossLog(false);
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			PageNum = -1;
-
+			PageNum = Page_TableOfContents;
 		}
 
 		public void DisablePromptMessage() {
@@ -904,7 +902,7 @@ namespace BossChecklist
 					else if (!entry.downed()) {
 						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
 					}
-					UpdateSelectedPage(TableOfContents);
+					UpdateSelectedPage(Page_TableOfContents);
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
@@ -922,7 +920,7 @@ namespace BossChecklist
 						WorldAssist.HiddenBosses.Remove(entry.Key);
 					}
 					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-					UpdateSelectedPage(TableOfContents);
+					UpdateSelectedPage(Page_TableOfContents);
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestHideBoss);
@@ -941,10 +939,10 @@ namespace BossChecklist
 				return;
 
 			string id = book.Id;
-			if (PageNum == -3 || !BookUI.DrawTab(id))
+			if (PageNum == Page_Prompt || !BookUI.DrawTab(id))
 				return;
 
-			if (id == "ToCFilter_Tab" && PageNum == -1) {
+			if (id == "ToCFilter_Tab" && PageNum == Page_TableOfContents) {
 				UpdateFilterTabPos(true);
 				return;
 			}
@@ -991,7 +989,7 @@ namespace BossChecklist
 					PageNum++;
 				}
 				else {
-					PageNum = -2;
+					PageNum = Page_Credits;
 				}
 			}
 			else {
@@ -1028,7 +1026,7 @@ namespace BossChecklist
 								PageNum++;
 							}
 							else {
-								PageNum = -2;
+								PageNum = Page_Credits;
 							}
 						}
 						else {
@@ -1058,10 +1056,10 @@ namespace BossChecklist
 
 			UpdateTabNavPos(); // Update tabs to be properly positioned on either the left or right side
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
-			if (PageNum == -1) {
+			if (PageNum == Page_TableOfContents) {
 				UpdateTableofContents();
 			}
-			else if (PageNum == -2) {
+			else if (PageNum == Page_Credits) {
 				UpdateCredits();
 			}
 			else {
@@ -1138,22 +1136,17 @@ namespace BossChecklist
 		}
 
 		private void ResetPageButtons() {
-			PageOne.RemoveChild(PrevPage);
-			PageTwo.RemoveChild(NextPage);
-			for (int i = 0; i < AltPageButtons.Length; i++) {
-				PageTwo.RemoveChild(AltPageButtons[i]);
-			}
-
-			if (PageNum == -3)
+			if (PageNum == Page_Prompt)
 				return;
 
-			if (PageNum == -2) {
-				PageOne.Append(PrevPage);
+			if (PageNum != Page_Credits) {
+				PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
 			}
-			else if (PageNum == -1) {
-				PageTwo.Append(NextPage);
+			if (PageNum != Page_TableOfContents) {
+				PageOne.Append(PrevPage); // Prev page button can appear on any page except the Table of Contents
 			}
-			else {
+
+			if (PageNum >= 0) {
 				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 				if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
@@ -1185,8 +1178,6 @@ namespace BossChecklist
 						}
 					}
 				}
-				PageOne.Append(PrevPage);
-				PageTwo.Append(NextPage);
 			}
 		}
 

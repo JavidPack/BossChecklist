@@ -256,7 +256,7 @@ namespace BossChecklist
 			// Update checklist to match Hidden and Forced Downed entries
 			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 			if (BossChecklist.BossLogConfig.HideUnavailable && BossLogUI.PageNum == -1) {
-				BossUISystem.Instance.BossLog.UpdateSelectedPage(BossLogUI.TableOfContents);
+				BossUISystem.Instance.BossLog.UpdateSelectedPage(BossLogUI.Page_TableOfContents);
 			}
 		}
 
