@@ -621,39 +621,6 @@ namespace BossChecklist
 			}
 		}
 
-		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is not BookUI book)
-				return;
-
-			string id = book.Id;
-			if (PageNum == -3 || !BookUI.DrawTab(id))
-				return;
-
-			if (id == "ToCFilter_Tab" && PageNum == -1) {
-				UpdateFilterTabPos(true);
-				return;
-			}
-
-			// Remove new records when navigating from a new record page
-			UpdateRecordHighlight();
-
-			if (id == "Boss_Tab") {
-				UpdateSelectedPage(FindNext(EntryType.Boss), CategoryPageType);
-			}
-			else if (id == "Miniboss_Tab") {
-				UpdateSelectedPage(FindNext(EntryType.MiniBoss), CategoryPageType);
-			}
-			else if (id == "Event_Tab") {
-				UpdateSelectedPage(FindNext(EntryType.Event), CategoryPageType);
-			}
-			else if (id == "Credits_Tab") {
-				UpdateSelectedPage(-2, CategoryPageType);
-			}
-			else {
-				UpdateSelectedPage(-1, CategoryPageType);
-			}
-		}
-
 		// Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
@@ -721,6 +688,287 @@ namespace BossChecklist
 			UpdateSelectedPage(PageNum, CategoryPage.Spawn);
 		}
 
+		public static bool[] CalculateTableOfContents(List<BossInfo> bossList) {
+			bool[] visibleList = new bool[bossList.Count];
+			for (int i = 0; i < bossList.Count; i++) {
+				BossInfo boss = bossList[i];
+				// if the boss cannot get through the config checks, it will remain false (invisible)
+				bool HideUnsupported = boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported;
+				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
+				bool HideHidden = boss.hidden && !showHidden;
+				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyBosses && boss.type != EntryType.Boss;
+				if (((HideUnavailable || HideHidden) && !boss.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
+					continue;
+				}
+
+				// Check filters as well
+				EntryType type = boss.type;
+				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
+				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
+				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
+
+				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && boss.IsDownedOrForced;
+				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && boss.IsDownedOrForced));
+				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && boss.IsDownedOrForced));
+				if (FilterBoss || FilterMiniBoss || FilterEvent) {
+					continue;
+				}
+
+				visibleList[i] = true; // Boss will show on the Table of Contents
+			}
+			return visibleList;
+		}
+
+		public void OpenProgressionModePrompt() {
+			PageNum = -3;
+			ResetBothPages();
+			ResetUIPositioning();
+
+			FittedTextPanel textBox = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ProgressionModeDescription");
+			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
+			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
+			textBox.Left.Pixels = 10;
+			textBox.Top.Pixels = 60;
+			PageOne.Append(textBox);
+
+			Asset<Texture2D> backdropTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
+			UIImage[] backdrops = new UIImage[] {
+				new UIImage(backdropTexture),
+				new UIImage(backdropTexture),
+				new UIImage(backdropTexture),
+				new UIImage(backdropTexture)
+			};
+
+			Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
+
+			backdrops[0].OnClick += (a, b) => ContinueDisabled();
+			backdrops[0].OnMouseOver += (a, b) => { backdrops[0].Color = bookColor; };
+			backdrops[0].OnMouseOut += (a, b) => { backdrops[0].Color = Color.White; };
+
+			backdrops[1].OnClick += (a, b) => ContinueEnabled();
+			backdrops[1].OnMouseOver += (a, b) => { backdrops[1].Color = bookColor; };
+			backdrops[1].OnMouseOut += (a, b) => { backdrops[1].Color = Color.White; };
+
+			backdrops[2].OnClick += (a, b) => CloseAndConfigure();
+			backdrops[2].OnMouseOver += (a, b) => { backdrops[2].Color = bookColor; };
+			backdrops[2].OnMouseOut += (a, b) => { backdrops[2].Color = Color.White; };
+
+			backdrops[3].OnClick += (a, b) => DisablePromptMessage();
+			backdrops[3].OnMouseOver += (a, b) => { backdrops[3].Color = bookColor; };
+			backdrops[3].OnMouseOut += (a, b) => { backdrops[3].Color = Color.White; };
+
+			Asset<Texture2D>[] buttonTextures = new Asset<Texture2D>[] {
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.SteampunkGoggles}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Wrench}", AssetRequestMode.ImmediateLoad),
+				ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad)
+			};
+
+			UIImage[] buttons = new UIImage[] {
+				new UIImage(buttonTextures[0]),
+				new UIImage(buttonTextures[1]),
+				new UIImage(buttonTextures[2]),
+				new UIImage(buttonTextures[3])
+			};
+
+			FittedTextPanel[] textOptions = new FittedTextPanel[] {
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressMode"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.EnableProgressMode"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ConfigProgressMode"),
+				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressPrompt"),
+			};
+
+			Asset<Texture2D> check = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
+			Asset<Texture2D> x = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
+
+			bool config = BossChecklist.BossLogConfig.PromptDisabled;
+			PromptCheck = new UIImage(config ? check : x);
+
+			for (int i = 0; i < buttonTextures.Length; i++) {
+				backdrops[i].Width.Pixels = backdropTexture.Value.Width;
+				backdrops[i].Height.Pixels = backdropTexture.Value.Height;
+				backdrops[i].Left.Pixels = 25;
+				backdrops[i].Top.Pixels = 75 + (75 * i);
+
+				buttons[i].Width.Pixels = buttonTextures[i].Value.Width;
+				buttons[i].Height.Pixels = buttonTextures[i].Value.Height;
+				buttons[i].Left.Pixels = 15;
+				buttons[i].Top.Pixels = backdrops[i].Height.Pixels / 2 - buttons[i].Height.Pixels / 2;
+
+				textOptions[i].Width.Pixels = backdrops[i].Width.Pixels - (buttons[i].Left.Pixels + buttons[i].Width.Pixels + 15);
+				textOptions[i].Height.Pixels = backdrops[i].Height.Pixels;
+				textOptions[i].Left.Pixels = buttons[i].Left.Pixels + buttons[i].Width.Pixels;
+				textOptions[i].Top.Pixels = -10;
+				textOptions[i].PaddingTop = 0;
+				textOptions[i].PaddingLeft = 15;
+
+				if (i == buttonTextures.Length - 1) {
+					buttons[i].Append(PromptCheck);
+				}
+				backdrops[i].Append(buttons[i]);
+				backdrops[i].Append(textOptions[i]);
+				PageTwo.Append(backdrops[i]);
+			}
+		}
+
+		public void ContinueDisabled() {
+			BossChecklist.BossLogConfig.MaskTextures = false;
+			BossChecklist.BossLogConfig.MaskNames = false;
+			BossChecklist.BossLogConfig.UnmaskNextBoss = true;
+			BossChecklist.BossLogConfig.MaskBossLoot = false;
+			BossChecklist.BossLogConfig.MaskHardMode = false;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			PageNum = -1;
+			ToggleBossLog(true);
+		}
+
+		public void ContinueEnabled() {
+			BossChecklist.BossLogConfig.MaskTextures = true;
+			BossChecklist.BossLogConfig.MaskNames = true;
+			BossChecklist.BossLogConfig.UnmaskNextBoss = false;
+			BossChecklist.BossLogConfig.MaskBossLoot = true;
+			BossChecklist.BossLogConfig.MaskHardMode = true;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			PageNum = -1;
+			ToggleBossLog(true);
+		}
+
+		public void CloseAndConfigure() {
+			ToggleBossLog(false);
+			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
+			PageNum = -1;
+
+		}
+
+		public void DisablePromptMessage() {
+			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+			if (BossChecklist.BossLogConfig.PromptDisabled) {
+				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check"));
+			}
+			else {
+				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X"));
+			}
+		}
+
+		internal void HideBoss(UIMouseEvent evt, UIElement listeningElement) {
+			if (listeningElement is TableOfContents table)
+				JumpToBossPage(table.Index, false);
+		}
+
+		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
+			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
+			if (!leftClick) {
+				if (RecordPageType == type)
+					return;
+
+				if (CompareState == RecordPageType) {
+					CompareState = RecordCategory.None;
+				}
+				else if (CompareState != type) {
+					CompareState = type;
+				}
+				else {
+					CompareState = RecordCategory.None;
+				}
+				//Main.NewText($"Set compare value to {CompareState}");
+			}
+			else {
+				// If selecting the compared state altpage, reset compare state
+				if (CompareState == type) {
+					CompareState = RecordCategory.None;
+				}
+				UpdateSelectedPage(PageNum, CategoryPageType, type);
+			}
+		}
+
+		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
+			if (listeningElement is TableOfContents table)
+				JumpToBossPage(table.Index, true);
+		}
+
+		internal void JumpToBossPage(int index, bool leftClick = true) {
+			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
+				// While holding alt, a user can interact with any boss list entry
+				// Left-clicking forces a completion check on or off
+				// Right-clicking hides the boss from the list
+				BossInfo entry = BossChecklist.bossTracker.SortedBosses[index];
+				if (leftClick) {
+					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
+						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
+					}
+					else if (!entry.downed()) {
+						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
+					}
+					UpdateSelectedPage(TableOfContents);
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
+						packet.Write(entry.Key);
+						packet.Write(entry.ForceDowned);
+						packet.Send();
+					}
+				}
+				else {
+					entry.hidden = !entry.hidden;
+					if (entry.hidden) {
+						WorldAssist.HiddenBosses.Add(entry.Key);
+					}
+					else {
+						WorldAssist.HiddenBosses.Remove(entry.Key);
+					}
+					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+					UpdateSelectedPage(TableOfContents);
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.RequestHideBoss);
+						packet.Write(entry.Key);
+						packet.Write(entry.hidden);
+						packet.Send();
+					}
+				}
+				return; // Alt-clicking should never jump to a boss page
+			}
+			UpdateSelectedPage(index, CategoryPageType);
+		}
+
+		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
+			if (listeningElement is not BookUI book)
+				return;
+
+			string id = book.Id;
+			if (PageNum == -3 || !BookUI.DrawTab(id))
+				return;
+
+			if (id == "ToCFilter_Tab" && PageNum == -1) {
+				UpdateFilterTabPos(true);
+				return;
+			}
+
+			// Remove new records when navigating from a new record page
+			UpdateRecordHighlight();
+
+			if (id == "Boss_Tab") {
+				UpdateSelectedPage(FindNext(EntryType.Boss), CategoryPageType);
+			}
+			else if (id == "Miniboss_Tab") {
+				UpdateSelectedPage(FindNext(EntryType.MiniBoss), CategoryPageType);
+			}
+			else if (id == "Event_Tab") {
+				UpdateSelectedPage(FindNext(EntryType.Event), CategoryPageType);
+			}
+			else if (id == "Credits_Tab") {
+				UpdateSelectedPage(-2, CategoryPageType);
+			}
+			else {
+				UpdateSelectedPage(-1, CategoryPageType);
+			}
+		}
+
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not BossAssistButton button)
 				return;
@@ -746,7 +994,7 @@ namespace BossChecklist
 					PageNum = -2;
 				}
 			}
-			else { 
+			else {
 				// button is previous
 				if (PageNum >= 0) {
 					PageNum--;
@@ -758,11 +1006,10 @@ namespace BossChecklist
 
 			// If the page is hidden or unavailable, keep moving till its not or until page is at either end
 			// Also check for "Only Bosses" navigation
-			bool bossesOnly = BossChecklist.BossLogConfig.OnlyBosses;
 			if (PageNum >= 0) {
 				bool HiddenOrUnAvailable = BossList[PageNum].hidden || !BossList[PageNum].available();
 				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyBosses && BossList[PageNum].type != EntryType.Boss;
-				if ((HiddenOrUnAvailable || OnlyDisplayBosses)) {
+				if (HiddenOrUnAvailable || OnlyDisplayBosses) {
 					while (PageNum >= 0) {
 						BossInfo currentBoss = BossList[PageNum];
 						if (!currentBoss.hidden && currentBoss.available()) {
@@ -784,7 +1031,7 @@ namespace BossChecklist
 								PageNum = -2;
 							}
 						}
-						else { 
+						else {
 							// button is previous
 							if (PageNum >= 0) {
 								PageNum--;
@@ -796,9 +1043,399 @@ namespace BossChecklist
 					}
 				}
 			}
+			UpdateSelectedPage(PageNum, CategoryPageType); // Update the page
+		}
 
-			// Update the page
-			UpdateSelectedPage(PageNum, CategoryPageType);
+		public void UpdateSelectedPage(int pageNum, CategoryPage catPage = CategoryPage.Record, RecordCategory altPage = RecordCategory.None) {
+			PageNum = pageNum;
+			// Only on boss pages does updating the category page matter
+			if (PageNum >= 0) {
+				CategoryPageType = catPage;
+				if (altPage != RecordCategory.None) {
+					RecordPageType = altPage;
+				}
+			}
+
+			UpdateTabNavPos(); // Update tabs to be properly positioned on either the left or right side
+			ResetBothPages(); // Reset the content of both pages before appending new content for the page
+			if (PageNum == -1) {
+				UpdateTableofContents();
+			}
+			else if (PageNum == -2) {
+				UpdateCredits();
+			}
+			else {
+				if (CategoryPageType == CategoryPage.Record) {
+					OpenRecord();
+				}
+				else if (CategoryPageType == CategoryPage.Spawn) {
+					OpenSpawn();
+				}
+				else if (CategoryPageType == CategoryPage.Loot) {
+					OpenLoot();
+				}
+			}
+		}
+
+		private void ResetBothPages() {
+			PageOne.RemoveAllChildren();
+			PageTwo.RemoveAllChildren();
+
+			scrollOne = new BossLogUIElements.FixedUIScrollbar();
+			scrollOne.SetView(100f, 1000f);
+			scrollOne.Top.Pixels = 50f;
+			scrollOne.Left.Pixels = -18;
+			scrollOne.Height.Set(-24f, 0.75f);
+			scrollOne.HAlign = 1f;
+
+			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
+			scrollTwo.SetView(100f, 1000f);
+			scrollTwo.Top.Pixels = 50f;
+			scrollTwo.Left.Pixels = -13;
+			scrollTwo.Height.Set(-24f, 0.75f);
+			scrollTwo.HAlign = 1f;
+
+			ResetPageButtons();
+			if (PageNum >= 0) {
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
+					PageTwo.Append(spawnButton);
+					PageTwo.Append(lootButton);
+					//PageTwo.Append(collectButton);
+					PageTwo.Append(recordButton);
+				}
+				else {
+					UIPanel brokenPanel = new UIPanel();
+					brokenPanel.Height.Pixels = 160;
+					brokenPanel.Width.Pixels = 340;
+					brokenPanel.Top.Pixels = 150;
+					brokenPanel.Left.Pixels = 3;
+					PageTwo.Append(brokenPanel);
+
+					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.LogFeaturesNotAvailable");
+					brokenDisplay.Height.Pixels = 200;
+					brokenDisplay.Width.Pixels = 340;
+					brokenDisplay.Top.Pixels = -12;
+					brokenDisplay.Left.Pixels = -15;
+					brokenPanel.Append(brokenDisplay);
+				}
+
+				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown" && BossChecklist.bossTracker.SortedBosses[PageNum].npcIDs.Count == 0) {
+					UIPanel brokenPanel = new UIPanel();
+					brokenPanel.Height.Pixels = 160;
+					brokenPanel.Width.Pixels = 340;
+					brokenPanel.Top.Pixels = 150;
+					brokenPanel.Left.Pixels = 14;
+					PageOne.Append(brokenPanel);
+
+					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NotImplemented");
+					brokenDisplay.Height.Pixels = 200;
+					brokenDisplay.Width.Pixels = 340;
+					brokenDisplay.Top.Pixels = 0;
+					brokenDisplay.Left.Pixels = -15;
+					brokenPanel.Append(brokenDisplay);
+				}
+			}
+		}
+
+		private void ResetPageButtons() {
+			PageOne.RemoveChild(PrevPage);
+			PageTwo.RemoveChild(NextPage);
+			for (int i = 0; i < AltPageButtons.Length; i++) {
+				PageTwo.RemoveChild(AltPageButtons[i]);
+			}
+
+			if (PageNum == -3)
+				return;
+
+			if (PageNum == -2) {
+				PageOne.Append(PrevPage);
+			}
+			else if (PageNum == -1) {
+				PageTwo.Append(NextPage);
+			}
+			else {
+				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
+				if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
+					// Spawn and Loot pages do not have alt pages currently, so skip adding them
+					bool validRecordPage = CategoryPageType != CategoryPage.Record || boss.type != EntryType.Boss;
+					if (!validRecordPage) {
+						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
+						PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
+						int totalRecords = (int)RecordCategory.None;
+						for (int i = 0; i < totalRecords; i++) {
+							if ((i == 1 || i == 2) && record.kills == 0)
+								continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
+
+							AltPageButtons[i].Width.Pixels = 25;
+							AltPageButtons[i].Height.Pixels = 25;
+							int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
+							if (CategoryPageType == CategoryPage.Record) {
+								// If First or Best buttons were skipped account for the positioning of Previous and World
+								if (i < 2) {
+									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
+								}
+								else {
+									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + (i - 2) * 25 + offset;
+								}
+							}
+							AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
+							PageTwo.Append(AltPageButtons[i]);
+						}
+					}
+				}
+				PageOne.Append(PrevPage);
+				PageTwo.Append(NextPage);
+			}
+		}
+
+		private void UpdateTableofContents() {
+			string nextBoss = "";
+			prehardmodeList.Clear();
+			hardmodeList.Clear();
+
+			List<BossInfo> referenceList = BossChecklist.bossTracker.SortedBosses;
+			bool[] visibleList = CalculateTableOfContents(referenceList);
+
+			for (int bossIndex = 0; bossIndex < referenceList.Count; bossIndex++) {
+				BossInfo boss = referenceList[bossIndex];
+				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
+
+				// If the boss should not be visible on the Table of Contents, skip the entry in the list
+				if (!visibleList[bossIndex])
+					continue;
+
+				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
+				string displayName = boss.DisplayName;
+				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
+
+				if (nextBoss == "" && !boss.IsDownedOrForced) {
+					nextBoss = boss.Key;
+				}
+
+				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
+				bool hardMode = cfg.MaskHardMode && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && !boss.IsDownedOrForced;
+				bool availability = cfg.HideUnavailable && !boss.available() && !boss.IsDownedOrForced;
+				if (namesMasked || hardMode || availability) {
+					displayName = "???";
+				}
+
+				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
+					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextBoss == boss.Key) {
+						displayName = boss.DisplayName;
+					}
+				}
+
+				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
+				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
+				// Update forced downs. If the boss is actaully downed, remove the force check.
+				if (boss.ForceDowned) {
+					displayName += "*";
+					if (boss.downed()) {
+						WorldAssist.ForcedMarkedEntries.Remove(boss.Key);
+					}
+				}
+
+				bool allLoot = false;
+				bool allCollect = false;
+				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
+					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					allLoot = allCollect = true;
+
+					// Loop through player saved loot and boss loot to see if every item was obtained
+					foreach (int loot in boss.lootItemTypes) {
+						// Check for corruption/crimson vanilla items, and skip them based on world evil
+						// May need new method for looking for these items.
+						if (boss.npcIDs[0] < NPCID.Count) {
+							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
+								continue;
+
+							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
+								continue;
+						}
+
+						// Skip expert/master mode items if the world is not in expert/master mode.
+						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
+						if (!Main.expertMode || !Main.masterMode) {
+							Item checkItem = ContentSamples.ItemsByType[loot];
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+								continue;
+
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+								continue;
+						}
+
+						// If the item index is not found, end the loop and set allLoot to false
+						// If this never occurs, the user successfully obtained all the items!
+						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
+							allLoot = false;
+							break;
+						}
+					}
+
+					// If no collection items were setup, consider it false until all loot has been obtained
+					if (boss.collection.Count == 0) {
+						allCollect = allLoot;
+					}
+					else {
+						//Repeat everything for collectibles as well
+						foreach (int collectible in boss.collection) {
+							if (collectible == -1 || collectible == 0)
+								continue;
+
+							if (!Main.expertMode || !Main.masterMode) {
+								Item checkItem = ContentSamples.ItemsByType[collectible];
+								if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+									continue;
+
+								if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+									continue;
+							}
+							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
+								allCollect = false;
+								break;
+							}
+						}
+					}
+				}
+
+				bool isNext = nextBoss == boss.Key && cfg.DrawNextMark;
+				TableOfContents next = new TableOfContents(bossIndex, displayName, isNext, allLoot, allCollect) {
+					PaddingTop = 5,
+					PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0)
+				};
+				next.OnClick += JumpToBossPage;
+				next.OnRightClick += HideBoss;
+
+				if (boss.progression <= BossTracker.WallOfFlesh) {
+					prehardmodeList.Add(next);
+				}
+				else {
+					hardmodeList.Add(next);
+				}
+			}
+
+			if (prehardmodeList.Count > 13) {
+				PageOne.Append(scrollOne);
+			}
+			PageOne.Append(prehardmodeList);
+			prehardmodeList.SetScrollbar(scrollOne);
+			if (hardmodeList.Count > 13) {
+				PageTwo.Append(scrollTwo);
+			}
+			PageTwo.Append(hardmodeList);
+			hardmodeList.SetScrollbar(scrollTwo);
+
+			// Calculate Progress Bar downed entries
+			int[] prehDown = new int[] { 0, 0, 0 };
+			int[] prehTotal = new int[] { 0, 0, 0 };
+			int[] hardDown = new int[] { 0, 0, 0 };
+			int[] hardTotal = new int[] { 0, 0, 0 };
+			Dictionary<string, int[]> prehEntries = new Dictionary<string, int[]>();
+			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
+
+			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				if (boss.hidden)
+					continue;
+
+				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
+					continue;
+
+				if (boss.progression <= BossTracker.WallOfFlesh) {
+					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+						if (!prehEntries.ContainsKey(boss.modSource)) {
+							prehEntries.Add(boss.modSource, new int[] { 0, 0 });
+						}
+						prehTotal[(int)boss.type]++;
+						prehEntries[boss.modSource][1] += 1;
+
+						if (boss.IsDownedOrForced) {
+							prehDown[(int)boss.type]++;
+							prehEntries[boss.modSource][0] += 1;
+						}
+					}
+				}
+				else {
+					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+						if (!hardEntries.ContainsKey(boss.modSource)) {
+							hardEntries.Add(boss.modSource, new int[] { 0, 0 });
+						}
+						hardTotal[(int)boss.type]++;
+						hardEntries[boss.modSource][1] += 1;
+
+						if (boss.IsDownedOrForced) {
+							if (!hardEntries.ContainsKey(boss.modSource)) {
+								hardEntries.Add(boss.modSource, new int[] { 0, 0 });
+							}
+							hardDown[(int)boss.type]++;
+							hardEntries[boss.modSource][0] += 1;
+						}
+					}
+				}
+			}
+
+			prehardmodeBar.downedEntries = prehDown;
+			prehardmodeBar.totalEntries = prehTotal;
+			prehEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
+			prehardmodeBar.modAllEntries = prehEntries;
+
+			hardmodeBar.downedEntries = hardDown;
+			hardmodeBar.totalEntries = hardTotal;
+			hardEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
+			hardmodeBar.modAllEntries = hardEntries;
+
+
+			PageOne.Append(prehardmodeBar);
+			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {
+				PageTwo.Append(hardmodeBar);
+			}
+		}
+
+		private void UpdateCredits() {
+			pageTwoItemList.Left.Pixels = 15;
+			pageTwoItemList.Top.Pixels = 65;
+			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
+			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - pageTwoItemList.Top.Pixels - 80;
+			pageTwoItemList.Clear();
+
+			scrollTwo.SetView(10f, 1000f);
+			scrollTwo.Top.Pixels = 90;
+			scrollTwo.Left.Pixels = 5;
+			scrollTwo.Height.Set(-60f, 0.75f);
+			scrollTwo.HAlign = 1f;
+
+			List<string> optedMods = BossUISystem.Instance.OptedModNames;
+			if (optedMods.Count > 0) {
+				foreach (string mod in optedMods) {
+					UIText modListed = new UIText("●" + mod, 0.85f) {
+						PaddingTop = 8,
+						PaddingLeft = 5
+					};
+					pageTwoItemList.Add(modListed);
+				}
+				if (optedMods.Count > 11) {
+					PageTwo.Append(scrollTwo);
+				}
+				PageTwo.Append(pageTwoItemList);
+				pageTwoItemList.SetScrollbar(scrollTwo);
+			}
+			else {
+				// No mods are using the Log
+				UIPanel brokenPanel = new UIPanel();
+				brokenPanel.Height.Pixels = 220;
+				brokenPanel.Width.Pixels = 340;
+				brokenPanel.Top.Pixels = 120;
+				brokenPanel.Left.Pixels = 18;
+				PageTwo.Append(brokenPanel);
+
+				FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NoModsSupported");
+				brokenDisplay.Height.Pixels = 200;
+				brokenDisplay.Width.Pixels = 340;
+				brokenDisplay.Top.Pixels = 0;
+				brokenDisplay.Left.Pixels = -15;
+				brokenPanel.Append(brokenDisplay);
+			}
 		}
 
 		private void OpenRecord() {
@@ -818,7 +1455,7 @@ namespace BossChecklist
 			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
 			if (boss.modSource == "Unknown")
 				return;
-			
+
 			var message = new UIMessageBox(boss.DisplaySpawnInfo);
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
@@ -835,7 +1472,7 @@ namespace BossChecklist
 			scrollTwo.HAlign = 1f;
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
-			
+
 			if (boss.spawnItem.Count == 0 || boss.spawnItem.All(x => x <= 0)) {
 				string type = "Boss";
 				if (boss.type == EntryType.MiniBoss) {
@@ -1037,7 +1674,7 @@ namespace BossChecklist
 			int col = 0;
 			foreach (int item in bossItems) {
 				Item selectedItem = ContentSamples.ItemsByType[item];
-				
+
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, selectedItem.Name, ItemSlot.Context.TrashItem) {
@@ -1075,646 +1712,6 @@ namespace BossChecklist
 			}
 			PageTwo.Append(pageTwoItemList);
 			pageTwoItemList.SetScrollbar(scrollTwo);
-		}
-
-		public static bool[] CalculateTableOfContents(List<BossInfo> bossList) {
-			bool[] visibleList = new bool[bossList.Count];
-			for (int i = 0; i < bossList.Count; i++) {
-				BossInfo boss = bossList[i];
-				// if the boss cannot get through the config checks, it will remain false (invisible)
-				bool HideUnsupported = boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported;
-				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
-				bool HideHidden = boss.hidden && !showHidden;
-				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyBosses && boss.type != EntryType.Boss;
-				if (((HideUnavailable || HideHidden) && !boss.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
-					continue;
-				}
-
-				// Check filters as well
-				EntryType type = boss.type;
-				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
-				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
-				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
-
-				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && boss.IsDownedOrForced;
-				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && boss.IsDownedOrForced));
-				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && boss.IsDownedOrForced));
-				if (FilterBoss || FilterMiniBoss || FilterEvent) {
-					continue;
-				}
-
-				visibleList[i] = true; // Boss will show on the Table of Contents
-			}
-			return visibleList;
-		}
-
-		public void OpenProgressionModePrompt() {
-			PageNum = -3;
-			ResetBothPages();
-			ResetUIPositioning();
-
-			FittedTextPanel textBox = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ProgressionModeDescription");
-			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
-			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
-			textBox.Left.Pixels = 10;
-			textBox.Top.Pixels = 60;
-			PageOne.Append(textBox);
-
-			Asset<Texture2D> backdropTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
-			UIImage[] backdrops = new UIImage[] {
-				new UIImage(backdropTexture),
-				new UIImage(backdropTexture),
-				new UIImage(backdropTexture),
-				new UIImage(backdropTexture)
-			};
-
-			Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
-
-			backdrops[0].OnClick += (a, b) => ContinueDisabled();
-			backdrops[0].OnMouseOver += (a, b) => { backdrops[0].Color = bookColor; };
-			backdrops[0].OnMouseOut += (a, b) => { backdrops[0].Color = Color.White; };
-
-			backdrops[1].OnClick += (a, b) => ContinueEnabled();
-			backdrops[1].OnMouseOver += (a, b) => { backdrops[1].Color = bookColor; };
-			backdrops[1].OnMouseOut += (a, b) => { backdrops[1].Color = Color.White; };
-
-			backdrops[2].OnClick += (a, b) => CloseAndConfigure();
-			backdrops[2].OnMouseOver += (a, b) => { backdrops[2].Color = bookColor; };
-			backdrops[2].OnMouseOut += (a, b) => { backdrops[2].Color = Color.White; };
-
-			backdrops[3].OnClick += (a, b) => DisablePromptMessage();
-			backdrops[3].OnMouseOver += (a, b) => { backdrops[3].Color = bookColor; };
-			backdrops[3].OnMouseOut += (a, b) => { backdrops[3].Color = Color.White; };
-
-			Asset<Texture2D>[] buttonTextures = new Asset<Texture2D>[] {
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.SteampunkGoggles}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Wrench}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad)
-			};
-
-			UIImage[] buttons = new UIImage[] {
-				new UIImage(buttonTextures[0]),
-				new UIImage(buttonTextures[1]),
-				new UIImage(buttonTextures[2]),
-				new UIImage(buttonTextures[3])
-			};
-
-			FittedTextPanel[] textOptions = new FittedTextPanel[] {
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressMode"),
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.EnableProgressMode"),
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ConfigProgressMode"),
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressPrompt"),
-			};
-
-			Asset<Texture2D> check = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
-			Asset<Texture2D> x = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
-
-			bool config = BossChecklist.BossLogConfig.PromptDisabled;
-			PromptCheck = new UIImage(config ? check : x);
-
-			for (int i = 0; i < buttonTextures.Length; i++) {
-				backdrops[i].Width.Pixels = backdropTexture.Value.Width;
-				backdrops[i].Height.Pixels = backdropTexture.Value.Height;
-				backdrops[i].Left.Pixels = 25;
-				backdrops[i].Top.Pixels = 75 + (75 * i);
-
-				buttons[i].Width.Pixels = buttonTextures[i].Value.Width;
-				buttons[i].Height.Pixels = buttonTextures[i].Value.Height;
-				buttons[i].Left.Pixels = 15;
-				buttons[i].Top.Pixels = backdrops[i].Height.Pixels / 2 - buttons[i].Height.Pixels / 2;
-
-				textOptions[i].Width.Pixels = backdrops[i].Width.Pixels - (buttons[i].Left.Pixels + buttons[i].Width.Pixels + 15);
-				textOptions[i].Height.Pixels = backdrops[i].Height.Pixels;
-				textOptions[i].Left.Pixels = buttons[i].Left.Pixels + buttons[i].Width.Pixels;
-				textOptions[i].Top.Pixels = -10;
-				textOptions[i].PaddingTop = 0;
-				textOptions[i].PaddingLeft = 15;
-
-				if (i == buttonTextures.Length - 1) {
-					buttons[i].Append(PromptCheck);
-				}
-				backdrops[i].Append(buttons[i]);
-				backdrops[i].Append(textOptions[i]);
-				PageTwo.Append(backdrops[i]);
-			}
-		}
-
-		public void ContinueDisabled() {
-			BossChecklist.BossLogConfig.MaskTextures = false;
-			BossChecklist.BossLogConfig.MaskNames = false;
-			BossChecklist.BossLogConfig.UnmaskNextBoss = true;
-			BossChecklist.BossLogConfig.MaskBossLoot = false;
-			BossChecklist.BossLogConfig.MaskHardMode = false;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
-
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			PageNum = -1;
-			ToggleBossLog(true);
-		}
-
-		public void ContinueEnabled() {
-			BossChecklist.BossLogConfig.MaskTextures = true;
-			BossChecklist.BossLogConfig.MaskNames = true;
-			BossChecklist.BossLogConfig.UnmaskNextBoss = false;
-			BossChecklist.BossLogConfig.MaskBossLoot = true;
-			BossChecklist.BossLogConfig.MaskHardMode = true;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
-
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			PageNum = -1;
-			ToggleBossLog(true);
-		}
-
-		public void CloseAndConfigure() {
-			ToggleBossLog(false);
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
-			PageNum = -1;
-
-		}
-
-		public void DisablePromptMessage() {
-			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
-			if (BossChecklist.BossLogConfig.PromptDisabled) {
-				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check"));
-			}
-			else {
-				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X"));
-			}
-		}
-
-		public void UpdateTableofContents() {
-			string nextBoss = "";
-			prehardmodeList.Clear();
-			hardmodeList.Clear();
-
-			List<BossInfo> referenceList = BossChecklist.bossTracker.SortedBosses;
-			bool[] visibleList = CalculateTableOfContents(referenceList);
-
-			for (int bossIndex = 0; bossIndex < referenceList.Count; bossIndex++) {
-				BossInfo boss = referenceList[bossIndex];
-				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
-
-				// If the boss should not be visible on the Table of Contents, skip the entry in the list
-				if (!visibleList[bossIndex]) {
-					continue;
-				}
-
-				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
-				string displayName = boss.DisplayName;
-				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
-
-				if (nextBoss == "" && !boss.IsDownedOrForced) {
-					nextBoss = boss.Key;
-				}
-
-				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
-				bool hardMode = cfg.MaskHardMode && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && !boss.IsDownedOrForced;
-				bool availability = cfg.HideUnavailable && !boss.available() && !boss.IsDownedOrForced;
-				if (namesMasked || hardMode || availability) {
-					displayName = "???";
-				}
-
-				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
-					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextBoss == boss.Key) {
-						displayName = boss.DisplayName;
-					}
-				}
-
-				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
-				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
-				// Update forced downs. If the boss is actaully downed, remove the force check.
-				if (boss.ForceDowned) {
-					displayName += "*";
-					if (boss.downed()) {
-						WorldAssist.ForcedMarkedEntries.Remove(boss.Key);
-					}
-				}
-
-				bool allLoot = false;
-				bool allCollect = false;
-				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
-					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-					allLoot = allCollect = true;
-
-					// Loop through player saved loot and boss loot to see if every item was obtained
-					foreach (int loot in boss.lootItemTypes) {
-						// Check for corruption/crimson vanilla items, and skip them based on world evil
-						// May need new method for looking for these items.
-						if (boss.npcIDs[0] < NPCID.Count) {
-							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
-								continue;
-
-							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
-								continue;
-						}
-
-						// Skip expert/master mode items if the world is not in expert/master mode.
-						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
-						if (!Main.expertMode || !Main.masterMode) {
-							Item checkItem = ContentSamples.ItemsByType[loot];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-								continue;
-
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-								continue;
-						}
-
-						// If the item index is not found, end the loop and set allLoot to false
-						// If this never occurs, the user successfully obtained all the items!
-						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
-							allLoot = false;
-							break;
-						}
-					}
-
-					// If no collection items were setup, consider it false until all loot has been obtained
-					if (boss.collection.Count == 0) {
-						allCollect = allLoot;
-					}
-					else {
-						//Repeat everything for collectibles as well
-						foreach (int collectible in boss.collection) {
-							if (collectible == -1 || collectible == 0)
-								continue;
-
-							if (!Main.expertMode || !Main.masterMode) {
-								Item checkItem = ContentSamples.ItemsByType[collectible];
-								if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-									continue;
-
-								if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-									continue;
-							}
-							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
-								allCollect = false;
-								break;
-							}
-						}
-					}
-				}
-
-				bool isNext = nextBoss == boss.Key && cfg.DrawNextMark;
-				TableOfContents next = new TableOfContents(bossIndex, displayName, isNext, allLoot, allCollect);				
-				next.PaddingTop = 5;
-				next.PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0);
-				next.OnClick += JumpToBossPage;
-				next.OnRightClick += HideBoss;
-
-				if (boss.progression <= BossTracker.WallOfFlesh) {
-					prehardmodeList.Add(next);
-				}
-				else {
-					hardmodeList.Add(next);
-				}
-			}
-
-			if (prehardmodeList.Count > 13) {
-				PageOne.Append(scrollOne);
-			}
-			PageOne.Append(prehardmodeList);
-			prehardmodeList.SetScrollbar(scrollOne);
-			if (hardmodeList.Count > 13) {
-				PageTwo.Append(scrollTwo);
-			}
-			PageTwo.Append(hardmodeList);
-			hardmodeList.SetScrollbar(scrollTwo);
-
-			// Calculate Progress Bar downed entries
-			int[] prehDown = new int[] { 0, 0, 0 };
-			int[] prehTotal = new int[] { 0, 0, 0 };
-			int[] hardDown = new int[] { 0, 0, 0 };
-			int[] hardTotal = new int[] { 0, 0, 0 };
-			Dictionary<string, int[]> prehEntries = new Dictionary<string, int[]>();
-			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
-
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.hidden)
-					continue;
-
-				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
-					continue;
-
-				if (boss.progression <= BossTracker.WallOfFlesh) {
-					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-						if (!prehEntries.ContainsKey(boss.modSource)) {
-							prehEntries.Add(boss.modSource, new int[] { 0, 0 });
-						}
-						prehTotal[(int)boss.type]++;
-						prehEntries[boss.modSource][1] += 1;
-
-						if (boss.IsDownedOrForced) {
-							prehDown[(int)boss.type]++;
-							prehEntries[boss.modSource][0] += 1;
-						}
-					}
-				}
-				else {
-					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-						if (!hardEntries.ContainsKey(boss.modSource)) {
-							hardEntries.Add(boss.modSource, new int[] { 0, 0 });
-						}
-						hardTotal[(int)boss.type]++;
-						hardEntries[boss.modSource][1] += 1;
-
-						if (boss.IsDownedOrForced) {
-							if (!hardEntries.ContainsKey(boss.modSource)) {
-								hardEntries.Add(boss.modSource, new int[] { 0, 0 });
-							}
-							hardDown[(int)boss.type]++;
-							hardEntries[boss.modSource][0] += 1;
-						}
-					}
-				}					
-			}
-
-			prehardmodeBar.downedEntries = prehDown;
-			prehardmodeBar.totalEntries = prehTotal;
-			prehEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
-			prehardmodeBar.modAllEntries = prehEntries;
-
-			hardmodeBar.downedEntries = hardDown;
-			hardmodeBar.totalEntries = hardTotal;
-			hardEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
-			hardmodeBar.modAllEntries = hardEntries;
-
-
-			PageOne.Append(prehardmodeBar);
-			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {
-				PageTwo.Append(hardmodeBar);
-			}
-		}
-
-		private void UpdateCredits() {
-			pageTwoItemList.Left.Pixels = 15;
-			pageTwoItemList.Top.Pixels = 65;
-			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
-			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - pageTwoItemList.Top.Pixels - 80;
-			pageTwoItemList.Clear();
-
-			scrollTwo.SetView(10f, 1000f);
-			scrollTwo.Top.Pixels = 90;
-			scrollTwo.Left.Pixels = 5;
-			scrollTwo.Height.Set(-60f, 0.75f);
-			scrollTwo.HAlign = 1f;
-
-			List<string> optedMods = BossUISystem.Instance.OptedModNames;
-			if (optedMods.Count > 0) {
-				foreach (string mod in optedMods) {
-					UIText modListed = new UIText("●" + mod, 0.85f) {
-						PaddingTop = 8,
-						PaddingLeft = 5
-					};
-					pageTwoItemList.Add(modListed);
-				}
-				if (optedMods.Count > 11) {
-					PageTwo.Append(scrollTwo);
-				}
-				PageTwo.Append(pageTwoItemList);
-				pageTwoItemList.SetScrollbar(scrollTwo);
-			}
-			else {
-				// No mods are using the Log
-				UIPanel brokenPanel = new UIPanel();
-				brokenPanel.Height.Pixels = 220;
-				brokenPanel.Width.Pixels = 340;
-				brokenPanel.Top.Pixels = 120;
-				brokenPanel.Left.Pixels = 18;
-				PageTwo.Append(brokenPanel);
-
-				FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NoModsSupported");
-				brokenDisplay.Height.Pixels = 200;
-				brokenDisplay.Width.Pixels = 340;
-				brokenDisplay.Top.Pixels = 0;
-				brokenDisplay.Left.Pixels = -15;
-				brokenPanel.Append(brokenDisplay);
-			}
-		}
-
-		internal void HideBoss(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.Index, false);
-		}
-
-		internal void JumpToBossPage(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is TableOfContents table)
-				JumpToBossPage(table.Index, true);
-		}
-
-		internal void JumpToBossPage(int index, bool leftClick = true) {
-			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
-				// While holding alt, a user can interact with any boss list entry
-				// Left-clicking forces a completion check on or off
-				// Right-clicking hides the boss from the list
-				BossInfo entry = BossChecklist.bossTracker.SortedBosses[index];
-				if (leftClick) {
-					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
-						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
-					}
-					else if (!entry.downed()) {
-						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
-					}
-					UpdateSelectedPage(TableOfContents);
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
-						packet.Write(entry.Key);
-						packet.Write(entry.ForceDowned);
-						packet.Send();
-					}
-				}
-				else {
-					entry.hidden = !entry.hidden;
-					if (entry.hidden) {
-						WorldAssist.HiddenBosses.Add(entry.Key);
-					}
-					else {
-						WorldAssist.HiddenBosses.Remove(entry.Key);
-					}
-					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-					UpdateSelectedPage(TableOfContents);
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestHideBoss);
-						packet.Write(entry.Key);
-						packet.Write(entry.hidden);
-						packet.Send();
-					}
-				}
-				return; // Alt-clicking should never jump to a boss page
-			}
-			UpdateSelectedPage(index, CategoryPageType);
-		}
-
-		private void ResetBothPages() {
-			PageOne.RemoveAllChildren();
-			PageTwo.RemoveAllChildren();
-
-			scrollOne = new BossLogUIElements.FixedUIScrollbar();
-			scrollOne.SetView(100f, 1000f);
-			scrollOne.Top.Pixels = 50f;
-			scrollOne.Left.Pixels = -18;
-			scrollOne.Height.Set(-24f, 0.75f);
-			scrollOne.HAlign = 1f;
-
-			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
-			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Pixels = 50f;
-			scrollTwo.Left.Pixels = -13;
-			scrollTwo.Height.Set(-24f, 0.75f);
-			scrollTwo.HAlign = 1f;
-
-			ResetPageButtons();
-			if (PageNum >= 0) {
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
-					PageTwo.Append(spawnButton);
-					PageTwo.Append(lootButton);
-					//PageTwo.Append(collectButton);
-					PageTwo.Append(recordButton);
-				}
-				else {
-					UIPanel brokenPanel = new UIPanel();
-					brokenPanel.Height.Pixels = 160;
-					brokenPanel.Width.Pixels = 340;
-					brokenPanel.Top.Pixels = 150;
-					brokenPanel.Left.Pixels = 3;
-					PageTwo.Append(brokenPanel);
-
-					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.LogFeaturesNotAvailable");
-					brokenDisplay.Height.Pixels = 200;
-					brokenDisplay.Width.Pixels = 340;
-					brokenDisplay.Top.Pixels = -12;
-					brokenDisplay.Left.Pixels = -15;
-					brokenPanel.Append(brokenDisplay);
-				}
-
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown" && BossChecklist.bossTracker.SortedBosses[PageNum].npcIDs.Count == 0) {
-					UIPanel brokenPanel = new UIPanel();
-					brokenPanel.Height.Pixels = 160;
-					brokenPanel.Width.Pixels = 340;
-					brokenPanel.Top.Pixels = 150;
-					brokenPanel.Left.Pixels = 14;
-					PageOne.Append(brokenPanel);
-
-					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NotImplemented");
-					brokenDisplay.Height.Pixels = 200;
-					brokenDisplay.Width.Pixels = 340;
-					brokenDisplay.Top.Pixels = 0;
-					brokenDisplay.Left.Pixels = -15;
-					brokenPanel.Append(brokenDisplay);
-				}
-			}
-		}
-
-		private void ResetPageButtons() {
-			PageOne.RemoveChild(PrevPage);
-			PageTwo.RemoveChild(NextPage);
-			for (int i = 0; i < AltPageButtons.Length; i++) {
-				PageTwo.RemoveChild(AltPageButtons[i]);
-			}
-
-			if (PageNum == -3)
-				return;
-
-			if (PageNum == -2) {
-				PageOne.Append(PrevPage);
-			}
-			else if (PageNum == -1) {
-				PageTwo.Append(NextPage);
-			}
-			else {
-				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-				if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
-					// Spawn and Loot pages do not have alt pages currently, so skip adding them
-					bool validRecordPage = CategoryPageType != CategoryPage.Record || boss.type != EntryType.Boss;
-					if (!validRecordPage) {
-						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
-						PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
-						int totalRecords = (int)RecordCategory.None;
-						for (int i = 0; i < totalRecords; i++) {
-							if ((i == 1 || i == 2) && record.kills == 0)
-								continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-
-							AltPageButtons[i].Width.Pixels = 25;
-							AltPageButtons[i].Height.Pixels = 25;
-							int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
-							if (CategoryPageType == CategoryPage.Record) {
-								// If First or Best buttons were skipped account for the positioning of Previous and World
-								if (i < 2) {
-									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
-								}
-								else {
-									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + (i - 2) * 25 + offset;
-								}
-							}
-							AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
-							PageTwo.Append(AltPageButtons[i]);
-						}
-					}
-				}
-				PageOne.Append(PrevPage);
-				PageTwo.Append(NextPage);
-			}
-		}
-
-		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
-			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
-			if (!leftClick) {
-				if (RecordPageType == type)
-					return;
-
-				if (CompareState == RecordPageType) {
-					CompareState = RecordCategory.None;
-				}
-				else if (CompareState != type) {
-					CompareState = type;
-				}
-				else {
-					CompareState = RecordCategory.None;
-				}
-				//Main.NewText($"Set compare value to {CompareState}");
-			}
-			else {
-				// If selecting the compared state altpage, reset compare state
-				if (CompareState == type) {
-					CompareState = RecordCategory.None;
-				}
-				UpdateSelectedPage(PageNum, CategoryPageType, type);
-			}
-		}
-
-		public void UpdateSelectedPage(int pageNum, CategoryPage catPage = CategoryPage.Record, RecordCategory altPage = RecordCategory.None) {
-			PageNum = pageNum;
-			// Only on boss pages does updating the category page matter
-			if (PageNum >= 0) {
-				CategoryPageType = catPage;
-				if (altPage != RecordCategory.None) {
-					RecordPageType = altPage;
-				}
-			}
-
-			UpdateTabNavPos(); // Update tabs to be properly positioned on either the left or right side
-			ResetBothPages(); // Reset the content of both pages before appending new content for the page
-			if (PageNum == -1) {
-				UpdateTableofContents();
-			}
-			else if (PageNum == -2) {
-				UpdateCredits();
-			}
-			else {
-				if (CategoryPageType == CategoryPage.Record) {
-					OpenRecord();
-				}
-				else if (CategoryPageType == CategoryPage.Spawn) {
-					OpenSpawn();
-				}
-				else if (CategoryPageType == CategoryPage.Loot) {
-					OpenLoot();
-				}
-			}
 		}
 
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
