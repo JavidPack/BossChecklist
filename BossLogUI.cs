@@ -1305,7 +1305,65 @@ namespace BossChecklist
 					}
 				}
 
-				TableOfContents next = new TableOfContents(bossIndex, boss.progression, displayName, boss.IsDownedOrForced, nextBoss == boss.Key);				
+				bool allLoot = false;
+				bool allCollect = false;
+				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
+					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					allLoot = allCollect = true;
+
+					// Loop through player saved loot and boss loot to see if every item was obtained
+					foreach (int loot in boss.lootItemTypes) {
+						// Check for corruption/crimson vanilla items, and skip them based on world evil
+						// May need new method for looking for these items.
+						if (boss.npcIDs[0] < NPCID.Count) {
+							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
+								continue;
+
+							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
+								continue;
+						}
+
+						// Skip expert/master mode items if the world is not in expert/master mode.
+						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
+						if (!Main.expertMode || !Main.masterMode) {
+							Item checkItem = ContentSamples.ItemsByType[loot];
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+								continue;
+
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+								continue;
+						}
+
+						// If the item index is not found, end the loop and set allLoot to false
+						// If this never occurs, the user successfully obtained all the items!
+						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
+							allLoot = false;
+							break;
+						}
+					}
+
+					//Repeat everything for collectibles as well
+					foreach (int collectible in boss.collection) {
+						if (collectible == -1 || collectible == 0)
+							continue;
+
+						if (!Main.expertMode || !Main.masterMode) {
+							Item checkItem = ContentSamples.ItemsByType[collectible];
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+								continue;
+
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+								continue;
+						}
+						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
+							allCollect = false;
+							break;
+						}
+					}
+				}
+
+				bool isNext = nextBoss == boss.Key && cfg.DrawNextMark;
+				TableOfContents next = new TableOfContents(bossIndex, displayName, isNext, allLoot, allCollect);				
 				next.PaddingTop = 5;
 				next.PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0);
 				next.OnClick += JumpToBossPage;

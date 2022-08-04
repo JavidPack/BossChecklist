@@ -1395,18 +1395,23 @@ namespace BossChecklist.UIElements
 			readonly bool isNext;
 			readonly bool downed;
 			readonly string displayName;
+			readonly bool allLoot;
+			readonly bool allCollectibles;
 
-			public TableOfContents(int index, float order, string displayName, bool downed, bool nextCheck, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+			public TableOfContents(int index, string displayName, bool nextCheck, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				this.Index = index;
-				this.order = order;
-				this.isNext = nextCheck;
-				this.downed = downed;
 				this.displayName = displayName;
+				this.isNext = nextCheck;
+				this.order = BossChecklist.bossTracker.SortedBosses[Index].progression;
+				this.downed = BossChecklist.bossTracker.SortedBosses[Index].IsDownedOrForced;
+				this.allLoot = loot;
+				this.allCollectibles = collect;
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {
-				if (BossChecklist.DebugConfig.ShowProgressionValue)
+				if (BossChecklist.DebugConfig.ShowProgressionValue) {
 					SetText($"[{order}f] {displayName}");
+				}
 				base.MouseOver(evt);
 			}
 
@@ -1422,41 +1427,29 @@ namespace BossChecklist.UIElements
 				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[Index];
 
 				if (order != -1) {
-					BossChecklist BA = BossChecklist.instance;
 					// Use the appropriate text color for conditions
-					if (BossChecklist.BossLogConfig.ColoredBossText) {
-						if (IsMouseHovering) {
-							TextColor = TextColor = Color.SkyBlue;
-						}
-						//if (IsMouseHovering && sortedBosses[pageNum].IsDownedOrForced) TextColor = Color.DarkSeaGreen;
-						//else if (IsMouseHovering && !sortedBosses[pageNum].IsDownedOrForced) TextColor = Color.IndianRed;
-						else if (!downed) {
-							TextColor = isNext && BossChecklist.BossLogConfig.DrawNextMark ? new Color(248, 235, 91) : Colors.RarityRed;
-						}
-						else if (downed) {
-							TextColor = Colors.RarityGreen;
-						}
-
+					if ((!selectedBoss.available() && !downed) || selectedBoss.hidden) {
+						TextColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
+					}
+					else if (BossChecklist.BossLogConfig.ColoredBossText) {
 						int recordIndex = BossChecklist.bossTracker.SortedBosses[Index].GetRecordIndex;
 						if (recordIndex != -1 && modPlayer.hasNewRecord[recordIndex]) {
 							TextColor = Main.DiscoColor;
 						}
-					}
-					else {
-						if (selectedBoss.IsDownedOrForced) {
-							TextColor = IsMouseHovering ? Color.Silver : Color.DarkGray;
+						else if (IsMouseHovering) {
+							TextColor = TextColor = Color.SkyBlue;
 						}
-						else if (isNext && BossChecklist.BossLogConfig.DrawNextMark) {
+						else if (isNext) {
 							TextColor = new Color(248, 235, 91);
 						}
 						else {
-							TextColor = IsMouseHovering ? Color.Silver : Color.Gainsboro;
+							TextColor = downed ? Colors.RarityGreen : Colors.RarityRed;
 						}
 					}
-					// Hidden boss text color overwrites previous text color alterations
-					if ((!selectedBoss.available() && !downed) || selectedBoss.hidden) {
-						TextColor = Color.DimGray;
+					else {
+						TextColor = IsMouseHovering ? Color.Silver : Color.White; // Disabled colored text
 					}
+
 					if (IsMouseHovering) {
 						BossLogPanel.headNum = Index;
 					}
@@ -1465,82 +1458,27 @@ namespace BossChecklist.UIElements
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
 
-				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
-					bool allLoot = true;
-					bool allCollect = true;
+				Rectangle parent = this.Parent.GetInnerDimensions().ToRectangle();
+				int hardModeOffset = selectedBoss.progression > BossTracker.WallOfFlesh ? 10 : 0;
+				string looted = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllLoot");
+				string collected = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllCollectibles");
+				Texture2D texture = null;
+				string hoverText = "";
 
-					// Loop through player saved loot and boss loot to see if every item was obtained
-					foreach (int loot in selectedBoss.lootItemTypes) {
-						// Check for corruption/crimson vanilla items, and skip them based on world evil
-						// May need new method for looking for these items.
-						if (selectedBoss.npcIDs[0] < NPCID.Count) {
-							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
-								continue;
+				if (allLoot && allCollectibles) {
+					texture = BossLogUI.goldChestTexture.Value;
+					hoverText = $"{looted}\n{collected}";
+				}
+				else if (allLoot || allCollectibles) {
+					texture = BossLogUI.chestTexture.Value;
+					hoverText = allLoot ? looted : collected;
+				}
 
-							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
-								continue;
-						}
-
-						// Skip expert/master mode items if the world is not in expert/master mode.
-						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
-						if (!Main.expertMode || !Main.masterMode) {
-							Item checkItem = ContentSamples.ItemsByType[loot];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-								continue;
-
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-								continue;
-						}
-
-						// If the item index is not found, end the loop and set allLoot to false
-						// If this never occurs, the user successfully obtained all the items!
-						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
-							allLoot = false;
-							break;
-						}
-					}
-
-					//Repeat everything for collectibles as well
-					foreach (int collectible in selectedBoss.collection) {
-						if (collectible == -1 || collectible == 0)
-							continue;
-
-						if (!Main.expertMode || !Main.masterMode) {
-							Item checkItem = ContentSamples.ItemsByType[collectible];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-								continue;
-
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-								continue;
-						}
-						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
-							allCollect = false;
-							break;
-						}
-					}
-
-					Rectangle parent = this.Parent.GetInnerDimensions().ToRectangle();
-					int hardModeOffset = selectedBoss.progression > BossTracker.WallOfFlesh ? 10 : 0;
-					string looted = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllLoot");
-					string collected = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllCollectibles");
-					Texture2D texture = null;
-					string hoverText = "";
-
-					if (allLoot && allCollect) {
-						texture = BossLogUI.goldChestTexture.Value;
-						hoverText = $"{looted}\n{collected}";
-					}
-					else if (allLoot || allCollect) {
-						texture = BossLogUI.chestTexture.Value;
-						hoverText = allLoot ? looted : collected;
-					}
-
-					if (texture != null) {
-						Rectangle chestPos = new Rectangle(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2, texture.Width, texture.Height);
-						spriteBatch.Draw(texture, chestPos, Color.White);
-						if (Main.MouseScreen.Between(chestPos.TopLeft(), chestPos.BottomRight())) {
-							BossUISystem.Instance.UIHoverText = hoverText;
-						}
+				if (texture != null) {
+					Rectangle chestPos = new Rectangle(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2, texture.Width, texture.Height);
+					spriteBatch.Draw(texture, chestPos, Color.White);
+					if (Main.MouseScreen.Between(chestPos.TopLeft(), chestPos.BottomRight())) {
+						BossUISystem.Instance.UIHoverText = hoverText;
 					}
 				}
 
@@ -1584,13 +1522,11 @@ namespace BossChecklist.UIElements
 						}
 					}
 
-					if (checkType != "Strike-through" || checkGrid == BossLogUI.strikeNTexture) {
-						if (!selectedBoss.hidden) {
-							if (checkGrid != BossLogUI.strikeNTexture) {
-								spriteBatch.Draw(BossLogUI.checkboxTexture.Value, pos, Color.White);
-							}
-							spriteBatch.Draw(checkGrid.Value, pos, Color.White);
+					if ((checkType != "Strike-through" || checkGrid == BossLogUI.strikeNTexture) && !selectedBoss.hidden) {
+						if (checkGrid != BossLogUI.strikeNTexture) {
+							spriteBatch.Draw(BossLogUI.checkboxTexture.Value, pos, Color.White);
 						}
+						spriteBatch.Draw(checkGrid.Value, pos, Color.White);
 					}
 				}
 			}
