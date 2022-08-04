@@ -1342,22 +1342,28 @@ namespace BossChecklist
 						}
 					}
 
-					//Repeat everything for collectibles as well
-					foreach (int collectible in boss.collection) {
-						if (collectible == -1 || collectible == 0)
-							continue;
-
-						if (!Main.expertMode || !Main.masterMode) {
-							Item checkItem = ContentSamples.ItemsByType[collectible];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+					// If no collection items were setup, consider it false until all loot has been obtained
+					if (boss.collection.Count == 0) {
+						allCollect = allLoot;
+					}
+					else {
+						//Repeat everything for collectibles as well
+						foreach (int collectible in boss.collection) {
+							if (collectible == -1 || collectible == 0)
 								continue;
 
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-								continue;
-						}
-						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
-							allCollect = false;
-							break;
+							if (!Main.expertMode || !Main.masterMode) {
+								Item checkItem = ContentSamples.ItemsByType[collectible];
+								if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+									continue;
+
+								if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+									continue;
+							}
+							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
+								allCollect = false;
+								break;
+							}
 						}
 					}
 				}
