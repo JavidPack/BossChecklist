@@ -1131,6 +1131,12 @@ namespace BossChecklist.UIElements
 				}
 			}
 
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (IsMouseHovering)
+					Terraria.GameInput.PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogPanel");
+			}
+
 			internal static string RecordTimeConversion(int ticks) {
 				const int TicksPerSecond = 60;
 				const int TicksPerMinute = TicksPerSecond * 60;
