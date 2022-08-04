@@ -28,18 +28,20 @@ namespace BossChecklist
 		// All contents are within these areas
 		// The selected boss page starts out with an invalid number for the initial check
 		public static int PageNum = -3;
+		public const int TableOfContents = -1;
+		public const int Credits = -2;
 		public BossLogPanel BookArea;
 		public BossLogPanel PageOne;
 		public BossLogPanel PageTwo;
 
 		// Each Boss entry has 3 subpage categories
-		public static CategoryPage CategoryPageNum = CategoryPage.Record;
+		public static CategoryPage CategoryPageType = CategoryPage.Record;
 		public SubpageButton recordButton;
 		public SubpageButton spawnButton;
 		public SubpageButton lootButton;
 
 		public SubpageButton[] AltPageButtons;
-		public static RecordCategory RecordPageSelected = RecordCategory.PreviousAttempt;
+		public static RecordCategory RecordPageType = RecordCategory.PreviousAttempt;
 		public static RecordCategory CompareState = RecordCategory.None; // Compare record values to one another
 		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
 		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
@@ -134,7 +136,6 @@ namespace BossChecklist
 		}
 
 		public void ToggleBossLog(bool show = true) {
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			if (PageNum == -3) {
 				BossLogVisible = show;
 				if (show) {
@@ -145,23 +146,23 @@ namespace BossChecklist
 			}
 
 			if (show) {
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				modPlayer.hasOpenedTheBossLog = true;
 				// If the prompt isn't shown, try checking for a reset.
 				// This is to reset the page from what the user previously had back to the Table of Contents
 				if (modPlayer.enteredWorldReset) {
 					modPlayer.enteredWorldReset = false;
 					PageNum = -1;
-					CategoryPageNum = 0;
-					UpdateTableofContents();
+					CategoryPageType = 0;
+					UpdateSelectedPage(TableOfContents);
 				}
 				else {
-					UpdateCatPage(CategoryPageNum);
+					UpdateSelectedPage(PageNum, CategoryPageType);
 				}
 
 				// Update UI Element positioning before marked visible
 				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
 				ResetUIPositioning();
-				UpdateTabNavPos();
 			}
 
 			// If UI is closed on a new record page, remove the new record from the list
@@ -381,7 +382,7 @@ namespace BossChecklist
 			recordButton.Height.Pixels = 25;
 			recordButton.Left.Pixels = PageTwo.Width.Pixels / 2 - recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 15;
-			recordButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Record);
+			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Record);
 			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
 
 			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
@@ -389,14 +390,14 @@ namespace BossChecklist
 			spawnButton.Height.Pixels = 25;
 			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 + 8;
 			spawnButton.Top.Pixels = 15;
-			spawnButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Spawn);
+			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Spawn);
 
 			lootButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.LootCollect");
 			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24 + 16;
 			lootButton.Height.Pixels = 25;
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 50;
-			lootButton.OnClick += (a, b) => UpdateCatPage(CategoryPage.Loot);
+			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Loot);
 			lootButton.OnRightDoubleClick += RemoveItem;
 
 			// These will serve as a reservation for our AltPage buttons
@@ -483,7 +484,7 @@ namespace BossChecklist
 			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
 			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
 			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == -2 ? -20 : BookArea.Width.Pixels - 12);
-			UpdateFilterTabPos(false);
+			UpdateFilterTabPos(false); // Update filter tab visibility
 		}
 
 		private void UpdateFilterTabPos(bool tabClicked) {
@@ -581,7 +582,7 @@ namespace BossChecklist
 			}
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			Filters_SetImage();
-			UpdateTableofContents();
+			UpdateSelectedPage(TableOfContents);
 		}
 
 		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Forced Downs, Clear Records, Clear Boss Loot, etc
@@ -598,7 +599,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearHidden);
 				packet.Send();
 			}
-			UpdateTableofContents();
+			UpdateSelectedPage(TableOfContents);
 		}
 
 		private void ClearForcedDowns() {
@@ -611,14 +612,12 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearForceDowns);
 				packet.Send();
 			}
-			UpdateTableofContents();
+			UpdateSelectedPage(TableOfContents);
 		}
 
 		private static void UpdateRecordHighlight() {
-			if (PageNum >= 0) {
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
-				}
+			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
 			}
 		}
 
@@ -639,28 +638,19 @@ namespace BossChecklist
 			UpdateRecordHighlight();
 
 			if (id == "Boss_Tab") {
-				PageNum = FindNext(EntryType.Boss);
+				UpdateSelectedPage(FindNext(EntryType.Boss), CategoryPageType);
 			}
 			else if (id == "Miniboss_Tab") {
-				PageNum = FindNext(EntryType.MiniBoss);
+				UpdateSelectedPage(FindNext(EntryType.MiniBoss), CategoryPageType);
 			}
 			else if (id == "Event_Tab") {
-				PageNum = FindNext(EntryType.Event);
+				UpdateSelectedPage(FindNext(EntryType.Event), CategoryPageType);
 			}
 			else if (id == "Credits_Tab") {
-				UpdateCredits();
+				UpdateSelectedPage(-2, CategoryPageType);
 			}
 			else {
-				UpdateTableofContents();
-			}
-
-			// Update tabs to be properly positioned on either the left or right side
-			UpdateFilterTabPos(false);
-			UpdateTabNavPos();
-
-			if (PageNum >= 0) {
-				ResetBothPages();
-				UpdateCatPage(CategoryPageNum);
+				UpdateSelectedPage(-1, CategoryPageType);
 			}
 		}
 
@@ -669,7 +659,7 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
-			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageNum == 0) {
+			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageType == 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
 				PersonalStats stats = modPlayer.RecordsForWorld[recordIndex].stats;
@@ -681,7 +671,7 @@ namespace BossChecklist
 
 				stats.hitsTakenBest = -1;
 				stats.hitsTakenPrev = -1;
-				OpenRecord();
+				UpdateSelectedPage(PageNum, CategoryPageType);
 			}
 		}
 
@@ -692,7 +682,7 @@ namespace BossChecklist
 			if (!BossChecklist.DebugConfig.ResetLootItems)
 				return;
 
-			if (CategoryPageNum == CategoryPage.Loot) {
+			if (CategoryPageType == CategoryPage.Loot) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				// If tthe page button was double right-clicked, clear all items from the player's boss loot list
 				// If an item slot was double right-clicked, remove only that item from the boss loot list
@@ -702,12 +692,14 @@ namespace BossChecklist
 				else if (listeningElement is LogItemSlot slot) {
 					modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
 				}
-				OpenLoot();
+				UpdateSelectedPage(PageNum, CategoryPage.Loot);
 			}
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
-			BossAssistButton button = (BossAssistButton)listeningElement;
+			if (listeningElement is not BossAssistButton button)
+				return;
+
 			string id = button.Id;
 			if (id == "NextItem") {
 				RecipePageNum++;
@@ -726,7 +718,7 @@ namespace BossChecklist
 					RecipeShown++;
 				}
 			}
-			OpenSpawn();
+			UpdateSelectedPage(PageNum, CategoryPage.Spawn);
 		}
 
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
@@ -754,7 +746,8 @@ namespace BossChecklist
 					PageNum = -2;
 				}
 			}
-			else { // button is previous
+			else { 
+				// button is previous
 				if (PageNum >= 0) {
 					PageNum--;
 				}
@@ -791,7 +784,8 @@ namespace BossChecklist
 								PageNum = -2;
 							}
 						}
-						else { // button is previous
+						else { 
+							// button is previous
 							if (PageNum >= 0) {
 								PageNum--;
 							}
@@ -803,23 +797,19 @@ namespace BossChecklist
 				}
 			}
 
-			// Update tabs to be properly positioned on either the left or right side
-			UpdateTabNavPos();
-			ResetBothPages();
-			UpdateCatPage(CategoryPageNum);
+			// Update the page
+			UpdateSelectedPage(PageNum, CategoryPageType);
 		}
 
 		private void OpenRecord() {
-			ResetBothPages();
-			if (!PageTwo.HasChild(AltPageButtons[(int)RecordPageSelected])) {
-				RecordPageSelected = RecordCategory.PreviousAttempt;
+			if (!PageTwo.HasChild(AltPageButtons[(int)RecordPageType])) {
+				RecordPageType = RecordCategory.PreviousAttempt;
 			}
 			if (PageNum < 0)
 				return;
 		}
 
 		private void OpenSpawn() {
-			ResetBothPages();
 			int TotalRecipes = 0;
 			if (PageNum < 0)
 				return;
@@ -1011,7 +1001,6 @@ namespace BossChecklist
 		}
 
 		private void OpenLoot() {
-			ResetBothPages();
 			if (PageNum < 0)
 				return;
 
@@ -1256,8 +1245,6 @@ namespace BossChecklist
 		}
 
 		public void UpdateTableofContents() {
-			PageNum = -1;
-			ResetBothPages();
 			string nextBoss = "";
 			prehardmodeList.Clear();
 			hardmodeList.Clear();
@@ -1460,10 +1447,6 @@ namespace BossChecklist
 		}
 
 		private void UpdateCredits() {
-			PageNum = -2;
-			ResetBothPages();
-			List<string> optedMods = BossUISystem.Instance.OptedModNames;
-
 			pageTwoItemList.Left.Pixels = 15;
 			pageTwoItemList.Top.Pixels = 65;
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
@@ -1476,6 +1459,7 @@ namespace BossChecklist
 			scrollTwo.Height.Set(-60f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
+			List<string> optedMods = BossUISystem.Instance.OptedModNames;
 			if (optedMods.Count > 0) {
 				foreach (string mod in optedMods) {
 					UIText modListed = new UIText("●" + mod, 0.85f) {
@@ -1490,8 +1474,8 @@ namespace BossChecklist
 				PageTwo.Append(pageTwoItemList);
 				pageTwoItemList.SetScrollbar(scrollTwo);
 			}
-			else // No mods are using the Log
-			{
+			else {
+				// No mods are using the Log
 				UIPanel brokenPanel = new UIPanel();
 				brokenPanel.Height.Pixels = 220;
 				brokenPanel.Width.Pixels = 340;
@@ -1531,7 +1515,7 @@ namespace BossChecklist
 					else if (!entry.downed()) {
 						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
 					}
-					UpdateTableofContents();
+					UpdateSelectedPage(TableOfContents);
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
@@ -1549,7 +1533,7 @@ namespace BossChecklist
 						WorldAssist.HiddenBosses.Remove(entry.Key);
 					}
 					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-					UpdateTableofContents();
+					UpdateSelectedPage(TableOfContents);
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestHideBoss);
@@ -1560,12 +1544,7 @@ namespace BossChecklist
 				}
 				return; // Alt-clicking should never jump to a boss page
 			}
-			PageNum = index;
-			PageOne.RemoveAllChildren();
-			ResetPageButtons();
-			UpdateCatPage(CategoryPageNum);
-			UpdateTabNavPos();
-			UpdateFilterTabPos(false); // Clicking entry on the ToC should update filter panel
+			UpdateSelectedPage(index, CategoryPageType);
 		}
 
 		private void ResetBothPages() {
@@ -1649,7 +1628,7 @@ namespace BossChecklist
 				if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
 					// Spawn and Loot pages do not have alt pages currently, so skip adding them
-					bool validRecordPage = CategoryPageNum != CategoryPage.Record || boss.type != EntryType.Boss;
+					bool validRecordPage = CategoryPageType != CategoryPage.Record || boss.type != EntryType.Boss;
 					if (!validRecordPage) {
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
@@ -1662,7 +1641,7 @@ namespace BossChecklist
 							AltPageButtons[i].Width.Pixels = 25;
 							AltPageButtons[i].Height.Pixels = 25;
 							int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
-							if (CategoryPageNum == CategoryPage.Record) {
+							if (CategoryPageType == CategoryPage.Record) {
 								// If First or Best buttons were skipped account for the positioning of Previous and World
 								if (i < 2) {
 									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
@@ -1684,10 +1663,10 @@ namespace BossChecklist
 		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
 			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
 			if (!leftClick) {
-				if (RecordPageSelected == type)
+				if (RecordPageType == type)
 					return;
 
-				if (CompareState == RecordPageSelected) {
+				if (CompareState == RecordPageType) {
 					CompareState = RecordCategory.None;
 				}
 				else if (CompareState != type) {
@@ -1703,31 +1682,36 @@ namespace BossChecklist
 				if (CompareState == type) {
 					CompareState = RecordCategory.None;
 				}
-				UpdateCatPage(CategoryPageNum, type);
+				UpdateSelectedPage(PageNum, CategoryPageType, type);
 			}
 		}
 
-		public void UpdateCatPage(CategoryPage catPage, RecordCategory altPage = RecordCategory.None) {
-			CategoryPageNum = catPage;
-			// If altPage doesn't want to be changed use -1
-			if (altPage != RecordCategory.None) {
-				RecordPageSelected = altPage;
+		public void UpdateSelectedPage(int pageNum, CategoryPage catPage = CategoryPage.Record, RecordCategory altPage = RecordCategory.None) {
+			PageNum = pageNum;
+			// Only on boss pages does updating the category page matter
+			if (PageNum >= 0) {
+				CategoryPageType = catPage;
+				if (altPage != RecordCategory.None) {
+					RecordPageType = altPage;
+				}
 			}
 
+			UpdateTabNavPos(); // Update tabs to be properly positioned on either the left or right side
+			ResetBothPages(); // Reset the content of both pages before appending new content for the page
 			if (PageNum == -1) {
-				UpdateTableofContents(); // Handle new page
+				UpdateTableofContents();
 			}
 			else if (PageNum == -2) {
 				UpdateCredits();
 			}
 			else {
-				if (CategoryPageNum == CategoryPage.Record) {
+				if (CategoryPageType == CategoryPage.Record) {
 					OpenRecord();
 				}
-				else if (CategoryPageNum == CategoryPage.Spawn) {
+				else if (CategoryPageType == CategoryPage.Spawn) {
 					OpenSpawn();
 				}
-				else if (CategoryPageNum == CategoryPage.Loot) {
+				else if (CategoryPageType == CategoryPage.Loot) {
 					OpenLoot();
 				}
 			}

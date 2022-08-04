@@ -28,13 +28,6 @@ namespace BossChecklist
 		Mount
 	}
 
-	internal enum CategoryPage
-	{
-		Record,
-		Spawn,
-		Loot
-	}
-
 	enum PacketMessageType : byte
 	{
 		RequestHideBoss,
@@ -58,7 +51,14 @@ namespace BossChecklist
 		ResetAll = 8
 	}
 
-	internal enum RecordCategory : int
+	internal enum CategoryPage
+	{
+		Record,
+		Spawn,
+		Loot
+	}
+
+	internal enum RecordCategory
 	{
 		PreviousAttempt,
 		BestRecord,
