@@ -104,51 +104,25 @@ namespace BossChecklist
 
 			int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
 			if (mouseTextIndex != -1) {
-				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-					"BossChecklist: Boss Checklist",
-					delegate {
-						if (BossChecklistUI.Visible) {
-							bossChecklistInterface?.Draw(Main.spriteBatch, new GameTime());
-
-							if (BossChecklistUI.hoverText != "") {
-								float x = FontAssets.MouseText.Value.MeasureString(BossChecklistUI.hoverText).X;
-								Vector2 vector = new Vector2((float)Main.mouseX, (float)Main.mouseY) + new Vector2(16f, 16f);
-								if (vector.Y > (float)(Main.screenHeight - 30)) {
-									vector.Y = (float)(Main.screenHeight - 30);
-								}
-								if (vector.X > (float)(Main.screenWidth - x - 30)) {
-									vector.X = (float)(Main.screenWidth - x - 30);
-								}
-								//Utils.DrawBorderStringFourWay(Main.spriteBatch, Main.fontMouseText, BossChecklistUI.hoverText,
-								//	vector.X, vector.Y, new Color((int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor), Color.Black, Vector2.Zero, 1f);
-								//	Utils.draw
-
-								//ItemTagHandler.GenerateTag(item)
-								int hoveredSnippet = -1;
-								TextSnippet[] array = ChatManager.ParseMessage(BossChecklistUI.hoverText, Color.White).ToArray();
-								ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, array,
-									vector, 0f, Vector2.Zero, Vector2.One, out hoveredSnippet/*, -1f, 2f*/);
-
-								if (hoveredSnippet > -1) {
-									array[hoveredSnippet].OnHover();
-									//if (Main.mouseLeft && Main.mouseLeftRelease)
-									//{
-									//	array[hoveredSnippet].OnClick();
-									//}
-								}
-							}
-						}
-						return true;
-					},
-					InterfaceScaleType.UI)
-				);
+				
 			}
 			// This doesn't work perfectly.
 			//if (BossChecklistUI.Visible) {
 			//	layers.RemoveAll(x => LayersToHideWhenChecklistVisible.Contains(x.Name));
 			//}
 			if (mouseTextIndex != -1) {
-				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log UI",
+				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
+					"BossChecklist: Boss Checklist",
+					delegate {
+						if (BossChecklistUI.Visible) {
+							bossChecklistInterface?.Draw(Main.spriteBatch, new GameTime());
+						}
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
+
+				layers.Insert(++mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Boss Log UI",
 					delegate {
 						BossLogInterface.Draw(Main.spriteBatch, new GameTime());
 						return true;

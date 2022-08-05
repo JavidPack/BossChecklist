@@ -38,7 +38,7 @@ namespace BossChecklist.UIElements
 			//checkbox.spawnItemID = boss.spawnItemID;
 			Append(checkbox);
 
-			moreInfo = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/UIElements/info"), "More Info");
+			moreInfo = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/UIElements/info", ReLogic.Content.AssetRequestMode.ImmediateLoad), "More Info");
 			moreInfo.Left.Set(-24, 1f);
 			moreInfo.SetVisibility(1f, 0.7f);
 			moreInfo.OnClick += MoreInfo_OnClick;

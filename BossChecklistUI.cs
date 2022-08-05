@@ -35,25 +35,28 @@ namespace BossChecklist.UIElements
 		public static bool showMiniBoss = true;
 		public static bool showEvent = true;
 		public static bool showHidden = false;
-		public static string hoverText = "";
 
 		bool imagesResized;
 		public override void Update(GameTime gameTime) {
 			base.Update(gameTime);
+
+			if (IsMouseHovering)
+				Terraria.GameInput.PlayerInput.LockVanillaMouseScroll("BossChecklist/BossChecklistUI");
+
 			if (!imagesResized) {
 				Main.instance.LoadItem(ItemID.SuspiciousLookingEye);
-				Main.instance.LoadItem(ItemID.CandyCorn);
-				Main.instance.LoadItem(ItemID.SnowGlobe);
-				Main.instance.LoadItem(ItemID.InvisibilityPotion);
+				//Main.instance.LoadItem(ItemID.CandyCorn);
+				//Main.instance.LoadItem(ItemID.SnowGlobe);
+				//Main.instance.LoadItem(ItemID.InvisibilityPotion);
 
-				Texture2D completedToggle = ResizeImage(TextureAssets.Item[ItemID.SuspiciousLookingEye].Value, 32, 32);
-				Texture2D miniBossToggle = ResizeImage(TextureAssets.Item[ItemID.CandyCorn].Value, 32, 32);
-				Texture2D eventToggle = ResizeImage(TextureAssets.Item[ItemID.SnowGlobe].Value, 32, 32);
-				Texture2D showHiddenToggle = ResizeImage(TextureAssets.Item[ItemID.InvisibilityPotion].Value, 32, 32);
+				Texture2D completedToggle = ResizeImage(TextureAssets.Item[ItemID.SuspiciousLookingEye].Value, 26, 26);
+				//Texture2D miniBossToggle = ResizeImage(TextureAssets.Item[ItemID.CandyCorn].Value, 26, 26);
+				//Texture2D eventToggle = ResizeImage(TextureAssets.Item[ItemID.SnowGlobe].Value, 26, 26);
+				//Texture2D showHiddenToggle = ResizeImage(TextureAssets.Item[ItemID.InvisibilityPotion].Value, 26, 26);
 				toggleCompletedButton.SetImage(TextureAsset(completedToggle));
-				toggleMiniBossButton.SetImage(TextureAsset(miniBossToggle));
-				toggleEventButton.SetImage(TextureAsset(eventToggle));
-				toggleHiddenButton.SetImage(TextureAsset(showHiddenToggle));
+				//toggleMiniBossButton.SetImage(TextureAsset(miniBossToggle));
+				//toggleEventButton.SetImage(TextureAsset(eventToggle));
+				//toggleHiddenButton.SetImage(TextureAsset(showHiddenToggle));
 				imagesResized = true;
 			}
 			BossUISystem.Instance.bossChecklistUI.checklistPanel.Left.Pixels = Main.playerInventory ? -200 : 0;
@@ -76,43 +79,53 @@ namespace BossChecklist.UIElements
 			checklistPanel.Height.Set(-100, 1f);
 			checklistPanel.BackgroundColor = new Color(73, 94, 171);
 
+			var buttonPanel = new UIPanel();
+			buttonPanel.BackgroundColor = Color.AliceBlue;
+			buttonPanel.SetPadding(6);
+			buttonPanel.Width.Set(0, 1f);
+			buttonPanel.Height.Set(36, 0f);
+			checklistPanel.Append(buttonPanel);
+
 			toggleCompletedButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Completed");
 			toggleCompletedButton.OnClick += ToggleCompletedButtonClicked;
 			toggleCompletedButton.Left.Pixels = spacing;
 			toggleCompletedButton.Top.Pixels = 0;
-			checklistPanel.Append(toggleCompletedButton);
+			toggleCompletedButton.SetVisibility(1f, 0.7f);
+			buttonPanel.Append(toggleCompletedButton);
 
-			toggleMiniBossButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Mini Bosses");
+			toggleMiniBossButton = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss", AssetRequestMode.ImmediateLoad), "Toggle Mini Bosses");
 			toggleMiniBossButton.OnClick += ToggleMiniBossButtonClicked;
 			toggleMiniBossButton.Left.Pixels = spacing + 32;
 			toggleMiniBossButton.Top.Pixels = 0;
-			checklistPanel.Append(toggleMiniBossButton);
+			toggleMiniBossButton.SetVisibility(1f, 0.7f);
+			buttonPanel.Append(toggleMiniBossButton);
 
-			toggleEventButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Events");
+			toggleEventButton = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event", AssetRequestMode.ImmediateLoad), "Toggle Events");
 			toggleEventButton.OnClick += ToggleEventButtonClicked;
 			toggleEventButton.Left.Pixels = spacing + 64;
 			toggleEventButton.Top.Pixels = 0;
-			checklistPanel.Append(toggleEventButton);
+			toggleEventButton.SetVisibility(1f, 0.7f);
+			buttonPanel.Append(toggleEventButton);
 
-			toggleHiddenButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
+			toggleHiddenButton = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Hidden", AssetRequestMode.ImmediateLoad), "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
 			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
 			toggleHiddenButton.Left.Pixels = spacing + 96;
 			toggleHiddenButton.Top.Pixels = 0;
-			checklistPanel.Append(toggleHiddenButton);
+			toggleHiddenButton.SetVisibility(1f, 0.7f);
+			buttonPanel.Append(toggleHiddenButton);
 
 			checklistList = new UIList();
-			checklistList.Top.Pixels = 32f + spacing;
+			checklistList.Top.Pixels = 42f + spacing;
 			checklistList.Width.Set(-25f, 1f);
-			checklistList.Height.Set(-32f, 1f);
+			checklistList.Height.Set(-42f, 1f);
 			checklistList.ListPadding = 12f;
-			checklistList.OnScrollWheel += OnScrollWheel_FixHotbarScroll;
 			checklistPanel.Append(checklistList);
 
 			FixedUIScrollbar checklistListScrollbar = new FixedUIScrollbar();
 			checklistListScrollbar.SetView(100f, 1000f);
 			//checklistListScrollbar.Height.Set(0f, 1f);
-			checklistListScrollbar.Top.Pixels = 32f + spacing;
-			checklistListScrollbar.Height.Set(-32f - spacing, 1f);
+			checklistListScrollbar.Top.Pixels = 42f + spacing;
+			checklistListScrollbar.Height.Set(-42f - spacing, 1f);
 			checklistListScrollbar.HAlign = 1f;
 			checklistPanel.Append(checklistListScrollbar);
 			checklistList.SetScrollbar(checklistListScrollbar);
@@ -199,7 +212,6 @@ namespace BossChecklist.UIElements
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
-			hoverText = "";
 			Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
 			if (checklistPanel.ContainsPoint(MousePosition)) {
 				Main.player[Main.myPlayer].mouseInterface = true;
@@ -222,11 +234,6 @@ namespace BossChecklist.UIElements
 				}
 				hoveredTextSnippet = null;
 			}
-		}
-
-		internal static void OnScrollWheel_FixHotbarScroll(UIScrollWheelEvent evt, UIElement listeningElement) {
-			if (Main.LocalPlayer.itemAnimation == 0 && Main.LocalPlayer.itemTime == 0 && Main.LocalPlayer.reuseDelay == 0)
-				Main.LocalPlayer.ScrollHotbar(Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120);
 		}
 
 		private Texture2D ResizeImage(Texture2D texture2D, int desiredWidth, int desiredHeight) {
