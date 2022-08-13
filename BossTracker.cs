@@ -167,7 +167,7 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventMartianMadness")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_10"),
 				BossInfo.MakeVanillaBoss(EntryType.MiniBoss, MartianSaucer, "$NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer, new List<int>() { }),
-				BossInfo.MakeVanillaEvent(LunarEvent, "Lunar Event", () => NPC.downedTowerNebula && NPC.downedTowerVortex && NPC.downedTowerSolar && NPC.downedTowerStardust, new List<int>() { })
+				BossInfo.MakeVanillaEvent(LunarEvent, "Lunar Event", () => NPC.downedTowers, new List<int>() { })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventLunarEvent")
 					.WithCustomHeadIcon(new List<string>() {
 						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerNebula]}",
