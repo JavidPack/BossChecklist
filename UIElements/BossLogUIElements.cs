@@ -386,13 +386,6 @@ namespace BossChecklist.UIElements
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
-
-				BossInfo selectedBoss;
-				if (BossLogUI.PageNum >= 0) {
-					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-					if (selectedBoss.modSource == "Unknown" && Id == "PageTwo")
-						return; // Prevents drawings on the page if the boss has no info
-				}
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
@@ -458,9 +451,9 @@ namespace BossChecklist.UIElements
 						}
 					}
 				}
-				else if (BossLogUI.PageNum == -2) { // Mod Developers Credits
+				else if (BossLogUI.PageNum == -2) {
 					if (Id == "PageOne") {
-						// Credits Page
+						// Mod Developers Credits
 						string specialThanks = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs");
 						float textScale = 1.15f;
 						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(specialThanks) * textScale;
@@ -496,25 +489,24 @@ namespace BossChecklist.UIElements
 							}
 						}
 					}
+					else if (Id == "PageTwo" && BossUISystem.Instance.OptedModNames.Count > 0) {
+						// Supported Mod Credits Page
+						string thanksMods = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods");
+						float textScale = 1.15f;
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(thanksMods) * textScale;
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
+						Utils.DrawBorderString(spriteBatch, thanksMods, pos, Color.LightSkyBlue, textScale);
 
-					if (Id == "PageTwo") { // Supported Mod Credits Page
-						if (BossUISystem.Instance.OptedModNames.Count > 0) {
-							string thanksMods = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods");
-							float textScale = 1.15f;
-							Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(thanksMods) * textScale;
-							Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
-							Utils.DrawBorderString(spriteBatch, thanksMods, pos, Color.LightSkyBlue, textScale);
-
-							string notice = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
-							textScale = 0.9f;
-							Vector2 stringSize2 = FontAssets.MouseText.Value.MeasureString(notice) * textScale;
-							Vector2 pos2 = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize2.X / 2), pos.Y + stringSize2.Y + 5);
-							Utils.DrawBorderString(spriteBatch, notice, pos2, Color.LightBlue, textScale);
-						}
+						string notice = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
+						textScale = 0.9f;
+						Vector2 stringSize2 = FontAssets.MouseText.Value.MeasureString(notice) * textScale;
+						Vector2 pos2 = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize2.X / 2), pos.Y + stringSize2.Y + 5);
+						Utils.DrawBorderString(spriteBatch, notice, pos2, Color.LightBlue, textScale);
 					}
 				}
-				else if (BossLogUI.PageNum >= 0) { // Boss Pages
-					selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
+				else if (BossLogUI.PageNum >= 0) {
+					// Boss Pages
+					BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 					bool masked = BossLogUI.MaskBoss(selectedBoss) == Color.Black;
 					if (Id == "PageOne") {
 						if (selectedBoss.customDrawing != null) {
@@ -633,500 +625,500 @@ namespace BossChecklist.UIElements
 							}
 						}
 					}
-					if (Id == "PageTwo" && BossLogUI.CategoryPageType == 0 && selectedBoss.modSource != "Unknown") {
-						if (selectedBoss.type == EntryType.Boss) {
-							// Boss Records Subpage
-							Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
-							Rectangle innerRect = pageRect;
-							Rectangle conRect = new Rectangle(innerRect.X + 30, innerRect.Y + 100, construction.Value.Width, construction.Value.Height);
-							spriteBatch.Draw(construction.Value, conRect, Color.White);
+					else if (Id == "PageTwo" && selectedBoss.modSource != "Unknown") {
+						if (BossLogUI.CategoryPageType == 0) {
+							if (selectedBoss.type == EntryType.Boss) {
+								// Boss Records Subpage
+								Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
+								Rectangle conRect = new Rectangle(pageRect.X + 30, pageRect.Y + 100, construction.Value.Width, construction.Value.Height);
+								spriteBatch.Draw(construction.Value, conRect, Color.White);
 
-							if (Main.MouseScreen.Between(conRect.TopLeft(), conRect.BottomRight())) {
-								string noticeText;
-								if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
-									noticeText = $"World Records is currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
-										"\nThe World Records feature is still under construction." +
-										"\nThis feature is known to not work and cause issues, so enable at your own risk." +
-										$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
-								}
-								else {
-									noticeText = $"Boss Records is currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
-										"\nThis section of the Boss Log is still under construction." +
-										"\nAny features or configs related to this page may not work or cause issues." +
-										$"\nBoss Records can be {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? "enabled" : "disabled")} under the Feature Testing configs.";
-								}
-								BossUISystem.Instance.UIHoverText = noticeText;
-								BossUISystem.Instance.UIHoverTextColor = Color.Gold;
-							}
-
-							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-								if (info.type != EntryType.Event)
-									continue;
-
-								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
-									Texture2D icon = info.headIconTextures[0].Value;
-									Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
-									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									spriteBatch.Draw(icon, headPos, faded);
-									if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
-										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-										BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
-										if (Main.mouseLeft && Main.mouseLeftRelease) {
-											// Reset UI positions when changing the page
-											BossLogUI bossLog = BossUISystem.Instance.BossLog;
-											int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-											bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
-											bossLog.ResetUIPositioning();
-										}
-									}
-								}
-							}
-
-							// Beginning of record drawing
-							Texture2D achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements").Value;
-							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-
-							if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-								return;
-
-							int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
-							PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
-							WorldStats wldRecord = WorldAssist.worldRecords[recordIndex].stats;
-
-							string recordTitle = "";
-							string recordValue = "";
-							int[] achCoord = new int[] { -1, -1 };
-							string NoRecord = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
-
-							for (int recordSlot = 0; recordSlot < 4; recordSlot++) { // 4 spots total
-								if (recordSlot == 0) {
-									recordValue = Main.LocalPlayer.name;
-									// Which sub-category are we in?
-									if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousRecord");
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.FirstRecord");
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BestRecord");
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.WorldRecord");
-										recordValue = Main.worldName;
-									}
-								}
-								if (recordSlot == 1) {
-									string Unchallenged = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+								if (Main.MouseScreen.Between(conRect.TopLeft(), conRect.BottomRight())) {
+									string noticeText;
 									if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
-										// World Global Kills & Deaths
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDRWorld");
-										achCoord = wldRecord.totalKills >= wldRecord.totalDeaths ? new int[] { 4, 10 } : new int[] { 4, 8 };
-										if (wldRecord.totalKills == 0 && wldRecord.totalDeaths == 0) {
-											recordValue = Unchallenged;
-										}
-										else {
-											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
-											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
-											recordValue = $"{wldRecord.totalKills} {killTerm} / {wldRecord.totalDeaths} {deathTerm}";
-										}
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Attempt");
-										achCoord = new int[] { 0, 9 };
-										recordValue = record.kills == 0 ? Unchallenged : $"#{record.kills}";
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PlayTime");
-										achCoord = new int[] { 7, 10 };
-										recordValue = record.kills == 0 ? Unchallenged : $"{TicksToPlayTime(record.playTimeFirst)}";
+										noticeText = $"World Records is currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+											"\nThe World Records feature is still under construction." +
+											"\nThis feature is known to not work and cause issues, so enable at your own risk." +
+											$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
 									}
 									else {
-										// Kills & Deaths
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
-										achCoord = new int[] { 0, 3 };
-										if (record.kills == 0 && record.deaths == 0) {
-											recordValue = Unchallenged;
-										}
-										else {
-											string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
-											string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
-											recordValue = $"{record.kills} {killTerm} / {record.deaths} {deathTerm}";
+										noticeText = $"Boss Records is currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+											"\nThis section of the Boss Log is still under construction." +
+											"\nAny features or configs related to this page may not work or cause issues." +
+											$"\nBoss Records can be {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? "enabled" : "disabled")} under the Feature Testing configs.";
+									}
+									BossUISystem.Instance.UIHoverText = noticeText;
+									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
+								}
+
+								foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
+									if (info.type != EntryType.Event)
+										continue;
+
+									if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+										Texture2D icon = info.headIconTextures[0].Value;
+										Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
+										Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+										spriteBatch.Draw(icon, headPos, faded);
+										if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
+											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+											if (Main.mouseLeft && Main.mouseLeftRelease) {
+												// Reset UI positions when changing the page
+												BossLogUI bossLog = BossUISystem.Instance.BossLog;
+												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+												bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
+												bossLog.ResetUIPositioning();
+											}
 										}
 									}
 								}
-								else if (recordSlot == 2) {
-									// Fight Duration
-									recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Duration");
-									achCoord = new int[] { 4, 9 };
 
-									if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
-										recordValue = record.durationPrev == -1 ? NoRecord : RecordTimeConversion(record.durationPrev);
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
-										recordValue = record.durationFirst == -1 ? NoRecord : RecordTimeConversion(record.durationFirst);
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
-										recordValue = record.durationBest == -1 ? NoRecord : RecordTimeConversion(record.durationBest);
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DurationWorld");
-										achCoord = new int[] { 2, 12 };
-										recordValue = wldRecord.durationWorld == -1 ? NoRecord : RecordTimeConversion(wldRecord.durationWorld);
-									}
-								}
-								else if (recordSlot == 3) { // Hits Taken
-									recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
-									achCoord = new int[] { 3, 0 };
+								// Beginning of record drawing
+								Texture2D achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements").Value;
+								PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
-									if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
-										recordValue = record.hitsTakenPrev == -1 ? NoRecord : record.hitsTakenPrev.ToString();
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
-										recordValue = record.hitsTakenFirst == -1 ? NoRecord : record.hitsTakenFirst.ToString();
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
-										recordValue = record.hitsTakenBest == -1 ? NoRecord : record.hitsTakenBest.ToString();
-									}
-									else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
-										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");
-										achCoord = new int[] { 0, 7 };
-										recordValue = wldRecord.hitsTakenWorld < 0 ? NoRecord : wldRecord.hitsTakenWorld.ToString();
-									}
-								}
+								if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+									return;
 
-								if (achCoord[0] != -1) {
-									Rectangle achPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100 + (75 * recordSlot), 64, 64);
-									Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
+								int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
+								PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
+								WorldStats wldRecord = WorldAssist.worldRecords[recordIndex].stats;
 
-									Texture2D slot = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad).Value;
-									spriteBatch.Draw(slot, new Vector2(achPos.X, achPos.Y), new Color(175, 175, 125));
-									spriteBatch.Draw(achievements, achPos, cutRect, Color.White);
+								string recordTitle = "";
+								string recordValue = "";
+								int[] achCoord = new int[] { -1, -1 };
+								string NoRecord = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
 
-									if (Main.MouseScreen.Between(achPos.TopLeft(), achPos.BottomRight())) {
-										if (recordSlot == 1) {
-											if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
-												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
-											}
-											else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
-												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.FirstKDRDescription";
-											}
-											else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
-												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.BestKDRDescription";
-											}
-											else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
-												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.GlobalKDRDescription";
-											}
+								for (int recordSlot = 0; recordSlot < 4; recordSlot++) { // 4 spots total
+									if (recordSlot == 0) {
+										recordValue = Main.LocalPlayer.name;
+										// Which sub-category are we in?
+										if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousRecord");
 										}
-										if (recordSlot == 2) {
-											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.DurationDescription";
-										}
-										if (recordSlot == 3) {
-											BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.HitsTakenDescription";
-										}
-									}
-
-									// Draw trophies hoverover for World Record holder names
-									if (recordSlot == 2 || recordSlot == 3) {
-										if (BossLogUI.RecordPageType == RecordCategory.WorldRecord && (recordSlot == 2 || recordSlot == 3)) {
-											Texture2D trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad).Value;
-											Rectangle trophyPos = new Rectangle(achPos.X + slot.Width - trophy.Width / 2, achPos.Y + slot.Height / 2 - trophy.Height / 2, trophy.Width, trophy.Height);
-											spriteBatch.Draw(trophy, trophyPos, Color.White);
-
-											string message = "$Mods.BossChecklist.BossLog.HoverText.ClaimRecord";
-											if (Main.MouseScreen.Between(trophyPos.TopLeft(), trophyPos.BottomRight())) {
-												string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
-												if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
-													message = $"{holderText}";
-													foreach (string name in wldRecord.durationHolder) {
-														message += $":\n{name}";
-													}
-												}
-												else if (recordSlot == 3 && wldRecord.hitsTakenHolder.Count > 0) {
-													message = $"{holderText}";
-													foreach (string name in wldRecord.hitsTakenHolder) {
-														message += $":\n{name}";
-													}
-												}
-												BossUISystem.Instance.UIHoverText = message;
-											}
+										else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.FirstRecord");
 										}
 										else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
-											Texture2D trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophySilver}", AssetRequestMode.ImmediateLoad).Value;
-											Rectangle trophyPos = new Rectangle(achPos.X + slot.Width - trophy.Width / 2, achPos.Y + slot.Height / 2 - trophy.Height / 2, trophy.Width, trophy.Height);
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BestRecord");
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.WorldRecord");
+											recordValue = Main.worldName;
+										}
+									}
+									if (recordSlot == 1) {
+										string Unchallenged = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+										if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
+											// World Global Kills & Deaths
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDRWorld");
+											achCoord = wldRecord.totalKills >= wldRecord.totalDeaths ? new int[] { 4, 10 } : new int[] { 4, 8 };
+											if (wldRecord.totalKills == 0 && wldRecord.totalDeaths == 0) {
+												recordValue = Unchallenged;
+											}
+											else {
+												string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
+												string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
+												recordValue = $"{wldRecord.totalKills} {killTerm} / {wldRecord.totalDeaths} {deathTerm}";
+											}
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Attempt");
+											achCoord = new int[] { 0, 9 };
+											recordValue = record.kills == 0 ? Unchallenged : $"#{record.kills}";
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PlayTime");
+											achCoord = new int[] { 7, 10 };
+											recordValue = record.kills == 0 ? Unchallenged : $"{TicksToPlayTime(record.playTimeFirst)}";
+										}
+										else {
+											// Kills & Deaths
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.KDR");
+											achCoord = new int[] { 0, 3 };
+											if (record.kills == 0 && record.deaths == 0) {
+												recordValue = Unchallenged;
+											}
+											else {
+												string killTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Kills");
+												string deathTerm = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Deaths");
+												recordValue = $"{record.kills} {killTerm} / {record.deaths} {deathTerm}";
+											}
+										}
+									}
+									else if (recordSlot == 2) {
+										// Fight Duration
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Duration");
+										achCoord = new int[] { 4, 9 };
 
-											// Do not draw the trophy unless a Previous Best record is available
-											if ((recordSlot == 2 && record.durationPrevBest != -1) || (recordSlot == 3 && record.hitsTakenPrevBest != -1)) {
+										if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
+											recordValue = record.durationPrev == -1 ? NoRecord : RecordTimeConversion(record.durationPrev);
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
+											recordValue = record.durationFirst == -1 ? NoRecord : RecordTimeConversion(record.durationFirst);
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
+											recordValue = record.durationBest == -1 ? NoRecord : RecordTimeConversion(record.durationBest);
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DurationWorld");
+											achCoord = new int[] { 2, 12 };
+											recordValue = wldRecord.durationWorld == -1 ? NoRecord : RecordTimeConversion(wldRecord.durationWorld);
+										}
+									}
+									else if (recordSlot == 3) { // Hits Taken
+										recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Dodge");
+										achCoord = new int[] { 3, 0 };
+
+										if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
+											recordValue = record.hitsTakenPrev == -1 ? NoRecord : record.hitsTakenPrev.ToString();
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
+											recordValue = record.hitsTakenFirst == -1 ? NoRecord : record.hitsTakenFirst.ToString();
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
+											recordValue = record.hitsTakenBest == -1 ? NoRecord : record.hitsTakenBest.ToString();
+										}
+										else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
+											recordTitle = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.DodgeWorld");
+											achCoord = new int[] { 0, 7 };
+											recordValue = wldRecord.hitsTakenWorld < 0 ? NoRecord : wldRecord.hitsTakenWorld.ToString();
+										}
+									}
+
+									if (achCoord[0] != -1) {
+										Rectangle achPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100 + (75 * recordSlot), 64, 64);
+										Rectangle cutRect = new Rectangle(66 * achCoord[0], 66 * achCoord[1], 64, 64);
+
+										Texture2D slot = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad).Value;
+										spriteBatch.Draw(slot, new Vector2(achPos.X, achPos.Y), new Color(175, 175, 125));
+										spriteBatch.Draw(achievements, achPos, cutRect, Color.White);
+
+										if (Main.MouseScreen.Between(achPos.TopLeft(), achPos.BottomRight())) {
+											if (recordSlot == 1) {
+												if (BossLogUI.RecordPageType == RecordCategory.PreviousAttempt) {
+													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
+												}
+												else if (BossLogUI.RecordPageType == RecordCategory.FirstRecord) {
+													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.FirstKDRDescription";
+												}
+												else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
+													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.BestKDRDescription";
+												}
+												else if (BossLogUI.RecordPageType == RecordCategory.WorldRecord) {
+													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.GlobalKDRDescription";
+												}
+											}
+											if (recordSlot == 2) {
+												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.DurationDescription";
+											}
+											if (recordSlot == 3) {
+												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.HitsTakenDescription";
+											}
+										}
+
+										// Draw trophies hoverover for World Record holder names
+										if (recordSlot == 2 || recordSlot == 3) {
+											if (BossLogUI.RecordPageType == RecordCategory.WorldRecord && (recordSlot == 2 || recordSlot == 3)) {
+												Texture2D trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophyGold}", AssetRequestMode.ImmediateLoad).Value;
+												Rectangle trophyPos = new Rectangle(achPos.X + slot.Width - trophy.Width / 2, achPos.Y + slot.Height / 2 - trophy.Height / 2, trophy.Width, trophy.Height);
 												spriteBatch.Draw(trophy, trophyPos, Color.White);
 
-												string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousBest");
+												string message = "$Mods.BossChecklist.BossLog.HoverText.ClaimRecord";
 												if (Main.MouseScreen.Between(trophyPos.TopLeft(), trophyPos.BottomRight())) {
-													if (recordSlot == 2)
-														message += $":\n{RecordTimeConversion(record.durationPrevBest)}";
-													else if (recordSlot == 3)
-														message += $":\n{record.hitsTakenPrevBest}";
-
+													string holderText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+													if (recordSlot == 2 && wldRecord.durationHolder.Count > 0) {
+														message = $"{holderText}";
+														foreach (string name in wldRecord.durationHolder) {
+															message += $":\n{name}";
+														}
+													}
+													else if (recordSlot == 3 && wldRecord.hitsTakenHolder.Count > 0) {
+														message = $"{holderText}";
+														foreach (string name in wldRecord.hitsTakenHolder) {
+															message += $":\n{name}";
+														}
+													}
 													BossUISystem.Instance.UIHoverText = message;
 												}
 											}
+											else if (BossLogUI.RecordPageType == RecordCategory.BestRecord) {
+												Texture2D trophy = Main.Assets.Request<Texture2D>($"Images/Item_{ItemID.GolfTrophySilver}", AssetRequestMode.ImmediateLoad).Value;
+												Rectangle trophyPos = new Rectangle(achPos.X + slot.Width - trophy.Width / 2, achPos.Y + slot.Height / 2 - trophy.Height / 2, trophy.Width, trophy.Height);
+
+												// Do not draw the trophy unless a Previous Best record is available
+												if ((recordSlot == 2 && record.durationPrevBest != -1) || (recordSlot == 3 && record.hitsTakenPrevBest != -1)) {
+													spriteBatch.Draw(trophy, trophyPos, Color.White);
+
+													string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.PreviousBest");
+													if (Main.MouseScreen.Between(trophyPos.TopLeft(), trophyPos.BottomRight())) {
+														if (recordSlot == 2)
+															message += $":\n{RecordTimeConversion(record.durationPrevBest)}";
+														else if (recordSlot == 3)
+															message += $":\n{record.hitsTakenPrevBest}";
+
+														BossUISystem.Instance.UIHoverText = message;
+													}
+												}
+											}
+										}
+
+										// Draw compare numbers if selected
+										if (BossLogUI.CompareState != RecordCategory.None && recordSlot != 0 && recordSlot != 1) {
+											int initialRecordValue = -1;
+											int compareRecordValue = -1;
+											string comparisonValue = "";
+
+											if (recordSlot == 2) {
+												// Duration comparison
+												initialRecordValue = GetRecordValue(BossLogUI.RecordPageType, recordSlot);
+												compareRecordValue = GetRecordValue(BossLogUI.CompareState, recordSlot);
+												comparisonValue = RecordTimeConversion(initialRecordValue - compareRecordValue);
+											}
+											else if (recordSlot == 3) {
+												// Hits Taken comparison
+												initialRecordValue = GetRecordValue(BossLogUI.RecordPageType, recordSlot);
+												compareRecordValue = GetRecordValue(BossLogUI.CompareState, recordSlot);
+												comparisonValue = (initialRecordValue - compareRecordValue).ToString();
+											}
+
+											if (comparisonValue != "" && initialRecordValue >= 0 && compareRecordValue >= 0) {
+												bool badRecord = compareRecordValue < initialRecordValue;
+												string sign = badRecord ? "+" : (initialRecordValue - compareRecordValue == 0) ? "-" : "";
+												comparisonValue = sign + comparisonValue;
+
+												float textScale = 0.65f;
+												Vector2 textSize = FontAssets.MouseText.Value.MeasureString(comparisonValue) * textScale;
+												Vector2 textPos = new Vector2(achPos.X + slot.Width - 50 - (textSize.X / 2), achPos.Y + slot.Height - textSize.Y);
+												Color textColor = badRecord ? Color.LightSalmon : Color.LightGreen;
+												Utils.DrawBorderString(spriteBatch, comparisonValue, textPos, textColor, textScale);
+
+												string compareRecordString = recordSlot == 2 ? RecordTimeConversion(compareRecordValue) : compareRecordValue.ToString();
+												textSize = FontAssets.MouseText.Value.MeasureString(compareRecordString) * textScale;
+												textPos = new Vector2(achPos.X + slot.Width - 50 - (textSize.X / 2), achPos.Y + 6);
+												Utils.DrawBorderString(spriteBatch, compareRecordString, textPos, Color.SkyBlue, textScale);
+											}
+
 										}
 									}
 
-									// Draw compare numbers if selected
-									if (BossLogUI.CompareState != RecordCategory.None && recordSlot != 0 && recordSlot != 1) {
-										int initialRecordValue = -1;
-										int compareRecordValue = -1;
-										string comparisonValue = "";
+									int offsetY = 110 + (recordSlot * 75);
+									CalculatedStyle inner = GetInnerDimensions();
 
-										if (recordSlot == 2) {
-											// Duration comparison
-											initialRecordValue = GetRecordValue(BossLogUI.RecordPageType, recordSlot);
-											compareRecordValue = GetRecordValue(BossLogUI.CompareState, recordSlot);
-											comparisonValue = RecordTimeConversion(initialRecordValue - compareRecordValue);
+									Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(recordTitle);
+									Color col = recordSlot == 0 ? Color.Goldenrod : Color.Gold;
+									float scl = recordSlot == 0 ? 1.15f : 1f;
+									Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.Length() * scl / 2) + 2, inner.Y + offsetY);
+									Utils.DrawBorderString(spriteBatch, recordTitle, pos, col, scl);
+
+									stringAdjust = FontAssets.MouseText.Value.MeasureString(recordValue);
+									pos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.Length() / 2) + 2, inner.Y + offsetY + 25);
+									Utils.DrawBorderString(spriteBatch, recordValue, pos, Color.White);
+								}
+							}
+							else if (selectedBoss.type == EntryType.MiniBoss) {
+								foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
+									if (info.type != EntryType.Event)
+										continue;
+
+									if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+										Texture2D icon = info.headIconTextures[0].Value;
+										Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
+										Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+										spriteBatch.Draw(icon, headPos, faded);
+										if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
+											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+											if (Main.mouseLeft && Main.mouseLeftRelease) {
+												// Reset UI positions when changing the page
+												BossLogUI bossLog = BossUISystem.Instance.BossLog;
+												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+												bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
+												bossLog.ResetUIPositioning();
+											}
 										}
-										else if (recordSlot == 3) {
-											// Hits Taken comparison
-											initialRecordValue = GetRecordValue(BossLogUI.RecordPageType, recordSlot);
-											compareRecordValue = GetRecordValue(BossLogUI.CompareState, recordSlot);
-											comparisonValue = (initialRecordValue - compareRecordValue).ToString();
-										}
-
-										if (comparisonValue != "" && initialRecordValue >= 0 && compareRecordValue >= 0) {
-											bool badRecord = compareRecordValue < initialRecordValue;
-											string sign = badRecord ? "+" : (initialRecordValue - compareRecordValue == 0) ? "-" : "";
-											comparisonValue = sign + comparisonValue;
-
-											float textScale = 0.65f;
-											Vector2 textSize = FontAssets.MouseText.Value.MeasureString(comparisonValue) * textScale;
-											Vector2 textPos = new Vector2(achPos.X + slot.Width - 50 - (textSize.X / 2), achPos.Y + slot.Height - textSize.Y);
-											Color textColor = badRecord ? Color.LightSalmon : Color.LightGreen;
-											Utils.DrawBorderString(spriteBatch, comparisonValue, textPos, textColor, textScale);
-
-											string compareRecordString = recordSlot == 2 ? RecordTimeConversion(compareRecordValue) : compareRecordValue.ToString();
-											textSize = FontAssets.MouseText.Value.MeasureString(compareRecordString) * textScale;
-											textPos = new Vector2(achPos.X + slot.Width - 50 - (textSize.X / 2), achPos.Y + 6);
-											Utils.DrawBorderString(spriteBatch, compareRecordString, textPos, Color.SkyBlue, textScale);
-										}
-
 									}
 								}
-
-								int offsetY = 110 + (recordSlot * 75);
-								CalculatedStyle inner = GetInnerDimensions();
-
-								Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(recordTitle);
-								Color col = recordSlot == 0 ? Color.Goldenrod : Color.Gold;
-								float scl = recordSlot == 0 ? 1.15f : 1f;
-								Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.Length() * scl / 2) + 2, inner.Y + offsetY);
-								Utils.DrawBorderString(spriteBatch, recordTitle, pos, col, scl);
-
-								stringAdjust = FontAssets.MouseText.Value.MeasureString(recordValue);
-								pos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.Length() / 2) + 2, inner.Y + offsetY + 25);
-								Utils.DrawBorderString(spriteBatch, recordValue, pos, Color.White);
 							}
-						}
-						else if (selectedBoss.type == EntryType.MiniBoss) {
-							foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-								if (info.type != EntryType.Event)
-									continue;
+							else if (selectedBoss.type == EntryType.Event) {
+								var bosses = BossChecklist.bossTracker.SortedBosses;
+								int offset = 0;
+								int offsetY = 0;
 
-								if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
-									Texture2D icon = info.headIconTextures[0].Value;
-									Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
-									Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									spriteBatch.Draw(icon, headPos, faded);
+								int headTextureOffsetX = 0;
+								int headTextureOffsetY = 0;
+
+								foreach (int npcID in selectedBoss.npcIDs) {
+									int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event);
+									if (npcIndex == -1)
+										continue;
+
+									BossInfo addedNPC = bosses[npcIndex];
+									Texture2D head = addedNPC.headIconTextures[0].Value;
+									Rectangle headPos = new Rectangle(pageRect.X + headTextureOffsetX + 15, pageRect.Y + 100, head.Width, head.Height);
+									Color headColor = addedNPC.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+
+									spriteBatch.Draw(head, headPos, headColor);
+									headTextureOffsetX += head.Width + 5;
 									if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
 										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-										BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+										BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 										if (Main.mouseLeft && Main.mouseLeftRelease) {
 											// Reset UI positions when changing the page
 											BossLogUI bossLog = BossUISystem.Instance.BossLog;
-											int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
+											int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == addedNPC.Key);
 											bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
 											bossLog.ResetUIPositioning();
 										}
 									}
-								}
-							}
-						}
-						else if (selectedBoss.type == EntryType.Event) {
-							var bosses = BossChecklist.bossTracker.SortedBosses;
-							int offset = 0;
-							int offsetY = 0;
-
-							int headTextureOffsetX = 0;
-							int headTextureOffsetY = 0;
-
-							foreach (int npcID in selectedBoss.npcIDs) {
-								int npcIndex = bosses.FindIndex(x => x.npcIDs.Contains(npcID) && x.type != EntryType.Event);
-								if (npcIndex == -1)
-									continue;
-
-								BossInfo addedNPC = bosses[npcIndex];
-								Texture2D head = addedNPC.headIconTextures[0].Value;
-								Rectangle headPos = new Rectangle(pageRect.X + headTextureOffsetX + 15, pageRect.Y + 100, head.Width, head.Height);
-								Color headColor = addedNPC.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
-
-								spriteBatch.Draw(head, headPos, headColor);
-								headTextureOffsetX += head.Width + 5;
-								if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
-									string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-									BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
-									if (Main.mouseLeft && Main.mouseLeftRelease) {
-										// Reset UI positions when changing the page
-										BossLogUI bossLog = BossUISystem.Instance.BossLog;
-										int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == addedNPC.Key);
-										bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
-										bossLog.ResetUIPositioning();
+									if (head.Height > headTextureOffsetY) {
+										headTextureOffsetY = head.Height;
 									}
 								}
-								if (head.Height > headTextureOffsetY) {
-									headTextureOffsetY = head.Height;
+
+								offset = 0;
+								if (headTextureOffsetY != 0) {
+									offsetY = headTextureOffsetY + 5;
 								}
-							}
 
-							offset = 0;
-							if (headTextureOffsetY != 0) {
-								offsetY = headTextureOffsetY + 5;
-							}
+								foreach (int npcID in selectedBoss.npcIDs) {
+									if (offset == 0 && offsetY == 4)
+										break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
 
-							foreach (int npcID in selectedBoss.npcIDs) {
-								if (offset == 0 && offsetY == 4)
-									break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
+									if (npcID < NPCID.Count) {
+										int init = Item.NPCtoBanner(npcID) + 21;
+										if (init <= 21)
+											continue;
 
-								if (npcID < NPCID.Count) {
-									int init = Item.NPCtoBanner(npcID) + 21;
-									if (init <= 21)
-										continue;
+										Main.instance.LoadNPC(npcID);
+										Main.instance.LoadTiles(TileID.Banners);
+										Asset<Texture2D> banner = TextureAssets.Tile[TileID.Banners];
 
-									Main.instance.LoadNPC(npcID);
-									Main.instance.LoadTiles(TileID.Banners);
-									Asset<Texture2D> banner = TextureAssets.Tile[TileID.Banners];
+										int jump = 0;
+										if (init >= 222) {
+											jump = 6;
+											init -= 222;
+										}
+										else if (init >= 111) {
+											jump = 3;
+											init -= 111;
+										}
 
-									int jump = 0;
-									if (init >= 222) {
-										jump = 6;
-										init -= 222;
-									}
-									else if (init >= 111) {
-										jump = 3;
-										init -= 111;
-									}
+										int bannerID = Item.NPCtoBanner(npcID);
+										int bannerItem = Item.BannerToItem(bannerID);
+										bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
+										Color bannerColor = reachedKillCount ? Color.White : masked ? Color.Black : BossLogUI.faded;
+										if (bannerID <= 0 || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
+											continue;
 
-									int bannerID = Item.NPCtoBanner(npcID);
-									int bannerItem = Item.BannerToItem(bannerID);
-									bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
-									Color bannerColor = reachedKillCount ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									if (bannerID <= 0 || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
-										continue;
+										for (int j = 0; j < 3; j++) {
+											Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY, 16, 16);
+											Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
+											spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
 
-									for (int j = 0; j < 3; j++) {
-										Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY, 16, 16);
-										Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
-										spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
-
-										if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
-											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
-											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
-											if (!reachedKillCount) {
-												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+											if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
+												string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+												string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+												if (!reachedKillCount) {
+													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+												}
+												BossUISystem.Instance.UIHoverText = npcName + killcount;
 											}
-											BossUISystem.Instance.UIHoverText = npcName + killcount;
+										}
+										offset += 25;
+										if (offset == 14 * 25) {
+											offset = 0;
+											offsetY += 64;
 										}
 									}
-									offset += 25;
-									if (offset == 14 * 25) {
-										offset = 0;
-										offsetY += 64;
-									}
-								}
-								else { // Its a modded NPC
-									Main.instance.LoadNPC(npcID);
+									else { // Its a modded NPC
+										Main.instance.LoadNPC(npcID);
 
-									int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
-									if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item))
-										continue;
+										int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
+										if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item))
+											continue;
 
-									if (item.createTile <= -1)
-										continue;
+										if (item.createTile <= -1)
+											continue;
 
-									Main.instance.LoadTiles(item.createTile);
-									Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
+										Main.instance.LoadTiles(item.createTile);
+										Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
 
-									// Code adapted from TileObject.DrawPreview
-									var tileData = TileObjectData.GetTileData(item.createTile, item.placeStyle);
-									int styleColumn = tileData.CalculatePlacementStyle(item.placeStyle, 0, 0); // adjust for StyleMultiplier
-									int styleRow = 0;
-									//int num3 = tileData.DrawYOffset;
-									if (tileData.StyleWrapLimit > 0) {
-										styleRow = styleColumn / tileData.StyleWrapLimit * tileData.StyleLineSkip; // row quotient
-										styleColumn %= tileData.StyleWrapLimit; // remainder
-									}
-
-									int x;
-									int y;
-									if (tileData.StyleHorizontal) {
-										x = tileData.CoordinateFullWidth * styleColumn;
-										y = tileData.CoordinateFullHeight * styleRow;
-									}
-									else {
-										x = tileData.CoordinateFullWidth * styleRow;
-										y = tileData.CoordinateFullHeight * styleColumn;
-									}
-
-									int bannerID = NPCLoader.GetNPC(npcID).Banner;
-									int bannerItem = NPCLoader.GetNPC(npcID).BannerItem;
-									string source = NPCLoader.GetNPC(npcID).Mod.DisplayName;
-									bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
-
-									Color bannerColor = NPC.killCount[bannerID] >= 50 ? Color.White : masked ? Color.Black : BossLogUI.faded;
-									
-									int[] heights = tileData.CoordinateHeights;
-									int heightOffSet = 0;
-									int heightOffSetTexture = 0;
-									for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-										Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY, 16, 16);
-										Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
-										Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
-										heightOffSet += heights[j];
-										heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
-
-										if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
-											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
-											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
-											if (!reachedKillCount) {
-												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
-											}
-											BossUISystem.Instance.UIHoverText = npcName + killcount;
+										// Code adapted from TileObject.DrawPreview
+										var tileData = TileObjectData.GetTileData(item.createTile, item.placeStyle);
+										int styleColumn = tileData.CalculatePlacementStyle(item.placeStyle, 0, 0); // adjust for StyleMultiplier
+										int styleRow = 0;
+										//int num3 = tileData.DrawYOffset;
+										if (tileData.StyleWrapLimit > 0) {
+											styleRow = styleColumn / tileData.StyleWrapLimit * tileData.StyleLineSkip; // row quotient
+											styleColumn %= tileData.StyleWrapLimit; // remainder
 										}
-									}
-									offset += 25;
-									if (offset == 14 * 25) {
-										offset = 0;
-										offsetY += 64;
+
+										int x;
+										int y;
+										if (tileData.StyleHorizontal) {
+											x = tileData.CoordinateFullWidth * styleColumn;
+											y = tileData.CoordinateFullHeight * styleRow;
+										}
+										else {
+											x = tileData.CoordinateFullWidth * styleRow;
+											y = tileData.CoordinateFullHeight * styleColumn;
+										}
+
+										int bannerID = NPCLoader.GetNPC(npcID).Banner;
+										int bannerItem = NPCLoader.GetNPC(npcID).BannerItem;
+										string source = NPCLoader.GetNPC(npcID).Mod.DisplayName;
+										bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
+
+										Color bannerColor = NPC.killCount[bannerID] >= 50 ? Color.White : masked ? Color.Black : BossLogUI.faded;
+
+										int[] heights = tileData.CoordinateHeights;
+										int heightOffSet = 0;
+										int heightOffSetTexture = 0;
+										for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
+											Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY, 16, 16);
+											Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
+											Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
+											heightOffSet += heights[j];
+											heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
+
+											if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
+												string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+												string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+												if (!reachedKillCount) {
+													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+												}
+												BossUISystem.Instance.UIHoverText = npcName + killcount;
+											}
+										}
+										offset += 25;
+										if (offset == 14 * 25) {
+											offset = 0;
+											offsetY += 64;
+										}
 									}
 								}
 							}
 						}
-					}
-					if (Id == "PageTwo" && BossLogUI.CategoryPageType == CategoryPage.Spawn) {
-						// Spawn Item Subpage
-					}
-
-					if (Id == "PageTwo" && BossLogUI.CategoryPageType == CategoryPage.Loot) {
-						// Loot Table Subpage
-						Asset<Texture2D> bagTexture;
-						if (selectedBoss.treasureBag != 0) {
-							Main.instance.LoadItem(selectedBoss.treasureBag);
-							bagTexture = TextureAssets.Item[selectedBoss.treasureBag];
+						else if (BossLogUI.CategoryPageType == CategoryPage.Spawn) {
+							// Spawn Item Subpage
 						}
-						else {
-							bagTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag", AssetRequestMode.ImmediateLoad);
+						else if (BossLogUI.CategoryPageType == CategoryPage.Loot) {
+							// Loot Table Subpage
+							Asset<Texture2D> bagTexture;
+							if (selectedBoss.treasureBag != 0) {
+								Main.instance.LoadItem(selectedBoss.treasureBag);
+								bagTexture = TextureAssets.Item[selectedBoss.treasureBag];
+							}
+							else {
+								bagTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag", AssetRequestMode.ImmediateLoad);
+							}
+							DrawAnimation drawAnim = Main.itemAnimations[selectedBoss.treasureBag]; // 0 is null
+							Rectangle srcRect = drawAnim != null ? srcRect = drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
+							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
+							spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 						}
-						DrawAnimation drawAnim = Main.itemAnimations[selectedBoss.treasureBag]; // 0 is null
-						Rectangle srcRect = drawAnim != null ? srcRect = drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
-						Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
-						spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 					}
 				}
 			}
