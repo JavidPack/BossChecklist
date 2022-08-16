@@ -248,8 +248,7 @@ Mods: {
 				DespawnMessageType: Boss消失信息
 				PillarMessages: 天界柱被击败信息
 				LimbMessages: 节点击败消息
-				RespawnTimer: 启用重生倒计时
-				TimerSounds: 重生倒计时启用声音
+				TimerSounds: 重生倒计时声音
 				TreasureBags: 宝藏袋在小地图上显示
 				Fragments: 四柱碎片在小地图上显示
 				Scales: 暗影鳞片和血腥样本在小地图上显示
