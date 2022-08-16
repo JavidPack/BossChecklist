@@ -668,7 +668,6 @@ namespace BossChecklist.UIElements
 												BossLogUI bossLog = BossUISystem.Instance.BossLog;
 												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 												bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
-												bossLog.ResetUIPositioning();
 											}
 										}
 									}
@@ -935,7 +934,6 @@ namespace BossChecklist.UIElements
 												BossLogUI bossLog = BossUISystem.Instance.BossLog;
 												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
 												bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
-												bossLog.ResetUIPositioning();
 											}
 										}
 									}
@@ -969,7 +967,6 @@ namespace BossChecklist.UIElements
 											BossLogUI bossLog = BossUISystem.Instance.BossLog;
 											int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == addedNPC.Key);
 											bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
-											bossLog.ResetUIPositioning();
 										}
 									}
 									if (head.Height > headTextureOffsetY) {

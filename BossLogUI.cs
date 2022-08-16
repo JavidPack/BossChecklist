@@ -1047,7 +1047,7 @@ namespace BossChecklist
 				}
 			}
 
-			UpdateTabNavPos(); // Update tabs to be properly positioned on either the left or right side
+			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
 			if (PageNum == Page_TableOfContents) {
 				UpdateTableofContents();
