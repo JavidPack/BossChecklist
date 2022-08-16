@@ -234,8 +234,11 @@ Mods: {
 				FilterBosses: 过滤日志中不符合条件的Boss
 				FilterMiniBosses: 过滤日志中不符合条件的小Boss
 				FilterEvents: 过滤日志中不符合条件的事件
+				OnlyBosses: 在Boss日志中仅显示Boss
 				HideUnavailable: 隐藏不可用的Boss
 				HideUnsupported: 隐藏没有引用的Boss
+				EnableProgressionMode: 启用进度模式
+				DisableProgressionMode: 禁用进度模式
 				ProgressionPrompt: 禁用进度模式提示
 				MaskTextures: 隐藏材质直至其条目被击败
 				MaskNames: 隐藏名称直至其条目被击败
