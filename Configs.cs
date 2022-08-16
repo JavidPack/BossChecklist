@@ -111,12 +111,11 @@ namespace BossChecklist
 		[BackgroundColor(255, 99, 71)]
 		[Label("$Mods.BossChecklist.Configs.Label.EnableProgressionMode")]
 		public bool ProgressionModeEnable {
-			get => MaskTextures && MaskNames && !UnmaskNextBoss && MaskBossLoot && MaskHardMode;
+			get => MaskTextures && MaskNames && MaskBossLoot && MaskHardMode;
 			set {
 				if (value) {
 					MaskTextures = true;
 					MaskNames = true;
-					UnmaskNextBoss = false;
 					MaskBossLoot = true;
 					MaskHardMode = true;
 				}
@@ -131,7 +130,7 @@ namespace BossChecklist
 				if (value) {
 					MaskTextures = false;
 					MaskNames = false;
-					UnmaskNextBoss = true; // unneeded? keep for consistency? add to getter?
+					UnmaskNextBoss = false; // UnmaskNextBoss is unnecessary if MaskNames is disabled, so disable it too.
 					MaskBossLoot = false;
 					MaskHardMode = false;
 				}
