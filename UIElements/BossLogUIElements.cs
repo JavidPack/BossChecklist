@@ -1574,15 +1574,11 @@ namespace BossChecklist.UIElements
 				BossLogConfiguration configs = BossChecklist.BossLogConfig;
 				int allDownedEntries = downedEntries[0];
 				int allAccountedEntries = totalEntries[0];
+
+				// If OnlyBosses config is disabled, we'll count the MiniBosses and Events to the total count as well
 				if (!configs.OnlyBosses) {
-					if (configs.FilterMiniBosses != "Hide") {
-						allDownedEntries += downedEntries[1];
-						allAccountedEntries += totalEntries[1];
-					}
-					if (configs.FilterEvents != "Hide") {
-						allDownedEntries += downedEntries[2];
-						allAccountedEntries += totalEntries[2];
-					}
+					allDownedEntries += downedEntries[1] + downedEntries[2];
+					allAccountedEntries += totalEntries[1] + totalEntries[2];
 				}
 
 				float percentage = (float)allDownedEntries / (float)allAccountedEntries;

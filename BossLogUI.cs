@@ -1321,10 +1321,10 @@ namespace BossChecklist
 
 			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
 				if (boss.hidden)
-					continue;
+					continue; // The only way to manually remove entries from the progress bar is by hiding them
 
 				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
-					continue;
+					continue; // Unknown and Unsupported entries can be automatically removed through configs if desired
 
 				if (boss.progression <= BossTracker.WallOfFlesh) {
 					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
