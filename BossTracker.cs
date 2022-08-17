@@ -262,10 +262,16 @@ namespace BossChecklist
 
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
-			// 
-			for (int i = 0; i < SortedBosses.Count; i++) {
-				if (SortedBosses[i].type == EntryType.Boss)
-					BossRecordKeys.Add(SortedBosses[i].Key);
+
+			BossCache = new bool[NPCLoader.NPCCount];
+			BossLootCache = new bool[ItemLoader.ItemCount];
+			foreach (BossInfo entry in SortedBosses) {
+				if (entry.type == EntryType.Boss) {
+					BossRecordKeys.Add(entry.Key); // Add all Boss Type entries to a list of keys for Boss Records
+				}
+				entry.npcIDs.ForEach(x => BossCache[x] = true); // Mark all NPCs as an entry NPC for verifying purposes
+				entry.lootItemTypes.ForEach(x => BossLootCache[x] = true); // Mark loot items to be "obtainable" for loot checklist
+				entry.collection.ForEach(x => BossLootCache[x] = true); // Mark collection items to be "obtainable" for loot checklist
 			}
 
 			// Bosses are now finalized. Entries can no longer be added or edited through Mod Calls.
@@ -291,15 +297,9 @@ namespace BossChecklist
 					}
 				}
 			}
-
-			BossCache = new bool[NPCLoader.NPCCount];
-			foreach (var boss in SortedBosses) {
-				boss.npcIDs.ForEach(x => BossCache[x] = true);
-			}
 		}
 
 		internal void FinalizeBossLootTables() {
-			BossLootCache = new bool[ItemLoader.ItemCount];
 			foreach (BossInfo boss in SortedBosses) {
 				// Loot is easily found through the item drop database.
 				foreach (int npc in boss.npcIDs) {
@@ -335,9 +335,6 @@ namespace BossChecklist
 						boss.lootItemTypes.Add(ItemID.CultistBossBag);
 					}
 				}
-
-				// After loot is assigned, mark the item types as boss loot
-				boss.lootItemTypes.ForEach(x => BossLootCache[x] = true);
 
 				// Assign this boss's treasure bag, looking through the loot list provided
 				if (!vanillaBossBags.TryGetValue(boss.Key, out boss.treasureBag)) {
