@@ -61,28 +61,36 @@ namespace BossChecklist
 				downedInvasionT3Ours = true;
 		}
 
-		public override void OnWorldLoad() {
-			HiddenBosses.Clear();
-			ForcedMarkedEntries.Clear();
-
+		private void ClearDownedBools() {
+			// Events
 			downedBloodMoon = false;
 			downedFrostMoon = false;
 			downedPumpkinMoon = false;
 			downedSolarEclipse = false;
 
+			// Event trackers
 			isBloodMoon = false;
 			isFrostMoon = false;
 			isPumpkinMoon = false;
 			isEclipse = false;
 
+			// MiniBosses
 			downedDarkMage = false;
 			downedOgre = false;
 			downedFlyingDutchman = false;
 			downedMartianSaucer = false;
 
+			// Vanilla additions
 			downedInvasionT2Ours = false;
 			downedInvasionT3Ours = false;
 			downedTorchGod = false;
+		}
+
+		public override void OnWorldLoad() {
+			HiddenBosses.Clear();
+			ForcedMarkedEntries.Clear();
+
+			ClearDownedBools();
 
 			// Record related lists that should be the same count of record tracking entries
 			worldRecords = new WorldRecord[BossChecklist.bossTracker.BossRecordKeys.Count];
@@ -98,11 +106,11 @@ namespace BossChecklist
 		}
 
 		public override void OnWorldUnload() {
-			// Reset back to false on world unload to ensure event completions do not bleed over into the next world load
-			isBloodMoon = false;
-			isEclipse = false;
-			isFrostMoon = false;
-			isPumpkinMoon = false;
+			ClearDownedBools(); // Reset downs and trackers to prevent "defeation" of an entry
+		}
+
+		public override void PreWorldGen() {
+			ClearDownedBools(); // Reset downs and trackers back to false if creating a new world
 		}
 
 		public override void SaveWorldData(TagCompound tag) {
