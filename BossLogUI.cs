@@ -17,6 +17,7 @@ using Terraria.ModLoader.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using static BossChecklist.UIElements.BossLogUIElements;
+using Terraria.GameContent.ItemDropRules;
 
 namespace BossChecklist
 {
@@ -1229,56 +1230,52 @@ namespace BossChecklist
 
 					// Loop through player saved loot and boss loot to see if every item was obtained
 					foreach (int loot in boss.lootItemTypes) {
-						// Check for corruption/crimson vanilla items, and skip them based on world evil
-						// May need new method for looking for these items.
-						if (boss.npcIDs[0] < NPCID.Count) {
-							if (WorldGen.crimson && (loot == ItemID.DemoniteOre || loot == ItemID.CorruptSeeds || loot == ItemID.UnholyArrow))
-								continue;
+						int index = boss.loot.FindIndex(x => x.itemId == loot);
+						if (index != -1) {
+							bool isCorruptionLocked = WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
+							bool isCrimsonLocked = !WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
 
-							if (!WorldGen.crimson && (loot == ItemID.CrimtaneOre || loot == ItemID.CrimsonSeeds))
-								continue;
+							if (isCorruptionLocked || isCrimsonLocked)
+								continue; // Skips items that are dropped within the opposing world evil
 						}
 
-						// Skip expert/master mode items if the world is not in expert/master mode.
-						// TODO: Do something similar for task related items, such as Otherworld music boxes needing to be unlocked.
 						if (!Main.expertMode || !Main.masterMode) {
 							Item checkItem = ContentSamples.ItemsByType[loot];
 							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-								continue;
+								continue; // Skip items that are expert exclusive if not in an expert world
 
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-								continue;
+								continue; // Skip items that are master exclusive if not in an master world
 						}
 
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
 						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
-							allLoot = false;
-							break;
+							allLoot = false; // If the item is not located in the player's obtained list, allLoot must be false
+							break; // end further item checking
 						}
 					}
 
-					// If no collection items were setup, consider it false until all loot has been obtained
 					if (boss.collection.Count == 0) {
-						allCollect = allLoot;
+						allCollect = allLoot; // If no collection items were setup, consider it false until all loot has been obtained
 					}
 					else {
-						//Repeat everything for collectibles as well
 						foreach (int collectible in boss.collection) {
 							if (collectible == -1 || collectible == 0)
-								continue;
+								continue; // Skips empty items
 
 							if (!Main.expertMode || !Main.masterMode) {
 								Item checkItem = ContentSamples.ItemsByType[collectible];
 								if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-									continue;
+									continue; // Skip items that are expert exclusive if not in an expert world
 
 								if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-									continue;
+									continue; // Skip items that are master exclusive if not in an master world
 							}
+
 							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
-								allCollect = false;
-								break;
+								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
+								break; // end further item checking
 							}
 						}
 					}
@@ -1654,11 +1651,25 @@ namespace BossChecklist
 				}
 			}
 
+			// Prevents itemslot creation for items that are dropped from within the opposite world evil, if applicable
+			if (!Main.drunkWorld && !ModLoader.TryGetMod("BothEvils", out Mod mod)) {
+				foreach (DropRateInfo loot in selectedBoss.loot) {
+					if (loot.conditions == null)
+						continue;
+
+					bool isCorruptionLocked = WorldGen.crimson && loot.conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
+					bool isCrimsonLocked = !WorldGen.crimson && loot.conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
+
+					if (bossItems.Contains(loot.itemId) && (isCorruptionLocked || isCrimsonLocked)) {
+						bossItems.Remove(loot.itemId);
+					}
+				}
+			}
+
 			int row = 0;
 			int col = 0;
 			foreach (int item in bossItems) {
 				Item selectedItem = ContentSamples.ItemsByType[item];
-
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, selectedItem.Name, ItemSlot.Context.TrashItem) {

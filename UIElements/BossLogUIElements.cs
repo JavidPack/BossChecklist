@@ -17,7 +17,6 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.UI;
 using Terraria.UI.Chat;
-using Terraria.ModLoader.Config;
 using System;
 
 namespace BossChecklist.UIElements
@@ -279,8 +278,7 @@ namespace BossChecklist.UIElements
 				}
 
 				if (Id.StartsWith("loot_") && BossChecklist.DebugConfig.ShowCollectionType) {
-					BossInfo boss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
-					boss.collectType.TryGetValue(item.type, out CollectionType type);
+					selectedBoss.collectType.TryGetValue(item.type, out CollectionType type);
 
 					if (type != CollectionType.Generic) {
 						string showType = "";
