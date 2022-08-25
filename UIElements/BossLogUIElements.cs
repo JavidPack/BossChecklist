@@ -1468,7 +1468,10 @@ namespace BossChecklist.UIElements
 				}
 				else if (allLoot || allCollectibles) {
 					texture = BossLogUI.chestTexture.Value;
-					hoverText = allLoot ? looted : collected;
+					if (allLoot) {
+						looted = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.AllDropLoot");
+					}
+					hoverText = allLoot ? Language.GetTextValue(looted) : Language.GetTextValue(collected);
 				}
 
 				if (texture != null) {

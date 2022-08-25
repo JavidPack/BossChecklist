@@ -1231,13 +1231,16 @@ namespace BossChecklist
 					// Loop through player saved loot and boss loot to see if every item was obtained
 					foreach (int loot in boss.lootItemTypes) {
 						int index = boss.loot.FindIndex(x => x.itemId == loot);
-						if (index != -1) {
+						if (index != -1 && boss.loot[index].conditions is not null) {
 							bool isCorruptionLocked = WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
 							bool isCrimsonLocked = !WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
 
 							if (isCorruptionLocked || isCrimsonLocked)
 								continue; // Skips items that are dropped within the opposing world evil
 						}
+
+						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && boss.collection.Contains(loot))
+							continue; // If the CheckedDroppedLoot config enabled, skip loot items that are considered collectibles for the check
 
 						if (!Main.expertMode || !Main.masterMode) {
 							Item checkItem = ContentSamples.ItemsByType[loot];
@@ -1260,9 +1263,15 @@ namespace BossChecklist
 						allCollect = allLoot; // If no collection items were setup, consider it false until all loot has been obtained
 					}
 					else {
+						int collectCount = 0;
 						foreach (int collectible in boss.collection) {
 							if (collectible == -1 || collectible == 0)
 								continue; // Skips empty items
+
+							if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && !boss.lootItemTypes.Contains(collectible)) {
+								collectCount++;
+								continue; // If the CheckedDroppedLoot config enabled, skip collectible items that aren't also considered loot
+							}
 
 							if (!Main.expertMode || !Main.masterMode) {
 								Item checkItem = ContentSamples.ItemsByType[collectible];
@@ -1277,6 +1286,10 @@ namespace BossChecklist
 								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
 								break; // end further item checking
 							}
+						}
+
+						if (collectCount == boss.collection.Count) {
+							allCollect = false; // If all the items were skipped due to the DroppedLootCheck config, don't mark as all collectibles obtained
 						}
 					}
 				}
@@ -1654,7 +1667,7 @@ namespace BossChecklist
 			// Prevents itemslot creation for items that are dropped from within the opposite world evil, if applicable
 			if (!Main.drunkWorld && !ModLoader.TryGetMod("BothEvils", out Mod mod)) {
 				foreach (DropRateInfo loot in selectedBoss.loot) {
-					if (loot.conditions == null)
+					if (loot.conditions is null)
 						continue;
 
 					bool isCorruptionLocked = WorldGen.crimson && loot.conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);

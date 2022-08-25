@@ -109,8 +109,9 @@ Mods: {
 				DurationDescription: The quickest time you defeated this boss!
 				HitsTakenDescription: Avoid as many attacks as you can! Try to defeat this boss untouched!
 				ToggleVisibility: Toggle hidden visibility
-				AllLoot: All Boss Loot Obtained!
-				AllCollectibles: All Boss Collectibles Obtained!
+				AllLoot: All boss loot obtained!
+				AllDropLoot: All non-collectible boss loot obtained!
+				AllCollectibles: All boss collectibles Obtained!
 				MaskedItems: Defeat {0} to view obtainable loot and collectibles
 				KDRDescription: Total times you have encountered this boss!
 				BestKDRDescription: Total times you killed this boss and total times this boss has killed you!
@@ -229,6 +230,7 @@ Mods: {
 				BossLogPos: Open Log Button Position
 				DrawNextMark: Next Boss Check
 				LootChecklist: Enable loot/collectible checklist
+				CheckDroppedLoot: Only check droppable loot
 				ColoredBossText: Colored Boss Text
 				SelectedCheckmarkType: Checklist Marking Type
 				FilterBosses: Filter bosses in list
@@ -279,6 +281,7 @@ Mods: {
 					'''
 				DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
 				LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
+				CheckDroppedLoot: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
 				ColoredBossText:
 					'''
 					The boss text in the table of contents will be green when defeated and red when not.

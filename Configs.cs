@@ -105,7 +105,13 @@ namespace BossChecklist
 		[Label("$Mods.BossChecklist.Configs.Label.LootChecklist")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LootChecklist")]
 		public bool LootCheckVisibility { get; set; }
-		
+
+		[BackgroundColor(250, 235, 215)]
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.CheckDroppedLoot")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CheckDroppedLoot")]
+		public bool OnlyCheckDroppedLoot { get; set; }
+
 		[Header("$Mods.BossChecklist.Configs.Header.BlindMode")]
 
 		[BackgroundColor(255, 99, 71)]
