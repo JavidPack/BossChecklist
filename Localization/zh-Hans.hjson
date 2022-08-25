@@ -110,6 +110,7 @@ Mods: {
 				HitsTakenDescription: 尽可能的闪避攻击! 试着无伤击败该Boss!
 				ToggleVisibility: 切换隐藏可见性
 				AllLoot: 已获得所有的战利品!
+				AllDropLoot: 已获得所有非收藏品的战利品!
 				AllCollectibles: 已获得所有的收藏品!
 				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
 				KDRDescription: 你遭遇该Boss的总次数!
@@ -229,6 +230,7 @@ Mods: {
 				BossLogPos: 开启Boss日志的按钮的位置
 				DrawNextMark: 提示下一个要挑战的Boss
 				LootChecklist: 开启战利品/收藏品清单
+				CheckDroppedLoot: 只检查可掉落的战利品
 				ColoredBossText: Boss文本变色
 				SelectedCheckmarkType: 标记模式
 				FilterBosses: 过滤日志中不符合条件的Boss
@@ -279,6 +281,7 @@ Mods: {
 					'''
 				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
 				LootChecklist: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
+				CheckDroppedLoot: 如音乐盒这种不会由条目掉落的物品将不会计入战利品检查.
 				ColoredBossText:
 					'''
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
