@@ -1218,12 +1218,38 @@ namespace BossChecklist.UIElements
 				book = texture;
 			}
 
-			public static bool DrawTab(string Id) {
+			internal static bool DrawTab(string Id) {
 				bool MatchesCreditsTab = BossLogUI.PageNum == -2 && Id == "Credits_Tab";
 				bool MatchesBossTab = BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab";
 				bool MatchesMinibossTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyBosses) && Id == "Miniboss_Tab";
 				bool MatchesEventTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyBosses) && Id == "Event_Tab";
 				return !(MatchesCreditsTab || MatchesBossTab || MatchesMinibossTab || MatchesEventTab);
+			}
+
+			internal string DetermineHintText() {
+				string hintText = "";
+				if (BossLogUI.PageNum == -1) {
+					hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.MarkEntry");
+					hintText += "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.HideEntry");
+					if (BossChecklist.DebugConfig.ResetForcedDowns) {
+						hintText += "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearMarked");
+					}
+					if (BossChecklist.DebugConfig.ResetHiddenEntries) {
+						hintText += "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearHidden");
+					}
+				}
+				else if (BossLogUI.PageNum >= 0) {
+					if (BossLogUI.CategoryPageType == CategoryPage.Record && BossChecklist.DebugConfig.ResetRecordsBool && BossLogUI.RecordPageType != RecordCategory.WorldRecord) {
+						//hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearRecord"); // TODO: Make this function. Clear a singular record
+						hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearAllRecords");
+					}
+					if (BossLogUI.CategoryPageType == CategoryPage.Loot && BossChecklist.DebugConfig.ResetLootItems) {
+						hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.RemoveItem");
+						hintText += "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearItems");
+					}
+				}
+
+				return hintText;
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
@@ -1239,6 +1265,22 @@ namespace BossChecklist.UIElements
 
 						if (IsMouseHovering) {
 							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ProgressionModeIsEnabled";
+							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
+						}
+					}
+					return;
+				}
+				else if (Id == "Shortcut_Tab") {
+					if (!string.IsNullOrEmpty(DetermineHintText())) {
+						Rectangle rect = GetDimensions().ToRectangle();
+						spriteBatch.Draw(book.Value, rect, Color.Tan);
+
+						Texture2D texture = BossLogUI.mouseTexture.Value;
+						Vector2 pos = new Vector2(rect.X + rect.Width / 2 - texture.Width / 2, rect.Y + rect.Height / 2 - texture.Height / 2);
+						spriteBatch.Draw(texture, pos, texture.Bounds, Color.White);
+
+						if (IsMouseHovering) {
+							BossUISystem.Instance.UIHoverText = DetermineHintText();
 							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
 						}
 					}

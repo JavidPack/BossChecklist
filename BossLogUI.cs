@@ -60,6 +60,7 @@ namespace BossChecklist
 		public BookUI MiniBossTab;
 		public BookUI EventTab;
 		public BookUI InfoTab;
+		public BookUI ShortcutsTab;
 		public bool filterOpen = false;
 
 		public UIList prehardmodeList;
@@ -88,6 +89,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> minibossNavTexture;
 		public static Asset<Texture2D> eventNavTexture;
 		public static Asset<Texture2D> filterTexture;
+		public static Asset<Texture2D> mouseTexture;
 		public static Asset<Texture2D> hiddenTexture;
 		public static Asset<Texture2D> cycleTexture;
 		public static Asset<Texture2D> checkMarkTexture;
@@ -111,6 +113,7 @@ namespace BossChecklist
 			set {
 				if (value) {
 					Append(BookArea);
+					Append(ShortcutsTab);
 					Append(InfoTab);
 					Append(ToCTab);
 					Append(filterPanel);
@@ -131,6 +134,7 @@ namespace BossChecklist
 					RemoveChild(filterPanel);
 					RemoveChild(ToCTab);
 					RemoveChild(InfoTab);
+					RemoveChild(ShortcutsTab);
 					RemoveChild(BookArea);
 				}
 				bossLogVisible = value;
@@ -197,6 +201,7 @@ namespace BossChecklist
 			minibossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss");
 			eventNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event");
 			filterTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Filter");
+			mouseTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_Shortcuts");
 			hiddenTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Hidden");
 			cycleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CycleRecipe");
 
@@ -237,13 +242,19 @@ namespace BossChecklist
 			InfoTab.Width.Pixels = infoTexture.Value.Width;
 			InfoTab.Height.Pixels = infoTexture.Value.Height;
 
+			ShortcutsTab = new BookUI(infoTexture) {
+				Id = "Shortcut_Tab"
+			};
+			ShortcutsTab.Width.Pixels = infoTexture.Value.Width;
+			ShortcutsTab.Height.Pixels = infoTexture.Value.Height;
+
 			ToCTab = new BookUI(tabTexture) {
 				Id = "ToCFilter_Tab"
 			};
 			ToCTab.Width.Pixels = tabTexture.Value.Width;
 			ToCTab.Height.Pixels = tabTexture.Value.Height;
 			ToCTab.OnClick += OpenViaTab;
-			ToCTab.OnRightDoubleClick += (a, b) => ClearForcedDowns();
+			ToCTab.OnRightClick += (a, b) => ClearForcedDowns();
 
 			BossTab = new BookUI(tabTexture) {
 				Id = "Boss_Tab"
@@ -342,7 +353,7 @@ namespace BossChecklist
 				newCheckBox.Left.Pixels = (25) - (filterNav[i].Value.Width / 2);
 				newCheckBox.OnClick += ChangeFilter;
 				if (filterNav[i] == hiddenTexture) {
-					newCheckBox.OnRightDoubleClick += (a, b) => ClearHiddenList();
+					newCheckBox.OnRightClick += (a, b) => ClearHiddenList();
 				}
 				newCheckBox.Append(filterCheckMark[i]);
 				filterCheck.Add(newCheckBox);
@@ -386,7 +397,7 @@ namespace BossChecklist
 			recordButton.Left.Pixels = PageTwo.Width.Pixels / 2 - recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 15;
 			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Record);
-			recordButton.OnRightDoubleClick += (a, b) => ResetStats();
+			recordButton.OnRightClick += (a, b) => ResetStats();
 
 			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
 			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
@@ -401,7 +412,7 @@ namespace BossChecklist
 			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 50;
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Loot);
-			lootButton.OnRightDoubleClick += RemoveItem;
+			lootButton.OnRightClick += RemoveItem;
 
 			// These will serve as a reservation for our AltPage buttons
 			SubpageButton PrevRecordButton = new SubpageButton((int)RecordCategory.PreviousAttempt);
@@ -459,8 +470,11 @@ namespace BossChecklist
 			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = BookArea.Top.Pixels + 12;
 
-			InfoTab.Left.Pixels = BookArea.Left.Pixels + 40;
-			InfoTab.Top.Pixels = BookArea.Top.Pixels - infoTexture.Value.Height + 8;
+			ShortcutsTab.Left.Pixels = BookArea.Left.Pixels + 40;
+			ShortcutsTab.Top.Pixels = BookArea.Top.Pixels - infoTexture.Value.Height + 8;
+
+			InfoTab.Left.Pixels = ShortcutsTab.Left.Pixels + ShortcutsTab.Width.Pixels - 8;
+			InfoTab.Top.Pixels = ShortcutsTab.Top.Pixels;
 
 			int offsetY = 50;
 
@@ -594,6 +608,9 @@ namespace BossChecklist
 			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenBosses.Count == 0)
 				return;
 
+			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
+				return;
+
 			WorldAssist.HiddenBosses.Clear();
 			showHidden = false;
 
@@ -607,6 +624,9 @@ namespace BossChecklist
 
 		private void ClearForcedDowns() {
 			if (!BossChecklist.DebugConfig.ResetForcedDowns || WorldAssist.ForcedMarkedEntries.Count == 0)
+				return;
+
+			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return;
 
 			WorldAssist.ForcedMarkedEntries.Clear();
@@ -623,41 +643,46 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
-			if (BossChecklist.DebugConfig.ResetRecordsBool && CategoryPageType == 0) {
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
-				PersonalStats stats = modPlayer.RecordsForWorld[recordIndex].stats;
-				stats.kills = 0;
-				stats.deaths = 0;
+			if (!BossChecklist.DebugConfig.ResetRecordsBool || CategoryPageType != 0)
+				return;
 
-				stats.durationBest = -1;
-				stats.durationPrev = -1;
+			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
+				return;
 
-				stats.hitsTakenBest = -1;
-				stats.hitsTakenPrev = -1;
-				UpdateSelectedPage(PageNum, CategoryPageType);
-			}
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
+			PersonalStats stats = modPlayer.RecordsForWorld[recordIndex].stats;
+			stats.kills = 0;
+			stats.deaths = 0;
+
+			stats.durationBest = -1;
+			stats.durationPrev = -1;
+
+			stats.hitsTakenBest = -1;
+			stats.hitsTakenPrev = -1;
+			UpdateSelectedPage(PageNum, CategoryPageType);
 		}
 
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
-			// Double right-click an item slot to remove that item from the selected boss page's loot/collection list
-			// Double right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
+			// Alt right-click an item slot to remove that item from the selected boss page's loot/collection list
+			// Alt right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
 			// If holding Alt while right-clicking will do the above for ALL boss lists
-			if (!BossChecklist.DebugConfig.ResetLootItems)
+			if (!BossChecklist.DebugConfig.ResetLootItems || CategoryPageType != CategoryPage.Loot)
 				return;
 
-			if (CategoryPageType == CategoryPage.Loot) {
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				// If tthe page button was double right-clicked, clear all items from the player's boss loot list
-				// If an item slot was double right-clicked, remove only that item from the boss loot list
-				if (listeningElement is SubpageButton) {
-					modPlayer.BossItemsCollected.Clear();
-				}
-				else if (listeningElement is LogItemSlot slot) {
-					modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
-				}
-				UpdateSelectedPage(PageNum, CategoryPage.Loot);
+			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
+				return;
+
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			// If tthe page button was alt right-clicked, clear all items from the player's boss loot list
+			// If an item slot was alt right-clicked, remove only that item from the boss loot list
+			if (listeningElement is SubpageButton) {
+				modPlayer.BossItemsCollected.Clear();
 			}
+			else if (listeningElement is LogItemSlot slot) {
+				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
+			}
+			UpdateSelectedPage(PageNum, CategoryPage.Loot);
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
@@ -1691,7 +1716,7 @@ namespace BossChecklist
 				itemSlot.Width.Pixels = slotRectRef.Width;
 				itemSlot.Height.Pixels = slotRectRef.Height;
 				itemSlot.Left.Pixels = (col * 56) + 15;
-				itemSlot.OnRightDoubleClick += RemoveItem;
+				itemSlot.OnRightClick += RemoveItem;
 				newRow.Append(itemSlot);
 				col++;
 				if (col == 6) {

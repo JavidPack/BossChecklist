@@ -204,6 +204,17 @@ Mods: {
 				RecordHolder: Record Holder(s)
 				PreviousBest: Your Previous Best
 			}
+
+			HintTexts: {
+				MarkEntry: Alt+LeftClick an entry to mark it as defeated
+				HideEntry: Alt+RightClick an entry to hide it from the list
+				ClearMarked: Alt+LeftClick the 'Toggle Visibility button to clear all forced marks
+				ClearHidden: Alt+RightClick the 'Toggle Visibility' button to clear all hidden entries
+				ClearItems: Alt+RightClick the 'Loot & Collection' button to clear all obtained boss items
+				RemoveItem: Alt+RightClick an itemslot to clear that item from your obtained boss items
+				ClearAllRecords: Alt+RightClick the 'Records' Button to clear all your records
+				ClearRecord: Alt+RightClick a record icon to clear that record
+			}
 		}
 
 		Configs: {
@@ -326,17 +337,17 @@ Mods: {
 				CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
 				ResetLoot: 
 					'''
-					Remove a selected item from your saved loot/collection by double right-clicking the selected item slot.
-					Clear the entire loot/collection list by double right-clicking the 'Loot & Collection' button.
+					Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
+					Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
 					This will apply to ALL boss loot lists.
 					'''
 				ResetRecords: 
 					'''
-					Reset a singular record by double right-clicking on the image of the record on the selected boss page.
-					Reset all records for a boss by double right-clicking the 'Records' button of the selected boss page.
+					Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
+					Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
 					'''
-				ResetForcedDowns: Reset all world forced downs by double right-clicking on the filters tab on the Table of Contents pages.
-				ResetHiddenEntries: Reset all hidden entries by double right-clicking on the show/hide hidden entries button, located in the filters tab.
+				ResetForcedDowns: Reset all world forced downs by alt + right-clicking on the filters tab on the Table of Contents pages.
+				ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
 				InactiveBossCheck: 
 					'''
 					While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
