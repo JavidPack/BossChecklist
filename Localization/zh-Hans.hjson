@@ -204,6 +204,17 @@ Mods: {
 				RecordHolder: 记录保持者
 				PreviousBest: 你以前的最佳纪录
 			}
+
+			HintTexts: {
+				MarkEntry: Alt+左键条目以将其标记为已击败
+				HideEntry: Alt+右键条目以将其从列表中隐藏
+				ClearMarked: Alt+左键'切换可见性'按钮以清除所有被强行标记为击败的条目
+				ClearHidden: Alt+右键'切换可见性'按钮以清除所有被隐藏的条目
+				ClearItems: Alt+右键'战利品&收藏品'按钮以清除所有获得的Boss物品
+				RemoveItem: Alt+右键物品栏以清除从Boss物品中获得的对应物品
+				ClearAllRecords: Alt+右键'记录'按钮以清除所有的记录
+				ClearRecord: Alt+右键记录图标以清除对应的记录
+			}
 		}
 
 		Configs: {
@@ -326,17 +337,17 @@ Mods: {
 				CollectionTypeDetection: Boss的收藏品物品栏会被标记为指定的集合类型
 				ResetLoot: 
 					'''
-					右键双击所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
-					右键双击'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
+					alt + 右键所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
+					alt + 右键'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
 					这会应用于所有Boss战利品列表.
 					'''
 				ResetRecords: 
 					'''
-					右键双击所选Boss页面上的记录会重置记录.
-					右键双击所选Boss页面上的'记录'按钮会重置所有Boss的记录.
+					alt + 右键所选Boss页面上的记录会重置记录.
+					alt + 右键所选Boss页面上的'记录'按钮会重置所有Boss的记录.
 					'''
-				ResetForcedDowns: 右键点击目录页上的过滤标签以重置所有世界中的被手动标记击败.
-				ResetHiddenEntries: 右键双击'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
+				ResetForcedDowns: alt + 右键目录页上的过滤标签以重置所有世界中的被手动标记击败.
+				ResetHiddenEntries: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
 				InactiveBossCheck: 
 					'''
 					启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
