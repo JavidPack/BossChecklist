@@ -110,6 +110,7 @@ Mods: {
 				HitsTakenDescription: 尽可能的闪避攻击! 试着无伤击败该Boss!
 				ToggleVisibility: 切换隐藏可见性
 				AllLoot: 已获得所有的战利品!
+				AllDropLoot: 已获得所有非收藏品的战利品!
 				AllCollectibles: 已获得所有的收藏品!
 				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
 				KDRDescription: 你遭遇该Boss的总次数!
@@ -203,6 +204,17 @@ Mods: {
 				RecordHolder: 记录保持者
 				PreviousBest: 你以前的最佳纪录
 			}
+
+			HintTexts: {
+				MarkEntry: Alt+左键条目以将其标记为已击败
+				HideEntry: Alt+右键条目以将其从列表中隐藏
+				ClearMarked: Alt+左键'切换可见性'按钮以清除所有被强行标记为击败的条目
+				ClearHidden: Alt+右键'切换可见性'按钮以清除所有被隐藏的条目
+				ClearItems: Alt+右键'战利品&收藏品'按钮以清除所有获得的Boss物品
+				RemoveItem: Alt+右键物品栏以清除从Boss物品中获得的对应物品
+				ClearAllRecords: Alt+右键'记录'按钮以清除所有的记录
+				ClearRecord: Alt+右键记录图标以清除对应的记录
+			}
 		}
 
 		Configs: {
@@ -229,6 +241,7 @@ Mods: {
 				BossLogPos: 开启Boss日志的按钮的位置
 				DrawNextMark: 提示下一个要挑战的Boss
 				LootChecklist: 开启战利品/收藏品清单
+				CheckDroppedLoot: 只检查可掉落的战利品
 				ColoredBossText: Boss文本变色
 				SelectedCheckmarkType: 标记模式
 				FilterBosses: 过滤日志中不符合条件的Boss
@@ -279,6 +292,7 @@ Mods: {
 					'''
 				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
 				LootChecklist: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
+				CheckDroppedLoot: 如音乐盒这种不会由条目掉落的物品将不会计入战利品检查.
 				ColoredBossText:
 					'''
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
@@ -323,17 +337,17 @@ Mods: {
 				CollectionTypeDetection: Boss的收藏品物品栏会被标记为指定的集合类型
 				ResetLoot: 
 					'''
-					右键双击所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
-					右键双击'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
+					alt + 右键所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
+					alt + 右键'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
 					这会应用于所有Boss战利品列表.
 					'''
 				ResetRecords: 
 					'''
-					右键双击所选Boss页面上的记录会重置记录.
-					右键双击所选Boss页面上的'记录'按钮会重置所有Boss的记录.
+					alt + 右键所选Boss页面上的记录会重置记录.
+					alt + 右键所选Boss页面上的'记录'按钮会重置所有Boss的记录.
 					'''
-				ResetForcedDowns: 右键点击目录页上的过滤标签以重置所有世界中的被手动标记击败.
-				ResetHiddenEntries: 右键双击'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
+				ResetForcedDowns: alt + 右键目录页上的过滤标签以重置所有世界中的被手动标记击败.
+				ResetHiddenEntries: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
 				InactiveBossCheck: 
 					'''
 					启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
