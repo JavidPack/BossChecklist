@@ -1206,8 +1206,8 @@ namespace BossChecklist.UIElements
 			internal static bool DrawTab(string Id) {
 				bool MatchesCreditsTab = BossLogUI.PageNum == -2 && Id == "Credits_Tab";
 				bool MatchesBossTab = BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab";
-				bool MatchesMinibossTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyBosses) && Id == "Miniboss_Tab";
-				bool MatchesEventTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyBosses) && Id == "Event_Tab";
+				bool MatchesMinibossTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Miniboss_Tab";
+				bool MatchesEventTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Event_Tab";
 				return !(MatchesCreditsTab || MatchesBossTab || MatchesMinibossTab || MatchesEventTab);
 			}
 
@@ -1392,14 +1392,14 @@ namespace BossChecklist.UIElements
 						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
 					}
 					if (Id == "F_1") {
-						if (!BossChecklist.BossLogConfig.OnlyBosses) {
+						if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
 							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}";
 							termLang2 = $"{termPrefix}MiniBosses";
 						}
 						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
 					}
 					if (Id == "F_2") {
-						if (!BossChecklist.BossLogConfig.OnlyBosses) {
+						if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
 							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}";
 							termLang2 = $"{termPrefix}Events";
 						}
@@ -1604,7 +1604,7 @@ namespace BossChecklist.UIElements
 				int allAccountedEntries = totalEntries[0];
 
 				// If OnlyBosses config is disabled, we'll count the MiniBosses and Events to the total count as well
-				if (!configs.OnlyBosses) {
+				if (!configs.OnlyShowBossContent) {
 					allDownedEntries += downedEntries[1] + downedEntries[2];
 					allAccountedEntries += totalEntries[1] + totalEntries[2];
 				}
@@ -1649,7 +1649,7 @@ namespace BossChecklist.UIElements
 						string miniBosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.MiniBosses");
 						string events = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Events");
 						BossUISystem.Instance.UIHoverText = $"{total}: {allDownedEntries}/{allAccountedEntries}";
-						if (!configs.OnlyBosses) {
+						if (!configs.OnlyShowBossContent) {
 							if (configs.FilterMiniBosses != "Hide" || configs.FilterEvents != "Hide") {
 								BossUISystem.Instance.UIHoverText += $"\n{bosses}: {downedEntries[0]}/{totalEntries[0]}";
 							}

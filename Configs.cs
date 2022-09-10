@@ -33,12 +33,6 @@ namespace BossChecklist
 
 		[Header("$Mods.BossChecklist.Configs.Header.BossLogChecklist")]
 
-		[BackgroundColor(250, 235, 215)]
-		[DefaultValue(false)]
-		[Label("$Mods.BossChecklist.Configs.Label.OnlyBosses")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.OnlyBosses")]
-		public bool OnlyBosses { get; set; }
-
 		// TODO: [??] Change HideUnavailable and HideUnsupported to OptionStrings to allow users to choose betweem
 		// 1.) Show on Table of Contents, but skip through page navigation
 		// 2.) Show on Table of Contents, and allow visibility through page navigation
@@ -56,35 +50,64 @@ namespace BossChecklist
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.HideUnsupported")]
 		public bool HideUnsupported { get; set; }
 
-		[SliderColor(87, 181, 92)]
+		private bool BossesOnly;
+
 		[BackgroundColor(250, 235, 215)]
+		[DefaultValue(false)]
+		[Label("$Mods.BossChecklist.Configs.Label.OnlyBosses")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.OnlyBosses")]
+		public bool OnlyShowBossContent {
+			get => BossesOnly;
+			set {
+				BossesOnly = value;
+				if (value) {
+					FilterMiniBosses = "Hide";
+					FilterEvents = "Hide";
+				}
+			}
+		}
+
+		[SliderColor(87, 181, 92)]
+		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.FilterBosses")]
 		[OptionStrings(new string[] { "Show", "Hide when completed" })]
 		[DefaultValue("Show")]
 		public string FilterBosses { get; set; }
 
+		private string MB_Value = "Show";
 		[SliderColor(87, 181, 92)]
-		[BackgroundColor(250, 235, 215)]
+		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.FilterMiniBosses")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
-		public string FilterMiniBosses { get; set; }
+		public string FilterMiniBosses {
+			get => MB_Value;
+			set {
+				MB_Value = value;
+				if (value != "Hide") {
+					BossesOnly = false;
+				}
+			}
+		}
 
+		private string E_Value = "Show";
 		[SliderColor(87, 181, 92)]
-		[BackgroundColor(250, 235, 215)]
+		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
 		[Label("$Mods.BossChecklist.Configs.Label.FilterEvents")]
 		[OptionStrings(new string[] { "Show", "Hide when completed", "Hide" })]
 		[DefaultValue("Show")]
-		public string FilterEvents { get; set; }
-
-		[BackgroundColor(250, 235, 215)]
-		[DefaultValue(true)]
-		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
-		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
-		public bool DrawNextMark { get; set; }
+		public string FilterEvents {
+			get => E_Value;
+			set {
+				E_Value = value;
+				if (value != "Hide") {
+					BossesOnly = false;
+				}
+			}
+		}
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]
@@ -100,13 +123,19 @@ namespace BossChecklist
 		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 
+		[BackgroundColor(200, 188, 172)]
+		[DefaultValue(true)]
+		[Label("$Mods.BossChecklist.Configs.Label.DrawNextMark")]
+		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.DrawNextMark")]
+		public bool DrawNextMark { get; set; }
+
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.LootChecklist")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.LootChecklist")]
 		public bool LootCheckVisibility { get; set; }
 
-		[BackgroundColor(250, 235, 215)]
+		[BackgroundColor(200, 188, 172)]
 		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.CheckDroppedLoot")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.CheckDroppedLoot")]
@@ -150,12 +179,12 @@ namespace BossChecklist
 		public bool PromptDisabled { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.MaskTextures")]
 		public bool MaskTextures { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.MaskNames")]
 		public bool MaskNames { get; set; }
 
@@ -166,12 +195,12 @@ namespace BossChecklist
 		public bool UnmaskNextBoss { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.MaskBossLoot")]
 		public bool MaskBossLoot { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		[Label("$Mods.BossChecklist.Configs.Label.MaskHardMode")]
 		[Tooltip("$Mods.BossChecklist.Configs.Tooltip.MaskHardMode")]
 		public bool MaskHardMode { get; set; }

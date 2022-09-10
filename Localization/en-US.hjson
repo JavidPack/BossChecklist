@@ -163,7 +163,7 @@ Mods: {
 				DisableProgressPrompt: 
 					'''
 					Don't show this again
-					(For future characters)
+					(For newly-created characters)
 					'''
 				ProgressionModeDescription:
 					'''
@@ -247,7 +247,7 @@ Mods: {
 				FilterBosses: Filter bosses in list
 				FilterMiniBosses: Filter mini bosses in list
 				FilterEvents: Filter events in list
-				OnlyBosses: Boss Log only show bosses
+				OnlyBosses: Boss Log only shows boss content
 				HideUnavailable: Hide unavailable bosses
 				HideUnsupported: Hide unsupported bosses
 				EnableProgressionMode: Enable Progression Mode
@@ -298,10 +298,10 @@ Mods: {
 					The boss text in the table of contents will be green when defeated and red when not.
 					If next check is enabled, the next boss will be yellow.
 					'''
-				ProgressionPrompt: While enabled, this will prevent the prompt from appearing on all future characters.
+				ProgressionPrompt: While enabled, this will prevent the prompt from appearing for newly-created characters.
 				UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
 				MaskHardMode: Hides ALL content, overriding the options you have toggled above.
-				OnlyBosses: If enabled, the checklist and page navigation will only display boss entries.
+				OnlyBosses: If enabled, the checklist and page navigation will only give access boss entries.
 				HideUnavailable: 
 					'''
 					If enabled, unavailable bosses will be removed from the Boss Log's table of contents.

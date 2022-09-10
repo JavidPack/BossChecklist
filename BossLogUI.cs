@@ -529,7 +529,7 @@ namespace BossChecklist
 			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
 
 			// ...Mini-Bosses
-			if (BossChecklist.BossLogConfig.OnlyBosses) {
+			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				filterCheckMark[1].SetImage(xTexture);
 			}
 			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
@@ -543,7 +543,7 @@ namespace BossChecklist
 			}
 
 			// ...Events
-			if (BossChecklist.BossLogConfig.OnlyBosses) {
+			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				filterCheckMark[2].SetImage(xTexture);
 			}
 			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
@@ -573,7 +573,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
 				}
 			}
-			if (rowID == "1" && !BossChecklist.BossLogConfig.OnlyBosses) {
+			if (rowID == "1" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
 				}
@@ -584,7 +584,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
 				}
 			}
-			if (rowID == "2" && !BossChecklist.BossLogConfig.OnlyBosses) {
+			if (rowID == "2" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
 				}
@@ -719,7 +719,7 @@ namespace BossChecklist
 				bool HideUnsupported = boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported;
 				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
 				bool HideHidden = boss.hidden && !showHidden;
-				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyBosses && boss.type != EntryType.Boss;
+				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && boss.type != EntryType.Boss;
 				if (((HideUnavailable || HideHidden) && !boss.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
 					continue;
 				}
@@ -1062,12 +1062,12 @@ namespace BossChecklist
 			// Also check for "Only Bosses" navigation
 			if (PageNum >= 0) {
 				bool HiddenOrUnAvailable = BossList[PageNum].hidden || !BossList[PageNum].available();
-				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyBosses && BossList[PageNum].type != EntryType.Boss;
+				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && BossList[PageNum].type != EntryType.Boss;
 				if (HiddenOrUnAvailable || OnlyDisplayBosses) {
 					while (PageNum >= 0) {
 						BossInfo currentBoss = BossList[PageNum];
 						if (!currentBoss.hidden && currentBoss.available()) {
-							if (BossChecklist.BossLogConfig.OnlyBosses) {
+							if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 								if (currentBoss.type == EntryType.Boss) {
 									break;
 								}
