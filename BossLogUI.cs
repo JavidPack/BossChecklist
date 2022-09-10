@@ -18,6 +18,7 @@ using Terraria.UI;
 using Terraria.UI.Chat;
 using static BossChecklist.UIElements.BossLogUIElements;
 using Terraria.GameContent.ItemDropRules;
+using System.Reflection;
 
 namespace BossChecklist
 {
@@ -863,6 +864,42 @@ namespace BossChecklist
 			ToggleBossLog(false);
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
 			PageNum = Page_TableOfContents;
+
+			// A whole bunch of janky code to show the config and scroll down.
+			try {
+				IngameFancyUI.CoverNextFrame();
+				Main.playerInventory = false;
+				Main.editChest = false;
+				Main.npcChatText = "";
+				Main.inFancyUI = true;
+
+				var modConfigFieldInfo = Assembly.GetEntryAssembly().GetType("Terraria.ModLoader.UI.Interface").GetField("modConfig", BindingFlags.Static | BindingFlags.NonPublic);
+				var modConfig = (UIState)modConfigFieldInfo.GetValue(null);
+
+				Type UIModConfigType = Assembly.GetEntryAssembly().GetType("Terraria.ModLoader.Config.UI.UIModConfig");
+				var SetModMethodInfo = UIModConfigType.GetMethod("SetMod", BindingFlags.Instance | BindingFlags.NonPublic);
+
+				//Interface.modConfig.SetMod("BossChecklist", BossChecklist.BossLogConfig);
+				SetModMethodInfo.Invoke(modConfig, new object[] { BossChecklist.instance, BossChecklist.BossLogConfig });
+				Main.InGameUI.SetState(modConfig);
+
+				//private UIList mainConfigList;
+				//var mainConfigListFieldInfo = UIModConfigType.GetField("mainConfigList", BindingFlags.Instance | BindingFlags.NonPublic);
+				//UIList mainConfigList = (UIList)mainConfigListFieldInfo.GetValue(modConfig);
+
+				var uIScrollbarFieldInfo = UIModConfigType.GetField("uIScrollbar", BindingFlags.Instance | BindingFlags.NonPublic);
+				UIScrollbar uIScrollbar = (UIScrollbar)uIScrollbarFieldInfo.GetValue(modConfig);
+				uIScrollbar.GoToBottom();
+
+				//mainConfigList.Goto(delegate (UIElement element) {
+				//	if(element is UISortableElement sortableElement && sortableElement.Children.FirstOrDefault() is Terraria.ModLoader.Config.UI.ConfigElement configElement) {
+				//		return configElement.TextDisplayFunction().IndexOf("Test", StringComparison.OrdinalIgnoreCase) != -1;
+				//	}
+				//});
+			}
+			catch (Exception) {
+				BossChecklist.instance.Logger.Warn("Force opening ModConfig menu failed, code update required");
+			}
 		}
 
 		public void DisablePromptMessage() {
