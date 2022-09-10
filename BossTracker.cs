@@ -305,9 +305,8 @@ namespace BossChecklist
 				foreach (int npc in boss.npcIDs) {
 					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForNPCID(npc, false);
 					List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
-					DropRateInfoChainFeed ratesInfo = new DropRateInfoChainFeed(1f);
 					foreach (IItemDropRule item in dropRules) {
-						item.ReportDroprates(itemDropInfo, ratesInfo);
+						item.ReportDroprates(itemDropInfo, new DropRateInfoChainFeed(1f));
 					}
 					boss.loot.AddRange(itemDropInfo);
 
@@ -347,6 +346,44 @@ namespace BossChecklist
 						}
 					}
 				}
+
+				// If the treasure bag is assigned, look through its loot table for expert exclusive items
+				if (boss.treasureBag != 0) {
+					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForItemID(boss.treasureBag, false);
+					List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
+					foreach (IItemDropRule item in dropRules) {
+						item.ReportDroprates(itemDropInfo, new DropRateInfoChainFeed(1f));
+					}
+					boss.loot.AddRange(itemDropInfo);
+
+					foreach (DropRateInfo dropRate in itemDropInfo) {
+						Item item = ContentSamples.ItemsByType[dropRate.itemId];
+						if (item.expert || item.expertOnly || item.master || item.masterOnly) {
+							if (!boss.lootItemTypes.Contains(dropRate.itemId)) {
+								boss.lootItemTypes.Add(dropRate.itemId);
+							}
+						}
+					}
+				}
+
+
+				// Sorts Master Mode items first, Expert Mode items second, and leaves the remaining items last
+				List<int> masterItems = new List<int>();
+				List<int> expertItems = new List<int>();
+				List<int> normalItems = new List<int>();
+				foreach (int item in boss.lootItemTypes) {
+					Item refItem = ContentSamples.ItemsByType[item];
+					if (refItem.master || refItem.masterOnly) {
+						masterItems.Add(item);
+					}
+					else if (refItem.expert || refItem.expertOnly) {
+						expertItems.Add(item);
+					}
+					else {
+						normalItems.Add(item);
+					}
+				}
+				boss.lootItemTypes = masterItems.Concat(expertItems).Concat(normalItems).ToList();
 			}
 		}
 
