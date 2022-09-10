@@ -177,12 +177,12 @@ namespace BossChecklist.UIElements
 				float oldScale = Main.inventoryScale;
 				Main.inventoryScale = scale;
 				Rectangle rectangle = GetInnerDimensions().ToRectangle();
-				// Make backups of the original itemslot textures, as we will replace them temporarily for our visuals
-				var backup2 = TextureAssets.InventoryBack7;
 
 				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
 				bool maskedItems = BossChecklist.BossLogConfig.MaskBossLoot || (BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && selectedBoss.progression > BossTracker.WallOfFlesh);
 
+				// Make backups of the original itemslot textures, as we will replace them temporarily for our visuals
+				var backup2 = TextureAssets.InventoryBack7;
 				if (Id.StartsWith("loot_")) {
 					if (maskedItems && !selectedBoss.IsDownedOrForced) {
 						// Boss Silhouettes always makes itemslot background red, reguardless of obtainable
@@ -199,29 +199,29 @@ namespace BossChecklist.UIElements
 					// Otherwise, any unobtained items use the original trash-itemslot background color
 				}
 
-				string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
-				string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
+				bool isDemonAltar = hoverText == Language.GetTextValue("MapObject.DemonAltar");
+				bool isCrimsonAltar = hoverText == Language.GetTextValue("MapObject.CrimsonAltar");
 
 				if (maskedItems && !selectedBoss.IsDownedOrForced && Id.StartsWith("loot_")) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
 					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
-					string hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.MaskedItems", selectedBoss.DisplayName);
+					string altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.MaskedItems", selectedBoss.DisplayName);
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
 					if ((item.expert || item.expertOnly) && !Main.expertMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
-						hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
+						altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
 					}
 					if ((item.master || item.masterOnly) && !Main.masterMode) {
 						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
-						hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
+						altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
 					}
 					if (IsMouseHovering) {
-						BossUISystem.Instance.UIHoverText = hoverText;
+						BossUISystem.Instance.UIHoverText = altHoverText;
 					}
-					return;
+					return; // The remaining logic isn't needed when the item is masked (hidden), so end draw code here
 				}
-				else if (item.type != ItemID.None || hoverText == demonAltar || hoverText == crimsonAltar) {
+				else if (item.type != ItemID.None || isDemonAltar || isCrimsonAltar) {
 					if (item.color == Color.Black) {
 						item.color = default;
 					}
@@ -229,12 +229,12 @@ namespace BossChecklist.UIElements
 					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
 				}
 
-				// Draw evil altars if needed
-				if (hoverText == crimsonAltar || hoverText == demonAltar) {
+				// Draws the evil altars in the designated slots if needed
+				if (isCrimsonAltar || isDemonAltar) {
 					Main.instance.LoadTiles(TileID.DemonAltar);
 					int offsetX = 0;
 					int offsetY = 0;
-					int offsetSrc = hoverText == crimsonAltar ? 3 : 0;
+					int offsetSrc = isCrimsonAltar ? 3 : 0;
 					for (int i = 0; i < 6; i++) {
 						float scale = 0.64f;
 						Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
@@ -316,43 +316,29 @@ namespace BossChecklist.UIElements
 					}
 				}
 
+				// When hovering, determine what the hovertext should be
 				if (IsMouseHovering) {
-					if (hoverText != Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
-						if (item.type != ItemID.None && Id.StartsWith("loot_") && !hasItem) {
-							if (!Main.expertMode && (item.expert || item.expertOnly)) {
-								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
-							}
-							else if (!Main.masterMode && (item.master || item.masterOnly)) {
-								BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
-							}
-							else {
-								BossUISystem.Instance.UIHoverText = item.HoverName;
-							}
-							Main.HoverItem = item;
+					if (isCrimsonAltar || isDemonAltar || hoverText == Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
+						BossUISystem.Instance.UIHoverText = hoverText; // 'Demon/Crimson Altar' or 'by Hand' should just show their normal hoverText
+					}
+					else if (item.type != ItemID.None) {
+						// All items should show their normal tooltips, unless unobtainable
+						if (!Main.expertMode && (item.expert || item.expertOnly) && !hasItem) {
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
+							BossUISystem.Instance.UIHoverTextColor = Main.DiscoColor;
 						}
-						else if (hoverText == crimsonAltar || hoverText == demonAltar) {
-							BossUISystem.Instance.UIHoverText = hoverText;
-						}
-						else if (item.type != ItemID.None || hoverText != "") {
-							Color newcolor;
-							if (item.expert || item.expertOnly) {
-								newcolor = Main.DiscoColor;
-							}
-							else if (item.master || item.masterOnly) {
-								newcolor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor);
-							}
-							else {
-								newcolor = ItemRarity.GetColor(item.rare);
-							}
-							Main.HoverItem = item;
-							Main.hoverItemName = $"[c/{newcolor.Hex3()}: {hoverText}]";
+						else if (!Main.masterMode && (item.master || item.masterOnly) && !hasItem) {
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
+							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
 						}
 						else {
-							BossUISystem.Instance.UIHoverText = hoverText;
+							Main.HoverItem = item.Clone();
+							Main.hoverItemName = Main.HoverItem.Name;
+							Main.HoverItem.SetNameOverride(Main.HoverItem.Name);
 						}
 					}
 					else {
-						BossUISystem.Instance.UIHoverText = hoverText;
+						BossUISystem.Instance.UIHoverText = hoverText; // Empty item, default to hoverText if applicable
 					}
 				}
 				Main.inventoryScale = oldScale;

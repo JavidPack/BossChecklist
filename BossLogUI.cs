@@ -1710,7 +1710,7 @@ namespace BossChecklist
 				Item selectedItem = ContentSamples.ItemsByType[item];
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
-				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, selectedItem.Name, ItemSlot.Context.TrashItem) {
+				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item
 				};
 				itemSlot.Width.Pixels = slotRectRef.Width;
