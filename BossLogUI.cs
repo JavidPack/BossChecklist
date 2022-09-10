@@ -1256,6 +1256,10 @@ namespace BossChecklist
 					// Loop through player saved loot and boss loot to see if every item was obtained
 					foreach (int loot in boss.lootItemTypes) {
 						int index = boss.loot.FindIndex(x => x.itemId == loot);
+
+						if (loot == boss.treasureBag)
+							continue;
+
 						if (index != -1 && boss.loot[index].conditions is not null) {
 							bool isCorruptionLocked = WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
 							bool isCrimsonLocked = !WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
@@ -1267,14 +1271,12 @@ namespace BossChecklist
 						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && boss.collection.Contains(loot))
 							continue; // If the CheckedDroppedLoot config enabled, skip loot items that are considered collectibles for the check
 
-						if (!Main.expertMode || !Main.masterMode) {
-							Item checkItem = ContentSamples.ItemsByType[loot];
-							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-								continue; // Skip items that are expert exclusive if not in an expert world
+						Item checkItem = ContentSamples.ItemsByType[loot];
+						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+							continue; // Skip items that are expert exclusive if not in an expert world
 
-							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-								continue; // Skip items that are master exclusive if not in an master world
-						}
+						if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+							continue; // Skip items that are master exclusive if not in an master world
 
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
@@ -1298,14 +1300,12 @@ namespace BossChecklist
 								continue; // If the CheckedDroppedLoot config enabled, skip collectible items that aren't also considered loot
 							}
 
-							if (!Main.expertMode || !Main.masterMode) {
-								Item checkItem = ContentSamples.ItemsByType[collectible];
-								if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
-									continue; // Skip items that are expert exclusive if not in an expert world
+							Item checkItem = ContentSamples.ItemsByType[collectible];
+							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
+								continue; // Skip items that are expert exclusive if not in an expert world
 
-								if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
-									continue; // Skip items that are master exclusive if not in an master world
-							}
+							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
+								continue; // Skip items that are master exclusive if not in an master world
 
 							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
 								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
