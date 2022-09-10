@@ -332,9 +332,8 @@ namespace BossChecklist.UIElements
 							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
 						}
 						else {
-							Main.HoverItem = item.Clone();
-							Main.hoverItemName = Main.HoverItem.Name;
-							Main.HoverItem.SetNameOverride(Main.HoverItem.Name);
+							Main.HoverItem = item;
+							Main.hoverItemName = item.HoverName;
 						}
 					}
 					else {
