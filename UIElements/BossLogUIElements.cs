@@ -767,6 +767,10 @@ namespace BossChecklist.UIElements
 											achCoord = new int[] { 0, 7 };
 											recordValue = wldRecord.hitsTakenWorld < 0 ? NoRecord : wldRecord.hitsTakenWorld.ToString();
 										}
+
+										if (recordValue == "0") {
+											recordValue = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoHit");
+										}
 									}
 
 									if (achCoord[0] != -1) {

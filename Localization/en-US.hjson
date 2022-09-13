@@ -203,6 +203,7 @@ Mods: {
 				PlayTime: Play Time
 				RecordHolder: Record Holder(s)
 				PreviousBest: Your Previous Best
+				NoHit: No hit!
 			}
 
 			HintTexts: {
