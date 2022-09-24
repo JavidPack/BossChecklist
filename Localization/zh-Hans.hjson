@@ -163,7 +163,7 @@ Mods: {
 				DisableProgressPrompt: 
 					'''
 					不再显示此内容
-					(对于将来的人物)
+					(对于新创建的人物)
 					'''
 				ProgressionModeDescription:
 					'''
@@ -203,6 +203,7 @@ Mods: {
 				PlayTime: 游戏时间
 				RecordHolder: 记录保持者
 				PreviousBest: 你以前的最佳纪录
+				NoHit: 未命中!
 			}
 
 			HintTexts: {
@@ -247,7 +248,7 @@ Mods: {
 				FilterBosses: 过滤日志中不符合条件的Boss
 				FilterMiniBosses: 过滤日志中不符合条件的小Boss
 				FilterEvents: 过滤日志中不符合条件的事件
-				OnlyBosses: 在Boss日志中仅显示Boss
+				OnlyBosses: 在Boss日志中仅显示Boss内容
 				HideUnavailable: 隐藏不可用的Boss
 				HideUnsupported: 隐藏没有引用的Boss
 				EnableProgressionMode: 启用进度模式
@@ -298,10 +299,10 @@ Mods: {
 					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
 					如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
 					'''
-				ProgressionPrompt: 启用后会阻止提示出现在所有未来的字符中.
+				ProgressionPrompt: 如果启用, 则阻止用于新创建的人物的提示出现.
 				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
 				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
-				OnlyBosses: 如果启用, 则清单和导航页仅会显示Boss栏目.
+				OnlyBosses: 如果启用, 则清单和导航页仅会显示访问Boss条目.
 				HideUnavailable: 
 					'''
 					如果启用, 则在Boss日志的目录中移除不可用的Boss.
