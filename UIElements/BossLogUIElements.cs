@@ -1613,7 +1613,7 @@ namespace BossChecklist.UIElements
 					allAccountedEntries += totalEntries[1] + totalEntries[2];
 				}
 
-				float percentage = (float)allDownedEntries / (float)allAccountedEntries;
+				float percentage = allAccountedEntries == 0 ? 1f : (float)allDownedEntries / (float)allAccountedEntries;
 				int meterWidth = (int)(barWidth * percentage); 
 
 				Rectangle meterPos = new Rectangle(inner.X + 4, inner.Y + 4, meterWidth + 2, (int)inner.Height - 8);
