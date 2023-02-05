@@ -205,6 +205,7 @@ namespace BossChecklist.UIElements
 				if (maskedItems && !selectedBoss.IsDownedOrForced && Id.StartsWith("loot_")) {
 					item.color = Color.Black;
 					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
+					item.color = default; // Item color needs to be reset back to it's default state
 					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
 					string altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.MaskedItems", selectedBoss.DisplayName);
 					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
