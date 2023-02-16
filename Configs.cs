@@ -207,6 +207,21 @@ namespace BossChecklist
 
 		internal bool AnyProgressionModeConfigUsed => MaskTextures || MaskNames || MaskBossLoot || MaskHardMode;
 
+		public override void OnChanged() {
+			if (BossChecklist.instance == null)
+				return;
+
+			if (ProgressionModeEnable) {
+				BossChecklist.instance.Logger.Info("Progression Mode is ENABLED");
+			}
+			else if (AnyProgressionModeConfigUsed) {
+				BossChecklist.instance.Logger.Info("Progression Mode is PARTIALLY ENABLED");
+			}
+			else {
+				BossChecklist.instance.Logger.Info("Progression Mode is DISABLED");
+			}
+		}
+
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
 			return true;
 		}

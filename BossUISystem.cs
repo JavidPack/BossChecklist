@@ -73,6 +73,16 @@ namespace BossChecklist
 			BossChecklist.bossTracker.FinalizeBossLootTables(); // Generate boss loot data. Treasurebag is also determined in this.
 			BossChecklist.bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
 			BossChecklist.bossTracker.FinalizeBossData(); // Finalize all boss data. Entries cannot be further edited beyond this point.
+
+			if (BossChecklist.BossLogConfig.ProgressionModeEnable) {
+				BossChecklist.instance.Logger.Info("Progression Mode is ENABLED");
+			}
+			else if (BossChecklist.BossLogConfig.AnyProgressionModeConfigUsed) {
+				BossChecklist.instance.Logger.Info("Progression Mode is PARTIALLY ENABLED");
+			}
+			else {
+				BossChecklist.instance.Logger.Info("Progression Mode is DISABLED");
+			}
 		}
 
 		public override void UpdateUI(GameTime gameTime) {
