@@ -143,27 +143,35 @@ namespace BossChecklist
 		}
 
 		public void ToggleBossLog(bool show = true) {
-			if (PageNum == Page_Prompt) {
-				BossLogVisible = show;
-				if (show) {
-					OpenProgressionModePrompt();
-					Main.playerInventory = false;
-				}
-				return;
-			}
-
+			// First, determine if the player has ever opened the Log before
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+
 			if (show) {
-				modPlayer.hasOpenedTheBossLog = true;
-				// If the prompt isn't shown, try checking for a reset.
-				// This is to reset the page from what the user previously had back to the Table of Contents
-				if (modPlayer.enteredWorldReset) {
+				// Mark the player as having opened the Log if they have not been so already
+				if (!modPlayer.hasOpenedTheBossLog) {
+					modPlayer.hasOpenedTheBossLog = true; // This will only ever happen once per character
+
+					// When opening for the first time, check if the Progression Mode prompt is enabled and provide the prompt
+					// If the prompt is disabled, just set the page to the Table of Contents.
+					// TODO: Disabled progression mode related stuff until it is reworked on until an issue with player data is resolved
+					// TODO: remove false from if statement once fixed
+					if (!BossChecklist.BossLogConfig.PromptDisabled && false) {
+						OpenProgressionModePrompt(); // All page logic is handled in this method, so return afterwards.
+						return;
+					}
+					else {
+						PageNum = Page_TableOfContents;
+					}
+				}
+				else if (modPlayer.enteredWorldReset) {
+					// If the Log has been opened before, check for a world change.
+					// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
 					modPlayer.enteredWorldReset = false;
 					UpdateSelectedPage(Page_TableOfContents);
 				}
 				else {
-					UpdateSelectedPage(PageNum, CategoryPageType);
-				}
+					UpdateSelectedPage(PageNum, CategoryPageType); // Otherwise, just default to the last page selected
+				}				
 
 				// Update UI Element positioning before marked visible
 				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
@@ -737,6 +745,8 @@ namespace BossChecklist
 
 		public void OpenProgressionModePrompt() {
 			PageNum = Page_Prompt;
+			Main.playerInventory = false;
+			BossLogVisible = true;
 			ResetBothPages();
 			ResetUIPositioning();
 
