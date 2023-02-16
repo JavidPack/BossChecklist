@@ -213,9 +213,6 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.Server || Main.myPlayer != Player.whoAmI)
 				return;
 
-			if (BossUISystem.Instance.BossLog.BossLogVisible)
-				BossUISystem.Instance.BossLog.ToggleBossLog(false); // Toggle off UI when player dies
-
 			// Timer sounds when a player is about to respawn
 			if (BossChecklist.ClientConfig.TimerSounds) {
 				if (Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0) {
