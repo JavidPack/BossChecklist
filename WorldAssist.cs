@@ -44,10 +44,10 @@ namespace BossChecklist
 		public static bool downedInvasionT3Ours;
 		public static bool downedTorchGod;
 
-		bool isBloodMoon = false;
-		bool isPumpkinMoon = false;
-		bool isFrostMoon = false;
-		bool isEclipse = false;
+		bool Tracker_BloodMoon = false;
+		bool Tracker_PumpkinMoon = false;
+		bool Tracker_FrostMoon = false;
+		bool Tracker_SolarEclipse = false;
 
 		public override void Load() {
 			On.Terraria.GameContent.Events.DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
@@ -69,10 +69,10 @@ namespace BossChecklist
 			downedSolarEclipse = false;
 
 			// Event trackers
-			isBloodMoon = false;
-			isFrostMoon = false;
-			isPumpkinMoon = false;
-			isEclipse = false;
+			Tracker_BloodMoon = false;
+			Tracker_FrostMoon = false;
+			Tracker_PumpkinMoon = false;
+			Tracker_SolarEclipse = false;
 
 			// MiniBosses
 			downedDarkMage = false;
@@ -269,6 +269,7 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdateWorld() {
+			HandleMoonDowns();
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
@@ -313,16 +314,25 @@ namespace BossChecklist
 			}
 		}
 
-		public override void PostUpdateWorld() {
-			string EventKey = "";
+		public void AnnounceEventEnd(string eventType) {
+			// TODO: Custom/Generic announcements
+			NetworkText message = NetworkText.FromKey($"Mods.BossChecklist.EventEnd.{eventType}");
+			if (Main.netMode == NetmodeID.SinglePlayer) {
+				Main.NewText(message.ToString(), Colors.RarityGreen);
+			}
+			else {
+				ChatHelper.BroadcastChatMessage(message, Colors.RarityGreen);
+			}
+		}
 
+		public void HandleMoonDowns() {
 			// Blood Moon
 			if (Main.bloodMoon) {
-				isBloodMoon = true;
+				Tracker_BloodMoon = true;
 			}
-			else if (isBloodMoon) {
-				isBloodMoon = false;
-				EventKey = "Mods.BossChecklist.EventEnd.BloodMoon";
+			else if (Tracker_BloodMoon) {
+				Tracker_BloodMoon = false;
+				AnnounceEventEnd("BloodMoon"); // Sends a message to all players that the moon event has ended
 				if (!downedBloodMoon) {
 					downedBloodMoon = true;
 					if (Main.netMode == NetmodeID.Server) {
@@ -333,11 +343,11 @@ namespace BossChecklist
 
 			// Frost Moon
 			if (Main.snowMoon) {
-				isFrostMoon = true;
+				Tracker_FrostMoon = true;
 			}
-			else if (isFrostMoon) {
-				isFrostMoon = false;
-				EventKey = "Mods.BossChecklist.EventEnd.FrostMoon";
+			else if (Tracker_FrostMoon) {
+				Tracker_FrostMoon = false;
+				AnnounceEventEnd("FrostMoon");
 				if (!downedFrostMoon) {
 					downedFrostMoon = true;
 					if (Main.netMode == NetmodeID.Server) {
@@ -348,11 +358,11 @@ namespace BossChecklist
 
 			// Pumpkin Moon
 			if (Main.pumpkinMoon) {
-				isPumpkinMoon = true;
+				Tracker_PumpkinMoon = true;
 			}
-			else if (isPumpkinMoon) {
-				isPumpkinMoon = false;
-				EventKey = "Mods.BossChecklist.EventEnd.PumpkinMoon";
+			else if (Tracker_PumpkinMoon) {
+				Tracker_PumpkinMoon = false;
+				AnnounceEventEnd("PumpkinMoon");
 				if (!downedPumpkinMoon) {
 					downedPumpkinMoon = true;
 					if (Main.netMode == NetmodeID.Server) {
@@ -363,27 +373,16 @@ namespace BossChecklist
 
 			// Solar Eclipse
 			if (Main.eclipse) {
-				isEclipse = true;
+				Tracker_SolarEclipse = true;
 			}
-			else if (isEclipse) {
-				isEclipse = false;
-				EventKey = "Mods.BossChecklist.EventEnd.SolarEclipse";
+			else if (Tracker_SolarEclipse) {
+				Tracker_SolarEclipse = false;
+				AnnounceEventEnd("SolarEclipse");
 				if (!downedSolarEclipse) {
 					downedSolarEclipse = true;
 					if (Main.netMode == NetmodeID.Server) {
 						NetMessage.SendData(MessageID.WorldData);
 					}
-				}
-			}
-
-			// Event Ending Messages
-			if (EventKey != "") {
-				NetworkText message = NetworkText.FromKey(EventKey);
-				if (Main.netMode == NetmodeID.SinglePlayer) {
-					Main.NewText(message.ToString(), Colors.RarityGreen);
-				}
-				else {
-					ChatHelper.BroadcastChatMessage(message, Colors.RarityGreen);
 				}
 			}
 		}
