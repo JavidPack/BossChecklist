@@ -168,21 +168,17 @@ namespace BossChecklist
 				// Update UI Element positioning before marked visible
 				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
 				ResetUIPositioning();
+				Main.playerInventory = false; // hide the player inventory
 			}
-
-			// If UI is closed on a new record page, remove the new record from the list
-			if (PageNum >= 0) {
-				BossInfo selectedEntry = BossChecklist.bossTracker.SortedBosses[PageNum];
-				if (BossLogVisible && show == false && selectedEntry.GetRecordIndex != -1) {
-					modPlayer.hasNewRecord[selectedEntry.GetRecordIndex] = false;
+			else if (PageNum >= 0) {
+				// If UI is closed on a new record page, remove the new record from the list
+				int selectedEntryIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
+				if (selectedEntryIndex != -1) {
+					modPlayer.hasNewRecord[selectedEntryIndex] = false;
 				}
 			}
 
-			BossLogVisible = show;
-			if (show) {
-				// TODO: Small fix to update hidden list on open
-				Main.playerInventory = false;
-			}
+			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
 		}
 
 		public override void OnInitialize() {
@@ -443,7 +439,7 @@ namespace BossChecklist
 		public override void Update(GameTime gameTime) {
 			if (PendingToggleBossLogUI) {
 				PendingToggleBossLogUI = false;
-				BossUISystem.Instance.BossLog.ToggleBossLog(!BossUISystem.Instance.BossLog.BossLogVisible);
+				ToggleBossLog(!BossLogVisible);
 			}
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
 			base.Update(gameTime);
@@ -491,18 +487,15 @@ namespace BossChecklist
 			MiniBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 2);
 			EventTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 3);
 			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
-			UpdateTabNavPos();
-		}
 
-		private void UpdateTabNavPos() {
-			if (PageNum == Page_Prompt)
-				return;
-
-			// Updating tabs to proper positions
-			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-			UpdateFilterTabPos(false); // Update filter tab visibility
+			// Update the navigation tabs to the proper positions
+			// This does not need to occur if the Progression prompt is shown, as they are not visible
+			if (PageNum != Page_Prompt) {
+				BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+				MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+				EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+				UpdateFilterTabPos(false); // Update filter tab visibility
+			}
 		}
 
 		private void UpdateFilterTabPos(bool tabClicked) {
