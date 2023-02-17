@@ -87,9 +87,6 @@ namespace BossChecklist
 		}
 
 		public override void OnEnterWorld(Player player) {
-			// If the boss log has been fully opened before or the prompt is disabled, set the pagenum to the Table of Contents instead of the prompt.
-			BossLogUI.PageNum = hasOpenedTheBossLog || BossChecklist.BossLogConfig.PromptDisabled ? -1 : -3;
-
 			// PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
 			enteredWorldReset = true;
 

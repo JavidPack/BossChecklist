@@ -10,7 +10,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
-using Terraria.UI.Chat;
 
 namespace BossChecklist
 {
@@ -153,7 +152,7 @@ namespace BossChecklist
 						// Detect if the hover text is a single localization key and draw the hover text accordingly
 						if (UIHoverText != "") {
 							string text = UIHoverText.StartsWith("$Mods.") ? Language.GetTextValue(UIHoverText.Substring(1)) : UIHoverText;
-							BossLogUI.DrawTooltipBG(Main.spriteBatch, text, UIHoverTextColor);
+							DrawTooltipBackground(text, UIHoverTextColor);
 						}
 						// Reset text and color back to default state
 						UIHoverText = "";
@@ -201,6 +200,31 @@ namespace BossChecklist
 				);
 			}
 			#endregion
+		}
+
+		/// <summary>
+		/// <para>Draws backgrounds for texts similar to the ones used for item tooltips.</para>
+		/// <para>ModifyInterfaceLayers will use this method when hovering over an element that changes the <see cref="UIHoverText"/></para>
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="textColor"></param>
+		private void DrawTooltipBackground(string text, Color textColor = default) {
+			if (text == "")
+				return;
+
+			int padd = 20;
+			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(text);
+			Rectangle bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd - 5);
+			bgPos.X = Utils.Clamp(bgPos.X, 0, Main.screenWidth - bgPos.Width);
+			bgPos.Y = Utils.Clamp(bgPos.Y, 0, Main.screenHeight - bgPos.Height);
+
+			Vector2 textPos = new Vector2(bgPos.X + padd / 2, bgPos.Y + padd / 2);
+			if (textColor == default) {
+				textColor = Main.MouseTextColorReal;
+			}
+
+			Utils.DrawInvBG(Main.spriteBatch, bgPos, new Color(23, 25, 81, 255) * 0.925f);
+			Utils.DrawBorderString(Main.spriteBatch, text, textPos, textColor);
 		}
 	}
 }

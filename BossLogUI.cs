@@ -24,18 +24,33 @@ namespace BossChecklist
 {
 	class BossLogUI : UIState
 	{
-		// The main button to open the Boss Log
-		public BossAssistButton bosslogbutton;
+		public BossAssistButton bosslogbutton; // The main button to open the Boss Log
+		public BossLogPanel BookArea; // The main panel for the UI. All content is aligned within this area.
+		public BossLogPanel PageOne; // left page content panel
+		public BossLogPanel PageTwo; // right page content panel
 
-		// All contents are within these areas
 		// The selected boss page starts out with an invalid number for the initial check
-		public static int PageNum = -3;
+		private int BossLogPageNumber;
+
+		/// <summary>
+		/// The page number for the client's Boss Log. Changing the page value will automatically update the log to dispaly the selected page.
+		/// </summary>
+		public int PageNum {
+			get => BossLogPageNumber;
+			set {
+				if (value == -3) {
+					OpenProgressionModePrompt();
+				}
+				else { 
+					UpdateSelectedPage(value, CategoryPageType);
+				}
+			}
+		}
+
+		//public static int PageNum = -3; // The page number the Log is currently on. 0+ is corresponded with boss pages.
 		public const int Page_TableOfContents = -1;
-		public const int Page_Credits = -2;
+		public const int Page_Credits = -2; // Even though its -2, the credits page appears last
 		public const int Page_Prompt = -3;
-		public BossLogPanel BookArea;
-		public BossLogPanel PageOne;
-		public BossLogPanel PageTwo;
 
 		// Each Boss entry has 3 subpage categories
 		public static CategoryPage CategoryPageType = CategoryPage.Record;
@@ -156,8 +171,7 @@ namespace BossChecklist
 					// TODO: Disabled progression mode related stuff until it is reworked on until an issue with player data is resolved
 					// TODO: remove false from if statement once fixed
 					if (!BossChecklist.BossLogConfig.PromptDisabled && false) {
-						OpenProgressionModePrompt(); // All page logic is handled in this method, so return afterwards.
-						return;
+						PageNum = Page_Prompt; // All page logic is handled in this method, so return afterwards.
 					}
 					else {
 						PageNum = Page_TableOfContents;
@@ -167,21 +181,21 @@ namespace BossChecklist
 					// If the Log has been opened before, check for a world change.
 					// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
 					modPlayer.enteredWorldReset = false;
-					UpdateSelectedPage(Page_TableOfContents);
+					PageNum = Page_TableOfContents;
 				}
 				else {
-					UpdateSelectedPage(PageNum, CategoryPageType); // Otherwise, just default to the last page selected
+					RefreshPageContent(); // Otherwise, just default to the last page selected
 				}				
 
 				// Update UI Element positioning before marked visible
 				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
-				ResetUIPositioning();
+				//ResetUIPositioning();
 				Main.playerInventory = false; // hide the player inventory
 			}
 			else if (PageNum >= 0) {
 				// If UI is closed on a new record page, remove the new record from the list
 				int selectedEntryIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
-				if (selectedEntryIndex != -1) {
+				if (selectedEntryIndex != -1 && modPlayer.hasNewRecord.Length > 0) {
 					modPlayer.hasNewRecord[selectedEntryIndex] = false;
 				}
 			}
@@ -601,7 +615,7 @@ namespace BossChecklist
 			}
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			Filters_SetImage();
-			UpdateSelectedPage(Page_TableOfContents);
+			RefreshPageContent();
 		}
 
 		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Forced Downs, Clear Records, Clear Boss Loot, etc
@@ -621,7 +635,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearHidden);
 				packet.Send();
 			}
-			UpdateSelectedPage(Page_TableOfContents);
+			RefreshPageContent();
 		}
 
 		private void ClearForcedDowns() {
@@ -637,7 +651,7 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearForceDowns);
 				packet.Send();
 			}
-			UpdateSelectedPage(Page_TableOfContents);
+			RefreshPageContent();
 		}
 
 		// Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)
@@ -662,9 +676,12 @@ namespace BossChecklist
 
 			stats.hitsTakenBest = -1;
 			stats.hitsTakenPrev = -1;
-			UpdateSelectedPage(PageNum, CategoryPageType);
+			RefreshPageContent();
 		}
 
+		/// <summary>
+		/// While in debug mode, players will be able to remove obtained items from their player save data using the right-click button on the selected item slot.
+		/// </summary>
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
 			// Alt right-click an item slot to remove that item from the selected boss page's loot/collection list
 			// Alt right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
@@ -684,7 +701,7 @@ namespace BossChecklist
 			else if (listeningElement is LogItemSlot slot) {
 				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
 			}
-			UpdateSelectedPage(PageNum, CategoryPage.Loot);
+			RefreshPageContent();
 		}
 
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
@@ -709,7 +726,7 @@ namespace BossChecklist
 					RecipeShown++;
 				}
 			}
-			UpdateSelectedPage(PageNum, CategoryPage.Spawn);
+			RefreshPageContent();
 		}
 
 		public static bool[] CalculateTableOfContents(List<BossInfo> bossList) {
@@ -744,11 +761,9 @@ namespace BossChecklist
 		}
 
 		public void OpenProgressionModePrompt() {
-			PageNum = Page_Prompt;
-			Main.playerInventory = false;
-			BossLogVisible = true;
-			ResetBothPages();
-			ResetUIPositioning();
+			BossLogPageNumber = Page_Prompt;
+			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
+			ResetBothPages(); // Reset the content of both pages before appending new content for the page
 
 			FittedTextPanel textBox = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ProgressionModeDescription");
 			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
@@ -943,7 +958,12 @@ namespace BossChecklist
 		}
 
 		internal void JumpToBossPage(int index, bool leftClick = true) {
-			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
+			// If no alt key is pressed when clicking, just jump to the boss page selected
+			// If an alt key was pressed when clicking, the either mark as defeated or hidden based on click state
+			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt)) {
+				PageNum = index;
+			}
+			else {
 				// While holding alt, a user can interact with any boss list entry
 				// Left-clicking forces a completion check on or off
 				// Right-clicking hides the boss from the list
@@ -955,7 +975,6 @@ namespace BossChecklist
 					else if (!entry.downed()) {
 						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
 					}
-					UpdateSelectedPage(Page_TableOfContents);
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
@@ -973,7 +992,6 @@ namespace BossChecklist
 						WorldAssist.HiddenBosses.Remove(entry.Key);
 					}
 					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-					UpdateSelectedPage(Page_TableOfContents);
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestHideBoss);
@@ -982,9 +1000,8 @@ namespace BossChecklist
 						packet.Send();
 					}
 				}
-				return; // Alt-clicking should never jump to a boss page
+				RefreshPageContent();
 			}
-			UpdateSelectedPage(index, CategoryPageType);
 		}
 
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
@@ -1007,19 +1024,19 @@ namespace BossChecklist
 			}
 
 			if (id == "Boss_Tab") {
-				UpdateSelectedPage(FindNext(EntryType.Boss), CategoryPageType);
+				PageNum = FindNext(EntryType.Boss);
 			}
 			else if (id == "Miniboss_Tab") {
-				UpdateSelectedPage(FindNext(EntryType.MiniBoss), CategoryPageType);
+				PageNum = FindNext(EntryType.MiniBoss);
 			}
 			else if (id == "Event_Tab") {
-				UpdateSelectedPage(FindNext(EntryType.Event), CategoryPageType);
+				PageNum = FindNext(EntryType.Event);
 			}
 			else if (id == "Credits_Tab") {
-				UpdateSelectedPage(-2, CategoryPageType);
+				PageNum = Page_Credits;
 			}
 			else {
-				UpdateSelectedPage(-1, CategoryPageType);
+				PageNum = Page_TableOfContents;
 			}
 		}
 
@@ -1041,34 +1058,36 @@ namespace BossChecklist
 			RecipeShown = 0;
 			RecipePageNum = 0;
 
+			int NewPageValue = PageNum;
+
 			// Move to next/prev
 			List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
 			if (button.Id == "Next") {
-				if (PageNum < BossList.Count - 1) {
-					PageNum++;
+				if (NewPageValue < BossList.Count - 1) {
+					NewPageValue++;
 				}
 				else {
-					PageNum = Page_Credits;
+					NewPageValue = Page_Credits;
 				}
 			}
 			else {
 				// button is previous
-				if (PageNum >= 0) {
-					PageNum--;
+				if (NewPageValue >= 0) {
+					NewPageValue--;
 				}
 				else {
-					PageNum = BossList.Count - 1;
+					NewPageValue = BossList.Count - 1;
 				}
 			}
 
 			// If the page is hidden or unavailable, keep moving till its not or until page is at either end
 			// Also check for "Only Bosses" navigation
-			if (PageNum >= 0) {
-				bool HiddenOrUnAvailable = BossList[PageNum].hidden || !BossList[PageNum].available();
-				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && BossList[PageNum].type != EntryType.Boss;
+			if (NewPageValue >= 0) {
+				bool HiddenOrUnAvailable = BossList[NewPageValue].hidden || !BossList[NewPageValue].available();
+				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && BossList[NewPageValue].type != EntryType.Boss;
 				if (HiddenOrUnAvailable || OnlyDisplayBosses) {
-					while (PageNum >= 0) {
-						BossInfo currentBoss = BossList[PageNum];
+					while (NewPageValue >= 0) {
+						BossInfo currentBoss = BossList[NewPageValue];
 						if (!currentBoss.hidden && currentBoss.available()) {
 							if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 								if (currentBoss.type == EntryType.Boss) {
@@ -1081,30 +1100,38 @@ namespace BossChecklist
 						}
 
 						if (button.Id == "Next") {
-							if (PageNum < BossList.Count - 1) {
-								PageNum++;
+							if (NewPageValue < BossList.Count - 1) {
+								NewPageValue++;
 							}
 							else {
-								PageNum = Page_Credits;
+								NewPageValue = Page_Credits;
 							}
 						}
 						else {
 							// button is previous
-							if (PageNum >= 0) {
-								PageNum--;
+							if (NewPageValue >= 0) {
+								NewPageValue--;
 							}
 							else {
-								PageNum = BossList.Count - 1;
+								NewPageValue = BossList.Count - 1;
 							}
 						}
 					}
 				}
 			}
-			UpdateSelectedPage(PageNum, CategoryPageType); // Update the page
+
+			PageNum = NewPageValue; // Once a valid page is found, change the page.
 		}
 
+		/// <summary>
+		/// Updates desired page and subcategory when called. Used for buttons that use navigation.
+		/// </summary>
+		/// <param name="pageNum">The page you want to switch to.</param>
+		/// <param name="catPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist. Defaults to the record page.</param>
+		/// <param name="altPage">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
 		public void UpdateSelectedPage(int pageNum, CategoryPage catPage = CategoryPage.Record, RecordCategory altPage = RecordCategory.None) {
-			PageNum = pageNum;
+			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
+			
 			// Only on boss pages does updating the category page matter
 			if (PageNum >= 0) {
 				CategoryPageType = catPage;
@@ -1113,6 +1140,13 @@ namespace BossChecklist
 				}
 			}
 
+			RefreshPageContent();
+		}
+
+		/// <summary>
+		/// Restructures all page content and elements without changing the page or subcategory.
+		/// </summary>
+		public void RefreshPageContent() {
 			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
 			if (PageNum == Page_TableOfContents) {
@@ -1152,7 +1186,50 @@ namespace BossChecklist
 			scrollTwo.Height.Set(-24f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
-			ResetPageButtons();
+			// Reset all of the page's buttons
+			if (PageNum != Page_Prompt) {
+				if (PageNum != Page_Credits) {
+					PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
+				}
+				if (PageNum != Page_TableOfContents) {
+					PageOne.Append(PrevPage); // Prev page button can appear on any page except the Table of Contents
+				}
+
+				if (PageNum >= 0) {
+					BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
+					if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+						// Only bosses have records. Events will have their own page with banners of the enemies in the event.
+						// Spawn and Loot pages do not have alt pages currently, so skip adding them
+						bool validRecordPage = CategoryPageType != CategoryPage.Record || boss.type != EntryType.Boss;
+						if (!validRecordPage) {
+							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+							int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
+							PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
+							int totalRecords = (int)RecordCategory.None;
+							for (int i = 0; i < totalRecords; i++) {
+								if ((i == 1 || i == 2) && record.kills == 0)
+									continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
+
+								AltPageButtons[i].Width.Pixels = 25;
+								AltPageButtons[i].Height.Pixels = 25;
+								int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
+								if (CategoryPageType == CategoryPage.Record) {
+									// If First or Best buttons were skipped account for the positioning of Previous and World
+									if (i < 2) {
+										AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
+									}
+									else {
+										AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + (i - 2) * 25 + offset;
+									}
+								}
+								AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
+								PageTwo.Append(AltPageButtons[i]);
+							}
+						}
+					}
+				}
+			}
+
 			if (PageNum >= 0) {
 				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
 					PageTwo.Append(spawnButton);
@@ -1190,52 +1267,6 @@ namespace BossChecklist
 					brokenDisplay.Top.Pixels = 0;
 					brokenDisplay.Left.Pixels = -15;
 					brokenPanel.Append(brokenDisplay);
-				}
-			}
-		}
-
-		private void ResetPageButtons() {
-			if (PageNum == Page_Prompt)
-				return;
-
-			if (PageNum != Page_Credits) {
-				PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
-			}
-			if (PageNum != Page_TableOfContents) {
-				PageOne.Append(PrevPage); // Prev page button can appear on any page except the Table of Contents
-			}
-
-			if (PageNum >= 0) {
-				BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-				if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-					// Only bosses have records. Events will have their own page with banners of the enemies in the event.
-					// Spawn and Loot pages do not have alt pages currently, so skip adding them
-					bool validRecordPage = CategoryPageType != CategoryPage.Record || boss.type != EntryType.Boss;
-					if (!validRecordPage) {
-						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
-						PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
-						int totalRecords = (int)RecordCategory.None;
-						for (int i = 0; i < totalRecords; i++) {
-							if ((i == 1 || i == 2) && record.kills == 0)
-								continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-
-							AltPageButtons[i].Width.Pixels = 25;
-							AltPageButtons[i].Height.Pixels = 25;
-							int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
-							if (CategoryPageType == CategoryPage.Record) {
-								// If First or Best buttons were skipped account for the positioning of Previous and World
-								if (i < 2) {
-									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
-								}
-								else {
-									AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + (i - 2) * 25 + offset;
-								}
-							}
-							AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
-							PageTwo.Append(AltPageButtons[i]);
-						}
-					}
 				}
 			}
 		}
@@ -1498,24 +1529,33 @@ namespace BossChecklist
 		}
 
 		private void OpenRecord() {
+			// If a boss record does not have the selected subcategory type, it should default back to previous attempt.
 			if (!PageTwo.HasChild(AltPageButtons[(int)RecordPageType])) {
 				RecordPageType = RecordCategory.PreviousAttempt;
 			}
+
 			if (PageNum < 0)
-				return;
+				return; // Code should only run if it is on an entry page
+
+			// Currently blank, but leave here in case elements need to be added later on
 		}
 
+		/// <summary>
+		/// Sets up the content needed for the spawn info page, 
+		/// creating a text box containing a description of how to summon the boss or event. 
+		/// It can also have an item slot that cycles through summoning items along with the item's recipe for crafting.
+		/// </summary>
 		private void OpenSpawn() {
-			int TotalRecipes = 0;
 			if (PageNum < 0)
-				return;
+				return; // Code should only run if it is on an entry page
 
-			pageTwoItemList.Clear();
-			BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (boss.modSource == "Unknown")
-				return;
+			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
+			if (selectedBoss.modSource == "Unknown")
+				return; // prevent unsupported entries from displaying info
+						// a message panel will take its place notifying the user that the mods calls are out of date
 
-			var message = new UIMessageBox(boss.DisplaySpawnInfo);
+			// create a message box, displaying the spawn info provided
+			var message = new UIMessageBox(selectedBoss.DisplaySpawnInfo);
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
@@ -1523,7 +1563,7 @@ namespace BossChecklist
 			//message.PaddingRight = 30;
 			PageTwo.Append(message);
 
-			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
+			// create a scroll bar in case the message is too long for the box to contain
 			scrollTwo.SetView(100f, 1000f);
 			scrollTwo.Top.Set(91f, 0f);
 			scrollTwo.Height.Set(-382f, 1f);
@@ -1532,202 +1572,220 @@ namespace BossChecklist
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
 
-			if (boss.spawnItem.Count == 0 || boss.spawnItem.All(x => x <= 0)) {
-				string type = "Boss";
-				if (boss.type == EntryType.MiniBoss) {
-					type = "MiniBoss";
-				}
-				else if (boss.type == EntryType.Event) {
-					type = "Event";
-				}
+			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
+			if (selectedBoss.spawnItem.Count == 0 || selectedBoss.spawnItem.All(x => x <= 0)) {
+				string type = selectedBoss.type == EntryType.Boss ? "Boss" : selectedBoss.type == EntryType.Event ? "Event" : "MiniBoss";
 				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
 				PageTwo.Append(info);
-				return;
+				return; // since no items are listed, the recipe code does not need to occur
 			}
+
+			/// Code below handles all of the recipe searching and displaying
+			// create empty lists for ingredients and required tiles
+			int selectedSpawnItem = selectedBoss.spawnItem[RecipePageNum];
 			List<Item> ingredients = new List<Item>();
 			List<int> requiredTiles = new List<int>();
-			string recipeMod = "Terraria";
-			//List<Recipe> recipes = Main.recipe.ToList();
-			if (boss.spawnItem[RecipePageNum] != 0) {
-				var recipes = Main.recipe
-					.Take(Recipe.numRecipes)
-					.Where(r => r.HasResult(boss.spawnItem[RecipePageNum]));
+			string recipeMod = "Terraria"; // we can inform players where the recipe originates from, starting with vanilla as a base
 
-				foreach (Recipe recipe in recipes) {
-					if (TotalRecipes == RecipeShown) {
-						foreach (Item item in recipe.requiredItem) {
-							Item clone = item.Clone();
-							OverrideForGroups(recipe, clone);
-							ingredients.Add(clone);
-						}
+			if (selectedSpawnItem == ItemID.None)
+				return; // just in case the selected summon item is invalid
 
-						requiredTiles.AddRange(recipe.requiredTile);
+			// search for all recipes that have the item as a result
+			var itemRecipes = Main.recipe
+				.Take(Recipe.numRecipes)
+				.Where(r => r.HasResult(selectedSpawnItem));
 
-						if (recipe.Mod != null) {
-							recipeMod = recipe.Mod.DisplayName;
-						}
+			// iterate through all the recipes to gather the information we need to display for the recipe
+			int TotalRecipes = 0;
+			foreach (Recipe recipe in itemRecipes) {
+				if (TotalRecipes == RecipeShown) {
+					foreach (Item item in recipe.requiredItem) {
+						Item clone = item.Clone();
+						OverrideForGroups(recipe, clone); // account for recipe group names
+						ingredients.Add(clone); // populate the ingredients list with all items found in the required items
 					}
-					TotalRecipes++;
-				}
-				Item spawn = ContentSamples.ItemsByType[boss.spawnItem[RecipePageNum]];
-				if (boss.Key == "Terraria TorchGod" && spawn.type == ItemID.Torch) {
-					spawn.stack = 101;
-				}
 
-				LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
-				spawnItemSlot.Width.Pixels = slotRectRef.Width;
-				spawnItemSlot.Height.Pixels = slotRectRef.Height;
-				spawnItemSlot.Left.Pixels = 48 + (56 * 2);
-				spawnItemSlot.Top.Pixels = 230;
-				PageTwo.Append(spawnItemSlot);
+					requiredTiles.AddRange(recipe.requiredTile); // populate the required tiles list
 
-				int row = 0;
-				int col = 0;
-				for (int k = 0; k < ingredients.Count; k++) {
-					LogItemSlot ingList = new LogItemSlot(ingredients[k], false, ingredients[k].HoverName, ItemSlot.Context.GuideItem, 0.85f) {
-						Id = "ingredient_" + k
-					};
-					ingList.Width.Pixels = slotRectRef.Width * 0.85f;
-					ingList.Height.Pixels = slotRectRef.Height * 0.85f;
-					ingList.Left.Pixels = 20 + (48 * col);
-					ingList.Top.Pixels = 240 + (48 * (row + 1));
-					PageTwo.Append(ingList);
-					col++;
-					if (k == 6) {
-						// Fills in rows with empty slots. New rows start after 7 items
-						if (ingList.item.type == ItemID.None) {
-							break;
-						}
-						col = 0;
-						row++;
-					}
-					else if (k == 13) {
-						// No mods should be able to use more than 14 items to craft this spawn item, so break incase it goes beyond that
-						break;
+					if (recipe.Mod != null) {
+						recipeMod = recipe.Mod.DisplayName; // if the recipe was added by a mod, credit the mod
 					}
 				}
-
-				if (ingredients.Count > 0 && requiredTiles.Count == 0) {
-					LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
-					craftItem.Width.Pixels = slotRectRef.Width * 0.85f;
-					craftItem.Height.Pixels = slotRectRef.Height * 0.85f;
-					craftItem.Top.Pixels = 240 + (48 * (row + 2));
-					craftItem.Left.Pixels = 20;
-					PageTwo.Append(craftItem);
-				}
-				else if (requiredTiles.Count > 0) {
-					for (int l = 0; l < requiredTiles.Count; l++) {
-						if (requiredTiles[l] == -1) {
-							break; // Prevents extra empty slots from being created
-						}
-						LogItemSlot tileList;
-						if (requiredTiles[l] == 26) {
-							string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
-							string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
-							string altarType = WorldGen.crimson ? crimsonAltar : demonAltar;
-							tileList = new LogItemSlot(new Item(0), false, altarType, ItemSlot.Context.EquipArmorVanity, 0.85f);
-						}
-						else {
-							Item craft = new Item(0);
-							for (int m = 0; m < ItemLoader.ItemCount; m++) {
-								Item craftItem = ContentSamples.ItemsByType[m];
-								if (craftItem.createTile == requiredTiles[l]) {
-									craft = craftItem;
-									break;
-								}
-							}
-							tileList = new LogItemSlot(craft, false, craft.HoverName, ItemSlot.Context.EquipArmorVanity, 0.85f);
-						}
-						tileList.Width.Pixels = slotRectRef.Width * 0.85f;
-						tileList.Height.Pixels = slotRectRef.Height * 0.85f;
-						tileList.Left.Pixels = 20 + (48 * l);
-						tileList.Top.Pixels = 240 + (48 * (row + 2));
-						PageTwo.Append(tileList);
-					}
-				}
-
-				if (RecipePageNum > 0) {
-					BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
-						Id = "PrevItem"
-					};
-					PrevItem.Width.Pixels = prevTexture.Value.Width;
-					PrevItem.Height.Pixels = prevTexture.Value.Width;
-					PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
-					PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
-					PrevItem.OnClick += ChangeSpawnItem;
-					PageTwo.Append(PrevItem);
-				}
-
-				if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-					BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
-						Id = "NextItem"
-					};
-					NextItem.Width.Pixels = nextTexture.Value.Width;
-					NextItem.Height.Pixels = nextTexture.Value.Height;
-					NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
-					NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
-					NextItem.OnClick += ChangeSpawnItem;
-					PageTwo.Append(NextItem);
-				}
-
-				if (TotalRecipes > 1) {
-					BossAssistButton CycleItem = new BossAssistButton(cycleTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
-						Id = "CycleItem_" + TotalRecipes
-					};
-					CycleItem.Width.Pixels = cycleTexture.Value.Width;
-					CycleItem.Height.Pixels = cycleTexture.Value.Height;
-					CycleItem.Left.Pixels = 240;
-					CycleItem.Top.Pixels = 240;
-					CycleItem.OnClick += ChangeSpawnItem;
-					PageTwo.Append(CycleItem);
-				}
-
-				string recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Noncraftable");
-				if (TotalRecipes > 0) {
-					recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.RecipeFrom", recipeMod);
-				}
-
-				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
-				ModdedRecipe.Left.Pixels = 10;
-				ModdedRecipe.Top.Pixels = 205;
-				PageTwo.Append(ModdedRecipe);
+				TotalRecipes++; // add to recipe count. this will be useful later for cycling through other recipes.
 			}
+
+			Item spawn = ContentSamples.ItemsByType[selectedSpawnItem]; // create an item for reference
+
+			if (selectedBoss.Key == "Terraria TorchGod" && spawn.type == ItemID.Torch) {
+				spawn.stack = 101; // apply a custom stack count for the torches needed for the Torch God summoning event
+			}
+
+			// create an item slot of the summoning item
+			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
+			spawnItemSlot.Width.Pixels = slotRectRef.Width;
+			spawnItemSlot.Height.Pixels = slotRectRef.Height;
+			spawnItemSlot.Left.Pixels = 48 + (56 * 2);
+			spawnItemSlot.Top.Pixels = 230;
+			PageTwo.Append(spawnItemSlot);
+
+			// If no recipes were found, skip the recipe item slot code and inform the user the item is not craftable
+			if (TotalRecipes == 0) {
+				string noncraftable = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Noncraftable");
+				UIText craftText = new UIText(noncraftable, 0.8f);
+				craftText.Left.Pixels = 10;
+				craftText.Top.Pixels = 205;
+				PageTwo.Append(craftText);
+				return;
+			}
+
+			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
+			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
+			// To note, we do not need an item row as recipes have a max ingredient size of 14, so there is no need for a scrollbar
+			foreach (Item item in ingredients) {
+				// Create an item slot for the current item
+				LogItemSlot ingList = new LogItemSlot(item, false, item.HoverName, ItemSlot.Context.GuideItem, 0.85f) {
+					Id = $"ingredient_{item.type}"
+				};
+				ingList.Width.Pixels = slotRectRef.Width * 0.85f;
+				ingList.Height.Pixels = slotRectRef.Height * 0.85f;
+				ingList.Left.Pixels = 20 + (48 * col);
+				ingList.Top.Pixels = 240 + (48 * (row + 1));
+				PageTwo.Append(ingList);
+
+				col++;
+				// if col hit the max that can be drawn on the page move onto the next row
+				if (col == 6) {
+					if (row == 1)
+						break; // Recipes should not be able to have more than 14 ingredients, so end the loop
+					
+					if (ingList.item.type == ItemID.None)
+						break; // if the current row ends with a blank item, end the loop. this will prevent another row of blank items
+					
+					col = 0;
+					row++;
+				}
+			}
+
+			if (requiredTiles.Count == 0) {
+				// If there were no tiles required for the recipe, add a 'By Hand' slot
+				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
+				craftItem.Width.Pixels = slotRectRef.Width * 0.85f;
+				craftItem.Height.Pixels = slotRectRef.Height * 0.85f;
+				craftItem.Top.Pixels = 240 + (48 * (row + 2));
+				craftItem.Left.Pixels = 20;
+				PageTwo.Append(craftItem);
+			}
+			else if (requiredTiles.Count > 0) {
+				// iterate through all required tiles to list them in item slots
+				col = 0; // reset col to zero for the crafting stations
+				foreach (int tile in requiredTiles) {
+					if (tile == -1)
+						break; // Prevents extra empty slots from being created
+
+					string hoverText = "";
+					Item craftStation = new Item(0);
+					if (tile == TileID.DemonAltar) {
+						// Demon altars do not have an item id, so a texture will be created solely to be drawn here
+						// A demon altar will be displayed if the world evil is corruption
+						// A crimson altar will be displayed if the world evil is crimson
+						string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
+						string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
+						hoverText = WorldGen.crimson ? crimsonAltar : demonAltar;
+					}
+					else {
+						// Look for items that create the tile when placed, and use that item for the item slot
+						foreach (Item item in ContentSamples.ItemsByType.Values) {
+							if (item.createTile == tile) {
+								craftStation.SetDefaults(item.type);
+								break;
+							}
+						}
+					}
+
+					LogItemSlot tileList = new LogItemSlot(craftStation, false, hoverText, ItemSlot.Context.EquipArmorVanity, 0.85f);
+					tileList.Width.Pixels = slotRectRef.Width * 0.85f;
+					tileList.Height.Pixels = slotRectRef.Height * 0.85f;
+					tileList.Left.Pixels = 20 + (48 * col);
+					tileList.Top.Pixels = 240 + (48 * (row + 2));
+					PageTwo.Append(tileList);
+					col++; // if multiple crafting stations are needed
+				}
+			}
+
+			// if more than one item is used for summoning, append navigational button to cycle through the items
+			// a previous item button will appear if it is not the first item listed
+			if (RecipePageNum > 0) {
+				BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
+					Id = "PrevItem"
+				};
+				PrevItem.Width.Pixels = prevTexture.Value.Width;
+				PrevItem.Height.Pixels = prevTexture.Value.Width;
+				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
+				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
+				PrevItem.OnClick += ChangeSpawnItem;
+				PageTwo.Append(PrevItem);
+			}
+			// a next button will appear if it is not the last item listed
+			if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
+				BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
+					Id = "NextItem"
+				};
+				NextItem.Width.Pixels = nextTexture.Value.Width;
+				NextItem.Height.Pixels = nextTexture.Value.Height;
+				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
+				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
+				NextItem.OnClick += ChangeSpawnItem;
+				PageTwo.Append(NextItem);
+			}
+
+			// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
+			if (TotalRecipes > 1) {
+				BossAssistButton CycleItem = new BossAssistButton(cycleTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
+					Id = "CycleItem_" + TotalRecipes
+				};
+				CycleItem.Width.Pixels = cycleTexture.Value.Width;
+				CycleItem.Height.Pixels = cycleTexture.Value.Height;
+				CycleItem.Left.Pixels = 240;
+				CycleItem.Top.Pixels = 240;
+				CycleItem.OnClick += ChangeSpawnItem;
+				PageTwo.Append(CycleItem);
+			}
+
+			// display where the recipe originates form
+			string recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.RecipeFrom", recipeMod);
+			UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
+			ModdedRecipe.Left.Pixels = 10;
+			ModdedRecipe.Top.Pixels = 205;
+			PageTwo.Append(ModdedRecipe);
 		}
 
+		/// <summary>
+		/// Sets up the content needed for the loot page, creating a list of item slots of the boss's loot and collectibles.
+		/// </summary>
 		private void OpenLoot() {
 			if (PageNum < 0)
-				return;
+				return; // Code should only run if it is on an entry page
 
+			// set up an item list for the listed loot itemslots
 			pageTwoItemList.Left.Pixels = 0;
 			pageTwoItemList.Top.Pixels = 125;
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
+			pageTwoItemList.Clear();
 
+			// setup the scroll for the loot item list
 			scrollTwo.SetView(10f, 1000f);
 			scrollTwo.Top.Pixels = 125;
 			scrollTwo.Left.Pixels = -3;
 			scrollTwo.Height.Set(-88f, 0.75f);
 			scrollTwo.HAlign = 1f;
 
-			pageTwoItemList.Clear();
-
 			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
 			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
-
-			LootRow newRow = new LootRow(0) {
-				Id = "Loot0"
-			};
-
-			// Create the combined list of loot and collectibles.
-			List<int> bossItems = new List<int>(selectedBoss.lootItemTypes.Union(selectedBoss.collection));
-			// Skip any treasurebag as they should not be display within the loot table.
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (bossItems.Contains(boss.treasureBag)) {
-					bossItems.Remove(boss.treasureBag);
-				}
-			}
+			List<int> bossItems = new List<int>(selectedBoss.lootItemTypes.Union(selectedBoss.collection)); // combined list of loot and collectibles
+			bossItems.Remove(selectedBoss.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
 
 			// Prevents itemslot creation for items that are dropped from within the opposite world evil, if applicable
 			if (!Main.drunkWorld && !ModLoader.TryGetMod("BothEvils", out Mod mod)) {
@@ -1744,21 +1802,28 @@ namespace BossChecklist
 				}
 			}
 
-			int row = 0;
-			int col = 0;
+			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
+			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
+			LootRow newRow = new LootRow(0) {
+				Id = "Loot0"
+			}; // the initial row to start with
+
 			foreach (int item in bossItems) {
 				Item selectedItem = ContentSamples.ItemsByType[item];
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
+				// Create an item slot for the current item
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item
 				};
 				itemSlot.Width.Pixels = slotRectRef.Width;
 				itemSlot.Height.Pixels = slotRectRef.Height;
 				itemSlot.Left.Pixels = (col * 56) + 15;
-				itemSlot.OnRightClick += RemoveItem;
-				newRow.Append(itemSlot);
-				col++;
+				itemSlot.OnRightClick += RemoveItem; // debug functionality
+				newRow.Append(itemSlot); // append the item slot to the current row
+
+				col++; // increase col before moving on to the next item
+				// if col hit the max that can be drawn on the page, add the current row to the list and move onto the next row
 				if (col == 6) {
 					col = 0;
 					row++;
@@ -1769,39 +1834,42 @@ namespace BossChecklist
 				}
 			}
 
-			// This adds the final row
+			// Once all our items have been added, append the final row to the list
+			// This does not need to occur if col is at 0, as the current row is empty
 			if (col != 0) {
-				col = 0;
 				row++;
 				pageTwoItemList.Add(newRow);
-				newRow = new LootRow(row) {
-					Id = "Loot" + row
-				};
 			}
 
-			// If we have more than 5 rows of items, a scroll bar is needed to access all items
+			PageTwo.Append(pageTwoItemList); // append the list to the page so the items can be seen
+
 			if (row > 5) {
-				PageTwo.Append(scrollTwo);
+				PageTwo.Append(scrollTwo); // If more than 5 rows exist, a scroll bar is needed to access all items
+				pageTwoItemList.SetScrollbar(scrollTwo); // connect the scrollbar to the list
 			}
-			PageTwo.Append(pageTwoItemList);
-			pageTwoItemList.SetScrollbar(scrollTwo);
 		}
 
+		/// <summary>
+		/// Used to locate the next available entry for the player to fight that is not defeated, marked as defeated, or hidden.
+		/// Mainly used for positioning and navigation.
+		/// </summary>
+		/// <returns>The index of the next available entry within the boss tracker.</returns>
 		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
-		
-		public static Color MaskBoss(BossInfo boss) {
-			if (!boss.IsDownedOrForced) {
+
+		/// <summary> Determines if a texture should be masked by a black sihlouette. </summary>
+		public static Color MaskBoss(BossInfo entry) {
+			if (!entry.IsDownedOrForced) {
 				if (BossChecklist.BossLogConfig.MaskTextures) {
 					return Color.Black;
 				}
-				else if (!Main.hardMode && boss.progression > BossTracker.WallOfFlesh && BossChecklist.BossLogConfig.MaskHardMode) {
+				else if (!Main.hardMode && entry.progression > BossTracker.WallOfFlesh && BossChecklist.BossLogConfig.MaskHardMode) {
 					return Color.Black;
 				}
-				else if (!boss.available()) {
+				else if (!entry.available()) {
 					return Color.Black;
 				}
 			}
-			else if (boss.hidden) {
+			else if (entry.hidden) {
 				return Color.Black;
 			}
 			return Color.White;
@@ -1815,26 +1883,6 @@ namespace BossChecklist
 			if (nameOverride != "") {
 				item.SetNameOverride(nameOverride);
 			}
-		}
-
-		// Use Main.HoverItemName to get text value
-		public static void DrawTooltipBG(SpriteBatch sb, string text, Color textColor = default) {
-			if (text == "")
-				return;
-
-			int padd = 20;
-			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(text);
-			Rectangle bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd - 5);
-			bgPos.X = Utils.Clamp(bgPos.X, 0, Main.screenWidth - bgPos.Width);
-			bgPos.Y = Utils.Clamp(bgPos.Y, 0, Main.screenHeight - bgPos.Height);
-
-			Vector2 textPos = new Vector2(bgPos.X + padd / 2, bgPos.Y + padd / 2);
-			if (textColor == default) {
-				textColor = Main.MouseTextColorReal;
-			}
-
-			Utils.DrawInvBG(sb, bgPos, new Color(23, 25, 81, 255) * 0.925f);
-			Utils.DrawBorderString(sb, text, textPos, textColor);
 		}
 	}
 }

@@ -8,7 +8,6 @@ using ReLogic.OS;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
@@ -178,7 +177,7 @@ namespace BossChecklist.UIElements
 				Main.inventoryScale = scale;
 				Rectangle rectangle = GetInnerDimensions().ToRectangle();
 
-				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
+				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossUISystem.Instance.BossLog.PageNum];
 				bool maskedItems = BossChecklist.BossLogConfig.MaskBossLoot || (BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && selectedBoss.progression > BossTracker.WallOfFlesh);
 
 				// Make backups of the original itemslot textures, as we will replace them temporarily for our visuals
@@ -371,6 +370,7 @@ namespace BossChecklist.UIElements
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
+				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 					// Needed to remove mousetext from outside sources when using the Boss Log
@@ -382,7 +382,7 @@ namespace BossChecklist.UIElements
 					Main.ItemIconCacheUpdate(0);
 				}
 
-				if (BossLogUI.PageNum == -3) {
+				if (selectedLogPage == -3) {
 					if (Id == "PageOne") {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
 						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.BeforeYouBegin");
@@ -402,7 +402,7 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 				}
-				if (BossLogUI.PageNum == -1) { // Table of Contents
+				if (selectedLogPage == -1) { // Table of Contents
 					if (Id == "PageOne") {
 						float textScale = 0.6f;
 						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
@@ -435,7 +435,7 @@ namespace BossChecklist.UIElements
 						}
 					}
 				}
-				else if (BossLogUI.PageNum == -2) {
+				else if (selectedLogPage == -2) {
 					if (Id == "PageOne") {
 						// Mod Developers Credits
 						string specialThanks = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs");
@@ -488,9 +488,9 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, notice, pos2, Color.LightBlue, textScale);
 					}
 				}
-				else if (BossLogUI.PageNum >= 0) {
+				else if (selectedLogPage >= 0) {
 					// Boss Pages
-					BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum];
+					BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[selectedLogPage];
 					bool masked = BossLogUI.MaskBoss(selectedBoss) == Color.Black;
 					if (Id == "PageOne") {
 						if (selectedBoss.customDrawing != null) {
@@ -649,9 +649,8 @@ namespace BossChecklist.UIElements
 											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												// Reset UI positions when changing the page
-												BossLogUI bossLog = BossUISystem.Instance.BossLog;
 												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-												bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
+												BossUISystem.Instance.BossLog.PageNum = index;
 											}
 										}
 									}
@@ -664,7 +663,7 @@ namespace BossChecklist.UIElements
 								if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 									return;
 
-								int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
+								int recordIndex = BossChecklist.bossTracker.SortedBosses[selectedLogPage].GetRecordIndex;
 								PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
 								WorldStats wldRecord = WorldAssist.worldRecords[recordIndex].stats;
 
@@ -919,9 +918,8 @@ namespace BossChecklist.UIElements
 											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
 												// Reset UI positions when changing the page
-												BossLogUI bossLog = BossUISystem.Instance.BossLog;
 												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-												bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
+												BossUISystem.Instance.BossLog.PageNum = index;
 											}
 										}
 									}
@@ -952,9 +950,8 @@ namespace BossChecklist.UIElements
 										BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 										if (Main.mouseLeft && Main.mouseLeftRelease) {
 											// Reset UI positions when changing the page
-											BossLogUI bossLog = BossUISystem.Instance.BossLog;
 											int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == addedNPC.Key);
-											bossLog.UpdateSelectedPage(index, BossLogUI.CategoryPageType);
+											BossUISystem.Instance.BossLog.PageNum = index;
 										}
 									}
 									if (head.Height > headTextureOffsetY) {
@@ -1138,7 +1135,7 @@ namespace BossChecklist.UIElements
 			}
 
 			internal static int GetRecordValue(RecordCategory type, int id) {
-				int recordIndex = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].GetRecordIndex;
+				int recordIndex = BossChecklist.bossTracker.SortedBosses[BossUISystem.Instance.BossLog.PageNum].GetRecordIndex;
 				if (id != 2 && id != 3)
 					return -1;
 
@@ -1203,22 +1200,27 @@ namespace BossChecklist.UIElements
 		{
 			public string Id { get; init; } = "";
 			readonly Asset<Texture2D> book;
+			readonly BossLogUI log;
+			public static bool isDrawn;
 
 			public BookUI(Asset<Texture2D> texture) : base(texture) {
 				book = texture;
+				log = BossUISystem.Instance.BossLog;
 			}
 
 			internal static bool DrawTab(string Id) {
-				bool MatchesCreditsTab = BossLogUI.PageNum == -2 && Id == "Credits_Tab";
-				bool MatchesBossTab = BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab";
-				bool MatchesMinibossTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Miniboss_Tab";
-				bool MatchesEventTab = (BossLogUI.PageNum == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Event_Tab";
+				int page = BossUISystem.Instance.BossLog.PageNum;
+				bool MatchesCreditsTab = page == -2 && Id == "Credits_Tab";
+				bool MatchesBossTab = page == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab";
+				bool MatchesMinibossTab = (page == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Miniboss_Tab";
+				bool MatchesEventTab = (page == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Event_Tab";
 				return !(MatchesCreditsTab || MatchesBossTab || MatchesMinibossTab || MatchesEventTab);
 			}
 
 			internal string DetermineHintText() {
+				int selectedLogPage = log.PageNum;
 				string hintText = "";
-				if (BossLogUI.PageNum == -1) {
+				if (selectedLogPage == -1) {
 					hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.MarkEntry");
 					hintText += "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.HideEntry");
 					if (BossChecklist.DebugConfig.ResetForcedDowns) {
@@ -1228,7 +1230,7 @@ namespace BossChecklist.UIElements
 						hintText += "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearHidden");
 					}
 				}
-				else if (BossLogUI.PageNum >= 0) {
+				else if (selectedLogPage >= 0) {
 					if (BossLogUI.CategoryPageType == CategoryPage.Record && BossChecklist.DebugConfig.ResetRecordsBool && BossLogUI.RecordPageType != RecordCategory.WorldRecord) {
 						//hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearRecord"); // TODO: Make this function. Clear a singular record
 						hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.ClearAllRecords");
@@ -1243,6 +1245,8 @@ namespace BossChecklist.UIElements
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
+				int selectedLogPage = log.PageNum;
+
 				if (Id == "Info_Tab") {
 					if (BossChecklist.BossLogConfig.AnyProgressionModeConfigUsed) {
 						Rectangle rect = GetDimensions().ToRectangle();
@@ -1290,20 +1294,20 @@ namespace BossChecklist.UIElements
 				else {
 					// Tab drawing
 					SpriteEffects effect = SpriteEffects.FlipHorizontally;
-					if (Id == "Boss_Tab" && (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Boss) || BossLogUI.PageNum == -2)) {
+					if (Id == "Boss_Tab" && (selectedLogPage >= BossLogUI.FindNext(EntryType.Boss) || selectedLogPage == -2)) {
 						effect = SpriteEffects.None;
 					}
-					else if (Id == "Miniboss_Tab" && (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.MiniBoss) || BossLogUI.PageNum == -2)) {
+					else if (Id == "Miniboss_Tab" && (selectedLogPage >= BossLogUI.FindNext(EntryType.MiniBoss) || selectedLogPage == -2)) {
 						effect = SpriteEffects.None;
 					}
-					else if (Id == "Event_Tab" && (BossLogUI.PageNum >= BossLogUI.FindNext(EntryType.Event) || BossLogUI.PageNum == -2)) {
+					else if (Id == "Event_Tab" && (selectedLogPage >= BossLogUI.FindNext(EntryType.Event) || selectedLogPage == -2)) {
 						effect = SpriteEffects.None;
 					}
 					else if (Id == "ToCFilter_Tab") {
 						effect = SpriteEffects.None;
 					}
 
-					if (DrawTab(Id) && BossLogUI.PageNum != -3) {
+					if (DrawTab(Id) && selectedLogPage != -3) {
 						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), Color.Tan, 0f, Vector2.Zero, effect, 0f);
 					}
 				}
@@ -1328,7 +1332,7 @@ namespace BossChecklist.UIElements
 					Main.ItemIconCacheUpdate(0);
 				}
 
-				if (Id.EndsWith("_Tab") && BossLogUI.PageNum != -3) {
+				if (Id.EndsWith("_Tab") && selectedLogPage != -3) {
 					// Tab Icon
 					Asset<Texture2D> texture = BossLogUI.tocTexture;
 
@@ -1344,10 +1348,10 @@ namespace BossChecklist.UIElements
 					else if (Id == "Credits_Tab") {
 						texture = BossLogUI.credTexture;
 					}
-					else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum == -1) {
+					else if (Id == "ToCFilter_Tab" && selectedLogPage == -1) {
 						texture = BossLogUI.filterTexture;
 					}
-					else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum != -1) {
+					else if (Id == "ToCFilter_Tab" && selectedLogPage != -1) {
 						texture = BossLogUI.tocTexture;
 					}
 
@@ -1375,10 +1379,10 @@ namespace BossChecklist.UIElements
 						else if (Id == "Credits_Tab") {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
 						}
-						else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum == -1) {
+						else if (Id == "ToCFilter_Tab" && selectedLogPage == -1) {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ToggleFilters");
 						}
-						else if (Id == "ToCFilter_Tab" && BossLogUI.PageNum != -1) {
+						else if (Id == "ToCFilter_Tab" && selectedLogPage != -1) {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpTOC");
 						}
 						if (tabMessage != "") {
@@ -1713,11 +1717,12 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				if (BossLogUI.PageNum < 0)
+				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
+				if (selectedLogPage < 0)
 					return;
 
 				if (buttonString == "Mods.BossChecklist.BossLog.DrawnText.Records" || buttonString == "LegacyInterface.101") {
-					EntryType BossType = BossChecklist.bossTracker.SortedBosses[BossLogUI.PageNum].type;
+					EntryType BossType = BossChecklist.bossTracker.SortedBosses[selectedLogPage].type;
 					buttonString = BossType == EntryType.Event ? "LegacyInterface.101" : "Mods.BossChecklist.BossLog.DrawnText.Records";
 				}
 				BackgroundColor = Color.Brown;
