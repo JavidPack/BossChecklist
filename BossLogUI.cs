@@ -78,7 +78,7 @@ namespace BossChecklist
 		public ProgressBar hardmodeBar;
 		public BossLogUIElements.FixedUIScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
 		public BossLogUIElements.FixedUIScrollbar scrollTwo;
-		public static bool showHidden = false; // when true, hidden bosses are visible on the list
+		public bool showHidden = false; // when true, hidden bosses are visible on the list
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Record page related
@@ -770,71 +770,6 @@ namespace BossChecklist
 			RefreshPageContent();
 		}
 
-		// TODO: Move this to BossInfo as a property?
-		/// <summary>
-		/// Determines which entries need to be shown on the Table of Contents, 
-		/// taking into account for any entries that are marked or are disabled by a configuration.
-		/// </summary>
-		/// <returns>An array of booleans representing visibility on the Table of Contents. 
-		/// The array accounts for all submitted entries.</returns>
-		private bool[] CalculateTableOfContents() {
-			List<BossInfo> entryList = BossChecklist.bossTracker.SortedBosses; // the list of all entries
-			bool[] visibleList = new bool[entryList.Count]; // create an array for the output
-
-			foreach (BossInfo entry in entryList) {
-				bool HideUnsupported = entry.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
-				bool HideUnavailable = !entry.available() && BossChecklist.BossLogConfig.HideUnavailable; // entries that are labeled as not available
-				bool HideHidden = entry.hidden && !showHidden; // entries that are labeled as hidden
-				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && entry.type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
-				if (((HideUnavailable || HideHidden) && !entry.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
-					continue;
-				}
-
-				// Check filters as well
-				EntryType type = entry.type;
-				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
-				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
-				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
-
-				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && entry.IsDownedOrForced;
-				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && entry.IsDownedOrForced));
-				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && entry.IsDownedOrForced));
-				if (FilterBoss || FilterMiniBoss || FilterEvent) {
-					continue;
-				}
-
-				visibleList[entryList.IndexOf(entry)] = true; // if it passes all the checks, it should be shown
-			}
-
-			for (int i = 0; i < entryList.Count; i++) {
-				BossInfo boss = entryList[i];
-				// if the boss cannot get through the config checks, it will remain false (invisible)
-				bool HideUnsupported = boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported;
-				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
-				bool HideHidden = boss.hidden && !showHidden;
-				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && boss.type != EntryType.Boss;
-				if (((HideUnavailable || HideHidden) && !boss.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
-					continue;
-				}
-
-				// Check filters as well
-				EntryType type = boss.type;
-				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
-				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
-				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
-
-				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && boss.IsDownedOrForced;
-				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && boss.IsDownedOrForced));
-				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && boss.IsDownedOrForced));
-				if (FilterBoss || FilterMiniBoss || FilterEvent) {
-					continue;
-				}
-
-				visibleList[i] = true; // Boss will show on the Table of Contents
-			}
-			return visibleList;
-		}
-
 		/// <summary>
 		/// Sets up the content needed for the Progression Mode prompt, including text boxes and buttons.
 		/// </summary>
@@ -1318,14 +1253,13 @@ namespace BossChecklist
 			hardmodeList.Clear();
 
 			List<BossInfo> entries = BossChecklist.bossTracker.SortedBosses;
-			bool[] visibleList = CalculateTableOfContents();
 			string nextBoss = "";
 
 			for (int bossIndex = 0; bossIndex < entries.Count; bossIndex++) {
 				BossInfo boss = entries[bossIndex];
 				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
 
-				if (!visibleList[bossIndex])
+				if (!boss.VisibleOnChecklist())
 					continue; // If the boss should not be visible on the Table of Contents, skip the entry in the list
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on

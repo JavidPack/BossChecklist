@@ -136,6 +136,35 @@ namespace BossChecklist
 			return editedName;
 		}
 
+		/// <summary>
+		/// Determines whether or not the entry should be visible on the Table of Contents, 
+		/// based on configurations and filter status.
+		/// </summary>
+		/// <returns>If the entry should be visible</returns>
+		internal bool VisibleOnChecklist() {
+			bool HideUnsupported = modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
+			bool HideUnavailable = available() && BossChecklist.BossLogConfig.HideUnavailable; // entries that are labeled as not available
+			bool HideHidden = hidden && !BossUISystem.Instance.BossLog.showHidden; // entries that are labeled as hidden
+			bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
+			if (((HideUnavailable || HideHidden) && !IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
+				return false;
+			}
+
+			// Make sure the filters allow the entry to be visible
+			string bFilter = BossChecklist.BossLogConfig.FilterBosses;
+			string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
+			string eFilter = BossChecklist.BossLogConfig.FilterEvents;
+
+			bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && IsDownedOrForced;
+			bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && IsDownedOrForced));
+			bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && IsDownedOrForced));
+			if (FilterBoss || FilterMiniBoss || FilterEvent) {
+				return false;
+			}
+
+			return true; // if it passes all the checks, it should be shown
+		}
+
 		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages = null, Action<SpriteBatch, Rectangle, Color> customDrawing = null, List<string> overrideHeadTextures = null) {
 			this.type = type;
 			this.modSource = modSource;
