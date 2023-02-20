@@ -143,7 +143,7 @@ namespace BossChecklist
 		/// <returns>If the entry should be visible</returns>
 		internal bool VisibleOnChecklist() {
 			bool HideUnsupported = modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
-			bool HideUnavailable = available() && BossChecklist.BossLogConfig.HideUnavailable; // entries that are labeled as not available
+			bool HideUnavailable = !available() && BossChecklist.BossLogConfig.HideUnavailable; // entries that are labeled as not available
 			bool HideHidden = hidden && !BossUISystem.Instance.BossLog.showHidden; // entries that are labeled as hidden
 			bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
 			if (((HideUnavailable || HideHidden) && !IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
