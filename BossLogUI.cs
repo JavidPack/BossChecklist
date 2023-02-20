@@ -29,8 +29,10 @@ namespace BossChecklist
 		public BossLogPanel PageOne; // left page content panel
 		public BossLogPanel PageTwo; // right page content panel
 
-		// The selected boss page starts out with an invalid number for the initial check
 		private int BossLogPageNumber;
+		public const int Page_TableOfContents = -1;
+		public const int Page_Credits = -2; // Even though its -2, the credits page appears last, after all entries
+		public const int Page_Prompt = -3;
 
 		/// <summary>
 		/// The page number for the client's Boss Log. Changing the page value will automatically update the log to dispaly the selected page.
@@ -47,47 +49,48 @@ namespace BossChecklist
 			}
 		}
 
-		//public static int PageNum = -3; // The page number the Log is currently on. 0+ is corresponded with boss pages.
-		public const int Page_TableOfContents = -1;
-		public const int Page_Credits = -2; // Even though its -2, the credits page appears last
-		public const int Page_Prompt = -3;
+		// Navigation
+		public UIImageButton NextPage;
+		public UIImageButton PrevPage;
 
-		// Each Boss entry has 3 subpage categories
 		public static CategoryPage CategoryPageType = CategoryPage.Record;
 		public SubpageButton recordButton;
 		public SubpageButton spawnButton;
 		public SubpageButton lootButton;
 
+		// Book Tabs
+		public BookUI ToCTab; // also used for the filter tab
+		public BookUI CreditsTab;
+		public BookUI BossTab;
+		public BookUI MiniBossTab;
+		public BookUI EventTab;
+		public BookUI InfoTab; // shows users info about the enabled progression mode
+		public BookUI ShortcutsTab; // shows users how to change an entry's hidden/defeation state
+		public BookUI filterPanel; // contains the filter buttons
+		private List<BookUI> filterCheckBoxes; // checkmarks for the filters
+		private List<BookUI> filterCheckMark; // checkmarks for the filters
+		public bool filterOpen = false; // when true, the filter panel is visible to the user
+
+		// Table of Contents related
+		public UIList prehardmodeList; // lists for pre-hardmode and hardmode entries
+		public UIList hardmodeList;
+		public ProgressBar prehardmodeBar; // progress bars for pre-hardmode and hardmode entries
+		public ProgressBar hardmodeBar;
+		public BossLogUIElements.FixedUIScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
+		public BossLogUIElements.FixedUIScrollbar scrollTwo;
+		public static bool showHidden = false; // when true, hidden bosses are visible on the list
+		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
+
+		// Record page related
 		public SubpageButton[] AltPageButtons;
 		public static RecordCategory RecordPageType = RecordCategory.PreviousAttempt;
 		public static RecordCategory CompareState = RecordCategory.None; // Compare record values to one another
 		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
 		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
-		public UIImageButton NextPage;
-		public UIImageButton PrevPage;
-		public BookUI filterPanel;
-		private List<BookUI> filterCheck;
-		private List<BookUI> filterCheckMark;
-
-		public BookUI ToCTab;
-		public BookUI CreditsTab;
-		public BookUI BossTab;
-		public BookUI MiniBossTab;
-		public BookUI EventTab;
-		public BookUI InfoTab;
-		public BookUI ShortcutsTab;
-		public bool filterOpen = false;
-
-		public UIList prehardmodeList;
-		public UIList hardmodeList;
-		public ProgressBar prehardmodeBar;
-		public ProgressBar hardmodeBar;
-		public BossLogUIElements.FixedUIScrollbar scrollOne;
-		public BossLogUIElements.FixedUIScrollbar scrollTwo;
-
-		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
-		public UIImage PromptCheck;
+		// Spawn Info page related
+		public static int RecipePageNum = 0;
+		public static int RecipeShown = 0;
 
 		// Cropped Textures
 		public static Asset<Texture2D> bookTexture;
@@ -115,15 +118,17 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
-		public static Rectangle slotRectRef;
+		public static Rectangle slotRectRef; // just grabs the size of a normal inventory slot
 		public static readonly Color faded = new Color(128, 128, 128, 128);
+		public UIImage PromptCheck; // checkmark for the toggle prompt config button
 
-		public static int RecipePageNum = 0;
-		public static int RecipeShown = 0;
-		public static bool showHidden = false;
-		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
-
+		// Boss Log visibiltiy helpers
 		private bool bossLogVisible;
+		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
+		
+		/// <summary>
+		/// Appends or removes UI elements based on the visibility status it is set to.
+		/// </summary>
 		public bool BossLogVisible {
 			get => bossLogVisible;
 			set {
@@ -157,6 +162,10 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Toggles the Boss Log's visibility state. Defaults to visible.
+		/// </summary>
+		/// <param name="show">The visibility state desired</param>
 		public void ToggleBossLog(bool show = true) {
 			// First, determine if the player has ever opened the Log before
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
@@ -348,7 +357,7 @@ namespace BossChecklist
 			filterPanel.Width.Pixels = 50;
 
 			filterCheckMark = new List<BookUI>();
-			filterCheck = new List<BookUI>();
+			filterCheckBoxes = new List<BookUI>();
 
 			List<Asset<Texture2D>> filterNav = new List<Asset<Texture2D>>() {
 				bossNavTexture,
@@ -375,14 +384,14 @@ namespace BossChecklist
 					newCheckBox.OnRightClick += (a, b) => ClearHiddenList();
 				}
 				newCheckBox.Append(filterCheckMark[i]);
-				filterCheck.Add(newCheckBox);
+				filterCheckBoxes.Add(newCheckBox);
 			}
 
 			// Setup the inital checkmarks to display what the user has prematurely selected
 			Filters_SetImage();
 
 			// Append the filter checks to the filter panel
-			foreach (BookUI uiimage in filterCheck) {
+			foreach (BookUI uiimage in filterCheckBoxes) {
 				filterPanel.Append(uiimage);
 			}
 
@@ -433,7 +442,6 @@ namespace BossChecklist
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Loot);
 			lootButton.OnRightClick += RemoveItem;
 
-			// These will serve as a reservation for our AltPage buttons
 			SubpageButton PrevRecordButton = new SubpageButton((int)RecordCategory.PreviousAttempt);
 			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.PreviousAttempt);
 			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.PreviousAttempt, false);
@@ -456,6 +464,17 @@ namespace BossChecklist
 				FirstRecordButton,
 				WorldRecordButton
 			};
+
+			// scroll one currently only appears for the table of contents, so its fields can be set here
+			scrollOne = new BossLogUIElements.FixedUIScrollbar();
+			scrollOne.SetView(100f, 1000f);
+			scrollOne.Top.Pixels = 50f;
+			scrollOne.Left.Pixels = -18;
+			scrollOne.Height.Set(-24f, 0.75f);
+			scrollOne.HAlign = 1f;
+
+			// scroll two is used in more areas, such as the display spawn info message box, so its fields are set when needed
+			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
 		}
 
 		public override void Update(GameTime gameTime) {
@@ -480,6 +499,10 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Resets the positioning of the Boss Log's common UI elements.
+		/// This includes the main book area, the page areas, and all book tabs.
+		/// </summary>
 		public void ResetUIPositioning() {
 			// Reset the position of the button to make sure it updates with the screen res
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - (BookArea.Width.Pixels / 2);
@@ -520,6 +543,10 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Toggles the visibility state of the filter panel. This can occur when the tab is clicked or if the page is changed.
+		/// </summary>
+		/// <param name="tabClicked"></param>
 		private void UpdateFilterTabPos(bool tabClicked) {
 			if (tabClicked) {
 				filterOpen = !filterOpen;
@@ -539,6 +566,9 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// The logic behind the filters changing images when toggled.
+		/// </summary>
 		private void Filters_SetImage() {
 			// ...Bosses
 			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
@@ -575,12 +605,16 @@ namespace BossChecklist
 			filterCheckMark[3].SetImage(showHidden ? checkMarkTexture : xTexture);
 		}
 
+		/// <summary>
+		/// Cycles through the visibility state of the selected filter,
+		/// including bosses, mini-bosses, events and hidden entries.
+		/// </summary>
 		private void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is not BookUI book)
+			if (listeningElement is not BookUI filter)
 				return;
 
-			string rowID = book.Id.Substring(2, 1);
-			if (rowID == "0") {
+			string filterID = filter.Id.Substring(2, 1);
+			if (filterID == "0") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
 				}
@@ -588,7 +622,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
 				}
 			}
-			if (rowID == "1" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
+			else if (filterID == "1" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
 				}
@@ -599,7 +633,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
 				}
 			}
-			if (rowID == "2" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
+			else if (filterID == "2" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
 				}
@@ -610,9 +644,11 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterEvents = "Show";
 				}
 			}
-			if (rowID == "3") {
+			else if (filterID == "3") {
 				showHidden = !showHidden;
 			}
+
+			// Save the filters to the configs, update the checkmark images and refresh the page to update the table of content lists.
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			Filters_SetImage();
 			RefreshPageContent();
@@ -654,16 +690,19 @@ namespace BossChecklist
 			RefreshPageContent();
 		}
 
-		// Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)
+		/// <summary>
+		/// While in debug mode, users are able to reset their records of a specific boss by alt and right-clicking the recordnavigation button
+		/// <para>TODO: Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)</para>
+		/// </summary>
 		private void ResetStats() {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
+				return; // temporary block is recordcode is disabled
 
 			if (!BossChecklist.DebugConfig.ResetRecordsBool || CategoryPageType != 0)
-				return;
+				return; // do not do anything if not on the record page (ex. can't reset record on loot page)
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
-				return;
+				return; // player must be holding alt
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
@@ -676,34 +715,36 @@ namespace BossChecklist
 
 			stats.hitsTakenBest = -1;
 			stats.hitsTakenPrev = -1;
-			RefreshPageContent();
+			RefreshPageContent();  // update page to show changes
 		}
 
 		/// <summary>
 		/// While in debug mode, players will be able to remove obtained items from their player save data using the right-click button on the selected item slot.
 		/// </summary>
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
-			// Alt right-click an item slot to remove that item from the selected boss page's loot/collection list
-			// Alt right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
-			// If holding Alt while right-clicking will do the above for ALL boss lists
 			if (!BossChecklist.DebugConfig.ResetLootItems || CategoryPageType != CategoryPage.Loot)
-				return;
+				return; // do not do anything if not on the loot page (ex. can't remove loot on spawn info page)
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
-				return;
+				return; // player must be holding alt
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			// If tthe page button was alt right-clicked, clear all items from the player's boss loot list
-			// If an item slot was alt right-clicked, remove only that item from the boss loot list
+			// Alt right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
+			// Alt right-click an item slot to remove that item from the selected boss page's loot/collection list
+			// Note: items removed are removed from ALL boss loot pages retroactively
 			if (listeningElement is SubpageButton) {
 				modPlayer.BossItemsCollected.Clear();
 			}
 			else if (listeningElement is LogItemSlot slot) {
 				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
 			}
-			RefreshPageContent();
+			RefreshPageContent(); // update page to show changes
 		}
 
+		/// <summary>
+		/// Cycles through the spawn items on an entry.
+		/// Also cycles through recipes for spawn items.
+		/// </summary>
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not BossAssistButton button)
 				return;
@@ -729,10 +770,44 @@ namespace BossChecklist
 			RefreshPageContent();
 		}
 
-		public static bool[] CalculateTableOfContents(List<BossInfo> bossList) {
-			bool[] visibleList = new bool[bossList.Count];
-			for (int i = 0; i < bossList.Count; i++) {
-				BossInfo boss = bossList[i];
+		// TODO: Move this to BossInfo as a property?
+		/// <summary>
+		/// Determines which entries need to be shown on the Table of Contents, 
+		/// taking into account for any entries that are marked or are disabled by a configuration.
+		/// </summary>
+		/// <returns>An array of booleans representing visibility on the Table of Contents. 
+		/// The array accounts for all submitted entries.</returns>
+		private bool[] CalculateTableOfContents() {
+			List<BossInfo> entryList = BossChecklist.bossTracker.SortedBosses; // the list of all entries
+			bool[] visibleList = new bool[entryList.Count]; // create an array for the output
+
+			foreach (BossInfo entry in entryList) {
+				bool HideUnsupported = entry.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
+				bool HideUnavailable = !entry.available() && BossChecklist.BossLogConfig.HideUnavailable; // entries that are labeled as not available
+				bool HideHidden = entry.hidden && !showHidden; // entries that are labeled as hidden
+				bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && entry.type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
+				if (((HideUnavailable || HideHidden) && !entry.IsDownedOrForced) || SkipNonBosses || HideUnsupported) {
+					continue;
+				}
+
+				// Check filters as well
+				EntryType type = entry.type;
+				string bFilter = BossChecklist.BossLogConfig.FilterBosses;
+				string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
+				string eFilter = BossChecklist.BossLogConfig.FilterEvents;
+
+				bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && entry.IsDownedOrForced;
+				bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && entry.IsDownedOrForced));
+				bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && entry.IsDownedOrForced));
+				if (FilterBoss || FilterMiniBoss || FilterEvent) {
+					continue;
+				}
+
+				visibleList[entryList.IndexOf(entry)] = true; // if it passes all the checks, it should be shown
+			}
+
+			for (int i = 0; i < entryList.Count; i++) {
+				BossInfo boss = entryList[i];
 				// if the boss cannot get through the config checks, it will remain false (invisible)
 				bool HideUnsupported = boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported;
 				bool HideUnavailable = (!boss.available()) && BossChecklist.BossLogConfig.HideUnavailable;
@@ -760,11 +835,16 @@ namespace BossChecklist
 			return visibleList;
 		}
 
+		/// <summary>
+		/// Sets up the content needed for the Progression Mode prompt, including text boxes and buttons.
+		/// </summary>
 		public void OpenProgressionModePrompt() {
-			BossLogPageNumber = Page_Prompt;
+			BossLogPageNumber = Page_Prompt; // make sure the page number is updated directly (using PageNum will trigger the page set up)
 			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
-			ResetBothPages(); // Reset the content of both pages before appending new content for the page
+			PageOne.RemoveAllChildren(); // remove all content from both pages before appending new content for the prompt
+			PageTwo.RemoveAllChildren();
 
+			// create a text box for the progression mode description
 			FittedTextPanel textBox = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ProgressionModeDescription");
 			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
 			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
@@ -772,6 +852,7 @@ namespace BossChecklist
 			textBox.Top.Pixels = 60;
 			PageOne.Append(textBox);
 
+			// create buttons for the different progression mode options
 			Asset<Texture2D> backdropTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
 			UIImage[] backdrops = new UIImage[] {
 				new UIImage(backdropTexture),
@@ -852,6 +933,9 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Fully disables Progression Mode and redirects the player to the Table of Contents.
+		/// </summary>
 		public void ContinueDisabled() {
 			BossChecklist.BossLogConfig.MaskTextures = false;
 			BossChecklist.BossLogConfig.MaskNames = false;
@@ -865,6 +949,9 @@ namespace BossChecklist
 			ToggleBossLog(true);
 		}
 
+		/// <summary>
+		/// Fully enables Progression Mode and redirects the player to the Table of Contents.
+		/// </summary>
 		public void ContinueEnabled() {
 			BossChecklist.BossLogConfig.MaskTextures = true;
 			BossChecklist.BossLogConfig.MaskNames = true;
@@ -878,6 +965,9 @@ namespace BossChecklist
 			ToggleBossLog(true);
 		}
 
+		/// <summary>
+		/// Closes the UI and opens the configs to allow the player to customize the Progression Mode options to their liking.
+		/// </summary>
 		public void CloseAndConfigure() {
 			ToggleBossLog(false);
 			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
@@ -920,6 +1010,9 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Toggles whether the prompt will show on future characters. This can still be changed under the configs.
+		/// </summary>
 		public void DisablePromptMessage() {
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
@@ -931,37 +1024,42 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Navigational logic for clicking on the record type buttons.
+		/// Left-clicks will swap to that record category. Right-clicks will set the compare state to the record category.
+		/// <para>Note: Handling buttons within the for loop upon button creation makes altPage reach max value. This method seems to be a good substitute.</para>
+		/// </summary>
+		/// <param name="type">The record category you are chainging</param>
+		/// <param name="leftClick"></param>
 		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
-			// Doing this in the for loop upon creating the buttons makes the altPage the max value for some reason. This method fixes it.
-			if (!leftClick) {
-				if (RecordPageType == type)
-					return;
+			// If left-clicking, there is no point in changing the page to the one the player is already on
+			// If right-clicking, we cannot compare the record to itself
+			if (RecordPageType == type)
+				return; // in either case, just do nothing
 
-				if (CompareState == RecordPageType) {
-					CompareState = RecordCategory.None;
-				}
-				else if (CompareState != type) {
-					CompareState = type;
-				}
-				else {
-					CompareState = RecordCategory.None;
-				}
-				//Main.NewText($"Set compare value to {CompareState}");
+			if (!leftClick) {
+				// If it is already the compare state, reset the compare state to off. Otherwise, just set it to the selected type.
+				CompareState = CompareState == type ? RecordCategory.None : type;
 			}
 			else {
-				// If selecting the compared state altpage, reset compare state
 				if (CompareState == type) {
-					CompareState = RecordCategory.None;
+					CompareState = RecordCategory.None; // If switching to the compared state, reset compare state to off.
 				}
-				UpdateSelectedPage(PageNum, CategoryPageType, type);
+				UpdateSelectedPage(PageNum, CategoryPageType, type); // update the record category to the new type
 			}
 		}
 
+		/// <summary>
+		/// Handlesthe logic for interacting with the Table of Content texts.
+		/// Left or right clicking will jump to the boss's page.
+		/// Holding alt while left-clicking will mark the boss as defeated.
+		/// Holding alt while right-clicking will hide the boss from the table of contents.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="leftClick"></param>
 		internal void JumpToBossPage(int index, bool leftClick = true) {
-			// If no alt key is pressed when clicking, just jump to the boss page selected
-			// If an alt key was pressed when clicking, the either mark as defeated or hidden based on click state
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt)) {
-				PageNum = index;
+				PageNum = index; // jump to boss page
 			}
 			else {
 				// While holding alt, a user can interact with any boss list entry
@@ -969,12 +1067,15 @@ namespace BossChecklist
 				// Right-clicking hides the boss from the list
 				BossInfo entry = BossChecklist.bossTracker.SortedBosses[index];
 				if (leftClick) {
+					// toggle defeation state and update the world save data
 					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
 						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
 					}
 					else if (!entry.downed()) {
 						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
 					}
+
+					// handle the global update with a packet
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
 						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
@@ -984,6 +1085,7 @@ namespace BossChecklist
 					}
 				}
 				else {
+					// toggle hidden state and update the world save data
 					entry.hidden = !entry.hidden;
 					if (entry.hidden) {
 						WorldAssist.HiddenBosses.Add(entry.Key);
@@ -991,6 +1093,8 @@ namespace BossChecklist
 					else {
 						WorldAssist.HiddenBosses.Remove(entry.Key);
 					}
+
+					// handle the global update with a packet and update the legacy checklist as well
 					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
@@ -1000,29 +1104,34 @@ namespace BossChecklist
 						packet.Send();
 					}
 				}
-				RefreshPageContent();
+				RefreshPageContent(); // update the checklist by refreshing page content
 			}
 		}
 
+		/// <summary>
+		/// Contains the logic needed for the book tabs.
+		/// </summary>
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not BookUI book)
 				return;
 
 			string id = book.Id;
 			if (PageNum == Page_Prompt || !BookUI.DrawTab(id))
-				return;
+				return; // if the page is on the prompt or if the tab isn't drawn to begin with, no logic should be run
 
 			if (id == "ToCFilter_Tab" && PageNum == Page_TableOfContents) {
 				UpdateFilterTabPos(true);
-				return;
+				return; // if it was the filter tab, just open the tab without changing or refrshing the page
 			}
 
 			// Remove new records when navigating from a page with a new record
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
-				modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
+			BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
+			if (PageNum >= 0 && entry.GetRecordIndex != -1) {
+				modPlayer.hasNewRecord[entry.GetRecordIndex] = false;
 			}
 
+			// determine which page to open base on tab ID
 			if (id == "Boss_Tab") {
 				PageNum = FindNext(EntryType.Boss);
 			}
@@ -1040,6 +1149,9 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Handles the logic behind clicking the next/prev navigation buttons, and thus "turning the page".
+		/// </summary>
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not BossAssistButton button)
 				return;
@@ -1050,71 +1162,43 @@ namespace BossChecklist
 				modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
 			}
 
-			pageTwoItemList.Clear();
-			prehardmodeList.Clear();
-			hardmodeList.Clear();
-			PageOne.RemoveChild(scrollOne);
-			PageTwo.RemoveChild(scrollTwo);
-			RecipeShown = 0;
-			RecipePageNum = 0;
-
-			int NewPageValue = PageNum;
-
-			// Move to next/prev
+			// Calculate what page the Log needs to update to
 			List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
+			int NewPageValue = PageNum;
 			if (button.Id == "Next") {
-				if (NewPageValue < BossList.Count - 1) {
-					NewPageValue++;
-				}
-				else {
-					NewPageValue = Page_Credits;
-				}
+				NewPageValue = NewPageValue < BossList.Count - 1 ? NewPageValue + 1 : Page_Credits;
 			}
 			else {
-				// button is previous
-				if (NewPageValue >= 0) {
-					NewPageValue--;
-				}
-				else {
-					NewPageValue = BossList.Count - 1;
-				}
+				NewPageValue = NewPageValue >= 0 ? NewPageValue - 1 : BossList.Count - 1;
 			}
 
-			// If the page is hidden or unavailable, keep moving till its not or until page is at either end
+			// Figure out next page based on the new page number value
+			// If the page is hidden or unavailable, keep moving till its not or until page reaches the end
 			// Also check for "Only Bosses" navigation
 			if (NewPageValue >= 0) {
+				// if the new boss page is hidden, unavailable, or otherwise invalid...
 				bool HiddenOrUnAvailable = BossList[NewPageValue].hidden || !BossList[NewPageValue].available();
 				bool OnlyDisplayBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && BossList[NewPageValue].type != EntryType.Boss;
 				if (HiddenOrUnAvailable || OnlyDisplayBosses) {
+					// ...repeat the new page calculation until a valid boss page is selected
+					// or until its reached page -1 (table of contents) or -2 (credits)
 					while (NewPageValue >= 0) {
 						BossInfo currentBoss = BossList[NewPageValue];
 						if (!currentBoss.hidden && currentBoss.available()) {
-							if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
-								if (currentBoss.type == EntryType.Boss) {
-									break;
-								}
+							if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
+								break; // if 'only show bosses' is not enabled
 							}
-							else {
-								break;
+							else if (currentBoss.type == EntryType.Boss) {
+								break; // or if it IS enabled and the entry is a boss
 							}
 						}
 
+						// same calulation as before, but repeated until a valid page is selected
 						if (button.Id == "Next") {
-							if (NewPageValue < BossList.Count - 1) {
-								NewPageValue++;
-							}
-							else {
-								NewPageValue = Page_Credits;
-							}
+							NewPageValue = NewPageValue < BossList.Count - 1 ? NewPageValue + 1 : Page_Credits;
 						}
 						else {
-							// button is previous
-							if (NewPageValue >= 0) {
-								NewPageValue--;
-							}
-							else {
-								NewPageValue = BossList.Count - 1;
-							}
+							NewPageValue = NewPageValue >= 0 ? NewPageValue - 1 : BossList.Count - 1;
 						}
 					}
 				}
@@ -1147,8 +1231,10 @@ namespace BossChecklist
 		/// Restructures all page content and elements without changing the page or subcategory.
 		/// </summary>
 		public void RefreshPageContent() {
-			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
+			ResetUIPositioning(); // Repositions common ui elements when the UI is updated
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
+
+			// Set up the designated page content
 			if (PageNum == Page_TableOfContents) {
 				UpdateTableofContents();
 			}
@@ -1168,76 +1254,40 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Clears page content and replaces navigational elements.
+		/// </summary>
 		private void ResetBothPages() {
-			PageOne.RemoveAllChildren();
+			if (PageNum == -3) {
+				OpenProgressionModePrompt();
+				return; // If the page is somehow the prompt, redirect to the open prompt method
+			}
+
+			PageOne.RemoveAllChildren(); // remove all elements from the pages
 			PageTwo.RemoveAllChildren();
 
-			scrollOne = new BossLogUIElements.FixedUIScrollbar();
-			scrollOne.SetView(100f, 1000f);
-			scrollOne.Top.Pixels = 50f;
-			scrollOne.Left.Pixels = -18;
-			scrollOne.Height.Set(-24f, 0.75f);
-			scrollOne.HAlign = 1f;
+			RecipeShown = 0; // spawn item should be reset back to 0 when page changes
+			RecipePageNum = 0;
 
-			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
-			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Pixels = 50f;
-			scrollTwo.Left.Pixels = -13;
-			scrollTwo.Height.Set(-24f, 0.75f);
-			scrollTwo.HAlign = 1f;
-
-			// Reset all of the page's buttons
-			if (PageNum != Page_Prompt) {
-				if (PageNum != Page_Credits) {
-					PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
-				}
-				if (PageNum != Page_TableOfContents) {
-					PageOne.Append(PrevPage); // Prev page button can appear on any page except the Table of Contents
-				}
-
-				if (PageNum >= 0) {
-					BossInfo boss = BossChecklist.bossTracker.SortedBosses[PageNum];
-					if (boss.modSource != "Unknown" && !BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-						// Only bosses have records. Events will have their own page with banners of the enemies in the event.
-						// Spawn and Loot pages do not have alt pages currently, so skip adding them
-						bool validRecordPage = CategoryPageType != CategoryPage.Record || boss.type != EntryType.Boss;
-						if (!validRecordPage) {
-							PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-							int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
-							PersonalStats record = modPlayer.RecordsForWorld[recordIndex].stats;
-							int totalRecords = (int)RecordCategory.None;
-							for (int i = 0; i < totalRecords; i++) {
-								if ((i == 1 || i == 2) && record.kills == 0)
-									continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-
-								AltPageButtons[i].Width.Pixels = 25;
-								AltPageButtons[i].Height.Pixels = 25;
-								int offset = record.kills == 0 ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12;
-								if (CategoryPageType == CategoryPage.Record) {
-									// If First or Best buttons were skipped account for the positioning of Previous and World
-									if (i < 2) {
-										AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + (i - 2) * 25 + offset;
-									}
-									else {
-										AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + lootButton.Width.Pixels + (i - 2) * 25 + offset;
-									}
-								}
-								AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
-								PageTwo.Append(AltPageButtons[i]);
-							}
-						}
-					}
-				}
+			// Replace all of the page's navigational buttons
+			if (PageNum != Page_Credits) {
+				PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
+			}
+			if (PageNum != Page_TableOfContents) {
+				PageOne.Append(PrevPage); // Prev page button can appear on any page except the Table of Contents
 			}
 
 			if (PageNum >= 0) {
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource != "Unknown") {
+				// Entry pages need to have the category pages set up, but only for entries fully implemented
+				BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
+				if (entry.modSource != "Unknown") {
+					PageTwo.Append(recordButton);
 					PageTwo.Append(spawnButton);
 					PageTwo.Append(lootButton);
-					//PageTwo.Append(collectButton);
-					PageTwo.Append(recordButton);
 				}
 				else {
+					// if the boss has an unknown source, it is likely that the mod call for it is using the old mod call
+					// this should be brought to the developer's attention, so a message will be displayed on the boss's page
 					UIPanel brokenPanel = new UIPanel();
 					brokenPanel.Height.Pixels = 160;
 					brokenPanel.Width.Pixels = 340;
@@ -1245,47 +1295,38 @@ namespace BossChecklist
 					brokenPanel.Left.Pixels = 3;
 					PageTwo.Append(brokenPanel);
 
-					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.LogFeaturesNotAvailable");
+					// TODO: this will likely always output the NotImplemented, but I don't want to remove it just yet
+					bool entryHasOldCall = BossChecklist.bossTracker.OldCalls.Values.Any(x => x.Contains(entry.name));
+					string message = entryHasOldCall ? "NotImplemented" : "LogFeaturesNotAvailable";
+					FittedTextPanel brokenDisplay = new FittedTextPanel($"Mods.BossChecklist.BossLog.DrawnText.{message}");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = -12;
 					brokenDisplay.Left.Pixels = -15;
 					brokenPanel.Append(brokenDisplay);
 				}
-
-				if (BossChecklist.bossTracker.SortedBosses[PageNum].modSource == "Unknown" && BossChecklist.bossTracker.SortedBosses[PageNum].npcIDs.Count == 0) {
-					UIPanel brokenPanel = new UIPanel();
-					brokenPanel.Height.Pixels = 160;
-					brokenPanel.Width.Pixels = 340;
-					brokenPanel.Top.Pixels = 150;
-					brokenPanel.Left.Pixels = 14;
-					PageOne.Append(brokenPanel);
-
-					FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NotImplemented");
-					brokenDisplay.Height.Pixels = 200;
-					brokenDisplay.Width.Pixels = 340;
-					brokenDisplay.Top.Pixels = 0;
-					brokenDisplay.Left.Pixels = -15;
-					brokenPanel.Append(brokenDisplay);
-				}
 			}
 		}
 
+		/// <summary>
+		/// Sets up the content needed for the table of contents,
+		/// including the list of pre-hardmode and hardmode entries and
+		/// the progress bar of defeated entries.
+		/// </summary>
 		private void UpdateTableofContents() {
-			string nextBoss = "";
-			prehardmodeList.Clear();
+			prehardmodeList.Clear(); // clear both lists before setting up content
 			hardmodeList.Clear();
 
-			List<BossInfo> referenceList = BossChecklist.bossTracker.SortedBosses;
-			bool[] visibleList = CalculateTableOfContents(referenceList);
+			List<BossInfo> entries = BossChecklist.bossTracker.SortedBosses;
+			bool[] visibleList = CalculateTableOfContents();
+			string nextBoss = "";
 
-			for (int bossIndex = 0; bossIndex < referenceList.Count; bossIndex++) {
-				BossInfo boss = referenceList[bossIndex];
+			for (int bossIndex = 0; bossIndex < entries.Count; bossIndex++) {
+				BossInfo boss = entries[bossIndex];
 				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
 
-				// If the boss should not be visible on the Table of Contents, skip the entry in the list
 				if (!visibleList[bossIndex])
-					continue;
+					continue; // If the boss should not be visible on the Table of Contents, skip the entry in the list
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
 				string displayName = boss.DisplayName;
@@ -1406,16 +1447,28 @@ namespace BossChecklist
 				}
 			}
 
-			if (prehardmodeList.Count > 13) {
-				PageOne.Append(scrollOne);
-			}
 			PageOne.Append(prehardmodeList);
-			prehardmodeList.SetScrollbar(scrollOne);
-			if (hardmodeList.Count > 13) {
-				PageTwo.Append(scrollTwo);
+			if (prehardmodeList.Count > 13) {
+				scrollOne.SetView(100f, 1000f);
+				scrollOne.Top.Pixels = 50f;
+				scrollOne.Left.Pixels = -18;
+				scrollOne.Height.Set(-24f, 0.75f);
+				scrollOne.HAlign = 1f;
+
+				PageOne.Append(scrollOne);
+				prehardmodeList.SetScrollbar(scrollOne);
 			}
 			PageTwo.Append(hardmodeList);
-			hardmodeList.SetScrollbar(scrollTwo);
+			if (hardmodeList.Count > 13) {
+				scrollTwo.SetView(100f, 1000f);
+				scrollTwo.Top.Pixels = 50f;
+				scrollTwo.Left.Pixels = -13;
+				scrollTwo.Height.Set(-24f, 0.75f);
+				scrollTwo.HAlign = 1f;
+
+				PageTwo.Append(scrollTwo);
+				hardmodeList.SetScrollbar(scrollTwo);
+			}
 
 			// Calculate Progress Bar downed entries
 			int[] prehDown = new int[] { 0, 0, 0 };
@@ -1482,21 +1535,21 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Sets up the content need for the credits page,
+		/// listing off all mod contributors as well as the mods using the updated mod calls.
+		/// </summary>
 		private void UpdateCredits() {
-			pageTwoItemList.Left.Pixels = 15;
-			pageTwoItemList.Top.Pixels = 65;
-			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
-			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - pageTwoItemList.Top.Pixels - 80;
-			pageTwoItemList.Clear();
-
-			scrollTwo.SetView(10f, 1000f);
-			scrollTwo.Top.Pixels = 90;
-			scrollTwo.Left.Pixels = 5;
-			scrollTwo.Height.Set(-60f, 0.75f);
-			scrollTwo.HAlign = 1f;
-
-			List<string> optedMods = BossUISystem.Instance.OptedModNames;
+			List<string> optedMods = BossUISystem.Instance.OptedModNames; // The mods are already tracked in a list
 			if (optedMods.Count > 0) {
+				// create a list for the mod names using updated mod calls
+				pageTwoItemList.Clear();
+				pageTwoItemList.Left.Pixels = 15;
+				pageTwoItemList.Top.Pixels = 65;
+				pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
+				pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - pageTwoItemList.Top.Pixels - 80;
+
+				// add each one to the list
 				foreach (string mod in optedMods) {
 					UIText modListed = new UIText("●" + mod, 0.85f) {
 						PaddingTop = 8,
@@ -1504,14 +1557,24 @@ namespace BossChecklist
 					};
 					pageTwoItemList.Add(modListed);
 				}
+
+				// prepare the scrollbar in case it is needed for an excessive amount of mods
+				scrollTwo.SetView(10f, 1000f);
+				scrollTwo.Top.Pixels = 90;
+				scrollTwo.Left.Pixels = 5;
+				scrollTwo.Height.Set(-60f, 0.75f);
+				scrollTwo.HAlign = 1f;
+
+				// if more than 11 mods are present, the scrollbar is needed
 				if (optedMods.Count > 11) {
 					PageTwo.Append(scrollTwo);
 				}
+
 				PageTwo.Append(pageTwoItemList);
 				pageTwoItemList.SetScrollbar(scrollTwo);
 			}
 			else {
-				// No mods are using the Log
+				// No mods are using the updated mod calls to use the Log, so create a text panel to inform the user
 				UIPanel brokenPanel = new UIPanel();
 				brokenPanel.Height.Pixels = 220;
 				brokenPanel.Width.Pixels = 340;
@@ -1528,16 +1591,43 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Sets up the content needed for the record info page.
+		/// Includes the navigation buttons for alternate record types such as previous attempt or best record.
+		/// </summary>
 		private void OpenRecord() {
-			// If a boss record does not have the selected subcategory type, it should default back to previous attempt.
-			if (!PageTwo.HasChild(AltPageButtons[(int)RecordPageType])) {
-				RecordPageType = RecordCategory.PreviousAttempt;
-			}
-
 			if (PageNum < 0)
 				return; // Code should only run if it is on an entry page
 
-			// Currently blank, but leave here in case elements need to be added later on
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+				return; // temporary block to prevent record page from creating elements when record tracking code is disabled.
+
+			BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
+
+			// Set up the record type navigation buttons
+			// Only bosses have records (Events will have banners of the enemies in the event drawn on it)
+			// The entry also must be fully supported to have these buttons created
+			if (entry.modSource != "Unknown" && CategoryPageType == CategoryPage.Record && entry.type == EntryType.Boss) {
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				bool noKills = modPlayer.RecordsForWorld[entry.GetRecordIndex].stats.kills == 0; // has the player killed this boss before?
+				// If a boss record does not have the selected subcategory type, it should default back to previous attempt.
+				if (noKills) {
+					RecordPageType = RecordCategory.PreviousAttempt;
+				}
+
+				// iterate through the buttons
+				for (int i = 0; i < AltPageButtons.Length; i++) {
+					if ((i == (int)RecordCategory.BestRecord || i == (int)RecordCategory.FirstRecord) && noKills)
+						continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
+
+					AltPageButtons[i].Width.Pixels = 25;
+					AltPageButtons[i].Height.Pixels = 25;
+					int offset = noKills ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12; // offset needed if best record and first record are missing
+					AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + ((i - 2) * 25) + offset + (i >= 2 ? lootButton.Width.Pixels : 0);
+					AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
+					PageTwo.Append(AltPageButtons[i]);
+				}
+			}
 		}
 
 		/// <summary>
@@ -1769,18 +1859,11 @@ namespace BossChecklist
 				return; // Code should only run if it is on an entry page
 
 			// set up an item list for the listed loot itemslots
+			pageTwoItemList.Clear();
 			pageTwoItemList.Left.Pixels = 0;
 			pageTwoItemList.Top.Pixels = 125;
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
-			pageTwoItemList.Clear();
-
-			// setup the scroll for the loot item list
-			scrollTwo.SetView(10f, 1000f);
-			scrollTwo.Top.Pixels = 125;
-			scrollTwo.Left.Pixels = -3;
-			scrollTwo.Height.Set(-88f, 0.75f);
-			scrollTwo.HAlign = 1f;
 
 			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
 			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
@@ -1843,9 +1926,16 @@ namespace BossChecklist
 
 			PageTwo.Append(pageTwoItemList); // append the list to the page so the items can be seen
 
+			// If more than 5 rows exist, a scroll bar is needed to access all items in the loot list
 			if (row > 5) {
-				PageTwo.Append(scrollTwo); // If more than 5 rows exist, a scroll bar is needed to access all items
-				pageTwoItemList.SetScrollbar(scrollTwo); // connect the scrollbar to the list
+				scrollTwo.SetView(10f, 1000f);
+				scrollTwo.Top.Pixels = 125;
+				scrollTwo.Left.Pixels = -3;
+				scrollTwo.Height.Set(-88f, 0.75f);
+				scrollTwo.HAlign = 1f;
+
+				PageTwo.Append(scrollTwo);
+				pageTwoItemList.SetScrollbar(scrollTwo);
 			}
 		}
 
