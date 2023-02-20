@@ -1060,10 +1060,12 @@ namespace BossChecklist
 			}
 
 			// Remove new records when navigating from a page with a new record
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (PageNum >= 0 && entry.GetRecordIndex != -1) {
-				modPlayer.hasNewRecord[entry.GetRecordIndex] = false;
+			if (PageNum >= 0) {
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
+				if (entry.GetRecordIndex != -1) {
+					modPlayer.hasNewRecord[entry.GetRecordIndex] = false;
+				}
 			}
 
 			// determine which page to open base on tab ID
