@@ -89,8 +89,8 @@ namespace BossChecklist
 		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
 		// Spawn Info page related
-		public static int RecipePageNum = 0;
-		public static int RecipeShown = 0;
+		public static int SpawnItemSelected = 0;
+		public static int RecipeSelected = 0;
 
 		// Cropped Textures
 		public static Asset<Texture2D> bookTexture;
@@ -756,20 +756,20 @@ namespace BossChecklist
 
 			string id = button.Id;
 			if (id == "NextItem") {
-				RecipePageNum++;
-				RecipeShown = 0;
+				SpawnItemSelected++;
+				RecipeSelected = 0;
 			}
 			else if (id == "PrevItem") {
-				RecipePageNum--;
-				RecipeShown = 0;
+				SpawnItemSelected--;
+				RecipeSelected = 0;
 			}
 			else if (id.Contains("CycleItem")) {
 				int index = id.IndexOf('_');
-				if (RecipeShown == Convert.ToInt32(id.Substring(index + 1)) - 1) {
-					RecipeShown = 0;
+				if (RecipeSelected == Convert.ToInt32(id.Substring(index + 1)) - 1) {
+					RecipeSelected = 0;
 				}
 				else {
-					RecipeShown++;
+					RecipeSelected++;
 				}
 			}
 			RefreshPageContent();
@@ -1204,9 +1204,6 @@ namespace BossChecklist
 			PageOne.RemoveAllChildren(); // remove all elements from the pages
 			PageTwo.RemoveAllChildren();
 
-			RecipeShown = 0; // spawn item should be reset back to 0 when page changes
-			RecipePageNum = 0;
-
 			// Replace all of the page's navigational buttons
 			if (PageNum != Page_Credits) {
 				PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
@@ -1610,6 +1607,59 @@ namespace BossChecklist
 				return; // prevent unsupported entries from displaying info
 						// a message panel will take its place notifying the user that the mods calls are out of date
 
+			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
+			if (selectedBoss.spawnItem.Count == 0 || selectedBoss.spawnItem.All(x => x <= 0)) {
+				string type = selectedBoss.type == EntryType.Boss ? "Boss" : selectedBoss.type == EntryType.Event ? "Event" : "MiniBoss";
+				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
+				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
+				info.Top.Pixels = 300;
+				PageTwo.Append(info);
+				return; // since no items are listed, the recipe code does not need to occur
+			}
+
+			/// Code below handles all of the recipe searching and displaying
+			// create empty lists for ingredients and required tiles
+			int selectedSpawnItem = selectedBoss.spawnItem[SpawnItemSelected];
+			List<Item> ingredients = new List<Item>();
+			List<int> requiredTiles = new List<int>();
+			string recipeMod = "Terraria"; // we can inform players where the recipe originates from, starting with vanilla as a base
+
+			if (selectedSpawnItem == ItemID.None)
+				return; // just in case the selected summon item is invalid
+
+			// search for all recipes that have the item as a result
+			var itemRecipes = Main.recipe
+				.Take(Recipe.numRecipes)
+				.Where(r => r.HasResult(selectedSpawnItem));
+
+			// iterate through all the recipes to gather the information we need to display for the recipe
+			int TotalRecipes = 0;
+			foreach (Recipe recipe in itemRecipes) {
+				if (TotalRecipes == RecipeSelected) {
+					foreach (Item item in recipe.requiredItem) {
+						Item clone = item.Clone();
+						OverrideForGroups(recipe, clone); // account for recipe group names
+						ingredients.Add(clone); // populate the ingredients list with all items found in the required items
+					}
+
+					requiredTiles.AddRange(recipe.requiredTile); // populate the required tiles list
+
+					if (recipe.Mod != null) {
+						recipeMod = recipe.Mod.DisplayName; // if the recipe was added by a mod, credit the mod
+					}
+				}
+				TotalRecipes++; // add to recipe count. this will be useful later for cycling through other recipes.
+			}
+
+			// If the recipe selected is greater than the total recipes, no recipe will be shown.
+			// To avoid this, set the selected recipe back to 0 and reconstruct the spawn page, which will iterate through the recipes again.
+			if (TotalRecipes != 0 && RecipeSelected + 1 > TotalRecipes) {
+				RecipeSelected = 0;
+				OpenSpawn();
+				return; // don't let the code run twice
+			}
+			// once this check has passed, the page elements can now be created
+
 			// create a message box, displaying the spawn info provided
 			var message = new UIMessageBox(selectedBoss.DisplaySpawnInfo);
 			message.Width.Set(-34f, 1f);
@@ -1627,50 +1677,6 @@ namespace BossChecklist
 			scrollTwo.HAlign = 1f;
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
-
-			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
-			if (selectedBoss.spawnItem.Count == 0 || selectedBoss.spawnItem.All(x => x <= 0)) {
-				string type = selectedBoss.type == EntryType.Boss ? "Boss" : selectedBoss.type == EntryType.Event ? "Event" : "MiniBoss";
-				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
-				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
-				info.Top.Pixels = 300;
-				PageTwo.Append(info);
-				return; // since no items are listed, the recipe code does not need to occur
-			}
-
-			/// Code below handles all of the recipe searching and displaying
-			// create empty lists for ingredients and required tiles
-			int selectedSpawnItem = selectedBoss.spawnItem[RecipePageNum];
-			List<Item> ingredients = new List<Item>();
-			List<int> requiredTiles = new List<int>();
-			string recipeMod = "Terraria"; // we can inform players where the recipe originates from, starting with vanilla as a base
-
-			if (selectedSpawnItem == ItemID.None)
-				return; // just in case the selected summon item is invalid
-
-			// search for all recipes that have the item as a result
-			var itemRecipes = Main.recipe
-				.Take(Recipe.numRecipes)
-				.Where(r => r.HasResult(selectedSpawnItem));
-
-			// iterate through all the recipes to gather the information we need to display for the recipe
-			int TotalRecipes = 0;
-			foreach (Recipe recipe in itemRecipes) {
-				if (TotalRecipes == RecipeShown) {
-					foreach (Item item in recipe.requiredItem) {
-						Item clone = item.Clone();
-						OverrideForGroups(recipe, clone); // account for recipe group names
-						ingredients.Add(clone); // populate the ingredients list with all items found in the required items
-					}
-
-					requiredTiles.AddRange(recipe.requiredTile); // populate the required tiles list
-
-					if (recipe.Mod != null) {
-						recipeMod = recipe.Mod.DisplayName; // if the recipe was added by a mod, credit the mod
-					}
-				}
-				TotalRecipes++; // add to recipe count. this will be useful later for cycling through other recipes.
-			}
 
 			Item spawn = ContentSamples.ItemsByType[selectedSpawnItem]; // create an item for reference
 
@@ -1726,6 +1732,7 @@ namespace BossChecklist
 
 			if (requiredTiles.Count == 0) {
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
+				// TODO: Change the Power Glove to the Hand of Creation
 				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
 				craftItem.Width.Pixels = slotRectRef.Width * 0.85f;
 				craftItem.Height.Pixels = slotRectRef.Height * 0.85f;
@@ -1772,7 +1779,7 @@ namespace BossChecklist
 
 			// if more than one item is used for summoning, append navigational button to cycle through the items
 			// a previous item button will appear if it is not the first item listed
-			if (RecipePageNum > 0) {
+			if (SpawnItemSelected > 0) {
 				BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
 					Id = "PrevItem"
 				};
@@ -1784,7 +1791,7 @@ namespace BossChecklist
 				PageTwo.Append(PrevItem);
 			}
 			// a next button will appear if it is not the last item listed
-			if (RecipePageNum < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
+			if (SpawnItemSelected < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
 				BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
 					Id = "NextItem"
 				};
