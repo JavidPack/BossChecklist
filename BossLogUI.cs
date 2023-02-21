@@ -1509,9 +1509,7 @@ namespace BossChecklist
 					}
 				}
 
-				if (col != 0) {
-					pageTwoItemList.Add(newRow); // add the final row if it hasnt been completed yet
-				}
+				pageTwoItemList.Add(newRow); // add the final row
 
 				// increase rows until at least 3 rows are visible
 				while (row < 2) {
