@@ -1488,6 +1488,7 @@ namespace BossChecklist
 				UIImage newRow = new UIImage(creditModSlot); // begin with the first row
 				newRow.Width.Pixels = creditModSlot.Value.Width;
 				newRow.Height.Pixels = creditModSlot.Value.Height;
+				pageTwoItemList.Add(newRow); // add the initial row to the page
 				foreach (KeyValuePair<string, string> mod in optedMods) {
 					ModIcon icon = new ModIcon(mod.Key, mod.Value);
 					icon.Width.Pixels = 90;
@@ -1501,15 +1502,14 @@ namespace BossChecklist
 						col = 0;
 						row++;
 
-						pageTwoItemList.Add(newRow); // if the row is full, move to the next row by creating one
+						// create a new row after all column are filled
 						newRow = new UIImage(creditModSlot);
 						newRow.Top.Pixels = creditModSlot.Value.Height * row;
 						newRow.Width.Pixels = creditModSlot.Value.Width;
 						newRow.Height.Pixels = creditModSlot.Value.Height;
+						pageTwoItemList.Add(newRow);
 					}
 				}
-
-				pageTwoItemList.Add(newRow); // add the final row
 
 				// increase rows until at least 3 rows are visible
 				while (row < 2) {
