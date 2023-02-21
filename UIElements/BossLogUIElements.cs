@@ -362,6 +362,41 @@ namespace BossChecklist.UIElements
 			}
 		}
 
+		/// <summary>
+		/// Creates an image of a mod's icon when mod and file path are provided.
+		/// When hovering over the icon, the mod's display name is shown.
+		/// </summary>
+		internal class ModIcon : UIElement {
+			readonly Asset<Texture2D> icon;
+			readonly string modName;
+
+			public ModIcon (string modName, string iconPath) {
+				this.modName = modName;
+				if (iconPath == "BossChecklist/Resources/Extra_NoIcon") {
+					icon = ModContent.Request<Texture2D>(iconPath, AssetRequestMode.ImmediateLoad); // mods without icons use this texture instead
+				}
+				else {
+					icon = ModLoader.GetMod(modName).Assets.Request<Texture2D>(iconPath); // HasAsset check already done before added to Registered list
+				}
+			}
+
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (IsMouseHovering)
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				base.Draw(spriteBatch);
+
+				spriteBatch.Draw(icon.Value, GetInnerDimensions().ToRectangle(), Color.White); // innerDimensions will resize the icon to the needed size
+
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
+					BossUISystem.Instance.UIHoverText = ModLoader.GetMod(modName).DisplayName;
+				}
+			}
+		}
+
 		internal class BossLogPanel : UIElement
 		{
 			public string Id { get; init; } = "";
@@ -473,7 +508,7 @@ namespace BossChecklist.UIElements
 							}
 						}
 					}
-					else if (Id == "PageTwo" && BossUISystem.Instance.OptedModNames.Count > 0) {
+					else if (Id == "PageTwo" && BossUISystem.Instance.RegisteredMods.Count > 0) {
 						// Supported Mod Credits Page
 						string thanksMods = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods");
 						float textScale = 1.15f;
@@ -1108,7 +1143,7 @@ namespace BossChecklist.UIElements
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
 				if (IsMouseHovering)
-					Terraria.GameInput.PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogPanel");
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
 			}
 
 			internal static string RecordTimeConversion(int ticks) {
@@ -1242,6 +1277,12 @@ namespace BossChecklist.UIElements
 				}
 
 				return hintText;
+			}
+
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (IsMouseHovering)
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {

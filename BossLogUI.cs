@@ -118,6 +118,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
+		public static Asset<Texture2D> creditModSlot;
 		public static Rectangle slotRectRef; // just grabs the size of a normal inventory slot
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 		public UIImage PromptCheck; // checkmark for the toggle prompt config button
@@ -212,34 +213,38 @@ namespace BossChecklist
 			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
 		}
 
+		public Asset<Texture2D> RequestResource(string path) => ModContent.Request<Texture2D>("BossChecklist/Resources/" + path, AssetRequestMode.ImmediateLoad);
+
 		public override void OnInitialize() {
-			bookTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Outline");
-			borderTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Border");
-			fadedTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Faded");
-			colorTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Book_Color");
-			bookUITexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Back");
-			tabTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Tab");
-			infoTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_InfoTab");
+			bookTexture = RequestResource("Book_Outline");
+			borderTexture = RequestResource("Book_Border");
+			fadedTexture = RequestResource("Book_Faded");
+			colorTexture = RequestResource("Book_Color");
+			bookUITexture = RequestResource("LogUI_Back");
+			tabTexture = RequestResource("LogUI_Tab");
+			infoTexture = RequestResource("LogUI_InfoTab");
 
-			prevTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Prev");
-			nextTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Next");
-			tocTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Contents");
-			credTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Credits");
-			bossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Boss");
-			minibossNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss");
-			eventNavTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event");
-			filterTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Filter");
-			mouseTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_Shortcuts");
-			hiddenTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Hidden");
-			cycleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_CycleRecipe");
+			prevTexture = RequestResource("Nav_Prev");
+			nextTexture = RequestResource("Nav_Next");
+			tocTexture = RequestResource("Nav_Contents");
+			credTexture = RequestResource("Nav_Credits");
+			bossNavTexture = RequestResource("Nav_Boss");
+			minibossNavTexture = RequestResource("Nav_Miniboss");
+			eventNavTexture = RequestResource("Nav_Event");
+			filterTexture = RequestResource("Nav_Filter");
+			mouseTexture = RequestResource("Extra_Shortcuts");
+			hiddenTexture = RequestResource("Nav_Hidden");
+			cycleTexture = RequestResource("Extra_CycleRecipe");
 
-			checkMarkTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
-			xTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
-			circleTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Next", AssetRequestMode.ImmediateLoad);
-			strikeNTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_StrikeNext", AssetRequestMode.ImmediateLoad);
-			checkboxTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad);
-			chestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Chest");
-			goldChestTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_GoldChest");
+			checkMarkTexture = RequestResource("Checks_Check");
+			xTexture = RequestResource("Checks_X");
+			circleTexture = RequestResource("Checks_Next");
+			strikeNTexture = RequestResource("Checks_StrikeNext");
+			checkboxTexture = RequestResource("Checks_Box");
+			chestTexture = RequestResource("Checks_Chest");
+			goldChestTexture = RequestResource("Checks_GoldChest");
+
+			creditModSlot = RequestResource("Extra_CreditModSlot");
 
 			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
 
@@ -349,7 +354,7 @@ namespace BossChecklist
 
 			pageTwoItemList = new UIList();
 
-			Asset<Texture2D> filterPanelTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/LogUI_Filter");
+			Asset<Texture2D> filterPanelTexture = RequestResource("LogUI_Filter");
 			filterPanel = new BookUI(filterPanelTexture) {
 				Id = "filterPanel"
 			};
@@ -788,7 +793,7 @@ namespace BossChecklist
 			PageOne.Append(textBox);
 
 			// create buttons for the different progression mode options
-			Asset<Texture2D> backdropTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_RecordSlot", AssetRequestMode.ImmediateLoad);
+			Asset<Texture2D> backdropTexture = RequestResource("Extra_RecordSlot");
 			UIImage[] backdrops = new UIImage[] {
 				new UIImage(backdropTexture),
 				new UIImage(backdropTexture),
@@ -818,7 +823,7 @@ namespace BossChecklist
 				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.SteampunkGoggles}", AssetRequestMode.ImmediateLoad),
 				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad),
 				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Wrench}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Box", AssetRequestMode.ImmediateLoad)
+				checkboxTexture
 			};
 
 			UIImage[] buttons = new UIImage[] {
@@ -835,11 +840,7 @@ namespace BossChecklist
 				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressPrompt"),
 			};
 
-			Asset<Texture2D> check = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check", AssetRequestMode.ImmediateLoad);
-			Asset<Texture2D> x = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X", AssetRequestMode.ImmediateLoad);
-
-			bool config = BossChecklist.BossLogConfig.PromptDisabled;
-			PromptCheck = new UIImage(config ? check : x);
+			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? checkMarkTexture : xTexture);
 
 			for (int i = 0; i < buttonTextures.Length; i++) {
 				backdrops[i].Width.Pixels = backdropTexture.Value.Width;
@@ -952,10 +953,10 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			if (BossChecklist.BossLogConfig.PromptDisabled) {
-				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Check"));
+				PromptCheck.SetImage(checkMarkTexture);
 			}
 			else {
-				PromptCheck.SetImage(ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_X"));
+				PromptCheck.SetImage(xTexture);
 			}
 		}
 
@@ -1476,38 +1477,67 @@ namespace BossChecklist
 		/// listing off all mod contributors as well as the mods using the updated mod calls.
 		/// </summary>
 		private void UpdateCredits() {
-			List<string> optedMods = BossUISystem.Instance.OptedModNames; // The mods are already tracked in a list
+			Dictionary<string, string> optedMods = BossUISystem.Instance.RegisteredMods; // The mods are already tracked in a list
 			if (optedMods.Count > 0) {
 				// create a list for the mod names using updated mod calls
 				pageTwoItemList.Clear();
-				pageTwoItemList.Left.Pixels = 15;
+				pageTwoItemList.Left.Pixels = 34;
 				pageTwoItemList.Top.Pixels = 65;
-				pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 51;
-				pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - pageTwoItemList.Top.Pixels - 80;
+				pageTwoItemList.Width.Pixels = creditModSlot.Value.Width;
+				pageTwoItemList.Height.Pixels = creditModSlot.Value.Height * 3 + 15;
 
-				// add each one to the list
-				foreach (string mod in optedMods) {
-					UIText modListed = new UIText("●" + mod, 0.85f) {
-						PaddingTop = 8,
-						PaddingLeft = 5
-					};
-					pageTwoItemList.Add(modListed);
+				int row = 0; // this will track the row pos, increasing by one after the column limit is reached
+				int col = 0; // this will track the column pos, increasing by one every icon added, and resetting to zero when the next row is made
+				UIImage newRow = new UIImage(creditModSlot); // begin with the first row
+				newRow.Width.Pixels = creditModSlot.Value.Width;
+				newRow.Height.Pixels = creditModSlot.Value.Height;
+				foreach (KeyValuePair<string, string> mod in optedMods) {
+					ModIcon icon = new ModIcon(mod.Key, mod.Value);
+					icon.Width.Pixels = 90;
+					icon.Height.Pixels = 90;
+					icon.Left.Pixels = 4 + (col * 90) + (6 * (col + 1));
+					icon.Top.Pixels = 12;
+					newRow.Append(icon);
+
+					col++; // after each icon added, move to the next column
+					if (col == 3) {
+						col = 0;
+						row++;
+
+						pageTwoItemList.Add(newRow); // if the row is full, move to the next row by creating one
+						newRow = new UIImage(creditModSlot);
+						newRow.Top.Pixels = creditModSlot.Value.Height * row;
+						newRow.Width.Pixels = creditModSlot.Value.Width;
+						newRow.Height.Pixels = creditModSlot.Value.Height;
+					}
 				}
+
+				if (col != 0) {
+					pageTwoItemList.Add(newRow); // add the final row if it hasnt been completed yet
+				}
+
+				// increase rows until at least 3 rows are visible
+				while (row < 2) {
+					newRow = new UIImage(creditModSlot);
+					newRow.Top.Pixels = creditModSlot.Value.Height * row;
+					newRow.Width.Pixels = creditModSlot.Value.Width;
+					newRow.Height.Pixels = creditModSlot.Value.Height;
+					pageTwoItemList.Add(newRow);
+					row++;
+				}
+				
+				PageTwo.Append(pageTwoItemList); // append the list with all the children attached
 
 				// prepare the scrollbar in case it is needed for an excessive amount of mods
-				scrollTwo.SetView(10f, 1000f);
-				scrollTwo.Top.Pixels = 90;
-				scrollTwo.Left.Pixels = 5;
-				scrollTwo.Height.Set(-60f, 0.75f);
-				scrollTwo.HAlign = 1f;
-
-				// if more than 11 mods are present, the scrollbar is needed
-				if (optedMods.Count > 11) {
+				if (row > 2) {
+					scrollTwo.SetView(10f, 1000f);
+					scrollTwo.Top.Pixels = 92;
+					scrollTwo.Left.Pixels = -8;
+					scrollTwo.Height.Set(-60f, 0.75f);
+					scrollTwo.HAlign = 1f;
 					PageTwo.Append(scrollTwo);
+					pageTwoItemList.SetScrollbar(scrollTwo);
 				}
-
-				PageTwo.Append(pageTwoItemList);
-				pageTwoItemList.SetScrollbar(scrollTwo);
 			}
 			else {
 				// No mods are using the updated mod calls to use the Log, so create a text panel to inform the user
