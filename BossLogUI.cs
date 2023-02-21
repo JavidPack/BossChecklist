@@ -1574,7 +1574,7 @@ namespace BossChecklist
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				bool noKills = modPlayer.RecordsForWorld[entry.GetRecordIndex].stats.kills == 0; // has the player killed this boss before?
 				// If a boss record does not have the selected subcategory type, it should default back to previous attempt.
-				if (noKills) {
+				if (noKills && RecordPageType != RecordCategory.PreviousAttempt && RecordPageType != RecordCategory.WorldRecord) {
 					RecordPageType = RecordCategory.PreviousAttempt;
 				}
 
