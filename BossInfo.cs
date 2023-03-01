@@ -101,11 +101,13 @@ namespace BossChecklist
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
-		internal bool ForceDowned => WorldAssist.ForcedMarkedEntries.Contains(Key);
+		internal bool ForceDowned => WorldAssist.ForcedMarkedEntries.Contains(this.Key);
 
 		internal bool IsDownedOrForced => downed() || ForceDowned;
 
-		internal int GetRecordIndex => BossChecklist.bossTracker.BossRecordKeys.FindIndex(key => key == this.Key);
+		internal int GetIndex => BossChecklist.bossTracker.SortedBosses.IndexOf(this);
+
+		internal int GetRecordIndex => BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
 
 		internal static string SourceDisplayNameWithoutChatTags(string modSource) {
 			string editedName = "";

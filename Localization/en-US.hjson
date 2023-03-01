@@ -364,7 +364,7 @@ Mods: {
 			}
 
 			Notice: {
-				InvalidChange: You cannot change this while a boss is active!
+				InvalidChange: You cannot change this config while {0} is active!
 				HostChange: Only the host is allowed to change this config.
 			}
 		}

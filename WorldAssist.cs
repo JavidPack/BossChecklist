@@ -274,15 +274,15 @@ namespace BossChecklist
 				return;
 
 			foreach (NPC npc in Main.npc) {
-				int bossIndex = NPCAssist.GetBossInfoIndex(npc.type, true);
-				if (bossIndex == -1)
-					continue;
-				int recordIndex = BossChecklist.bossTracker.SortedBosses[bossIndex].GetRecordIndex;
-				if (recordIndex == -1 || CheckedRecordIndexes[recordIndex])
+				BossInfo entry = NPCAssist.GetBossInfo(npc.type);
+				if (entry == null)
 					continue;
 
-				// Prevents checking and updating NPCs within the same entry npc pool for performance
-				CheckedRecordIndexes[recordIndex] = true;
+				int recordIndex = entry.GetRecordIndex;
+				if (recordIndex == -1 || CheckedRecordIndexes[recordIndex])
+					continue; // If the NPC's record index is invalid OR was already handled, move on to the next NPC
+
+				CheckedRecordIndexes[recordIndex] = true; // record index will be handled, so no need to check it again
 
 				// If marked as active...
 				if (Tracker_ActiveEntry[recordIndex]) {
@@ -294,10 +294,10 @@ namespace BossChecklist
 					}
 
 					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
-					if (NPCAssist.FullyInactive(npc, bossIndex, true)) {
+					if (NPCAssist.FullyInactive(npc, entry.GetIndex)) {
 						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-						string message = NPCAssist.GetDespawnMessage(npc, bossIndex);
-						if (message != "") {
+						string message = NPCAssist.GetDespawnMessage(npc, entry.GetIndex);
+						if (string.IsNullOrEmpty(message)) {
 							if (Main.netMode == NetmodeID.SinglePlayer) {
 								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
 							}
@@ -308,9 +308,9 @@ namespace BossChecklist
 					}
 				}
 			}
-			// Resets all to false
+
 			for (int i = 0; i < CheckedRecordIndexes.Length; i++) {
-				CheckedRecordIndexes[i] = false;
+				CheckedRecordIndexes[i] = false; // reset all handled record indexes to false after iterating through all NPCs
 			}
 		}
 

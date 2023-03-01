@@ -176,11 +176,11 @@ namespace BossChecklist
 						if (Main.netMode != NetmodeID.SinglePlayer)
 							return true;
 
-						int configIndex = NPCAssist.GetBossInfoIndex(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, true);
-						if (configIndex == -1)
+						BossInfo entry = NPCAssist.GetBossInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type);
+						if (entry == null)
 							return true;
 
-						int recordIndex = BossChecklist.bossTracker.SortedBosses[configIndex].GetRecordIndex;
+						int recordIndex = entry.GetRecordIndex;
 						if (recordIndex == -1)
 							return true;
 
@@ -189,7 +189,7 @@ namespace BossChecklist
 							return true; // fixes a silent error on servers when the trackers have not yet been populated
 						
 						string debugText =
-							$"[#{configIndex}] {BossChecklist.bossTracker.SortedBosses[configIndex].DisplayName} [{recordIndex}]" +
+							$"[#{entry.GetIndex}] {entry.DisplayName} [{recordIndex}]" +
 							$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +
 							$"\nTimes Hit: {modPlayer.Tracker_HitsTaken[recordIndex]}" +
 							$"\nDeaths: {modPlayer.Tracker_Deaths[recordIndex]}";

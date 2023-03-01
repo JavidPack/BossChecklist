@@ -363,14 +363,16 @@ namespace BossChecklist
 			get => processRecord == 1 && nrEnabled;
 			set {
 				if (!Main.gameMenu) {
-					for (int i = 0; i < Main.maxNPCs; i++) {
-						if (!Main.npc[i].active) {
+					foreach (NPC npc in Main.npc) {
+						if (!npc.active)
 							continue;
-						}
-						if (NPCAssist.GetBossInfoIndex(Main.npc[i].type) != -1) {
-							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
-							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
-						}
+
+						BossInfo entry = NPCAssist.GetBossInfo(npc.type);
+						if (entry == null)
+							continue;
+
+						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange", entry.DisplayName), Color.Orange);
+						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 					}
 				}
 				if (value) {
@@ -387,14 +389,16 @@ namespace BossChecklist
 			get => processRecord == 2 && rtEnabled;
 			set {
 				if (!Main.gameMenu) {
-					for (int i = 0; i < Main.maxNPCs; i++) {
-						if (!Main.npc[i].active) {
+					foreach (NPC npc in Main.npc) {
+						if (!npc.active)
 							continue;
-						}
-						if (NPCAssist.GetBossInfoIndex(Main.npc[i].type) != -1) {
-							Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange"), Color.Orange);
-							return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
-						}
+
+						BossInfo entry = NPCAssist.GetBossInfo(npc.type);
+						if (entry == null)
+							continue;
+
+						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Notice.InvalidChange", entry.DisplayName), Color.Orange);
+						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
 					}
 				}
 				if (value) {
