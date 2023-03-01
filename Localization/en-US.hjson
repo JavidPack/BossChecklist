@@ -33,7 +33,7 @@ Mods: {
 
 		BossDefeated: {
 			Tower: The {0} has been destroyed!
-			Limb: The {0} is down!
+			Limb: {0} down!
 		}
 
 		BossSpawnInfo: {
