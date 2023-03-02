@@ -22,64 +22,63 @@ namespace BossChecklist.UIElements
 {
 	internal static class BossLogUIElements
 	{
-		internal class BossAssistButton : UIImageButton
+		/// <summary>
+		/// Hides certain mouse over interactions from appearing such as tile icons or NPC names.
+		/// </summary>
+		static void HideMouseOverInteractions() 
 		{
-			public string Id { get; init; } = "";
-			internal string buttonType;
+			Main.mouseText = true;
+			Main.LocalPlayer.cursorItemIconEnabled = false;
+			Main.LocalPlayer.cursorItemIconID = -1;
+			Main.ItemIconCacheUpdate(0);
+		}
+
+		internal class OpenLogButton : UIImageButton
+		{
 			internal Asset<Texture2D> texture;
 			private Vector2 offset;
 			internal bool dragging;
 
-			public BossAssistButton(Asset<Texture2D> texture, string type) : base(texture) {
-				buttonType = type;
+			public OpenLogButton(Asset<Texture2D> texture) : base(texture) {
 				this.texture = texture;
 			}
 
 			private void DragStart(UIMouseEvent evt) {
 				var dimensions = GetDimensions().ToRectangle();
-				offset = new Vector2(evt.MousePosition.X - dimensions.Left, evt.MousePosition.Y - dimensions.Top);
+				offset = new Vector2(evt.MousePosition.X - dimensions.Left, evt.MousePosition.Y - dimensions.Top); // aligns the element's center with the mouse position
 				dragging = true;
 			}
 
 			private void DragEnd(UIMouseEvent evt) {
-				Vector2 end = evt.MousePosition;
-				dragging = false;
-
-				Left.Set(end.X - Main.screenWidth - offset.X, 1f);
-				Top.Set(end.Y - Main.screenHeight - offset.Y, 1f);
-
+				// Set the new position
+				Left.Set(evt.MousePosition.X - Main.screenWidth - offset.X, 1f);
+				Top.Set(evt.MousePosition.Y - Main.screenHeight - offset.Y, 1f);
 				Recalculate();
+
+				// Update and save the new button position
 				BossChecklist.BossLogConfig.BossLogPos = new Vector2(Left.Pixels, Top.Pixels);
 				BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+
+				dragging = false;
 			}
 
 			public override void RightMouseDown(UIMouseEvent evt) {
 				base.RightMouseDown(evt);
-				if (Id == "OpenUI") {
-					DragStart(evt);
-				}
+				DragStart(evt);
 			}
 
 			public override void RightMouseUp(UIMouseEvent evt) {
 				base.RightMouseUp(evt);
-				if (Id == "OpenUI") {
-					DragEnd(evt);
-				}
+				DragEnd(evt);
 			}
 
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
 
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					Main.LocalPlayer.mouseInterface = true;
-
-				if (Id != "OpenUI")
-					return;
-
 				if (dragging) {
 					Left.Set(Main.mouseX - Main.screenWidth - offset.X, 1f);
 					Top.Set(Main.mouseY - Main.screenHeight - offset.Y, 1f);
-					Recalculate();
+					//Recalculate();
 				}
 				else {
 					Vector2 configVec = BossChecklist.BossLogConfig.BossLogPos;
@@ -97,57 +96,79 @@ namespace BossChecklist.UIElements
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
-				CalculatedStyle innerDimensions = GetInnerDimensions();
-				string translated = Language.GetTextValue(buttonType);
-				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
-				Vector2 pos = new Vector2(innerDimensions.X - (stringAdjust.X / 3), innerDimensions.Y - 24);
-
 				base.DrawSelf(spriteBatch);
 
-				// Draw the Boss Log Color
-				if (Id == "OpenUI") {
-					Asset<Texture2D> cover = BossLogUI.colorTexture;
-					Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
-					if (!IsMouseHovering && !dragging) {
-						cover = BossLogUI.fadedTexture;
-						coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
-					}
-					spriteBatch.Draw(cover.Value, innerDimensions.ToRectangle(), coverColor);
-
-					// Border Selection
-					PlayerAssist player = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-					Color? borderColor = null;
-
-					if (IsMouseHovering) {
-						borderColor = Color.Goldenrod;
-					}
-					else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-						borderColor = Color.Firebrick;
-					}
-					else if (!player.hasOpenedTheBossLog || player.hasNewRecord.Any(x => x == true)) {
-						float modifier = Main.masterColor / 200f;
-						borderColor = new Color(coverColor.R * modifier, coverColor.G * modifier, coverColor.B * modifier);
-					}
-
-					// Draw a colored border if one was set
-					if (borderColor.HasValue) {
-						spriteBatch.Draw(BossLogUI.borderTexture.Value, innerDimensions.ToRectangle(), borderColor.Value);
-					}
-
-					// Drawing the entire book while dragging if the mouse happens to go off screen/out of window
-					if (dragging) {
-						spriteBatch.Draw(texture.Value, innerDimensions.ToRectangle(), Color.White);
-					}
+				if ((ContainsPoint(Main.MouseScreen) || dragging) && !PlayerInput.IgnoreMouseInterface) {
+					Main.LocalPlayer.mouseInterface = true;
+					HideMouseOverInteractions();
 				}
 
+				// When hovering over the button, draw a 'Boss Log' text over the button
+				CalculatedStyle bookArea = GetInnerDimensions();
+				string hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BossLog");
+				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(hoverText);
+				Vector2 pos = new Vector2(bookArea.X - (stringAdjust.X / 3), bookArea.Y - 24);
 				if (IsMouseHovering && !dragging) {
+					spriteBatch.DrawString(FontAssets.MouseText.Value, hoverText, pos, Color.White); // text shouldn't appear if dragging the element
+				}
+
+				Asset<Texture2D> cover = BossLogUI.colorTexture;
+				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
+				if (!IsMouseHovering && !dragging) {
+					cover = BossLogUI.fadedTexture; // make the color match the faded UIImageButton
+					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
+				}
+				spriteBatch.Draw(cover.Value, bookArea.ToRectangle(), coverColor);
+
+				// UIImageButtons are normally faded, so if dragging and not draw the button fully opaque
+				// This is most likely to occur when the mouse travels off screen while dragging
+				if (dragging) {
+					spriteBatch.Draw(texture.Value, bookArea.ToRectangle(), Color.White);
+				}
+
+				// Determine a border color for the button
+				PlayerAssist player = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				Color? borderColor = null;
+
+				if (IsMouseHovering || dragging) {
+					borderColor = Color.Goldenrod; // If hovering over or dragging the button, the book will be highlighted in a gold border
+				}
+				else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+					borderColor = Color.Firebrick; // If Records are disabled in any way, the book will be highlighted with a red border
+				}
+				else if (!player.hasOpenedTheBossLog || player.hasNewRecord.Any(x => x == true)) {
+					float modifier = Main.masterColor / 200f; // If the player has not opened the log or has not viewed a new record page, the book will be hightlighted with a flashing log-colored border
+					borderColor = new Color(coverColor.R * modifier, coverColor.G * modifier, coverColor.B * modifier);
+				}
+
+				if (borderColor.HasValue) {
+					spriteBatch.Draw(BossLogUI.borderTexture.Value, bookArea.ToRectangle(), borderColor.Value); // Draw a colored border if one was set
+				}
+			}
+		}
+
+		internal class NavigationalButton : UIImageButton
+		{
+			public string Id { get; init; } = "";
+			internal Asset<Texture2D> texture;
+			internal string hoverText;
+
+			public NavigationalButton(Asset<Texture2D> texture, string hoverText = null) : base(texture) {
+				this.texture = texture;
+				this.hoverText = hoverText;
+			}			
+
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					Main.LocalPlayer.mouseInterface = true;
+			}
+
+			protected override void DrawSelf(SpriteBatch spriteBatch) {
+				base.DrawSelf(spriteBatch);
+				if (IsMouseHovering && !string.IsNullOrEmpty(hoverText)) {
 					BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
-					if (!Id.StartsWith("CycleItem")) {
-						spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.White);
-					}
-					else {
-						BossUISystem.Instance.UIHoverText = translated;
-					}
+					BossUISystem.Instance.UIHoverText = Language.GetTextValue(hoverText); // Display the hover text in a tooltip-like box
 				}
 			}
 		}
@@ -410,11 +431,7 @@ namespace BossChecklist.UIElements
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 					// Needed to remove mousetext from outside sources when using the Boss Log
 					Main.player[Main.myPlayer].mouseInterface = true;
-					Main.mouseText = true;
-					// Item icons such as hovering over a bed will not appear
-					Main.LocalPlayer.cursorItemIconEnabled = false;
-					Main.LocalPlayer.cursorItemIconID = -1;
-					Main.ItemIconCacheUpdate(0);
+					HideMouseOverInteractions();
 				}
 
 				if (selectedLogPage == -3) {
@@ -1359,12 +1376,7 @@ namespace BossChecklist.UIElements
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 					// Needed to remove mousetext from outside sources when using the Boss Log
 					Main.player[Main.myPlayer].mouseInterface = true;
-					Main.mouseText = true;
-
-					// Item icons such as hovering over a bed will not appear
-					Main.LocalPlayer.cursorItemIconEnabled = false;
-					Main.LocalPlayer.cursorItemIconID = -1;
-					Main.ItemIconCacheUpdate(0);
+					HideMouseOverInteractions();
 				}
 
 				if (Id.EndsWith("_Tab") && selectedLogPage != -3) {

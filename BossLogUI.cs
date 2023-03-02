@@ -24,7 +24,7 @@ namespace BossChecklist
 {
 	class BossLogUI : UIState
 	{
-		public BossAssistButton bosslogbutton; // The main button to open the Boss Log
+		public OpenLogButton bosslogbutton; // The main button to open the Boss Log
 		public BossLogPanel BookArea; // The main panel for the UI. All content is aligned within this area.
 		public BossLogPanel PageOne; // left page content panel
 		public BossLogPanel PageTwo; // right page content panel
@@ -248,9 +248,7 @@ namespace BossChecklist
 
 			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
 
-			bosslogbutton = new BossAssistButton(bookTexture, "Mods.BossChecklist.BossLog.Terms.BossLog") {
-				Id = "OpenUI"
-			};
+			bosslogbutton = new OpenLogButton(bookTexture);
 			bosslogbutton.Width.Set(34, 0f);
 			bosslogbutton.Height.Set(38, 0f);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
@@ -323,7 +321,7 @@ namespace BossChecklist
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
 
-			PrevPage = new BossAssistButton(prevTexture, "") {
+			PrevPage = new NavigationalButton(prevTexture) {
 				Id = "Previous"
 			};
 			PrevPage.Width.Pixels = prevTexture.Value.Width;
@@ -400,7 +398,7 @@ namespace BossChecklist
 				filterPanel.Append(uiimage);
 			}
 
-			NextPage = new BossAssistButton(nextTexture, "") {
+			NextPage = new NavigationalButton(nextTexture) {
 				Id = "Next"
 			};
 			NextPage.Width.Pixels = nextTexture.Value.Width;
@@ -751,7 +749,7 @@ namespace BossChecklist
 		/// Also cycles through recipes for spawn items.
 		/// </summary>
 		private void ChangeSpawnItem(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is not BossAssistButton button)
+			if (listeningElement is not NavigationalButton button)
 				return;
 
 			string id = button.Id;
@@ -1091,7 +1089,7 @@ namespace BossChecklist
 		/// Handles the logic behind clicking the next/prev navigation buttons, and thus "turning the page".
 		/// </summary>
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is not BossAssistButton button)
+			if (listeningElement is not NavigationalButton button)
 				return;
 
 			// Remove new records when navigating from a page with a new record
@@ -1602,8 +1600,30 @@ namespace BossChecklist
 				return; // prevent unsupported entries from displaying info
 						// a message panel will take its place notifying the user that the mods calls are out of date
 
+			// Before anything, create a message box to display the spawn info provided
+			var message = new UIMessageBox(selectedBoss.DisplaySpawnInfo);
+			message.Width.Set(-34f, 1f);
+			message.Height.Set(-370f, 1f);
+			message.Top.Set(85f, 0f);
+			message.Left.Set(5f, 0f);
+			PageTwo.Append(message);
+
+			// create a scroll bar in case the message is too long for the box to contain
+			scrollTwo.SetView(100f, 1000f);
+			scrollTwo.Top.Set(91f, 0f);
+			scrollTwo.Height.Set(-382f, 1f);
+			scrollTwo.Left.Set(-5, 0f);
+			scrollTwo.HAlign = 1f;
+			PageTwo.Append(scrollTwo);
+			message.SetScrollbar(scrollTwo);
+
+			if (SpawnItemSelected >= selectedBoss.spawnItem.Count) {
+				SpawnItemSelected = 0; // the selected spawn item number is greater than how many are in the list, so reset it back to 0
+			}
+
+			// Once the spawn description has been made, start structuring the spawn items showcase
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
-			if (selectedBoss.spawnItem.Count == 0 || selectedBoss.spawnItem.All(x => x <= 0)) {
+			if (selectedBoss.spawnItem.Count == 0 || selectedBoss.spawnItem[SpawnItemSelected] == ItemID.None) {
 				string type = selectedBoss.type == EntryType.Boss ? "Boss" : selectedBoss.type == EntryType.Event ? "Event" : "MiniBoss";
 				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
@@ -1612,20 +1632,57 @@ namespace BossChecklist
 				return; // since no items are listed, the recipe code does not need to occur
 			}
 
+			// If a valid item is found, an item slot can be created
+			int itemType = selectedBoss.spawnItem[SpawnItemSelected]; // grab the item type
+			Item spawn = ContentSamples.ItemsByType[itemType]; // create an item for the item slot to use and reference
+			if (selectedBoss.Key == "Terraria TorchGod" && itemType == ItemID.Torch) {
+				spawn.stack = 101; // apply a custom stack count for the torches needed for the Torch God summoning event
+			}
+
+			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
+			spawnItemSlot.Width.Pixels = slotRectRef.Width;
+			spawnItemSlot.Height.Pixels = slotRectRef.Height;
+			spawnItemSlot.Left.Pixels = 48 + (56 * 2);
+			spawnItemSlot.Top.Pixels = 230;
+			PageTwo.Append(spawnItemSlot);
+
+			// if more than one item is used for summoning, append navigational button to cycle through the items
+			// a previous item button will appear if it is not the first item listed
+			if (SpawnItemSelected > 0) {
+				NavigationalButton PrevItem = new NavigationalButton(prevTexture) {
+					Id = "PrevItem"
+				};
+				PrevItem.Width.Pixels = prevTexture.Value.Width;
+				PrevItem.Height.Pixels = prevTexture.Value.Width;
+				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
+				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
+				PrevItem.OnClick += ChangeSpawnItem;
+				PageTwo.Append(PrevItem);
+			}
+			// a next button will appear if it is not the last item listed
+			if (SpawnItemSelected < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
+				NavigationalButton NextItem = new NavigationalButton(nextTexture) {
+					Id = "NextItem"
+				};
+				NextItem.Width.Pixels = nextTexture.Value.Width;
+				NextItem.Height.Pixels = nextTexture.Value.Height;
+				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
+				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
+				NextItem.OnClick += ChangeSpawnItem;
+				PageTwo.Append(NextItem);
+			}
+
 			/// Code below handles all of the recipe searching and displaying
+			// Finally, if the item has a recipe, look for all possible recipes and display them
 			// create empty lists for ingredients and required tiles
-			int selectedSpawnItem = selectedBoss.spawnItem[SpawnItemSelected];
 			List<Item> ingredients = new List<Item>();
 			List<int> requiredTiles = new List<int>();
 			string recipeMod = "Terraria"; // we can inform players where the recipe originates from, starting with vanilla as a base
 
-			if (selectedSpawnItem == ItemID.None)
-				return; // just in case the selected summon item is invalid
-
 			// search for all recipes that have the item as a result
 			var itemRecipes = Main.recipe
 				.Take(Recipe.numRecipes)
-				.Where(r => r.HasResult(selectedSpawnItem));
+				.Where(r => r.HasResult(itemType));
 
 			// iterate through all the recipes to gather the information we need to display for the recipe
 			int TotalRecipes = 0;
@@ -1650,42 +1707,10 @@ namespace BossChecklist
 			// To avoid this, set the selected recipe back to 0 and reconstruct the spawn page, which will iterate through the recipes again.
 			if (TotalRecipes != 0 && RecipeSelected + 1 > TotalRecipes) {
 				RecipeSelected = 0;
-				OpenSpawn();
+				RefreshPageContent();
 				return; // don't let the code run twice
 			}
 			// once this check has passed, the page elements can now be created
-
-			// create a message box, displaying the spawn info provided
-			var message = new UIMessageBox(selectedBoss.DisplaySpawnInfo);
-			message.Width.Set(-34f, 1f);
-			message.Height.Set(-370f, 1f);
-			message.Top.Set(85f, 0f);
-			message.Left.Set(5f, 0f);
-			//message.PaddingRight = 30;
-			PageTwo.Append(message);
-
-			// create a scroll bar in case the message is too long for the box to contain
-			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Set(91f, 0f);
-			scrollTwo.Height.Set(-382f, 1f);
-			scrollTwo.Left.Set(-5, 0f);
-			scrollTwo.HAlign = 1f;
-			PageTwo.Append(scrollTwo);
-			message.SetScrollbar(scrollTwo);
-
-			Item spawn = ContentSamples.ItemsByType[selectedSpawnItem]; // create an item for reference
-
-			if (selectedBoss.Key == "Terraria TorchGod" && spawn.type == ItemID.Torch) {
-				spawn.stack = 101; // apply a custom stack count for the torches needed for the Torch God summoning event
-			}
-
-			// create an item slot of the summoning item
-			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
-			spawnItemSlot.Width.Pixels = slotRectRef.Width;
-			spawnItemSlot.Height.Pixels = slotRectRef.Height;
-			spawnItemSlot.Left.Pixels = 48 + (56 * 2);
-			spawnItemSlot.Top.Pixels = 230;
-			PageTwo.Append(spawnItemSlot);
 
 			// If no recipes were found, skip the recipe item slot code and inform the user the item is not craftable
 			if (TotalRecipes == 0) {
@@ -1695,6 +1720,27 @@ namespace BossChecklist
 				craftText.Top.Pixels = 205;
 				PageTwo.Append(craftText);
 				return;
+			}
+			else {
+				// display where the recipe originates form
+				string recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.RecipeFrom", recipeMod);
+				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
+				ModdedRecipe.Left.Pixels = 10;
+				ModdedRecipe.Top.Pixels = 205;
+				PageTwo.Append(ModdedRecipe);
+
+				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
+				if (TotalRecipes > 1) {
+					NavigationalButton CycleItem = new NavigationalButton(cycleTexture, "Mods.BossChecklist.BossLog.DrawnText.CycleRecipe") {
+						Id = "CycleItem_" + TotalRecipes
+					};
+					CycleItem.Width.Pixels = cycleTexture.Value.Width;
+					CycleItem.Height.Pixels = cycleTexture.Value.Height;
+					CycleItem.Left.Pixels = 240;
+					CycleItem.Top.Pixels = 240;
+					CycleItem.OnClick += ChangeSpawnItem;
+					PageTwo.Append(CycleItem);
+				}
 			}
 
 			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
@@ -1771,52 +1817,6 @@ namespace BossChecklist
 					col++; // if multiple crafting stations are needed
 				}
 			}
-
-			// if more than one item is used for summoning, append navigational button to cycle through the items
-			// a previous item button will appear if it is not the first item listed
-			if (SpawnItemSelected > 0) {
-				BossAssistButton PrevItem = new BossAssistButton(prevTexture, "") {
-					Id = "PrevItem"
-				};
-				PrevItem.Width.Pixels = prevTexture.Value.Width;
-				PrevItem.Height.Pixels = prevTexture.Value.Width;
-				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
-				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
-				PrevItem.OnClick += ChangeSpawnItem;
-				PageTwo.Append(PrevItem);
-			}
-			// a next button will appear if it is not the last item listed
-			if (SpawnItemSelected < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-				BossAssistButton NextItem = new BossAssistButton(nextTexture, "") {
-					Id = "NextItem"
-				};
-				NextItem.Width.Pixels = nextTexture.Value.Width;
-				NextItem.Height.Pixels = nextTexture.Value.Height;
-				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
-				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
-				NextItem.OnClick += ChangeSpawnItem;
-				PageTwo.Append(NextItem);
-			}
-
-			// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
-			if (TotalRecipes > 1) {
-				BossAssistButton CycleItem = new BossAssistButton(cycleTexture, Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.CycleRecipe")) {
-					Id = "CycleItem_" + TotalRecipes
-				};
-				CycleItem.Width.Pixels = cycleTexture.Value.Width;
-				CycleItem.Height.Pixels = cycleTexture.Value.Height;
-				CycleItem.Left.Pixels = 240;
-				CycleItem.Top.Pixels = 240;
-				CycleItem.OnClick += ChangeSpawnItem;
-				PageTwo.Append(CycleItem);
-			}
-
-			// display where the recipe originates form
-			string recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.RecipeFrom", recipeMod);
-			UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
-			ModdedRecipe.Left.Pixels = 10;
-			ModdedRecipe.Top.Pixels = 205;
-			PageTwo.Append(ModdedRecipe);
 		}
 
 		/// <summary>
