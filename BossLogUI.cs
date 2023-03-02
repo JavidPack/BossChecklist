@@ -1252,44 +1252,41 @@ namespace BossChecklist
 			prehardmodeList.Clear(); // clear both lists before setting up content
 			hardmodeList.Clear();
 
-			List<BossInfo> entries = BossChecklist.bossTracker.SortedBosses;
 			string nextBoss = "";
+			foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
+				entry.hidden = WorldAssist.HiddenBosses.Contains(entry.Key);
 
-			for (int bossIndex = 0; bossIndex < entries.Count; bossIndex++) {
-				BossInfo boss = entries[bossIndex];
-				boss.hidden = WorldAssist.HiddenBosses.Contains(boss.Key);
-
-				if (!boss.VisibleOnChecklist())
+				if (!entry.VisibleOnChecklist())
 					continue; // If the boss should not be visible on the Table of Contents, skip the entry in the list
 
 				// Setup display name. Show "???" if unavailable and Silhouettes are turned on
-				string displayName = boss.DisplayName;
+				string displayName = entry.DisplayName;
 				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
 
-				if (nextBoss == "" && !boss.IsDownedOrForced) {
-					nextBoss = boss.Key;
+				if (nextBoss == "" && !entry.IsDownedOrForced) {
+					nextBoss = entry.Key;
 				}
 
-				bool namesMasked = cfg.MaskNames && !boss.IsDownedOrForced;
-				bool hardMode = cfg.MaskHardMode && !Main.hardMode && boss.progression > BossTracker.WallOfFlesh && !boss.IsDownedOrForced;
-				bool availability = cfg.HideUnavailable && !boss.available() && !boss.IsDownedOrForced;
+				bool namesMasked = cfg.MaskNames && !entry.IsDownedOrForced;
+				bool hardMode = cfg.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh && !entry.IsDownedOrForced;
+				bool availability = cfg.HideUnavailable && !entry.available() && !entry.IsDownedOrForced;
 				if (namesMasked || hardMode || availability) {
 					displayName = "???";
 				}
 
 				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
-					if (!boss.IsDownedOrForced && boss.available() && !boss.hidden && nextBoss == boss.Key) {
-						displayName = boss.DisplayName;
+					if (!entry.IsDownedOrForced && entry.available() && !entry.hidden && nextBoss == entry.Key) {
+						displayName = entry.DisplayName;
 					}
 				}
 
 				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
 				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
 				// Update forced downs. If the boss is actaully downed, remove the force check.
-				if (boss.ForceDowned) {
+				if (entry.ForceDowned) {
 					displayName += "*";
-					if (boss.downed()) {
-						WorldAssist.ForcedMarkedEntries.Remove(boss.Key);
+					if (entry.downed()) {
+						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
 					}
 				}
 
@@ -1300,21 +1297,21 @@ namespace BossChecklist
 					allLoot = allCollect = true;
 
 					// Loop through player saved loot and boss loot to see if every item was obtained
-					foreach (int loot in boss.lootItemTypes) {
-						int index = boss.loot.FindIndex(x => x.itemId == loot);
+					foreach (int loot in entry.lootItemTypes) {
+						int index = entry.loot.FindIndex(x => x.itemId == loot);
 
-						if (loot == boss.treasureBag)
+						if (loot == entry.treasureBag)
 							continue;
 
-						if (index != -1 && boss.loot[index].conditions is not null) {
-							bool isCorruptionLocked = WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
-							bool isCrimsonLocked = !WorldGen.crimson && boss.loot[index].conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
+						if (index != -1 && entry.loot[index].conditions is not null) {
+							bool isCorruptionLocked = WorldGen.crimson && entry.loot[index].conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
+							bool isCrimsonLocked = !WorldGen.crimson && entry.loot[index].conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
 
 							if (isCorruptionLocked || isCrimsonLocked)
 								continue; // Skips items that are dropped within the opposing world evil
 						}
 
-						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && boss.collection.Contains(loot))
+						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && entry.collection.Contains(loot))
 							continue; // If the CheckedDroppedLoot config enabled, skip loot items that are considered collectibles for the check
 
 						Item checkItem = ContentSamples.ItemsByType[loot];
@@ -1332,16 +1329,16 @@ namespace BossChecklist
 						}
 					}
 
-					if (boss.collection.Count == 0) {
+					if (entry.collection.Count == 0) {
 						allCollect = allLoot; // If no collection items were setup, consider it false until all loot has been obtained
 					}
 					else {
 						int collectCount = 0;
-						foreach (int collectible in boss.collection) {
+						foreach (int collectible in entry.collection) {
 							if (collectible == -1 || collectible == 0)
 								continue; // Skips empty items
 
-							if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && !boss.lootItemTypes.Contains(collectible)) {
+							if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && !entry.lootItemTypes.Contains(collectible)) {
 								collectCount++;
 								continue; // If the CheckedDroppedLoot config enabled, skip collectible items that aren't also considered loot
 							}
@@ -1359,21 +1356,21 @@ namespace BossChecklist
 							}
 						}
 
-						if (collectCount == boss.collection.Count) {
+						if (collectCount == entry.collection.Count) {
 							allCollect = false; // If all the items were skipped due to the DroppedLootCheck config, don't mark as all collectibles obtained
 						}
 					}
 				}
 
-				bool isNext = nextBoss == boss.Key && cfg.DrawNextMark;
-				TableOfContents next = new TableOfContents(bossIndex, displayName, isNext, allLoot, allCollect) {
+				bool isNext = nextBoss == entry.Key && cfg.DrawNextMark;
+				TableOfContents next = new TableOfContents(entry.GetIndex, displayName, isNext, allLoot, allCollect) {
 					PaddingTop = 5,
-					PaddingLeft = 22 + (boss.progression <= BossTracker.WallOfFlesh ? 10 : 0)
+					PaddingLeft = 22 + (entry.progression <= BossTracker.WallOfFlesh ? 10 : 0)
 				};
 				next.OnClick += (a, b) => JumpToBossPage(next.Index);
 				next.OnRightClick += (a, b) => JumpToBossPage(next.Index, false);
 
-				if (boss.progression <= BossTracker.WallOfFlesh) {
+				if (entry.progression <= BossTracker.WallOfFlesh) {
 					prehardmodeList.Add(next);
 				}
 				else {
@@ -1412,41 +1409,41 @@ namespace BossChecklist
 			Dictionary<string, int[]> prehEntries = new Dictionary<string, int[]>();
 			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
 
-			foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
-				if (boss.hidden)
+			foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
+				if (entry.hidden)
 					continue; // The only way to manually remove entries from the progress bar is by hiding them
 
-				if (boss.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
+				if (entry.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
 					continue; // Unknown and Unsupported entries can be automatically removed through configs if desired
 
-				if (boss.progression <= BossTracker.WallOfFlesh) {
-					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-						if (!prehEntries.ContainsKey(boss.modSource)) {
-							prehEntries.Add(boss.modSource, new int[] { 0, 0 });
+				if (entry.progression <= BossTracker.WallOfFlesh) {
+					if (entry.available() || (entry.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+						if (!prehEntries.ContainsKey(entry.modSource)) {
+							prehEntries.Add(entry.modSource, new int[] { 0, 0 });
 						}
-						prehTotal[(int)boss.type]++;
-						prehEntries[boss.modSource][1] += 1;
+						prehTotal[(int)entry.type]++;
+						prehEntries[entry.modSource][1] += 1;
 
-						if (boss.IsDownedOrForced) {
-							prehDown[(int)boss.type]++;
-							prehEntries[boss.modSource][0] += 1;
+						if (entry.IsDownedOrForced) {
+							prehDown[(int)entry.type]++;
+							prehEntries[entry.modSource][0] += 1;
 						}
 					}
 				}
 				else {
-					if (boss.available() || (boss.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-						if (!hardEntries.ContainsKey(boss.modSource)) {
-							hardEntries.Add(boss.modSource, new int[] { 0, 0 });
+					if (entry.available() || (entry.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
+						if (!hardEntries.ContainsKey(entry.modSource)) {
+							hardEntries.Add(entry.modSource, new int[] { 0, 0 });
 						}
-						hardTotal[(int)boss.type]++;
-						hardEntries[boss.modSource][1] += 1;
+						hardTotal[(int)entry.type]++;
+						hardEntries[entry.modSource][1] += 1;
 
-						if (boss.IsDownedOrForced) {
-							if (!hardEntries.ContainsKey(boss.modSource)) {
-								hardEntries.Add(boss.modSource, new int[] { 0, 0 });
+						if (entry.IsDownedOrForced) {
+							if (!hardEntries.ContainsKey(entry.modSource)) {
+								hardEntries.Add(entry.modSource, new int[] { 0, 0 });
 							}
-							hardDown[(int)boss.type]++;
-							hardEntries[boss.modSource][0] += 1;
+							hardDown[(int)entry.type]++;
+							hardEntries[entry.modSource][0] += 1;
 						}
 					}
 				}

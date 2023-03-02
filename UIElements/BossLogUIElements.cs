@@ -670,22 +670,20 @@ namespace BossChecklist.UIElements
 									BossUISystem.Instance.UIHoverTextColor = Color.Gold;
 								}
 
-								foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-									if (info.type != EntryType.Event)
+								foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
+									if (entry.type != EntryType.Event)
 										continue;
 
-									if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
-										Texture2D icon = info.headIconTextures[0].Value;
+									if (entry.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+										Texture2D icon = entry.headIconTextures[0].Value;
 										Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
-										Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+										Color faded = entry.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 										spriteBatch.Draw(icon, headPos, faded);
 										if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
 											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+											BossUISystem.Instance.UIHoverText = entry.DisplayName + "\n" + translated;
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												// Reset UI positions when changing the page
-												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-												BossUISystem.Instance.BossLog.PageNum = index;
+												BossUISystem.Instance.BossLog.PageNum = entry.GetIndex; // Reset UI positions when changing the page
 											}
 										}
 									}
@@ -939,22 +937,20 @@ namespace BossChecklist.UIElements
 								}
 							}
 							else if (selectedBoss.type == EntryType.MiniBoss) {
-								foreach (BossInfo info in BossChecklist.bossTracker.SortedBosses) {
-									if (info.type != EntryType.Event)
+								foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
+									if (entry.type != EntryType.Event)
 										continue;
 
-									if (info.npcIDs.Contains(selectedBoss.npcIDs[0])) {
-										Texture2D icon = info.headIconTextures[0].Value;
+									if (entry.npcIDs.Contains(selectedBoss.npcIDs[0])) {
+										Texture2D icon = entry.headIconTextures[0].Value;
 										Rectangle headPos = new Rectangle(pageRect.X + 15, pageRect.Y + 100, icon.Width, icon.Height);
-										Color faded = info.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
+										Color faded = entry.IsDownedOrForced ? Color.White : masked ? Color.Black : BossLogUI.faded;
 										spriteBatch.Draw(icon, headPos, faded);
 										if (Main.MouseScreen.Between(headPos.TopLeft(), headPos.BottomRight())) {
 											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-											BossUISystem.Instance.UIHoverText = info.DisplayName + "\n" + translated;
+											BossUISystem.Instance.UIHoverText = entry.DisplayName + "\n" + translated;
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												// Reset UI positions when changing the page
-												int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == info.Key);
-												BossUISystem.Instance.BossLog.PageNum = index;
+												BossUISystem.Instance.BossLog.PageNum = entry.GetIndex; // Reset UI positions when changing the page
 											}
 										}
 									}
@@ -984,9 +980,7 @@ namespace BossChecklist.UIElements
 										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 										BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 										if (Main.mouseLeft && Main.mouseLeftRelease) {
-											// Reset UI positions when changing the page
-											int index = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == addedNPC.Key);
-											BossUISystem.Instance.BossLog.PageNum = index;
+											BossUISystem.Instance.BossLog.PageNum = addedNPC.GetIndex; // Reset UI positions when changing the page
 										}
 									}
 									if (head.Height > headTextureOffsetY) {

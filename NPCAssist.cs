@@ -101,7 +101,7 @@ namespace BossChecklist
 
 		/// <summary>
 		/// Loops through all entries in BossTracker.SortedBosses to find BossInfo that contains the specified npc type.
-		/// This method should only be used to look for boss indexes, as it is needed for boss record purposes.
+		/// This method is mainly used for boss record purposes.
 		/// </summary>
 		/// <returns>A valid BossInfo entry within the registered entries. Returns null if no entry can be found.</returns>
 		public static BossInfo GetBossInfo(int npcType) {

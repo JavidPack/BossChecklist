@@ -42,7 +42,7 @@ namespace BossChecklist.UIElements
 			moreInfo.Left.Set(-24, 1f);
 			moreInfo.SetVisibility(1f, 0.7f);
 			moreInfo.OnClick += MoreInfo_OnClick;
-			bossIndex = BossChecklist.bossTracker.SortedBosses.IndexOf(boss);
+			bossIndex = boss.GetIndex;
 
 			OnClick += Box_OnClick;
 		}

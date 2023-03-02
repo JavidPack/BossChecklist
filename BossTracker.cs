@@ -57,7 +57,7 @@ namespace BossChecklist
 		public const float LunarEvent = LunaticCultist + 0.01f; // Happens immediately after the defeation of the Lunatic Cultist
 
 		/// <summary>
-		/// All currently loaded bosses/minibosses/events sorted in progression order.
+		/// All currently loaded bosses/minibosses/events sorted by progression.
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
 		internal bool[] BossCache;
