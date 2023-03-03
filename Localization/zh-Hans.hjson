@@ -364,7 +364,7 @@ Mods: {
 			}
 
 			Notice: {
-				InvalidChange: 你不能在任何一个Boss存在时启用这个!
+				InvalidChange: 你不能在{0}存在时更改该配置!
 				HostChange: 仅允许主机更改此配置.
 			}
 		}
