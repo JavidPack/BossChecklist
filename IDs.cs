@@ -51,14 +51,14 @@ namespace BossChecklist
 		ResetAll = 8
 	}
 
-	internal enum CategoryPage
+	internal enum SubPage
 	{
 		Record,
 		Spawn,
 		Loot
 	}
 
-	internal enum RecordCategory
+	internal enum SubCategory
 	{
 		PreviousAttempt,
 		BestRecord,

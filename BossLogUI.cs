@@ -44,7 +44,7 @@ namespace BossChecklist
 					OpenProgressionModePrompt();
 				}
 				else { 
-					UpdateSelectedPage(value, CategoryPageType);
+					UpdateSelectedPage(value, SelectedSubPage);
 				}
 			}
 		}
@@ -53,7 +53,7 @@ namespace BossChecklist
 		public UIImageButton NextPage;
 		public UIImageButton PrevPage;
 
-		public static CategoryPage CategoryPageType = CategoryPage.Record;
+		public static SubPage SelectedSubPage = SubPage.Record;
 		public SubpageButton recordButton;
 		public SubpageButton spawnButton;
 		public SubpageButton lootButton;
@@ -83,8 +83,8 @@ namespace BossChecklist
 
 		// Record page related
 		public SubpageButton[] AltPageButtons;
-		public static RecordCategory RecordPageType = RecordCategory.PreviousAttempt;
-		public static RecordCategory CompareState = RecordCategory.None; // Compare record values to one another
+		public static SubCategory RecordPageType = SubCategory.PreviousAttempt;
+		public static SubCategory CompareState = SubCategory.None; // Compare record values to one another
 		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
 		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
@@ -102,6 +102,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> bookUITexture;
 		public static Asset<Texture2D> prevTexture;
 		public static Asset<Texture2D> nextTexture;
+		public static Asset<Texture2D> subpageTexture;
 		public static Asset<Texture2D> tocTexture;
 		public static Asset<Texture2D> credTexture;
 		public static Asset<Texture2D> bossNavTexture;
@@ -118,6 +119,10 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
+		public static Asset<Texture2D> prevRecordTexture;
+		public static Asset<Texture2D> bestRecordTexture;
+		public static Asset<Texture2D> firstRecordTexture;
+		public static Asset<Texture2D> worldRecordTexture;
 		public static Asset<Texture2D> creditModSlot;
 		public static Rectangle slotRectRef; // just grabs the size of a normal inventory slot
 		public static readonly Color faded = new Color(128, 128, 128, 128);
@@ -226,6 +231,7 @@ namespace BossChecklist
 
 			prevTexture = RequestResource("Nav_Prev");
 			nextTexture = RequestResource("Nav_Next");
+			subpageTexture = RequestResource("Nav_Subpage");
 			tocTexture = RequestResource("Nav_Contents");
 			credTexture = RequestResource("Nav_Credits");
 			bossNavTexture = RequestResource("Nav_Boss");
@@ -243,6 +249,11 @@ namespace BossChecklist
 			checkboxTexture = RequestResource("Checks_Box");
 			chestTexture = RequestResource("Checks_Chest");
 			goldChestTexture = RequestResource("Checks_GoldChest");
+
+			prevRecordTexture = RequestResource("Nav_RecordPrev");
+			bestRecordTexture = RequestResource("Nav_RecordBest");
+			firstRecordTexture = RequestResource("Nav_RecordFirst");
+			worldRecordTexture = RequestResource("Nav_RecordWorld");
 
 			creditModSlot = RequestResource("Extra_CreditModSlot");
 
@@ -422,44 +433,44 @@ namespace BossChecklist
 			hardmodeBar.Top.Pixels = NextPage.Top.Pixels + (NextPage.Height.Pixels / 2) - (hardmodeBar.Height.Pixels / 2);
 			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
-			recordButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.Records");
-			recordButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
-			recordButton.Height.Pixels = 25;
-			recordButton.Left.Pixels = PageTwo.Width.Pixels / 2 - recordButton.Width.Pixels - 8;
-			recordButton.Top.Pixels = 15;
-			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Record);
+			recordButton = new SubpageButton(subpageTexture, (int)SubPage.Record, "Mods.BossChecklist.BossLog.DrawnText.Records");
+			recordButton.Width.Pixels = subpageTexture.Value.Width;
+			recordButton.Height.Pixels = subpageTexture.Value.Height;
+			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)recordButton.Width.Pixels - 8;
+			recordButton.Top.Pixels = 5;
+			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Record);
 			recordButton.OnRightClick += (a, b) => ResetStats();
 
-			spawnButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
-			spawnButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24;
-			spawnButton.Height.Pixels = 25;
-			spawnButton.Left.Pixels = PageTwo.Width.Pixels / 2 + 8;
-			spawnButton.Top.Pixels = 15;
-			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Spawn);
+			spawnButton = new SubpageButton(subpageTexture, (int)SubPage.Spawn, "Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
+			spawnButton.Width.Pixels = subpageTexture.Value.Width;
+			spawnButton.Height.Pixels = subpageTexture.Value.Height;
+			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
+			spawnButton.Top.Pixels = 5;
+			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Spawn);
 
-			lootButton = new SubpageButton("Mods.BossChecklist.BossLog.DrawnText.LootCollect");
-			lootButton.Width.Pixels = PageTwo.Width.Pixels / 2 - 24 + 16;
-			lootButton.Height.Pixels = 25;
-			lootButton.Left.Pixels = PageTwo.Width.Pixels / 2 - lootButton.Width.Pixels / 2;
-			lootButton.Top.Pixels = 50;
-			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, CategoryPage.Loot);
+			lootButton = new SubpageButton(subpageTexture, (int)SubPage.Loot, "Mods.BossChecklist.BossLog.DrawnText.LootCollect");
+			lootButton.Width.Pixels = subpageTexture.Value.Width;
+			lootButton.Height.Pixels = subpageTexture.Value.Height;
+			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
+			lootButton.Top.Pixels = 5 + subpageTexture.Value.Height + 10;
+			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Loot);
 			lootButton.OnRightClick += RemoveItem;
 
-			SubpageButton PrevRecordButton = new SubpageButton((int)RecordCategory.PreviousAttempt);
-			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.PreviousAttempt);
-			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.PreviousAttempt, false);
+			SubpageButton PrevRecordButton = new SubpageButton(prevRecordTexture, (int)SubCategory.PreviousAttempt, "Mods.BossChecklist.BossLog.Terms.PreviousRecord");
+			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.PreviousAttempt);
+			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.PreviousAttempt, false);
 
-			SubpageButton FirstRecordButton = new SubpageButton((int)RecordCategory.FirstRecord);
-			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.FirstRecord);
-			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.FirstRecord, false);
+			SubpageButton BestRecordButton = new SubpageButton(bestRecordTexture, (int)SubCategory.BestRecord, "Mods.BossChecklist.BossLog.Terms.BestRecord");
+			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.BestRecord);
+			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.BestRecord, false);
 
-			SubpageButton BestRecordButton = new SubpageButton((int)RecordCategory.BestRecord);
-			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.BestRecord);
-			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.BestRecord, false);
+			SubpageButton FirstRecordButton = new SubpageButton(firstRecordTexture, (int)SubCategory.FirstRecord, "Mods.BossChecklist.BossLog.Terms.FirstRecord");
+			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.FirstRecord);
+			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.FirstRecord, false);
 
-			SubpageButton WorldRecordButton = new SubpageButton((int)RecordCategory.WorldRecord);
-			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(RecordCategory.WorldRecord);
-			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(RecordCategory.WorldRecord, false);
+			SubpageButton WorldRecordButton = new SubpageButton(worldRecordTexture, (int)SubCategory.WorldRecord, "Mods.BossChecklist.BossLog.Terms.WorldRecord");
+			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.WorldRecord);
+			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.WorldRecord, false);
 
 			AltPageButtons = new SubpageButton[] {
 				PrevRecordButton,
@@ -701,7 +712,7 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // temporary block is recordcode is disabled
 
-			if (!BossChecklist.DebugConfig.ResetRecordsBool || CategoryPageType != 0)
+			if (!BossChecklist.DebugConfig.ResetRecordsBool || SelectedSubPage != 0)
 				return; // do not do anything if not on the record page (ex. can't reset record on loot page)
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
@@ -725,7 +736,7 @@ namespace BossChecklist
 		/// While in debug mode, players will be able to remove obtained items from their player save data using the right-click button on the selected item slot.
 		/// </summary>
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
-			if (!BossChecklist.DebugConfig.ResetLootItems || CategoryPageType != CategoryPage.Loot)
+			if (!BossChecklist.DebugConfig.ResetLootItems || SelectedSubPage != SubPage.Loot)
 				return; // do not do anything if not on the loot page (ex. can't remove loot on spawn info page)
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
@@ -965,7 +976,7 @@ namespace BossChecklist
 		/// </summary>
 		/// <param name="type">The record category you are chainging</param>
 		/// <param name="leftClick"></param>
-		public void HandleRecordTypeButton(RecordCategory type, bool leftClick = true) {
+		public void HandleRecordTypeButton(SubCategory type, bool leftClick = true) {
 			// If left-clicking, there is no point in changing the page to the one the player is already on
 			// If right-clicking, we cannot compare the record to itself
 			if (RecordPageType == type)
@@ -973,13 +984,13 @@ namespace BossChecklist
 
 			if (!leftClick) {
 				// If it is already the compare state, reset the compare state to off. Otherwise, just set it to the selected type.
-				CompareState = CompareState == type ? RecordCategory.None : type;
+				CompareState = CompareState == type ? SubCategory.None : type;
 			}
 			else {
 				if (CompareState == type) {
-					CompareState = RecordCategory.None; // If switching to the compared state, reset compare state to off.
+					CompareState = SubCategory.None; // If switching to the compared state, reset compare state to off.
 				}
-				UpdateSelectedPage(PageNum, CategoryPageType, type); // update the record category to the new type
+				UpdateSelectedPage(PageNum, SelectedSubPage, type); // update the record category to the new type
 			}
 		}
 
@@ -1149,13 +1160,13 @@ namespace BossChecklist
 		/// <param name="pageNum">The page you want to switch to.</param>
 		/// <param name="catPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist. Defaults to the record page.</param>
 		/// <param name="altPage">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
-		public void UpdateSelectedPage(int pageNum, CategoryPage catPage = CategoryPage.Record, RecordCategory altPage = RecordCategory.None) {
+		public void UpdateSelectedPage(int pageNum, SubPage catPage = SubPage.Record, SubCategory altPage = SubCategory.None) {
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
 			
 			// Only on boss pages does updating the category page matter
 			if (PageNum >= 0) {
-				CategoryPageType = catPage;
-				if (altPage != RecordCategory.None) {
+				SelectedSubPage = catPage;
+				if (altPage != SubCategory.None) {
 					RecordPageType = altPage;
 				}
 			}
@@ -1178,13 +1189,13 @@ namespace BossChecklist
 				UpdateCredits();
 			}
 			else {
-				if (CategoryPageType == CategoryPage.Record) {
+				if (SelectedSubPage == SubPage.Record) {
 					OpenRecord();
 				}
-				else if (CategoryPageType == CategoryPage.Spawn) {
+				else if (SelectedSubPage == SubPage.Spawn) {
 					OpenSpawn();
 				}
-				else if (CategoryPageType == CategoryPage.Loot) {
+				else if (SelectedSubPage == SubPage.Loot) {
 					OpenLoot();
 				}
 			}
@@ -1563,24 +1574,21 @@ namespace BossChecklist
 			// Set up the record type navigation buttons
 			// Only bosses have records (Events will have banners of the enemies in the event drawn on it)
 			// The entry also must be fully supported to have these buttons created
-			if (entry.modSource != "Unknown" && CategoryPageType == CategoryPage.Record && entry.type == EntryType.Boss) {
+			if (entry.modSource != "Unknown" && SelectedSubPage == SubPage.Record && entry.type == EntryType.Boss) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				bool noKills = modPlayer.RecordsForWorld[entry.GetRecordIndex].stats.kills == 0; // has the player killed this boss before?
 				// If a boss record does not have the selected subcategory type, it should default back to previous attempt.
-				if (noKills && RecordPageType != RecordCategory.PreviousAttempt && RecordPageType != RecordCategory.WorldRecord) {
-					RecordPageType = RecordCategory.PreviousAttempt;
+				if (noKills && RecordPageType != SubCategory.PreviousAttempt && RecordPageType != SubCategory.WorldRecord) {
+					RecordPageType = SubCategory.PreviousAttempt;
 				}
 
 				// iterate through the buttons
 				for (int i = 0; i < AltPageButtons.Length; i++) {
-					if ((i == (int)RecordCategory.BestRecord || i == (int)RecordCategory.FirstRecord) && noKills)
+					if ((i == (int)SubCategory.BestRecord || i == (int)SubCategory.FirstRecord) && noKills)
 						continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-
-					AltPageButtons[i].Width.Pixels = 25;
-					AltPageButtons[i].Height.Pixels = 25;
 					int offset = noKills ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12; // offset needed if best record and first record are missing
-					AltPageButtons[i].Left.Pixels = lootButton.Left.Pixels + ((i - 2) * 25) + offset + (i >= 2 ? lootButton.Width.Pixels : 0);
-					AltPageButtons[i].Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - 11;
+					AltPageButtons[i].Left.Pixels = (int)lootButton.Left.Pixels + ((i - 2) * 28) + offset + (i >= 2 ? (int)lootButton.Width.Pixels : 0);
+					AltPageButtons[i].Top.Pixels = (int)lootButton.Top.Pixels + (int)lootButton.Height.Pixels / 2 - 11;
 					PageTwo.Append(AltPageButtons[i]);
 				}
 			}
