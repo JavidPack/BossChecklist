@@ -297,7 +297,7 @@ namespace BossChecklist
 					if (NPCAssist.FullyInactive(npc, entry.GetIndex)) {
 						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
 						string message = NPCAssist.GetDespawnMessage(npc, entry.GetIndex);
-						if (string.IsNullOrEmpty(message)) {
+						if (!string.IsNullOrEmpty(message)) {
 							if (Main.netMode == NetmodeID.SinglePlayer) {
 								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
 							}

@@ -293,9 +293,8 @@ namespace BossChecklist
 			Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
 
 			string bossCustomKillMessage = $"Mods.BossChecklist.BossVictory.{nameKey}";
-			if (Language.GetTextValue(bossCustomKillMessage) == bossCustomKillMessage) {
-				// If the provided key wasn't found, default to the generic key
-				bossCustomKillMessage = $"Mods.BossChecklist.BossVictory.Generic";
+			if (!Language.Exists(bossCustomKillMessage)) {
+				bossCustomKillMessage = $"Mods.BossChecklist.BossVictory.Generic"; // If the provided key wasn't found, default to the generic key
 			}
 
 			Func<NPC, string> customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? "Mods.BossChecklist.BossDespawn.Day" : "Mods.BossChecklist.BossDespawn.Generic";
