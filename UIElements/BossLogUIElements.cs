@@ -1733,9 +1733,8 @@ namespace BossChecklist.UIElements
 			const float infoScaleY = 1f;
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle hitbox = new Rectangle((int)GetInnerDimensions().X, (int)GetInnerDimensions().Y, (int)Width.Pixels, 100);
-
-				string translation = Language.GetTextValue(text);
-				TextSnippet[] textSnippets = ChatManager.ParseMessage(translation, Color.White).ToArray();
+;
+				TextSnippet[] textSnippets = ChatManager.ParseMessage(Language.GetTextValue(text), Color.White).ToArray();
 				ChatManager.ConvertNormalSnippets(textSnippets);
 
 				foreach (Vector2 direction in ChatManager.ShadowDirections) {
@@ -1750,11 +1749,13 @@ namespace BossChecklist.UIElements
 
 		internal class SubpageButton : UIImage
 		{
+			Asset<Texture2D> texture;
 			string buttonText;
 			readonly int subpageNum;
 			readonly int altPageNum;
 
 			public SubpageButton(Asset<Texture2D> texture, int type, string text) : base(texture) {
+				this.texture = texture;
 				buttonText = text;
 				if (text.Contains("DrawnText")) {
 					subpageNum = type;
@@ -1790,11 +1791,13 @@ namespace BossChecklist.UIElements
 				if (altPageNum >= 0) {
 					if (BossLogUI.SelectedSubPage == SubPage.Record) {
 						if (altPageNum == (int)BossLogUI.RecordPageType) {
+							spriteBatch.Draw(texture.Value, inner, Color.LemonChiffon);
 							Texture2D pointer = TextureAssets.Cursors[4].Value;
 							Vector2 iconPos = new Vector2(inner.Right - pointer.Width / 2 - 2, inner.Bottom - pointer.Height / 2 - 2);
 							spriteBatch.Draw(pointer, iconPos, Color.White);
 						}
 						else if (altPageNum == (int)BossLogUI.CompareState) {
+							spriteBatch.Draw(texture.Value, inner, Color.LightCyan);
 							Texture2D glass = TextureAssets.Cursors[2].Value;
 							Vector2 iconPos = new Vector2(inner.Right - glass.Width / 2 - 2, inner.Bottom - glass.Height / 2 - 2);
 							spriteBatch.Draw(glass, iconPos, Color.White);
