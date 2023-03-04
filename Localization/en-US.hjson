@@ -103,6 +103,7 @@ Mods: {
 				ViewLoot: Click to view all loot
 				ItemIsExpertOnly: This item is only obtainable in expert mode
 				ItemIsMasterOnly: This item is only obtainable in master mode
+				ItemIsLocked: This item has special requirements to unlock
 				CopyKey: Click to copy internal 'boss key' to clipboard
 				CopySource: Click to copy internal 'mod source' to clipboard
 				ViewPage: Click to view page
@@ -112,7 +113,7 @@ Mods: {
 				AllLoot: All boss loot obtained!
 				AllDropLoot: All non-collectible boss loot obtained!
 				AllCollectibles: All boss collectibles Obtained!
-				MaskedItems: Defeat {0} to view obtainable loot and collectibles
+				MaskedItems: Defeat this entry to view its loot and collectibles
 				KDRDescription: Total times you have encountered this boss!
 				BestKDRDescription: Total times you killed this boss and total times this boss has killed you!
 				FirstKDRDescription: Total play time your character has been active, up until the first boss kill!

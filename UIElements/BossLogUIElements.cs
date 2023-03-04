@@ -194,174 +194,182 @@ namespace BossChecklist.UIElements
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
+				Rectangle inner = GetInnerDimensions().ToRectangle();
 				float oldScale = Main.inventoryScale;
 				Main.inventoryScale = scale;
-				Rectangle rectangle = GetInnerDimensions().ToRectangle();
-
-				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossUISystem.Instance.BossLog.PageNum];
-				bool maskedItems = BossChecklist.BossLogConfig.MaskBossLoot || (BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && selectedBoss.progression > BossTracker.WallOfFlesh);
-
-				// Make backups of the original itemslot textures, as we will replace them temporarily for our visuals
-				var backup2 = TextureAssets.InventoryBack7;
-				if (Id.StartsWith("loot_")) {
-					if (maskedItems && !selectedBoss.IsDownedOrForced) {
-						// Boss Silhouettes always makes itemslot background red, reguardless of obtainable
-						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
-					}
-					else if (hasItem) {
-						// Otherwise, if the item is obtained make the itemslot background green
-						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
-					}
-					else if ((item.expert && !Main.expertMode) || (item.master && !Main.masterMode)) {
-						// If not obtained and the item is mode restricted, itemslot background is red
-						TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
-					}
-					// Otherwise, any unobtained items use the original trash-itemslot background color
-				}
 
 				bool isDemonAltar = hoverText == Language.GetTextValue("MapObject.DemonAltar");
 				bool isCrimsonAltar = hoverText == Language.GetTextValue("MapObject.CrimsonAltar");
+				bool byHand = hoverText == Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand");
 
-				if (maskedItems && !selectedBoss.IsDownedOrForced && Id.StartsWith("loot_")) {
-					item.color = Color.Black;
-					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
-					item.color = default; // Item color needs to be reset back to it's default state
-					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
-					string altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.MaskedItems", selectedBoss.DisplayName);
-					Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
-					if ((item.expert || item.expertOnly) && !Main.expertMode) {
-						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
-						altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly");
+				if (item.type == ItemID.None && !isDemonAltar && !isCrimsonAltar)
+					return; // blank item slots should not be drawn
+
+				if (!Id.StartsWith("loot_")) {
+					ItemSlot.Draw(spriteBatch, ref item, context, inner.TopLeft());
+					Main.inventoryScale = oldScale;
+
+					// Draws the evil altars in the designated slots if needed
+					if (isCrimsonAltar || isDemonAltar) {
+						Main.instance.LoadTiles(TileID.DemonAltar);
+						int offsetX = 0;
+						int offsetY = 0;
+						int offsetSrc = isCrimsonAltar ? 3 : 0;
+						for (int i = 0; i < 6; i++) {
+							float scale = 0.64f;
+							Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
+							// Determine the position of EACH tile of the selected altar (multi-tile, 3x2)
+							float posX = inner.X + (inner.Width / 2) - (src.Width * scale / 2) + (src.Width * scale * (offsetX - 1));
+							float posY = inner.Y + (inner.Height / 2) - (src.Height * scale / 2) + (src.Height * scale / 2 * (offsetY == 0 ? -1 : 1));
+							Vector2 pos2 = new Vector2(posX, posY);
+							spriteBatch.Draw(TextureAssets.Tile[TileID.DemonAltar].Value, pos2, src, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+							offsetX++;
+							if (offsetX == 3) {
+								offsetX = 0;
+								offsetY++;
+							}
+						}
 					}
-					if ((item.master || item.masterOnly) && !Main.masterMode) {
-						spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
-						altHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly");
-					}
+
+					// Hover text
 					if (IsMouseHovering) {
-						BossUISystem.Instance.UIHoverText = altHoverText;
-					}
-					return; // The remaining logic isn't needed when the item is masked (hidden), so end draw code here
-				}
-				else if (item.type != ItemID.None || isDemonAltar || isCrimsonAltar) {
-					if (item.color == Color.Black) {
-						item.color = default;
-					}
-					ItemSlot.Draw(spriteBatch, ref item, context, rectangle.TopLeft());
-					TextureAssets.InventoryBack7 = backup2; // Set the itemslot textures back to their original state
-				}
-
-				// Draws the evil altars in the designated slots if needed
-				if (isCrimsonAltar || isDemonAltar) {
-					Main.instance.LoadTiles(TileID.DemonAltar);
-					int offsetX = 0;
-					int offsetY = 0;
-					int offsetSrc = isCrimsonAltar ? 3 : 0;
-					for (int i = 0; i < 6; i++) {
-						float scale = 0.64f;
-						Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
-						// Determine the position of EACH tile of the selected altar (multi-tile, 3x2)
-						float posX = rectangle.X + (rectangle.Width / 2) - (src.Width * scale / 2) + (src.Width * scale * (offsetX - 1));
-						float posY = rectangle.Y + (rectangle.Height / 2) - (src.Height * scale / 2) + (src.Height * scale / 2 * (offsetY == 0 ? -1 : 1));
-						Vector2 pos = new Vector2(posX, posY);
-						spriteBatch.Draw(TextureAssets.Tile[TileID.DemonAltar].Value, pos, src, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-
-						offsetX++;
-						if (offsetX == 3) {
-							offsetX = 0;
-							offsetY++;
-						}
-					}
-				}
-				
-				Rectangle rect = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 22, 20);
-				if (item.type != ItemID.None && Id.StartsWith("loot_")) {
-					// Draw collectible border
-					if (selectedBoss.collection.Contains(item.type)) {
-						string texturePath = "BossChecklist/Resources/Extra_HighlightedCollectible";
-						Asset<Texture2D> border = ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad);
-						spriteBatch.Draw(border.Value, rectangle.TopLeft(), Color.White);
-					}
-					if (hasItem) {
-						// Obtainability check take priority over any expert/master mode restriction
-						if (!maskedItems || (maskedItems && selectedBoss.IsDownedOrForced)) {
-							spriteBatch.Draw(BossLogUI.checkMarkTexture.Value, rect, Color.White);
-						}
-					}
-					else {
-						Rectangle rect2 = new Rectangle(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2, 32, 32);
-						if (item.expert && !Main.expertMode) {
-							spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyExpert").Value, rect2, Color.White);
-						}
-						if (item.master && !Main.masterMode) {
-							spriteBatch.Draw(ModContent.Request<Texture2D>("Terraria/Images/UI/WorldCreation/IconDifficultyMaster").Value, rect2, Color.White);
-						}
-					}
-				}
-
-				if (Id.StartsWith("loot_") && BossChecklist.DebugConfig.ShowCollectionType) {
-					selectedBoss.collectType.TryGetValue(item.type, out CollectionType type);
-
-					if (type != CollectionType.Generic) {
-						string showType = "";
-						Texture2D showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
-						if (type == CollectionType.Trophy) {
-							showType = "Trophy";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
-						}
-						else if (type == CollectionType.MusicBox) {
-							showType = "Music";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Music").Value;
-						}
-						else if (type == CollectionType.Mask) {
-							showType = "Mask";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Mask").Value;
-						}
-						else if (type == CollectionType.Pet) {
-							showType = "Pet";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet").Value;
-						}
-						else if (type == CollectionType.Mount) {
-							showType = "Mount";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet").Value;
-						}
-						else if (type == CollectionType.Relic) {
-							showType = "Relic";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy").Value;
-						}
-
-						Rectangle rect2 = new Rectangle((int)rectangle.BottomLeft().X - 4, (int)rectangle.BottomLeft().Y - 15, 22, 20);
-						spriteBatch.Draw(showIcon, rect2, Color.White);
-						if (IsMouseHovering) {
-							Utils.DrawBorderString(spriteBatch, showType, rectangle.TopLeft(), Colors.RarityAmber, 0.8f);
-						}
-					}
-				}
-
-				// When hovering, determine what the hovertext should be
-				if (IsMouseHovering) {
-					if (isCrimsonAltar || isDemonAltar || hoverText == Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand")) {
-						BossUISystem.Instance.UIHoverText = hoverText; // 'Demon/Crimson Altar' or 'by Hand' should just show their normal hoverText
-					}
-					else if (item.type != ItemID.None) {
-						// All items should show their normal tooltips, unless unobtainable
-						if (!Main.expertMode && (item.expert || item.expertOnly) && !hasItem) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
-							BossUISystem.Instance.UIHoverTextColor = Main.DiscoColor;
-						}
-						else if (!Main.masterMode && (item.master || item.masterOnly) && !hasItem) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
-							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
+						if (isCrimsonAltar || isDemonAltar || byHand || item.type == ItemID.None) {
+							BossUISystem.Instance.UIHoverText = hoverText; // Empty item, default to hoverText if applicable
 						}
 						else {
 							Main.HoverItem = item;
 							Main.hoverItemName = item.HoverName;
 						}
 					}
-					else {
-						BossUISystem.Instance.UIHoverText = hoverText; // Empty item, default to hoverText if applicable
+
+					return; // This should cover everything for item slots in the Spawn subpage (spawn item slot, recipe slots, and empty tile slots)
+				}
+
+				/// Everything below is being set up for loot related itemslots ///
+				BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[BossUISystem.Instance.BossLog.PageNum];
+				bool hardModeMasked = BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && selectedBoss.progression > BossTracker.WallOfFlesh;
+				bool progressRestricted = !selectedBoss.IsDownedOrForced && (BossChecklist.BossLogConfig.MaskBossLoot || hardModeMasked);
+				bool expertRestricted = item.expert && !Main.expertMode;
+				bool masterRestricted = item.master && !Main.masterMode;
+				bool OWmusicRestricted = BossTracker.otherWorldMusicBoxTypes.Contains(item.type) && !BossLogUI.OtherworldUnlocked;
+
+				// Make a backups of the original itemslot texture and alter the texture to display the color needed
+				// If the config 'Hide boss drops' is enabled and the boss hasn't been defeated yet, the itemslot should appear red, even if the item was already obtained
+				// Otherwise, the itemslot will always appear green if obtained
+				// If not obtained and the item is mode or seed restricted, itemslot background is red
+				// Any other case should leave the itemslot color as is
+				var backup = TextureAssets.InventoryBack7;
+				Color oldColor = item.color;
+				if (progressRestricted) {
+					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
+					item.color = Color.Black; // item should be masked in a black silhouette
+				}
+				else if (hasItem) {
+					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
+				}
+				else if (expertRestricted || masterRestricted || expertRestricted) {
+					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
+				}
+				
+				// Draw the item slot and reset the fields to their original value
+				ItemSlot.Draw(spriteBatch, ref item, context, inner.TopLeft());
+				Main.inventoryScale = oldScale;
+				TextureAssets.InventoryBack7 = backup;
+				item.color = oldColor; // if the item was masked
+
+				// Draw golden border around items that are considered collectibles
+				if (selectedBoss.collection.Contains(item.type)) {
+					string texturePath = "BossChecklist/Resources/Extra_HighlightedCollectible";
+					Asset<Texture2D> border = ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad);
+					spriteBatch.Draw(border.Value, inner.TopLeft(), Color.White);
+				}
+
+				// Similar to the logic of deciding the itemslot color, decide what should be drawn and what text should show when hovering over
+				// Masked item takes priority, displaying 'Defeat this entry to show items'
+				// If the item has not been obtained, check for item restrictions and apply those icons and texts
+				// If no item restrictions exist, display normal item tooltips, and draw a checkmark for obtained items
+				Vector2 pos = new Vector2(inner.X + inner.Width / 2, inner.Y + inner.Height / 2);
+				if (progressRestricted) {
+					if (IsMouseHovering) {
+						BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.MaskedItems";
+						BossUISystem.Instance.UIHoverTextColor = Color.IndianRed;
 					}
 				}
-				Main.inventoryScale = oldScale;
+				else if (!hasItem) {
+					if (expertRestricted) {
+						spriteBatch.Draw(Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/IconDifficultyExpert").Value, pos, Color.White);
+						if (IsMouseHovering) {
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
+							BossUISystem.Instance.UIHoverTextColor = Main.DiscoColor;
+						}
+					}
+					else if (masterRestricted) {
+						spriteBatch.Draw(Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/IconDifficultyMaster").Value, pos, Color.White);
+						if (IsMouseHovering) {
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
+							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
+						}
+					}
+					else if (OWmusicRestricted) {
+						spriteBatch.Draw(Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/IconRandomSeed").Value, pos, Color.White);
+						if (IsMouseHovering) {
+							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsLocked";
+							BossUISystem.Instance.UIHoverTextColor = Color.Goldenrod; // mimics Master Mode color
+						}
+					}
+					else {
+						if (IsMouseHovering) {
+							Main.HoverItem = item;
+							Main.hoverItemName = item.HoverName;
+						}
+					}
+				}
+				else {
+					spriteBatch.Draw(BossLogUI.checkMarkTexture.Value, pos, Color.White);
+					if (IsMouseHovering) {
+						Main.HoverItem = item;
+						Main.hoverItemName = item.HoverName;
+					}
+				}
+
+				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
+				if (BossChecklist.DebugConfig.ShowCollectionType && selectedBoss.collection.Contains(item.type)) {
+					string showType = "Generic";
+					Asset<Texture2D> showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Generic");
+					if (selectedBoss.collectType.TryGetValue(item.type, out CollectionType type) && type != CollectionType.Generic) {
+						if (type == CollectionType.Trophy) {
+							showType = "Trophy";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy");
+						}
+						else if (type == CollectionType.MusicBox) {
+							showType = "Music";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Music");
+						}
+						else if (type == CollectionType.Mask) {
+							showType = "Mask";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Mask");
+						}
+						else if (type == CollectionType.Pet) {
+							showType = "Pet";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet");
+						}
+						else if (type == CollectionType.Mount) {
+							showType = "Mount";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet");
+						}
+						else if (type == CollectionType.Relic) {
+							showType = "Relic";
+							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy");
+						}
+					}
+
+					Vector2 iconPos = new Vector2((int)inner.BottomLeft().X - 4, (int)inner.BottomLeft().Y - 15);
+					spriteBatch.Draw(showIcon.Value, iconPos, Color.White);
+					if (IsMouseHovering) {
+						Utils.DrawBorderString(spriteBatch, showType, inner.TopLeft(), Colors.RarityAmber, 0.8f);
+					}
+				}
 			}
 		}
 

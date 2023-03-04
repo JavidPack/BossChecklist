@@ -92,6 +92,9 @@ namespace BossChecklist
 		public static int SpawnItemSelected = 0;
 		public static int RecipeSelected = 0;
 
+		// Loot page related
+		public static bool OtherworldUnlocked = false;
+
 		// Cropped Textures
 		public static Asset<Texture2D> bookTexture;
 		public static Asset<Texture2D> borderTexture;
@@ -1359,6 +1362,9 @@ namespace BossChecklist
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue; // Skip items that are master exclusive if not in an master world
 
+							if (!OtherworldUnlocked && BossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
+								continue;
+
 							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
 								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
 								break; // end further item checking
@@ -1858,6 +1864,15 @@ namespace BossChecklist
 					if (bossItems.Contains(loot.itemId) && (isCorruptionLocked || isCrimsonLocked)) {
 						bossItems.Remove(loot.itemId);
 					}
+				}
+			}
+
+			// If the boss items contains any otherworld music boxes
+			if (bossItems.Intersect(BossTracker.otherWorldMusicBoxTypes).Any()) {
+				FieldInfo TOWMusicUnlocked = typeof(Main).GetField("TOWMusicUnlocked", BindingFlags.Static | BindingFlags.NonPublic);
+				bool OWUnlocked = (bool)TOWMusicUnlocked.GetValue(null);
+				if (OtherworldUnlocked != OWUnlocked) {
+					OtherworldUnlocked = OWUnlocked;
 				}
 			}
 
