@@ -226,16 +226,16 @@ namespace BossChecklist
 		internal void FinalizeCollectionTypes() {
 			foreach (BossInfo boss in SortedBosses) {
 				foreach (int type in boss.collection) {
-					if (!ContentSamples.ItemsByType.TryGetValue(type, out Item temp)) {
+					if (!ContentSamples.ItemsByType.TryGetValue(type, out Item temp))
 						continue;
-					}
+
 					if (temp.headSlot > 0 && temp.vanity) {
 						boss.collectType.Add(type, CollectionType.Mask);
 					}
 					else if (vanillaMusicBoxTypes.Contains(type) || otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
 						boss.collectType.Add(type, CollectionType.MusicBox);
 					}
-					else if (temp.master && temp.shoot > ProjectileID.None && temp.buffType > 0) {
+					else if (Main.projPet[temp.shoot] || ProjectileID.Sets.LightPet[temp.shoot]) {
 						boss.collectType.Add(type, CollectionType.Pet);
 					}
 					else if (temp.master && temp.mountType > MountID.None) {
