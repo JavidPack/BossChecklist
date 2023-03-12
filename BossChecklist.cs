@@ -19,7 +19,7 @@ namespace BossChecklist
 		internal static BossTracker bossTracker;
 		internal static ModKeybind ToggleChecklistHotKey;
 		public static ModKeybind ToggleBossLog;
-		private string LastVanillaProgressionReveision = "v1.4.0"; // This should be updated whenever a vanilla progression value is changed, or if another vanilla boss is added.
+		private string LastVanillaProgressionRevision = "v1.4.0"; // This should be updated whenever a vanilla progression value is changed, or if another vanilla boss is added.
 
 		public static Dictionary<int, int> itemToMusicReference;
 
@@ -69,7 +69,7 @@ namespace BossChecklist
 			}
 			*/
 
-			Logger.Info($"Progression values for vanilla entries have been last updated on BossChecklist {LastVanillaProgressionReveision}");
+			Logger.Info($"Progression values for vanilla entries have been last updated on BossChecklist {LastVanillaProgressionRevision}");
 			if (!DebugConfig.ModCallLogVerbose)
 				Logger.Info("Boss Log integration messages will not be logged.");
 		}

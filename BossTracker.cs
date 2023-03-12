@@ -58,7 +58,7 @@ namespace BossChecklist
 
 		/// <summary>
 		/// All currently loaded bosses/minibosses/events sorted by progression.
-		/// When updating vanilla progression values, please also update the version number of <see cref="BossChecklist.LastVanillaProgressionReveision"/>.
+		/// When updating vanilla progression values, please also update the version number of <see cref="BossChecklist.LastVanillaProgressionRevision"/>.
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
 		internal bool[] BossCache;
