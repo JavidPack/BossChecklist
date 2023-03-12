@@ -28,9 +28,9 @@ namespace BossChecklist
 		public const float SkeletronPrime = 11f;
 		public const float Plantera = 12f;
 		public const float Golem = 13f;
-		public const float Betsy = 14f;
+		public const float DukeFishron = 14f;
 		public const float EmpressOfLight = 15f;
-		public const float DukeFishron = 16f;
+		public const float Betsy = 16f;
 		public const float LunaticCultist = 17f;
 		public const float Moonlord = 18f;
 
@@ -45,19 +45,20 @@ namespace BossChecklist
 		public const float PirateInvasion = 7.66f;
 		public const float PirateShip = PirateInvasion + 0.01f;
 		public const float SolarEclipse = 11.5f;
-		public const float PumpkinMoon = 12.33f;
+		public const float PumpkinMoon = 13.25f;
 		public const float MourningWood = PumpkinMoon + 0.01f;
 		public const float Pumpking = PumpkinMoon + 0.02f;
-		public const float FrostMoon = 12.66f;
+		public const float FrostMoon = 13.5f;
 		public const float Everscream = FrostMoon + 0.01f;
 		public const float SantaNK1 = FrostMoon + 0.02f;
 		public const float IceQueen = FrostMoon + 0.03f;
-		public const float MartianMadness = 13.5f;
+		public const float MartianMadness = 13.75f;
 		public const float MartianSaucer = MartianMadness + 0.01f;
 		public const float LunarEvent = LunaticCultist + 0.01f; // Happens immediately after the defeation of the Lunatic Cultist
 
 		/// <summary>
 		/// All currently loaded bosses/minibosses/events sorted by progression.
+		/// When updating vanilla progression values, please also update the version number of <see cref="BossChecklist.LastVanillaProgressionReveision"/>.
 		/// </summary>
 		internal List<BossInfo> SortedBosses;
 		internal bool[] BossCache;
