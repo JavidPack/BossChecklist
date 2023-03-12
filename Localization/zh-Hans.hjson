@@ -103,6 +103,7 @@ Mods: {
 				ViewLoot: 点击以显示所有掉落物
 				ItemIsExpertOnly: 此物品仅在专家模式下可获得
 				ItemIsMasterOnly: 此物品仅在大师模式下可获得
+				ItemIsLocked: 此物品仅在满足特殊需求后解锁
 				CopyKey: 点击以复制内部'Boss键值'至剪切板
 				CopySource: 点击以复制内部'Mod源'至剪切板
 				ViewPage: 点击以查看页面
@@ -112,7 +113,7 @@ Mods: {
 				AllLoot: 已获得所有的战利品!
 				AllDropLoot: 已获得所有非收藏品的战利品!
 				AllCollectibles: 已获得所有的收藏品!
-				MaskedItems: 击败{0}以查看可获得的战利品和收藏品
+				MaskedItems: 击败实体以查看其战利品和收藏品
 				KDRDescription: 你遭遇该Boss的总次数!
 				BestKDRDescription: 你击败该Boss和该Boss击败你的总次数!
 				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间!
@@ -364,7 +365,7 @@ Mods: {
 			}
 
 			Notice: {
-				InvalidChange: 你不能在任何一个Boss存在时启用这个!
+				InvalidChange: 你不能在{0}存在时更改该配置!
 				HostChange: 仅允许主机更改此配置.
 			}
 		}
