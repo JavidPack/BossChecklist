@@ -183,12 +183,13 @@ namespace BossChecklist
 				// Mark the player as having opened the Log if they have not been so already
 				if (!modPlayer.hasOpenedTheBossLog) {
 					modPlayer.hasOpenedTheBossLog = true; // This will only ever happen once per character
+					modPlayer.enteredWorldReset = false; // If opening for the first time, this doesn't need to occur again until the next world reset
 
 					// When opening for the first time, check if the Progression Mode prompt is enabled and provide the prompt
 					// If the prompt is disabled, just set the page to the Table of Contents.
 					// TODO: Disabled progression mode related stuff until it is reworked on until an issue with player data is resolved
 					// TODO: remove false from if statement once fixed
-					if (!BossChecklist.BossLogConfig.PromptDisabled && false) {
+					if (!BossChecklist.BossLogConfig.PromptDisabled) {
 						PageNum = Page_Prompt; // All page logic is handled in this method, so return afterwards.
 					}
 					else {
@@ -892,8 +893,7 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.MaskHardMode = false;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
-			PageNum = Page_TableOfContents;
-			ToggleBossLog(true);
+			PageNum = Page_TableOfContents; // switch page to Table of Contents when clicked
 		}
 
 		/// <summary>
@@ -907,8 +907,7 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.MaskHardMode = true;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
-			PageNum = Page_TableOfContents;
-			ToggleBossLog(true);
+			PageNum = Page_TableOfContents; // switch page to Table of Contents when clicked
 		}
 
 		/// <summary>
