@@ -892,7 +892,6 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.MaskHardMode = false;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
 			PageNum = Page_TableOfContents;
 			ToggleBossLog(true);
 		}
@@ -908,7 +907,6 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.MaskHardMode = true;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
 			PageNum = Page_TableOfContents;
 			ToggleBossLog(true);
 		}
@@ -918,7 +916,6 @@ namespace BossChecklist
 		/// </summary>
 		public void CloseAndConfigure() {
 			ToggleBossLog(false);
-			Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog = true;
 			PageNum = Page_TableOfContents;
 
 			// A whole bunch of janky code to show the config and scroll down.
