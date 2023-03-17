@@ -1874,18 +1874,14 @@ namespace BossChecklist
 
 			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
 			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
-			LootRow newRow = new LootRow(0) {
-				Id = "Loot0"
-			}; // the initial row to start with
+			LootRow newRow = new LootRow(0); // the initial row to start with
 
 			foreach (int item in bossItems) {
 				Item selectedItem = ContentSamples.ItemsByType[item];
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
 				// Create an item slot for the current item
-				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem) {
-					Id = "loot_" + item
-				};
+				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem);
 				itemSlot.Width.Pixels = slotRectRef.Width;
 				itemSlot.Height.Pixels = slotRectRef.Height;
 				itemSlot.Left.Pixels = (col * 56) + 15;
@@ -1898,9 +1894,7 @@ namespace BossChecklist
 					col = 0;
 					row++;
 					pageTwoItemList.Add(newRow);
-					newRow = new LootRow(row) {
-						Id = "Loot" + row
-					};
+					newRow = new LootRow(row);
 				}
 			}
 

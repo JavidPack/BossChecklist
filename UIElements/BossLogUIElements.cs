@@ -375,9 +375,7 @@ namespace BossChecklist.UIElements
 
 		internal class LootRow : UIElement
 		{
-			public string Id { get; init; } = "";
-			// Had to put the itemslots in a row in order to be put in a UIList with scroll functionality
-			readonly int order;
+			readonly int order; // Had to put the itemslots in a row in order to be put in a UIList with scroll functionality
 
 			public LootRow(int order) {
 				this.order = order;
