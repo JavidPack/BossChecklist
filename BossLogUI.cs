@@ -1893,7 +1893,9 @@ namespace BossChecklist
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
 				// Create an item slot for the current item
-				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem);
+				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem) {
+					Id = "loot_" + item
+				};
 				itemSlot.Width.Pixels = slotRectRef.Width;
 				itemSlot.Height.Pixels = slotRectRef.Height;
 				itemSlot.Left.Pixels = (col * 56) + 15;
