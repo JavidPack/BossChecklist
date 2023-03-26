@@ -167,7 +167,6 @@ namespace BossChecklist.UIElements
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
 				base.DrawSelf(spriteBatch);
 				if (IsMouseHovering && !string.IsNullOrEmpty(hoverText)) {
-					BossLogPanel.headNum = -1; // Fixes PageTwo head drawing when clicking on ToC boss and going back to ToC
 					BossUISystem.Instance.UIHoverText = Language.GetTextValue(hoverText); // Display the hover text in a tooltip-like box
 				}
 			}
@@ -427,7 +426,6 @@ namespace BossChecklist.UIElements
 		internal class BossLogPanel : UIElement
 		{
 			public string Id { get; init; } = "";
-			public static int headNum = -1;
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
@@ -473,23 +471,6 @@ namespace BossChecklist.UIElements
 						Vector2 stringSize = FontAssets.DeathText.Value.MeasureString(message) * textScale;
 						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 15);
 						Utils.DrawBorderStringBig(spriteBatch, message, pos, Colors.RarityAmber, textScale);
-					}
-
-					if (!IsMouseHovering) {
-						headNum = -1;
-					}
-
-					if (headNum != -1) {
-						BossInfo headBoss = BossChecklist.bossTracker.SortedBosses[headNum];
-						int headsDisplayed = 0;
-						int offset = 0;
-						Color maskedHead = BossLogUI.MaskBoss(headBoss);
-						foreach (Asset<Texture2D> headIcon in headBoss.headIconTextures) {
-							Texture2D head = headIcon.Value;
-							headsDisplayed++;
-							spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * offset), Main.mouseY + 15, head.Width, head.Height), maskedHead);
-							offset++;
-						}
 					}
 				}
 				else if (selectedLogPage == BossLogUI.Page_Credits) {
@@ -1494,6 +1475,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {
+				BossLogUI.headNum = Index;
 				if (BossChecklist.DebugConfig.ShowProgressionValue) {
 					SetText($"[{order}f] {displayName}");
 				}
@@ -1501,6 +1483,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void MouseOut(UIMouseEvent evt) {
+				BossLogUI.headNum = -1; // MouseOut will occur even if the element is removed when changing pages!
 				SetText(displayName);
 				base.MouseOut(evt);
 			}
@@ -1533,10 +1516,6 @@ namespace BossChecklist.UIElements
 					}
 					else {
 						TextColor = IsMouseHovering ? Color.Silver : Color.White; // Disabled colored text
-					}
-
-					if (IsMouseHovering) {
-						BossLogPanel.headNum = Index;
 					}
 				}
 

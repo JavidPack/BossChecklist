@@ -31,7 +31,7 @@ namespace BossChecklist
 
 		private int BossLogPageNumber;
 		public const int Page_TableOfContents = -1;
-		public const int Page_Credits = -2; // Even though its -2, the credits page appears last, after all entries
+		public const int Page_Credits = -2; // The credits page is the last page after all entries, despite being -2
 		public const int Page_Prompt = -3;
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace BossChecklist
 				if (value == -3) {
 					OpenProgressionModePrompt();
 				}
-				else { 
+				else {
 					UpdateSelectedPage(value, SelectedSubPage);
 				}
 			}
@@ -127,6 +127,9 @@ namespace BossChecklist
 		public static Asset<Texture2D> firstRecordTexture;
 		public static Asset<Texture2D> worldRecordTexture;
 		public static Asset<Texture2D> creditModSlot;
+
+		// Extra stuff
+		public static int headNum = -1;
 		public static Rectangle slotRectRef; // just grabs the size of a normal inventory slot
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 		public UIImage PromptCheck; // checkmark for the toggle prompt config button
@@ -514,6 +517,18 @@ namespace BossChecklist
 					hoveredTextSnippet.OnClick();
 				}
 				hoveredTextSnippet = null;
+			}
+
+			if (headNum != -1) {
+				BossInfo entry = BossChecklist.bossTracker.SortedBosses[headNum];
+				int headsDisplayed = 0;
+				int offset = 0;
+				foreach (Asset<Texture2D> headIcon in entry.headIconTextures) {
+					Texture2D head = headIcon.Value;
+					headsDisplayed++;
+					spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * offset), Main.mouseY + 15, head.Width, head.Height), MaskBoss(entry));
+					offset++;
+				}
 			}
 		}
 
