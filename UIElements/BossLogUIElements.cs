@@ -435,12 +435,11 @@ namespace BossChecklist.UIElements
 				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
-					// Needed to remove mousetext from outside sources when using the Boss Log
 					Main.player[Main.myPlayer].mouseInterface = true;
 					HideMouseOverInteractions();
 				}
 
-				if (selectedLogPage == -3) {
+				if (selectedLogPage == BossLogUI.Page_Prompt) {
 					if (Id == "PageOne") {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
 						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.BeforeYouBegin");
@@ -460,7 +459,7 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 				}
-				if (selectedLogPage == -1) { // Table of Contents
+				else if (selectedLogPage == BossLogUI.Page_TableOfContents) {
 					if (Id == "PageOne") {
 						float textScale = 0.6f;
 						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
@@ -493,7 +492,7 @@ namespace BossChecklist.UIElements
 						}
 					}
 				}
-				else if (selectedLogPage == -2) {
+				else if (selectedLogPage == BossLogUI.Page_Credits) {
 					if (Id == "PageOne") {
 						// Mod Developers Credits
 						string specialThanks = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs");
