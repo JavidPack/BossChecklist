@@ -267,7 +267,7 @@ namespace BossChecklist.UIElements
 				else if (hasItem) {
 					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
 				}
-				else if (expertRestricted || masterRestricted || expertRestricted) {
+				else if (expertRestricted || masterRestricted || OWmusicRestricted) {
 					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
 				}
 				
@@ -648,7 +648,7 @@ namespace BossChecklist.UIElements
 						}
 					}
 					else if (Id == "PageTwo" && selectedBoss.modSource != "Unknown") {
-						if (BossLogUI.SelectedSubPage == 0) {
+						if (BossLogUI.SelectedSubPage == SubPage.Record) {
 							if (selectedBoss.type == EntryType.Boss) {
 								// Boss Records Subpage
 								Asset<Texture2D> construction = ModContent.Request<Texture2D>("Terraria/Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
