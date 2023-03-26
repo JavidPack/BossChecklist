@@ -521,13 +521,10 @@ namespace BossChecklist
 
 			if (headNum != -1) {
 				BossInfo entry = BossChecklist.bossTracker.SortedBosses[headNum];
-				int headsDisplayed = 0;
-				int offset = 0;
+				int headOffset = 0;
 				foreach (Asset<Texture2D> headIcon in entry.headIconTextures) {
-					Texture2D head = headIcon.Value;
-					headsDisplayed++;
-					spriteBatch.Draw(head, new Rectangle(Main.mouseX + 15 + ((head.Width + 2) * offset), Main.mouseY + 15, head.Width, head.Height), MaskBoss(entry));
-					offset++;
+					headOffset += headIcon.Value.Width + 2;
+					spriteBatch.Draw(headIcon.Value, new Vector2(Main.mouseX + 15 + headOffset, Main.mouseY + 15), MaskBoss(entry));
 				}
 			}
 		}
