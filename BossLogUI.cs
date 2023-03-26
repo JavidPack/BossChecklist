@@ -523,8 +523,8 @@ namespace BossChecklist
 				BossInfo entry = BossChecklist.bossTracker.SortedBosses[headNum];
 				int headOffset = 0;
 				foreach (Asset<Texture2D> headIcon in entry.headIconTextures) {
-					headOffset += headIcon.Value.Width + 2;
 					spriteBatch.Draw(headIcon.Value, new Vector2(Main.mouseX + 15 + headOffset, Main.mouseY + 15), MaskBoss(entry));
+					headOffset += headIcon.Value.Width + 2;
 				}
 			}
 		}
