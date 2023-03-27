@@ -389,8 +389,7 @@ namespace BossChecklist.UIElements
 		}
 
 		/// <summary>
-		/// Creates an image of a mod's icon when mod and file path are provided.
-		/// When hovering over the icon, the mod's display name is shown.
+		/// Creates an image of a mod's icon when with hovertext of the mod's display name.
 		/// </summary>
 		internal class ModIcon : UIImage {
 			readonly Asset<Texture2D> icon;
