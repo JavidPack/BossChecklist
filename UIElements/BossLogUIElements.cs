@@ -392,18 +392,13 @@ namespace BossChecklist.UIElements
 		/// Creates an image of a mod's icon when mod and file path are provided.
 		/// When hovering over the icon, the mod's display name is shown.
 		/// </summary>
-		internal class ModIcon : UIElement {
+		internal class ModIcon : UIImage {
 			readonly Asset<Texture2D> icon;
 			readonly string modName;
 
-			public ModIcon (string modName, string iconPath) {
+			public ModIcon (Asset<Texture2D> icon, string modName) : base(icon) {
+				this.icon = icon;
 				this.modName = modName;
-				if (iconPath == "BossChecklist/Resources/Extra_NoIcon") {
-					icon = ModContent.Request<Texture2D>(iconPath, AssetRequestMode.ImmediateLoad); // mods without icons use this texture instead
-				}
-				else {
-					icon = ModLoader.GetMod(modName).Assets.Request<Texture2D>(iconPath); // HasAsset check already done before added to Registered list
-				}
 			}
 
 			public override void Update(GameTime gameTime) {
@@ -413,9 +408,12 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				base.Draw(spriteBatch);
-
-				spriteBatch.Draw(icon.Value, GetInnerDimensions().ToRectangle(), Color.White); // innerDimensions will resize the icon to the needed size
+				if (icon.Size() == new Vector2(80, 80)) {
+					base.Draw(spriteBatch);
+				}
+				else {
+					spriteBatch.Draw(icon.Value, GetInnerDimensions().ToRectangle(), Color.White); // If the icon size is not 80x80, overwrite the drawing to the proper dimensions
+				}
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 					BossUISystem.Instance.UIHoverText = ModLoader.GetMod(modName).DisplayName;

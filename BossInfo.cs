@@ -223,10 +223,10 @@ namespace BossChecklist
 			if (modSource != "Unknown" && modSource != "Terraria" && ModLoader.TryGetMod(modSource, out Mod mod)) {
 				// Fetch icon texture
 				if (mod.HasAsset("icon")) {
-					BossUISystem.Instance.RegisteredMods.TryAdd(mod.Name, "icon");
+					BossUISystem.Instance.RegisteredMods.TryAdd(mod.Name, $"{mod.Name}/icon");
 				}
 				else if (mod.HasAsset("icon_workshop")) {
-					BossUISystem.Instance.RegisteredMods.TryAdd(mod.Name, "icon_workshop");
+					BossUISystem.Instance.RegisteredMods.TryAdd(mod.Name, $"{mod.Name}/icon_workshop");
 				}
 				else {
 					BossUISystem.Instance.RegisteredMods.TryAdd(mod.Name, "BossChecklist/Resources/Extra_NoIcon"); // backup plan for mods without icons

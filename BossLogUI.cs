@@ -1510,11 +1510,11 @@ namespace BossChecklist
 				newRow.Height.Pixels = creditModSlot.Value.Height;
 				pageTwoItemList.Add(newRow); // add the initial row to the page
 				foreach (KeyValuePair<string, string> mod in optedMods) {
-					ModIcon icon = new ModIcon(mod.Key, mod.Value);
-					icon.Width.Pixels = 90;
-					icon.Height.Pixels = 90;
-					icon.Left.Pixels = 4 + (col * 90) + (6 * (col + 1));
-					icon.Top.Pixels = 12;
+					ModIcon icon = new ModIcon(ModContent.Request<Texture2D>(mod.Value), mod.Key);
+					icon.Width.Pixels = 80;
+					icon.Height.Pixels = 80;
+					icon.Left.Pixels = 6 + (14 * (col + 1)) + (col * 80);
+					icon.Top.Pixels = 6 + 12;
 					newRow.Append(icon);
 
 					col++; // after each icon added, move to the next column
