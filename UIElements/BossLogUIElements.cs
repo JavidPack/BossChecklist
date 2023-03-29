@@ -291,7 +291,7 @@ namespace BossChecklist.UIElements
 				Vector2 pos = new Vector2(inner.X + inner.Width / 2, inner.Y + inner.Height / 2);
 				if (progressRestricted) {
 					if (IsMouseHovering) {
-						BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.MaskedItems";
+						BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.MaskedItems";
 						BossUISystem.Instance.UIHoverTextColor = Color.IndianRed;
 					}
 				}
@@ -299,21 +299,21 @@ namespace BossChecklist.UIElements
 					if (expertRestricted) {
 						spriteBatch.Draw(Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/IconDifficultyExpert").Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
+							BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.ItemIsExpertOnly";
 							BossUISystem.Instance.UIHoverTextColor = Main.DiscoColor;
 						}
 					}
 					else if (masterRestricted) {
 						spriteBatch.Draw(Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/IconDifficultyMaster").Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
+							BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.ItemIsMasterOnly";
 							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
 						}
 					}
 					else if (OWmusicRestricted) {
 						spriteBatch.Draw(Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/IconRandomSeed").Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ItemIsLocked";
+							BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.ItemIsLocked";
 							BossUISystem.Instance.UIHoverTextColor = Color.Goldenrod; // mimics Master Mode color
 						}
 					}
@@ -817,23 +817,23 @@ namespace BossChecklist.UIElements
 										if (Main.MouseScreen.Between(achPos.TopLeft(), achPos.BottomRight())) {
 											if (recordSlot == 1) {
 												if (BossLogUI.RecordPageType == SubCategory.PreviousAttempt) {
-													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.KDRDescription";
+													BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.KDRDescription";
 												}
 												else if (BossLogUI.RecordPageType == SubCategory.FirstRecord) {
-													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.FirstKDRDescription";
+													BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.FirstKDRDescription";
 												}
 												else if (BossLogUI.RecordPageType == SubCategory.BestRecord) {
-													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.BestKDRDescription";
+													BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.BestKDRDescription";
 												}
 												else if (BossLogUI.RecordPageType == SubCategory.WorldRecord) {
-													BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.GlobalKDRDescription";
+													BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.GlobalKDRDescription";
 												}
 											}
 											if (recordSlot == 2) {
-												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.DurationDescription";
+												BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.DurationDescription";
 											}
 											if (recordSlot == 3) {
-												BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.HitsTakenDescription";
+												BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.HitsTakenDescription";
 											}
 										}
 
@@ -1293,7 +1293,7 @@ namespace BossChecklist.UIElements
 						spriteBatch.Draw(texture, pos, texture.Bounds, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ProgressionModeIsEnabled";
+							BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.ProgressionModeIsEnabled";
 							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
 						}
 					}
@@ -1445,7 +1445,7 @@ namespace BossChecklist.UIElements
 						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
 					}
 					if (Id == "F_3") {
-						BossUISystem.Instance.UIHoverText = "$Mods.BossChecklist.BossLog.HoverText.ToggleVisibility";
+						BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.ToggleVisibility";
 					}
 				}
 			}
