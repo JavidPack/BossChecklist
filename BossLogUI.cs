@@ -83,7 +83,7 @@ namespace BossChecklist
 
 		// Record page related
 		public SubpageButton[] AltPageButtons;
-		public static SubCategory RecordPageType = SubCategory.PreviousAttempt;
+		public static SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public static SubCategory CompareState = SubCategory.None; // Compare record values to one another
 		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
 		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
@@ -990,7 +990,7 @@ namespace BossChecklist
 		public void HandleRecordTypeButton(SubCategory type, bool leftClick = true) {
 			// If left-clicking, there is no point in changing the page to the one the player is already on
 			// If right-clicking, we cannot compare the record to itself
-			if (RecordPageType == type)
+			if (RecordSubCategory == type)
 				return; // in either case, just do nothing
 
 			if (!leftClick) {
@@ -1178,7 +1178,7 @@ namespace BossChecklist
 			if (PageNum >= 0) {
 				SelectedSubPage = catPage;
 				if (altPage != SubCategory.None) {
-					RecordPageType = altPage;
+					RecordSubCategory = altPage;
 				}
 			}
 
@@ -1592,8 +1592,8 @@ namespace BossChecklist
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				bool noKills = modPlayer.RecordsForWorld[entry.GetRecordIndex].stats.kills == 0; // has the player killed this boss before?
 				// If a boss record does not have the selected subcategory type, it should default back to previous attempt.
-				if (noKills && RecordPageType != SubCategory.PreviousAttempt && RecordPageType != SubCategory.WorldRecord) {
-					RecordPageType = SubCategory.PreviousAttempt;
+				if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
+					RecordSubCategory = SubCategory.PreviousAttempt;
 				}
 
 				// iterate through the buttons
