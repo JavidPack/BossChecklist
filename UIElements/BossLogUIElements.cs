@@ -1728,14 +1728,14 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class SubpageButton : UIImage
+		internal class SubPageButton : UIImage
 		{
 			Asset<Texture2D> texture;
 			string buttonText;
 			readonly int subpageNum;
 			readonly int altPageNum;
 
-			public SubpageButton(Asset<Texture2D> texture, int type, string text) : base(texture) {
+			public SubPageButton(Asset<Texture2D> texture, int type, string text) : base(texture) {
 				this.texture = texture;
 				buttonText = text;
 				if (text.Contains("DrawnText")) {

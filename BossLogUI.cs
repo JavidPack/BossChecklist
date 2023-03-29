@@ -54,9 +54,9 @@ namespace BossChecklist
 		public UIImageButton PrevPage;
 
 		public static SubPage SelectedSubPage = SubPage.Record;
-		public SubpageButton recordButton;
-		public SubpageButton spawnButton;
-		public SubpageButton lootButton;
+		public SubPageButton recordButton;
+		public SubPageButton spawnButton;
+		public SubPageButton lootButton;
 
 		// Book Tabs
 		public BookUI ToCTab; // also used for the filter tab
@@ -82,7 +82,7 @@ namespace BossChecklist
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Record page related
-		public SubpageButton[] AltPageButtons;
+		public SubPageButton[] AltPageButtons;
 		public static SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public static SubCategory CompareState = SubCategory.None; // Compare record values to one another
 		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
@@ -440,7 +440,7 @@ namespace BossChecklist
 			hardmodeBar.Top.Pixels = NextPage.Top.Pixels + (NextPage.Height.Pixels / 2) - (hardmodeBar.Height.Pixels / 2);
 			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
-			recordButton = new SubpageButton(subpageTexture, (int)SubPage.Record, "Mods.BossChecklist.BossLog.DrawnText.Records");
+			recordButton = new SubPageButton(subpageTexture, (int)SubPage.Record, "Mods.BossChecklist.BossLog.DrawnText.Records");
 			recordButton.Width.Pixels = subpageTexture.Value.Width;
 			recordButton.Height.Pixels = subpageTexture.Value.Height;
 			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)recordButton.Width.Pixels - 8;
@@ -448,14 +448,14 @@ namespace BossChecklist
 			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Record);
 			recordButton.OnRightClick += (a, b) => ResetStats();
 
-			spawnButton = new SubpageButton(subpageTexture, (int)SubPage.Spawn, "Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
+			spawnButton = new SubPageButton(subpageTexture, (int)SubPage.Spawn, "Mods.BossChecklist.BossLog.DrawnText.SpawnInfo");
 			spawnButton.Width.Pixels = subpageTexture.Value.Width;
 			spawnButton.Height.Pixels = subpageTexture.Value.Height;
 			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
 			spawnButton.Top.Pixels = 5;
 			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Spawn);
 
-			lootButton = new SubpageButton(subpageTexture, (int)SubPage.Loot, "Mods.BossChecklist.BossLog.DrawnText.LootCollect");
+			lootButton = new SubPageButton(subpageTexture, (int)SubPage.Loot, "Mods.BossChecklist.BossLog.DrawnText.LootCollect");
 			lootButton.Width.Pixels = subpageTexture.Value.Width;
 			lootButton.Height.Pixels = subpageTexture.Value.Height;
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
@@ -463,23 +463,23 @@ namespace BossChecklist
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Loot);
 			lootButton.OnRightClick += RemoveItem;
 
-			SubpageButton PrevRecordButton = new SubpageButton(prevRecordTexture, (int)SubCategory.PreviousAttempt, "Mods.BossChecklist.BossLog.Terms.PreviousRecord");
+			SubPageButton PrevRecordButton = new SubPageButton(prevRecordTexture, (int)SubCategory.PreviousAttempt, "Mods.BossChecklist.BossLog.Terms.PreviousRecord");
 			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.PreviousAttempt);
 			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.PreviousAttempt, false);
 
-			SubpageButton BestRecordButton = new SubpageButton(bestRecordTexture, (int)SubCategory.BestRecord, "Mods.BossChecklist.BossLog.Terms.BestRecord");
+			SubPageButton BestRecordButton = new SubPageButton(bestRecordTexture, (int)SubCategory.BestRecord, "Mods.BossChecklist.BossLog.Terms.BestRecord");
 			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.BestRecord);
 			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.BestRecord, false);
 
-			SubpageButton FirstRecordButton = new SubpageButton(firstRecordTexture, (int)SubCategory.FirstRecord, "Mods.BossChecklist.BossLog.Terms.FirstRecord");
+			SubPageButton FirstRecordButton = new SubPageButton(firstRecordTexture, (int)SubCategory.FirstRecord, "Mods.BossChecklist.BossLog.Terms.FirstRecord");
 			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.FirstRecord);
 			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.FirstRecord, false);
 
-			SubpageButton WorldRecordButton = new SubpageButton(worldRecordTexture, (int)SubCategory.WorldRecord, "Mods.BossChecklist.BossLog.Terms.WorldRecord");
+			SubPageButton WorldRecordButton = new SubPageButton(worldRecordTexture, (int)SubCategory.WorldRecord, "Mods.BossChecklist.BossLog.Terms.WorldRecord");
 			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.WorldRecord);
 			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.WorldRecord, false);
 
-			AltPageButtons = new SubpageButton[] {
+			AltPageButtons = new SubPageButton[] {
 				PrevRecordButton,
 				BestRecordButton,
 				FirstRecordButton,
@@ -762,7 +762,7 @@ namespace BossChecklist
 			// Alt right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
 			// Alt right-click an item slot to remove that item from the selected boss page's loot/collection list
 			// Note: items removed are removed from ALL boss loot pages retroactively
-			if (listeningElement is SubpageButton) {
+			if (listeningElement is SubPageButton) {
 				modPlayer.BossItemsCollected.Clear();
 			}
 			else if (listeningElement is LogItemSlot slot) {
