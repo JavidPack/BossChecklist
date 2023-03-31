@@ -53,16 +53,16 @@ namespace BossChecklist
 
 	internal enum SubPage
 	{
-		Record,
-		Spawn,
-		Loot
+		Records,
+		SpawnInfo,
+		LootAndCollectibles
 	}
 
 	internal enum SubCategory
 	{
 		PreviousAttempt,
-		BestRecord,
-		FirstRecord,
+		PersonalBest,
+		FirstVictory,
 		WorldRecord,
 		None
 	}

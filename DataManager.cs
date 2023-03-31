@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Terraria.Localization;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
@@ -191,6 +193,141 @@ namespace BossChecklist
 				}
 			}
 		}
+
+		/// <summary>
+		/// Gets the personal kills and deaths of an entry record in a string format.
+		/// If the designated boss has not been killed nor has killed a player, 'Unchallenged' will be returned instead.
+		/// </summary>
+		public string GetKDR() {
+			string terms = "Mods.BossChecklist.BossLog.Terms";
+			if (kills == 0 && deaths == 0)
+				return Language.GetTextValue($"{terms}.Unchallenged");
+
+			return $"{kills} {Language.GetTextValue($"{terms}.Kills")} / {deaths} {Language.GetTextValue($"{terms}.Deaths")}";
+		}
+
+		/// <summary>
+		/// Gets the duration time of an entry record in a string format.
+		/// If the designated boss has not been defeated yet, 'No Record' will be returned instead.
+		/// </summary>
+		/// <param name="ticks">The about of ticks a fight took.</param>
+		/// <param name="sign">Only used when find a time difference using <see cref="TimeConversionDiff"/>.</param>
+		public static string TimeConversion(int ticks, string sign = "") {
+			if (ticks == -1)
+				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+
+			const int TicksPerSecond = 60;
+			const int TicksPerMinute = TicksPerSecond * 60;
+			int minutes = ticks / TicksPerMinute; // Minutes will still show if 0
+			float seconds = (float)(ticks - (float)(minutes * TicksPerMinute)) / TicksPerSecond;
+			return $"{sign}{minutes}:{seconds.ToString("00.00")}";
+		}
+
+		/// <summary>
+		/// Takes a duration record and compares it against another.
+		/// The result will be in a string format along with a symbol to represent the difference direction.
+		/// </summary>
+		/// <param name="recordTicks">The recorded amount of ticks that is being compared against.</param>
+		/// <param name="compareTicks">The amount of ticks from the compare value.</param>
+		/// <param name="diff">The color value that represents the record time difference. 
+		///		<list type="bullet">
+		///		<item><term>Red</term> <description>The time recorded is slower than the compare value (+)</description></item>
+		///		<item><term>Yellow</term> <description>No difference between the record's time (±)</description></item>
+		///		<item><term>Green</term> <description>The time recorded is faster than the compare value (-)</description></item></list>
+		/// </param>
+		public static string TimeConversionDiff(int recordTicks, int compareTicks, out Color diff) {
+			if (recordTicks == -1 || compareTicks == -1) {
+				diff = default;
+				return ""; // records cannot be compared
+			}
+
+			// A color and sign should be picked
+			int tickDiff = recordTicks - compareTicks;
+			string sign;
+			if (tickDiff > 0) {
+				sign = "+";
+				diff = Color.Red;
+			}
+			else if (tickDiff == 0) {
+				sign = "±";
+				diff = Color.Yellow;
+			}
+			else {
+				tickDiff *= -1;
+				sign = "-";
+				diff = Color.Green;
+			}
+
+			return TimeConversion(tickDiff, sign);
+		}
+
+		/// <summary>
+		/// Gets the hits taken entry record in a string format.
+		/// If the user's record is zero, 'No Hit!' will be returned instead.
+		/// Otherwise, if the entry has not been defeated yet, 'No Record' will be returned instead.
+		/// </summary>
+		/// <param name="count">The record being checked.</param>
+		public static string HitCount(int count) {
+			if (count == -1)
+				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+			
+			if (count == 0)
+				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoHit");
+			
+			return count.ToString();
+		}
+
+		/// <summary>
+		/// Takes a Hits Taken record and compares it against another.
+		/// The result will be in a string format along with a symbol to represent the difference direction.
+		/// </summary>
+		/// <param name="count">The recorded amount of hits that is being compared against.</param>
+		/// <param name="compareCount">The amount of hits from the compare value.</param>
+		/// <param name="diff">The color value that represents the record time difference. 
+		///		<list type="bullet">
+		///		<item><term>Red</term> <description>The time recorded is slower than the compare value (+)</description></item>
+		///		<item><term>Yellow</term> <description>No difference between the record's time (±)</description></item>
+		///		<item><term>Green</term> <description>The time recorded is faster than the compare value (-)</description></item></list>
+		/// </param>
+		public static string HitCountDiff(int count, int compareCount, out Color diff) {
+			if (count == -1 || compareCount == -1) {
+				diff = default;
+				return ""; // records cannot be compared
+			}
+
+			// A color and sign should be picked
+			int countDiff = count - compareCount;
+			string sign;
+			if (countDiff > 0) {
+				sign = "+";
+				diff = Color.Red;
+			}
+			else if (countDiff == 0) {
+				sign = "±";
+				diff = Color.Yellow;
+			}
+			else {
+				countDiff *= -1;
+				sign = "-";
+				diff = Color.Green;
+			}
+
+			return $"{sign}{countDiff}";
+		}
+
+		/// <summary>
+		/// Gets the recorded play time snapshot for the entry's first defeation in a string format.
+		/// If the entry has not yet been defeated, 'Unchallenged' will be returned instead.
+		/// </summary>
+		public string PlayTimeToString() {
+			if (kills == 0)
+				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+
+			int hours = (int)(playTimeFirst / TimeSpan.TicksPerHour);
+			int minutes = (int)((playTimeFirst - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
+			float seconds = (float)((playTimeFirst - (float)(hours * TimeSpan.TicksPerHour) - (float)(minutes * TimeSpan.TicksPerMinute)) / TimeSpan.TicksPerSecond);
+			return $"{(hours > 0 ? hours + ":" : "")}{(hours > 0 ? minutes.ToString("00") : minutes)}:{seconds.ToString("00.00")}";
+		}
 	}
 
 	/* Plans for World Records
@@ -214,8 +351,8 @@ namespace BossChecklist
 		public List<string> hitsTakenHolder = new List<string> { };
 		public int hitsTakenWorld = -1;
 
-		public bool DurationEmpty => durationHolder.Count == 0 && durationWorld == -1;
-		public bool HitsTakenEmpty => hitsTakenHolder.Count == 0 && hitsTakenWorld == -1;
+		public bool DurationEmpty => durationHolder.Count == 0 || durationWorld == -1;
+		public bool HitsTakenEmpty => hitsTakenHolder.Count == 0 || hitsTakenWorld == -1;
 
 		public static Func<TagCompound, WorldStats> DESERIALIZER = tag => new WorldStats(tag);
 
@@ -289,6 +426,48 @@ namespace BossChecklist
 					hitsTakenHolder.Add(reader.ReadString());
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the total kills and deaths of an entry in a string format.
+		/// If the entry has not yet been defeated, 'Unchallenged' will be returned instead.
+		/// </summary>
+		public string GetGlobalKDR() {
+			string terms = "Mods.BossChecklist.BossLog.Terms";
+			if (totalKills == 0 && totalDeaths == 0)
+				return Language.GetTextValue($"{terms}.Unchallenged");
+
+			return $"{totalKills} {Language.GetTextValue($"{terms}.Kills")} / {totalDeaths} {Language.GetTextValue($"{terms}.Deaths")}";
+		}
+
+		/// <summary>
+		/// Lists the current holders of the duration world record.
+		/// If the entry has not yet been defated, 'Be the first to claim the world record!' will be returned instead.
+		/// </summary>
+		public string ListDurationRecordHolders() {
+			if (DurationEmpty)
+				return Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ClaimRecord");
+
+			string list = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+			foreach (string name in durationHolder) {
+				list += $"\n •{name}";
+			}
+			return list;
+		}
+
+		/// <summary>
+		/// Lists the current holders of the hits taken world record.
+		/// If the entry has not yet been defated, 'Be the first to claim the world record!' will be returned instead.
+		/// </summary>
+		public string ListHitsTakenRecordHolders() {
+			if (HitsTakenEmpty)
+				return Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ClaimRecord");
+
+			string list = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+			foreach (string name in hitsTakenHolder) {
+				list += $"\n •{name}";
+			}
+			return list;
 		}
 	}
 }

@@ -107,17 +107,11 @@ Mods: {
 				CopyKey: Click to copy internal 'boss key' to clipboard
 				CopySource: Click to copy internal 'mod source' to clipboard
 				ViewPage: Click to view page
-				DurationDescription: The quickest time you defeated this boss!
-				HitsTakenDescription: Avoid as many attacks as you can! Try to defeat this boss untouched!
 				ToggleVisibility: Toggle hidden visibility
 				AllLoot: All boss loot obtained!
 				AllDropLoot: All non-collectible boss loot obtained!
 				AllCollectibles: All boss collectibles Obtained!
 				MaskedItems: Defeat this entry to view its loot and collectibles
-				KDRDescription: Total times you have encountered this boss!
-				BestKDRDescription: Total times you killed this boss and total times this boss has killed you!
-				FirstKDRDescription: Total play time your character has been active, up until the first boss kill!
-				GlobalKDRDescription: Global kills and deaths from all players for this boss!
 				ClaimRecord: Be the first to claim the world record!
 				ProgressionModeIsEnabled:
 					'''
@@ -136,15 +130,6 @@ Mods: {
 				Hardmode: Hardmode
 				Defeated: Defeated in {0}
 				Undefeated: Undefeated in {0}
-				Records: Records
-				SpawnInfo: Spawn Info
-				LootCollect: Loot & Collection
-				KDR: Kill Death Ratio
-				Duration: Fight Duration
-				Dodge: Hits Received
-				KDRWorld: Global Kills and Deaths
-				DurationWorld: Quickest Fight
-				DodgeWorld: Lowest Hits Taken
 				RecipeFrom: Recipe from: {0}
 				CycleRecipe: Cycle alternative recipes
 				Noncraftable: This item is not craftable
@@ -194,17 +179,40 @@ Mods: {
 				MiniBosses: Mini bosses
 				Events: Events
 				Total: Total
-				PreviousRecord: Previous Attempt
-				FirstRecord: First Victory
-				BestRecord: Personal Best
+				Records: Records
+				SpawnInfo: Spawn Info
+				LootAndCollectibles: Loot & Collection
+				PreviousAttempt: Previous Attempt
+				FirstVictory: First Victory
+				PersonalBest: Personal Best
 				WorldRecord: World Records
 				NewRecord: New Record!
 				NewWorldRecord: World Record!
-				Attempt: Attempt
-				PlayTime: Play Time
 				RecordHolder: Record Holder(s)
 				PreviousBest: Your Previous Best
 				NoHit: No hit!
+			}
+
+			RecordSlot: {
+				Title: {
+					PreviousAttempt: Attempt
+					FirstVictory: Play Time
+					PersonalBest: Kill Death Ratio
+					WorldRecord: Global KDR
+					Duration: Fight Duration
+					DurationWorld: Quickest Fight
+					HitsTaken: Hits Received
+					HitsTakenWorld: Lowest Hits Taken
+				}
+
+				Tooltip: {
+					Duration: The quickest time this boss was defeated!
+					HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
+					PreviousAttempt: Total times you have encountered this boss!
+					PersonalBest: Total times you killed this boss and total times this boss has killed you!
+					FirstVictory: Total play time your character has been active, up until the first boss kill!
+					WorldRecord: Global kills and deaths from all players for this boss!
+				}
 			}
 
 			HintTexts: {
