@@ -867,8 +867,8 @@ namespace BossChecklist.UIElements
 			int achY;
 			string tooltip;
 
-			public RecordDisplaySlot(Asset<Texture2D> texture, BossInfo entry, SubCategory subCategory, int slot) : base(texture) {
-				this.entry = entry;
+			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot) : base(texture) {
+				this.entry = BossChecklist.bossTracker.SortedBosses[BossUISystem.Instance.BossLog.PageNum];
 				this.stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
 				this.worldStats = WorldAssist.worldRecords[entry.GetRecordIndex].stats;
 

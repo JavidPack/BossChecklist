@@ -1614,7 +1614,7 @@ namespace BossChecklist
 				if (BossChecklist.DebugConfig.DisableWorldRecords && i > 0 && RecordSubCategory == SubCategory.WorldRecord)
 					break;
 
-				RecordDisplaySlot slot = new RecordDisplaySlot(recordSlot, entry, RecordSubCategory, i);
+				RecordDisplaySlot slot = new RecordDisplaySlot(recordSlot, RecordSubCategory, i);
 				slot.Width.Pixels = recordSlot.Value.Width;
 				slot.Height.Pixels = recordSlot.Value.Height;
 				slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
