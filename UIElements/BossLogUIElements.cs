@@ -663,7 +663,7 @@ namespace BossChecklist.UIElements
 											string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 											BossUISystem.Instance.UIHoverText = entry.DisplayName + "\n" + translated;
 											if (Main.mouseLeft && Main.mouseLeftRelease) {
-												BossUISystem.Instance.BossLog.PageNum = entry.GetIndex; // Reset UI positions when changing the page
+												BossUISystem.Instance.BossLog.PendingPageNum = entry.GetIndex; // Reset UI positions when changing the page
 											}
 										}
 									}
@@ -693,7 +693,7 @@ namespace BossChecklist.UIElements
 										string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 										BossUISystem.Instance.UIHoverText = addedNPC.DisplayName + "\n" + translated;
 										if (Main.mouseLeft && Main.mouseLeftRelease) {
-											BossUISystem.Instance.BossLog.PageNum = addedNPC.GetIndex; // Reset UI positions when changing the page
+											BossUISystem.Instance.BossLog.PendingPageNum = addedNPC.GetIndex; // Reset UI positions when changing the page
 										}
 									}
 									if (head.Height > headTextureOffsetY) {
@@ -991,9 +991,7 @@ namespace BossChecklist.UIElements
 					}
 
 					foreach (BossInfo eventEntry in BossChecklist.bossTracker.SortedBosses) {
-						if (eventEntry.type != EntryType.Event)
-							continue;
-						if (eventEntry.npcIDs.Contains(entry.npcIDs[0])) {
+						if (eventEntry.type == EntryType.Event && eventEntry.npcIDs.Contains(entry.npcIDs[0])) {
 							Texture2D icon = eventEntry.headIconTextures[0].Value;
 							Rectangle headRect = new Rectangle(inner.X + 15, inner.Y + inner.Height / 2 - icon.Height / 2, icon.Width, icon.Height);
 							Color faded = eventEntry.IsDownedOrForced ? Color.White : BossLogUI.MaskBoss(entry) == Color.Black ? Color.Black : BossLogUI.faded;
@@ -1002,8 +1000,7 @@ namespace BossChecklist.UIElements
 								string translated = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
 								BossUISystem.Instance.UIHoverText = eventEntry.DisplayName + "\n" + translated;
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
-									// TODO: Draw conflictions when clicked. Will work on later.
-									//BossUISystem.Instance.BossLog.PageNum = eventEntry.GetIndex; // Reset UI positions when changing the page
+									BossUISystem.Instance.BossLog.PendingPageNum = eventEntry.GetIndex;
 								}
 							}
 							break; // Stop at the first event

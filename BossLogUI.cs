@@ -139,6 +139,17 @@ namespace BossChecklist
 		private bool bossLogVisible;
 		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
 		
+		private bool PendingPageChange;
+		private int PageNumChange;
+		internal static int PendingPage;
+		public int PendingPageNum {
+			get => PageNumChange;
+			set {
+				PageNumChange = value;
+				PendingPageChange = true;
+			}
+		}
+
 		/// <summary>
 		/// Appends or removes UI elements based on the visibility status it is set to.
 		/// </summary>
@@ -504,6 +515,10 @@ namespace BossChecklist
 			if (PendingToggleBossLogUI) {
 				PendingToggleBossLogUI = false;
 				ToggleBossLog(!BossLogVisible);
+			}
+			if (PendingPageChange) {
+				PendingPageChange = false;
+				UpdateSelectedPage(PageNumChange);
 			}
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
 			base.Update(gameTime);
