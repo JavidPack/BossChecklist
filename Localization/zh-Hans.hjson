@@ -107,17 +107,11 @@ Mods: {
 				CopyKey: 点击以复制内部'Boss键值'至剪切板
 				CopySource: 点击以复制内部'Mod源'至剪切板
 				ViewPage: 点击以查看页面
-				DurationDescription: 你击败该Boss所用的最短时间!
-				HitsTakenDescription: 尽可能的闪避攻击! 试着无伤击败该Boss!
 				ToggleVisibility: 切换隐藏可见性
 				AllLoot: 已获得所有的战利品!
 				AllDropLoot: 已获得所有非收藏品的战利品!
 				AllCollectibles: 已获得所有的收藏品!
-				MaskedItems: 击败实体以查看其战利品和收藏品
-				KDRDescription: 你遭遇该Boss的总次数!
-				BestKDRDescription: 你击败该Boss和该Boss击败你的总次数!
-				FirstKDRDescription: 首次击败Boss前你的角色处于活动状态的总游戏时间!
-				GlobalKDRDescription: 与该Boss相关的全球击杀和死亡次数!
+				MaskedItems: 击败条目以查看其战利品和收藏品
 				ClaimRecord: 成为第一个打破世界纪录的人!
 				ProgressionModeIsEnabled:
 					'''
@@ -136,15 +130,6 @@ Mods: {
 				Hardmode: 困难模式
 				Defeated: 在{0}中已被击败
 				Undefeated: 在{0}中未被击败
-				Records: 挑战记录
-				SpawnInfo: 生成信息
-				LootCollect: 掉落物 & 收藏品
-				KDR: KD比
-				Duration: 战斗持续时间
-				Dodge: 受击数
-				KDRWorld: 全球击败和死亡次数
-				DurationWorld: 最短时间的战斗
-				DodgeWorld: 最低受击次数
 				RecipeFrom: 此合成配方来自: {0}
 				CycleRecipe: 切换至其他合成配方
 				Noncraftable: 此物品不可被合成
@@ -168,7 +153,7 @@ Mods: {
 					'''
 				ProgressionModeDescription:
 					'''
-					进度模式隐藏了很多Boss内容, 直至你击败对应的Boss或满足条件. 本模式及其适合盲打通关.
+					进度模式隐藏了很多Boss内容, 直至你击败对应的Boss或满足条件. 本模式极其适合盲打通关.
 
 					注意, 在选择任意选项之前, Boss日志将被禁用!
 					'''
@@ -194,17 +179,40 @@ Mods: {
 				MiniBosses: 小Boss
 				Events: 事件
 				Total: 总计
-				PreviousRecord: 上次尝试
-				FirstRecord: 首次胜利
-				BestRecord: 个人最佳
+				Records: 挑战记录
+				SpawnInfo: 生成信息
+				LootAndCollectibles: 掉落物 & 收藏品
+				PreviousAttempt: 上次尝试
+				FirstVictory: 首次胜利
+				PersonalBest: 个人的最佳记录
 				WorldRecord: 世界纪录
 				NewRecord: 新纪录!
 				NewWorldRecord: 世界纪录!
-				Attempt: 尝试
-				PlayTime: 游戏时间
 				RecordHolder: 记录保持者
 				PreviousBest: 你以前的最佳纪录
-				NoHit: 未命中!
+				NoHit: 无伤!
+			}
+			
+			RecordSlot: {
+				Title: {
+					PreviousAttempt: 尝试
+					FirstVictory: 游戏时间
+					PersonalBest: KD比
+					WorldRecord: 全球击败和死亡次数
+					Duration: 战斗持续时间
+					DurationWorld: 最短时间的战斗
+					HitsTaken: 受击数
+					HitsTakenWorld: 最低受击次数
+				}
+
+				Tooltip: {
+					Duration: 你击败该Boss所用的最短时间!
+					HitsTaken: 尽可能的闪避攻击! 试着无伤击败该Boss!
+					PreviousAttempt: 你遭遇该Boss的总次数!
+					PersonalBest: 你击败该Boss和该Boss击败你的总次数!
+					FirstVictory: 首次击败Boss前你的角色处于活动状态的总游戏时间!
+					WorldRecord: 与该Boss相关的全球击杀和死亡次数!
+				}
 			}
 
 			HintTexts: {
