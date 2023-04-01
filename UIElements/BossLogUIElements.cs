@@ -1040,7 +1040,7 @@ namespace BossChecklist.UIElements
 			public override void Click(UIMouseEvent evt) {
 				UserInterface temp = UserInterface.ActiveInstance;
 				UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
-				base.MouseDown(evt);
+				base.Click(evt);
 				UserInterface.ActiveInstance = temp;
 			}
 
