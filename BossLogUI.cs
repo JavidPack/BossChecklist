@@ -50,8 +50,8 @@ namespace BossChecklist
 		}
 
 		// Navigation
-		public UIImageButton NextPage;
-		public UIImageButton PrevPage;
+		public NavigationalButton NextPage;
+		public NavigationalButton PrevPage;
 
 		public static SubPage SelectedSubPage = SubPage.Records;
 		public SubPageButton recordButton;
@@ -352,7 +352,7 @@ namespace BossChecklist
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
 
-			PrevPage = new NavigationalButton(prevTexture) {
+			PrevPage = new NavigationalButton(prevTexture, true) {
 				Id = "Previous"
 			};
 			PrevPage.Width.Pixels = prevTexture.Value.Width;
@@ -429,7 +429,7 @@ namespace BossChecklist
 				filterPanel.Append(uiimage);
 			}
 
-			NextPage = new NavigationalButton(nextTexture) {
+			NextPage = new NavigationalButton(nextTexture, true) {
 				Id = "Next"
 			};
 			NextPage.Width.Pixels = nextTexture.Value.Width;
@@ -1130,7 +1130,6 @@ namespace BossChecklist
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not NavigationalButton button)
 				return;
-
 			// Remove new records when navigating from a page with a new record
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
@@ -1598,43 +1597,129 @@ namespace BossChecklist
 				return; // Code should only run if it is on an entry page
 
 			BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (entry.modSource == "Unknown" || entry.type != EntryType.Boss)
-				return; // No elements are created on unsupport pages or on Mini-boss/Event pages
 
 			// Set up the record type navigation buttons
 			// Only bosses have records (Events will have banners of the enemies in the event drawn on it)
 			// The entry also must be fully supported to have these buttons created
-			PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
 
-			bool noKills = stats.kills == 0; // has the player killed this boss before?
-			if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
-				RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.
-			}
+			if (entry.type == EntryType.Boss) {
+				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
+				bool noKills = stats.kills == 0; // has the player killed this boss before?
+				if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
+					RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.
+				}
 
-			// iterate through AltPageButtons to appeand each button where needed
-			for (int i = 0; i < AltPageButtons.Length; i++) {
-				if ((i == (int)SubCategory.PersonalBest || i == (int)SubCategory.FirstVictory) && noKills)
-					continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-				int offset = noKills ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12; // offset needed if best record and first record are missing
-				AltPageButtons[i].Left.Pixels = (int)lootButton.Left.Pixels + ((i - 2) * 28) + offset + (i >= 2 ? (int)lootButton.Width.Pixels : 0);
-				AltPageButtons[i].Top.Pixels = (int)lootButton.Top.Pixels + (int)lootButton.Height.Pixels / 2 - 11;
-				PageTwo.Append(AltPageButtons[i]);
+				// iterate through AltPageButtons to appeand each button where needed
+				for (int i = 0; i < AltPageButtons.Length; i++) {
+					if ((i == (int)SubCategory.PersonalBest || i == (int)SubCategory.FirstVictory) && noKills)
+						continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
+					int offset = noKills ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12; // offset needed if best record and first record are missing
+					AltPageButtons[i].Left.Pixels = (int)lootButton.Left.Pixels + ((i - 2) * 28) + offset + (i >= 2 ? (int)lootButton.Width.Pixels : 0);
+					AltPageButtons[i].Top.Pixels = (int)lootButton.Top.Pixels + (int)lootButton.Height.Pixels / 2 - 11;
+					PageTwo.Append(AltPageButtons[i]);
+				}
 			}
 
 			// create 4 slots for each stat category value
 			for (int i = 0; i < 4; i++) {
+				if (i > 0 && entry.type != EntryType.Boss)
+					break; // Mini-bosses and Events only display the first slot
+
 				if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE && i > 0 && RecordSubCategory != SubCategory.WorldRecord)
 					break;
 
 				if (BossChecklist.DebugConfig.DisableWorldRecords && i > 0 && RecordSubCategory == SubCategory.WorldRecord)
 					break;
 
-				RecordDisplaySlot slot = new RecordDisplaySlot(recordSlot, RecordSubCategory, i);
-				slot.Width.Pixels = recordSlot.Value.Width;
-				slot.Height.Pixels = recordSlot.Value.Height;
-				slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
-				slot.Top.Pixels = 35 + (75 * (i + 1));
-				PageTwo.Append(slot);
+				RecordDisplaySlot slot;
+				if (entry.type == EntryType.Boss) {
+					slot = new RecordDisplaySlot(recordSlot, RecordSubCategory, i);
+					slot.Width.Pixels = recordSlot.Value.Width;
+					slot.Height.Pixels = recordSlot.Value.Height;
+					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
+					slot.Top.Pixels = 35 + (75 * (i + 1));
+					PageTwo.Append(slot);
+				}
+				else {
+					slot = new RecordDisplaySlot(recordSlot, entry.type.ToString(), "");
+					slot.Width.Pixels = recordSlot.Value.Width;
+					slot.Height.Pixels = recordSlot.Value.Height;
+					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
+					slot.Top.Pixels = 35 + (75 * (i + 1));
+					PageTwo.Append(slot);
+				}
+
+				if (entry.type == EntryType.Boss || entry.type == EntryType.MiniBoss) {
+					foreach (BossInfo eventEntry in BossChecklist.bossTracker.SortedBosses) {
+						if (eventEntry.type == EntryType.Event && eventEntry.npcIDs.Contains(entry.npcIDs[0])) {
+							Asset<Texture2D> headIcon = eventEntry.headIconTextures[0];
+							string hoverText = eventEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+							Color eventColor = eventEntry.IsDownedOrForced ? Color.White : MaskBoss(eventEntry) == Color.Black ? Color.Black : faded;
+
+							NavigationalButton eventIcon = new NavigationalButton(headIcon, hoverText, eventColor) {
+								Id = "eventIcon",
+								Anchor = eventEntry.GetIndex
+							};
+							eventIcon.Width.Pixels = headIcon.Value.Width;
+							eventIcon.Height.Pixels = headIcon.Value.Height;
+							eventIcon.Left.Pixels = 15;
+							eventIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
+							slot.Append(eventIcon);
+							break; // Stop at the first event
+						}
+					}
+				}
+				else {
+					int offset = 0;
+					foreach (BossInfo bossEntry in BossChecklist.bossTracker.SortedBosses) {
+						if (bossEntry.type != EntryType.Event && entry.npcIDs.Contains(bossEntry.npcIDs[0])) {
+							Asset<Texture2D> headIcon = bossEntry.headIconTextures[0];
+							string hoverText = bossEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+							Color eventColor = bossEntry.IsDownedOrForced ? Color.White : MaskBoss(bossEntry) == Color.Black ? Color.Black : faded;
+
+							NavigationalButton bossIcon = new NavigationalButton(headIcon, hoverText, eventColor) {
+								Id = "bossIcon",
+								Anchor = bossEntry.GetIndex
+							};
+							bossIcon.Width.Pixels = headIcon.Value.Width;
+							bossIcon.Height.Pixels = headIcon.Value.Height;
+							bossIcon.Left.Pixels = 15 + offset;
+							bossIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
+							slot.Append(bossIcon);
+
+							offset += 10 + headIcon.Value.Width;
+						}
+					}
+				}
+
+				if (entry.type == EntryType.Boss && i == 0) {
+					#region Experimental Feature Notice
+					// TODO: Experimental feature notice, eventually will need to be removed
+					Asset<Texture2D> bnuuy = Main.Assets.Request<Texture2D>("Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
+					string noticeText;
+					if (RecordSubCategory == SubCategory.WorldRecord) {
+						noticeText = $"World Records are currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+							"\nThe World Records feature is still under construction." +
+							"\nThis feature is known to not work and cause issues, so enable at your own risk." +
+							$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
+					}
+					else {
+						noticeText = $"Boss Records are currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+							"\nThis section of the Boss Log is still under construction." +
+							"\nAny features or configs related to this page may not work or cause issues." +
+							$"\nBoss Records can be toggled under the Feature Testing configs.";
+					}
+
+					NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, noticeText) {
+						Id = "bnuuyIcon"
+					};
+					bnuuyIcon.Width.Pixels = bnuuy.Value.Width;
+					bnuuyIcon.Height.Pixels = bnuuy.Value.Height;
+					bnuuyIcon.Left.Pixels = slot.Width.Pixels - bnuuy.Value.Width - 15;
+					bnuuyIcon.Top.Pixels = slot.Height.Pixels / 2 - bnuuy.Value.Height / 2;
+					slot.Append(bnuuyIcon);
+					#endregion
+				}
 			}
 		}
 
