@@ -857,6 +857,7 @@ namespace BossChecklist
 			{ "Terraria MartianMadness",
 				new List<int>() {
 					NPCID.MartianSaucerCore,
+					NPCID.MartianSaucer,
 					NPCID.Scutlix,
 					NPCID.ScutlixRider,
 					NPCID.MartianWalker,
