@@ -1641,7 +1641,7 @@ namespace BossChecklist
 					PageTwo.Append(slot);
 				}
 				else {
-					slot = new RecordDisplaySlot(recordSlot, entry.type.ToString(), "");
+					slot = new RecordDisplaySlot(recordSlot, null, null);
 					slot.Width.Pixels = recordSlot.Value.Width;
 					slot.Height.Pixels = recordSlot.Value.Height;
 					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
