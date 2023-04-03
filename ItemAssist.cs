@@ -27,7 +27,7 @@ namespace BossChecklist
 		}
 
 		public override void OnCreate(Item item, ItemCreationContext context) {
-			if (Main.netMode != NetmodeID.Server) {
+			if (Main.netMode != NetmodeID.Server && BossChecklist.bossTracker.EntryLootCache[item.type]) {
 				List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
 				if (!itemsList.Any(x => x.Type == item.type)) {
 					itemsList.Add(new ItemDefinition(item.type));
