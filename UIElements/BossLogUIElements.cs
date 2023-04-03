@@ -176,6 +176,29 @@ namespace BossChecklist.UIElements
 				base.Click(evt);
 				if (Anchor != null)
 					BossUISystem.Instance.BossLog.PendingPageNum = (int)Anchor;
+
+				if (Id == "SubCategory") {
+					BossLogUI.RecordSubCategory++;
+					if (BossLogUI.RecordSubCategory == SubCategory.None)
+						BossLogUI.RecordSubCategory = SubCategory.PreviousAttempt;
+
+					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossUISystem.Instance.BossLog.PageNum);
+				}
+			}
+
+			public override void RightClick(UIMouseEvent evt) {
+				base.RightClick(evt);
+
+				if (Id == "SubCategory") {
+					if (BossLogUI.RecordSubCategory == SubCategory.PreviousAttempt) {
+						BossLogUI.RecordSubCategory = SubCategory.WorldRecord;
+					}
+					else {
+						BossLogUI.RecordSubCategory--;
+					}
+
+					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossUISystem.Instance.BossLog.PageNum);
+				}
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {

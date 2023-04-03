@@ -82,11 +82,8 @@ namespace BossChecklist
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Record page related
-		public SubPageButton[] AltPageButtons;
 		public static SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public static SubCategory CompareState = SubCategory.None; // Compare record values to one another
-		//public static int[] AltPageSelected; // AltPage for Records is "Player Best/World Best(Server)"
-		//public static int[] TotalAltPages; // The total amount of "subpages" for Records, Spawn, and Loot pages
 
 		// Spawn Info page related
 		public static int SpawnItemSelected = 0;
@@ -122,10 +119,6 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
-		public static Asset<Texture2D> prevRecordTexture;
-		public static Asset<Texture2D> bestRecordTexture;
-		public static Asset<Texture2D> firstRecordTexture;
-		public static Asset<Texture2D> worldRecordTexture;
 		public static Asset<Texture2D> creditModSlot;
 		public static Asset<Texture2D> recordSlot;
 
@@ -268,11 +261,6 @@ namespace BossChecklist
 			checkboxTexture = RequestResource("Checks_Box");
 			chestTexture = RequestResource("Checks_Chest");
 			goldChestTexture = RequestResource("Checks_GoldChest");
-
-			prevRecordTexture = RequestResource("Nav_RecordPrev");
-			bestRecordTexture = RequestResource("Nav_RecordBest");
-			firstRecordTexture = RequestResource("Nav_RecordFirst");
-			worldRecordTexture = RequestResource("Nav_RecordWorld");
 
 			creditModSlot = RequestResource("Extra_CreditModSlot");
 			recordSlot = RequestResource("Extra_RecordSlot");
@@ -475,29 +463,6 @@ namespace BossChecklist
 			lootButton.Top.Pixels = 5 + subpageTexture.Value.Height + 10;
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
 			lootButton.OnRightClick += RemoveItem;
-
-			SubPageButton PrevRecordButton = new SubPageButton(prevRecordTexture, SubCategory.PreviousAttempt);
-			PrevRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.PreviousAttempt);
-			PrevRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.PreviousAttempt, false);
-
-			SubPageButton BestRecordButton = new SubPageButton(bestRecordTexture, SubCategory.PersonalBest);
-			BestRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.PersonalBest);
-			BestRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.PersonalBest, false);
-
-			SubPageButton FirstRecordButton = new SubPageButton(firstRecordTexture, SubCategory.FirstVictory);
-			FirstRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.FirstVictory);
-			FirstRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.FirstVictory, false);
-
-			SubPageButton WorldRecordButton = new SubPageButton(worldRecordTexture, SubCategory.WorldRecord);
-			WorldRecordButton.OnClick += (a, b) => HandleRecordTypeButton(SubCategory.WorldRecord);
-			WorldRecordButton.OnRightClick += (a, b) => HandleRecordTypeButton(SubCategory.WorldRecord, false);
-
-			AltPageButtons = new SubPageButton[] {
-				PrevRecordButton,
-				BestRecordButton,
-				FirstRecordButton,
-				WorldRecordButton
-			};
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
 			scrollOne = new BossLogUIElements.FixedUIScrollbar();
@@ -1679,31 +1644,42 @@ namespace BossChecklist
 					PageTwo.Append(slot);
 				}
 
-				if (i > 0)
-					break;
+				if (i == 0) {
+					if (entry.type == EntryType.Boss) {
+						Asset<Texture2D> recordIcon = RequestResource($"Nav_Record_{RecordSubCategory}");
+						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, "Cycle record cubcategory") {
+							Id = "SubCategory"
+						};
+						RecordSubCategoryButton.Width.Pixels = recordIcon.Value.Width;
+						RecordSubCategoryButton.Height.Pixels = recordIcon.Value.Height;
+						RecordSubCategoryButton.Left.Pixels = slot.Width.Pixels - recordIcon.Value.Width - 15;
+						RecordSubCategoryButton.Top.Pixels = slot.Height.Pixels / 2 - recordIcon.Value.Height / 2;
+						slot.Append(RecordSubCategoryButton);
+					}
 
-				int offset = 0;
-				foreach (string entryKey in entry.relatedEntries) {
-					BossInfo relatedEntry = BossChecklist.bossTracker.SortedBosses[BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == entryKey)];
+					int offset = 0;
+					foreach (string entryKey in entry.relatedEntries) {
+						BossInfo relatedEntry = BossChecklist.bossTracker.SortedBosses[BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == entryKey)];
 
-					Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
-					string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-					Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
+						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
+						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+						Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
-					NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
-						Id = entry.type == EntryType.Event ? "eventIcon" : "bossIcon",
-						Anchor = relatedEntry.GetIndex
-					};
-					entryIcon.Width.Pixels = headIcon.Value.Width;
-					entryIcon.Height.Pixels = headIcon.Value.Height;
-					entryIcon.Left.Pixels = 15 + offset;
-					entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
-					slot.Append(entryIcon);
+						NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
+							Id = entry.type == EntryType.Event ? "eventIcon" : "bossIcon",
+							Anchor = relatedEntry.GetIndex
+						};
+						entryIcon.Width.Pixels = headIcon.Value.Width;
+						entryIcon.Height.Pixels = headIcon.Value.Height;
+						entryIcon.Left.Pixels = 15 + offset;
+						entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
+						slot.Append(entryIcon);
 
-					if (entry.type == EntryType.Boss || entry.type == EntryType.MiniBoss)
-						break;
+						if (entry.type == EntryType.Boss || entry.type == EntryType.MiniBoss)
+							break;
 
-					offset += 10 + headIcon.Value.Width;
+						offset += 10 + headIcon.Value.Width;
+					}
 				}
 			}
 		}
