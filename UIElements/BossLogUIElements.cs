@@ -959,7 +959,7 @@ namespace BossChecklist.UIElements
 					Utils.DrawBorderString(spriteBatch, title, pos, col);
 				}
 
-				if (!string.IsNullOrEmpty(title)) {
+				if (!string.IsNullOrEmpty(value)) {
 					Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(value);
 					Color col = slotID == 0 ? Color.LightYellow : Color.White;
 					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (int)(stringAdjust.X / 2) + 2, inner.Y + inner.Height - (int)stringAdjust.Y);
