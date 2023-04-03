@@ -1649,47 +1649,28 @@ namespace BossChecklist
 					PageTwo.Append(slot);
 				}
 
-				if (entry.type == EntryType.Boss || entry.type == EntryType.MiniBoss) {
-					foreach (BossInfo eventEntry in BossChecklist.bossTracker.SortedBosses) {
-						if (eventEntry.type == EntryType.Event && eventEntry.npcIDs.Contains(entry.npcIDs[0])) {
-							Asset<Texture2D> headIcon = eventEntry.headIconTextures[0];
-							string hoverText = eventEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-							Color eventColor = eventEntry.IsDownedOrForced ? Color.White : MaskBoss(eventEntry) == Color.Black ? Color.Black : faded;
+				int offset = 0;
+				foreach (string entryKey in entry.relatedEntries) {
+					BossInfo relatedEntry = BossChecklist.bossTracker.SortedBosses[BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == entryKey)];
 
-							NavigationalButton eventIcon = new NavigationalButton(headIcon, hoverText, eventColor) {
-								Id = "eventIcon",
-								Anchor = eventEntry.GetIndex
-							};
-							eventIcon.Width.Pixels = headIcon.Value.Width;
-							eventIcon.Height.Pixels = headIcon.Value.Height;
-							eventIcon.Left.Pixels = 15;
-							eventIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
-							slot.Append(eventIcon);
-							break; // Stop at the first event
-						}
-					}
-				}
-				else {
-					int offset = 0;
-					foreach (BossInfo bossEntry in BossChecklist.bossTracker.SortedBosses) {
-						if (bossEntry.type != EntryType.Event && entry.npcIDs.Contains(bossEntry.npcIDs[0])) {
-							Asset<Texture2D> headIcon = bossEntry.headIconTextures[0];
-							string hoverText = bossEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
-							Color eventColor = bossEntry.IsDownedOrForced ? Color.White : MaskBoss(bossEntry) == Color.Black ? Color.Black : faded;
+					Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
+					string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+					Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
-							NavigationalButton bossIcon = new NavigationalButton(headIcon, hoverText, eventColor) {
-								Id = "bossIcon",
-								Anchor = bossEntry.GetIndex
-							};
-							bossIcon.Width.Pixels = headIcon.Value.Width;
-							bossIcon.Height.Pixels = headIcon.Value.Height;
-							bossIcon.Left.Pixels = 15 + offset;
-							bossIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
-							slot.Append(bossIcon);
+					NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
+						Id = entry.type == EntryType.Event ? "eventIcon" : "bossIcon",
+						Anchor = relatedEntry.GetIndex
+					};
+					entryIcon.Width.Pixels = headIcon.Value.Width;
+					entryIcon.Height.Pixels = headIcon.Value.Height;
+					entryIcon.Left.Pixels = 15 + offset;
+					entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
+					slot.Append(entryIcon);
 
-							offset += 10 + headIcon.Value.Width;
-						}
-					}
+					if (entry.type == EntryType.Boss || entry.type == EntryType.MiniBoss)
+						break;
+
+					offset += 10 + headIcon.Value.Width;
 				}
 
 				if (entry.type == EntryType.Boss && i == 0) {

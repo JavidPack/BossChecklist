@@ -29,6 +29,8 @@ namespace BossChecklist
 		internal bool hidden;
 		internal Func<NPC, string> customDespawnMessages;
 
+		internal List<string> relatedEntries;
+
 		internal List<int> spawnItem;
 		internal string spawnInfo;
 
@@ -185,6 +187,8 @@ namespace BossChecklist
 			else {
 				this.customDespawnMessages = null;
 			}
+
+			relatedEntries = new List<string>();
 
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.spawnInfo = info ?? "";

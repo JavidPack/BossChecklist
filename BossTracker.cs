@@ -263,6 +263,7 @@ namespace BossChecklist
 
 		internal void FinalizeBossData() {
 			SortedBosses.Sort((x, y) => x.progression.CompareTo(y.progression));
+			BossChecklist.bossTracker.SetupEntryRelations(); // must be done after sorting bosses
 
 			BossCache = new bool[NPCLoader.NPCCount];
 			BossLootCache = new bool[ItemLoader.ItemCount];
@@ -385,6 +386,24 @@ namespace BossChecklist
 					}
 				}
 				boss.lootItemTypes = masterItems.Concat(expertItems).Concat(normalItems).ToList();
+			}
+		}
+
+		internal void SetupEntryRelations() {
+			foreach (BossInfo entry in SortedBosses) {
+				foreach (BossInfo distinctEntry in SortedBosses) {
+					if (entry == distinctEntry || entry.type == distinctEntry.type)
+						continue;
+
+					if (entry.npcIDs.Intersect(distinctEntry.npcIDs).Any()) {
+						if (!entry.relatedEntries.Contains(distinctEntry.Key)) {
+							entry.relatedEntries.Add(distinctEntry.Key);
+						}
+						if (!distinctEntry.relatedEntries.Contains(entry.Key)) {
+							distinctEntry.relatedEntries.Add(entry.Key);
+						}
+					}
+				}
 			}
 		}
 
