@@ -297,7 +297,7 @@ namespace BossChecklist.UIElements
 				}
 
 				/// Everything below is being set up for loot related itemslots ///
-				BossInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
+				EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
 				bool hardModeMasked = BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh;
 				bool progressRestricted = !entry.IsDownedOrForced && (BossChecklist.BossLogConfig.MaskBossLoot || hardModeMasked);
 				bool expertRestricted = item.expert && !Main.expertMode;
@@ -576,7 +576,7 @@ namespace BossChecklist.UIElements
 				}
 				else if (selectedLogPage >= 0) {
 					// Boss Pages
-					BossInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
+					EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
 					bool masked = BossLogUI.MaskBoss(entry) == Color.Black;
 					if (Id == "PageOne") {
 						if (entry.customDrawing != null) {
@@ -704,7 +704,6 @@ namespace BossChecklist.UIElements
 								// Mini-boss Records SubPage
 							}
 							else if (entry.type == EntryType.Event) {
-								var bosses = BossChecklist.bossTracker.SortedBosses;
 								int offset = 0;
 								int offsetY = 85;
 								int rows = 0;
@@ -876,7 +875,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot) : base(texture) {
-				BossInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
+				EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
 				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
 				WorldStats worldStats = WorldAssist.worldRecords[entry.GetRecordIndex].stats;
 
@@ -1199,16 +1198,16 @@ namespace BossChecklist.UIElements
 						return;
 
 					if (IsMouseHovering) {
-						List<BossInfo> bossList = BossChecklist.bossTracker.SortedBosses;
+						List<EntryInfo> entryList = BossChecklist.bossTracker.SortedEntries;
 						string tabMessage = "";
 						if (Id == "Boss_Tab" && BossLogUI.FindNext(EntryType.Boss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", bossList[BossLogUI.FindNext(EntryType.Boss)].DisplayName);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", entryList[BossLogUI.FindNext(EntryType.Boss)].DisplayName);
 						}
 						else if (Id == "Miniboss_Tab" && BossLogUI.FindNext(EntryType.MiniBoss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", bossList[BossLogUI.FindNext(EntryType.MiniBoss)].DisplayName);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", entryList[BossLogUI.FindNext(EntryType.MiniBoss)].DisplayName);
 						}
 						else if (Id == "Event_Tab" && BossLogUI.FindNext(EntryType.Event) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", bossList[BossLogUI.FindNext(EntryType.Event)].DisplayName);
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", entryList[BossLogUI.FindNext(EntryType.Event)].DisplayName);
 						}
 						else if (Id == "Credits_Tab") {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
@@ -1269,8 +1268,8 @@ namespace BossChecklist.UIElements
 				this.Index = index;
 				this.displayName = displayName;
 				this.isNext = nextCheck;
-				this.order = BossChecklist.bossTracker.SortedBosses[Index].progression;
-				this.downed = BossChecklist.bossTracker.SortedBosses[Index].IsDownedOrForced;
+				this.order = BossChecklist.bossTracker.SortedEntries[Index].progression;
+				this.downed = BossChecklist.bossTracker.SortedEntries[Index].IsDownedOrForced;
 				this.allLoot = loot;
 				this.allCollectibles = collect;
 			}
@@ -1293,7 +1292,7 @@ namespace BossChecklist.UIElements
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				BossInfo entry = BossChecklist.bossTracker.SortedBosses[Index];
+				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[Index];
 
 				if (order != -1) {
 					// Use the appropriate text color for conditions
@@ -1301,7 +1300,7 @@ namespace BossChecklist.UIElements
 						TextColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
 					}
 					else if (BossChecklist.BossLogConfig.ColoredBossText) {
-						int recordIndex = BossChecklist.bossTracker.SortedBosses[Index].GetRecordIndex;
+						int recordIndex = BossChecklist.bossTracker.SortedEntries[Index].GetRecordIndex;
 						if (recordIndex != -1 && modPlayer.hasNewRecord[recordIndex]) {
 							TextColor = Main.DiscoColor;
 						}
@@ -1567,7 +1566,7 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
-				bool useKillCountText = subpageNum == SubPage.Records && BossChecklist.bossTracker.SortedBosses[selectedLogPage].type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
+				bool useKillCountText = subpageNum == SubPage.Records && BossChecklist.bossTracker.SortedEntries[selectedLogPage].type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				Vector2 pos = new Vector2(inner.X + ((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);

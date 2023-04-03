@@ -19,7 +19,7 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
-			BossInfo entry = GetBossInfo(npc.type);
+			EntryInfo entry = GetEntryInfo(npc.type);
 			if (entry == null)
 				return; // Make sure the npc is an entry
 
@@ -68,7 +68,7 @@ namespace BossChecklist
 
 			// Stop record trackers and record them to the player while also checking for records and world records
 			
-			BossInfo entry = GetBossInfo(npc.type);
+			EntryInfo entry = GetEntryInfo(npc.type);
 			if (entry != null) {
 				int index = entry.GetIndex;
 				int recordIndex = entry.GetRecordIndex;
@@ -100,21 +100,21 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Loops through all entries in BossTracker.SortedBosses to find BossInfo that contains the specified npc type.
+		/// Loops through all entries in BossTracker.SortedBosses to find EntryInfo that contains the specified npc type.
 		/// This method is mainly used for boss record purposes.
 		/// </summary>
-		/// <returns>A valid BossInfo entry within the registered entries. Returns null if no entry can be found.</returns>
-		public static BossInfo GetBossInfo(int npcType) {
-			if (!BossChecklist.bossTracker.BossCache[npcType])
+		/// <returns>A valid EntryInfo entry within the registered entries. Returns null if no entry can be found.</returns>
+		public static EntryInfo GetEntryInfo(int npcType) {
+			if (!BossChecklist.bossTracker.EntryCache[npcType])
 				return null; // the entry hasn't been registered
 
-			List<BossInfo> BossInfoList = BossChecklist.bossTracker.SortedBosses;
-			for (int index = 0; index < BossInfoList.Count; index++) {
-				if (BossInfoList[index].type != EntryType.Boss)
+			List<EntryInfo> entries = BossChecklist.bossTracker.SortedEntries;
+			for (int index = 0; index < entries.Count; index++) {
+				if (entries[index].type != EntryType.Boss)
 					continue; // skip non-boss
 
-				if (BossInfoList[index].npcIDs.Contains(npcType))
-					return BossInfoList[index]; // if the npc pool contains the npc type, return the current the index
+				if (entries[index].npcIDs.Contains(npcType))
+					return entries[index]; // if the npc pool contains the npc type, return the current the index
 			}
 
 			return null; // no entry found
@@ -129,7 +129,7 @@ namespace BossChecklist
 			if (index == -1)
 				return !npc.active; // index should already be valid before submitting, but just in case return the NPC's active status
 
-			foreach (int npcType in BossChecklist.bossTracker.SortedBosses[index].npcIDs) {
+			foreach (int npcType in BossChecklist.bossTracker.SortedEntries[index].npcIDs) {
 				if (Main.npc.Any(nPC => nPC != npc && nPC.active && nPC.type == npcType))
 					return false; // if another npc within the same npc pool exists, the entry isn't truly inactive. Reminder: Boss minions should not submitted into NPC pools.
 			}
@@ -151,7 +151,7 @@ namespace BossChecklist
 			string messageType = BossChecklist.ClientConfig.DespawnMessageType;
 			if (messageType == "Unique") {
 				// When unique despawn messages are enabled, pass the NPC for the custom message function provided by the entry
-				string customMessage = BossChecklist.bossTracker.SortedBosses[index].customDespawnMessages(npc);
+				string customMessage = BossChecklist.bossTracker.SortedEntries[index].customDespawnMessages(npc);
 				if (!string.IsNullOrEmpty(customMessage))
 					return customMessage; // this will only return a unique message if the custom message function properly assigns one
 			}

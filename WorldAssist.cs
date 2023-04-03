@@ -27,7 +27,7 @@ namespace BossChecklist
 
 		public static bool[] CheckedRecordIndexes;
 
-		public static HashSet<string> HiddenBosses = new HashSet<string>();
+		public static HashSet<string> HiddenEntries = new HashSet<string>();
 		public static HashSet<string> ForcedMarkedEntries = new HashSet<string>();
 
 		public static bool downedBloodMoon;
@@ -87,7 +87,7 @@ namespace BossChecklist
 		}
 
 		public override void OnWorldLoad() {
-			HiddenBosses.Clear();
+			HiddenEntries.Clear();
 			ForcedMarkedEntries.Clear();
 
 			ClearDownedBools();
@@ -101,7 +101,7 @@ namespace BossChecklist
 
 			// Populate world records list
 			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-				worldRecords[BossChecklist.bossTracker.SortedBosses[BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == key)].GetRecordIndex] = new WorldRecord(key);
+				worldRecords[BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == key)].GetRecordIndex] = new WorldRecord(key);
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace BossChecklist
 		}
 
 		public override void SaveWorldData(TagCompound tag) {
-			var HiddenBossesList = new List<string>(HiddenBosses);
+			var HiddenBossesList = new List<string>(HiddenEntries);
 			var ForcedMarkedList = new List<string>(ForcedMarkedEntries);
 
 			var downed = new List<string>();
@@ -154,22 +154,22 @@ namespace BossChecklist
 			unloadedWorldRecords.Clear();
 			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("WorldRecords").ToList();
 			foreach (WorldRecord record in SavedWorldRecords) {
-				int sortedIndex = BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == record.bossKey);
+				int sortedIndex = BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == record.bossKey);
 				if (sortedIndex == -1) {
 					unloadedWorldRecords.Add(record); // Add any unloaded entries to this list
 					continue; // Entry is not loaded
 				}
-				else if (BossChecklist.bossTracker.SortedBosses[sortedIndex].type != EntryType.Boss)
+				else if (BossChecklist.bossTracker.SortedEntries[sortedIndex].type != EntryType.Boss)
 					continue; // Loaded entry is not a boss
 
 				// Set record data to list based on record index
 				// Data here can't be null as the key is checked beforehand
-				worldRecords[BossChecklist.bossTracker.SortedBosses[sortedIndex].GetRecordIndex] = record;
+				worldRecords[BossChecklist.bossTracker.SortedEntries[sortedIndex].GetRecordIndex] = record;
 			}
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {
-				HiddenBosses.Add(bossKey);
+				HiddenEntries.Add(bossKey);
 			}
 
 			var ForcedMarkedList = tag.GetList<string>("downed_Forced");
@@ -218,8 +218,8 @@ namespace BossChecklist
 			};
 			writer.Write(flags);
 
-			writer.Write(HiddenBosses.Count);
-			foreach (var bossKey in HiddenBosses) {
+			writer.Write(HiddenEntries.Count);
+			foreach (var bossKey in HiddenEntries) {
 				writer.Write(bossKey);
 			}
 
@@ -249,10 +249,10 @@ namespace BossChecklist
 			downedInvasionT3Ours = flags[5];
 			downedTorchGod = flags[6];
 
-			HiddenBosses.Clear();
+			HiddenEntries.Clear();
 			int count = reader.ReadInt32();
 			for (int i = 0; i < count; i++) {
-				HiddenBosses.Add(reader.ReadString());
+				HiddenEntries.Add(reader.ReadString());
 			}
 
 			ForcedMarkedEntries.Clear();
@@ -274,7 +274,7 @@ namespace BossChecklist
 				return;
 
 			foreach (NPC npc in Main.npc) {
-				BossInfo entry = NPCAssist.GetBossInfo(npc.type);
+				EntryInfo entry = NPCAssist.GetEntryInfo(npc.type);
 				if (entry == null)
 					continue;
 

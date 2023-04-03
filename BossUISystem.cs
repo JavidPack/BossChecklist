@@ -69,9 +69,9 @@ namespace BossChecklist
 		public override void AddRecipes() {
 			//bossTracker.FinalizeLocalization();
 			BossChecklist.bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.
-			BossChecklist.bossTracker.FinalizeBossLootTables(); // Generate boss loot data. Treasurebag is also determined in this.
+			BossChecklist.bossTracker.FinalizeEntryLootTables(); // Generate boss loot data. Treasurebag is also determined in this.
 			BossChecklist.bossTracker.FinalizeCollectionTypes(); // Collectible types have to be determined AFTER all items in orphan data has been added.
-			BossChecklist.bossTracker.FinalizeBossData(); // Finalize all boss data. Entries cannot be further edited beyond this point.
+			BossChecklist.bossTracker.FinalizeEntryData(); // Finalize all boss data. Entries cannot be further edited beyond this point.
 
 			if (BossChecklist.BossLogConfig.ProgressionModeEnable) {
 				BossChecklist.instance.Logger.Info("Progression Mode is ENABLED");
@@ -176,7 +176,7 @@ namespace BossChecklist
 						if (Main.netMode != NetmodeID.SinglePlayer)
 							return true;
 
-						BossInfo entry = NPCAssist.GetBossInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type);
+						EntryInfo entry = NPCAssist.GetEntryInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type);
 						if (entry == null)
 							return true;
 

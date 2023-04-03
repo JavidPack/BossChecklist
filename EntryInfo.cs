@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework;
 
 namespace BossChecklist
 {
-	internal class BossInfo // Inheritance for Event instead?
+	internal class EntryInfo // Inheritance for Event instead?
 	{
 		// This localization-ignoring string is used for cross mod queries and networking. Each key is completely unique.
 		internal string Key => modSource + " " + internalName;
@@ -21,7 +21,7 @@ namespace BossChecklist
 		internal EntryType type;
 		internal string modSource;
 		internal string internalName; // This should be unique per mod.
-		internal string name; // This should not be used for displaying purposes. Use 'BossInfo.GetDisplayName' instead.
+		internal string name; // This should not be used for displaying purposes. Use 'EntryInfo.GetDisplayName' instead.
 		internal List<int> npcIDs;
 		internal float progression;
 		internal Func<bool> downed;
@@ -69,9 +69,9 @@ namespace BossChecklist
 		}
 		*/
 
-		internal Dictionary<string, object> ConvertToDictionary(Version GetBossInfoAPIVersion) {
+		internal Dictionary<string, object> ConvertToDictionary(Version GetEntryInfoAPIVersion) {
 			// We may want to allow different returns based on api version.
-			//if (GetBossInfoAPIVersion == new Version(1, 1)) {
+			//if (GetEntryInfoAPIVersion == new Version(1, 1)) {
 			var dict = new Dictionary<string, object> {
 				{ "key", Key },
 				{ "modSource", modSource },
@@ -107,7 +107,7 @@ namespace BossChecklist
 
 		internal bool IsDownedOrForced => downed() || ForceDowned;
 
-		internal int GetIndex => BossChecklist.bossTracker.SortedBosses.IndexOf(this);
+		internal int GetIndex => BossChecklist.bossTracker.SortedEntries.IndexOf(this);
 
 		internal int GetRecordIndex => BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
 
@@ -169,7 +169,7 @@ namespace BossChecklist
 			return true; // if it passes all the checks, it should be shown
 		}
 
-		internal BossInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages = null, Action<SpriteBatch, Rectangle, Color> customDrawing = null, List<string> overrideHeadTextures = null) {
+		internal EntryInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages = null, Action<SpriteBatch, Rectangle, Color> customDrawing = null, List<string> overrideHeadTextures = null) {
 			this.type = type;
 			this.modSource = modSource;
 			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -239,27 +239,27 @@ namespace BossChecklist
 		}
 
 		// Workaround for vanilla events with illogical translation keys.
-		internal BossInfo WithCustomTranslationKey(string translationKey) {
-			// BossInfo.name should remain as a translation key.
+		internal EntryInfo WithCustomTranslationKey(string translationKey) {
+			// EntryInfo.name should remain as a translation key.
 			this.name = translationKey;
 			// Replace internal name (which would originally be illogicgal) with the printed name
 			this.internalName = Language.GetTextValue(translationKey.Substring(1)).Replace(" ", "").Replace("'", "");
 			return this;
 		}
 
-		internal BossInfo WithCustomAvailability(Func<bool> funcBool) {
+		internal EntryInfo WithCustomAvailability(Func<bool> funcBool) {
 			this.available = funcBool;
 			return this;
 		}
 
-		internal BossInfo WithCustomPortrait(string texturePath) {
+		internal EntryInfo WithCustomPortrait(string texturePath) {
 			if (ModContent.HasAsset(texturePath)) {
 				this.portraitTexture = ModContent.Request<Texture2D>(texturePath);
 			}
 			return this;
 		}
 
-		internal BossInfo WithCustomHeadIcon(string texturePath) {
+		internal EntryInfo WithCustomHeadIcon(string texturePath) {
 			if (ModContent.HasAsset(texturePath)) {
 				this.headIconTextures = new List<Asset<Texture2D>>() { ModContent.Request<Texture2D>(texturePath) };
 			}
@@ -269,7 +269,7 @@ namespace BossChecklist
 			return this;
 		}
 
-		internal BossInfo WithCustomHeadIcon(List<string> texturePaths) {
+		internal EntryInfo WithCustomHeadIcon(List<string> texturePaths) {
 			this.headIconTextures = new List<Asset<Texture2D>>();
 			foreach (string path in texturePaths) {
 				if (ModContent.HasAsset(path)) {
@@ -282,7 +282,7 @@ namespace BossChecklist
 			return this;
 		}
 
-		internal static BossInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
 			string nameKey = name.Substring(name.LastIndexOf(".") + 1);
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
@@ -303,7 +303,7 @@ namespace BossChecklist
 
 			Func<NPC, string> customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? "Mods.BossChecklist.BossDespawn.Day" : "Mods.BossChecklist.BossDespawn.Generic";
 
-			return new BossInfo(
+			return new EntryInfo(
 				type,
 				"Terraria",
 				name,
@@ -318,9 +318,9 @@ namespace BossChecklist
 			);
 		}
 
-		internal static BossInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
+		internal static EntryInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
 			string nameKey = name.StartsWith("$") ? name.Substring(name.LastIndexOf(".") + 1) : name.Replace(" ", "").Replace("'", "");
-			return new BossInfo(
+			return new EntryInfo(
 				EntryType.Event,
 				"Terraria",
 				name,
@@ -355,7 +355,7 @@ namespace BossChecklist
 			this.Key = bossKey;
 			this.values = values;
 
-			List<BossInfo> bosses = BossChecklist.bossTracker.SortedBosses;
+			List<EntryInfo> bosses = BossChecklist.bossTracker.SortedEntries;
 			int index = bosses.FindIndex(x => x.Key == this.Key);
 			if (index != -1) {
 				modSource = bosses[index].SourceDisplayName;

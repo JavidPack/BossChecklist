@@ -15,7 +15,7 @@ namespace BossChecklist.Commands
 		// public override string Usage => base.Usage;
 
 		public override void Action(CommandCaller caller, string input, string[] args) {
-			var sortedBosses = BossChecklist.bossTracker.SortedBosses.OrderBy(x => x.progression);
+			var sortedBosses = BossChecklist.bossTracker.SortedEntries.OrderBy(x => x.progression);
 			foreach (var boss in sortedBosses) {
 				bool downed = boss.downed();
 				Console.ForegroundColor = downed ? ConsoleColor.Green : ConsoleColor.Yellow;

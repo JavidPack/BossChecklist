@@ -50,9 +50,9 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Gets the BossInfo of the entry on the selected page. Returns null if not on a entry page.
+		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on a entry page.
 		/// </summary>
-		public BossInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedBosses[PageNum] : null;
+		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
 
 		// Navigation
 		public NavigationalButton NextPage;
@@ -83,7 +83,7 @@ namespace BossChecklist
 		public ProgressBar hardmodeBar;
 		public BossLogUIElements.FixedUIScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
 		public BossLogUIElements.FixedUIScrollbar scrollTwo;
-		public bool showHidden = false; // when true, hidden bosses are visible on the list
+		public bool showHidden = false; // when true, hidden entries are visible on the list
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Record page related
@@ -507,7 +507,7 @@ namespace BossChecklist
 			}
 
 			if (headNum != -1) {
-				BossInfo entry = BossChecklist.bossTracker.SortedBosses[headNum];
+				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[headNum];
 				int headOffset = 0;
 				foreach (Asset<Texture2D> headIcon in entry.headIconTextures) {
 					spriteBatch.Draw(headIcon.Value, new Vector2(Main.mouseX + 15 + headOffset, Main.mouseY + 15), MaskBoss(entry));
@@ -674,13 +674,13 @@ namespace BossChecklist
 		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Forced Downs, Clear Records, Clear Boss Loot, etc
 
 		private void ClearHiddenList() {
-			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenBosses.Count == 0)
+			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenEntries.Count == 0)
 				return;
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return;
 
-			WorldAssist.HiddenBosses.Clear();
+			WorldAssist.HiddenEntries.Clear();
 			showHidden = false;
 
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -1008,7 +1008,7 @@ namespace BossChecklist
 				// While holding alt, a user can interact with any boss list entry
 				// Left-clicking forces a completion check on or off
 				// Right-clicking hides the boss from the list
-				BossInfo entry = BossChecklist.bossTracker.SortedBosses[index];
+				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[index];
 				if (leftClick) {
 					// toggle defeation state and update the world save data
 					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
@@ -1031,10 +1031,10 @@ namespace BossChecklist
 					// toggle hidden state and update the world save data
 					entry.hidden = !entry.hidden;
 					if (entry.hidden) {
-						WorldAssist.HiddenBosses.Add(entry.Key);
+						WorldAssist.HiddenEntries.Add(entry.Key);
 					}
 					else {
-						WorldAssist.HiddenBosses.Remove(entry.Key);
+						WorldAssist.HiddenEntries.Remove(entry.Key);
 					}
 
 					// handle the global update with a packet and update the legacy checklist as well
@@ -1106,7 +1106,7 @@ namespace BossChecklist
 			}
 
 			// Calculate what page the Log needs to update to
-			List<BossInfo> BossList = BossChecklist.bossTracker.SortedBosses;
+			List<EntryInfo> BossList = BossChecklist.bossTracker.SortedEntries;
 			int NewPageValue = PageNum;
 			if (button.Id == "Next") {
 				NewPageValue = NewPageValue < BossList.Count - 1 ? NewPageValue + 1 : Page_Credits;
@@ -1126,7 +1126,7 @@ namespace BossChecklist
 					// ...repeat the new page calculation until a valid boss page is selected
 					// or until its reached page -1 (table of contents) or -2 (credits)
 					while (NewPageValue >= 0) {
-						BossInfo currentBoss = BossList[NewPageValue];
+						EntryInfo currentBoss = BossList[NewPageValue];
 						if (!currentBoss.hidden && currentBoss.available()) {
 							if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
 								break; // if 'only show bosses' is not enabled
@@ -1257,8 +1257,8 @@ namespace BossChecklist
 			hardmodeList.Clear();
 
 			string nextBoss = "";
-			foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
-				entry.hidden = WorldAssist.HiddenBosses.Contains(entry.Key);
+			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
+				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
 
 				if (!entry.VisibleOnChecklist())
 					continue; // If the boss should not be visible on the Table of Contents, skip the entry in the list
@@ -1284,8 +1284,8 @@ namespace BossChecklist
 					}
 				}
 
-				// The first boss that isnt downed to have a nextCheck will set off the next check for the rest
-				// Bosses that ARE downed will still be green due to the ordering of colors within the draw method
+				// The first entry that isnt downed to have a nextCheck will set off the next check for the rest
+				// Entries that ARE downed will still be green due to the ordering of colors within the draw method
 				// Update forced downs. If the boss is actaully downed, remove the force check.
 				if (entry.ForceDowned) {
 					displayName += "*";
@@ -1416,7 +1416,7 @@ namespace BossChecklist
 			Dictionary<string, int[]> prehEntries = new Dictionary<string, int[]>();
 			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
 
-			foreach (BossInfo entry in BossChecklist.bossTracker.SortedBosses) {
+			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				if (entry.hidden)
 					continue; // The only way to manually remove entries from the progress bar is by hiding them
 
@@ -1660,7 +1660,7 @@ namespace BossChecklist
 
 					int offset = 0;
 					foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
-						BossInfo relatedEntry = BossChecklist.bossTracker.SortedBosses[BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == entryKey)];
+						EntryInfo relatedEntry = BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == entryKey)];
 
 						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
 						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
@@ -2013,10 +2013,10 @@ namespace BossChecklist
 		/// Mainly used for positioning and navigation.
 		/// </summary>
 		/// <returns>The index of the next available entry within the boss tracker.</returns>
-		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedBosses.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
+		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
 
 		/// <summary> Determines if a texture should be masked by a black sihlouette. </summary>
-		public static Color MaskBoss(BossInfo entry) {
+		public static Color MaskBoss(EntryInfo entry) {
 			if (!entry.IsDownedOrForced) {
 				if (BossChecklist.BossLogConfig.MaskTextures) {
 					return Color.Black;

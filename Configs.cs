@@ -367,7 +367,7 @@ namespace BossChecklist
 						if (!npc.active)
 							continue;
 
-						BossInfo entry = NPCAssist.GetBossInfo(npc.type);
+						EntryInfo entry = NPCAssist.GetEntryInfo(npc.type);
 						if (entry == null)
 							continue;
 
@@ -393,7 +393,7 @@ namespace BossChecklist
 						if (!npc.active)
 							continue;
 
-						BossInfo entry = NPCAssist.GetBossInfo(npc.type);
+						EntryInfo entry = NPCAssist.GetEntryInfo(npc.type);
 						if (entry == null)
 							continue;
 

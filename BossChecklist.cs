@@ -136,18 +136,18 @@ namespace BossChecklist
 
 					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for GetBossInfoDictionary");
 
-					if (!bossTracker.BossesFinalized) {
+					if (!bossTracker.EntriesFinalized) {
 						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
 					}
 					//if (message == "GetBossInfoExpando") {
 					//	return bossTracker.SortedBosses.ToDictionary(boss => boss.Key, boss => boss.ConvertToExpandoObject());
 					//}
 					if (message == "GetBossInfoDictionary") {
-						return bossTracker.SortedBosses.ToDictionary(boss => boss.Key, boss => boss.ConvertToDictionary(apiVersion));
+						return bossTracker.SortedEntries.ToDictionary(boss => boss.Key, boss => boss.ConvertToDictionary(apiVersion));
 					}
 					return "Failure";
 				}
-				if (bossTracker.BossesFinalized)
+				if (bossTracker.EntriesFinalized)
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
 				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons
 					if (argsLength < 7) {
@@ -332,9 +332,9 @@ namespace BossChecklist
 					string bossKey = reader.ReadString();
 					bool hide = reader.ReadBoolean();
 					if (hide)
-						WorldAssist.HiddenBosses.Add(bossKey);
+						WorldAssist.HiddenEntries.Add(bossKey);
 					else
-						WorldAssist.HiddenBosses.Remove(bossKey);
+						WorldAssist.HiddenEntries.Remove(bossKey);
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else
@@ -345,7 +345,7 @@ namespace BossChecklist
 					//{
 					//	Main.NewText("Huh? RequestClearHidden on client?");
 					//}
-					WorldAssist.HiddenBosses.Clear();
+					WorldAssist.HiddenEntries.Clear();
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else

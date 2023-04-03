@@ -76,7 +76,7 @@ namespace BossChecklist
 				return true;
 			}
 			else if (BossChecklist.ClientConfig.TreasureBagsBool) {
-				foreach (BossInfo boss in BossChecklist.bossTracker.SortedBosses) {
+				foreach (EntryInfo boss in BossChecklist.bossTracker.SortedEntries) {
 					if (boss.treasureBag == type) {
 						return true;
 					}

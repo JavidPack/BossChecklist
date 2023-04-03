@@ -18,11 +18,11 @@ namespace BossChecklist.UIElements
 		internal UICheckbox checkbox;
 		internal UIHoverImageButton moreInfo;
 		internal bool expanded;
-		internal BossInfo boss;
+		internal EntryInfo boss;
 		private float descriptionHeight = 18;
 		private int bossIndex { get; }
 
-		public UIBossCheckbox(BossInfo boss) {
+		public UIBossCheckbox(EntryInfo boss) {
 			this.boss = boss;
 			Width = StyleDimension.Fill;
 			Height.Pixels = 15;
@@ -58,9 +58,9 @@ namespace BossChecklist.UIElements
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				boss.hidden = !boss.hidden;
 				if (boss.hidden)
-					WorldAssist.HiddenBosses.Add(boss.Key);
+					WorldAssist.HiddenEntries.Add(boss.Key);
 				else
-					WorldAssist.HiddenBosses.Remove(boss.Key);
+					WorldAssist.HiddenEntries.Remove(boss.Key);
 				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				if (BossChecklist.BossLogConfig.HideUnavailable) {
 					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossLogUI.Page_TableOfContents);
