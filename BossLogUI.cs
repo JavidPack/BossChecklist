@@ -1735,9 +1735,8 @@ namespace BossChecklist
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
 
-			if (SpawnItemSelected >= selectedBoss.spawnItem.Count) {
+			if (SpawnItemSelected >= selectedBoss.spawnItem.Count)
 				SpawnItemSelected = 0; // the selected spawn item number is greater than how many are in the list, so reset it back to 0
-			}
 
 			// Once the spawn description has been made, start structuring the spawn items showcase
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
@@ -1767,7 +1766,7 @@ namespace BossChecklist
 			// if more than one item is used for summoning, append navigational button to cycle through the items
 			// a previous item button will appear if it is not the first item listed
 			if (SpawnItemSelected > 0) {
-				NavigationalButton PrevItem = new NavigationalButton(prevTexture) {
+				NavigationalButton PrevItem = new NavigationalButton(prevTexture, true) {
 					Id = "PrevItem"
 				};
 				PrevItem.Width.Pixels = prevTexture.Value.Width;
@@ -1779,7 +1778,7 @@ namespace BossChecklist
 			}
 			// a next button will appear if it is not the last item listed
 			if (SpawnItemSelected < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
-				NavigationalButton NextItem = new NavigationalButton(nextTexture) {
+				NavigationalButton NextItem = new NavigationalButton(nextTexture, true) {
 					Id = "NextItem"
 				};
 				NextItem.Width.Pixels = nextTexture.Value.Width;

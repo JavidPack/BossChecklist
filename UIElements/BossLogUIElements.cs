@@ -179,9 +179,8 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {
-				if (hoverButton) {
+				if (hoverButton)
 					SoundEngine.PlaySound(SoundID.MenuTick);
-				}
 			}
 
 			public override void Update(GameTime gameTime) {
