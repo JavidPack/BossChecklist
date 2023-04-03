@@ -1626,7 +1626,6 @@ namespace BossChecklist
 						$"\nBoss Records can be toggled under the Feature Testing configs.";
 				}
 
-				float elementOffset = lootButton.Left.Pixels + lootButton.Width.Pixels;
 				NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, noticeText) {
 					Id = "bnuuyIcon"
 				};
@@ -1679,6 +1678,9 @@ namespace BossChecklist
 					slot.Top.Pixels = 35 + (75 * (i + 1));
 					PageTwo.Append(slot);
 				}
+
+				if (i > 0)
+					break;
 
 				int offset = 0;
 				foreach (string entryKey in entry.relatedEntries) {
