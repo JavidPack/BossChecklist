@@ -842,6 +842,7 @@ namespace BossChecklist
 					NPCID.PirateCorsair,
 					NPCID.PirateCrossbower,
 					NPCID.PirateCaptain,
+					NPCID.PirateGhost,
 					NPCID.Parrot,
 					NPCID.PirateShip,
 				}
