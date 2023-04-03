@@ -1545,8 +1545,8 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
-				bool isEvent = subpageNum == SubPage.Records && BossChecklist.bossTracker.SortedBosses[selectedLogPage].type == EntryType.Event; // Event entries should display 'Kill Count' instead of 'Records'
-				string translated = Language.GetTextValue(isEvent ? "LegacyInterface.101" : buttonText);
+				bool useKillCountText = subpageNum == SubPage.Records && BossChecklist.bossTracker.SortedBosses[selectedLogPage].type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
+				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				Vector2 pos = new Vector2(inner.X + ((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
 				if (isSubPage) {
