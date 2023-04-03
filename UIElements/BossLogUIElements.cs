@@ -178,7 +178,14 @@ namespace BossChecklist.UIElements
 					BossUISystem.Instance.BossLog.PendingPageNum = (int)Anchor;
 
 				if (Id == "SubCategory") {
-					BossLogUI.RecordSubCategory++;
+					PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[BossUISystem.Instance.BossLog.GetLogEntryInfo.GetRecordIndex].stats;
+					if (stats.kills == 0) {
+						BossLogUI.RecordSubCategory = BossLogUI.RecordSubCategory == SubCategory.PreviousAttempt ? SubCategory.WorldRecord : SubCategory.PreviousAttempt;
+					}
+					else {
+						BossLogUI.RecordSubCategory++;
+					}
+
 					if (BossLogUI.RecordSubCategory == SubCategory.None)
 						BossLogUI.RecordSubCategory = SubCategory.PreviousAttempt;
 
