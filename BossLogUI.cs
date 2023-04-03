@@ -49,6 +49,11 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Gets the BossInfo of the entry on the selected page. Returns null if not on a entry page.
+		/// </summary>
+		public BossInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedBosses[PageNum] : null;
+
 		// Navigation
 		public NavigationalButton NextPage;
 		public NavigationalButton PrevPage;
@@ -221,7 +226,7 @@ namespace BossChecklist
 			}
 			else if (PageNum >= 0) {
 				// If UI is closed on a new record page, remove the new record from the list
-				int selectedEntryIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
+				int selectedEntryIndex = GetLogEntryInfo.GetRecordIndex;
 				if (selectedEntryIndex != -1 && modPlayer.hasNewRecord.Length > 0) {
 					modPlayer.hasNewRecord[selectedEntryIndex] = false;
 				}
@@ -717,7 +722,7 @@ namespace BossChecklist
 				return; // player must be holding alt
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			int recordIndex = BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex;
+			int recordIndex = GetLogEntryInfo.GetRecordIndex;
 			PersonalStats stats = modPlayer.RecordsForWorld[recordIndex].stats;
 			stats.kills = 0;
 			stats.deaths = 0;
@@ -1065,9 +1070,8 @@ namespace BossChecklist
 			// Remove new records when navigating from a page with a new record
 			if (PageNum >= 0) {
 				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
-				if (entry.GetRecordIndex != -1) {
-					modPlayer.hasNewRecord[entry.GetRecordIndex] = false;
+				if (GetLogEntryInfo.GetRecordIndex != -1) {
+					modPlayer.hasNewRecord[GetLogEntryInfo.GetRecordIndex] = false;
 				}
 			}
 
@@ -1097,8 +1101,8 @@ namespace BossChecklist
 				return;
 			// Remove new records when navigating from a page with a new record
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex != -1) {
-				modPlayer.hasNewRecord[BossChecklist.bossTracker.SortedBosses[PageNum].GetRecordIndex] = false;
+			if (PageNum >= 0 && GetLogEntryInfo.GetRecordIndex != -1) {
+				modPlayer.hasNewRecord[GetLogEntryInfo.GetRecordIndex] = false;
 			}
 
 			// Calculate what page the Log needs to update to
@@ -1215,8 +1219,7 @@ namespace BossChecklist
 
 			if (PageNum >= 0) {
 				// Entry pages need to have the category pages set up, but only for entries fully implemented
-				BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
-				if (entry.modSource != "Unknown") {
+				if (GetLogEntryInfo.modSource != "Unknown") {
 					PageTwo.Append(recordButton);
 					PageTwo.Append(spawnButton);
 					PageTwo.Append(lootButton);
@@ -1232,7 +1235,7 @@ namespace BossChecklist
 					PageTwo.Append(brokenPanel);
 
 					// TODO: this will likely always output the NotImplemented, but I don't want to remove it just yet
-					bool entryHasOldCall = BossChecklist.bossTracker.OldCalls.Values.Any(x => x.Contains(entry.name));
+					bool entryHasOldCall = BossChecklist.bossTracker.OldCalls.Values.Any(x => x.Contains(GetLogEntryInfo.name));
 					string message = entryHasOldCall ? "NotImplemented" : "LogFeaturesNotAvailable";
 					FittedTextPanel brokenDisplay = new FittedTextPanel($"Mods.BossChecklist.BossLog.DrawnText.{message}");
 					brokenDisplay.Height.Pixels = 200;
@@ -1561,14 +1564,12 @@ namespace BossChecklist
 			if (PageNum < 0)
 				return; // Code should only run if it is on an entry page
 
-			BossInfo entry = BossChecklist.bossTracker.SortedBosses[PageNum];
-
 			// Set up the record type navigation buttons
 			// Only bosses have records (Events will have banners of the enemies in the event drawn on it)
 			// The entry also must be fully supported to have these buttons created
 
-			if (entry.type == EntryType.Boss) {
-				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
+			if (GetLogEntryInfo.type == EntryType.Boss) {
+				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[GetLogEntryInfo.GetRecordIndex].stats;
 				bool noKills = stats.kills == 0; // has the player killed this boss before?
 				if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
 					RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.
@@ -1617,7 +1618,7 @@ namespace BossChecklist
 
 			// create 4 slots for each stat category value
 			for (int i = 0; i < 4; i++) {
-				if (i > 0 && entry.type != EntryType.Boss)
+				if (i > 0 && GetLogEntryInfo.type != EntryType.Boss)
 					break; // Mini-bosses and Events only display the first slot
 
 				if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE && i > 0 && RecordSubCategory != SubCategory.WorldRecord)
@@ -1627,7 +1628,7 @@ namespace BossChecklist
 					break;
 
 				RecordDisplaySlot slot;
-				if (entry.type == EntryType.Boss) {
+				if (GetLogEntryInfo.type == EntryType.Boss) {
 					slot = new RecordDisplaySlot(recordSlot, RecordSubCategory, i);
 					slot.Width.Pixels = recordSlot.Value.Width;
 					slot.Height.Pixels = recordSlot.Value.Height;
@@ -1645,7 +1646,7 @@ namespace BossChecklist
 				}
 
 				if (i == 0) {
-					if (entry.type == EntryType.Boss) {
+					if (GetLogEntryInfo.type == EntryType.Boss) {
 						Asset<Texture2D> recordIcon = RequestResource($"Nav_Record_{RecordSubCategory}");
 						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, "Cycle record cubcategory") {
 							Id = "SubCategory"
@@ -1658,7 +1659,7 @@ namespace BossChecklist
 					}
 
 					int offset = 0;
-					foreach (string entryKey in entry.relatedEntries) {
+					foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
 						BossInfo relatedEntry = BossChecklist.bossTracker.SortedBosses[BossChecklist.bossTracker.SortedBosses.FindIndex(x => x.Key == entryKey)];
 
 						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
@@ -1666,7 +1667,7 @@ namespace BossChecklist
 						Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
 						NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
-							Id = entry.type == EntryType.Event ? "eventIcon" : "bossIcon",
+							Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
 							Anchor = relatedEntry.GetIndex
 						};
 						entryIcon.Width.Pixels = headIcon.Value.Width;
@@ -1675,7 +1676,7 @@ namespace BossChecklist
 						entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
 						slot.Append(entryIcon);
 
-						if (entry.type == EntryType.Boss || entry.type == EntryType.MiniBoss)
+						if (GetLogEntryInfo.type == EntryType.Boss || GetLogEntryInfo.type == EntryType.MiniBoss)
 							break;
 
 						offset += 10 + headIcon.Value.Width;
@@ -1693,13 +1694,12 @@ namespace BossChecklist
 			if (PageNum < 0)
 				return; // Code should only run if it is on an entry page
 
-			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
-			if (selectedBoss.modSource == "Unknown")
+			if (GetLogEntryInfo.modSource == "Unknown")
 				return; // prevent unsupported entries from displaying info
 						// a message panel will take its place notifying the user that the mods calls are out of date
 
 			// Before anything, create a message box to display the spawn info provided
-			var message = new UIMessageBox(selectedBoss.DisplaySpawnInfo);
+			var message = new UIMessageBox(GetLogEntryInfo.DisplaySpawnInfo);
 			message.Width.Set(-34f, 1f);
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
@@ -1715,13 +1715,13 @@ namespace BossChecklist
 			PageTwo.Append(scrollTwo);
 			message.SetScrollbar(scrollTwo);
 
-			if (SpawnItemSelected >= selectedBoss.spawnItem.Count)
+			if (SpawnItemSelected >= GetLogEntryInfo.spawnItem.Count)
 				SpawnItemSelected = 0; // the selected spawn item number is greater than how many are in the list, so reset it back to 0
 
 			// Once the spawn description has been made, start structuring the spawn items showcase
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
-			if (selectedBoss.spawnItem.Count == 0 || selectedBoss.spawnItem[SpawnItemSelected] == ItemID.None) {
-				string type = selectedBoss.type == EntryType.Boss ? "Boss" : selectedBoss.type == EntryType.Event ? "Event" : "MiniBoss";
+			if (GetLogEntryInfo.spawnItem.Count == 0 || GetLogEntryInfo.spawnItem[SpawnItemSelected] == ItemID.None) {
+				string type = GetLogEntryInfo.type == EntryType.Boss ? "Boss" : GetLogEntryInfo.type == EntryType.Event ? "Event" : "MiniBoss";
 				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
@@ -1730,9 +1730,9 @@ namespace BossChecklist
 			}
 
 			// If a valid item is found, an item slot can be created
-			int itemType = selectedBoss.spawnItem[SpawnItemSelected]; // grab the item type
+			int itemType = GetLogEntryInfo.spawnItem[SpawnItemSelected]; // grab the item type
 			Item spawn = ContentSamples.ItemsByType[itemType]; // create an item for the item slot to use and reference
-			if (selectedBoss.Key == "Terraria TorchGod" && itemType == ItemID.Torch) {
+			if (GetLogEntryInfo.Key == "Terraria TorchGod" && itemType == ItemID.Torch) {
 				spawn.stack = 101; // apply a custom stack count for the torches needed for the Torch God summoning event
 			}
 
@@ -1757,7 +1757,7 @@ namespace BossChecklist
 				PageTwo.Append(PrevItem);
 			}
 			// a next button will appear if it is not the last item listed
-			if (SpawnItemSelected < BossChecklist.bossTracker.SortedBosses[PageNum].spawnItem.Count - 1) {
+			if (SpawnItemSelected < GetLogEntryInfo.spawnItem.Count - 1) {
 				NavigationalButton NextItem = new NavigationalButton(nextTexture, true) {
 					Id = "NextItem"
 				};
@@ -1930,14 +1930,13 @@ namespace BossChecklist
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
 
-			BossInfo selectedBoss = BossChecklist.bossTracker.SortedBosses[PageNum];
 			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
-			List<int> bossItems = new List<int>(selectedBoss.lootItemTypes.Union(selectedBoss.collection)); // combined list of loot and collectibles
-			bossItems.Remove(selectedBoss.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
+			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collection)); // combined list of loot and collectibles
+			bossItems.Remove(GetLogEntryInfo.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
 
 			// Prevents itemslot creation for items that are dropped from within the opposite world evil, if applicable
 			if (!Main.drunkWorld && !ModLoader.TryGetMod("BothEvils", out Mod mod)) {
-				foreach (DropRateInfo loot in selectedBoss.loot) {
+				foreach (DropRateInfo loot in GetLogEntryInfo.loot) {
 					if (loot.conditions is null)
 						continue;
 
