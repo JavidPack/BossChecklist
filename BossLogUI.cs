@@ -1609,6 +1609,35 @@ namespace BossChecklist
 					RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.
 				}
 
+				#region Experimental Feature Notice
+				// TODO: Experimental feature notice, eventually will need to be removed
+				Asset<Texture2D> bnuuy = Main.Assets.Request<Texture2D>("Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
+				string noticeText;
+				if (RecordSubCategory == SubCategory.WorldRecord) {
+					noticeText = $"World Records are currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+						"\nThe World Records feature is still under construction." +
+						"\nThis feature is known to not work and cause issues, so enable at your own risk." +
+						$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
+				}
+				else {
+					noticeText = $"Boss Records are currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+						"\nThis section of the Boss Log is still under construction." +
+						"\nAny features or configs related to this page may not work or cause issues." +
+						$"\nBoss Records can be toggled under the Feature Testing configs.";
+				}
+
+				float elementOffset = lootButton.Left.Pixels + lootButton.Width.Pixels;
+				NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, noticeText) {
+					Id = "bnuuyIcon"
+				};
+				bnuuyIcon.Width.Pixels = bnuuy.Value.Width;
+				bnuuyIcon.Height.Pixels = bnuuy.Value.Height;
+				bnuuyIcon.Left.Pixels = (PageTwo.Width.Pixels - (lootButton.Left.Pixels / 2) - bnuuy.Value.Width / 2);
+				bnuuyIcon.Top.Pixels = lootButton.Top.Pixels;
+				PageTwo.Append(bnuuyIcon);
+				#endregion
+
+				/*
 				// iterate through AltPageButtons to appeand each button where needed
 				for (int i = 0; i < AltPageButtons.Length; i++) {
 					if ((i == (int)SubCategory.PersonalBest || i == (int)SubCategory.FirstVictory) && noKills)
@@ -1618,6 +1647,8 @@ namespace BossChecklist
 					AltPageButtons[i].Top.Pixels = (int)lootButton.Top.Pixels + (int)lootButton.Height.Pixels / 2 - 11;
 					PageTwo.Append(AltPageButtons[i]);
 				}
+				*/
+
 			}
 
 			// create 4 slots for each stat category value
@@ -1671,35 +1702,6 @@ namespace BossChecklist
 						break;
 
 					offset += 10 + headIcon.Value.Width;
-				}
-
-				if (entry.type == EntryType.Boss && i == 0) {
-					#region Experimental Feature Notice
-					// TODO: Experimental feature notice, eventually will need to be removed
-					Asset<Texture2D> bnuuy = Main.Assets.Request<Texture2D>("Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
-					string noticeText;
-					if (RecordSubCategory == SubCategory.WorldRecord) {
-						noticeText = $"World Records are currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
-							"\nThe World Records feature is still under construction." +
-							"\nThis feature is known to not work and cause issues, so enable at your own risk." +
-							$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
-					}
-					else {
-						noticeText = $"Boss Records are currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
-							"\nThis section of the Boss Log is still under construction." +
-							"\nAny features or configs related to this page may not work or cause issues." +
-							$"\nBoss Records can be toggled under the Feature Testing configs.";
-					}
-
-					NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, noticeText) {
-						Id = "bnuuyIcon"
-					};
-					bnuuyIcon.Width.Pixels = bnuuy.Value.Width;
-					bnuuyIcon.Height.Pixels = bnuuy.Value.Height;
-					bnuuyIcon.Left.Pixels = slot.Width.Pixels - bnuuy.Value.Width - 15;
-					bnuuyIcon.Top.Pixels = slot.Height.Pixels / 2 - bnuuy.Value.Height / 2;
-					slot.Append(bnuuyIcon);
-					#endregion
 				}
 			}
 		}
