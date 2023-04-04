@@ -50,7 +50,7 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on a entry page.
+		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on an entry page.
 		/// </summary>
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
 
@@ -480,7 +480,7 @@ namespace BossChecklist
 			}
 			if (PendingPageChange) {
 				PendingPageChange = false;
-				UpdateSelectedPage(PageChangeValue, SelectedSubPage);
+				PageNum = PageChangeValue;
 			}
 			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
 			base.Update(gameTime);
@@ -1118,19 +1118,19 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Updates desired page and subcategory when called. Used for buttons that use navigation.
+		/// Updates desired page, subpage, and subcategory when called. Used for buttons that use navigation.
 		/// </summary>
 		/// <param name="pageNum">The page you want to switch to.</param>
-		/// <param name="catPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist. Defaults to the record page.</param>
-		/// <param name="altPage">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
-		private void UpdateSelectedPage(int pageNum, SubPage catPage = SubPage.Records, SubCategory altPage = SubCategory.None) {
+		/// <param name="subPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist.</param>
+		/// <param name="subCategory">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
+		private void UpdateSelectedPage(int pageNum, SubPage subPage, SubCategory subCategory = SubCategory.None) {
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
 			
 			// Only on boss pages does updating the category page matter
 			if (PageNum >= 0) {
-				SelectedSubPage = catPage;
-				if (altPage != SubCategory.None) {
-					RecordSubCategory = altPage;
+				SelectedSubPage = subPage;
+				if (subCategory != SubCategory.None) {
+					RecordSubCategory = subCategory;
 				}
 			}
 
@@ -1138,7 +1138,7 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Restructures all page content and elements without changing the page or subcategory.
+		/// Restructures all page content and elements without changing the page or subpage.
 		/// </summary>
 		public void RefreshPageContent() {
 			ResetUIPositioning(); // Repositions common ui elements when the UI is updated
