@@ -1538,27 +1538,23 @@ namespace BossChecklist.UIElements
 		internal class SubPageButton : UIImage
 		{
 			readonly string buttonText;
-			readonly SubPage subpageNum;
+			readonly SubPage subPageType;
 
 			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
 				buttonText = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{type}");
-				subpageNum = type;
+				subPageType = type;
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
-				if (selectedLogPage < 0)
-					return;
-
 				base.DrawSelf(spriteBatch);
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
-				if (subpageNum == BossLogUI.SelectedSubPage) {
+				if (subPageType == BossLogUI.SelectedSubPage) {
 					Asset<Texture2D> border = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_SubpageSelected", AssetRequestMode.ImmediateLoad);
 					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
-				bool useKillCountText = subpageNum == SubPage.Records && BossChecklist.bossTracker.SortedEntries[selectedLogPage].type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
+				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				Vector2 pos = new Vector2(inner.X + ((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
