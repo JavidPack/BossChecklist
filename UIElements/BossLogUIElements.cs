@@ -1537,24 +1537,12 @@ namespace BossChecklist.UIElements
 
 		internal class SubPageButton : UIImage
 		{
-			Asset<Texture2D> texture;
-			string buttonText;
+			readonly string buttonText;
 			readonly SubPage subpageNum;
-			readonly SubCategory altPageNum;
-			bool isSubPage;
 
 			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
-				this.texture = texture;
 				buttonText = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{type}");
 				subpageNum = type;
-				isSubPage = true;
-			}
-
-			public SubPageButton(Asset<Texture2D> texture, SubCategory type) : base(texture) {
-				this.texture = texture;
-				buttonText = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{type}");
-				altPageNum = type;
-				isSubPage = false;
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -1565,7 +1553,7 @@ namespace BossChecklist.UIElements
 				base.DrawSelf(spriteBatch);
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
-				if (isSubPage && subpageNum == BossLogUI.SelectedSubPage) {
+				if (subpageNum == BossLogUI.SelectedSubPage) {
 					Asset<Texture2D> border = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_SubpageSelected", AssetRequestMode.ImmediateLoad);
 					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
 				}
@@ -1574,32 +1562,8 @@ namespace BossChecklist.UIElements
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				Vector2 pos = new Vector2(inner.X + ((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
-				if (isSubPage) {
-					spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
-				}
-
-				if (!isSubPage) {
-					if (BossLogUI.SelectedSubPage == SubPage.Records) {
-						if (altPageNum == BossLogUI.RecordSubCategory) {
-							spriteBatch.Draw(texture.Value, inner, Color.LemonChiffon);
-							Texture2D pointer = TextureAssets.Cursors[4].Value;
-							Vector2 iconPos = new Vector2(inner.Right - pointer.Width / 2 - 2, inner.Bottom - pointer.Height / 2 - 2);
-							spriteBatch.Draw(pointer, iconPos, Color.White);
-						}
-						else if (altPageNum == BossLogUI.CompareState) {
-							spriteBatch.Draw(texture.Value, inner, Color.LightCyan);
-							Texture2D glass = TextureAssets.Cursors[2].Value;
-							Vector2 iconPos = new Vector2(inner.Right - glass.Width / 2 - 2, inner.Bottom - glass.Height / 2 - 2);
-							spriteBatch.Draw(glass, iconPos, Color.White);
-						}
-
-						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = Language.GetTextValue(buttonText);
-							BossUISystem.Instance.UIHoverTextColor = Colors.RarityGreen;
-						}
-					}
-					// No other subpage uses subcategories currently
-				}
+				
+				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 			}
 		}
 	}
