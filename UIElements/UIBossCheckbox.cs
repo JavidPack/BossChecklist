@@ -49,7 +49,7 @@ namespace BossChecklist.UIElements
 
 		private void MoreInfo_OnClick(UIMouseEvent evt, UIElement listeningElement) {
 			BossUISystem.Instance.BossLog.ToggleBossLog(true);
-			BossUISystem.Instance.BossLog.JumpToBossPage(bossIndex);
+			BossUISystem.Instance.BossLog.PageNum = bossIndex;
 		}
 
 		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement) {
@@ -63,7 +63,7 @@ namespace BossChecklist.UIElements
 					WorldAssist.HiddenEntries.Remove(boss.Key);
 				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				if (BossChecklist.BossLogConfig.HideUnavailable) {
-					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossLogUI.Page_TableOfContents);
+					BossUISystem.Instance.BossLog.PageNum = BossLogUI.Page_TableOfContents;
 				}
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();

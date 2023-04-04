@@ -968,31 +968,6 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Navigational logic for clicking on the record type buttons.
-		/// Left-clicks will swap to that record category. Right-clicks will set the compare state to the record category.
-		/// <para>Note: Handling buttons within the for loop upon button creation makes altPage reach max value. This method seems to be a good substitute.</para>
-		/// </summary>
-		/// <param name="type">The record category you are chainging</param>
-		/// <param name="leftClick"></param>
-		public void HandleRecordTypeButton(SubCategory type, bool leftClick = true) {
-			// If left-clicking, there is no point in changing the page to the one the player is already on
-			// If right-clicking, we cannot compare the record to itself
-			if (RecordSubCategory == type)
-				return; // in either case, just do nothing
-
-			if (!leftClick) {
-				// If it is already the compare state, reset the compare state to off. Otherwise, just set it to the selected type.
-				CompareState = CompareState == type ? SubCategory.None : type;
-			}
-			else {
-				if (CompareState == type) {
-					CompareState = SubCategory.None; // If switching to the compared state, reset compare state to off.
-				}
-				UpdateSelectedPage(PageNum, SelectedSubPage, type); // update the record category to the new type
-			}
-		}
-
-		/// <summary>
 		/// Handlesthe logic for interacting with the Table of Content texts.
 		/// Left or right clicking will jump to the boss's page.
 		/// Holding alt while left-clicking will mark the boss as defeated.
@@ -1156,7 +1131,7 @@ namespace BossChecklist
 		/// <param name="pageNum">The page you want to switch to.</param>
 		/// <param name="catPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist. Defaults to the record page.</param>
 		/// <param name="altPage">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
-		public void UpdateSelectedPage(int pageNum, SubPage catPage = SubPage.Records, SubCategory altPage = SubCategory.None) {
+		private void UpdateSelectedPage(int pageNum, SubPage catPage = SubPage.Records, SubCategory altPage = SubCategory.None) {
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
 			
 			// Only on boss pages does updating the category page matter
