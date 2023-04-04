@@ -279,14 +279,6 @@ namespace BossChecklist
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
 
-			/* Keep incase more alt pages are reintroduced
-			TotalAltPages = new int[] {
-				4, // Record types have their own pages (Last, Best, First, World)
-				1, // All spawn info is on one page
-				1 // Loot and Collectibles occupy the same page
-			};
-			*/
-
 			BookArea = new BossLogPanel();
 			BookArea.Width.Pixels = bookUITexture.Value.Width;
 			BookArea.Height.Pixels = bookUITexture.Value.Height;
@@ -520,7 +512,7 @@ namespace BossChecklist
 		/// Resets the positioning of the Boss Log's common UI elements.
 		/// This includes the main book area, the page areas, and all book tabs.
 		/// </summary>
-		public void ResetUIPositioning() {
+		private void ResetUIPositioning() {
 			// Reset the position of the button to make sure it updates with the screen res
 			BookArea.Left.Pixels = (Main.screenWidth / 2) - (BookArea.Width.Pixels / 2);
 			BookArea.Top.Pixels = (Main.screenHeight / 2) - (BookArea.Height.Pixels / 2) - 6;
@@ -790,7 +782,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Sets up the content needed for the Progression Mode prompt, including text boxes and buttons.
 		/// </summary>
-		public void OpenProgressionModePrompt() {
+		private void OpenProgressionModePrompt() {
 			BossLogPageNumber = Page_Prompt; // make sure the page number is updated directly (using PageNum will trigger the page set up)
 			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
 			PageOne.RemoveAllChildren(); // remove all content from both pages before appending new content for the prompt
@@ -884,7 +876,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Fully disables Progression Mode and redirects the player to the Table of Contents.
 		/// </summary>
-		public void ContinueDisabled() {
+		private void ContinueDisabled() {
 			BossChecklist.BossLogConfig.MaskTextures = false;
 			BossChecklist.BossLogConfig.MaskNames = false;
 			BossChecklist.BossLogConfig.UnmaskNextBoss = true;
@@ -898,7 +890,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Fully enables Progression Mode and redirects the player to the Table of Contents.
 		/// </summary>
-		public void ContinueEnabled() {
+		private void ContinueEnabled() {
 			BossChecklist.BossLogConfig.MaskTextures = true;
 			BossChecklist.BossLogConfig.MaskNames = true;
 			BossChecklist.BossLogConfig.UnmaskNextBoss = false;
@@ -912,7 +904,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Closes the UI and opens the configs to allow the player to customize the Progression Mode options to their liking.
 		/// </summary>
-		public void CloseAndConfigure() {
+		private void CloseAndConfigure() {
 			ToggleBossLog(false);
 			PageNum = Page_TableOfContents;
 
@@ -956,7 +948,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Toggles whether the prompt will show on future characters. This can still be changed under the configs.
 		/// </summary>
-		public void DisablePromptMessage() {
+		private void DisablePromptMessage() {
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			if (BossChecklist.BossLogConfig.PromptDisabled) {
@@ -975,7 +967,7 @@ namespace BossChecklist
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="leftClick"></param>
-		internal void JumpToBossPage(int index, bool leftClick = true) {
+		private void JumpToBossPage(int index, bool leftClick = true) {
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				PageNum = index; // jump to boss page
 			}
@@ -1576,19 +1568,6 @@ namespace BossChecklist
 				bnuuyIcon.Top.Pixels = lootButton.Top.Pixels;
 				PageTwo.Append(bnuuyIcon);
 				#endregion
-
-				/*
-				// iterate through AltPageButtons to appeand each button where needed
-				for (int i = 0; i < AltPageButtons.Length; i++) {
-					if ((i == (int)SubCategory.PersonalBest || i == (int)SubCategory.FirstVictory) && noKills)
-						continue; // If a player has no kills against a boss, they can't have a First or Best record, so skip the button creation
-					int offset = noKills ? 0 : (i + (i < 2 ? 0 : 1) - 2) * 12; // offset needed if best record and first record are missing
-					AltPageButtons[i].Left.Pixels = (int)lootButton.Left.Pixels + ((i - 2) * 28) + offset + (i >= 2 ? (int)lootButton.Width.Pixels : 0);
-					AltPageButtons[i].Top.Pixels = (int)lootButton.Top.Pixels + (int)lootButton.Height.Pixels / 2 - 11;
-					PageTwo.Append(AltPageButtons[i]);
-				}
-				*/
-
 			}
 
 			// create 4 slots for each stat category value
