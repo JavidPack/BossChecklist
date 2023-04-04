@@ -174,8 +174,8 @@ namespace BossChecklist.UIElements
 
 			public override void Click(UIMouseEvent evt) {
 				base.Click(evt);
-				if (Anchor != null)
-					BossUISystem.Instance.BossLog.PendingPageNum = (int)Anchor;
+				if (Anchor.HasValue)
+					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 
 				if (Id == "SubCategory") {
 					PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[BossUISystem.Instance.BossLog.GetLogEntryInfo.GetRecordIndex].stats;
