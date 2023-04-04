@@ -1039,12 +1039,9 @@ namespace BossChecklist.UIElements
 		{
 			public string Id { get; init; } = "";
 			readonly Asset<Texture2D> book;
-			readonly BossLogUI log;
-			public static bool isDrawn;
 
 			public BookUI(Asset<Texture2D> texture) : base(texture) {
 				book = texture;
-				log = BossUISystem.Instance.BossLog;
 			}
 
 			internal static bool DrawTab(string Id) {
@@ -1057,7 +1054,7 @@ namespace BossChecklist.UIElements
 			}
 
 			internal string DetermineHintText() {
-				int selectedLogPage = log.PageNum;
+				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 				string hintText = "";
 				if (selectedLogPage == -1) {
 					hintText += Language.GetTextValue("Mods.BossChecklist.BossLog.HintTexts.MarkEntry");
@@ -1090,7 +1087,7 @@ namespace BossChecklist.UIElements
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
-				int selectedLogPage = log.PageNum;
+				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 
 				if (Id == "Info_Tab") {
 					if (BossChecklist.BossLogConfig.AnyProgressionModeConfigUsed) {
