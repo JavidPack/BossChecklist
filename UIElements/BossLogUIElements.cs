@@ -189,7 +189,7 @@ namespace BossChecklist.UIElements
 					if (BossLogUI.RecordSubCategory == SubCategory.None)
 						BossLogUI.RecordSubCategory = SubCategory.PreviousAttempt;
 
-					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossUISystem.Instance.BossLog.PageNum);
+					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
 			}
 
@@ -204,7 +204,7 @@ namespace BossChecklist.UIElements
 						BossLogUI.RecordSubCategory--;
 					}
 
-					BossUISystem.Instance.BossLog.UpdateSelectedPage(BossUISystem.Instance.BossLog.PageNum);
+					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
 			}
 
