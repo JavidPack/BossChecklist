@@ -235,7 +235,7 @@ namespace BossChecklist
 			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
 		}
 
-		public Asset<Texture2D> RequestResource(string path) => ModContent.Request<Texture2D>("BossChecklist/Resources/" + path, AssetRequestMode.ImmediateLoad);
+		public static Asset<Texture2D> RequestResource(string path) => ModContent.Request<Texture2D>("BossChecklist/Resources/" + path, AssetRequestMode.ImmediateLoad);
 
 		public override void OnInitialize() {
 			bookTexture = RequestResource("Book_Outline");

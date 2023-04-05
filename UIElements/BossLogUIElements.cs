@@ -336,11 +336,8 @@ namespace BossChecklist.UIElements
 				item.color = oldColor; // if the item was masked
 
 				// Draw golden border around items that are considered collectibles
-				if (entry.collection.Contains(item.type)) {
-					string texturePath = "BossChecklist/Resources/Extra_HighlightedCollectible";
-					Asset<Texture2D> border = ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad);
-					spriteBatch.Draw(border.Value, inner.TopLeft(), Color.White);
-				}
+				if (entry.collection.Contains(item.type))
+					spriteBatch.Draw(BossLogUI.RequestResource("Extra_HighlightedCollectible").Value, inner.TopLeft(), Color.White);
 
 				// Similar to the logic of deciding the itemslot color, decide what should be drawn and what text should show when hovering over
 				// Masked item takes priority, displaying 'Defeat this entry to show items'
@@ -401,9 +398,9 @@ namespace BossChecklist.UIElements
 					}
 
 					Vector2 iconPos = new Vector2((int)inner.BottomLeft().X - 4, (int)inner.BottomLeft().Y - 15);
-					spriteBatch.Draw(BossUISystem.Instance.BossLog.RequestResource($"Checks_{iconType}").Value, iconPos, Color.White);
+					spriteBatch.Draw(BossLogUI.RequestResource($"Checks_{iconType}").Value, iconPos, Color.White);
 					if (IsMouseHovering) {
-						Utils.DrawBorderString(spriteBatch, type.ToString(), inner.TopLeft(), Colors.RarityAmber, 0.8f);
+						Utils.DrawBorderString(spriteBatch, iconType, inner.TopLeft(), Colors.RarityAmber, 0.8f);
 					}
 				}
 			}
@@ -826,10 +823,10 @@ namespace BossChecklist.UIElements
 								bagTexture = TextureAssets.Item[entry.treasureBag];
 							}
 							else {
-								bagTexture = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_TreasureBag", AssetRequestMode.ImmediateLoad);
+								bagTexture = BossLogUI.RequestResource("Extra_TreasureBag");
 							}
 							DrawAnimation drawAnim = Main.itemAnimations[entry.treasureBag]; // 0 is null
-							Rectangle srcRect = drawAnim != null ? srcRect = drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
+							Rectangle srcRect = drawAnim != null ? drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
 							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
 							spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 						}
@@ -1389,7 +1386,7 @@ namespace BossChecklist.UIElements
 
 		internal class ProgressBar : UIElement
 		{
-			internal readonly Asset<Texture2D> fullBar = ModContent.Request<Texture2D>("BossChecklist/Resources/Extra_ProgressBar", AssetRequestMode.ImmediateLoad);
+			internal readonly Asset<Texture2D> fullBar = BossLogUI.RequestResource("Extra_ProgressBar");
 			internal int[] downedEntries;
 			internal int[] totalEntries;
 			internal Dictionary<string, int[]> modAllEntries;
@@ -1529,7 +1526,7 @@ namespace BossChecklist.UIElements
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				if (subPageType == BossLogUI.SelectedSubPage) {
-					Asset<Texture2D> border = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_SubPage_Border", AssetRequestMode.ImmediateLoad);
+					Asset<Texture2D> border = BossLogUI.RequestResource("Nav_SubPage_Border");
 					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
