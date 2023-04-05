@@ -233,6 +233,34 @@ namespace BossChecklist.UIElements
 			}
 		}
 
+		internal class SubPageButton : UIImage
+		{
+			readonly string buttonText;
+			readonly SubPage subPageType;
+
+			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
+				buttonText = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{type}");
+				subPageType = type;
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				base.DrawSelf(spriteBatch);
+
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+				if (subPageType == BossLogUI.SelectedSubPage) {
+					Asset<Texture2D> border = BossLogUI.RequestResource("Nav_SubPage_Border");
+					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
+				}
+
+				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
+				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
+				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
+				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
+
+				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
+			}
+		}
+
 		internal class LogItemSlot : UIElement
 		{
 			public string Id { get; init; } = "";
@@ -1511,34 +1539,6 @@ namespace BossChecklist.UIElements
 
 				ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.MouseText.Value, textSnippets, new Vector2(2, 15 + 3) + hitbox.TopLeft(),
 					Color.White, 0f, Vector2.Zero, new Vector2(infoScaleX, infoScaleY), out _, hitbox.Width - (7 * 2), false);
-			}
-		}
-
-		internal class SubPageButton : UIImage
-		{
-			readonly string buttonText;
-			readonly SubPage subPageType;
-
-			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
-				buttonText = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{type}");
-				subPageType = type;
-			}
-
-			public override void Draw(SpriteBatch spriteBatch) {
-				base.DrawSelf(spriteBatch);
-
-				Rectangle inner = GetInnerDimensions().ToRectangle();
-				if (subPageType == BossLogUI.SelectedSubPage) {
-					Asset<Texture2D> border = BossLogUI.RequestResource("Nav_SubPage_Border");
-					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
-				}
-
-				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
-				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
-				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
-				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
-				
-				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 			}
 		}
 	}
