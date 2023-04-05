@@ -1557,7 +1557,7 @@ namespace BossChecklist.UIElements
 				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
-				Vector2 pos = new Vector2(inner.X + ((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
+				Vector2 pos = new Vector2((inner.X + ((Width.Pixels - stringAdjust.X) / 2)), inner.Y + 5);
 				
 				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 			}
