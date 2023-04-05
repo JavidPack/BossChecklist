@@ -248,7 +248,7 @@ namespace BossChecklist
 
 			prevTexture = RequestResource("Nav_Prev");
 			nextTexture = RequestResource("Nav_Next");
-			subpageTexture = RequestResource("Nav_Subpage");
+			subpageTexture = RequestResource("Nav_SubPage_Button");
 			tocTexture = RequestResource("Nav_Contents");
 			credTexture = RequestResource("Nav_Credits");
 			bossNavTexture = RequestResource("Nav_Boss");
