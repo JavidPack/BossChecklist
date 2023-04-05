@@ -1550,14 +1550,14 @@ namespace BossChecklist.UIElements
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				if (subPageType == BossLogUI.SelectedSubPage) {
-					Asset<Texture2D> border = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_SubpageSelected", AssetRequestMode.ImmediateLoad);
+					Asset<Texture2D> border = ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_SubPage_Border", AssetRequestMode.ImmediateLoad);
 					spriteBatch.Draw(border.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
 				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
-				Vector2 pos = new Vector2((inner.X + ((Width.Pixels - stringAdjust.X) / 2)), inner.Y + 5);
+				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
 				
 				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
 			}
