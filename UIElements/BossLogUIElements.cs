@@ -39,6 +39,7 @@ namespace BossChecklist.UIElements
 			internal Asset<Texture2D> texture;
 			private Vector2 offset;
 			internal bool dragging;
+			internal Color? borderColor;
 
 			public OpenLogButton(Asset<Texture2D> texture) : base(texture) {
 				this.texture = texture;
@@ -74,6 +75,25 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Update(GameTime gameTime) {
+				// Determine a border color for the button
+				if (IsMouseHovering || dragging) {
+					borderColor = Color.Goldenrod; // If hovering over or dragging the button, the book will be highlighted in a gold border
+				}
+				else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+					borderColor = Color.Firebrick; // If Records are disabled in any way, the book will be highlighted with a red border
+				}
+				else{
+					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+					if (!modPlayer.hasOpenedTheBossLog || modPlayer.hasNewRecord.Any(x => x == true)) {
+						Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
+						float modifier = Main.masterColor / 200f; // If the player has not opened the log or has not viewed a new record page, the book will be hightlighted with a flashing log-colored border
+						borderColor = new Color(coverColor.R * modifier, coverColor.G * modifier, coverColor.B * modifier);
+					}
+					else {
+						borderColor = null;
+					}
+				}
+
 				base.Update(gameTime);
 
 				if (dragging) {
@@ -104,47 +124,30 @@ namespace BossChecklist.UIElements
 					HideMouseOverInteractions();
 				}
 
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+
 				// When hovering over the button, draw a 'Boss Log' text over the button
-				CalculatedStyle bookArea = GetInnerDimensions();
-				string hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BossLog");
-				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(hoverText);
-				Vector2 pos = new Vector2(bookArea.X - (stringAdjust.X / 3), bookArea.Y - 24);
+				// text shouldn't appear if dragging the element
 				if (IsMouseHovering && !dragging) {
-					spriteBatch.DrawString(FontAssets.MouseText.Value, hoverText, pos, Color.White); // text shouldn't appear if dragging the element
+					string hoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.BossLog");
+					Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(hoverText);
+					Vector2 pos = new Vector2(inner.X - (stringAdjust.X / 3), inner.Y - 24);
+					spriteBatch.DrawString(FontAssets.MouseText.Value, hoverText, pos, Color.White);
 				}
 
-				Asset<Texture2D> cover = BossLogUI.colorTexture;
 				Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
-				if (!IsMouseHovering && !dragging) {
-					cover = BossLogUI.fadedTexture; // make the color match the faded UIImageButton
+				if (!IsMouseHovering && !dragging)
 					coverColor = new Color(coverColor.R, coverColor.G, coverColor.B, 128);
-				}
-				spriteBatch.Draw(cover.Value, bookArea.ToRectangle(), coverColor);
+
+				spriteBatch.Draw(!IsMouseHovering && !dragging ? BossLogUI.fadedTexture.Value : BossLogUI.colorTexture.Value, inner, coverColor);
 
 				// UIImageButtons are normally faded, so if dragging and not draw the button fully opaque
 				// This is most likely to occur when the mouse travels off screen while dragging
-				if (dragging) {
-					spriteBatch.Draw(texture.Value, bookArea.ToRectangle(), Color.White);
-				}
+				if (dragging)
+					spriteBatch.Draw(texture.Value, inner, Color.White);
 
-				// Determine a border color for the button
-				PlayerAssist player = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				Color? borderColor = null;
-
-				if (IsMouseHovering || dragging) {
-					borderColor = Color.Goldenrod; // If hovering over or dragging the button, the book will be highlighted in a gold border
-				}
-				else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-					borderColor = Color.Firebrick; // If Records are disabled in any way, the book will be highlighted with a red border
-				}
-				else if (!player.hasOpenedTheBossLog || player.hasNewRecord.Any(x => x == true)) {
-					float modifier = Main.masterColor / 200f; // If the player has not opened the log or has not viewed a new record page, the book will be hightlighted with a flashing log-colored border
-					borderColor = new Color(coverColor.R * modifier, coverColor.G * modifier, coverColor.B * modifier);
-				}
-
-				if (borderColor.HasValue) {
-					spriteBatch.Draw(BossLogUI.borderTexture.Value, bookArea.ToRectangle(), borderColor.Value); // Draw a colored border if one was set
-				}
+				if (borderColor.HasValue)
+					spriteBatch.Draw(BossLogUI.borderTexture.Value, inner, borderColor.Value); // Draw a colored border if one was set
 			}
 		}
 
