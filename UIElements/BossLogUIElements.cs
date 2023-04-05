@@ -391,40 +391,19 @@ namespace BossChecklist.UIElements
 				}
 
 				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
-				if (BossChecklist.DebugConfig.ShowCollectionType && entry.collection.Contains(item.type)) {
-					string showType = "Generic";
-					Asset<Texture2D> showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Generic");
-					if (entry.collectType.TryGetValue(item.type, out CollectionType type) && type != CollectionType.Generic) {
-						if (type == CollectionType.Trophy) {
-							showType = "Trophy";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy");
-						}
-						else if (type == CollectionType.MusicBox) {
-							showType = "Music";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Music");
-						}
-						else if (type == CollectionType.Mask) {
-							showType = "Mask";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Mask");
-						}
-						else if (type == CollectionType.Pet) {
-							showType = "Pet";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet");
-						}
-						else if (type == CollectionType.Mount) {
-							showType = "Mount";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Pet");
-						}
-						else if (type == CollectionType.Relic) {
-							showType = "Relic";
-							showIcon = ModContent.Request<Texture2D>("BossChecklist/Resources/Checks_Trophy");
-						}
+				if (BossChecklist.DebugConfig.ShowCollectionType && entry.collectType.TryGetValue(item.type, out CollectionType type)) {
+					string iconType = type.ToString();
+					if (type == CollectionType.Mount) {
+						iconType = "Pet";
+					}
+					else if (type == CollectionType.Relic) {
+						iconType = "Trophy";
 					}
 
 					Vector2 iconPos = new Vector2((int)inner.BottomLeft().X - 4, (int)inner.BottomLeft().Y - 15);
-					spriteBatch.Draw(showIcon.Value, iconPos, Color.White);
+					spriteBatch.Draw(BossUISystem.Instance.BossLog.RequestResource($"Checks_{iconType}").Value, iconPos, Color.White);
 					if (IsMouseHovering) {
-						Utils.DrawBorderString(spriteBatch, showType, inner.TopLeft(), Colors.RarityAmber, 0.8f);
+						Utils.DrawBorderString(spriteBatch, type.ToString(), inner.TopLeft(), Colors.RarityAmber, 0.8f);
 					}
 				}
 			}

@@ -22,7 +22,7 @@ namespace BossChecklist
 		Generic,
 		Trophy,
 		Mask,
-		MusicBox,
+		Music,
 		Relic,
 		Pet,
 		Mount

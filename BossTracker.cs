@@ -234,7 +234,7 @@ namespace BossChecklist
 						boss.collectType.Add(type, CollectionType.Mask);
 					}
 					else if (vanillaMusicBoxTypes.Contains(type) || otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
-						boss.collectType.Add(type, CollectionType.MusicBox);
+						boss.collectType.Add(type, CollectionType.Music);
 					}
 					else if (Main.projPet[temp.shoot] || ProjectileID.Sets.LightPet[temp.shoot]) {
 						boss.collectType.Add(type, CollectionType.Pet);
