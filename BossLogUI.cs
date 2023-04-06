@@ -1331,8 +1331,7 @@ namespace BossChecklist
 					}
 				}
 
-				TableOfContents listedEntry = new TableOfContents(displayName, allLoot, allCollect) {
-					Index = entry.GetIndex,
+				TableOfContents listedEntry = new TableOfContents(entry.GetIndex, displayName, allLoot, allCollect) {
 					PaddingTop = 5,
 					PaddingLeft = entry.progression <= BossTracker.WallOfFlesh ? 32 : 22
 				};
@@ -1962,7 +1961,7 @@ namespace BossChecklist
 		/// </summary>
 		/// <param name="entryType">Add an entry type to specifically look for the next available entry of that type.</param>
 		/// <returns>The index of the next available entry within the SortedEntries list.</returns>
-		public static int FindNextEntry(EntryType? entryType = null) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
+		public static int FindNextEntry(EntryType? entryType = null) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrForced && x.VisibleOnChecklist() && (!entryType.HasValue || x.type == entryType));
 
 		/// <summary> Determines if a texture should be masked by a black sihlouette. </summary>
 		public static Color MaskBoss(EntryInfo entry) {

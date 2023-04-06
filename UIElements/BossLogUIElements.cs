@@ -1275,7 +1275,8 @@ namespace BossChecklist.UIElements
 			readonly bool allLoot;
 			readonly bool allCollectibles;
 
-			public TableOfContents(string displayName, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+			public TableOfContents(int index, string displayName, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+				this.Index = index;
 				this.displayName = displayName;
 				this.markAsNext = BossLogUI.FindNextEntry() == Index && BossChecklist.BossLogConfig.DrawNextMark;
 				this.order = BossChecklist.bossTracker.SortedEntries[Index].progression;
