@@ -545,9 +545,9 @@ namespace BossChecklist
 			// Update the navigation tabs to the proper positions
 			// This does not need to occur if the Progression prompt is shown, as they are not visible
 			if (PageNum != Page_Prompt) {
-				BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-				MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-				EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNext(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+				BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+				MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+				EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
 				UpdateFilterTabPos(false); // Update filter tab visibility
 			}
 		}
@@ -1044,13 +1044,13 @@ namespace BossChecklist
 
 			// determine which page to open base on tab ID
 			if (id == "Boss_Tab") {
-				PageNum = FindNext(EntryType.Boss);
+				PageNum = FindNextEntry(EntryType.Boss);
 			}
 			else if (id == "Miniboss_Tab") {
-				PageNum = FindNext(EntryType.MiniBoss);
+				PageNum = FindNextEntry(EntryType.MiniBoss);
 			}
 			else if (id == "Event_Tab") {
-				PageNum = FindNext(EntryType.Event);
+				PageNum = FindNextEntry(EntryType.Event);
 			}
 			else if (id == "Credits_Tab") {
 				PageNum = Page_Credits;
@@ -1223,7 +1223,6 @@ namespace BossChecklist
 			prehardmodeList.Clear(); // clear both lists before setting up content
 			hardmodeList.Clear();
 
-			string nextBoss = "";
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
 
@@ -1234,10 +1233,6 @@ namespace BossChecklist
 				string displayName = entry.DisplayName;
 				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
 
-				if (nextBoss == "" && !entry.IsDownedOrForced) {
-					nextBoss = entry.Key;
-				}
-
 				bool namesMasked = cfg.MaskNames && !entry.IsDownedOrForced;
 				bool hardMode = cfg.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh && !entry.IsDownedOrForced;
 				bool availability = cfg.HideUnavailable && !entry.available() && !entry.IsDownedOrForced;
@@ -1246,7 +1241,7 @@ namespace BossChecklist
 				}
 
 				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
-					if (!entry.IsDownedOrForced && entry.available() && !entry.hidden && nextBoss == entry.Key) {
+					if (!entry.IsDownedOrForced && entry.available() && !entry.hidden && FindNextEntry() == entry.GetIndex) {
 						displayName = entry.DisplayName;
 					}
 				}
@@ -1336,19 +1331,19 @@ namespace BossChecklist
 					}
 				}
 
-				bool isNext = nextBoss == entry.Key && cfg.DrawNextMark;
-				TableOfContents next = new TableOfContents(entry.GetIndex, displayName, isNext, allLoot, allCollect) {
+				TableOfContents listedEntry = new TableOfContents(displayName, allLoot, allCollect) {
+					Index = entry.GetIndex,
 					PaddingTop = 5,
-					PaddingLeft = 22 + (entry.progression <= BossTracker.WallOfFlesh ? 10 : 0)
+					PaddingLeft = entry.progression <= BossTracker.WallOfFlesh ? 32 : 22
 				};
-				next.OnClick += (a, b) => JumpToBossPage(next.Index);
-				next.OnRightClick += (a, b) => JumpToBossPage(next.Index, false);
+				listedEntry.OnClick += (a, b) => JumpToBossPage(listedEntry.Index);
+				listedEntry.OnRightClick += (a, b) => JumpToBossPage(listedEntry.Index, false);
 
 				if (entry.progression <= BossTracker.WallOfFlesh) {
-					prehardmodeList.Add(next);
+					prehardmodeList.Add(listedEntry);
 				}
 				else {
-					hardmodeList.Add(next);
+					hardmodeList.Add(listedEntry);
 				}
 			}
 
@@ -1964,10 +1959,10 @@ namespace BossChecklist
 
 		/// <summary>
 		/// Used to locate the next available entry for the player to fight that is not defeated, marked as defeated, or hidden.
-		/// Mainly used for positioning and navigation.
 		/// </summary>
-		/// <returns>The index of the next available entry within the boss tracker.</returns>
-		public static int FindNext(EntryType entryType) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
+		/// <param name="entryType">Add an entry type to specifically look for the next available entry of that type.</param>
+		/// <returns>The index of the next available entry within the SortedEntries list.</returns>
+		public static int FindNextEntry(EntryType? entryType = null) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrForced && x.available() && !x.hidden && x.type == entryType);
 
 		/// <summary> Determines if a texture should be masked by a black sihlouette. </summary>
 		public static Color MaskBoss(EntryInfo entry) {

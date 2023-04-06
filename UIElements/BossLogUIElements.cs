@@ -1054,9 +1054,9 @@ namespace BossChecklist.UIElements
 			internal static bool DrawTab(string Id) {
 				int page = BossUISystem.Instance.BossLog.PageNum;
 				bool MatchesCreditsTab = page == -2 && Id == "Credits_Tab";
-				bool MatchesBossTab = page == BossLogUI.FindNext(EntryType.Boss) && Id == "Boss_Tab";
-				bool MatchesMinibossTab = (page == BossLogUI.FindNext(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Miniboss_Tab";
-				bool MatchesEventTab = (page == BossLogUI.FindNext(EntryType.Event) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Event_Tab";
+				bool MatchesBossTab = page == BossLogUI.FindNextEntry(EntryType.Boss) && Id == "Boss_Tab";
+				bool MatchesMinibossTab = (page == BossLogUI.FindNextEntry(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Miniboss_Tab";
+				bool MatchesEventTab = (page == BossLogUI.FindNextEntry(EntryType.Event) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Event_Tab";
 				return !(MatchesCreditsTab || MatchesBossTab || MatchesMinibossTab || MatchesEventTab);
 			}
 
@@ -1143,13 +1143,13 @@ namespace BossChecklist.UIElements
 				else {
 					// Tab drawing
 					SpriteEffects effect = SpriteEffects.FlipHorizontally;
-					if (Id == "Boss_Tab" && (selectedLogPage >= BossLogUI.FindNext(EntryType.Boss) || selectedLogPage == -2)) {
+					if (Id == "Boss_Tab" && (selectedLogPage >= BossLogUI.FindNextEntry(EntryType.Boss) || selectedLogPage == -2)) {
 						effect = SpriteEffects.None;
 					}
-					else if (Id == "Miniboss_Tab" && (selectedLogPage >= BossLogUI.FindNext(EntryType.MiniBoss) || selectedLogPage == -2)) {
+					else if (Id == "Miniboss_Tab" && (selectedLogPage >= BossLogUI.FindNextEntry(EntryType.MiniBoss) || selectedLogPage == -2)) {
 						effect = SpriteEffects.None;
 					}
-					else if (Id == "Event_Tab" && (selectedLogPage >= BossLogUI.FindNext(EntryType.Event) || selectedLogPage == -2)) {
+					else if (Id == "Event_Tab" && (selectedLogPage >= BossLogUI.FindNextEntry(EntryType.Event) || selectedLogPage == -2)) {
 						effect = SpriteEffects.None;
 					}
 					else if (Id == "ToCFilter_Tab") {
@@ -1211,14 +1211,14 @@ namespace BossChecklist.UIElements
 					if (IsMouseHovering) {
 						List<EntryInfo> entryList = BossChecklist.bossTracker.SortedEntries;
 						string tabMessage = "";
-						if (Id == "Boss_Tab" && BossLogUI.FindNext(EntryType.Boss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", entryList[BossLogUI.FindNext(EntryType.Boss)].DisplayName);
+						if (Id == "Boss_Tab" && BossLogUI.FindNextEntry(EntryType.Boss) != -1) {
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", entryList[BossLogUI.FindNextEntry(EntryType.Boss)].DisplayName);
 						}
-						else if (Id == "Miniboss_Tab" && BossLogUI.FindNext(EntryType.MiniBoss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", entryList[BossLogUI.FindNext(EntryType.MiniBoss)].DisplayName);
+						else if (Id == "Miniboss_Tab" && BossLogUI.FindNextEntry(EntryType.MiniBoss) != -1) {
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", entryList[BossLogUI.FindNextEntry(EntryType.MiniBoss)].DisplayName);
 						}
-						else if (Id == "Event_Tab" && BossLogUI.FindNext(EntryType.Event) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", entryList[BossLogUI.FindNext(EntryType.Event)].DisplayName);
+						else if (Id == "Event_Tab" && BossLogUI.FindNextEntry(EntryType.Event) != -1) {
+							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", entryList[BossLogUI.FindNextEntry(EntryType.Event)].DisplayName);
 						}
 						else if (Id == "Credits_Tab") {
 							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
@@ -1269,16 +1269,15 @@ namespace BossChecklist.UIElements
 		{
 			public int Index { get; init; }
 			readonly float order = 0;
-			readonly bool isNext;
+			readonly bool markAsNext;
 			readonly bool downed;
 			readonly string displayName;
 			readonly bool allLoot;
 			readonly bool allCollectibles;
 
-			public TableOfContents(int index, string displayName, bool nextCheck, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
-				this.Index = index;
+			public TableOfContents(string displayName, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				this.displayName = displayName;
-				this.isNext = nextCheck;
+				this.markAsNext = BossLogUI.FindNextEntry() == Index && BossChecklist.BossLogConfig.DrawNextMark;
 				this.order = BossChecklist.bossTracker.SortedEntries[Index].progression;
 				this.downed = BossChecklist.bossTracker.SortedEntries[Index].IsDownedOrForced;
 				this.allLoot = loot;
@@ -1318,7 +1317,7 @@ namespace BossChecklist.UIElements
 						else if (IsMouseHovering) {
 							TextColor = TextColor = Color.SkyBlue;
 						}
-						else if (isNext) {
+						else if (markAsNext) {
 							TextColor = new Color(248, 235, 91);
 						}
 						else {
@@ -1395,7 +1394,7 @@ namespace BossChecklist.UIElements
 					}
 					else {
 						checkGrid = checkType == "✓ and  X" ? BossLogUI.xTexture : BossLogUI.checkboxTexture;
-						if (isNext && BossChecklist.BossLogConfig.DrawNextMark) {
+						if (markAsNext) {
 							checkGrid = checkType == "Strike-through" ? BossLogUI.strikeNTexture : BossLogUI.circleTexture;
 						}
 					}
