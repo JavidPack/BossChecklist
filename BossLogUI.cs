@@ -960,65 +960,6 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Handlesthe logic for interacting with the Table of Content texts.
-		/// Left or right clicking will jump to the boss's page.
-		/// Holding alt while left-clicking will mark the boss as defeated.
-		/// Holding alt while right-clicking will hide the boss from the table of contents.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="leftClick"></param>
-		private void JumpToBossPage(int index, bool leftClick = true) {
-			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt)) {
-				PageNum = index; // jump to boss page
-			}
-			else {
-				// While holding alt, a user can interact with any boss list entry
-				// Left-clicking forces a completion check on or off
-				// Right-clicking hides the boss from the list
-				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[index];
-				if (leftClick) {
-					// toggle defeation state and update the world save data
-					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
-						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
-					}
-					else if (!entry.downed()) {
-						WorldAssist.ForcedMarkedEntries.Add(entry.Key);
-					}
-
-					// handle the global update with a packet
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
-						packet.Write(entry.Key);
-						packet.Write(entry.ForceDowned);
-						packet.Send();
-					}
-				}
-				else {
-					// toggle hidden state and update the world save data
-					entry.hidden = !entry.hidden;
-					if (entry.hidden) {
-						WorldAssist.HiddenEntries.Add(entry.Key);
-					}
-					else {
-						WorldAssist.HiddenEntries.Remove(entry.Key);
-					}
-
-					// handle the global update with a packet and update the legacy checklist as well
-					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestHideBoss);
-						packet.Write(entry.Key);
-						packet.Write(entry.hidden);
-						packet.Send();
-					}
-				}
-				RefreshPageContent(); // update the checklist by refreshing page content
-			}
-		}
-
-		/// <summary>
 		/// Contains the logic needed for the book tabs.
 		/// </summary>
 		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
@@ -1335,8 +1276,6 @@ namespace BossChecklist
 					PaddingTop = 5,
 					PaddingLeft = entry.progression <= BossTracker.WallOfFlesh ? 32 : 22
 				};
-				listedEntry.OnClick += (a, b) => JumpToBossPage(listedEntry.Index);
-				listedEntry.OnRightClick += (a, b) => JumpToBossPage(listedEntry.Index, false);
 
 				if (entry.progression <= BossTracker.WallOfFlesh) {
 					prehardmodeList.Add(listedEntry);

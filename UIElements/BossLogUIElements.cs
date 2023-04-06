@@ -18,6 +18,7 @@ using Terraria.UI;
 using Terraria.UI.Chat;
 using System;
 using Terraria.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace BossChecklist.UIElements
 {
@@ -1283,6 +1284,49 @@ namespace BossChecklist.UIElements
 				this.downed = BossChecklist.bossTracker.SortedEntries[Index].IsDownedOrForced;
 				this.allLoot = loot;
 				this.allCollectibles = collect;
+			}
+
+			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = Index; // jump to entry page
+
+			public override void RightClick(UIMouseEvent evt) {
+				// Right-click an entry to mark it as completed
+				// Hold alt and right-click an entry to hide it
+				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[Index];
+				if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
+					entry.hidden = !entry.hidden;
+					if (entry.hidden) {
+						WorldAssist.HiddenEntries.Add(entry.Key);
+					}
+					else {
+						WorldAssist.HiddenEntries.Remove(entry.Key);
+					}
+
+					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes(); // update the legacy checklist
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.RequestHideBoss);
+						packet.Write(entry.Key);
+						packet.Write(entry.hidden);
+						packet.Send(); // update the server with a packet
+					}
+				}
+				else {
+					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
+						WorldAssist.ForcedMarkedEntries.Remove(entry.Key); // if the entry was marked already, remove it
+					}
+					else if (!entry.downed()) {
+						WorldAssist.ForcedMarkedEntries.Add(entry.Key); // if the entry was not marked already, add it if it is not already defeated
+					}
+
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
+						packet.Write(entry.Key);
+						packet.Write(entry.ForceDowned);
+						packet.Send(); // update the server with a packet
+					}
+				}
+				BossUISystem.Instance.BossLog.RefreshPageContent(); // refresh the page to show visual changes
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {

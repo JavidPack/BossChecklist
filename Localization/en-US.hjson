@@ -216,7 +216,7 @@ Mods: {
 			}
 
 			HintTexts: {
-				MarkEntry: Alt+LeftClick an entry to mark it as defeated
+				MarkEntry: RightClick an entry to mark it as defeated
 				HideEntry: Alt+RightClick an entry to hide it from the list
 				ClearMarked: Alt+LeftClick the 'Toggle Visibility button to clear all forced marks
 				ClearHidden: Alt+RightClick the 'Toggle Visibility' button to clear all hidden entries
