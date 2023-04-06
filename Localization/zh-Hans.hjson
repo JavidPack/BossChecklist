@@ -216,7 +216,7 @@ Mods: {
 			}
 
 			HintTexts: {
-				MarkEntry: Alt+左键条目以将其标记为已击败
+				MarkEntry: 右键条目以将其标记为已击败
 				HideEntry: Alt+右键条目以将其从列表中隐藏
 				ClearMarked: Alt+左键'切换可见性'按钮以清除所有被强行标记为击败的条目
 				ClearHidden: Alt+右键'切换可见性'按钮以清除所有被隐藏的条目
