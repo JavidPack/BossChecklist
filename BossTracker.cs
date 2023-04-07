@@ -263,7 +263,7 @@ namespace BossChecklist
 
 		internal void FinalizeEntryData() {
 			SortedEntries.Sort((x, y) => x.progression.CompareTo(y.progression));
-			BossChecklist.bossTracker.SetupEntryRelations(); // must be done after sorting entries
+			SetupEntryRelations(); // must be done after sorting entries
 
 			EntryCache = new bool[NPCLoader.NPCCount];
 			EntryLootCache = new bool[ItemLoader.ItemCount];
