@@ -84,6 +84,7 @@ namespace BossChecklist
 		public BossLogUIElements.FixedUIScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
 		public BossLogUIElements.FixedUIScrollbar scrollTwo;
 		public bool showHidden = false; // when true, hidden entries are visible on the list
+		public bool barState = false; // when true, hovering over the progress bar will split up the entry percentages by mod instead of entry type
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
 		// Record page related
@@ -353,13 +354,6 @@ namespace BossChecklist
 			prehardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			prehardmodeList.PaddingTop = 5;
 
-			// Order matters here
-			prehardmodeBar = new ProgressBar();
-			prehardmodeBar.Left.Pixels = PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10;
-			prehardmodeBar.Height.Pixels = 14;
-			prehardmodeBar.Top.Pixels = PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2);
-			prehardmodeBar.Width.Pixels = PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2);
-
 			PageTwo = new BossLogPanel() {
 				Id = "PageTwo"
 			};
@@ -430,13 +424,6 @@ namespace BossChecklist
 			hardmodeList.Width.Pixels = PageOne.Width.Pixels - 60;
 			hardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			hardmodeList.PaddingTop = 5;
-
-			// Order matters here
-			hardmodeBar = new ProgressBar();
-			hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
-			hardmodeBar.Height.Pixels = 14;
-			hardmodeBar.Top.Pixels = NextPage.Top.Pixels + (NextPage.Height.Pixels / 2) - (hardmodeBar.Height.Pixels / 2);
-			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
 			recordButton = new SubPageButton(subpageTexture, SubPage.Records);
 			recordButton.Width.Pixels = subpageTexture.Value.Width;
@@ -1308,64 +1295,19 @@ namespace BossChecklist
 				hardmodeList.SetScrollbar(scrollTwo);
 			}
 
-			// Calculate Progress Bar downed entries
-			int[] prehDown = new int[] { 0, 0, 0 };
-			int[] prehTotal = new int[] { 0, 0, 0 };
-			int[] hardDown = new int[] { 0, 0, 0 };
-			int[] hardTotal = new int[] { 0, 0, 0 };
-			Dictionary<string, int[]> prehEntries = new Dictionary<string, int[]>();
-			Dictionary<string, int[]> hardEntries = new Dictionary<string, int[]>();
+			// Order matters here
+			prehardmodeBar = new ProgressBar(false);
+			prehardmodeBar.Left.Pixels = PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10;
+			prehardmodeBar.Height.Pixels = 14;
+			prehardmodeBar.Top.Pixels = PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2);
+			prehardmodeBar.Width.Pixels = PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2);
 
-			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
-				if (entry.hidden)
-					continue; // The only way to manually remove entries from the progress bar is by hiding them
-
-				if (entry.modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported)
-					continue; // Unknown and Unsupported entries can be automatically removed through configs if desired
-
-				if (entry.progression <= BossTracker.WallOfFlesh) {
-					if (entry.available() || (entry.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-						if (!prehEntries.ContainsKey(entry.modSource)) {
-							prehEntries.Add(entry.modSource, new int[] { 0, 0 });
-						}
-						prehTotal[(int)entry.type]++;
-						prehEntries[entry.modSource][1] += 1;
-
-						if (entry.IsDownedOrForced) {
-							prehDown[(int)entry.type]++;
-							prehEntries[entry.modSource][0] += 1;
-						}
-					}
-				}
-				else {
-					if (entry.available() || (entry.IsDownedOrForced && BossChecklist.BossLogConfig.HideUnavailable)) {
-						if (!hardEntries.ContainsKey(entry.modSource)) {
-							hardEntries.Add(entry.modSource, new int[] { 0, 0 });
-						}
-						hardTotal[(int)entry.type]++;
-						hardEntries[entry.modSource][1] += 1;
-
-						if (entry.IsDownedOrForced) {
-							if (!hardEntries.ContainsKey(entry.modSource)) {
-								hardEntries.Add(entry.modSource, new int[] { 0, 0 });
-							}
-							hardDown[(int)entry.type]++;
-							hardEntries[entry.modSource][0] += 1;
-						}
-					}
-				}
-			}
-
-			prehardmodeBar.downedEntries = prehDown;
-			prehardmodeBar.totalEntries = prehTotal;
-			prehEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
-			prehardmodeBar.modAllEntries = prehEntries;
-
-			hardmodeBar.downedEntries = hardDown;
-			hardmodeBar.totalEntries = hardTotal;
-			hardEntries.ToList().Sort((x, y) => x.Key.CompareTo(y.Key));
-			hardmodeBar.modAllEntries = hardEntries;
-
+			// Order matters here
+			hardmodeBar = new ProgressBar(true);
+			hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
+			hardmodeBar.Height.Pixels = 14;
+			hardmodeBar.Top.Pixels = NextPage.Top.Pixels + (NextPage.Height.Pixels / 2) - (hardmodeBar.Height.Pixels / 2);
+			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
 			PageOne.Append(prehardmodeBar);
 			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {

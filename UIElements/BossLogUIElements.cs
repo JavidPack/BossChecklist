@@ -1462,16 +1462,70 @@ namespace BossChecklist.UIElements
 		internal class ProgressBar : UIElement
 		{
 			internal readonly Asset<Texture2D> fullBar = BossLogUI.RequestResource("Extra_ProgressBar");
-			internal int[] downedEntries;
-			internal int[] totalEntries;
-			internal Dictionary<string, int[]> modAllEntries;
-			internal bool ModSourceMode = false;
+			internal readonly float percentageTotal;
+			internal readonly Point downedTotal;
+			internal Dictionary<EntryType, float> PercentagesByType;
+			internal Dictionary<string, float> PercentagesByMod;
+			internal Dictionary<EntryType, Point> CountsByType = new Dictionary<EntryType, Point>();
+			internal Dictionary<string, Point> CountsByMod = new Dictionary<string, Point>();
 
-			public ProgressBar() {
-				downedEntries = totalEntries = new int[] { 0, 0, 0 };
+			public ProgressBar(bool hardMode) {
+				this.percentageTotal = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries, hardMode, out int d, out int t);
+				this.downedTotal = new Point(d, t);
+
+				PercentagesByType = new Dictionary<EntryType, float>() {
+					{ EntryType.Boss, 0f },
+					{ EntryType.MiniBoss, 0f },
+					{ EntryType.Event, 0f }
+				};
+
+				foreach (EntryType type in PercentagesByType.Keys) {
+					PercentagesByType[type] = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.type == type), hardMode, out int downed, out int total);
+					if (total == 0)
+						PercentagesByType.Remove(type); // Remove entries not found by type. This can occur when filtering out entry types
+
+					CountsByType.TryAdd(type, new Point(downed, total));
+				}
+
+				PercentagesByMod = new Dictionary<string, float>(); // create a new dictionary and add Terraria and Unknwon entries if they exist on the Table of Contents
+
+				float TerrariaPercentage = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == "Terraria"), hardMode, out int downedTerraria, out int totalTerraria);
+				if (totalTerraria != 0) {
+					PercentagesByMod.TryAdd("Terraria", TerrariaPercentage);
+					CountsByMod.TryAdd("Terraria", new Point(downedTerraria, totalTerraria));
+				}
+
+				float UnknownPercentage = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == "Unknown"), hardMode, out int downedUnknown, out int totalUnknown);
+				if (totalUnknown != 0) {
+					PercentagesByMod.TryAdd("Unknown", UnknownPercentage);
+					CountsByMod.TryAdd("Unknown", new Point(downedUnknown, totalUnknown));
+				}
+
+				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
+					PercentagesByMod.TryAdd(mod, CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == mod), hardMode, out int downed, out int total));
+					if (total == 0)
+						PercentagesByMod.Remove(mod); // If their are no listed entries, remove the mod
+
+					CountsByMod.TryAdd(mod, new Point(downed, total));
+				}
 			}
 
-			public override void Click(UIMouseEvent evt) => ModSourceMode = !ModSourceMode;
+			private float CalculateTotalPercentage(List<EntryInfo> entries, bool hardMode, out int downed, out int total) {
+				total = 0;
+				downed = 0;
+				foreach (EntryInfo entry in entries) {
+					if (!entry.VisibleOnChecklist() || (hardMode && entry.progression <= BossTracker.WallOfFlesh) || (!hardMode && entry.progression > BossTracker.WallOfFlesh))
+						continue; // skip entry if it is not visible on the checklist or if it is not on the selected hardmode status
+
+					total++;
+					if (entry.IsDownedOrForced)
+						downed++;
+				}
+
+				return total == 0 ? 1f : (float)downed / (float)total;
+			}
+
+			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.barState = !BossUISystem.Instance.BossLog.barState;
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle inner = GetInnerDimensions().ToRectangle();
@@ -1479,63 +1533,38 @@ namespace BossChecklist.UIElements
 				int h = fullBar.Value.Height;
 				int barWidth = inner.Width - 8;
 
-				// Beginning of bar
-				Rectangle src = new Rectangle(0, 0, w / 3, h);
-				Rectangle pos = new Rectangle(inner.X, inner.Y, w / 3, h);
-				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
+				// Drawing the full bar
+				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X, inner.Y, w / 3, h), new Rectangle(0, 0, w / 3, h), Color.White); // Beginning of bar
+				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + 6, inner.Y, barWidth, h), new Rectangle(w / 3, 0, w / 3, h), Color.White); // Center of bar
+				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + inner.Width - 4, inner.Y, w / 3, h), new Rectangle(2 * (w / 3), 0, w / 3, h), Color.White); // End of bar
 
-				// Center of bar
-				src = new Rectangle(w / 3, 0, w / 3, h);
-				pos = new Rectangle(inner.X + 6, inner.Y, barWidth, h);
-				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
-
-				// End of bar
-				src = new Rectangle(2 * (w / 3), 0, w / 3, h);
-				pos = new Rectangle(inner.X + inner.Width - 4, inner.Y, w / 3, h);
-				spriteBatch.Draw(fullBar.Value, pos, src, Color.White);
-
-				BossLogConfiguration configs = BossChecklist.BossLogConfig;
-				int allDownedEntries = downedEntries[0];
-				int allAccountedEntries = totalEntries[0];
-
-				// If OnlyBosses config is disabled, we'll count the MiniBosses and Events to the total count as well
-				if (!configs.OnlyShowBossContent) {
-					allDownedEntries += downedEntries[1] + downedEntries[2];
-					allAccountedEntries += totalEntries[1] + totalEntries[2];
-				}
-
-				float percentage = allAccountedEntries == 0 ? 1f : (float)allDownedEntries / (float)allAccountedEntries;
-				int meterWidth = (int)(barWidth * percentage); 
-
+				// drawing the progress meter
+				int meterWidth = (int)(barWidth * this.percentageTotal);
 				Rectangle meterPos = new Rectangle(inner.X + 4, inner.Y + 4, meterWidth + 2, (int)inner.Height - 8);
 				Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
 				bookColor.A = 180;
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, Color.White);
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, bookColor);
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, Color.White); // The base meter, using white will lighten the book color over drawn over top
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, bookColor); // A faded book color over the meter
 
-				string percentDisplay = $"{((float)percentage * 100).ToString("#0.0")}%";
+				// drawing a percentage value above the bar
+				string percentDisplay = $"{(this.percentageTotal * 100).ToString("#0.0")}%";
 				float scale = 0.85f;
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(percentDisplay) * scale;
 				Vector2 percentPos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.X / 2), inner.Y - stringAdjust.Y);
 				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
 
 				if (IsMouseHovering) {
-					if (ModSourceMode) {
-						int[] value = modAllEntries["Terraria"];
-						float entryPercentage = (float)((float)value[0] / (float)value[1]) * 100;
-						BossUISystem.Instance.UIHoverText = $"Terraria: {value[0]}/{value[1]} ({entryPercentage.ToString("#0.0")}%)";
-						foreach (KeyValuePair<string, int[]> entry in modAllEntries) {
-							if (entry.Key == "Unknown" || entry.Key == "Terraria")
-								continue;
+					if (BossUISystem.Instance.BossLog.barState) {
+						BossUISystem.Instance.UIHoverText = $"Terraria: {CountsByMod["Terraria"].X}/{CountsByMod["Terraria"].Y} ({(PercentagesByMod["Terraria"] * 100).ToString("#0.0")}%)";
 
-							entryPercentage = (float)((float)entry.Value[0] / (float)entry.Value[1]) * 100;
-							BossUISystem.Instance.UIHoverText += $"\n{entry.Key}: {entry.Value[0]}/{entry.Value[1]} ({entryPercentage.ToString("#0.0")}%)";
+						foreach (string Key in PercentagesByMod.Keys) {
+							if (Key != "Unknown" && Key != "Terraria")
+								BossUISystem.Instance.UIHoverText += $"\n{Key}: {CountsByMod[Key].X}/{CountsByMod[Key].Y} ({(PercentagesByMod[Key] * 100).ToString("#0.0")}%)";
 						}
-						if (modAllEntries.ContainsKey("Unknown")) {
-							value = modAllEntries["Unknown"];
-							entryPercentage = (float)((float)value[0] / (float)value[1]) * 100;
-							BossUISystem.Instance.UIHoverText = $"\nUnknown: {value[0]}/{value[1]} ({entryPercentage.ToString("#0.0")}%)";
-						}
+
+						if (PercentagesByMod.ContainsKey("Unknown"))
+							BossUISystem.Instance.UIHoverText = $"\nUnknown: {CountsByMod["Unknown"].X}/{CountsByMod["Unknown"].Y} ({(PercentagesByMod["Unknown"] * 100).ToString("#0.0")}%)";
+
 						BossUISystem.Instance.UIHoverText += $"\n[{Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.EntryCompletion")}]";
 					}
 					else {
@@ -1543,16 +1572,16 @@ namespace BossChecklist.UIElements
 						string bosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Bosses");
 						string miniBosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.MiniBosses");
 						string events = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Events");
-						BossUISystem.Instance.UIHoverText = $"{total}: {allDownedEntries}/{allAccountedEntries}";
-						if (!configs.OnlyShowBossContent) {
-							if (configs.FilterMiniBosses != "Hide" || configs.FilterEvents != "Hide") {
-								BossUISystem.Instance.UIHoverText += $"\n{bosses}: {downedEntries[0]}/{totalEntries[0]}";
+						BossUISystem.Instance.UIHoverText = $"{total}: {downedTotal.X}/{downedTotal.Y}";
+						if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
+							if (BossChecklist.BossLogConfig.FilterMiniBosses != "Hide" || BossChecklist.BossLogConfig.FilterEvents != "Hide") {
+								BossUISystem.Instance.UIHoverText += $"\n{bosses}: {CountsByType[EntryType.Boss].X}/{CountsByType[EntryType.Boss].Y}";
 							}
-							if (configs.FilterMiniBosses != "Hide") {
-								BossUISystem.Instance.UIHoverText += $"\n{miniBosses}: {downedEntries[1]}/{totalEntries[1]}";
+							if (BossChecklist.BossLogConfig.FilterMiniBosses != "Hide") {
+								BossUISystem.Instance.UIHoverText += $"\n{miniBosses}: {CountsByType[EntryType.MiniBoss].X}/{CountsByType[EntryType.MiniBoss].Y}";
 							}
-							if (configs.FilterEvents != "Hide") {
-								BossUISystem.Instance.UIHoverText += $"\n{events}: {downedEntries[2]}/{totalEntries[2]}";
+							if (BossChecklist.BossLogConfig.FilterEvents != "Hide") {
+								BossUISystem.Instance.UIHoverText += $"\n{events}: {CountsByType[EntryType.Event].X}/{CountsByType[EntryType.Event].Y}";
 							}
 						}
 						BossUISystem.Instance.UIHoverText += $"\n[{Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ModCompletion")}]";
