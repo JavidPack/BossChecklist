@@ -1529,18 +1529,19 @@ namespace BossChecklist.UIElements
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle inner = GetInnerDimensions().ToRectangle();
-				int w = fullBar.Value.Width;
+				int wCut = fullBar.Value.Width / 3;
 				int h = fullBar.Value.Height;
-				int barWidth = inner.Width - 8;
+				int extraBar = 4; // this is the small bit of bar that is the the end sections, unless the texture is changed, this is vital
+				int barWidth = inner.Width - 12 + extraBar;
 
 				// Drawing the full bar
-				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X, inner.Y, w / 3, h), new Rectangle(0, 0, w / 3, h), Color.White); // Beginning of bar
-				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + 6, inner.Y, barWidth, h), new Rectangle(w / 3, 0, w / 3, h), Color.White); // Center of bar
-				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + inner.Width - 4, inner.Y, w / 3, h), new Rectangle(2 * (w / 3), 0, w / 3, h), Color.White); // End of bar
+				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X, inner.Y, wCut, h), new Rectangle(0, 0, wCut, h), Color.White); // Beginning of bar
+				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + wCut, inner.Y, barWidth - extraBar, h), new Rectangle(wCut, 0, wCut, h), Color.White); // Center of bar
+				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + inner.Width - wCut, inner.Y, wCut, h), new Rectangle(2 * wCut, 0, wCut, h), Color.White); // End of bar
 
 				// drawing the progress meter
 				int meterWidth = (int)(barWidth * this.percentageTotal);
-				Rectangle meterPos = new Rectangle(inner.X + 4, inner.Y + 4, meterWidth + 2, (int)inner.Height - 8);
+				Rectangle meterPos = new Rectangle(inner.X + 4, inner.Y + 4, meterWidth, (int)inner.Height - 8);
 				Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
 				bookColor.A = 180;
 				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, Color.White); // The base meter, using white will lighten the book color over drawn over top
