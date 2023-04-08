@@ -1297,16 +1297,16 @@ namespace BossChecklist
 
 			// Order matters here
 			prehardmodeBar = new ProgressBar(false);
-			prehardmodeBar.Left.Pixels = PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10;
+			prehardmodeBar.Left.Pixels = (int)(PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10);
 			prehardmodeBar.Height.Pixels = 14;
-			prehardmodeBar.Top.Pixels = PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2);
-			prehardmodeBar.Width.Pixels = PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2);
+			prehardmodeBar.Top.Pixels = (int)(PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2));
+			prehardmodeBar.Width.Pixels = (int)(PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2));
 
 			// Order matters here
 			hardmodeBar = new ProgressBar(true);
 			hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
 			hardmodeBar.Height.Pixels = 14;
-			hardmodeBar.Top.Pixels = NextPage.Top.Pixels + (NextPage.Height.Pixels / 2) - (hardmodeBar.Height.Pixels / 2);
+			hardmodeBar.Top.Pixels = prehardmodeBar.Top.Pixels;
 			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
 			PageOne.Append(prehardmodeBar);

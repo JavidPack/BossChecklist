@@ -1,11 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using ReLogic.Content;
 using ReLogic.Graphics;
+using ReLogic.OS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ReLogic.Content;
-using ReLogic.OS;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -16,9 +19,6 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.UI;
 using Terraria.UI.Chat;
-using System;
-using Terraria.Audio;
-using Microsoft.Xna.Framework.Input;
 
 namespace BossChecklist.UIElements
 {
@@ -1459,20 +1459,26 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class ProgressBar : UIElement
-		{
+		internal class ProgressBar : UIElement {
 			internal readonly Asset<Texture2D> fullBar = BossLogUI.RequestResource("Extra_ProgressBar");
 			internal readonly float percentageTotal;
-			internal readonly Point downedTotal;
+			internal readonly Point countsTotal;
 			internal Dictionary<EntryType, float> PercentagesByType;
 			internal Dictionary<string, float> PercentagesByMod;
 			internal Dictionary<EntryType, Point> CountsByType = new Dictionary<EntryType, Point>();
 			internal Dictionary<string, Point> CountsByMod = new Dictionary<string, Point>();
 
-			public ProgressBar(bool hardMode) {
-				this.percentageTotal = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries, hardMode, out int d, out int t);
-				this.downedTotal = new Point(d, t);
+			internal bool InitializeDividers;
+			internal Dictionary<Rectangle, string> Sections = new Dictionary<Rectangle, string>();
 
+			public ProgressBar(bool hardMode) {
+				InitializeDividers = true; // a progress bar is created, let this UIelement know it should attempt to make section dividers asap
+
+				// Start with the total percentage and total counts
+				this.percentageTotal = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries, hardMode, out int d, out int t);
+				this.countsTotal = new Point(d, t);
+
+				// populate percentage values
 				PercentagesByType = new Dictionary<EntryType, float>() {
 					{ EntryType.Boss, 0f },
 					{ EntryType.MiniBoss, 0f },
@@ -1487,26 +1493,29 @@ namespace BossChecklist.UIElements
 					CountsByType.TryAdd(type, new Point(downed, total));
 				}
 
-				PercentagesByMod = new Dictionary<string, float>(); // create a new dictionary and add Terraria and Unknwon entries if they exist on the Table of Contents
+				PercentagesByMod = new Dictionary<string, float>(); // create a new dictionary, adding Terraria and Unknown entries menually if they exist on the Table of Contents
 
+				// Terraria entries should appear first
 				float TerrariaPercentage = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == "Terraria"), hardMode, out int downedTerraria, out int totalTerraria);
 				if (totalTerraria != 0) {
 					PercentagesByMod.TryAdd("Terraria", TerrariaPercentage);
 					CountsByMod.TryAdd("Terraria", new Point(downedTerraria, totalTerraria));
 				}
 
-				float UnknownPercentage = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == "Unknown"), hardMode, out int downedUnknown, out int totalUnknown);
-				if (totalUnknown != 0) {
-					PercentagesByMod.TryAdd("Unknown", UnknownPercentage);
-					CountsByMod.TryAdd("Unknown", new Point(downedUnknown, totalUnknown));
-				}
-
+				// populate dictionary with modded entries
 				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
 					PercentagesByMod.TryAdd(mod, CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == mod), hardMode, out int downed, out int total));
 					if (total == 0)
 						PercentagesByMod.Remove(mod); // If their are no listed entries, remove the mod
 
 					CountsByMod.TryAdd(mod, new Point(downed, total));
+				}
+
+				// Unknown entries should appear last
+				float UnknownPercentage = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == "Unknown"), hardMode, out int downedUnknown, out int totalUnknown);
+				if (totalUnknown != 0) {
+					PercentagesByMod.TryAdd("Unknown", UnknownPercentage);
+					CountsByMod.TryAdd("Unknown", new Point(downedUnknown, totalUnknown));
 				}
 			}
 
@@ -1525,10 +1534,86 @@ namespace BossChecklist.UIElements
 				return total == 0 ? 1f : (float)downed / (float)total;
 			}
 
-			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.barState = !BossUISystem.Instance.BossLog.barState;
+			private void GenerateDividers() {
+				Sections = new Dictionary<Rectangle, string>();
+
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+				int barFull = inner.Width - 12 + 4;
+				int barRemainder = (int)(barFull * this.percentageTotal);
+				int meterX = inner.X + 4;
+				if (BossUISystem.Instance.BossLog.barState) {
+					string finalValue = CountsByMod.First().Key;
+					foreach (KeyValuePair<string, Point> pair in CountsByMod) {
+						if (pair.Value.X != 0)
+							finalValue = pair.Key; // determine the final section needed to be created
+					}
+
+					foreach (KeyValuePair<string, Point> pair in CountsByMod) {
+						if (pair.Value.X == 0)
+							continue; // if no downs, don't create a section
+
+						int length = (int)(barFull * ((float)pair.Value.X / (float)countsTotal.Y));
+						string modName = ModLoader.TryGetMod(pair.Key, out Mod mod) ? mod.DisplayName : pair.Key;
+						string hoverText = $"{modName}: {pair.Value.X}/{pair.Value.Y} ({(((float)pair.Value.X / (float)countsTotal.Y) * 100).ToString("#0.0")}%)";
+
+						if (pair.Key == finalValue)
+							length += barRemainder - length + 1; // the final rectangle needs to cover any remaining bar left
+
+						Sections.Add(new Rectangle(meterX, inner.Y, length - 1, inner.Height), hoverText);
+
+						meterX += length;
+						barRemainder -= length;
+					}
+				}
+				else {
+					EntryType finalValue = CountsByType.First().Key;
+					foreach (KeyValuePair<EntryType, Point> pair in CountsByType) {
+						if (pair.Value.X != 0)
+							finalValue = pair.Key; // determine the final section needed to be created
+					}
+
+					foreach (KeyValuePair<EntryType, Point> pair in CountsByType) {
+						if (pair.Value.X == 0)
+							continue; // if no downs, don't create a section
+
+						int length = (int)(barFull * ((float)pair.Value.X / (float)countsTotal.Y));
+						string hoverText = $"{pair.Key}: {pair.Value.X}/{pair.Value.Y} ({(((float)pair.Value.X / (float)countsTotal.Y) * 100).ToString("#0.0")}%)";
+
+						if (pair.Key == finalValue)
+							length += barRemainder - length + 1; // the final rectangle needs to cover any remaining bar left
+
+						Sections.Add(new Rectangle(meterX, inner.Y, length - 1, inner.Height), hoverText);
+
+						meterX += length;
+						barRemainder -= length;
+					}
+				}
+			}
+
+			public override void Click(UIMouseEvent evt) {
+				base.Click(evt);
+				BossUISystem.Instance.BossLog.barState = !BossUISystem.Instance.BossLog.barState;
+				GenerateDividers(); // update the dividers based on the new bar state
+			}
+
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (InitializeDividers) {
+					GenerateDividers(); // Can only generate dividers once the dimensions are declared
+					InitializeDividers = false;
+				}
+			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle inner = GetInnerDimensions().ToRectangle();
+
+				// drawing a percentage value above the bar
+				string percentDisplay = $"{(this.percentageTotal * 100).ToString("#0.0")}%";
+				float scale = 0.85f;
+				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(percentDisplay) * scale;
+				Vector2 percentPos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.X / 2), inner.Y - stringAdjust.Y);
+				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
+
 				int wCut = fullBar.Value.Width / 3;
 				int h = fullBar.Value.Height;
 				int extraBar = 4; // this is the small bit of bar that is the the end sections, unless the texture is changed, this is vital
@@ -1540,52 +1625,23 @@ namespace BossChecklist.UIElements
 				spriteBatch.Draw(fullBar.Value, new Rectangle(inner.X + inner.Width - wCut, inner.Y, wCut, h), new Rectangle(2 * wCut, 0, wCut, h), Color.White); // End of bar
 
 				// drawing the progress meter
-				int meterWidth = (int)(barWidth * this.percentageTotal);
-				Rectangle meterPos = new Rectangle(inner.X + 4, inner.Y + 4, meterWidth, (int)inner.Height - 8);
-				Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
-				bookColor.A = 180;
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, Color.White); // The base meter, using white will lighten the book color over drawn over top
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterPos, bookColor); // A faded book color over the meter
+				Color barColor = BossChecklist.BossLogConfig.BossLogColor;
+				barColor.A = 180;
+				Rectangle meterProgress = new Rectangle(inner.X + 4, inner.Y + 4, (int)(barWidth * this.percentageTotal), inner.Height - 8);
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterProgress, Color.White); // The base meter, using white will lighten the book color over drawn over top
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, meterProgress, barColor); // The base meter, using white will lighten the book color over drawn over top
 
-				// drawing a percentage value above the bar
-				string percentDisplay = $"{(this.percentageTotal * 100).ToString("#0.0")}%";
-				float scale = 0.85f;
-				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(percentDisplay) * scale;
-				Vector2 percentPos = new Vector2(inner.X + (inner.Width / 2) - (stringAdjust.X / 2), inner.Y - stringAdjust.Y);
-				Utils.DrawBorderString(spriteBatch, percentDisplay, percentPos, Colors.RarityAmber, scale);
-
-				if (IsMouseHovering) {
-					if (BossUISystem.Instance.BossLog.barState) {
-						BossUISystem.Instance.UIHoverText = $"Terraria: {CountsByMod["Terraria"].X}/{CountsByMod["Terraria"].Y} ({(PercentagesByMod["Terraria"] * 100).ToString("#0.0")}%)";
-
-						foreach (string Key in PercentagesByMod.Keys) {
-							if (Key != "Unknown" && Key != "Terraria")
-								BossUISystem.Instance.UIHoverText += $"\n{Key}: {CountsByMod[Key].X}/{CountsByMod[Key].Y} ({(PercentagesByMod[Key] * 100).ToString("#0.0")}%)";
-						}
-
-						if (PercentagesByMod.ContainsKey("Unknown"))
-							BossUISystem.Instance.UIHoverText = $"\nUnknown: {CountsByMod["Unknown"].X}/{CountsByMod["Unknown"].Y} ({(PercentagesByMod["Unknown"] * 100).ToString("#0.0")}%)";
-
-						BossUISystem.Instance.UIHoverText += $"\n[{Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.EntryCompletion")}]";
+				// drawing the section dividers as well as the hover text and hover color of each section where applicable
+				foreach (KeyValuePair<Rectangle, string> pair in Sections) {
+					if (Main.MouseScreen.Between(pair.Key.TopLeft(), pair.Key.BottomRight())) {
+						BossUISystem.Instance.UIHoverText = pair.Value;
+						Rectangle section = new Rectangle(pair.Key.X, pair.Key.Y + 4, pair.Key.Width, pair.Key.Height - 8);
+						spriteBatch.Draw(TextureAssets.MagicPixel.Value, section, BossChecklist.BossLogConfig.BossLogColor);
 					}
-					else {
-						string total = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Total");
-						string bosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Bosses");
-						string miniBosses = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.MiniBosses");
-						string events = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Events");
-						BossUISystem.Instance.UIHoverText = $"{total}: {downedTotal.X}/{downedTotal.Y}";
-						if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
-							if (BossChecklist.BossLogConfig.FilterMiniBosses != "Hide" || BossChecklist.BossLogConfig.FilterEvents != "Hide") {
-								BossUISystem.Instance.UIHoverText += $"\n{bosses}: {CountsByType[EntryType.Boss].X}/{CountsByType[EntryType.Boss].Y}";
-							}
-							if (BossChecklist.BossLogConfig.FilterMiniBosses != "Hide") {
-								BossUISystem.Instance.UIHoverText += $"\n{miniBosses}: {CountsByType[EntryType.MiniBoss].X}/{CountsByType[EntryType.MiniBoss].Y}";
-							}
-							if (BossChecklist.BossLogConfig.FilterEvents != "Hide") {
-								BossUISystem.Instance.UIHoverText += $"\n{events}: {CountsByType[EntryType.Event].X}/{CountsByType[EntryType.Event].Y}";
-							}
-						}
-						BossUISystem.Instance.UIHoverText += $"\n[{Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ModCompletion")}]";
+
+					if (pair.Key != Sections.Last().Key) {
+						Rectangle divider = new Rectangle(pair.Key.X + pair.Key.Width - 1, pair.Key.Y + 4, 2, pair.Key.Height - 8);
+						spriteBatch.Draw(TextureAssets.MagicPixel.Value, divider, BossChecklist.BossLogConfig.BossLogColor);
 					}
 				}
 			}
