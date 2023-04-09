@@ -1151,6 +1151,25 @@ namespace BossChecklist
 			prehardmodeList.Clear(); // clear both lists before setting up content
 			hardmodeList.Clear();
 
+			// Pre-Hard Mode List Title
+			float scale = 0.6f;
+			string title = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
+			UIText phmTitle = new UIText(title, scale, true) {
+				TextColor = Colors.RarityAmber
+			};
+			phmTitle.Left.Pixels = (PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * scale / 2);
+			phmTitle.Top.Pixels = 18;
+			PageOne.Append(phmTitle);
+
+			// Hard Mode List Title
+			title = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode");
+			UIText hmTitle = new UIText(title, scale, true) {
+				TextColor = Colors.RarityAmber
+			};
+			hmTitle.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * scale / 2);
+			hmTitle.Top.Pixels = 18;
+			PageTwo.Append(hmTitle);
+
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
 

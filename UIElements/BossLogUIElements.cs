@@ -520,22 +520,6 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 				}
-				else if (selectedLogPage == BossLogUI.Page_TableOfContents) {
-					if (Id == "PageOne") {
-						float textScale = 0.6f;
-						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
-						Vector2 stringSize = FontAssets.DeathText.Value.MeasureString(message) * textScale;
-						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 15);
-						Utils.DrawBorderStringBig(spriteBatch, message, pos, Colors.RarityAmber, textScale);
-					}
-					else if (Id == "PageTwo") {
-						float textScale = 0.6f;
-						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode");
-						Vector2 stringSize = FontAssets.DeathText.Value.MeasureString(message) * textScale;
-						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 15);
-						Utils.DrawBorderStringBig(spriteBatch, message, pos, Colors.RarityAmber, textScale);
-					}
-				}
 				else if (selectedLogPage == BossLogUI.Page_Credits) {
 					if (Id == "PageOne") {
 						// Mod Developers Credits
