@@ -878,15 +878,13 @@ namespace BossChecklist.UIElements
 			int slotID = -1;
 			string title;
 			string value;
-			int achX;
-			int achY;
+			Point ach;
 			string tooltip;
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, string title, string value) : base(texture) {
 				this.title = title;
 				this.value = value;
-				achX = -1;
-				achY = -1;
+				this.ach = new Point(-1, -1);
 			}
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot) : base(texture) {
@@ -898,8 +896,7 @@ namespace BossChecklist.UIElements
 				title = GetTitle(subCategory)[slot];
 				value = GetValue(subCategory, stats, worldStats)[slot];
 				tooltip = GetTooltip(subCategory)[slot];
-				achX = (int)GetAchCoords(subCategory, worldStats)[slot].X;
-				achY = (int)GetAchCoords(subCategory, worldStats)[slot].Y;
+				ach = GetAchCoords(subCategory, worldStats)[slot];
 			}
 
 			private string[] GetTitle(SubCategory sub) {
@@ -952,24 +949,24 @@ namespace BossChecklist.UIElements
 				};
 			}
 
-			private Vector2[] GetAchCoords(SubCategory sub, WorldStats worldStats) {
-				Vector2 uniqueAch = new Vector2(0, 9);
+			private Point[] GetAchCoords(SubCategory sub, WorldStats worldStats) {
+				Point uniqueAch = new Point(0, 9);
 
 				if (sub == SubCategory.PersonalBest) {
-					uniqueAch = new Vector2(0, 3);
+					uniqueAch = new Point(0, 3);
 				}
 				else if (sub == SubCategory.FirstVictory) {
-					uniqueAch = new Vector2(7, 10);
+					uniqueAch = new Point(7, 10);
 				}
 				else if (sub == SubCategory.WorldRecord) {
-					uniqueAch = worldStats.totalKills >= worldStats.totalDeaths ? new Vector2(4, 10) : new Vector2(4, 8);
+					uniqueAch = worldStats.totalKills >= worldStats.totalDeaths ? new Point(4, 10) : new Point(4, 8);
 				}
 
-				return new Vector2[] {
-					new Vector2(-1, -1),
+				return new Point[] {
+					new Point(-1, -1),
 					uniqueAch,
-					sub == SubCategory.WorldRecord ? new Vector2(2, 12) : new Vector2(4, 9),
-					sub == SubCategory.WorldRecord ? new Vector2(0, 7) : new Vector2(3, 0)
+					sub == SubCategory.WorldRecord ? new Point(2, 12) : new Point(4, 9),
+					sub == SubCategory.WorldRecord ? new Point(0, 7) : new Point(3, 0)
 				};
 			}
 
@@ -978,9 +975,9 @@ namespace BossChecklist.UIElements
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 
 				// Draw an achievement icon that represents the record type
-				if (achX >= 0 && achY >= 0) {
+				if (ach.X >= 0 && ach.Y >= 0) {
 					Texture2D achievements = ModContent.Request<Texture2D>("Terraria/Images/UI/Achievements").Value;
-					Rectangle achSlot = new Rectangle(66 * achX, 66 * achY, 64, 64);
+					Rectangle achSlot = new Rectangle(66 * ach.X, 66 * ach.Y, 64, 64);
 					spriteBatch.Draw(achievements, inner.TopLeft(), achSlot, Color.White);
 
 					if (Main.MouseScreen.Between(inner.TopLeft(), new Vector2(inner.X + 64, inner.Y + 64))) {
