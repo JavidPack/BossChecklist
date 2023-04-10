@@ -139,7 +139,6 @@ Mods: {
 				NoInfo: 无可用信息
 				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
 				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
-				NoModsSupported: 您已加载的Mod均未将页面添加到Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请向Mod作者提议添加相关信息到Boss Checklist.
 				BeforeYouBegin: 在你开始之前...
 				EnableProgressionMode: 你想要开启进度模式吗?
 				SelectAnOption: 请在下方选择一项...
@@ -160,9 +159,10 @@ Mods: {
 			}
 
 			Credits: {
-				ThanksDevs: 特别鸣谢
-				ThanksMods: 感谢选择添加引用的Mod!
+				Devs: 贡献者
+				Mods: 已注册的Mod
 				Notice: "[列表仅包含已加载的Mod]"
+				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请向Mod作者提议添加相关信息到Boss Checklist!
 			}
 
 			Terms: {
