@@ -133,6 +133,8 @@ namespace BossChecklist
 		public static Rectangle slotRectRef; // just grabs the size of a normal inventory slot
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 		public UIImage PromptCheck; // checkmark for the toggle prompt config button
+		public UIText PageOneTitle;
+		public UIText PageTwoTitle;
 
 		// Boss Log visibiltiy helpers
 		private bool bossLogVisible;
@@ -338,6 +340,11 @@ namespace BossChecklist
 			PageOne.Width.Pixels = 375;
 			PageOne.Height.Pixels = 480;
 
+			PageOneTitle = new UIText("", 0.6f, true) {
+				TextColor = Colors.RarityAmber
+			};
+			PageOneTitle.Top.Pixels = 18;
+
 			PrevPage = new NavigationalButton(prevTexture, true) {
 				Id = "Previous"
 			};
@@ -359,6 +366,11 @@ namespace BossChecklist
 			};
 			PageTwo.Width.Pixels = 375;
 			PageTwo.Height.Pixels = 480;
+
+			PageTwoTitle = new UIText("", 0.6f, true) {
+				TextColor = Colors.RarityAmber
+			};
+			PageTwoTitle.Top.Pixels = 18;
 
 			pageTwoItemList = new UIList();
 
@@ -1152,23 +1164,16 @@ namespace BossChecklist
 			hardmodeList.Clear();
 
 			// Pre-Hard Mode List Title
-			float scale = 0.6f;
 			string title = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
-			UIText phmTitle = new UIText(title, scale, true) {
-				TextColor = Colors.RarityAmber
-			};
-			phmTitle.Left.Pixels = (PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * scale / 2);
-			phmTitle.Top.Pixels = 18;
-			PageOne.Append(phmTitle);
+			PageOneTitle.SetText(title);
+			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			PageOne.Append(PageOneTitle);
 
 			// Hard Mode List Title
 			title = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode");
-			UIText hmTitle = new UIText(title, scale, true) {
-				TextColor = Colors.RarityAmber
-			};
-			hmTitle.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * scale / 2);
-			hmTitle.Top.Pixels = 18;
-			PageTwo.Append(hmTitle);
+			PageTwoTitle.SetText(title);
+			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			PageTwo.Append(PageTwoTitle);
 
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
@@ -1339,6 +1344,18 @@ namespace BossChecklist
 		/// listing off all mod contributors as well as the mods using the updated mod calls.
 		/// </summary>
 		private void UpdateCredits() {
+			// Pre-Hard Mode List Title
+			string title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Devs");
+			PageOneTitle.SetText(title);
+			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			PageOne.Append(PageOneTitle);
+
+			// Hard Mode List Title
+			title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Mods");
+			PageTwoTitle.SetText(title);
+			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			PageTwo.Append(PageTwoTitle);
+
 			Dictionary<string, string> optedMods = BossUISystem.Instance.RegisteredMods; // The mods are already tracked in a list
 			if (optedMods.Count > 0) {
 				// create a list for the mod names using updated mod calls
@@ -1385,7 +1402,7 @@ namespace BossChecklist
 					pageTwoItemList.Add(newRow);
 					row++;
 				}
-				
+
 				PageTwo.Append(pageTwoItemList); // append the list with all the children attached
 
 				// prepare the scrollbar in case it is needed for an excessive amount of mods
@@ -1408,7 +1425,7 @@ namespace BossChecklist
 				brokenPanel.Left.Pixels = 18;
 				PageTwo.Append(brokenPanel);
 
-				FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.NoModsSupported");
+				FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.Credits.ModsEmpty");
 				brokenDisplay.Height.Pixels = 200;
 				brokenDisplay.Width.Pixels = 340;
 				brokenDisplay.Top.Pixels = 0;

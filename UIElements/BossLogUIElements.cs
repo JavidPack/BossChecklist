@@ -523,12 +523,6 @@ namespace BossChecklist.UIElements
 				else if (selectedLogPage == BossLogUI.Page_Credits) {
 					if (Id == "PageOne") {
 						// Mod Developers Credits
-						string specialThanks = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksDevs");
-						float textScale = 1.15f;
-						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(specialThanks) * textScale;
-						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
-						Utils.DrawBorderString(spriteBatch, specialThanks, pos, Main.DiscoColor, textScale);
-
 						Asset<Texture2D> users = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_CreditUsers");
 						string[] usernames = { "Jopojelly", "SheepishShepherd", "direwolf420", "riveren", "Orian", "Panini" };
 						string[] titles = { "Mod Owner", "Mod Co-Owner", "Code Contributor", "Spriter", "Beta Tester", "Beta Tester" };
@@ -557,20 +551,6 @@ namespace BossChecklist.UIElements
 								row++;
 							}
 						}
-					}
-					else if (Id == "PageTwo" && BossUISystem.Instance.RegisteredMods.Count > 0) {
-						// Supported Mod Credits Page
-						string thanksMods = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.ThanksMods");
-						float textScale = 1.15f;
-						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(thanksMods) * textScale;
-						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 10);
-						Utils.DrawBorderString(spriteBatch, thanksMods, pos, Color.LightSkyBlue, textScale);
-
-						string notice = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
-						textScale = 0.9f;
-						Vector2 stringSize2 = FontAssets.MouseText.Value.MeasureString(notice) * textScale;
-						Vector2 pos2 = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize2.X / 2), pos.Y + stringSize2.Y + 5);
-						Utils.DrawBorderString(spriteBatch, notice, pos2, Color.LightBlue, textScale);
 					}
 				}
 				else if (selectedLogPage >= 0) {

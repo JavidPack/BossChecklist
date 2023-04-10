@@ -139,7 +139,6 @@ Mods: {
 				NoInfo: No info available
 				NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
 				LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
-				NoModsSupported: None of your loaded mods have added pages to the Boss Log. If you want your favorite mods to be included, suggest adding their own boss pages to the mod's discord or forums page!
 				BeforeYouBegin: Before you begin...
 				EnableProgressionMode: Do you want to enable Progression Mode?
 				SelectAnOption: Please select an option below...
@@ -160,9 +159,10 @@ Mods: {
 			}
 
 			Credits: {
-				ThanksDevs: Special thanks to
-				ThanksMods: Thanks to the mods who've opted in!
+				Devs: Contributors
+				Mods: Registered Mods
 				Notice: "[List only contains loaded mods]"
+				ModsEmpty: None of the loaded mods have any submissions registered the Boss Log. If you want your favorite mods to be included, suggest adding their own boss pages to the mod's discord or forums page!
 			}
 
 			Terms: {
