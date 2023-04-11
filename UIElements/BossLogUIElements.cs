@@ -1229,10 +1229,8 @@ namespace BossChecklist.UIElements
 
 		internal class TableOfContents : UIText
 		{
-			public int Index { get; init; }
-			readonly float order = 0;
+			readonly EntryInfo entry;
 			readonly bool markAsNext;
-			readonly bool downed;
 			readonly string displayName;
 			readonly bool allLoot;
 			readonly bool allCollectibles;
@@ -1240,22 +1238,19 @@ namespace BossChecklist.UIElements
 			internal Color defaultColor;
 
 			public TableOfContents(int index, string displayName, Color entryColor, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
-				this.Index = index;
+				this.entry = BossChecklist.bossTracker.SortedEntries[index];
 				this.displayName = displayName;
-				this.markAsNext = BossLogUI.FindNextEntry() == Index && BossChecklist.BossLogConfig.DrawNextMark && !BossChecklist.bossTracker.SortedEntries[Index].hidden;
-				this.order = BossChecklist.bossTracker.SortedEntries[Index].progression;
-				this.downed = BossChecklist.bossTracker.SortedEntries[Index].IsDownedOrForced;
+				this.markAsNext = BossLogUI.FindNextEntry() == index && BossChecklist.BossLogConfig.DrawNextMark && !entry.hidden;
 				this.allLoot = loot;
 				this.allCollectibles = collect;
 				TextColor = this.defaultColor = markAsNext && BossChecklist.BossLogConfig.ColoredBossText ? new Color(248, 235, 91) : entryColor;
 			}
 
-			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = Index; // jump to entry page
+			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = entry.GetIndex; // jump to entry page
 
 			public override void RightClick(UIMouseEvent evt) {
 				// Right-click an entry to mark it as completed
 				// Hold alt and right-click an entry to hide it
-				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[Index];
 				if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 					entry.hidden = !entry.hidden;
 					if (entry.hidden) {
@@ -1294,9 +1289,9 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {
-				BossLogUI.headNum = Index;
+				BossLogUI.headNum = entry.GetIndex;
 				if (BossChecklist.DebugConfig.ShowProgressionValue) {
-					SetText($"[{order}f] {displayName}");
+					SetText($"[{entry.progression}f] {displayName}");
 				}
 				TextColor = BossChecklist.BossLogConfig.ColoredBossText ? Color.SkyBlue : Color.Silver;
 				base.MouseOver(evt);
@@ -1312,7 +1307,6 @@ namespace BossChecklist.UIElements
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
-				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[Index];
 
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
@@ -1344,58 +1338,56 @@ namespace BossChecklist.UIElements
 					}
 				}
 
-				if (order != -1f) {
-					Asset<Texture2D> checkGrid = BossLogUI.checkboxTexture;
-					string checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
+				Asset<Texture2D> checkGrid = BossLogUI.checkboxTexture;
+				string checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
 
-					if (downed) {
-						if (checkType == "X and  ☐") {
-							checkGrid = BossLogUI.xTexture;
-						}
-						else if (checkType != "Strike-through") {
-							checkGrid = BossLogUI.checkMarkTexture;
-						}
-						else {
-							Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(displayName);
-							Asset<Texture2D> strike = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Strike");
-							int w = strike.Value.Width / 3;
-							int h = strike.Value.Height;
-
-							Color hoverColor = IsMouseHovering ? BossLogUI.faded : Color.White;
-							int offsetY = (int)(inner.Y + (stringAdjust.Y / 3) - h / 2);
-
-							Rectangle strikePos = new Rectangle(inner.X - w, offsetY, w, h);
-							Rectangle strikeSrc = new Rectangle(0, 0, w, h);
-							spriteBatch.Draw(strike.Value, strikePos, strikeSrc, hoverColor);
-
-							strikePos = new Rectangle(inner.X, offsetY, (int)stringAdjust.X, h);
-							strikeSrc = new Rectangle(w, 0, w, h);
-							spriteBatch.Draw(strike.Value, strikePos, strikeSrc, IsMouseHovering ? Color.Transparent : Color.White);
-
-							strikePos = new Rectangle(inner.X + (int)stringAdjust.X, offsetY, w, h);
-							strikeSrc = new Rectangle(w * 2, 0, w, h);
-							spriteBatch.Draw(strike.Value, strikePos, strikeSrc, hoverColor);
-						}
+				if (entry.IsDownedOrForced) {
+					if (checkType == "X and  ☐") {
+						checkGrid = BossLogUI.xTexture;
+					}
+					else if (checkType != "Strike-through") {
+						checkGrid = BossLogUI.checkMarkTexture;
 					}
 					else {
-						checkGrid = checkType == "✓ and  X" ? BossLogUI.xTexture : BossLogUI.checkboxTexture;
-						if (markAsNext) {
-							checkGrid = checkType == "Strike-through" ? BossLogUI.strikeNTexture : BossLogUI.circleTexture;
-						}
-					}
+						Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(displayName);
+						Asset<Texture2D> strike = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Checks_Strike");
+						int w = strike.Value.Width / 3;
+						int h = strike.Value.Height;
 
-					if ((checkType != "Strike-through" || checkGrid == BossLogUI.strikeNTexture) && !entry.hidden) {
-						if (checkGrid != BossLogUI.strikeNTexture) {
-							spriteBatch.Draw(BossLogUI.checkboxTexture.Value, pos, Color.White);
-						}
-						spriteBatch.Draw(checkGrid.Value, pos, Color.White);
+						Color hoverColor = IsMouseHovering ? BossLogUI.faded : Color.White;
+						int offsetY = (int)(inner.Y + (stringAdjust.Y / 3) - h / 2);
+
+						Rectangle strikePos = new Rectangle(inner.X - w, offsetY, w, h);
+						Rectangle strikeSrc = new Rectangle(0, 0, w, h);
+						spriteBatch.Draw(strike.Value, strikePos, strikeSrc, hoverColor);
+
+						strikePos = new Rectangle(inner.X, offsetY, (int)stringAdjust.X, h);
+						strikeSrc = new Rectangle(w, 0, w, h);
+						spriteBatch.Draw(strike.Value, strikePos, strikeSrc, IsMouseHovering ? Color.Transparent : Color.White);
+
+						strikePos = new Rectangle(inner.X + (int)stringAdjust.X, offsetY, w, h);
+						strikeSrc = new Rectangle(w * 2, 0, w, h);
+						spriteBatch.Draw(strike.Value, strikePos, strikeSrc, hoverColor);
 					}
+				}
+				else {
+					checkGrid = checkType == "✓ and  X" ? BossLogUI.xTexture : BossLogUI.checkboxTexture;
+					if (markAsNext) {
+						checkGrid = checkType == "Strike-through" ? BossLogUI.strikeNTexture : BossLogUI.circleTexture;
+					}
+				}
+
+				if ((checkType != "Strike-through" || checkGrid == BossLogUI.strikeNTexture) && !entry.hidden) {
+					if (checkGrid != BossLogUI.strikeNTexture) {
+						spriteBatch.Draw(BossLogUI.checkboxTexture.Value, pos, Color.White);
+					}
+					spriteBatch.Draw(checkGrid.Value, pos, Color.White);
 				}
 			}
 
 			public override int CompareTo(object obj) {
 				TableOfContents other = obj as TableOfContents;
-				return order.CompareTo(other.order);
+				return entry.progression.CompareTo(other.entry.progression);
 			}
 		}
 
