@@ -1283,7 +1283,20 @@ namespace BossChecklist
 					}
 				}
 
-				TableOfContents listedEntry = new TableOfContents(entry.GetIndex, displayName, allLoot, allCollect) {
+				Color textColor = Color.PapayaWhip; // default color when ColoredBossText is false
+				if ((!entry.available() && !entry.IsDownedOrForced) || entry.hidden) {
+					textColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
+				}
+				else if (BossChecklist.BossLogConfig.ColoredBossText) {
+					if (entry.GetRecordIndex != -1 && Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[entry.GetRecordIndex]) {
+						textColor = Main.DiscoColor;
+					}
+					else {
+						textColor = entry.IsDownedOrForced ? Colors.RarityGreen : Colors.RarityRed;
+					}
+				}
+
+				TableOfContents listedEntry = new TableOfContents(entry.GetIndex, displayName, textColor, allLoot, allCollect) {
 					PaddingTop = 5,
 					PaddingLeft = entry.progression <= BossTracker.WallOfFlesh ? 32 : 22
 				};

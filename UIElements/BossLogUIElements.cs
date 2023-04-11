@@ -1237,14 +1237,17 @@ namespace BossChecklist.UIElements
 			readonly bool allLoot;
 			readonly bool allCollectibles;
 
-			public TableOfContents(int index, string displayName, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
+			internal Color defaultColor;
+
+			public TableOfContents(int index, string displayName, Color entryColor, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				this.Index = index;
 				this.displayName = displayName;
-				this.markAsNext = BossLogUI.FindNextEntry() == Index && BossChecklist.BossLogConfig.DrawNextMark;
+				this.markAsNext = BossLogUI.FindNextEntry() == Index && BossChecklist.BossLogConfig.DrawNextMark && !BossChecklist.bossTracker.SortedEntries[Index].hidden;
 				this.order = BossChecklist.bossTracker.SortedEntries[Index].progression;
 				this.downed = BossChecklist.bossTracker.SortedEntries[Index].IsDownedOrForced;
 				this.allLoot = loot;
 				this.allCollectibles = collect;
+				TextColor = this.defaultColor = markAsNext && BossChecklist.BossLogConfig.ColoredBossText ? new Color(248, 235, 91) : entryColor;
 			}
 
 			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = Index; // jump to entry page
@@ -1295,45 +1298,21 @@ namespace BossChecklist.UIElements
 				if (BossChecklist.DebugConfig.ShowProgressionValue) {
 					SetText($"[{order}f] {displayName}");
 				}
+				TextColor = BossChecklist.BossLogConfig.ColoredBossText ? Color.SkyBlue : Color.Silver;
 				base.MouseOver(evt);
 			}
 
 			public override void MouseOut(UIMouseEvent evt) {
 				BossLogUI.headNum = -1; // MouseOut will occur even if the element is removed when changing pages!
 				SetText(displayName);
+				TextColor = defaultColor;
 				base.MouseOut(evt);
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[Index];
-
-				if (order != -1) {
-					// Use the appropriate text color for conditions
-					if ((!entry.available() && !downed) || entry.hidden) {
-						TextColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
-					}
-					else if (BossChecklist.BossLogConfig.ColoredBossText) {
-						int recordIndex = BossChecklist.bossTracker.SortedEntries[Index].GetRecordIndex;
-						if (recordIndex != -1 && modPlayer.hasNewRecord[recordIndex]) {
-							TextColor = Main.DiscoColor;
-						}
-						else if (IsMouseHovering) {
-							TextColor = TextColor = Color.SkyBlue;
-						}
-						else if (markAsNext) {
-							TextColor = new Color(248, 235, 91);
-						}
-						else {
-							TextColor = downed ? Colors.RarityGreen : Colors.RarityRed;
-						}
-					}
-					else {
-						TextColor = IsMouseHovering ? Color.Silver : Color.White; // Disabled colored text
-					}
-				}
 
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
