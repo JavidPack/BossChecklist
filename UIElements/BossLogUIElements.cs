@@ -480,9 +480,8 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(icon.Value, GetInnerDimensions().ToRectangle(), Color.White); // If the icon size is not 80x80, overwrite the drawing to the proper dimensions
 				}
 
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) 
 					BossUISystem.Instance.UIHoverText = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
-				}
 			}
 		}
 

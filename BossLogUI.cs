@@ -1397,7 +1397,7 @@ namespace BossChecklist
 
 			// scrollbar
 			scrollOne.SetView(10f, 1000f);
-			scrollOne.Top.Pixels = 92;
+			scrollOne.Top.Pixels = 80;
 			scrollOne.Left.Pixels = -8;
 			scrollOne.Height.Set(-60f, 0.75f);
 			scrollOne.HAlign = 1f;
@@ -1456,7 +1456,7 @@ namespace BossChecklist
 
 				// prepare the scrollbar in case it is needed for an excessive amount of mods
 				scrollTwo.SetView(10f, 1000f);
-				scrollTwo.Top.Pixels = 92;
+				scrollTwo.Top.Pixels = 87;
 				scrollTwo.Left.Pixels = -8;
 				scrollTwo.Height.Set(-60f, 0.75f);
 				scrollTwo.HAlign = 1f;
