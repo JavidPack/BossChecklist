@@ -481,7 +481,7 @@ namespace BossChecklist.UIElements
 				}
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
-					BossUISystem.Instance.UIHoverText = ModLoader.GetMod(modName).DisplayName;
+					BossUISystem.Instance.UIHoverText = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
 				}
 			}
 		}
