@@ -87,6 +87,16 @@ namespace BossChecklist
 		public bool barState = false; // when true, hovering over the progress bar will split up the entry percentages by mod instead of entry type
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
 
+		// Credits related
+		public readonly Dictionary<string, string> contributors = new Dictionary<string, string>() {
+			{ "Jopojelly", "Creator & Owner" },
+			{ "SheepishShepherd", "Co-Owner & Maintainer"},
+			{ "direwolf420", "Code Contributor" },
+			{ "riveren", "Boss Log Sprites"},
+			{ "Orian", "Early Testing" },
+			{ "Panini", "Early Server Testing" }
+		};
+
 		// Record page related
 		public static SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public static SubCategory CompareState = SubCategory.None; // Compare record values to one another
@@ -125,6 +135,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
+		public static Asset<Texture2D> creditDevTexture;
 		public static Asset<Texture2D> creditModSlot;
 		public static Asset<Texture2D> recordSlot;
 
@@ -270,6 +281,7 @@ namespace BossChecklist
 			chestTexture = RequestResource("Checks_Chest");
 			goldChestTexture = RequestResource("Checks_GoldChest");
 
+			creditDevTexture = RequestResource("Credits_CharacterPanel");
 			creditModSlot = RequestResource("Extra_CreditModSlot");
 			recordSlot = RequestResource("Extra_RecordSlot");
 
@@ -1369,12 +1381,36 @@ namespace BossChecklist
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
 
+			// Contributors Display
+			UIList creditList = new UIList();
+			creditList.Width.Pixels = creditDevTexture.Value.Width;
+			creditList.Height.Pixels = creditDevTexture.Value.Height * 4 + 20;
+			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - creditDevTexture.Value.Width / 2) - 8;
+			creditList.Top.Pixels = 60;
+			foreach (KeyValuePair<string, string> user in contributors) {
+				ContributorCredit creditedUser = new ContributorCredit(creditDevTexture, RequestResource($"Credits_{user.Key}"), user.Key, user.Value);
+				creditedUser.Width.Pixels = creditDevTexture.Value.Width;
+				creditedUser.Height.Pixels = creditDevTexture.Value.Height;
+				creditList.Add(creditedUser);
+			}
+			PageOne.Append(creditList);
+
+			// scrollbar
+			scrollOne.SetView(10f, 1000f);
+			scrollOne.Top.Pixels = 92;
+			scrollOne.Left.Pixels = -8;
+			scrollOne.Height.Set(-60f, 0.75f);
+			scrollOne.HAlign = 1f;
+			creditList.SetScrollbar(scrollOne);
+			PageOne.Append(scrollOne);
+
+			// Registered Mods Display
 			Dictionary<string, string> optedMods = BossUISystem.Instance.RegisteredMods; // The mods are already tracked in a list
 			if (optedMods.Count > 0) {
 				// create a list for the mod names using updated mod calls
 				pageTwoItemList.Clear();
 				pageTwoItemList.Left.Pixels = 34;
-				pageTwoItemList.Top.Pixels = 65;
+				pageTwoItemList.Top.Pixels = 60;
 				pageTwoItemList.Width.Pixels = creditModSlot.Value.Width;
 				pageTwoItemList.Height.Pixels = creditModSlot.Value.Height * 3 + 15;
 
@@ -1419,15 +1455,14 @@ namespace BossChecklist
 				PageTwo.Append(pageTwoItemList); // append the list with all the children attached
 
 				// prepare the scrollbar in case it is needed for an excessive amount of mods
-				if (row > 2) {
-					scrollTwo.SetView(10f, 1000f);
-					scrollTwo.Top.Pixels = 92;
-					scrollTwo.Left.Pixels = -8;
-					scrollTwo.Height.Set(-60f, 0.75f);
-					scrollTwo.HAlign = 1f;
+				scrollTwo.SetView(10f, 1000f);
+				scrollTwo.Top.Pixels = 92;
+				scrollTwo.Left.Pixels = -8;
+				scrollTwo.Height.Set(-60f, 0.75f);
+				scrollTwo.HAlign = 1f;
+				pageTwoItemList.SetScrollbar(scrollTwo);
+				if (row > 2)
 					PageTwo.Append(scrollTwo);
-					pageTwoItemList.SetScrollbar(scrollTwo);
-				}
 			}
 			else {
 				// No mods are using the updated mod calls to use the Log, so create a text panel to inform the user

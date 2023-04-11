@@ -520,39 +520,6 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 				}
-				else if (selectedLogPage == BossLogUI.Page_Credits) {
-					if (Id == "PageOne") {
-						// Mod Developers Credits
-						Asset<Texture2D> users = BossChecklist.instance.Assets.Request<Texture2D>("Resources/Extra_CreditUsers");
-						string[] usernames = { "Jopojelly", "SheepishShepherd", "direwolf420", "riveren", "Orian", "Panini" };
-						string[] titles = { "Mod Owner", "Mod Co-Owner", "Code Contributor", "Spriter", "Beta Tester", "Beta Tester" };
-						Color[] colors = { Color.CornflowerBlue, Color.Goldenrod, Color.Tomato, Color.MediumPurple, new Color(49, 210, 162), Color.HotPink };
-						const float nameScaling = 0.85f;
-						const float titleScaling = 0.75f;
-
-						int row = 0;
-						for (int i = 0; i < usernames.Length; i++) {
-							bool left = i % 2 == 0;
-							bool panini = usernames[i] == "Panini";
-
-							Vector2 userpos = new Vector2(pageRect.X + (pageRect.Width / 2) - 30 + (left ? -85 : 85) - (panini ? 10 : 0), pageRect.Y + 75 + (125 * row));
-							Rectangle userselected = new Rectangle(0 + (60 * i), 0, 60 + (panini ? 10 : 0), 58);
-							spriteBatch.Draw(users.Value, userpos, userselected, Color.White);
-							
-							Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(usernames[i]);
-							Vector2 stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * nameScaling) / 2) + (panini ? 5 : 0), userpos.Y - 25);
-							Utils.DrawBorderString(spriteBatch, usernames[i], stringPos, colors[i], nameScaling);
-
-							stringAdjust = FontAssets.MouseText.Value.MeasureString(titles[i]);
-							stringPos = new Vector2(userpos.X + (userselected.Width / 2) - ((stringAdjust.X * titleScaling) / 2) + (panini ? 5 : 0), userpos.Y + userselected.Height + 10);
-							Utils.DrawBorderString(spriteBatch, titles[i], stringPos, colors[i], titleScaling);
-
-							if (!left) {
-								row++;
-							}
-						}
-					}
-				}
 				else if (selectedLogPage >= 0) {
 					// Boss Pages
 					EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
@@ -963,6 +930,32 @@ namespace BossChecklist.UIElements
 					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (int)(stringAdjust.X / 2) + 2, inner.Y + inner.Height - (int)stringAdjust.Y);
 					Utils.DrawBorderString(spriteBatch, value, pos, col);
 				}
+			}
+		}
+
+		internal class ContributorCredit : UIImage
+		{
+			Asset<Texture2D> character;
+			string name;
+			string title;
+
+			public ContributorCredit(Asset<Texture2D> texture, Asset<Texture2D> character, string name, string title) : base(texture) {
+				this.character = character;
+				this.name = name;
+				this.title = title;
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				base.Draw(spriteBatch);
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+
+				spriteBatch.Draw(character.Value, new Vector2(inner.X + 4, inner.Y), Color.White);
+
+				Vector2 pos = new Vector2(inner.X + 85, inner.Y + 11);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, name, pos, Color.White);
+
+				pos = new Vector2(inner.X + 95, inner.Y + 45);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, title, pos, Color.White);
 			}
 		}
 
