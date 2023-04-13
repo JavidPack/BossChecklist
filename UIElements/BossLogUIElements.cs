@@ -454,37 +454,6 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		/// <summary>
-		/// Creates an image of a mod's icon when with hovertext of the mod's display name.
-		/// </summary>
-		internal class ModIcon : UIImage {
-			readonly Asset<Texture2D> icon;
-			readonly string modName;
-
-			public ModIcon (Asset<Texture2D> icon, string modName) : base(icon) {
-				this.icon = icon;
-				this.modName = modName;
-			}
-
-			public override void Update(GameTime gameTime) {
-				base.Update(gameTime);
-				if (IsMouseHovering)
-					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
-			}
-
-			public override void Draw(SpriteBatch spriteBatch) {
-				if (icon.Size() == new Vector2(80, 80)) {
-					base.Draw(spriteBatch);
-				}
-				else {
-					spriteBatch.Draw(icon.Value, GetInnerDimensions().ToRectangle(), Color.White); // If the icon size is not 80x80, overwrite the drawing to the proper dimensions
-				}
-
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) 
-					BossUISystem.Instance.UIHoverText = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
-			}
-		}
-
 		internal class BossLogPanel : UIElement
 		{
 			public string Id { get; init; } = "";
