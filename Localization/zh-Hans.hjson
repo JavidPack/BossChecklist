@@ -162,7 +162,8 @@ Mods: {
 				Devs: 贡献者
 				Mods: 已注册的Mod
 				Notice: "[列表仅包含已加载的Mod]"
-				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请向Mod作者提议添加相关信息到Boss Checklist!
+				NoIcon: 未找到Mod图标!
+				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请在Mod的Steam创意工坊页面或Discord服务器告知他们!
 			}
 
 			Terms: {
