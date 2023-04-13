@@ -162,7 +162,8 @@ Mods: {
 				Devs: Contributors
 				Mods: Registered Mods
 				Notice: "[List only contains loaded mods]"
-				ModsEmpty: None of the loaded mods have any submissions registered the Boss Log. If you want your favorite mods to be included, suggest adding their own boss pages to the mod's discord or forums page!
+				NoIcon: Mod icon not found!
+				ModsEmpty: None of the loaded mods have any submissions registered to the Boss Log. If you want your favorite mods to be included, inform the mod's team on their steam workshop page or discord server!
 			}
 
 			Terms: {

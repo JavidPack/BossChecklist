@@ -135,7 +135,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> checkboxTexture;
 		public static Asset<Texture2D> chestTexture;
 		public static Asset<Texture2D> goldChestTexture;
-		public static Asset<Texture2D> creditDevTexture;
+		public static Asset<Texture2D> creditDevSlot;
 		public static Asset<Texture2D> creditModSlot;
 		public static Asset<Texture2D> recordSlot;
 
@@ -281,8 +281,8 @@ namespace BossChecklist
 			chestTexture = RequestResource("Checks_Chest");
 			goldChestTexture = RequestResource("Checks_GoldChest");
 
-			creditDevTexture = RequestResource("Credits_CharacterPanel");
-			creditModSlot = RequestResource("Extra_CreditModSlot");
+			creditDevSlot = RequestResource("Credits_Panel_Dev");
+			creditModSlot = RequestResource("Credits_Panel_Mod");
 			recordSlot = RequestResource("Extra_RecordSlot");
 
 			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
@@ -1369,100 +1369,73 @@ namespace BossChecklist
 		/// listing off all mod contributors as well as the mods using the updated mod calls.
 		/// </summary>
 		private void UpdateCredits() {
-			// Pre-Hard Mode List Title
+			// Developers Title
 			string title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Devs");
 			PageOneTitle.SetText(title);
 			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageOne.Append(PageOneTitle);
 
-			// Hard Mode List Title
+			// Registered Mods Title
 			title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Mods");
 			PageTwoTitle.SetText(title);
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
 
-			// Contributors Display
+			// Registered Mods subtitle
+			title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
+			UIText subtitle = new UIText(title) {
+				TextColor = Color.Salmon
+			};
+			subtitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(title).X / 2));
+			subtitle.Top.Pixels = 56;
+			PageTwo.Append(subtitle);
+
+			// Developers Display
 			UIList creditList = new UIList();
-			creditList.Width.Pixels = creditDevTexture.Value.Width;
-			creditList.Height.Pixels = creditDevTexture.Value.Height * 4 + 20;
-			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - creditDevTexture.Value.Width / 2) - 8;
+			creditList.Width.Pixels = creditDevSlot.Value.Width;
+			creditList.Height.Pixels = creditDevSlot.Value.Height * 4 + 20;
+			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - creditDevSlot.Value.Width / 2) - 8;
 			creditList.Top.Pixels = 60;
 			foreach (KeyValuePair<string, string> user in contributors) {
-				ContributorCredit creditedUser = new ContributorCredit(creditDevTexture, RequestResource($"Credits_{user.Key}"), user.Key, user.Value);
-				creditedUser.Width.Pixels = creditDevTexture.Value.Width;
-				creditedUser.Height.Pixels = creditDevTexture.Value.Height;
+				ContributorCredit creditedUser = new ContributorCredit(creditDevSlot, RequestResource($"Credits_{user.Key}"), user.Key, user.Value);
+				creditedUser.Width.Pixels = creditDevSlot.Value.Width;
+				creditedUser.Height.Pixels = creditDevSlot.Value.Height;
 				creditList.Add(creditedUser);
 			}
 			PageOne.Append(creditList);
 
-			// scrollbar
 			scrollOne.SetView(10f, 1000f);
 			scrollOne.Top.Pixels = 80;
 			scrollOne.Left.Pixels = -8;
 			scrollOne.Height.Set(-60f, 0.75f);
 			scrollOne.HAlign = 1f;
 			creditList.SetScrollbar(scrollOne);
-			PageOne.Append(scrollOne);
+			PageOne.Append(scrollOne); // scroll bar for developers
 
-			// Registered Mods Display
-			Dictionary<string, string> optedMods = BossUISystem.Instance.RegisteredMods; // The mods are already tracked in a list
-			if (optedMods.Count > 0) {
-				// create a list for the mod names using updated mod calls
+			if (BossUISystem.Instance.RegisteredMods.Count > 0) {
+				// Registered Mods Display
 				pageTwoItemList.Clear();
-				pageTwoItemList.Left.Pixels = 34;
-				pageTwoItemList.Top.Pixels = 60;
 				pageTwoItemList.Width.Pixels = creditModSlot.Value.Width;
 				pageTwoItemList.Height.Pixels = creditModSlot.Value.Height * 3 + 15;
+				pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - creditModSlot.Value.Width / 2) - 8;
+				pageTwoItemList.Top.Pixels = 85;
 
-				int row = 0; // this will track the row pos, increasing by one after the column limit is reached
-				int col = 0; // this will track the column pos, increasing by one every icon added, and resetting to zero when the next row is made
-				UIImage newRow = new UIImage(creditModSlot); // begin with the first row
-				newRow.Width.Pixels = creditModSlot.Value.Width;
-				newRow.Height.Pixels = creditModSlot.Value.Height;
-				pageTwoItemList.Add(newRow); // add the initial row to the page
-				foreach (KeyValuePair<string, string> mod in optedMods) {
-					ModIcon icon = new ModIcon(ModContent.Request<Texture2D>(mod.Value), mod.Key);
-					icon.Width.Pixels = 80;
-					icon.Height.Pixels = 80;
-					icon.Left.Pixels = 6 + (14 * (col + 1)) + (col * 80);
-					icon.Top.Pixels = 6 + 12;
-					newRow.Append(icon);
-
-					col++; // after each icon added, move to the next column
-					if (col == 3) {
-						col = 0;
-						row++;
-
-						// create a new row after all column are filled
-						newRow = new UIImage(creditModSlot);
-						newRow.Top.Pixels = creditModSlot.Value.Height * row;
-						newRow.Width.Pixels = creditModSlot.Value.Width;
-						newRow.Height.Pixels = creditModSlot.Value.Height;
-						pageTwoItemList.Add(newRow);
-					}
+				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
+					ContributorCredit creditedMod = new ContributorCredit(creditModSlot, mod);
+					creditedMod.Width.Pixels = creditModSlot.Value.Width;
+					creditedMod.Height.Pixels = creditModSlot.Value.Height;
+					pageTwoItemList.Add(creditedMod);
 				}
+				PageTwo.Append(pageTwoItemList);
 
-				// increase rows until at least 3 rows are visible
-				while (row < 2) {
-					newRow = new UIImage(creditModSlot);
-					newRow.Top.Pixels = creditModSlot.Value.Height * row;
-					newRow.Width.Pixels = creditModSlot.Value.Width;
-					newRow.Height.Pixels = creditModSlot.Value.Height;
-					pageTwoItemList.Add(newRow);
-					row++;
-				}
-
-				PageTwo.Append(pageTwoItemList); // append the list with all the children attached
-
-				// prepare the scrollbar in case it is needed for an excessive amount of mods
 				scrollTwo.SetView(10f, 1000f);
 				scrollTwo.Top.Pixels = 87;
 				scrollTwo.Left.Pixels = -8;
 				scrollTwo.Height.Set(-60f, 0.75f);
 				scrollTwo.HAlign = 1f;
 				pageTwoItemList.SetScrollbar(scrollTwo);
-				if (row > 2)
-					PageTwo.Append(scrollTwo);
+				if (BossUISystem.Instance.RegisteredMods.Count > 3)
+					PageTwo.Append(scrollTwo); // scroll bar for registered mods
 			}
 			else {
 				// No mods are using the updated mod calls to use the Log, so create a text panel to inform the user

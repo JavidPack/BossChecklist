@@ -934,27 +934,57 @@ namespace BossChecklist.UIElements
 
 		internal class ContributorCredit : UIImage
 		{
-			Asset<Texture2D> character;
+			Asset<Texture2D> icon;
 			string name;
-			string title;
+			string devTitle;
+			int[] entryCounts = null;
 
 			public ContributorCredit(Asset<Texture2D> texture, Asset<Texture2D> character, string name, string title) : base(texture) {
-				this.character = character;
+				this.icon = character;
 				this.name = name;
-				this.title = title;
+				this.devTitle = title;
+			}
+
+			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
+				this.icon = GetModIcon(modName);
+				this.name = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
+				this.entryCounts = BossUISystem.Instance.RegisteredMods[modName];
+			}
+
+			private Asset<Texture2D> GetModIcon(string modName) {
+				if (ModLoader.TryGetMod(modName, out Mod mod)) {
+					if (mod.HasAsset("icon"))
+						return ModContent.Request<Texture2D>(mod.Name + "/icon");
+
+					if (mod.HasAsset("icon_workshop"))
+						return ModContent.Request<Texture2D>(mod.Name + "/icon_workshop");
+				}
+				return BossLogUI.RequestResource("Credits_NoIcon");
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
 				Rectangle inner = GetInnerDimensions().ToRectangle();
+				bool isMod = string.IsNullOrEmpty(devTitle);
 
-				spriteBatch.Draw(character.Value, new Vector2(inner.X + 4, inner.Y), Color.White);
+				Rectangle iconRect = new Rectangle(inner.X + (isMod ? 8 : 0), inner.Y + (isMod ? 8 : 0), 80, 80);
+				spriteBatch.Draw(icon.Value, iconRect, Color.White); // character/icon drawing
+				if (icon.Name == "Resources\\Credits_NoIcon" && Main.MouseScreen.Between(iconRect.TopLeft(), iconRect.BottomRight()))
+					BossUISystem.Instance.UIHoverText = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.NoIcon");
 
-				Vector2 pos = new Vector2(inner.X + 85, inner.Y + 11);
-				spriteBatch.DrawString(FontAssets.MouseText.Value, name, pos, Color.White);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + (isMod ? 95 : 80), inner.Y + 11), Color.White); // Draw the dev/mod name as a string
 
-				pos = new Vector2(inner.X + 95, inner.Y + 45);
-				spriteBatch.DrawString(FontAssets.MouseText.Value, title, pos, Color.White);
+				if (!string.IsNullOrEmpty(devTitle)) {
+					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + 85, inner.Y + 45), Color.White); // Draw the dev title as a string
+				}
+				else if (entryCounts != null) {
+					int xOffset = 94 + (70 * 2 / 3);
+					foreach (int entryNum in entryCounts) {
+						Vector2 textSize = FontAssets.MouseText.Value.MeasureString(entryNum.ToString());
+						spriteBatch.DrawString(FontAssets.MouseText.Value, entryNum.ToString(), new Vector2(inner.X + xOffset - (int)(textSize.X / 2), inner.Y + 54), Color.White); // draw the entry values of a mod
+						xOffset += 74;
+					}
+				}
 			}
 		}
 
