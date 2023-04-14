@@ -141,7 +141,6 @@ namespace BossChecklist
 
 		// Extra stuff
 		public static int headNum = -1;
-		public static Rectangle slotRectRef; // just grabs the size of a normal inventory slot
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 		public UIImage PromptCheck; // checkmark for the toggle prompt config button
 		public UIText PageOneTitle;
@@ -284,8 +283,6 @@ namespace BossChecklist
 			creditDevSlot = RequestResource("Credits_Panel_Dev");
 			creditModSlot = RequestResource("Credits_Panel_Mod");
 			recordSlot = RequestResource("Extra_RecordSlot");
-
-			slotRectRef = TextureAssets.InventoryBack.Value.Bounds;
 
 			bosslogbutton = new OpenLogButton(bookTexture);
 			bosslogbutton.Width.Set(34, 0f);
@@ -1621,8 +1618,6 @@ namespace BossChecklist
 			}
 
 			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
-			spawnItemSlot.Width.Pixels = slotRectRef.Width;
-			spawnItemSlot.Height.Pixels = slotRectRef.Height;
 			spawnItemSlot.Left.Pixels = 48 + (56 * 2);
 			spawnItemSlot.Top.Pixels = 230;
 			PageTwo.Append(spawnItemSlot);
@@ -1732,8 +1727,6 @@ namespace BossChecklist
 				LogItemSlot ingList = new LogItemSlot(item, false, item.HoverName, ItemSlot.Context.GuideItem, 0.85f) {
 					Id = $"ingredient_{item.type}"
 				};
-				ingList.Width.Pixels = slotRectRef.Width * 0.85f;
-				ingList.Height.Pixels = slotRectRef.Height * 0.85f;
 				ingList.Left.Pixels = 20 + (48 * col);
 				ingList.Top.Pixels = 240 + (48 * (row + 1));
 				PageTwo.Append(ingList);
@@ -1756,8 +1749,6 @@ namespace BossChecklist
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
 				// TODO: Change the Power Glove to the Hand of Creation
 				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
-				craftItem.Width.Pixels = slotRectRef.Width * 0.85f;
-				craftItem.Height.Pixels = slotRectRef.Height * 0.85f;
 				craftItem.Top.Pixels = 240 + (48 * (row + 2));
 				craftItem.Left.Pixels = 20;
 				PageTwo.Append(craftItem);
@@ -1790,8 +1781,6 @@ namespace BossChecklist
 					}
 
 					LogItemSlot tileList = new LogItemSlot(craftStation, false, hoverText, ItemSlot.Context.EquipArmorVanity, 0.85f);
-					tileList.Width.Pixels = slotRectRef.Width * 0.85f;
-					tileList.Height.Pixels = slotRectRef.Height * 0.85f;
 					tileList.Left.Pixels = 20 + (48 * col);
 					tileList.Top.Pixels = 240 + (48 * (row + 2));
 					PageTwo.Append(tileList);
@@ -1854,8 +1843,6 @@ namespace BossChecklist
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item
 				};
-				itemSlot.Width.Pixels = slotRectRef.Width;
-				itemSlot.Height.Pixels = slotRectRef.Height;
 				itemSlot.Left.Pixels = (col * 56) + 15;
 				itemSlot.OnRightClick += RemoveItem; // debug functionality
 				newRow.Append(itemSlot); // append the item slot to the current row
