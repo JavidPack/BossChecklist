@@ -25,9 +25,9 @@ namespace BossChecklist
 	class BossLogUI : UIState
 	{
 		public OpenLogButton bosslogbutton; // The main button to open the Boss Log
-		public BossLogPanel BookArea; // The main panel for the UI. All content is aligned within this area.
-		public BossLogPanel PageOne; // left page content panel
-		public BossLogPanel PageTwo; // right page content panel
+		public LogPanel BookArea; // The main panel for the UI. All content is aligned within this area.
+		public LogPanel PageOne; // left page content panel
+		public LogPanel PageTwo; // right page content panel
 
 		private int BossLogPageNumber;
 		public const int Page_TableOfContents = -1;
@@ -294,7 +294,7 @@ namespace BossChecklist
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
 
-			BookArea = new BossLogPanel();
+			BookArea = new LogPanel();
 			BookArea.Width.Pixels = bookUITexture.Value.Width;
 			BookArea.Height.Pixels = bookUITexture.Value.Height;
 
@@ -346,7 +346,7 @@ namespace BossChecklist
 			CreditsTab.Height.Pixels = tabTexture.Value.Height;
 			CreditsTab.OnClick += OpenViaTab;
 
-			PageOne = new BossLogPanel() {
+			PageOne = new LogPanel() {
 				Id = "PageOne",
 			};
 			PageOne.Width.Pixels = 375;
@@ -373,7 +373,7 @@ namespace BossChecklist
 			prehardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			prehardmodeList.PaddingTop = 5;
 
-			PageTwo = new BossLogPanel() {
+			PageTwo = new LogPanel() {
 				Id = "PageTwo"
 			};
 			PageTwo.Width.Pixels = 375;
@@ -532,8 +532,11 @@ namespace BossChecklist
 			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = BookArea.Top.Pixels + 12;
 
+			if (PageNum == Page_Prompt)
+				return; // Tab positioning does not need to occur as they will not be drawn
+
 			ShortcutsTab.Left.Pixels = BookArea.Left.Pixels + 40;
-			ShortcutsTab.Top.Pixels = BookArea.Top.Pixels - infoTexture.Value.Height + 8;
+			ShortcutsTab.Top.Pixels = BookArea.Top.Pixels - infoTexture.Value.Height + 6;
 
 			InfoTab.Left.Pixels = ShortcutsTab.Left.Pixels + ShortcutsTab.Width.Pixels - 8;
 			InfoTab.Top.Pixels = ShortcutsTab.Top.Pixels;
@@ -541,11 +544,10 @@ namespace BossChecklist
 			int offsetY = 50;
 
 			// ToC/Filter Tab and Credits Tab never flips to the other side, just disappears when on said page
-			ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
 			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
+			UpdateFilterTabPos(false); // Update filter tab visibility
 			CreditsTab.Left.Pixels = BookArea.Left.Pixels + BookArea.Width.Pixels - 12;
 			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
-			filterPanel.Top.Pixels = -5000; // throw offscreen
 
 			// Reset book tabs Y positioning after BookArea adjusted
 			BossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 1);
@@ -554,13 +556,9 @@ namespace BossChecklist
 			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
 
 			// Update the navigation tabs to the proper positions
-			// This does not need to occur if the Progression prompt is shown, as they are not visible
-			if (PageNum != Page_Prompt) {
-				BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-				MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-				EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-				UpdateFilterTabPos(false); // Update filter tab visibility
-			}
+			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
 		}
 
 		/// <summary>
@@ -568,11 +566,11 @@ namespace BossChecklist
 		/// </summary>
 		/// <param name="tabClicked"></param>
 		private void UpdateFilterTabPos(bool tabClicked) {
-			if (tabClicked) {
-				filterOpen = !filterOpen;
-			}
 			if (PageNum != Page_TableOfContents) {
-				filterOpen = false;
+				filterOpen = false; // If the page is not on the Table of Contents, the filters tab should be in the closed position
+			}
+			else if (tabClicked) {
+				filterOpen = !filterOpen;
 			}
 
 			if (filterOpen) {

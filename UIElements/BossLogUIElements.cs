@@ -454,20 +454,30 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class BossLogPanel : UIElement
+		internal class LogPanel : UIElement
 		{
 			public string Id { get; init; } = "";
+
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (IsMouseHovering)
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
+			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
-				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
+				if (Id == "") {
+					spriteBatch.Draw(BossLogUI.bookUITexture.Value, pageRect, BossChecklist.BossLogConfig.BossLogColor); // Main panel draws the Log Book (with color)...
+					spriteBatch.Draw(BossLogUI.RequestResource("LogUI_Paper").Value, pageRect, Color.White); //.. and the paper on top
+				}
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
 					Main.player[Main.myPlayer].mouseInterface = true;
 					HideMouseOverInteractions();
 				}
 
+				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 				if (selectedLogPage == BossLogUI.Page_Prompt) {
 					if (Id == "PageOne") {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
@@ -763,12 +773,6 @@ namespace BossChecklist.UIElements
 						}
 					}
 				}
-			}
-
-			public override void Update(GameTime gameTime) {
-				base.Update(gameTime);
-				if (IsMouseHovering)
-					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
 			}
 		}
 
@@ -1082,13 +1086,6 @@ namespace BossChecklist.UIElements
 					}
 					return;
 				}
-				else if (Id == "ToCFilter_Tab") {
-					// The hardback part of the UIPanel should be layered under all of the tabs, so it is drawn here
-					Asset<Texture2D> pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Back");
-					BossLogPanel panel = BossUISystem.Instance.BossLog.BookArea;
-					Vector2 pagePos = new Vector2(panel.Left.Pixels, panel.Top.Pixels);
-					spriteBatch.Draw(pages.Value, pagePos, BossChecklist.BossLogConfig.BossLogColor);
-				}
 
 				if (!Id.EndsWith("_Tab")) {
 					base.DrawSelf(spriteBatch);
@@ -1112,15 +1109,6 @@ namespace BossChecklist.UIElements
 					if (DrawTab(Id) && selectedLogPage != -3) {
 						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), Color.Tan, 0f, Vector2.Zero, effect, 0f);
 					}
-				}
-
-				if (Id == "Event_Tab") {
-					// Paper Drawing
-					// The paper part of the UIPanel should be layered on top of all tabs, so it is drawn here
-					Asset<Texture2D> pages = BossChecklist.instance.Assets.Request<Texture2D>("Resources/LogUI_Paper");
-					BossLogPanel panel = BossUISystem.Instance.BossLog.BookArea;
-					Vector2 pagePos = new Vector2(panel.Left.Pixels, panel.Top.Pixels);
-					spriteBatch.Draw(pages.Value, pagePos, Color.White);
 				}
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
