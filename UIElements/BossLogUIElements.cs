@@ -944,13 +944,13 @@ namespace BossChecklist.UIElements
 				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + (isMod ? 95 : 80), inner.Y + 11), Color.White); // Draw the dev/mod name as a string
 
 				if (!string.IsNullOrEmpty(devTitle)) {
-					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + 85, inner.Y + 45), Color.White); // Draw the dev title as a string
+					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + 85, inner.Y + 45), Color.LemonChiffon); // Draw the dev title as a string
 				}
 				else if (entryCounts != null) {
-					int xOffset = 94 + (70 * 2 / 3);
+					int xOffset = 94 + (70 * 2 / 3); // draw each entry count submitted by the mod
 					foreach (int entryNum in entryCounts) {
 						Vector2 textSize = FontAssets.MouseText.Value.MeasureString(entryNum.ToString());
-						spriteBatch.DrawString(FontAssets.MouseText.Value, entryNum.ToString(), new Vector2(inner.X + xOffset - (int)(textSize.X / 2), inner.Y + 54), Color.White); // draw the entry values of a mod
+						spriteBatch.DrawString(FontAssets.MouseText.Value, entryNum.ToString(), new Vector2(inner.X + xOffset - (int)(textSize.X / 2), inner.Y + 54), Color.LemonChiffon);
 						xOffset += 74;
 					}
 				}
