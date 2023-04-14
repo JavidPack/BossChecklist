@@ -108,36 +108,43 @@ namespace BossChecklist
 		// Loot page related
 		public static bool OtherworldUnlocked = false;
 
-		// Cropped Textures
-		public static Asset<Texture2D> bookTexture;
-		public static Asset<Texture2D> borderTexture;
-		public static Asset<Texture2D> fadedTexture;
-		public static Asset<Texture2D> tabTexture;
-		public static Asset<Texture2D> infoTexture;
-		public static Asset<Texture2D> colorTexture;
-		public static Asset<Texture2D> bookUITexture;
-		public static Asset<Texture2D> prevTexture;
-		public static Asset<Texture2D> nextTexture;
-		public static Asset<Texture2D> subpageTexture;
-		public static Asset<Texture2D> tocTexture;
-		public static Asset<Texture2D> credTexture;
-		public static Asset<Texture2D> bossNavTexture;
-		public static Asset<Texture2D> minibossNavTexture;
-		public static Asset<Texture2D> eventNavTexture;
-		public static Asset<Texture2D> filterTexture;
-		public static Asset<Texture2D> mouseTexture;
-		public static Asset<Texture2D> hiddenTexture;
-		public static Asset<Texture2D> cycleTexture;
-		public static Asset<Texture2D> checkMarkTexture;
-		public static Asset<Texture2D> xTexture;
-		public static Asset<Texture2D> circleTexture;
-		public static Asset<Texture2D> strikeNTexture;
-		public static Asset<Texture2D> checkboxTexture;
-		public static Asset<Texture2D> chestTexture;
-		public static Asset<Texture2D> goldChestTexture;
-		public static Asset<Texture2D> creditDevSlot;
-		public static Asset<Texture2D> creditModSlot;
-		public static Asset<Texture2D> recordSlot;
+		// Log UI textures
+		public static Asset<Texture2D> Texture_Button_Book;
+		public static Asset<Texture2D> Texture_Button_Border;
+		public static Asset<Texture2D> Texture_Button_Color;
+		public static Asset<Texture2D> Texture_Button_Faded;
+
+		public static Asset<Texture2D> Texture_Log_BackPanel;
+		public static Asset<Texture2D> Texture_Log_Paper;
+		public static Asset<Texture2D> Texture_Log_Tab;
+		public static Asset<Texture2D> Texture_Log_Tab2;
+		public static Asset<Texture2D> Texture_Log_FilterPanel;
+
+		public static Asset<Texture2D> Texture_Nav_Prev;
+		public static Asset<Texture2D> Texture_Nav_Next;
+		public static Asset<Texture2D> Texture_Nav_SubPage;
+		public static Asset<Texture2D> Texture_Nav_TableOfContents;
+		public static Asset<Texture2D> Texture_Nav_Credits;
+		public static Asset<Texture2D> Texture_Nav_Boss;
+		public static Asset<Texture2D> Texture_Nav_MiniBoss;
+		public static Asset<Texture2D> Texture_Nav_Event;
+		public static Asset<Texture2D> Texture_Nav_Filter;
+
+		public static Asset<Texture2D> Texture_Check_Box;
+		public static Asset<Texture2D> Texture_Check_Check;
+		public static Asset<Texture2D> Texture_Check_X;
+		public static Asset<Texture2D> Texture_Check_Next;
+		public static Asset<Texture2D> Texture_Check_Strike;
+		public static Asset<Texture2D> Texture_Check_Chest;
+		public static Asset<Texture2D> Texture_Check_GoldChest;
+
+		public static Asset<Texture2D> Texture_Credit_DevSlot;
+		public static Asset<Texture2D> Texture_Credit_ModSlot;
+
+		public static Asset<Texture2D> Texture_Content_RecordSlot;
+		public static Asset<Texture2D> Texture_Content_CycleRecipe;
+		public static Asset<Texture2D> Texture_Content_Shortcuts;
+		public static Asset<Texture2D> Texture_Content_ToggleHidden;
 
 		// Extra stuff
 		public static int headNum = -1;
@@ -248,43 +255,49 @@ namespace BossChecklist
 			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
 		}
 
+		public static Asset<Texture2D> RequestVanillaTexture(string path) => Main.Assets.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad);
+
 		public static Asset<Texture2D> RequestResource(string path) => ModContent.Request<Texture2D>("BossChecklist/Resources/" + path, AssetRequestMode.ImmediateLoad);
 
 		public override void OnInitialize() {
-			bookTexture = RequestResource("Book_Outline");
-			borderTexture = RequestResource("Book_Border");
-			fadedTexture = RequestResource("Book_Faded");
-			colorTexture = RequestResource("Book_Color");
-			bookUITexture = RequestResource("LogUI_Back");
-			tabTexture = RequestResource("LogUI_Tab");
-			infoTexture = RequestResource("LogUI_InfoTab");
+			Texture_Button_Book = RequestResource("Book_Outline");
+			Texture_Button_Border = RequestResource("Book_Border");
+			Texture_Button_Color = RequestResource("Book_Color");
+			Texture_Button_Faded = RequestResource("Book_Faded");
 
-			prevTexture = RequestResource("Nav_Prev");
-			nextTexture = RequestResource("Nav_Next");
-			subpageTexture = RequestResource("Nav_SubPage_Button");
-			tocTexture = RequestResource("Nav_Contents");
-			credTexture = RequestResource("Nav_Credits");
-			bossNavTexture = RequestResource("Nav_Boss");
-			minibossNavTexture = RequestResource("Nav_Miniboss");
-			eventNavTexture = RequestResource("Nav_Event");
-			filterTexture = RequestResource("Nav_Filter");
-			mouseTexture = RequestResource("Extra_Shortcuts");
-			hiddenTexture = RequestResource("Nav_Hidden");
-			cycleTexture = RequestResource("Extra_CycleRecipe");
+			Texture_Log_BackPanel = RequestResource("LogUI_Back");
+			Texture_Log_Paper = RequestResource("LogUI_Paper");
+			Texture_Log_Tab = RequestResource("LogUI_Tab");
+			Texture_Log_Tab2 = RequestResource("LogUI_InfoTab");
+			Texture_Log_FilterPanel = RequestResource("LogUI_Filter");
 
-			checkMarkTexture = RequestResource("Checks_Check");
-			xTexture = RequestResource("Checks_X");
-			circleTexture = RequestResource("Checks_Next");
-			strikeNTexture = RequestResource("Checks_StrikeNext");
-			checkboxTexture = RequestResource("Checks_Box");
-			chestTexture = RequestResource("Checks_Chest");
-			goldChestTexture = RequestResource("Checks_GoldChest");
+			Texture_Nav_Prev = RequestResource("Nav_Prev");
+			Texture_Nav_Next = RequestResource("Nav_Next");
+			Texture_Nav_SubPage = RequestResource("Nav_SubPage_Button");
+			Texture_Nav_TableOfContents = RequestResource("Nav_Contents");
+			Texture_Nav_Credits = RequestResource("Nav_Credits");
+			Texture_Nav_Boss = RequestResource("Nav_Boss");
+			Texture_Nav_MiniBoss = RequestResource("Nav_Miniboss");
+			Texture_Nav_Event = RequestResource("Nav_Event");
+			Texture_Nav_Filter = RequestResource("Nav_Filter");
 
-			creditDevSlot = RequestResource("Credits_Panel_Dev");
-			creditModSlot = RequestResource("Credits_Panel_Mod");
-			recordSlot = RequestResource("Extra_RecordSlot");
+			Texture_Check_Box = RequestResource("Checks_Box");
+			Texture_Check_Check = RequestResource("Checks_Check");
+			Texture_Check_X = RequestResource("Checks_X");
+			Texture_Check_Next = RequestResource("Checks_Next");
+			Texture_Check_Strike = RequestResource("Checks_StrikeNext");
+			Texture_Check_Chest = RequestResource("Checks_Chest");
+			Texture_Check_GoldChest = RequestResource("Checks_GoldChest");
 
-			bosslogbutton = new OpenLogButton(bookTexture);
+			Texture_Credit_DevSlot = RequestResource("Credits_Panel_Dev");
+			Texture_Credit_ModSlot = RequestResource("Credits_Panel_Mod");
+
+			Texture_Content_RecordSlot = RequestResource("Extra_RecordSlot");
+			Texture_Content_CycleRecipe = RequestResource("Extra_CycleRecipe");
+			Texture_Content_Shortcuts = RequestResource("Extra_Shortcuts");
+			Texture_Content_ToggleHidden = RequestResource("Nav_Hidden");
+
+			bosslogbutton = new OpenLogButton(Texture_Button_Book);
 			bosslogbutton.Width.Set(34, 0f);
 			bosslogbutton.Height.Set(38, 0f);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
@@ -292,55 +305,55 @@ namespace BossChecklist
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
 
 			BookArea = new LogPanel();
-			BookArea.Width.Pixels = bookUITexture.Value.Width;
-			BookArea.Height.Pixels = bookUITexture.Value.Height;
+			BookArea.Width.Pixels = Texture_Log_BackPanel.Value.Width;
+			BookArea.Height.Pixels = Texture_Log_BackPanel.Value.Height;
 
-			InfoTab = new BookUI(infoTexture) {
+			InfoTab = new BookUI(Texture_Log_Tab2) {
 				Id = "Info_Tab"
 			};
-			InfoTab.Width.Pixels = infoTexture.Value.Width;
-			InfoTab.Height.Pixels = infoTexture.Value.Height;
+			InfoTab.Width.Pixels = Texture_Log_Tab2.Value.Width;
+			InfoTab.Height.Pixels = Texture_Log_Tab2.Value.Height;
 
-			ShortcutsTab = new BookUI(infoTexture) {
+			ShortcutsTab = new BookUI(Texture_Log_Tab2) {
 				Id = "Shortcut_Tab"
 			};
-			ShortcutsTab.Width.Pixels = infoTexture.Value.Width;
-			ShortcutsTab.Height.Pixels = infoTexture.Value.Height;
+			ShortcutsTab.Width.Pixels = Texture_Log_Tab2.Value.Width;
+			ShortcutsTab.Height.Pixels = Texture_Log_Tab2.Value.Height;
 
-			ToCTab = new BookUI(tabTexture) {
+			ToCTab = new BookUI(Texture_Log_Tab) {
 				Id = "ToCFilter_Tab"
 			};
-			ToCTab.Width.Pixels = tabTexture.Value.Width;
-			ToCTab.Height.Pixels = tabTexture.Value.Height;
+			ToCTab.Width.Pixels = Texture_Log_Tab.Value.Width;
+			ToCTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 			ToCTab.OnClick += OpenViaTab;
 			ToCTab.OnRightClick += (a, b) => ClearForcedDowns();
 
-			BossTab = new BookUI(tabTexture) {
+			BossTab = new BookUI(Texture_Log_Tab) {
 				Id = "Boss_Tab"
 			};
-			BossTab.Width.Pixels = tabTexture.Value.Width;
-			BossTab.Height.Pixels = tabTexture.Value.Height;
+			BossTab.Width.Pixels = Texture_Log_Tab.Value.Width;
+			BossTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 			BossTab.OnClick += OpenViaTab;
 
-			MiniBossTab = new BookUI(tabTexture) {
+			MiniBossTab = new BookUI(Texture_Log_Tab) {
 				Id = "Miniboss_Tab"
 			};
-			MiniBossTab.Width.Pixels = tabTexture.Value.Width;
-			MiniBossTab.Height.Pixels = tabTexture.Value.Height;
+			MiniBossTab.Width.Pixels = Texture_Log_Tab.Value.Width;
+			MiniBossTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 			MiniBossTab.OnClick += OpenViaTab;
 
-			EventTab = new BookUI(tabTexture) {
+			EventTab = new BookUI(Texture_Log_Tab) {
 				Id = "Event_Tab"
 			};
-			EventTab.Width.Pixels = tabTexture.Value.Width;
-			EventTab.Height.Pixels = tabTexture.Value.Height;
+			EventTab.Width.Pixels = Texture_Log_Tab.Value.Width;
+			EventTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 			EventTab.OnClick += OpenViaTab;
 
-			CreditsTab = new BookUI(tabTexture) {
+			CreditsTab = new BookUI(Texture_Log_Tab) {
 				Id = "Credits_Tab"
 			};
-			CreditsTab.Width.Pixels = tabTexture.Value.Width;
-			CreditsTab.Height.Pixels = tabTexture.Value.Height;
+			CreditsTab.Width.Pixels = Texture_Log_Tab.Value.Width;
+			CreditsTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 			CreditsTab.OnClick += OpenViaTab;
 
 			PageOne = new LogPanel() {
@@ -354,11 +367,11 @@ namespace BossChecklist
 			};
 			PageOneTitle.Top.Pixels = 18;
 
-			PrevPage = new NavigationalButton(prevTexture, true) {
+			PrevPage = new NavigationalButton(Texture_Nav_Prev, true) {
 				Id = "Previous"
 			};
-			PrevPage.Width.Pixels = prevTexture.Value.Width;
-			PrevPage.Height.Pixels = prevTexture.Value.Height;
+			PrevPage.Width.Pixels = Texture_Nav_Prev.Value.Width;
+			PrevPage.Height.Pixels = Texture_Nav_Prev.Value.Height;
 			PrevPage.Left.Pixels = 8;
 			PrevPage.Top.Pixels = 416;
 			PrevPage.OnClick += PageChangerClicked;
@@ -383,8 +396,7 @@ namespace BossChecklist
 
 			pageTwoItemList = new UIList();
 
-			Asset<Texture2D> filterPanelTexture = RequestResource("LogUI_Filter");
-			filterPanel = new BookUI(filterPanelTexture) {
+			filterPanel = new BookUI(Texture_Log_FilterPanel) {
 				Id = "filterPanel"
 			};
 			filterPanel.Height.Pixels = 166;
@@ -394,14 +406,14 @@ namespace BossChecklist
 			filterCheckBoxes = new List<BookUI>();
 
 			List<Asset<Texture2D>> filterNav = new List<Asset<Texture2D>>() {
-				bossNavTexture,
-				minibossNavTexture,
-				eventNavTexture,
-				hiddenTexture
+				Texture_Nav_Boss,
+				Texture_Nav_MiniBoss,
+				Texture_Nav_Event,
+				Texture_Content_ToggleHidden
 			};
 
 			for (int i = 0; i < 4; i++) {
-				BookUI newCheck = new BookUI(checkMarkTexture) {
+				BookUI newCheck = new BookUI(Texture_Check_Check) {
 					Id = "C_" + i
 				};
 				newCheck.Left.Pixels = filterNav[i].Value.Width * 0.56f;
@@ -414,7 +426,7 @@ namespace BossChecklist
 				newCheckBox.Top.Pixels = (34 * i) + 15;
 				newCheckBox.Left.Pixels = (25) - (filterNav[i].Value.Width / 2);
 				newCheckBox.OnClick += ChangeFilter;
-				if (filterNav[i] == hiddenTexture) {
+				if (filterNav[i] == Texture_Content_ToggleHidden) {
 					newCheckBox.OnRightClick += (a, b) => ClearHiddenList();
 				}
 				newCheckBox.Append(filterCheckMark[i]);
@@ -429,11 +441,11 @@ namespace BossChecklist
 				filterPanel.Append(uiimage);
 			}
 
-			NextPage = new NavigationalButton(nextTexture, true) {
+			NextPage = new NavigationalButton(Texture_Nav_Next, true) {
 				Id = "Next"
 			};
-			NextPage.Width.Pixels = nextTexture.Value.Width;
-			NextPage.Height.Pixels = nextTexture.Value.Height;
+			NextPage.Width.Pixels = Texture_Nav_Next.Value.Width;
+			NextPage.Height.Pixels = Texture_Nav_Next.Value.Height;
 			NextPage.Left.Pixels = PageTwo.Width.Pixels - NextPage.Width.Pixels - 12;
 			NextPage.Top.Pixels = 416;
 			NextPage.OnClick += PageChangerClicked;
@@ -446,26 +458,26 @@ namespace BossChecklist
 			hardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
 			hardmodeList.PaddingTop = 5;
 
-			recordButton = new SubPageButton(subpageTexture, SubPage.Records);
-			recordButton.Width.Pixels = subpageTexture.Value.Width;
-			recordButton.Height.Pixels = subpageTexture.Value.Height;
+			recordButton = new SubPageButton(Texture_Nav_SubPage, SubPage.Records);
+			recordButton.Width.Pixels = Texture_Nav_SubPage.Value.Width;
+			recordButton.Height.Pixels = Texture_Nav_SubPage.Value.Height;
 			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 5;
 			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Records);
 			recordButton.OnRightClick += (a, b) => ResetStats();
 
-			spawnButton = new SubPageButton(subpageTexture, SubPage.SpawnInfo);
-			spawnButton.Width.Pixels = subpageTexture.Value.Width;
-			spawnButton.Height.Pixels = subpageTexture.Value.Height;
+			spawnButton = new SubPageButton(Texture_Nav_SubPage, SubPage.SpawnInfo);
+			spawnButton.Width.Pixels = Texture_Nav_SubPage.Value.Width;
+			spawnButton.Height.Pixels = Texture_Nav_SubPage.Value.Height;
 			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
 			spawnButton.Top.Pixels = 5;
 			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.SpawnInfo);
 
-			lootButton = new SubPageButton(subpageTexture, SubPage.LootAndCollectibles);
-			lootButton.Width.Pixels = subpageTexture.Value.Width;
-			lootButton.Height.Pixels = subpageTexture.Value.Height;
+			lootButton = new SubPageButton(Texture_Nav_SubPage, SubPage.LootAndCollectibles);
+			lootButton.Width.Pixels = Texture_Nav_SubPage.Value.Width;
+			lootButton.Height.Pixels = Texture_Nav_SubPage.Value.Height;
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
-			lootButton.Top.Pixels = 5 + subpageTexture.Value.Height + 10;
+			lootButton.Top.Pixels = 5 + Texture_Nav_SubPage.Value.Height + 10;
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
 			lootButton.OnRightClick += RemoveItem;
 
@@ -533,7 +545,7 @@ namespace BossChecklist
 				return; // Tab positioning does not need to occur as they will not be drawn
 
 			ShortcutsTab.Left.Pixels = BookArea.Left.Pixels + 40;
-			ShortcutsTab.Top.Pixels = BookArea.Top.Pixels - infoTexture.Value.Height + 6;
+			ShortcutsTab.Top.Pixels = BookArea.Top.Pixels - Texture_Log_Tab2.Value.Height + 6;
 
 			InfoTab.Left.Pixels = ShortcutsTab.Left.Pixels + ShortcutsTab.Width.Pixels - 8;
 			InfoTab.Top.Pixels = ShortcutsTab.Top.Pixels;
@@ -586,38 +598,38 @@ namespace BossChecklist
 		/// </summary>
 		private void Filters_SetImage() {
 			// ...Bosses
-			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? checkMarkTexture : circleTexture);
+			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? Texture_Check_Check : Texture_Check_Next);
 
 			// ...Mini-Bosses
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
-				filterCheckMark[1].SetImage(xTexture);
+				filterCheckMark[1].SetImage(Texture_Check_X);
 			}
 			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
-				filterCheckMark[1].SetImage(checkMarkTexture);
+				filterCheckMark[1].SetImage(Texture_Check_Check);
 			}
 			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
-				filterCheckMark[1].SetImage(xTexture);
+				filterCheckMark[1].SetImage(Texture_Check_X);
 			}
 			else {
-				filterCheckMark[1].SetImage(circleTexture);
+				filterCheckMark[1].SetImage(Texture_Check_Next);
 			}
 
 			// ...Events
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
-				filterCheckMark[2].SetImage(xTexture);
+				filterCheckMark[2].SetImage(Texture_Check_X);
 			}
 			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
-				filterCheckMark[2].SetImage(checkMarkTexture);
+				filterCheckMark[2].SetImage(Texture_Check_Check);
 			}
 			else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
-				filterCheckMark[2].SetImage(xTexture);
+				filterCheckMark[2].SetImage(Texture_Check_X);
 			}
 			else {
-				filterCheckMark[2].SetImage(circleTexture);
+				filterCheckMark[2].SetImage(Texture_Check_Next);
 			}
 
 			// ...Hidden Entries
-			filterCheckMark[3].SetImage(showHidden ? checkMarkTexture : xTexture);
+			filterCheckMark[3].SetImage(showHidden ? Texture_Check_Check : Texture_Check_X);
 		}
 
 		/// <summary>
@@ -803,12 +815,11 @@ namespace BossChecklist
 			PageOne.Append(textBox);
 
 			// create buttons for the different progression mode options
-			Asset<Texture2D> backdropTexture = RequestResource("Extra_RecordSlot");
 			UIImage[] backdrops = new UIImage[] {
-				new UIImage(backdropTexture),
-				new UIImage(backdropTexture),
-				new UIImage(backdropTexture),
-				new UIImage(backdropTexture)
+				new UIImage(Texture_Content_RecordSlot),
+				new UIImage(Texture_Content_RecordSlot),
+				new UIImage(Texture_Content_RecordSlot),
+				new UIImage(Texture_Content_RecordSlot)
 			};
 
 			Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
@@ -830,10 +841,10 @@ namespace BossChecklist
 			backdrops[3].OnMouseOut += (a, b) => { backdrops[3].Color = Color.White; };
 
 			Asset<Texture2D>[] buttonTextures = new Asset<Texture2D>[] {
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.SteampunkGoggles}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Blindfold}", AssetRequestMode.ImmediateLoad),
-				ModContent.Request<Texture2D>($"Terraria/Images/Item_{ItemID.Wrench}", AssetRequestMode.ImmediateLoad),
-				checkboxTexture
+				RequestVanillaTexture($"Images/Item_{ItemID.SteampunkGoggles}"),
+				RequestVanillaTexture($"Images/Item_{ItemID.Blindfold}"),
+				RequestVanillaTexture($"Images/Item_{ItemID.Wrench}"),
+				Texture_Check_Box
 			};
 
 			UIImage[] buttons = new UIImage[] {
@@ -850,11 +861,11 @@ namespace BossChecklist
 				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressPrompt"),
 			};
 
-			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? checkMarkTexture : xTexture);
+			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? Texture_Check_Check : Texture_Check_X);
 
 			for (int i = 0; i < buttonTextures.Length; i++) {
-				backdrops[i].Width.Pixels = backdropTexture.Value.Width;
-				backdrops[i].Height.Pixels = backdropTexture.Value.Height;
+				backdrops[i].Width.Pixels = Texture_Content_RecordSlot.Value.Width;
+				backdrops[i].Height.Pixels = Texture_Content_RecordSlot.Value.Height;
 				backdrops[i].Left.Pixels = 25;
 				backdrops[i].Top.Pixels = 75 + (75 * i);
 
@@ -958,10 +969,10 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
 			if (BossChecklist.BossLogConfig.PromptDisabled) {
-				PromptCheck.SetImage(checkMarkTexture);
+				PromptCheck.SetImage(Texture_Check_Check);
 			}
 			else {
-				PromptCheck.SetImage(xTexture);
+				PromptCheck.SetImage(Texture_Check_X);
 			}
 		}
 
@@ -1387,14 +1398,14 @@ namespace BossChecklist
 
 			// Developers Display
 			UIList creditList = new UIList();
-			creditList.Width.Pixels = creditDevSlot.Value.Width;
-			creditList.Height.Pixels = creditDevSlot.Value.Height * 4 + 20;
-			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - creditDevSlot.Value.Width / 2) - 8;
+			creditList.Width.Pixels = Texture_Credit_DevSlot.Value.Width;
+			creditList.Height.Pixels = Texture_Credit_DevSlot.Value.Height * 4 + 20;
+			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - Texture_Credit_DevSlot.Value.Width / 2) - 8;
 			creditList.Top.Pixels = 60;
 			foreach (KeyValuePair<string, string> user in contributors) {
-				ContributorCredit creditedUser = new ContributorCredit(creditDevSlot, RequestResource($"Credits_{user.Key}"), user.Key, user.Value);
-				creditedUser.Width.Pixels = creditDevSlot.Value.Width;
-				creditedUser.Height.Pixels = creditDevSlot.Value.Height;
+				ContributorCredit creditedUser = new ContributorCredit(Texture_Credit_DevSlot, RequestResource($"Credits_{user.Key}"), user.Key, user.Value);
+				creditedUser.Width.Pixels = Texture_Credit_DevSlot.Value.Width;
+				creditedUser.Height.Pixels = Texture_Credit_DevSlot.Value.Height;
 				creditList.Add(creditedUser);
 			}
 			PageOne.Append(creditList);
@@ -1410,15 +1421,15 @@ namespace BossChecklist
 			if (BossUISystem.Instance.RegisteredMods.Count > 0) {
 				// Registered Mods Display
 				pageTwoItemList.Clear();
-				pageTwoItemList.Width.Pixels = creditModSlot.Value.Width;
-				pageTwoItemList.Height.Pixels = creditModSlot.Value.Height * 3 + 15;
-				pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - creditModSlot.Value.Width / 2) - 8;
+				pageTwoItemList.Width.Pixels = Texture_Credit_ModSlot.Value.Width;
+				pageTwoItemList.Height.Pixels = Texture_Credit_ModSlot.Value.Height * 3 + 15;
+				pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2) - 8;
 				pageTwoItemList.Top.Pixels = 85;
 
 				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
-					ContributorCredit creditedMod = new ContributorCredit(creditModSlot, mod);
-					creditedMod.Width.Pixels = creditModSlot.Value.Width;
-					creditedMod.Height.Pixels = creditModSlot.Value.Height;
+					ContributorCredit creditedMod = new ContributorCredit(Texture_Credit_ModSlot, mod);
+					creditedMod.Width.Pixels = Texture_Credit_ModSlot.Value.Width;
+					creditedMod.Height.Pixels = Texture_Credit_ModSlot.Value.Height;
 					pageTwoItemList.Add(creditedMod);
 				}
 				PageTwo.Append(pageTwoItemList);
@@ -1471,7 +1482,7 @@ namespace BossChecklist
 
 				#region Experimental Feature Notice
 				// TODO: Experimental feature notice, eventually will need to be removed
-				Asset<Texture2D> bnuuy = Main.Assets.Request<Texture2D>("Images/UI/Creative/Journey_Toggle", AssetRequestMode.ImmediateLoad);
+				Asset<Texture2D> bnuuy = RequestVanillaTexture("Images/UI/Creative/Journey_Toggle");
 				string noticeText;
 				if (RecordSubCategory == SubCategory.WorldRecord) {
 					noticeText = $"World Records are currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
@@ -1510,18 +1521,18 @@ namespace BossChecklist
 
 				RecordDisplaySlot slot;
 				if (GetLogEntryInfo.type == EntryType.Boss) {
-					slot = new RecordDisplaySlot(recordSlot, RecordSubCategory, i);
-					slot.Width.Pixels = recordSlot.Value.Width;
-					slot.Height.Pixels = recordSlot.Value.Height;
-					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
+					slot = new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i);
+					slot.Width.Pixels = Texture_Content_RecordSlot.Value.Width;
+					slot.Height.Pixels = Texture_Content_RecordSlot.Value.Height;
+					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2;
 					slot.Top.Pixels = 35 + (75 * (i + 1));
 					PageTwo.Append(slot);
 				}
 				else {
-					slot = new RecordDisplaySlot(recordSlot, null, null);
-					slot.Width.Pixels = recordSlot.Value.Width;
-					slot.Height.Pixels = recordSlot.Value.Height;
-					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - recordSlot.Value.Width / 2;
+					slot = new RecordDisplaySlot(Texture_Content_RecordSlot, null, null);
+					slot.Width.Pixels = Texture_Content_RecordSlot.Value.Width;
+					slot.Height.Pixels = Texture_Content_RecordSlot.Value.Height;
+					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2;
 					slot.Top.Pixels = 35 + (75 * (i + 1));
 					PageTwo.Append(slot);
 				}
@@ -1625,11 +1636,11 @@ namespace BossChecklist
 			// if more than one item is used for summoning, append navigational button to cycle through the items
 			// a previous item button will appear if it is not the first item listed
 			if (SpawnItemSelected > 0) {
-				NavigationalButton PrevItem = new NavigationalButton(prevTexture, true) {
+				NavigationalButton PrevItem = new NavigationalButton(Texture_Nav_Prev, true) {
 					Id = "PrevItem"
 				};
-				PrevItem.Width.Pixels = prevTexture.Value.Width;
-				PrevItem.Height.Pixels = prevTexture.Value.Width;
+				PrevItem.Width.Pixels = Texture_Nav_Prev.Value.Width;
+				PrevItem.Height.Pixels = Texture_Nav_Prev.Value.Width;
 				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
 				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
 				PrevItem.OnClick += ChangeSpawnItem;
@@ -1637,11 +1648,11 @@ namespace BossChecklist
 			}
 			// a next button will appear if it is not the last item listed
 			if (SpawnItemSelected < GetLogEntryInfo.spawnItem.Count - 1) {
-				NavigationalButton NextItem = new NavigationalButton(nextTexture, true) {
+				NavigationalButton NextItem = new NavigationalButton(Texture_Nav_Next, true) {
 					Id = "NextItem"
 				};
-				NextItem.Width.Pixels = nextTexture.Value.Width;
-				NextItem.Height.Pixels = nextTexture.Value.Height;
+				NextItem.Width.Pixels = Texture_Nav_Next.Value.Width;
+				NextItem.Height.Pixels = Texture_Nav_Next.Value.Height;
 				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
 				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
 				NextItem.OnClick += ChangeSpawnItem;
@@ -1707,11 +1718,11 @@ namespace BossChecklist
 
 				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
 				if (TotalRecipes > 1) {
-					NavigationalButton CycleItem = new NavigationalButton(cycleTexture, "Mods.BossChecklist.BossLog.DrawnText.CycleRecipe") {
+					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, "Mods.BossChecklist.BossLog.DrawnText.CycleRecipe") {
 						Id = "CycleItem_" + TotalRecipes
 					};
-					CycleItem.Width.Pixels = cycleTexture.Value.Width;
-					CycleItem.Height.Pixels = cycleTexture.Value.Height;
+					CycleItem.Width.Pixels = Texture_Content_CycleRecipe.Value.Width;
+					CycleItem.Height.Pixels = Texture_Content_CycleRecipe.Value.Height;
 					CycleItem.Left.Pixels = 240;
 					CycleItem.Top.Pixels = 240;
 					CycleItem.OnClick += ChangeSpawnItem;
