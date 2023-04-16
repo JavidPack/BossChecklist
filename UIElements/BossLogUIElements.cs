@@ -27,16 +27,14 @@ namespace BossChecklist.UIElements
 		/// <summary>
 		/// Hides certain mouse over interactions from appearing such as tile icons or NPC names.
 		/// </summary>
-		static void HideMouseOverInteractions() 
-		{
+		static void HideMouseOverInteractions() {
 			Main.mouseText = true;
 			Main.LocalPlayer.cursorItemIconEnabled = false;
 			Main.LocalPlayer.cursorItemIconID = -1;
 			Main.ItemIconCacheUpdate(0);
 		}
 
-		internal class OpenLogButton : UIImageButton
-		{
+		internal class OpenLogButton : UIImageButton {
 			internal Asset<Texture2D> texture;
 			private Vector2 offset;
 			internal bool dragging;
@@ -152,8 +150,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class NavigationalButton : UIElement
-		{
+		internal class NavigationalButton : UIElement {
 			public string Id { get; init; } = "";
 			public int? Anchor { get; init; } = null;
 
@@ -234,8 +231,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class SubPageButton : UIImage
-		{
+		internal class SubPageButton : UIImage {
 			readonly string buttonText;
 			readonly SubPage subPageType;
 
@@ -262,8 +258,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LogItemSlot : UIElement
-		{
+		internal class LogItemSlot : UIElement {
 			public string Id { get; init; } = "";
 			internal string hoverText;
 			internal Item item;
@@ -438,8 +433,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LootRow : UIElement
-		{
+		internal class LootRow : UIElement {
 			readonly int order; // Had to put the itemslots in a row in order to be put in a UIList with scroll functionality
 
 			public LootRow(int order) {
@@ -454,8 +448,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LogPanel : UIElement
-		{
+		internal class LogPanel : UIElement {
 			public string Id { get; init; } = "";
 
 			public override void Update(GameTime gameTime) {
@@ -776,13 +769,12 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class RecordDisplaySlot : UIImage
-		{
-			int slotID = -1;
-			string title;
-			string value;
-			Point ach;
-			string tooltip;
+		internal class RecordDisplaySlot : UIImage {
+			internal int slotID = -1;
+			internal string title;
+			internal string value;
+			internal Point ach;
+			internal string tooltip;
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, string title, string value) : base(texture) {
 				this.title = title;
@@ -905,12 +897,11 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class ContributorCredit : UIImage
-		{
-			Asset<Texture2D> icon;
-			string name;
-			string devTitle;
-			int[] entryCounts = null;
+		internal class ContributorCredit : UIImage {
+			internal Asset<Texture2D> icon;
+			internal string name;
+			internal string devTitle;
+			internal int[] entryCounts = null;
 
 			public ContributorCredit(Asset<Texture2D> texture, Asset<Texture2D> character, string name, string title) : base(texture) {
 				this.icon = character;
@@ -961,8 +952,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class FixedUIScrollbar : UIScrollbar
-		{
+		internal class FixedUIScrollbar : UIScrollbar {
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
 				UserInterface temp = UserInterface.ActiveInstance;
 				UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
@@ -999,8 +989,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class BookUI : UIImage
-		{
+		internal class BookUI : UIImage {
 			public string Id { get; init; } = "";
 			readonly Asset<Texture2D> book;
 
@@ -1206,8 +1195,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class TableOfContents : UIText
-		{
+		internal class TableOfContents : UIText {
 			readonly EntryInfo entry;
 			readonly bool markAsNext;
 			readonly string displayName;
@@ -1376,11 +1364,11 @@ namespace BossChecklist.UIElements
 			internal readonly Point countsTotal;
 			internal Dictionary<EntryType, float> PercentagesByType;
 			internal Dictionary<string, float> PercentagesByMod;
-			internal Dictionary<EntryType, Point> CountsByType = new Dictionary<EntryType, Point>();
-			internal Dictionary<string, Point> CountsByMod = new Dictionary<string, Point>();
+			internal Dictionary<EntryType, Point> CountsByType;
+			internal Dictionary<string, Point> CountsByMod;
 
 			internal bool InitializeDividers;
-			internal Dictionary<Rectangle, string> Sections = new Dictionary<Rectangle, string>();
+			internal Dictionary<Rectangle, string> Sections;
 
 			public ProgressBar(bool hardMode) {
 				InitializeDividers = true; // a progress bar is created, let this UIelement know it should attempt to make section dividers asap
@@ -1395,6 +1383,7 @@ namespace BossChecklist.UIElements
 					{ EntryType.MiniBoss, 0f },
 					{ EntryType.Event, 0f }
 				};
+				CountsByType = new Dictionary<EntryType, Point>();
 
 				foreach (EntryType type in PercentagesByType.Keys) {
 					PercentagesByType[type] = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.type == type), hardMode, out int downed, out int total);
@@ -1405,6 +1394,7 @@ namespace BossChecklist.UIElements
 				}
 
 				PercentagesByMod = new Dictionary<string, float>(); // create a new dictionary, adding Terraria and Unknown entries menually if they exist on the Table of Contents
+				CountsByMod = new Dictionary<string, Point>();
 
 				// Terraria entries should appear first
 				float TerrariaPercentage = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == "Terraria"), hardMode, out int downedTerraria, out int totalTerraria);
@@ -1558,8 +1548,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class FittedTextPanel : UITextPanel<string>
-		{
+		internal class FittedTextPanel : UITextPanel<string> {
 			readonly string text;
 			public FittedTextPanel(string text, float textScale = 1, bool large = false) : base(text, textScale, large) {
 				this.text = text;
