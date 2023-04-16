@@ -949,43 +949,6 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class FixedUIScrollbar : UIScrollbar {
-			protected override void DrawSelf(SpriteBatch spriteBatch) {
-				UserInterface temp = UserInterface.ActiveInstance;
-				UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
-				base.DrawSelf(spriteBatch);
-				UserInterface.ActiveInstance = temp;
-			}
-
-			public override void MouseDown(UIMouseEvent evt) {
-				UserInterface temp = UserInterface.ActiveInstance;
-				UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
-				base.MouseDown(evt);
-				UserInterface.ActiveInstance = temp;
-			}
-
-			public override void Click(UIMouseEvent evt) {
-				UserInterface temp = UserInterface.ActiveInstance;
-				UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
-				base.Click(evt);
-				UserInterface.ActiveInstance = temp;
-			}
-
-			public override void ScrollWheel(UIScrollWheelEvent evt) {
-				//Main.NewText(evt.ScrollWheelValue);
-				base.ScrollWheel(evt);
-				//if (BossLogUI.PageNum < 0 || BossLogUI.SubPageNum != 1) return;
-				if (this.Parent != null && this.Parent.IsMouseHovering) {
-					//Main.NewText(evt.ScrollWheelValue);
-					this.ViewPosition -= (float)evt.ScrollWheelValue / 1000;
-				}
-				else if (this.Parent != null && this.Parent.IsMouseHovering) {
-					//Main.NewText(evt.ScrollWheelValue);
-					this.ViewPosition -= (float)evt.ScrollWheelValue / 1000;
-				}
-			}
-		}
-
 		internal class BookUI : UIImage {
 			public string Id { get; init; } = "";
 			readonly Asset<Texture2D> book;

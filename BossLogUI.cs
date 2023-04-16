@@ -81,8 +81,8 @@ namespace BossChecklist
 		public UIList hardmodeList;
 		public ProgressBar prehardmodeBar; // progress bars for pre-hardmode and hardmode entries
 		public ProgressBar hardmodeBar;
-		public BossLogUIElements.FixedUIScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
-		public BossLogUIElements.FixedUIScrollbar scrollTwo;
+		public UIElements.FixedUIScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
+		public UIElements.FixedUIScrollbar scrollTwo;
 		public bool showHidden = false; // when true, hidden entries are visible on the list
 		public bool barState = false; // when true, hovering over the progress bar will split up the entry percentages by mod instead of entry type
 		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
@@ -482,7 +482,7 @@ namespace BossChecklist
 			lootButton.OnRightClick += RemoveItem;
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
-			scrollOne = new BossLogUIElements.FixedUIScrollbar();
+			scrollOne = new UIElements.FixedUIScrollbar();
 			scrollOne.SetView(100f, 1000f);
 			scrollOne.Top.Pixels = 50f;
 			scrollOne.Left.Pixels = -18;
@@ -490,7 +490,7 @@ namespace BossChecklist
 			scrollOne.HAlign = 1f;
 
 			// scroll two is used in more areas, such as the display spawn info message box, so its fields are set when needed
-			scrollTwo = new BossLogUIElements.FixedUIScrollbar();
+			scrollTwo = new UIElements.FixedUIScrollbar();
 		}
 
 		public override void Update(GameTime gameTime) {
