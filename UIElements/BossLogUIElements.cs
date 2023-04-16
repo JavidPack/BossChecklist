@@ -28,6 +28,7 @@ namespace BossChecklist.UIElements
 		/// Hides certain mouse over interactions from appearing such as tile icons or NPC names.
 		/// </summary>
 		static void HideMouseOverInteractions() {
+			Main.player[Main.myPlayer].mouseInterface = true;
 			Main.mouseText = true;
 			Main.LocalPlayer.cursorItemIconEnabled = false;
 			Main.LocalPlayer.cursorItemIconID = -1;
@@ -116,12 +117,10 @@ namespace BossChecklist.UIElements
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
-				base.DrawSelf(spriteBatch);
-
-				if ((ContainsPoint(Main.MouseScreen) || dragging) && !PlayerInput.IgnoreMouseInterface) {
-					Main.LocalPlayer.mouseInterface = true;
+				if ((ContainsPoint(Main.MouseScreen) || dragging) && !PlayerInput.IgnoreMouseInterface)
 					HideMouseOverInteractions();
-				}
+
+				base.DrawSelf(spriteBatch);
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 
@@ -453,21 +452,19 @@ namespace BossChecklist.UIElements
 
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
-				if (IsMouseHovering)
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
 					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					HideMouseOverInteractions();
+
 				base.Draw(spriteBatch);
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
 				if (Id == "") {
 					spriteBatch.Draw(BossLogUI.Texture_Log_BackPanel.Value, pageRect, BossChecklist.BossLogConfig.BossLogColor); // Main panel draws the Log Book (with color)...
 					spriteBatch.Draw(BossLogUI.RequestResource("LogUI_Paper").Value, pageRect, Color.White); //.. and the paper on top
-				}
-
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
-					Main.player[Main.myPlayer].mouseInterface = true;
-					HideMouseOverInteractions();
 				}
 
 				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
@@ -1035,11 +1032,14 @@ namespace BossChecklist.UIElements
 
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
-				if (IsMouseHovering)
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
 					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
 			}
 
 			protected override void DrawSelf(SpriteBatch spriteBatch) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					HideMouseOverInteractions();
+
 				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 
 				if (Id == "Info_Tab") {
@@ -1098,12 +1098,6 @@ namespace BossChecklist.UIElements
 					if (DrawTab(Id) && selectedLogPage != -3) {
 						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), Color.Tan, 0f, Vector2.Zero, effect, 0f);
 					}
-				}
-
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface) {
-					// Needed to remove mousetext from outside sources when using the Boss Log
-					Main.player[Main.myPlayer].mouseInterface = true;
-					HideMouseOverInteractions();
 				}
 
 				if (Id.EndsWith("_Tab") && selectedLogPage != -3) {
