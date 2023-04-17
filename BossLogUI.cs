@@ -1099,6 +1099,11 @@ namespace BossChecklist
 		/// Restructures all page content and elements without changing the page or subpage.
 		/// </summary>
 		public void RefreshPageContent() {
+			if (PageNum == Page_Prompt) {
+				OpenProgressionModePrompt();
+				return; // If the page is somehow the prompt, redirect to the open prompt method
+			}
+
 			ResetUIPositioning(); // Repositions common ui elements when the UI is updated
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
 
@@ -1126,11 +1131,6 @@ namespace BossChecklist
 		/// Clears page content and replaces navigational elements.
 		/// </summary>
 		private void ResetBothPages() {
-			if (PageNum == -3) {
-				OpenProgressionModePrompt();
-				return; // If the page is somehow the prompt, redirect to the open prompt method
-			}
-
 			PageOne.RemoveAllChildren(); // remove all elements from the pages
 			PageTwo.RemoveAllChildren();
 
