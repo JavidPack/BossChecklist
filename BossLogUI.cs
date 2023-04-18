@@ -159,7 +159,6 @@ namespace BossChecklist
 		
 		private bool PendingPageChange; // Allows changing the page outside of the UIState without causing ordering or drawing issues.
 		private int PageChangeValue;
-		internal static int PendingPage;
 		public int PendingPageNum {
 			get => PageChangeValue;
 			set {
