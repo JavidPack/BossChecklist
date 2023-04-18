@@ -84,17 +84,17 @@ Mods: {
 				ToggleFilters: 切换过滤器
 				JumpTOC: 目录
 				JumpCred: 感谢页面
-				JumpBoss:
+				NextBoss:
 					'''
 					下个Boss: 
 					{0}
 					'''
-				JumpMini:
+				NextMiniBoss:
 					'''
 					下个小Boss: 
 					{0}
 					'''
-				JumpEvent:
+				NextEvent:
 					'''
 					下个事件: 
 					{0}

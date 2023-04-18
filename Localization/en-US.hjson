@@ -84,17 +84,17 @@ Mods: {
 				ToggleFilters: Toggle Filters
 				JumpTOC: Table of Contents
 				JumpCred: Credits
-				JumpBoss:
+				NextBoss:
 					'''
 					Next Boss:
 					{0}
 					'''
-				JumpMini:
+				NextMiniBoss:
 					'''
 					Next Mini-boss:
 					{0}
 					'''
-				JumpEvent:
+				NextEvent:
 					'''
 					Next Event:
 					{0}

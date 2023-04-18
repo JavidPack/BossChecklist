@@ -949,21 +949,99 @@ namespace BossChecklist.UIElements
 			}
 		}
 
+		internal class LogTab : UIElement {
+			public string Id { get; init; } = "";
+			public int UpNext { get; set; } = -1;
+
+			internal Asset<Texture2D> texture;
+			internal Asset<Texture2D> icon;
+
+			public LogTab(Asset<Texture2D> texture, Asset<Texture2D> icon) {
+				this.texture = texture;
+				this.icon = icon;
+			}
+
+			public bool Visibile() {
+				int page = BossUISystem.Instance.BossLog.PageNum;
+				if (page == BossLogUI.Page_Prompt)
+					return false; // Tabs never show up on the Progression Mode prompt
+
+				return Id switch {
+					"TableOfContents" => true,
+					"Credits" => page != BossLogUI.Page_Credits,
+					_ => UpNext >= 0 && page != UpNext
+				};
+			}
+
+			public bool OnLeftSide() {
+				int page = BossUISystem.Instance.BossLog.PageNum;
+				return Id switch {
+					"TableOfContents" => true,
+					"Credits" => false,
+					_ => page > UpNext || page == BossLogUI.Page_Credits
+				};
+			}
+
+			private string AssignToolTip() {
+				List<EntryInfo> entryList = BossChecklist.bossTracker.SortedEntries;
+				int page = BossUISystem.Instance.BossLog.PageNum;
+				string path = "Mods.BossChecklist.BossLog.HoverText";
+
+				return Id switch {
+					"TableOfContents" => page == BossLogUI.Page_TableOfContents ? $"{path}.ToggleFilters" : $"{path}.JumpTOC",
+					"Credits" => $"{path}.JumpCred",
+					_ => UpNext >= 0 ? Language.GetTextValue($"{path}.{Id}", entryList[UpNext].DisplayName) : ""
+				};
+			}
+
+			private int? DeterminePageNav() {
+				int page = BossUISystem.Instance.BossLog.PageNum;
+				return Id switch {
+					"TableOfContents" => page == BossLogUI.Page_TableOfContents ? null : -1,
+					"Credits" => -2,
+					_ => UpNext >= 0 ? UpNext : null
+				};
+			}
+
+			public override void Click(UIMouseEvent evt) {
+				base.Click(evt);
+				int? Anchor = DeterminePageNav();
+				if (Anchor.HasValue)
+					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
+			}
+
+			public override void Update(GameTime gameTime) {
+				base.Update(gameTime);
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					HideMouseOverInteractions();
+				// Tab drawing
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+
+				if (this.Visibile()) {
+					spriteBatch.Draw(texture.Value, inner, texture.Value.Bounds, Color.Tan, 0f, Vector2.Zero, OnLeftSide() ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+
+					int offsetX = inner.X < Main.screenWidth / 2 ? 2 : -2;
+					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (icon.Value.Width / 2) + offsetX, inner.Y + (inner.Height / 2) - (icon.Value.Height / 2));
+					Asset<Texture2D> iconTexture = Id == "TableOfContents" && BossUISystem.Instance.BossLog.PageNum == BossLogUI.Page_TableOfContents ? BossLogUI.Texture_Nav_Filter : icon;
+					spriteBatch.Draw(iconTexture.Value, pos, Color.White);
+
+					if (IsMouseHovering) {
+						BossUISystem.Instance.UIHoverText = AssignToolTip();
+					}
+				}
+			}
+		}
+
 		internal class BookUI : UIImage {
 			public string Id { get; init; } = "";
 			readonly Asset<Texture2D> book;
-
 			public BookUI(Asset<Texture2D> texture) : base(texture) {
 				book = texture;
-			}
-
-			internal static bool DrawTab(string Id) {
-				int page = BossUISystem.Instance.BossLog.PageNum;
-				bool MatchesCreditsTab = page == -2 && Id == "Credits_Tab";
-				bool MatchesBossTab = page == BossLogUI.FindNextEntry(EntryType.Boss) && Id == "Boss_Tab";
-				bool MatchesMinibossTab = (page == BossLogUI.FindNextEntry(EntryType.MiniBoss) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Miniboss_Tab";
-				bool MatchesEventTab = (page == BossLogUI.FindNextEntry(EntryType.Event) || BossChecklist.BossLogConfig.OnlyShowBossContent) && Id == "Event_Tab";
-				return !(MatchesCreditsTab || MatchesBossTab || MatchesMinibossTab || MatchesEventTab);
 			}
 
 			internal string DetermineHintText() {
@@ -1039,88 +1117,7 @@ namespace BossChecklist.UIElements
 					return;
 				}
 
-				if (!Id.EndsWith("_Tab")) {
-					base.DrawSelf(spriteBatch);
-				}
-				else {
-					// Tab drawing
-					SpriteEffects effect = SpriteEffects.FlipHorizontally;
-					if (Id == "Boss_Tab" && (selectedLogPage >= BossLogUI.FindNextEntry(EntryType.Boss) || selectedLogPage == -2)) {
-						effect = SpriteEffects.None;
-					}
-					else if (Id == "Miniboss_Tab" && (selectedLogPage >= BossLogUI.FindNextEntry(EntryType.MiniBoss) || selectedLogPage == -2)) {
-						effect = SpriteEffects.None;
-					}
-					else if (Id == "Event_Tab" && (selectedLogPage >= BossLogUI.FindNextEntry(EntryType.Event) || selectedLogPage == -2)) {
-						effect = SpriteEffects.None;
-					}
-					else if (Id == "ToCFilter_Tab") {
-						effect = SpriteEffects.None;
-					}
-
-					if (DrawTab(Id) && selectedLogPage != -3) {
-						spriteBatch.Draw(book.Value, GetDimensions().ToRectangle(), new Rectangle(0, 0, book.Width(), book.Height()), Color.Tan, 0f, Vector2.Zero, effect, 0f);
-					}
-				}
-
-				if (Id.EndsWith("_Tab") && selectedLogPage != -3) {
-					// Tab Icon
-					Asset<Texture2D> texture = BossLogUI.Texture_Nav_TableOfContents;
-
-					if (Id == "Boss_Tab") {
-						texture = BossLogUI.Texture_Nav_Boss;
-					}
-					else if (Id == "Miniboss_Tab") {
-						texture = BossLogUI.Texture_Nav_MiniBoss;
-					}
-					else if (Id == "Event_Tab") {
-						texture = BossLogUI.Texture_Nav_Event;
-					}
-					else if (Id == "Credits_Tab") {
-						texture = BossLogUI.Texture_Nav_Credits;
-					}
-					else if (Id == "ToCFilter_Tab" && selectedLogPage == -1) {
-						texture = BossLogUI.Texture_Nav_Filter;
-					}
-					else if (Id == "ToCFilter_Tab" && selectedLogPage != -1) {
-						texture = BossLogUI.Texture_Nav_TableOfContents;
-					}
-
-					Rectangle inner = GetInnerDimensions().ToRectangle();
-					int offsetX = inner.X < Main.screenWidth / 2 ? 2 : -2;
-					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (texture.Value.Width / 2) + offsetX, inner.Y + (inner.Height / 2) - (texture.Value.Height / 2));
-
-					if (DrawTab(Id))
-						spriteBatch.Draw(texture.Value, pos, Color.White);
-					else
-						return;
-
-					if (IsMouseHovering) {
-						List<EntryInfo> entryList = BossChecklist.bossTracker.SortedEntries;
-						string tabMessage = "";
-						if (Id == "Boss_Tab" && BossLogUI.FindNextEntry(EntryType.Boss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpBoss", entryList[BossLogUI.FindNextEntry(EntryType.Boss)].DisplayName);
-						}
-						else if (Id == "Miniboss_Tab" && BossLogUI.FindNextEntry(EntryType.MiniBoss) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpMini", entryList[BossLogUI.FindNextEntry(EntryType.MiniBoss)].DisplayName);
-						}
-						else if (Id == "Event_Tab" && BossLogUI.FindNextEntry(EntryType.Event) != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpEvent", entryList[BossLogUI.FindNextEntry(EntryType.Event)].DisplayName);
-						}
-						else if (Id == "Credits_Tab") {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpCred");
-						}
-						else if (Id == "ToCFilter_Tab" && selectedLogPage == -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ToggleFilters");
-						}
-						else if (Id == "ToCFilter_Tab" && selectedLogPage != -1) {
-							tabMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.JumpTOC");
-						}
-						if (tabMessage != "") {
-							BossUISystem.Instance.UIHoverText = tabMessage;
-						}
-					}
-				}
+				base.DrawSelf(spriteBatch);
 
 				if (Id.Contains("F_") && IsMouseHovering) {
 					string termPrefix = "Mods.BossChecklist.BossLog.Terms.";

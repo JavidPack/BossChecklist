@@ -64,11 +64,11 @@ namespace BossChecklist
 		public SubPageButton lootButton;
 
 		// Book Tabs
-		public BookUI ToCTab; // also used for the filter tab
-		public BookUI CreditsTab;
-		public BookUI BossTab;
-		public BookUI MiniBossTab;
-		public BookUI EventTab;
+		public LogTab ToCTab; // also used for the filter tab
+		public LogTab CreditsTab;
+		public LogTab BossTab;
+		public LogTab MiniBossTab;
+		public LogTab EventTab;
 		public BookUI InfoTab; // shows users info about the enabled progression mode
 		public BookUI ShortcutsTab; // shows users how to change an entry's hidden/defeation state
 		public BookUI filterPanel; // contains the filter buttons
@@ -229,15 +229,21 @@ namespace BossChecklist
 						PageNum = Page_TableOfContents;
 					}
 				}
-				else if (modPlayer.enteredWorldReset) {
-					// If the Log has been opened before, check for a world change.
-					// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
-					modPlayer.enteredWorldReset = false;
-					PageNum = Page_TableOfContents;
-				}
 				else {
-					RefreshPageContent(); // Otherwise, just default to the last page selected
-				}				
+					BossTab.UpNext = FindNextEntry(EntryType.Boss); // Update the UpNext values for the entry tabs every time the Boss Log is opened
+					MiniBossTab.UpNext = FindNextEntry(EntryType.MiniBoss);
+					EventTab.UpNext = FindNextEntry(EntryType.Event);
+
+					if (modPlayer.enteredWorldReset) {
+						// If the Log has been opened before, check for a world change.
+						// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
+						modPlayer.enteredWorldReset = false;
+						PageNum = Page_TableOfContents;
+					}
+					else {
+						RefreshPageContent(); // Otherwise, just default to the last page selected
+					}
+				}
 
 				// Update UI Element positioning before marked visible
 				// This will always occur after adjusting UIScale, since the UI has to be closed in order to open up the menu options
@@ -320,41 +326,37 @@ namespace BossChecklist
 			ShortcutsTab.Width.Pixels = Texture_Log_Tab2.Value.Width;
 			ShortcutsTab.Height.Pixels = Texture_Log_Tab2.Value.Height;
 
-			ToCTab = new BookUI(Texture_Log_Tab) {
-				Id = "ToCFilter_Tab"
+			ToCTab = new LogTab(Texture_Log_Tab, Texture_Nav_TableOfContents) {
+				Id = "TableOfContents"
 			};
 			ToCTab.Width.Pixels = Texture_Log_Tab.Value.Width;
 			ToCTab.Height.Pixels = Texture_Log_Tab.Value.Height;
-			ToCTab.OnClick += OpenViaTab;
+			ToCTab.OnClick += (a, b) => UpdateFilterTabPos(true);
 			ToCTab.OnRightClick += (a, b) => ClearForcedDowns();
 
-			BossTab = new BookUI(Texture_Log_Tab) {
-				Id = "Boss_Tab"
+			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss) {
+				Id = "NextBoss"
 			};
 			BossTab.Width.Pixels = Texture_Log_Tab.Value.Width;
 			BossTab.Height.Pixels = Texture_Log_Tab.Value.Height;
-			BossTab.OnClick += OpenViaTab;
 
-			MiniBossTab = new BookUI(Texture_Log_Tab) {
-				Id = "Miniboss_Tab"
+			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss) {
+				Id = "NextMiniBoss"
 			};
 			MiniBossTab.Width.Pixels = Texture_Log_Tab.Value.Width;
 			MiniBossTab.Height.Pixels = Texture_Log_Tab.Value.Height;
-			MiniBossTab.OnClick += OpenViaTab;
 
-			EventTab = new BookUI(Texture_Log_Tab) {
-				Id = "Event_Tab"
+			EventTab = new LogTab(Texture_Log_Tab, Texture_Nav_Event) {
+				Id = "NextEvent"
 			};
 			EventTab.Width.Pixels = Texture_Log_Tab.Value.Width;
 			EventTab.Height.Pixels = Texture_Log_Tab.Value.Height;
-			EventTab.OnClick += OpenViaTab;
 
-			CreditsTab = new BookUI(Texture_Log_Tab) {
-				Id = "Credits_Tab"
+			CreditsTab = new LogTab(Texture_Log_Tab, Texture_Nav_Credits) {
+				Id = "Credits"
 			};
 			CreditsTab.Width.Pixels = Texture_Log_Tab.Value.Width;
 			CreditsTab.Height.Pixels = Texture_Log_Tab.Value.Height;
-			CreditsTab.OnClick += OpenViaTab;
 
 			PageOne = new LogPanel() {
 				Id = "PageOne",
@@ -565,9 +567,9 @@ namespace BossChecklist
 			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
 
 			// Update the navigation tabs to the proper positions
-			BossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Boss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.MiniBoss) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
-			EventTab.Left.Pixels = BookArea.Left.Pixels + (PageNum >= FindNextEntry(EntryType.Event) || PageNum == Page_Credits ? -20 : BookArea.Width.Pixels - 12);
+			BossTab.Left.Pixels = BookArea.Left.Pixels + (BossTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
+			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (MiniBossTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
+			EventTab.Left.Pixels = BookArea.Left.Pixels + (EventTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
 		}
 
 		/// <summary>
@@ -575,6 +577,9 @@ namespace BossChecklist
 		/// </summary>
 		/// <param name="tabClicked"></param>
 		private void UpdateFilterTabPos(bool tabClicked) {
+			if (tabClicked && PageNum != Page_TableOfContents)
+				return; // Filter tab position should not change if not on the Table of Contents page when clicked
+
 			if (PageNum != Page_TableOfContents) {
 				filterOpen = false; // If the page is not on the Table of Contents, the filters tab should be in the closed position
 			}
@@ -973,48 +978,6 @@ namespace BossChecklist
 			}
 			else {
 				PromptCheck.SetImage(Texture_Check_X);
-			}
-		}
-
-		/// <summary>
-		/// Contains the logic needed for the book tabs.
-		/// </summary>
-		private void OpenViaTab(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is not BookUI book)
-				return;
-
-			string id = book.Id;
-			if (PageNum == Page_Prompt || !BookUI.DrawTab(id))
-				return; // if the page is on the prompt or if the tab isn't drawn to begin with, no logic should be run
-
-			if (id == "ToCFilter_Tab" && PageNum == Page_TableOfContents) {
-				UpdateFilterTabPos(true);
-				return; // if it was the filter tab, just open the tab without changing or refrshing the page
-			}
-
-			// Remove new records when navigating from a page with a new record
-			if (PageNum >= 0) {
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-				if (GetLogEntryInfo.GetRecordIndex != -1) {
-					modPlayer.hasNewRecord[GetLogEntryInfo.GetRecordIndex] = false;
-				}
-			}
-
-			// determine which page to open base on tab ID
-			if (id == "Boss_Tab") {
-				PageNum = FindNextEntry(EntryType.Boss);
-			}
-			else if (id == "Miniboss_Tab") {
-				PageNum = FindNextEntry(EntryType.MiniBoss);
-			}
-			else if (id == "Event_Tab") {
-				PageNum = FindNextEntry(EntryType.Event);
-			}
-			else if (id == "Credits_Tab") {
-				PageNum = Page_Credits;
-			}
-			else {
-				PageNum = Page_TableOfContents;
 			}
 		}
 
