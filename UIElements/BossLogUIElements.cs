@@ -42,6 +42,9 @@ namespace BossChecklist.UIElements
 			internal Color? borderColor;
 
 			public OpenLogButton(Asset<Texture2D> texture) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.texture = texture;
 			}
 
@@ -159,6 +162,9 @@ namespace BossChecklist.UIElements
 			internal bool hoverButton;
 
 			public NavigationalButton(Asset<Texture2D> texture, bool hoverButton) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.texture = texture;
 				this.hoverText = null;
 				this.iconColor = Color.White;
@@ -166,6 +172,9 @@ namespace BossChecklist.UIElements
 			}
 
 			public NavigationalButton(Asset<Texture2D> texture, string hoverText = null, Color color = default) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.texture = texture;
 				this.hoverText = hoverText;
 				this.iconColor = color == default ? Color.White : color;
@@ -235,6 +244,9 @@ namespace BossChecklist.UIElements
 			readonly SubPage subPageType;
 
 			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				buttonText = Language.GetTextValue($"Mods.BossChecklist.BossLog.Terms.{type}");
 				subPageType = type;
 			}
@@ -774,12 +786,18 @@ namespace BossChecklist.UIElements
 			internal string tooltip;
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, string title, string value) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.title = title;
 				this.value = value;
 				this.ach = new Point(-1, -1);
 			}
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
 				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
 				WorldStats worldStats = WorldAssist.worldRecords[entry.GetRecordIndex].stats;
@@ -901,12 +919,18 @@ namespace BossChecklist.UIElements
 			internal int[] entryCounts = null;
 
 			public ContributorCredit(Asset<Texture2D> texture, Asset<Texture2D> character, string name, string title) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.icon = character;
 				this.name = name;
 				this.devTitle = title;
 			}
 
 			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.icon = GetModIcon(modName);
 				this.name = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
 				this.entryCounts = BossUISystem.Instance.RegisteredMods[modName];
@@ -957,6 +981,9 @@ namespace BossChecklist.UIElements
 			internal Asset<Texture2D> icon;
 
 			public LogTab(Asset<Texture2D> texture, Asset<Texture2D> icon) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				this.texture = texture;
 				this.icon = icon;
 			}
@@ -1041,6 +1068,9 @@ namespace BossChecklist.UIElements
 			public string Id { get; init; } = "";
 			readonly Asset<Texture2D> book;
 			public BookUI(Asset<Texture2D> texture) : base(texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+
 				book = texture;
 			}
 

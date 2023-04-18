@@ -303,8 +303,6 @@ namespace BossChecklist
 			Texture_Content_ToggleHidden = RequestResource("Nav_Hidden");
 
 			bosslogbutton = new OpenLogButton(Texture_Button_Book);
-			bosslogbutton.Width.Set(34, 0f);
-			bosslogbutton.Height.Set(38, 0f);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
 			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
@@ -316,46 +314,32 @@ namespace BossChecklist
 			InfoTab = new BookUI(Texture_Log_Tab2) {
 				Id = "Info_Tab"
 			};
-			InfoTab.Width.Pixels = Texture_Log_Tab2.Value.Width;
-			InfoTab.Height.Pixels = Texture_Log_Tab2.Value.Height;
 
 			ShortcutsTab = new BookUI(Texture_Log_Tab2) {
 				Id = "Shortcut_Tab"
 			};
-			ShortcutsTab.Width.Pixels = Texture_Log_Tab2.Value.Width;
-			ShortcutsTab.Height.Pixels = Texture_Log_Tab2.Value.Height;
 
 			ToCTab = new LogTab(Texture_Log_Tab, Texture_Nav_TableOfContents) {
 				Id = "TableOfContents"
 			};
-			ToCTab.Width.Pixels = Texture_Log_Tab.Value.Width;
-			ToCTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 			ToCTab.OnClick += (a, b) => UpdateFilterTabPos(true);
 			ToCTab.OnRightClick += (a, b) => ClearForcedDowns();
 
 			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss) {
 				Id = "NextBoss"
 			};
-			BossTab.Width.Pixels = Texture_Log_Tab.Value.Width;
-			BossTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 
 			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss) {
 				Id = "NextMiniBoss"
 			};
-			MiniBossTab.Width.Pixels = Texture_Log_Tab.Value.Width;
-			MiniBossTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 
 			EventTab = new LogTab(Texture_Log_Tab, Texture_Nav_Event) {
 				Id = "NextEvent"
 			};
-			EventTab.Width.Pixels = Texture_Log_Tab.Value.Width;
-			EventTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 
 			CreditsTab = new LogTab(Texture_Log_Tab, Texture_Nav_Credits) {
 				Id = "Credits"
 			};
-			CreditsTab.Width.Pixels = Texture_Log_Tab.Value.Width;
-			CreditsTab.Height.Pixels = Texture_Log_Tab.Value.Height;
 
 			PageOne = new LogPanel() {
 				Id = "PageOne",
@@ -371,8 +355,6 @@ namespace BossChecklist
 			PrevPage = new NavigationalButton(Texture_Nav_Prev, true) {
 				Id = "Previous"
 			};
-			PrevPage.Width.Pixels = Texture_Nav_Prev.Value.Width;
-			PrevPage.Height.Pixels = Texture_Nav_Prev.Value.Height;
 			PrevPage.Left.Pixels = 8;
 			PrevPage.Top.Pixels = 416;
 			PrevPage.OnClick += PageChangerClicked;
@@ -445,8 +427,6 @@ namespace BossChecklist
 			NextPage = new NavigationalButton(Texture_Nav_Next, true) {
 				Id = "Next"
 			};
-			NextPage.Width.Pixels = Texture_Nav_Next.Value.Width;
-			NextPage.Height.Pixels = Texture_Nav_Next.Value.Height;
 			NextPage.Left.Pixels = PageTwo.Width.Pixels - NextPage.Width.Pixels - 12;
 			NextPage.Top.Pixels = 416;
 			NextPage.OnClick += PageChangerClicked;
@@ -460,23 +440,17 @@ namespace BossChecklist
 			hardmodeList.PaddingTop = 5;
 
 			recordButton = new SubPageButton(Texture_Nav_SubPage, SubPage.Records);
-			recordButton.Width.Pixels = Texture_Nav_SubPage.Value.Width;
-			recordButton.Height.Pixels = Texture_Nav_SubPage.Value.Height;
 			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 5;
 			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Records);
 			recordButton.OnRightClick += (a, b) => ResetStats();
 
 			spawnButton = new SubPageButton(Texture_Nav_SubPage, SubPage.SpawnInfo);
-			spawnButton.Width.Pixels = Texture_Nav_SubPage.Value.Width;
-			spawnButton.Height.Pixels = Texture_Nav_SubPage.Value.Height;
 			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
 			spawnButton.Top.Pixels = 5;
 			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.SpawnInfo);
 
 			lootButton = new SubPageButton(Texture_Nav_SubPage, SubPage.LootAndCollectibles);
-			lootButton.Width.Pixels = Texture_Nav_SubPage.Value.Width;
-			lootButton.Height.Pixels = Texture_Nav_SubPage.Value.Height;
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 5 + Texture_Nav_SubPage.Value.Height + 10;
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
@@ -1365,10 +1339,7 @@ namespace BossChecklist
 			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - Texture_Credit_DevSlot.Value.Width / 2) - 8;
 			creditList.Top.Pixels = 60;
 			foreach (KeyValuePair<string, string> user in contributors) {
-				ContributorCredit creditedUser = new ContributorCredit(Texture_Credit_DevSlot, RequestResource($"Credits_{user.Key}"), user.Key, user.Value);
-				creditedUser.Width.Pixels = Texture_Credit_DevSlot.Value.Width;
-				creditedUser.Height.Pixels = Texture_Credit_DevSlot.Value.Height;
-				creditList.Add(creditedUser);
+				creditList.Add(new ContributorCredit(Texture_Credit_DevSlot, RequestResource($"Credits_{user.Key}"), user.Key, user.Value));
 			}
 			PageOne.Append(creditList);
 
@@ -1387,12 +1358,8 @@ namespace BossChecklist
 				pageTwoItemList.Height.Pixels = Texture_Credit_ModSlot.Value.Height * 3 + 15;
 				pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2) - 8;
 				pageTwoItemList.Top.Pixels = 85;
-
 				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
-					ContributorCredit creditedMod = new ContributorCredit(Texture_Credit_ModSlot, mod);
-					creditedMod.Width.Pixels = Texture_Credit_ModSlot.Value.Width;
-					creditedMod.Height.Pixels = Texture_Credit_ModSlot.Value.Height;
-					pageTwoItemList.Add(creditedMod);
+					pageTwoItemList.Add(new ContributorCredit(Texture_Credit_ModSlot, mod));
 				}
 				PageTwo.Append(pageTwoItemList);
 
@@ -1462,8 +1429,6 @@ namespace BossChecklist
 				NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, noticeText) {
 					Id = "bnuuyIcon"
 				};
-				bnuuyIcon.Width.Pixels = bnuuy.Value.Width;
-				bnuuyIcon.Height.Pixels = bnuuy.Value.Height;
 				bnuuyIcon.Left.Pixels = (PageTwo.Width.Pixels - (lootButton.Left.Pixels / 2) - bnuuy.Value.Width / 2);
 				bnuuyIcon.Top.Pixels = lootButton.Top.Pixels;
 				PageTwo.Append(bnuuyIcon);
@@ -1484,16 +1449,12 @@ namespace BossChecklist
 				RecordDisplaySlot slot;
 				if (GetLogEntryInfo.type == EntryType.Boss) {
 					slot = new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i);
-					slot.Width.Pixels = Texture_Content_RecordSlot.Value.Width;
-					slot.Height.Pixels = Texture_Content_RecordSlot.Value.Height;
 					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2;
 					slot.Top.Pixels = 35 + (75 * (i + 1));
 					PageTwo.Append(slot);
 				}
 				else {
 					slot = new RecordDisplaySlot(Texture_Content_RecordSlot, null, null);
-					slot.Width.Pixels = Texture_Content_RecordSlot.Value.Width;
-					slot.Height.Pixels = Texture_Content_RecordSlot.Value.Height;
 					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2;
 					slot.Top.Pixels = 35 + (75 * (i + 1));
 					PageTwo.Append(slot);
@@ -1505,8 +1466,6 @@ namespace BossChecklist
 						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, "Cycle record cubcategory") {
 							Id = "SubCategory"
 						};
-						RecordSubCategoryButton.Width.Pixels = recordIcon.Value.Width;
-						RecordSubCategoryButton.Height.Pixels = recordIcon.Value.Height;
 						RecordSubCategoryButton.Left.Pixels = slot.Width.Pixels - recordIcon.Value.Width - 15;
 						RecordSubCategoryButton.Top.Pixels = slot.Height.Pixels / 2 - recordIcon.Value.Height / 2;
 						slot.Append(RecordSubCategoryButton);
@@ -1524,8 +1483,6 @@ namespace BossChecklist
 							Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
 							Anchor = relatedEntry.GetIndex
 						};
-						entryIcon.Width.Pixels = headIcon.Value.Width;
-						entryIcon.Height.Pixels = headIcon.Value.Height;
 						entryIcon.Left.Pixels = 15 + offset;
 						entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
 						slot.Append(entryIcon);
@@ -1601,8 +1558,6 @@ namespace BossChecklist
 				NavigationalButton PrevItem = new NavigationalButton(Texture_Nav_Prev, true) {
 					Id = "PrevItem"
 				};
-				PrevItem.Width.Pixels = Texture_Nav_Prev.Value.Width;
-				PrevItem.Height.Pixels = Texture_Nav_Prev.Value.Width;
 				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
 				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
 				PrevItem.OnClick += ChangeSpawnItem;
@@ -1613,8 +1568,6 @@ namespace BossChecklist
 				NavigationalButton NextItem = new NavigationalButton(Texture_Nav_Next, true) {
 					Id = "NextItem"
 				};
-				NextItem.Width.Pixels = Texture_Nav_Next.Value.Width;
-				NextItem.Height.Pixels = Texture_Nav_Next.Value.Height;
 				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
 				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
 				NextItem.OnClick += ChangeSpawnItem;
@@ -1683,8 +1636,6 @@ namespace BossChecklist
 					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, "Mods.BossChecklist.BossLog.DrawnText.CycleRecipe") {
 						Id = "CycleItem_" + TotalRecipes
 					};
-					CycleItem.Width.Pixels = Texture_Content_CycleRecipe.Value.Width;
-					CycleItem.Height.Pixels = Texture_Content_CycleRecipe.Value.Height;
 					CycleItem.Left.Pixels = 240;
 					CycleItem.Top.Pixels = 240;
 					CycleItem.OnClick += ChangeSpawnItem;
