@@ -173,9 +173,9 @@ Mods: {
 				Unchallenged: 没有挑战过!
 				Kills: 击杀次数
 				Deaths: 死亡次数
-				show: 显示
-				hide: 隐藏
-				hidewhencompleted: 隐藏已完成的
+				show: '{0}: 显示'
+				hide: '{0}: 隐藏'
+				hidewhencompleted: '{0}: 隐藏已击败的'
 				Bosses: Boss
 				MiniBosses: 小Boss
 				Events: 事件
