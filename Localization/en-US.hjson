@@ -173,11 +173,11 @@ Mods: {
 				Unchallenged: Unchallenged
 				Kills: kills
 				Deaths: deaths
-				show: Show
-				hide: Hide
-				hidewhencompleted: Hide when completed
+				show: '{0}: Shown'
+				hide: '{0}: Hidden'
+				hidewhencompleted: '{0}: Hidden when defeated'
 				Bosses: Bosses
-				MiniBosses: Mini bosses
+				MiniBosses: Mini-bosses
 				Events: Events
 				Total: Total
 				Records: Records

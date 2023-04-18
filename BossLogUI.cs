@@ -72,8 +72,8 @@ namespace BossChecklist
 		public BookUI InfoTab; // shows users info about the enabled progression mode
 		public BookUI ShortcutsTab; // shows users how to change an entry's hidden/defeation state
 		public BookUI filterPanel; // contains the filter buttons
-		private List<BookUI> filterCheckBoxes; // checkmarks for the filters
-		private List<BookUI> filterCheckMark; // checkmarks for the filters
+		public List<NavigationalButton> FilterIcons;
+		private List<UIImage> FilterChecks; // checkmarks for the filters
 		public bool filterOpen = false; // when true, the filter panel is visible to the user
 
 		// Table of Contents related
@@ -385,43 +385,35 @@ namespace BossChecklist
 			filterPanel.Height.Pixels = 166;
 			filterPanel.Width.Pixels = 50;
 
-			filterCheckMark = new List<BookUI>();
-			filterCheckBoxes = new List<BookUI>();
+			FilterIcons = new List<NavigationalButton>();
+			FilterChecks = new List<UIImage>();
 
-			List<Asset<Texture2D>> filterNav = new List<Asset<Texture2D>>() {
-				Texture_Nav_Boss,
-				Texture_Nav_MiniBoss,
-				Texture_Nav_Event,
-				Texture_Content_ToggleHidden
+			Dictionary<string, Asset<Texture2D>> filterTextures = new Dictionary<string, Asset<Texture2D>>() {
+				{ "Filter_Boss", Texture_Nav_Boss },
+				{ "Filter_MiniBoss", Texture_Nav_MiniBoss },
+				{ "Filter_Event", Texture_Nav_Event },
+				{ "Filter_Hidden", Texture_Content_ToggleHidden }
 			};
 
-			for (int i = 0; i < 4; i++) {
-				BookUI newCheck = new BookUI(Texture_Check_Check) {
-					Id = "C_" + i
+			int offsetY = 0;
+			foreach (KeyValuePair<string, Asset<Texture2D>> pair in filterTextures) {
+				NavigationalButton filter = new NavigationalButton(pair.Value) {
+					Id = pair.Key
 				};
-				newCheck.Left.Pixels = filterNav[i].Value.Width * 0.56f;
-				newCheck.Top.Pixels = filterNav[i].Value.Height * 3 / 8;
-				filterCheckMark.Add(newCheck);
+				filter.Top.Pixels = offsetY + 15;
+				filter.Left.Pixels = 25 - (pair.Value.Value.Width / 2);
+				filter.OnClick += ChangeFilter;
+				FilterIcons.Add(filter);
 
-				BookUI newCheckBox = new BookUI(filterNav[i]) {
-					Id = "F_" + i
-				};
-				newCheckBox.Top.Pixels = (34 * i) + 15;
-				newCheckBox.Left.Pixels = (25) - (filterNav[i].Value.Width / 2);
-				newCheckBox.OnClick += ChangeFilter;
-				if (filterNav[i] == Texture_Content_ToggleHidden) {
-					newCheckBox.OnRightClick += (a, b) => ClearHiddenList();
-				}
-				newCheckBox.Append(filterCheckMark[i]);
-				filterCheckBoxes.Add(newCheckBox);
-			}
+				UIImage check = new UIImage(Texture_Check_Check);
+				check.Left.Pixels = pair.Value.Value.Width * 0.56f;
+				check.Top.Pixels = pair.Value.Value.Height * 3 / 8;
+				FilterChecks.Add(check);
 
-			// Setup the inital checkmarks to display what the user has prematurely selected
-			Filters_SetImage();
+				filterPanel.Append(filter);
+				filter.Append(check);
 
-			// Append the filter checks to the filter panel
-			foreach (BookUI uiimage in filterCheckBoxes) {
-				filterPanel.Append(uiimage);
+				offsetY += 34;
 			}
 
 			NextPage = new NavigationalButton(Texture_Nav_Next, true) {
@@ -564,6 +556,7 @@ namespace BossChecklist
 				filterPanel.Top.Pixels = ToCTab.Top.Pixels;
 				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20 - filterPanel.Width.Pixels;
 				filterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
+				UpdateFilterCheckAndTooltip(); // Update filter display state when the filter panel is opened
 			}
 			else {
 				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
@@ -574,40 +567,46 @@ namespace BossChecklist
 		/// <summary>
 		/// The logic behind the filters changing images when toggled.
 		/// </summary>
-		private void Filters_SetImage() {
+		private void UpdateFilterCheckAndTooltip() {
 			// ...Bosses
-			filterCheckMark[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? Texture_Check_Check : Texture_Check_Next);
+			string path = "Mods.BossChecklist.BossLog.Terms";
+
+			FilterIcons[0].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}", Language.GetTextValue($"{path}.Bosses"));
+			FilterChecks[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? Texture_Check_Check : Texture_Check_Next);
 
 			// ...Mini-Bosses
+			FilterIcons[1].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}", Language.GetTextValue($"{path}.MiniBosses"));
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
-				filterCheckMark[1].SetImage(Texture_Check_X);
+				FilterChecks[1].SetImage(Texture_Check_X);
 			}
 			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
-				filterCheckMark[1].SetImage(Texture_Check_Check);
+				FilterChecks[1].SetImage(Texture_Check_Check);
 			}
 			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
-				filterCheckMark[1].SetImage(Texture_Check_X);
+				FilterChecks[1].SetImage(Texture_Check_X);
 			}
 			else {
-				filterCheckMark[1].SetImage(Texture_Check_Next);
+				FilterChecks[1].SetImage(Texture_Check_Next);
 			}
 
 			// ...Events
+			FilterIcons[2].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}", Language.GetTextValue($"{path}.Events"));
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
-				filterCheckMark[2].SetImage(Texture_Check_X);
+				FilterChecks[2].SetImage(Texture_Check_X);
 			}
 			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
-				filterCheckMark[2].SetImage(Texture_Check_Check);
+				FilterChecks[2].SetImage(Texture_Check_Check);
 			}
 			else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
-				filterCheckMark[2].SetImage(Texture_Check_X);
+				FilterChecks[2].SetImage(Texture_Check_X);
 			}
 			else {
-				filterCheckMark[2].SetImage(Texture_Check_Next);
+				FilterChecks[2].SetImage(Texture_Check_Next);
 			}
 
 			// ...Hidden Entries
-			filterCheckMark[3].SetImage(showHidden ? Texture_Check_Check : Texture_Check_X);
+			FilterIcons[3].hoverText = "Mods.BossChecklist.BossLog.HoverText.ToggleVisibility";
+			FilterChecks[3].SetImage(showHidden ? Texture_Check_Check : Texture_Check_X);
 		}
 
 		/// <summary>
@@ -615,11 +614,10 @@ namespace BossChecklist
 		/// including bosses, mini-bosses, events and hidden entries.
 		/// </summary>
 		private void ChangeFilter(UIMouseEvent evt, UIElement listeningElement) {
-			if (listeningElement is not BookUI filter)
+			if (listeningElement is not NavigationalButton filter)
 				return;
 
-			string filterID = filter.Id.Substring(2, 1);
-			if (filterID == "0") {
+			if (filter.Id == "Filter_Boss") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
 				}
@@ -627,7 +625,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
 				}
 			}
-			else if (filterID == "1" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
+			else if (filter.Id == "Filter_MiniBoss" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
 				}
@@ -638,7 +636,7 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Show";
 				}
 			}
-			else if (filterID == "2" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
+			else if (filter.Id == "Filter_Event" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
 				}
@@ -649,13 +647,13 @@ namespace BossChecklist
 					BossChecklist.BossLogConfig.FilterEvents = "Show";
 				}
 			}
-			else if (filterID == "3") {
+			else if (filter.Id == "Filter_Hidden") {
 				showHidden = !showHidden;
 			}
 
 			// Save the filters to the configs, update the checkmark images and refresh the page to update the table of content lists.
 			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
-			Filters_SetImage();
+			UpdateFilterCheckAndTooltip(); // Update filter display state when clicked
 			RefreshPageContent();
 		}
 

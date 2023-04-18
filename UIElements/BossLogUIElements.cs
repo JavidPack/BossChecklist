@@ -231,8 +231,8 @@ namespace BossChecklist.UIElements
 			private Color HoverColor => ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface ? Color.White : BossLogUI.faded;
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				base.Draw(spriteBatch);
 				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), hoverButton ? HoverColor : iconColor);
+				base.Draw(spriteBatch);
 
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface && !string.IsNullOrEmpty(hoverText))
 					BossUISystem.Instance.UIHoverText = Language.GetTextValue(hoverText);
@@ -1148,34 +1148,6 @@ namespace BossChecklist.UIElements
 				}
 
 				base.DrawSelf(spriteBatch);
-
-				if (Id.Contains("F_") && IsMouseHovering) {
-					string termPrefix = "Mods.BossChecklist.BossLog.Terms.";
-					string termLang = $"{termPrefix}hide";
-					string termLang2 = $"";
-					if (Id == "F_0") {
-						termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}";
-						termLang2 = $"{termPrefix}Bosses";
-						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
-					}
-					if (Id == "F_1") {
-						if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
-							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}";
-							termLang2 = $"{termPrefix}MiniBosses";
-						}
-						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
-					}
-					if (Id == "F_2") {
-						if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
-							termLang = $"{termPrefix}{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}";
-							termLang2 = $"{termPrefix}Events";
-						}
-						BossUISystem.Instance.UIHoverText = $"{Language.GetTextValue(termLang)} {Language.GetTextValue(termLang2)}";
-					}
-					if (Id == "F_3") {
-						BossUISystem.Instance.UIHoverText = "Mods.BossChecklist.BossLog.HoverText.ToggleVisibility";
-					}
-				}
 			}
 		}
 
