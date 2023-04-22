@@ -108,6 +108,7 @@ Mods: {
 			}
 
 			SpawnInfo: {
+				NoInfo: Нет доступной информации
 				RecipeFrom: Рецепт из: {0}
 				CycleRecipe: Альтернативные рецепты
 				Noncraftable: Этот предмет не может быть создан

@@ -316,7 +316,7 @@ namespace BossChecklist
 
 		public void AnnounceEventEnd(string eventType) {
 			// TODO: Custom/Generic announcements
-			NetworkText message = NetworkText.FromKey($"Mods.BossChecklist.EventEnd.{eventType}");
+			NetworkText message = NetworkText.FromKey($"Mods.BossChecklist.ChatMessages.EventEnd.{eventType}");
 			if (Main.netMode == NetmodeID.SinglePlayer) {
 				Main.NewText(message.ToString(), Colors.RarityGreen);
 			}

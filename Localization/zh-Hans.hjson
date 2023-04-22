@@ -107,6 +107,7 @@ Mods: {
 			}
 
 			SpawnInfo: {
+				NoInfo: 无可用信息
 				RecipeFrom: 此合成配方来自: {0}
 				CycleRecipe: 切换至其他合成配方
 				Noncraftable: 此物品不可被合成

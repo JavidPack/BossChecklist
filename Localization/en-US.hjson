@@ -107,6 +107,7 @@ Mods: {
 			}
 
 			SpawnInfo: {
+				NoInfo: No info available
 				RecipeFrom: Recipe from: {0}
 				CycleRecipe: Cycle alternative recipes
 				Noncraftable: This item is not craftable

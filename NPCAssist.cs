@@ -159,7 +159,7 @@ namespace BossChecklist
 			if (messageType != "Disabled") {
 				// If the Unique message was empty/null or the player is using Generic despawn messages, try to find an appropriate despawn message to send
 				// Return a generic despawn message if any player is left alive or return a boss victory despawn message if all player's were killed
-				return Main.player.Any(plr => plr.active && !plr.dead) ? "Mods.BossChecklist.BossDespawn.Generic" : "Mods.BossChecklist.BossVictory.Generic";
+				return Main.player.Any(plr => plr.active && !plr.dead) ? "Mods.BossChecklist.ChatMessages.Despawn.Generic" : "Mods.BossChecklist.ChatMessages.Loss.Generic";
 			}
 			// The despawn message feature was disabled. Return an empty message.
 			return null;
@@ -219,7 +219,7 @@ namespace BossChecklist
 				modPlayer.hasNewRecord[recordIndex] = true;
 				// Compare records to World Records. Players must have beaten their own records to beat a world record
 				string recordSet = CheckWorldRecords(recordIndex) ? "NewWorldRecord" : "NewRecord";
-				string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms." + recordSet);
+				string message = Language.GetTextValue($"{BossLogUI.LogPath}.Records.{recordSet}");
 				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
 			}
 		}
@@ -481,7 +481,7 @@ namespace BossChecklist
 
 				// Skeletron's hands just use Skeletron's name instead of their own, so a custom name is needed
 				string partName = npc.type == NPCID.SkeletronHand ? Lang.GetItemNameValue(ItemID.SkeletronHand) : npc.GetFullNetName().ToString();
-				string defeatedLimb = "Mods.BossChecklist.BossDefeated.Limb";
+				string defeatedLimb = "Mods.BossChecklist.ChatMessages.Defeated.Limb";
 				if (Main.netMode == NetmodeID.SinglePlayer) {
 					Main.NewText(Language.GetTextValue(defeatedLimb, partName), Colors.RarityGreen);
 				}
@@ -493,7 +493,7 @@ namespace BossChecklist
 				if (!BossChecklist.ClientConfig.PillarMessages)
 					return;
 
-				string defeatedTower = "Mods.BossChecklist.BossDefeated.Tower";
+				string defeatedTower = "Mods.BossChecklist.ChatMessages.Defeated.Tower";
 				string npcName = npc.GetFullNetName().ToString();
 				if (Main.netMode == NetmodeID.SinglePlayer) {
 					Main.NewText(Language.GetTextValue(defeatedTower, npcName), Colors.RarityPurple);
