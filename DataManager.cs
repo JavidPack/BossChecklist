@@ -199,7 +199,7 @@ namespace BossChecklist
 		/// If the designated boss has not been killed nor has killed a player, 'Unchallenged' will be returned instead.
 		/// </summary>
 		public string GetKDR() {
-			string terms = "Mods.BossChecklist.BossLog.Terms";
+			string terms = "Mods.BossChecklist.Log.Records";
 			if (kills == 0 && deaths == 0)
 				return Language.GetTextValue($"{terms}.Unchallenged");
 
@@ -214,7 +214,7 @@ namespace BossChecklist
 		/// <param name="sign">Only used when find a time difference using <see cref="TimeConversionDiff"/>.</param>
 		public static string TimeConversion(int ticks, string sign = "") {
 			if (ticks == -1)
-				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+				return Language.GetTextValue("Mods.BossChecklist.Log.Records.NoRecord");
 
 			const int TicksPerSecond = 60;
 			const int TicksPerMinute = TicksPerSecond * 60;
@@ -269,10 +269,10 @@ namespace BossChecklist
 		/// <param name="count">The record being checked.</param>
 		public static string HitCount(int count) {
 			if (count == -1)
-				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoRecord");
+				return Language.GetTextValue("Mods.BossChecklist.Log.Records.NoRecord");
 			
 			if (count == 0)
-				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NoHit");
+				return Language.GetTextValue("Mods.BossChecklist.Log.Records.NoHit");
 			
 			return count.ToString();
 		}
@@ -321,7 +321,7 @@ namespace BossChecklist
 		/// </summary>
 		public string PlayTimeToString() {
 			if (kills == 0)
-				return Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.Unchallenged");
+				return Language.GetTextValue("Mods.BossChecklist.Log.Records.Unchallenged");
 
 			int hours = (int)(playTimeFirst / TimeSpan.TicksPerHour);
 			int minutes = (int)((playTimeFirst - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
@@ -433,7 +433,7 @@ namespace BossChecklist
 		/// If the entry has not yet been defeated, 'Unchallenged' will be returned instead.
 		/// </summary>
 		public string GetGlobalKDR() {
-			string terms = "Mods.BossChecklist.BossLog.Terms";
+			string terms = "Mods.BossChecklist.Log.Records";
 			if (totalKills == 0 && totalDeaths == 0)
 				return Language.GetTextValue($"{terms}.Unchallenged");
 
@@ -446,9 +446,9 @@ namespace BossChecklist
 		/// </summary>
 		public string ListDurationRecordHolders() {
 			if (DurationEmpty)
-				return Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ClaimRecord");
+				return Language.GetTextValue("Mods.BossChecklist.Log.Records.ClaimRecord");
 
-			string list = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+			string list = Language.GetTextValue("Mods.BossChecklist.Log.Records.RecordHolder");
 			foreach (string name in durationHolder) {
 				list += $"\n •{name}";
 			}
@@ -461,9 +461,9 @@ namespace BossChecklist
 		/// </summary>
 		public string ListHitsTakenRecordHolders() {
 			if (HitsTakenEmpty)
-				return Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ClaimRecord");
+				return Language.GetTextValue("Mods.BossChecklist.Log.Records.ClaimRecord");
 
-			string list = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.RecordHolder");
+			string list = Language.GetTextValue("Mods.BossChecklist.Log.Records.RecordHolder");
 			foreach (string name in hitsTakenHolder) {
 				list += $"\n •{name}";
 			}

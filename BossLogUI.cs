@@ -147,6 +147,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> Texture_Content_ToggleHidden;
 
 		// Extra stuff
+		public const string LogPath = "Mods.BossChecklist.Log";
 		public static int headNum = -1;
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 		public UIImage PromptCheck; // checkmark for the toggle prompt config button
@@ -325,17 +326,9 @@ namespace BossChecklist
 			ToCTab.OnClick += (a, b) => UpdateFilterTabPos(true);
 			ToCTab.OnRightClick += (a, b) => ClearForcedDowns();
 
-			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss) {
-				Id = "NextBoss"
-			};
-
-			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss) {
-				Id = "NextMiniBoss"
-			};
-
-			EventTab = new LogTab(Texture_Log_Tab, Texture_Nav_Event) {
-				Id = "NextEvent"
-			};
+			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss);
+			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss);
+			EventTab = new LogTab(Texture_Log_Tab, Texture_Nav_Event);
 
 			CreditsTab = new LogTab(Texture_Log_Tab, Texture_Nav_Credits) {
 				Id = "Credits"
@@ -569,13 +562,13 @@ namespace BossChecklist
 		/// </summary>
 		private void UpdateFilterCheckAndTooltip() {
 			// ...Bosses
-			string path = "Mods.BossChecklist.BossLog.Terms";
+			string path = $"{LogPath}.TableOfContents.Filter";
 
-			FilterIcons[0].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterBosses.ToLower().Replace(" ", "")}", Language.GetTextValue($"{path}.Bosses"));
+			FilterIcons[0].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterBosses.Replace(" ", "")}", Language.GetTextValue($"{LogPath}.Common.BossPlural"));
 			FilterChecks[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? Texture_Check_Check : Texture_Check_Next);
 
 			// ...Mini-Bosses
-			FilterIcons[1].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterMiniBosses.ToLower().Replace(" ", "")}", Language.GetTextValue($"{path}.MiniBosses"));
+			FilterIcons[1].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", "")}", Language.GetTextValue($"{LogPath}.Common.MiniBossPlural"));
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				FilterChecks[1].SetImage(Texture_Check_X);
 			}
@@ -590,7 +583,7 @@ namespace BossChecklist
 			}
 
 			// ...Events
-			FilterIcons[2].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterEvents.ToLower().Replace(" ", "")}", Language.GetTextValue($"{path}.Events"));
+			FilterIcons[2].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterEvents.Replace(" ", "")}", Language.GetTextValue($"{LogPath}.Common.EventPlural"));
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				FilterChecks[2].SetImage(Texture_Check_X);
 			}
@@ -605,7 +598,7 @@ namespace BossChecklist
 			}
 
 			// ...Hidden Entries
-			FilterIcons[3].hoverText = "Mods.BossChecklist.BossLog.HoverText.ToggleVisibility";
+			FilterIcons[3].hoverText = $"{path}.ToggleVisibility";
 			FilterChecks[3].SetImage(showHidden ? Texture_Check_Check : Texture_Check_X);
 		}
 
@@ -619,7 +612,7 @@ namespace BossChecklist
 
 			if (filter.Id == "Filter_Boss") {
 				if (BossChecklist.BossLogConfig.FilterBosses == "Show") {
-					BossChecklist.BossLogConfig.FilterBosses = "Hide when completed";
+					BossChecklist.BossLogConfig.FilterBosses = "Hide When Completed";
 				}
 				else {
 					BossChecklist.BossLogConfig.FilterBosses = "Show";
@@ -627,9 +620,9 @@ namespace BossChecklist
 			}
 			else if (filter.Id == "Filter_MiniBoss" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
-					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide when completed";
+					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide When Completed";
 				}
-				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide when completed") {
+				else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide When Completed") {
 					BossChecklist.BossLogConfig.FilterMiniBosses = "Hide";
 				}
 				else {
@@ -638,9 +631,9 @@ namespace BossChecklist
 			}
 			else if (filter.Id == "Filter_Event" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
-					BossChecklist.BossLogConfig.FilterEvents = "Hide when completed";
+					BossChecklist.BossLogConfig.FilterEvents = "Hide When Completed";
 				}
-				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide when completed") {
+				else if (BossChecklist.BossLogConfig.FilterEvents == "Hide When Completed") {
 					BossChecklist.BossLogConfig.FilterEvents = "Hide";
 				}
 				else {
@@ -783,7 +776,7 @@ namespace BossChecklist
 			PageTwo.RemoveAllChildren();
 
 			// create a text box for the progression mode description
-			FittedTextPanel textBox = new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ProgressionModeDescription");
+			FittedTextPanel textBox = new FittedTextPanel($"{LogPath}.ProgressionMode.Description");
 			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
 			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
 			textBox.Left.Pixels = 10;
@@ -831,10 +824,10 @@ namespace BossChecklist
 			};
 
 			FittedTextPanel[] textOptions = new FittedTextPanel[] {
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressMode"),
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.EnableProgressMode"),
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.ConfigProgressMode"),
-				new FittedTextPanel("Mods.BossChecklist.BossLog.DrawnText.DisableProgressPrompt"),
+				new FittedTextPanel($"{LogPath}.ProgressionMode.SelectDisable"),
+				new FittedTextPanel($"{LogPath}.ProgressionMode.SelectEnable"),
+				new FittedTextPanel($"{LogPath}.ProgressionMode.SelectConfig"),
+				new FittedTextPanel($"{LogPath}.ProgressionMode.DisablePrompt"),
 			};
 
 			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? Texture_Check_Check : Texture_Check_X);
@@ -1096,7 +1089,7 @@ namespace BossChecklist
 					// TODO: this will likely always output the NotImplemented, but I don't want to remove it just yet
 					bool entryHasOldCall = BossChecklist.bossTracker.OldCalls.Values.Any(x => x.Contains(GetLogEntryInfo.name));
 					string message = entryHasOldCall ? "NotImplemented" : "LogFeaturesNotAvailable";
-					FittedTextPanel brokenDisplay = new FittedTextPanel($"Mods.BossChecklist.BossLog.DrawnText.{message}");
+					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LogPath}.EntryPage.{message}");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = -12;
@@ -1116,13 +1109,13 @@ namespace BossChecklist
 			hardmodeList.Clear();
 
 			// Pre-Hard Mode List Title
-			string title = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.PreHardmode");
+			string title = Language.GetTextValue($"{LogPath}.TableOfContents.PreHardmode");
 			PageOneTitle.SetText(title);
 			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageOne.Append(PageOneTitle);
 
 			// Hard Mode List Title
-			title = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Hardmode");
+			title = Language.GetTextValue($"{LogPath}.TableOfContents.Hardmode");
 			PageTwoTitle.SetText(title);
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
@@ -1310,19 +1303,19 @@ namespace BossChecklist
 		/// </summary>
 		private void UpdateCredits() {
 			// Developers Title
-			string title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Devs");
+			string title = Language.GetTextValue($"{LogPath}.Credits.Devs");
 			PageOneTitle.SetText(title);
 			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageOne.Append(PageOneTitle);
 
 			// Registered Mods Title
-			title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Mods");
+			title = Language.GetTextValue($"{LogPath}.Credits.Mods");
 			PageTwoTitle.SetText(title);
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
 
 			// Registered Mods subtitle
-			title = Language.GetTextValue("Mods.BossChecklist.BossLog.Credits.Notice");
+			title = Language.GetTextValue($"{LogPath}.Credits.Notice");
 			UIText subtitle = new UIText(title) {
 				TextColor = Color.Salmon
 			};
@@ -1474,7 +1467,7 @@ namespace BossChecklist
 						EntryInfo relatedEntry = BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == entryKey)];
 
 						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
-						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue("Mods.BossChecklist.BossLog.HoverText.ViewPage");
+						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LogPath}.EntryPage.ViewPage");
 						Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
 						NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
@@ -1530,8 +1523,7 @@ namespace BossChecklist
 			// Once the spawn description has been made, start structuring the spawn items showcase
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
 			if (GetLogEntryInfo.spawnItem.Count == 0 || GetLogEntryInfo.spawnItem[SpawnItemSelected] == ItemID.None) {
-				string type = GetLogEntryInfo.type == EntryType.Boss ? "Boss" : GetLogEntryInfo.type == EntryType.Event ? "Event" : "MiniBoss";
-				UIText info = new UIText(Language.GetTextValue($"Mods.BossChecklist.BossLog.DrawnText.NoSpawn{type}"));
+				UIText info = new UIText(Language.GetTextValue($"{LogPath}.SpawnInfo.NoSpawnItem", Language.GetTextValue($"{LogPath}.Common.{GetLogEntryInfo.type}")));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
 				PageTwo.Append(info);
@@ -1614,7 +1606,7 @@ namespace BossChecklist
 
 			// If no recipes were found, skip the recipe item slot code and inform the user the item is not craftable
 			if (TotalRecipes == 0) {
-				string noncraftable = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.Noncraftable");
+				string noncraftable = Language.GetTextValue($"{LogPath}.SpawnInfo.Noncraftable");
 				UIText craftText = new UIText(noncraftable, 0.8f);
 				craftText.Left.Pixels = 10;
 				craftText.Top.Pixels = 205;
@@ -1623,7 +1615,7 @@ namespace BossChecklist
 			}
 			else {
 				// display where the recipe originates form
-				string recipeMessage = Language.GetTextValue("Mods.BossChecklist.BossLog.DrawnText.RecipeFrom", recipeMod);
+				string recipeMessage = Language.GetTextValue($"{LogPath}.SpawnInfo.RecipeFrom", recipeMod);
 				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
 				ModdedRecipe.Left.Pixels = 10;
 				ModdedRecipe.Top.Pixels = 205;
@@ -1631,7 +1623,7 @@ namespace BossChecklist
 
 				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
 				if (TotalRecipes > 1) {
-					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, "Mods.BossChecklist.BossLog.DrawnText.CycleRecipe") {
+					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, $"{LogPath}.SpawnInfo.CycleRecipe") {
 						Id = "CycleItem_" + TotalRecipes
 					};
 					CycleItem.Left.Pixels = 240;
@@ -1670,7 +1662,7 @@ namespace BossChecklist
 			if (requiredTiles.Count == 0) {
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
 				// TODO: Change the Power Glove to the Hand of Creation
-				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
+				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue($"{LogPath}.SpawnInfo.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
 				craftItem.Top.Pixels = 240 + (48 * (row + 2));
 				craftItem.Left.Pixels = 20;
 				PageTwo.Append(craftItem);
