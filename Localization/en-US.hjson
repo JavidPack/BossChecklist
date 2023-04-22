@@ -395,6 +395,19 @@ Mods: {
 						Useful for mod developers making cross-mod content.
 						'''
 					CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
+					InactiveBossCheck: 
+						'''
+						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
+						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
+						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
+						'''
+					DisableNewRecords:
+						'''
+						While enabled, all personal records will not be overwritten except for Previous Attempt.
+						This will also disable sending record data to the server for world records.
+						'''
+					ShowRecordTracking: Record Tracking must be enabled for this to show
+
 					ResetLoot: 
 						'''
 						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
@@ -408,18 +421,6 @@ Mods: {
 						'''
 					ResetForcedDowns: Reset all world forced downs by alt + right-clicking on the filters tab on the Table of Contents pages.
 					ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
-					InactiveBossCheck: 
-						'''
-						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
-						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
-						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
-						'''
-					DisableNewRecords:
-						'''
-						While enabled, all personal records will not be overwritten except for Previous Attempt.
-						This will also disable sending record data to the server for world records.
-						'''
-					ShowRecordTracking: Record Tracking must be enabled for this to show
 				}
 			}
 		}
