@@ -1,39 +1,207 @@
 Mods: {
 	BossChecklist: {
-		BossDespawn: {
-			Generic: "{0} больше не преследует вас..."
-			Day: "{0} скрывается с восходом солнца..."
+		Log: {
+			Common: {
+				BossLog: Босс-журнал
+				Boss: Boss
+				BossPlural: Боссы
+				MiniBoss: Mini-boss
+				MiniBossPlural: Мини-боссы
+				Event: Event
+				EventPlural: События
+			}
+
+			Tabs: {
+				ToggleFilters: Переключить фильтры
+
+				TableOfContents: Оглавление
+				Credits: Конец
+				NextEntry: 
+					'''
+					Next {0}:
+					{1}
+					'''
+				
+				Records: Рекорды
+				SpawnInfo: Призыв
+				LootAndCollectibles: Коллекция
+			}
+
+			TableOfContents: {
+				PreHardmode: Пре-хардмод
+				Hardmode: Хардмод
+				ProgressBarListMods: Нажмите, чтобы переключиться в режим списка модов
+				ProgressBarListTypes: Нажмите, чтобы переключиться в режим типа записей
+				
+				AllLoot: Вся добыча босса получена!
+				AllDropLoot: Вся не коллекционные предметы босса получены!
+				AllCollectibles: Все коллекционные предметы босса получены!
+
+				Filter:{
+					Show: '{0}: Показаны'
+					Hide: '{0}: Скрыты'
+					HideWhenCompleted: '{0}: Скрыты после победы'
+					ToggleVisibility: Переключить видимость скрытых целей
+				}
+			}
+			
+			Credits: {
+				Devs: Соавторы
+				Mods: Зарегистрированные моды
+				Notice: "[Список загружённых модов]"
+				NoIcon: Иконка мода не найдена!
+				ModsEmpty: Ни один из загружённых модов не зарегистрировал записи в Босс-журнал. Если вы хотите, чтобы ваши любимые моды были включены, сообщите разработчику мода на странице его мастерской Steam или на Discord сервере!
+			}
+
+			EntryPage: {
+				Defeated: Побеждён в {0}
+				Undefeated: Не побеждён в {0}
+				CopyKey: Нажмите, чтобы скопировать внутренний 'ключ босса' в буфер обмена
+				CopySource: Нажмите, чтобы скопировать внутренний 'ключ мода' в буфер обмена
+				ViewPage: Нажмите для просмотра страницы
+				
+				NotImplemented: Отображение этой страницы недоступно. Мод либо не представил страницу, либо неправильно её настроил.
+				LogFeaturesNotAvailable: Записи, предметы для призыва, и таблица добычи для этой страницы отключены. Мод либо не представил достаточно информации для страницы, либо неправильно её настроил.
+			}
+
+			Records: {
+				NewRecord: Новый рекорд!
+				NewWorldRecord: Рекорд мира!
+
+				NoRecord: Нет рекорда
+				Unchallenged: Непобеждён
+				Kills: убийств
+				Deaths: смертей
+				Total: Total
+				NoHit: Без урона!
+				
+				PreviousBest: Пред. лучший результат
+				ClaimRecord: Будьте первым, кто установит рекорд мира!
+				RecordHolder: Рекорд обладателя(ей)
+
+				Category: {
+					PreviousAttempt: Предыдущая попытка
+					FirstVictory: Первая победа
+					PersonalBest: Личный рекорд
+					WorldRecord: Рекорды мира
+				}
+
+				Title: {
+					PreviousAttempt: Попытка
+					FirstVictory: Время игры
+					PersonalBest: У/С-соотношение
+					WorldRecord: Общий У\С
+					Duration: Длительность битвы
+					DurationWorld: Самая быстрая битва
+					HitsTaken: Получено ударов
+					HitsTakenWorld: Мин. кол-во ударов
+				}
+
+				Tooltip: {
+					Duration: Самая быстрая победа над этим боссом!
+					HitsTaken: Избегайте как можно больше атак! Попробуйте победить этого босса, не получив урона!
+					PreviousAttempt: Количество столкновений с этим боссом!
+					PersonalBest: Общее количество раз, когда вы убили этого босса, и общее количество раз, когда этот босс убил вас!
+					FirstVictory: Общее время игры, в течение которого ваш персонаж был активен, вплоть до первого убийства босса!
+					WorldRecord: Статистика убийств и смертей от всех игроков для этого босса!
+				}
+			}
+
+			SpawnInfo: {
+				RecipeFrom: Рецепт из: {0}
+				CycleRecipe: Альтернативные рецепты
+				Noncraftable: Этот предмет не может быть создан
+				NoSpawnItem: 
+					'''
+					У этого {0] нет предмета
+					для призыва
+					'''
+				ByHand: Вручную
+			}
+
+			LootAndCollection: {
+				MaskedItems: Победите эту цель, чтобы ознакомиться с его добычей и коллекционными предметами
+				ItemIsExpertOnly: Этот предмет доступен только в режиме эксперта
+				ItemIsMasterOnly: Этот предмет доступен только в режиме мастера
+				ItemIsLocked: Этот предмет имеет особые условия для разблокировки
+			}
+
+			ProgressionMode: {
+				BeforeYouBegin: Прежде чем вы начнете...
+				AskEnable: Хотите включить режим прогрессии?
+				SelectAnOption: Выберите один из вариантов...
+				SelectDisable: Продолжить с отключённым режимом прогрессии...
+				SelectEnable: Продолжить с полностью включённым режимом прогрессии...
+				SelectConfig: Закрыть Босс-журнал и настроить режим прогрессии...
+				DisablePrompt: 
+					'''
+					Не показывать это снова
+					(Для вновь созданных персонажей)
+					'''
+				Description:
+					'''
+					Режим прогрессии скрывает часть контента, связанного с боссами, до тех пор, пока вы не победите их или не выполните определённые условия. Эта функция особенно полезна для игроков, которые хотят пройти игру на ощупь, не зная заранее о всех боссах и их особенностях.
+					
+					Обратите внимание, что Босс-журнал будет отключён до тех пор, пока вы не выберите один из вариантов!
+					'''
+				IsEnabled:
+					'''
+					[i:888] Режим прогрессии полностью или частично включён!
+					Он скрывает некоторую информацию о боссах до тех пор, пока они не будут побеждены.
+					Чтобы отключить или настроить режим прогрессии, перейдите в:
+					Настройки > Настройки модов > Boss Checklist: Настройки Босс-журнала
+					и пролистайте вниз до настроек режима прогресса
+					'''
+			}
+
+			HintTexts: {
+				MarkEntry: Нажмите ПКМ по боссу, чтобы отметить его побеждённого
+				HideEntry: Нажмите Alt+ПКМ по боссу, чтобы скрыть его из списка
+				ClearMarked: Нажмите Alt+ЛКМ по кнопке 'Переключить видимость скрытых целей', чтобы сбросить все принудительные пометки
+				ClearHidden: Нажмите Alt+ПКМ по кнопке 'Переключить видимость скрытых целей', чтобы сбросить все скрытые записи
+				ClearItems: Нажмите Alt+ПКМ по кнопке 'Коллекция', чтобы сбросить все полученные предметы босса
+				RemoveItem: Нажмите Alt+ПКМ по предмету, чтобы удалить его из списка полученных предметов босса
+				ClearAllRecords: Нажмите Alt+ПКМ по кнопке 'Рекорды', чтобы сбросить все рекорды
+				ClearRecord: Нажмите Alt+ПКМ по иконке рекорда, чтобы сбросить этот рекорд
+			}
 		}
 
-		BossVictory: {
-			Generic: "{0} убил всех игроков!"
-			KingSlime: Король слизней гордо уходит...
-			EyeofCthulhu: Глаз Ктулху исчезает в ночном небе...
-			EaterofWorlds: Пожиратель миров вновь уходит под землю...
-			BrainofCthulhu: Мозг Ктулху исчезает в ямах багрянца...
-			QueenBee: Королева пчёл возвращается в гнездо своей колонии...
-			Skeletron: Скелетрон продолжает мучить старика...
-			WallofFlesh: Стена плоти смогла пересечь преисподнюю...
-			Twins: "{0} продолжают свои наблюдения..."
-			TheDestroyer: Уничтожитель ищет другой мир, чтобы пожирать...
-			SkeletronPrime: Скелетрон Прайм начинает поиски новой жертвы...
-			Plantera: Плантера продолжает отдыхать в джунглях...
-			Golem: Голем отключается в недрах храма...
-			DukeFishron: Герцог Рыброн возвращается в глубины океана...
-			LunaticCultist: Культист-лунатик возвращается к своему истовому поклонению...
-			MoonLord: Лунный лорд покинул эту реальность...
-		}
+		ChatMessages: {
+			Despawn: {
+				Generic: "{0} больше не преследует вас..."
+				Day: "{0} скрывается с восходом солнца..."
+			}
 
-		EventEnd: {
-			BloodMoon: Кровавая луна уходит за горизонт...
-			FrostMoon: Морозная луна тает, как солнце восходит...
-			PumpkinMoon: Тыквенная луна прекращает свою жатву...
-			SolarEclipse: Солнечное затмение закончилось... до следующего раза...
-		}
+			Defeated: {
+				Tower: "{0} была уничтожена!"
+				Limb: "{0} пала!"
+			}
 
-		BossDefeated: {
-			Tower: "{0} была уничтожена!"
-			Limb: "{0} пала!"
+			Loss: {
+				Generic: "{0} убил всех игроков!"
+				KingSlime: Король слизней гордо уходит...
+				EyeofCthulhu: Глаз Ктулху исчезает в ночном небе...
+				EaterofWorlds: Пожиратель миров вновь уходит под землю...
+				BrainofCthulhu: Мозг Ктулху исчезает в ямах багрянца...
+				QueenBee: Королева пчёл возвращается в гнездо своей колонии...
+				Skeletron: Скелетрон продолжает мучить старика...
+				WallofFlesh: Стена плоти смогла пересечь преисподнюю...
+				Twins: "{0} продолжают свои наблюдения..."
+				TheDestroyer: Уничтожитель ищет другой мир, чтобы пожирать...
+				SkeletronPrime: Скелетрон Прайм начинает поиски новой жертвы...
+				Plantera: Плантера продолжает отдыхать в джунглях...
+				Golem: Голем отключается в недрах храма...
+				DukeFishron: Герцог Рыброн возвращается в глубины океана...
+				LunaticCultist: Культист-лунатик возвращается к своему истовому поклонению...
+				MoonLord: Лунный лорд покинул эту реальность...
+			}
+
+			EventEnd: {
+				BloodMoon: Кровавая луна уходит за горизонт...
+				FrostMoon: Морозная луна тает, как солнце восходит...
+				PumpkinMoon: Тыквенная луна прекращает свою жатву...
+				SolarEclipse: Солнечное затмение закончилось... до следующего раза...
+			}
 		}
 
 		BossSpawnInfo: {
@@ -79,315 +247,369 @@ Mods: {
 			TorchGod: Разместите 101 факел в подземелье. Событие начнётся, когда будет установлен последний факел.
 		}
 
-		BossLog: {
-			HoverText: {
-				ToggleFilters: Переключить фильтры
-				JumpTOC: Оглавление
-				JumpCred: Конец
-				NextBoss:
-					'''
-					Следующий босс:
-					{0}
-					'''
-				NextMiniBoss:
-					'''
-					Следующий мини-босс:
-					{0}
-					'''
-				NextEvent:
-					'''
-					Следующее событие:
-					{0}
-					'''
-				ViewCollect: Нажмите, чтобы просмотреть только коллекционные предметы
-				ViewLoot: Нажмите, чтобы просмотреть весь лут
-				ItemIsExpertOnly: Этот предмет доступен только в режиме эксперта
-				ItemIsMasterOnly: Этот предмет доступен только в режиме мастера
-				ItemIsLocked: Этот предмет имеет особые условия для разблокировки
-				CopyKey: Нажмите, чтобы скопировать внутренний 'ключ босса' в буфер обмена
-				CopySource: Нажмите, чтобы скопировать внутренний 'ключ мода' в буфер обмена
-				ViewPage: Нажмите для просмотра страницы
-				ToggleVisibility: Переключить видимость скрытых целей
-				AllLoot: Вся добыча босса получена!
-				AllDropLoot: Вся не коллекционные предметы босса получены!
-				AllCollectibles: Все коллекционные предметы босса получены!
-				MaskedItems: Победите эту цель, чтобы ознакомиться с его добычей и коллекционными предметами
-				ClaimRecord: Будьте первым, кто установит рекорд мира!
-				ProgressionModeIsEnabled:
-					'''
-					[i:888] Режим прогрессии полностью или частично включён!
-					Он скрывает некоторую информацию о боссах до тех пор, пока они не будут побеждены.
-					Чтобы отключить или настроить режим прогрессии, перейдите в:
-					Настройки > Настройки модов > Boss Checklist: Настройки Босс-журнала
-					и пролистайте вниз до настроек режима прогресса
-					'''
-				ModCompletion: Нажмите, чтобы переключиться в режим списка модов
-				EntryCompletion: Нажмите, чтобы переключиться в режим типа записей
+		Configs: {
+			Common: {
+				InvalidChange: Вы не можете изменить эту настройку, пока {0} активен!
+				HostChange: Только хост может изменить эту настройку.
 			}
 
-			DrawnText: {
-				PreHardmode: Пре-хардмод
-				Hardmode: Хардмод
-				Defeated: Побеждён в {0}
-				Undefeated: Не побеждён в {0}
-				RecipeFrom: Рецепт из: {0}
-				CycleRecipe: Альтернативные рецепты
-				Noncraftable: Этот предмет не может быть создан
-				NoSpawnBoss:
-					'''
-					У этого босса нет предмета
-					для призыва
-					'''
-				NoSpawnMiniBoss:
-					'''
-					У этого мини-босса нет предмета
-					для призыва
-					'''
-				NoSpawnEvent:
-					'''
-					У этого события нет предмета
-					для призыва
-					'''
-				NoInfo: Нет доступной информации
-				NotImplemented: Отображение этой страницы недоступно. Мод либо не представил страницу, либо неправильно её настроил.
-				LogFeaturesNotAvailable: Записи, предметы для призыва, и таблица добычи для этой страницы отключены. Мод либо не представил достаточно информации для страницы, либо неправильно её настроил.
-				BeforeYouBegin: Прежде чем вы начнете...
-				EnableProgressionMode: Хотите включить режим прогрессии?
-				SelectAnOption: Выберите один из вариантов...
-				DisableProgressMode: Продолжить с отключённым режимом прогрессии...
-				EnableProgressMode: Продолжить с полностью включённым режимом прогрессии...
-				ConfigProgressMode: Закрыть Босс-журнал и настроить режим прогрессии...
-				DisableProgressPrompt: 
-					'''
-					Не показывать это снова
-					(Для вновь созданных персонажей)
-					'''
-				ProgressionModeDescription:
-					'''
-					Режим прогрессии скрывает часть контента, связанного с боссами, до тех пор, пока вы не победите их или не выполните определённые условия. Эта функция особенно полезна для игроков, которые хотят пройти игру на ощупь, не зная заранее о всех боссах и их особенностях.
+			BossLogCustomization: {
+				Title: Boss Log Customization
+
+				Header: {
+					BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
+					BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
+					BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
+				}
+
+				Label: {
+					BossLogColor: Boss Log Color
+					BossLogPos: Open Log Button Position
 					
-					Обратите внимание, что Босс-журнал будет отключён до тех пор, пока вы не выберите один из вариантов!
-					'''
-			}
+					HideUnavailable: Hide unavailable bosses
+					HideUnsupported: Hide unsupported bosses
+					OnlyBosses: Boss Log only shows boss content
+					FilterBosses: Filter bosses in list
+					FilterMiniBosses: Filter mini bosses in list
+					FilterEvents: Filter events in list
+					ColoredBossText: Colored Boss Text
+					SelectedCheckmarkType: Checklist Marking Type
+					DrawNextMark: Next Boss Check
+					LootChecklist: Enable loot/collectible checklist
+					CheckDroppedLoot: Only check droppable loot
 
-			Credits: {
-				Devs: Соавторы
-				Mods: Зарегистрированные моды
-				Notice: "[Список загружённых модов]"
-				NoIcon: Иконка мода не найдена!
-				ModsEmpty: Ни один из загружённых модов не зарегистрировал записи в Босс-журнал. Если вы хотите, чтобы ваши любимые моды были включены, сообщите разработчику мода на странице его мастерской Steam или на Discord сервере!
-			}
-
-			Terms: {
-				BossLog: Босс-журнал
-				ByHand: Вручную
-				NoRecord: Нет рекорда
-				Unchallenged: Непобеждён
-				Kills: убийств
-				Deaths: смертей
-				show: '{0}: Показаны'
-				hide: '{0}: Скрыты'
-				hidewhencompleted: '{0}: Скрыты после победы'
-				Bosses: Боссы
-				MiniBosses: Мини-боссы
-				Events: События
-				Total: Total
-				Records: Рекорды
-				SpawnInfo: Призыв
-				LootAndCollectibles: Коллекция
-				PreviousAttempt: Предыдущая попытка
-				FirstVictory: Первая победа
-				PersonalBest: Личный рекорд
-				WorldRecord: Рекорды мира
-				NewRecord: Новый рекорд!
-				NewWorldRecord: Рекорд мира!
-				RecordHolder: Рекорд обладателя(ей)
-				PreviousBest: Пред. лучший результат
-				NoHit: Без урона!
-			}
-			
-			RecordSlot: {
-				Title: {
-					PreviousAttempt: Попытка
-					FirstVictory: Время игры
-					PersonalBest: У/С-соотношение
-					WorldRecord: Общий У\С
-					Duration: Длительность битвы
-					DurationWorld: Самая быстрая битва
-					HitsTaken: Получено ударов
-					HitsTakenWorld: Мин. кол-во ударов
+					EnableProgressionMode: Enable Progression Mode
+					DisableProgressionMode: Disable Progression Mode
+					ProgressionPrompt: Disable Progression Mode prompt
+					MaskTextures: Hide textures until entry is defeated
+					MaskNames: Hide names until entry is defeated
+					UnmaskNextCheck: Show the name of the next entry to fight
+					MaskBossLoot: Hide boss drops until entry is defeated
+					MaskHardMode: Hide hardmode content until in hardmode
 				}
 
 				Tooltip: {
-					Duration: Самая быстрая победа над этим боссом!
-					HitsTaken: Избегайте как можно больше атак! Попробуйте победить этого босса, не получив урона!
-					PreviousAttempt: Количество столкновений с этим боссом!
-					PersonalBest: Общее количество раз, когда вы убили этого босса, и общее количество раз, когда этот босс убил вас!
-					FirstVictory: Общее время игры, в течение которого ваш персонаж был активен, вплоть до первого убийства босса!
-					WorldRecord: Статистика убийств и смертей от всех игроков для этого босса!
+					BossLogColor: Choose the color of your Boss Log!
+					BossLogPos:
+						'''
+						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
+						Position is measured from bottom right corner of screen.
+						'''
+					
+					HideUnavailable: 
+						'''
+						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
+						Ex. Frost Legion while it is not Xmas
+						'''
+					HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
+					OnlyBosses: If enabled, the checklist and page navigation will only give access boss entries.
+					ColoredBossText:
+						'''
+						The boss text in the table of contents will be green when defeated and red when not.
+						If next check is enabled, the next boss will be yellow.
+						'''
+					DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
+					LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
+					CheckDroppedLoot: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
+				
+					ProgressionPrompt: While enabled, this will prevent the prompt from appearing for newly-created characters.
+					UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
+					MaskHardMode: Hides ALL content, overriding the options you have toggled above.
 				}
 			}
 
-			HintTexts: {
-				MarkEntry: Нажмите ПКМ по боссу, чтобы отметить его побеждённого
-				HideEntry: Нажмите Alt+ПКМ по боссу, чтобы скрыть его из списка
-				ClearMarked: Нажмите Alt+ЛКМ по кнопке 'Переключить видимость скрытых целей', чтобы сбросить все принудительные пометки
-				ClearHidden: Нажмите Alt+ПКМ по кнопке 'Переключить видимость скрытых целей', чтобы сбросить все скрытые записи
-				ClearItems: Нажмите Alt+ПКМ по кнопке 'Коллекция', чтобы сбросить все полученные предметы босса
-				RemoveItem: Нажмите Alt+ПКМ по предмету, чтобы удалить его из списка полученных предметов босса
-				ClearAllRecords: Нажмите Alt+ПКМ по кнопке 'Рекорды', чтобы сбросить все рекорды
-				ClearRecord: Нажмите Alt+ПКМ по иконке рекорда, чтобы сбросить этот рекорд
+			OtherFeatures: {
+				Title: Other features
+
+				Header: {
+					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
+					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
+				}
+
+				Label: {
+					DespawnMessageType: Boss Despawn Messages
+					LimbMessages: Segment Defeated Messages
+					PillarMessages: Pillar Defeated Messages
+					TimerSounds: Respawn Timer Sounds
+
+					TreasureBags: Treasure bags display on the map
+					Fragments: Fragments display on the map
+					Scales: Shadow Scales and Tissue Samples display on the map
+
+					BossRadar: Enable Boss Radar
+					RadarMiniBosses: Whitelist mini bosses
+					RadarOpacity: Radar Opacity
+					RadarBlacklist: Radar Blacklist
+				}
+
+				Tooltip: {
+					DespawnMessageType:
+						'''
+						Despawn messages will appear in chat when a boss becomes inactive.
+						If enabled, choose betweem generic or unique messages.
+						'''
+					LimbMessages:
+						'''
+						Multi-segmented bosses will send messages when a segment is defeated
+						Ex. Skeletron's hands
+						'''
+					PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
+					TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
+					RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
+					RadarOpacity: Adjust how transparent the radar's icon will be
+					RadarBlacklist: The selected NPCs will not be tracked by the radar
+				}
+			}
+
+			Debug: {
+				Title: Debug Interface
+
+				Header: {
+					Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
+					DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
+					DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
+				}
+
+				Label: {
+					ModCallVerbose: Mod.Call Log Verbose
+					ShowProgressionValue: Access Progression Values
+					AccessInternalNames: Access Internal Names
+					CollectionTypeDetection: Show Auto-detected Collection Type
+					InactiveBossCheck: Inactive Boss Check
+					DisableNewRecords: Disable updating personal records
+					DisableRecordTracking: Disable record tracking
+					ShowRecordTracking: Show record timers and counters of a selected Boss
+
+					ResetLoot: Enable Reset Loot and Collection Items Option
+					ResetRecords: Enable Reset Record Option
+					ResetForcedDowns: Enable Reset Forced Downed Entries Options
+					ResetHiddenEntries: Enable Reset Hidden Entries Option
+				}
+
+				Tooltip: {
+					ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
+					ShowProgressionValue:
+						'''
+						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
+						The progression value is what determines how entries are ordered in the checklist.
+						'''
+					AccessInternalNames:
+						'''
+						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
+						Useful for mod developers making cross-mod content.
+						'''
+					CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
+					InactiveBossCheck: 
+						'''
+						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
+						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
+						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
+						'''
+					DisableNewRecords:
+						'''
+						While enabled, all personal records will not be overwritten except for Previous Attempt.
+						This will also disable sending record data to the server for world records.
+						'''
+					ShowRecordTracking: Record Tracking must be enabled for this to show
+
+					ResetLoot: 
+						'''
+						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
+						Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
+						This will apply to ALL boss loot lists.
+						'''
+					ResetRecords: 
+						'''
+						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
+						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
+						'''
+					ResetForcedDowns: Reset all world forced downs by alt + right-clicking on the filters tab on the Table of Contents pages.
+					ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
+				}
 			}
 		}
+	}
+}
+
+Mods: {
+	BossChecklist: {
 
 		Configs: {
-			Title: {
-				BossLogCustomization: Настройки Босс-журнала
-				OtherFeatures: Другие возможности
-				Debug: Интерфейс отладки
+			BossLogCustomization: {
+				Title: Настройки Босс-журнала
+
+				Header: {
+					BossLogUI: "[i:149] [c/ffeb6e:Интерфейс Босс-журнала]"
+					BossLogChecklist: "[i:903] [c/ffeb6e:Отметки Босс-журнала]"
+					BlindMode: "[i:888] [c/ffeb6e:Режим прогрессии - победите боссов, чтобы открыть их запись!]"
+				}
+
+				Label: {
+					BossLogColor: Цвет Босс-журнала
+					BossLogPos: Положение кнопки Босс-журнала
+					
+					HideUnavailable: Скрыть недоступных боссов
+					HideUnsupported: Скрыть неподдерживаемых боссов
+					OnlyBosses: Босс-журнал показывает только боссов
+					FilterBosses: Фильтр боссов в списке
+					FilterMiniBosses: Фильтр мини-боссов в списке
+					FilterEvents: Фильтр событий в списке
+					ColoredBossText: Цветной текст боссов
+					SelectedCheckmarkType: Тип отметки в чеклисте
+					DrawNextMark: Проверка следующего босса
+					LootChecklist: Включить проверку добычи/коллекции
+					CheckDroppedLoot: Проверять только выпадающие предметы
+					
+					EnableProgressionMode: Включить режим прогрессии
+					DisableProgressionMode: Отключить режим прогрессии
+					ProgressionPrompt: Отключить предупреждение о режиме прогрессии
+					MaskTextures: Скрыть текстуры до победы над целью
+					MaskNames: Скрыть имена до победы над целью
+					UnmaskNextCheck: Показывать имя следующей цели для битвы
+					MaskBossLoot: Скрыть выпадаемые предметы босса до победы
+					MaskHardMode: Скрыть контент Хардмода до его начала
+				}
+
+				Tooltip: {
+					BossLogColor: Выберите цвет для вашего Босс-журнала!
+					BossLogPos:
+						'''
+						Альтернативно, удерживайте ПКМ при наведении на кнопку Босс-журнала, чтобы легко переместить её в любое место на экране!
+						Положение измеряется относительно нижнего правого угла экрана
+						'''
+
+					HideUnavailable: 
+						'''
+						Если эта настройка включена, недоступные боссы будут удалены из оглавления Босс-журнала.
+						Например, Морозный легион, пока не наступило Рождество
+						'''
+					HideUnsupported:  Если эта настройка включена, боссы, которые ещё не были полностью интегрированы, будут удалены из оглавления Босс-журнала.
+					OnlyBosses: Если эта настройка включена, то в чеклисте и навигации будут отображаться только записи о боссах.
+					ColoredBossText:
+						'''
+						Текст босса в оглавлении будет зелёным, если он побеждён, и красным, если нет.
+						Если включена настройка «Проверка следующего босса», следующий босс будет выделен жёлтым цветом.
+						'''
+					DrawNextMark: Помещает круг в чекбокс, указывающий на то, что это следующий непобеждённый босс, с которым предстоит сразиться.
+					LootChecklist: Оглавление также проверяет, получили ли вы все выпадаемые и коллекционные предметы босса.
+					CheckDroppedLoot: Предметы, которые не выпадают из цели, например музыкальные шкатулки, не будут учитываться при проверке добычи.
+					
+					ProgressionPrompt: При включении этой настройки предупреждение о режиме прогрессии не будет появляться для новых персонажей.
+					UnmaskNextCheck: Для работы этой настройки необходимо включить «Проверка следующего босса» и «Скрыть имена до победы над боссом».
+					MaskHardMode: Скрывает ВЕСЬ контент, заменяя все выбранные вами настройки выше.
+				}
 			}
 
-			Header: {
-				BossLogUI: "[i:149] [c/ffeb6e:Интерфейс Босс-журнала]"
-				BossLogChecklist: "[i:903] [c/ffeb6e:Отметки Босс-журнала]"
-				BlindMode: "[i:888] [c/ffeb6e:Режим прогрессии - победите боссов, чтобы открыть их запись!]"
-				ChatMessages: "[i:3037] [c/ffeb6e:Сообщения чата]"
-				ItemMapDetection: "[i:893] [c/ffeb6e:Определение предметов на карте]"
-				BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
-				Debug: "[i:3625] [c/ffeb6e:Инструменты для разработчиков модов]"
-				DebugRecordTracker: "[i:3619] [c/ffeb6e:Инструменты отладки отслеживания рекордов]"
-				DebugResetData: "[i:575] [c/ffeb6e:Опции сброса данных]"
+			OtherFeatures: {
+				Title: Другие возможности
+
+				Header: {
+					ChatMessages: "[i:3037] [c/ffeb6e:Сообщения чата]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:Определение предметов на карте]"
+					BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
+				}
+
+				Label: {
+					DespawnMessageType: Сообщение об исчезновении босса
+					LimbMessages: Сообщения о победе над сегментами
+					PillarMessages: Сообщения о победе над Башнями
+					TimerSounds: Звуки таймера возрождения
+
+					TreasureBags: Отображение мешков с сокровищами на карте
+					Fragments: Отображение фрагментов на карте
+					Scales: Отображение теневых чешуек и образцов ткани на карте
+
+					BossRadar: Включить босс-радар
+					RadarMiniBosses: Белый список мини-боссов
+					RadarOpacity: Прозрачность радара
+					RadarBlacklist: Чёрный список радара
+				}
+
+				Tooltip: {
+					DespawnMessageType:
+						'''
+						Сообщения об исчезновении босса отображаются в чате, когда босс неактивен.
+						Если эта настройка включена, можно выбрать между обычными и уникальными сообщениями.
+						'''
+					PillarMessages: После уничтожения Небесной башни, в чат отправляется сообщение о победе
+					LimbMessages:
+						'''
+						При поражении отдельного сегмента босса будет отправляться сообщение в чат
+						Например, Руки Скелетрона
+						'''
+					TimerSounds: Если эта настройка включена, последние 3 секунды вашего времени возрождения будут сопровождаться звуковыми сигналами
+					RadarMiniBosses: Примечание: Это работает корректно только с мини-боссами, у которых есть иконка на карте
+					RadarOpacity: Настройка прозрачности иконки радара
+					RadarBlacklist: Выбранные НИПы не будут отслеживаться радаром
+				}
 			}
 
-			Label: {
-				BossLogColor: Цвет Босс-журнала
-				BossLogPos: Положение кнопки Босс-журнала
-				DrawNextMark: Проверка следующего босса
-				LootChecklist: Включить проверку добычи/коллекции
-				CheckDroppedLoot: Проверять только выпадающие предметы
-				ColoredBossText: Цветной текст боссов
-				SelectedCheckmarkType: Тип отметки в чеклисте
-				FilterBosses: Фильтр боссов в списке
-				FilterMiniBosses: Фильтр мини-боссов в списке
-				FilterEvents: Фильтр событий в списке
-				OnlyBosses: Босс-журнал показывает только боссов
-				HideUnavailable: Скрыть недоступных боссов
-				HideUnsupported: Скрыть неподдерживаемых боссов
-				EnableProgressionMode: Включить режим прогрессии
-				DisableProgressionMode: Отключить режим прогрессии
-				ProgressionPrompt: Отключить предупреждение о режиме прогрессии
-				MaskTextures: Скрыть текстуры до победы над целью
-				MaskNames: Скрыть имена до победы над целью
-				UnmaskNextCheck: Показывать имя следующей цели для битвы
-				MaskBossLoot: Скрыть выпадаемые предметы босса до победы
-				MaskHardMode: Скрыть контент Хардмода до его начала
-				DespawnMessageType: Сообщение об исчезновении босса
-				PillarMessages: Сообщения о победе над Башнями
-				LimbMessages: Сообщения о победе над сегментами
-				TimerSounds: Звуки таймера возрождения
-				TreasureBags: Отображение мешков с сокровищами на карте
-				Fragments: Отображение фрагментов на карте
-				Scales: Отображение теневых чешуек и образцов ткани на карте
-				BossRadar: Включить босс-радар
-				RadarMiniBosses: Белый список мини-боссов
-				RadarOpacity: Прозрачность радара
-				RadarBlacklist: Чёрный список радара
-				ModCallVerbose: Подробный журнал Mod.Call
-				ShowProgressionValue: Отображение значения прогрессии
-				AccessInternalNames: Доступ к внутренним именам
-				CollectionTypeDetection: Отображение автоматически обнаруженного типа коллекции
-				ResetLoot: Включить опцию сброса добычи и коллекции
-				ResetRecords: Включить опцию сброса рекордов
-				ResetForcedDowns: Включить опцию сброса принудительно поверженных целей
-				ResetHiddenEntries: Включить опцию сброса скрытых записей
-				InactiveBossCheck: Проверка неактивного босса
-				DisableNewRecords: Отключить обновление личных рекордов
-				DisableRecordTracking: Отключить отслеживание рекордов
-				ShowRecordTracking: Отображение таймера и показателей рекорда для выбранного босса
-			}
+			Debug: {
+				Title: Интерфейс отладки
 
-			Tooltip: {
-				BossLogColor: Выберите цвет для вашего Босс-журнала!
-				BossLogPos:
-					'''
-					Альтернативно, удерживайте ПКМ при наведении на кнопку Босс-журнала, чтобы легко переместить её в любое место на экране!
-					Положение измеряется относительно нижнего правого угла экрана
-					'''
-				DrawNextMark: Помещает круг в чекбокс, указывающий на то, что это следующий непобеждённый босс, с которым предстоит сразиться.
-				LootChecklist: Оглавление также проверяет, получили ли вы все выпадаемые и коллекционные предметы босса.
-				CheckDroppedLoot: Предметы, которые не выпадают из цели, например музыкальные шкатулки, не будут учитываться при проверке добычи.
-				ColoredBossText:
-					'''
-					Текст босса в оглавлении будет зелёным, если он побеждён, и красным, если нет.
-					Если включена настройка «Проверка следующего босса», следующий босс будет выделен жёлтым цветом.
-					'''
-				ProgressionPrompt: При включении этой настройки предупреждение о режиме прогрессии не будет появляться для новых персонажей.
-				UnmaskNextCheck: Для работы этой настройки необходимо включить «Проверка следующего босса» и «Скрыть имена до победы над боссом».
-				MaskHardMode: Скрывает ВЕСЬ контент, заменяя все выбранные вами настройки выше.
-				OnlyBosses: Если эта настройка включена, то в чеклисте и навигации будут отображаться только записи о боссах.
-				HideUnavailable: 
-					'''
-					Если эта настройка включена, недоступные боссы будут удалены из оглавления Босс-журнала.
-					Например, Морозный легион, пока не наступило Рождество
-					'''
-				HideUnsupported:  Если эта настройка включена, боссы, которые ещё не были полностью интегрированы, будут удалены из оглавления Босс-журнала.
-				DespawnMessageType:
-					'''
-					Сообщения об исчезновении босса отображаются в чате, когда босс неактивен.
-					Если эта настройка включена, можно выбрать между обычными и уникальными сообщениями.
-					'''
-				PillarMessages: После уничтожения Небесной башни, в чат отправляется сообщение о победе
-				LimbMessages:
-					'''
-					При поражении отдельного сегмента босса будет отправляться сообщение в чат
-					Например, Руки Скелетрона
-					'''
-				TimerSounds: Если эта настройка включена, последние 3 секунды вашего времени возрождения будут сопровождаться звуковыми сигналами
-				RadarMiniBosses: Примечание: Это работает корректно только с мини-боссами, у которых есть иконка на карте
-				RadarOpacity: Настройка прозрачности иконки радара
-				RadarBlacklist: Выбранные НИПы не будут отслеживаться радаром
-				ModCallVerbose: Если настройка включена, в логах будут отображаться все боссы, добавленные в Boss Checklist в консоли сервера.
-				ShowProgressionValue:
-					'''
-					Отображает значение прогрессии при наведении на запись в оглавлении и при просмотре страницы записи.
-					Значение прогрессии определяет порядок записей в чеклисте.
-					'''
-				AccessInternalNames:
-					'''
-					Добавляет кнопку на страницу записи босса для копирования ключа босса и мода в буфер обмена.
-					Полезно для разработчиков модов, создающих кросс-мод контент.
-					'''
-				CollectionTypeDetection: Предметы из коллекции будут помечены меткой с автоматически определённым типом коллекции.
-				ResetLoot: 
-					'''
-					Удаляет выбранный предмет из сохранённого списка добычи/коллекции, нажав Alt+ПКМ по выбранному предмету.
-					Очищает весь список добычи/коллекции, нажав Alt+ПКМ по кнопке "Коллекция".
-					Это действие применяется ко ВСЕМ спискам добычи боссов.
-					'''
-				ResetRecords: 
-					'''
-					Сбрасывает отдельный рекорд, нажав Alt+ПКМ по иконке рекорда на выбранной странице босса.
-					Сбрасывает все рекорды, нажав Alt+ПКМ по кнопке 'Рекорды' на выбранной странице босса.
-					'''
-				ResetForcedDowns: Сбрасывает все принудительно поверженные цели мира, нажав Alt+ПКМ по вкладке фильтры в оглавлении.
-				ResetHiddenEntries: Сбрасывает все скрытые записи, нажав Alt+ПКМ по кнопке 'Переключить видимость скрытых целей', расположенной в кладке фильтров.
-				InactiveBossCheck: 
-					'''
-					Если эта настройка включена, в чате будет отображаться сообщение о начале подсчёта рекордов, если включено «Отслеживание рекордов».
-					Это также должно отображать сообщение в чате, когда появляется сообщение об исчезновении, если включено «Сообщение об исчезновении босса».
-					Эти сообщения должны появляться при победе над боссом или при его исчезновении, соответственно.
-					'''
-				DisableNewRecords:
-					'''
-					Если эта настройка включена, все личные рекорды не будут перезаписываться, за исключением предыдущей попытки.
-					Это также отключит отправку данных о рекордах на сервер для рекордов мира.
-					'''
-				ShowRecordTracking: Для отображения этой информации требуется включить «Отслеживание рекордов».
-			}
+				Header: {
+					Debug: "[i:3625] [c/ffeb6e:Инструменты для разработчиков модов]"
+					DebugRecordTracker: "[i:3619] [c/ffeb6e:Инструменты отладки отслеживания рекордов]"
+					DebugResetData: "[i:575] [c/ffeb6e:Опции сброса данных]"
+				}
 
-			Notice: {
-				InvalidChange: Вы не можете изменить эту настройку, пока {0} активен!
-				HostChange: Только хост может изменить эту настройку.
+				Label: {
+					ModCallVerbose: Подробный журнал Mod.Call
+					ShowProgressionValue: Отображение значения прогрессии
+					AccessInternalNames: Доступ к внутренним именам
+					CollectionTypeDetection: Отображение автоматически обнаруженного типа коллекции
+					InactiveBossCheck: Проверка неактивного босса
+					DisableNewRecords: Отключить обновление личных рекордов
+					DisableRecordTracking: Отключить отслеживание рекордов
+					ShowRecordTracking: Отображение таймера и показателей рекорда для выбранного босса
+
+					ResetLoot: Включить опцию сброса добычи и коллекции
+					ResetRecords: Включить опцию сброса рекордов
+					ResetForcedDowns: Включить опцию сброса принудительно поверженных целей
+					ResetHiddenEntries: Включить опцию сброса скрытых записей
+				}
+
+				Tooltip: {
+					ModCallVerbose: Если настройка включена, в логах будут отображаться все боссы, добавленные в Boss Checklist в консоли сервера.
+					ShowProgressionValue:
+						'''
+						Отображает значение прогрессии при наведении на запись в оглавлении и при просмотре страницы записи.
+						Значение прогрессии определяет порядок записей в чеклисте.
+						'''
+					AccessInternalNames:
+						'''
+						Добавляет кнопку на страницу записи босса для копирования ключа босса и мода в буфер обмена.
+						Полезно для разработчиков модов, создающих кросс-мод контент.
+						'''
+					CollectionTypeDetection: Предметы из коллекции будут помечены меткой с автоматически определённым типом коллекции.
+					InactiveBossCheck: 
+						'''
+						Если эта настройка включена, в чате будет отображаться сообщение о начале подсчёта рекордов, если включено «Отслеживание рекордов».
+						Это также должно отображать сообщение в чате, когда появляется сообщение об исчезновении, если включено «Сообщение об исчезновении босса».
+						Эти сообщения должны появляться при победе над боссом или при его исчезновении, соответственно.
+						'''
+					DisableNewRecords:
+						'''
+						Если эта настройка включена, все личные рекорды не будут перезаписываться, за исключением предыдущей попытки.
+						Это также отключит отправку данных о рекордах на сервер для рекордов мира.
+						'''
+					ShowRecordTracking: Для отображения этой информации требуется включить «Отслеживание рекордов».
+					
+					ResetLoot: 
+						'''
+						Удаляет выбранный предмет из сохранённого списка добычи/коллекции, нажав Alt+ПКМ по выбранному предмету.
+						Очищает весь список добычи/коллекции, нажав Alt+ПКМ по кнопке "Коллекция".
+						Это действие применяется ко ВСЕМ спискам добычи боссов.
+						'''
+					ResetRecords: 
+						'''
+						Сбрасывает отдельный рекорд, нажав Alt+ПКМ по иконке рекорда на выбранной странице босса.
+						Сбрасывает все рекорды, нажав Alt+ПКМ по кнопке 'Рекорды' на выбранной странице босса.
+						'''
+					ResetForcedDowns: Сбрасывает все принудительно поверженные цели мира, нажав Alt+ПКМ по вкладке фильтры в оглавлении.
+					ResetHiddenEntries: Сбрасывает все скрытые записи, нажав Alt+ПКМ по кнопке 'Переключить видимость скрытых целей', расположенной в кладке фильтров.
+				}
 			}
 		}
 	}
