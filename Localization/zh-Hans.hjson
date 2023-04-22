@@ -1,39 +1,202 @@
 Mods: {
 	BossChecklist: {
-		BossDespawn: {
-			Generic: "{0} 失去了对你的兴趣..."
-			Day: "{0} 在黎明时逃跑了..."
+		Log: {
+			Common: {
+				BossLog: Boss日志
+				Boss: Boss
+				BossPlural: Boss
+				MiniBoss: Mini-boss
+				MiniBossPlural: 小Boss
+				Event: Event
+				EventPlural: 事件
+			}
+
+			Tabs: {
+				ToggleFilters: 切换过滤器
+				TableOfContents: 目录
+				Credits: 感谢页面
+				NextEntry:
+					'''
+					Next {0}:
+					{1}
+					'''
+				
+				Records: 挑战记录
+				SpawnInfo: 生成信息
+				LootAndCollectibles: 掉落物 & 收藏品
+			}
+
+			TableOfContents: {
+				PreHardmode: 困难模式前
+				Hardmode: 困难模式
+				ProgressBarListMods: 点击以切换至Mod列表模式
+				ProgressBarListTypes: 点击以切换至条目类型模式
+				
+				AllLoot: 已获得所有的战利品!
+				AllDropLoot: 已获得所有非收藏品的战利品!
+				AllCollectibles: 已获得所有的收藏品!
+
+				Filter:{
+					Show: '{0}: 显示'
+					Hide: '{0}: 隐藏'
+					HideWhenCompleted: '{0}: 隐藏已击败的'
+					ToggleVisibility: 切换隐藏可见性
+				}
+			}
+
+			Credits: {
+				Devs: 贡献者
+				Mods: 已注册的Mod
+				Notice: "[列表仅包含已加载的Mod]"
+				NoIcon: 未找到Mod图标!
+				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请在Mod的Steam创意工坊页面或Discord服务器告知他们!
+			}
+
+			EntryPage: {
+				Defeated: 在{0}中已被击败
+				Undefeated: 在{0}中未被击败
+				CopyKey: 点击以复制内部'Boss键值'至剪切板
+				CopySource: 点击以复制内部'Mod源'至剪切板
+				ViewPage: 点击以查看页面
+				
+				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
+				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
+			}
+
+			Records: {
+				NewRecord: 新纪录!
+				NewWorldRecord: 世界纪录!
+				
+				NoRecord: 没有记录!
+				Unchallenged: 没有挑战过!
+				Kills: 击杀次数
+				Deaths: 死亡次数
+				Total: 总计
+				NoHit: 无伤!
+				
+				PreviousBest: 你以前的最佳纪录
+				ClaimRecord: 成为第一个打破世界纪录的人!
+				RecordHolder: 记录保持者
+
+				Category: {
+					PreviousAttempt: 上次尝试
+					FirstVictory: 首次胜利
+					PersonalBest: 个人的最佳记录
+					WorldRecord: 世界纪录
+				}
+
+				Title: {
+					PreviousAttempt: 尝试
+					FirstVictory: 游戏时间
+					PersonalBest: KD比
+					WorldRecord: 全球击败和死亡次数
+					Duration: 战斗持续时间
+					DurationWorld: 最短时间的战斗
+					HitsTaken: 受击数
+					HitsTakenWorld: 最低受击次数
+				}
+
+				Tooltip: {
+					Duration: 你击败该Boss所用的最短时间!
+					HitsTaken: 尽可能的闪避攻击! 试着无伤击败该Boss!
+					PreviousAttempt: 你遭遇该Boss的总次数!
+					PersonalBest: 你击败该Boss和该Boss击败你的总次数!
+					FirstVictory: 首次击败Boss前你的角色处于活动状态的总游戏时间!
+					WorldRecord: 与该Boss相关的全球击杀和死亡次数!
+				}
+			}
+
+			SpawnInfo: {
+				RecipeFrom: 此合成配方来自: {0}
+				CycleRecipe: 切换至其他合成配方
+				Noncraftable: 此物品不可被合成
+				NoSpawnItem: This {0} has no spawn item
+				ByHand: 空手制作
+			}
+
+			LootAndCollection: {
+				MaskedItems: 击败条目以查看其战利品和收藏品
+				ItemIsExpertOnly: 此物品仅在专家模式下可获得
+				ItemIsMasterOnly: 此物品仅在大师模式下可获得
+				ItemIsLocked: 此物品仅在满足特殊需求后解锁
+			}
+
+			ProgressionMode: {
+				BeforeYouBegin: 在你开始之前...
+				AskEnable: 你想要开启进度模式吗?
+				SelectAnOption: 请在下方选择一项...
+				SelectDisable: 继续并禁用进度模式...
+				SelectEnable: 继续并完全开启进度模式...
+				SelectConfig: 关闭Boss日志并配置进度模式...
+				DisableProgressPrompt: 
+					'''
+					不再显示此内容
+					(对于新创建的人物)
+					'''
+				Description:
+					'''
+					进度模式隐藏了很多Boss内容, 直至你击败对应的Boss或满足条件. 本模式极其适合盲打通关.
+
+					注意, 在选择任意选项之前, Boss日志将被禁用!
+					'''
+				IsEnabled:
+					'''
+					[i:888] 进度模式已完全或部分启用!
+					这会隐藏一些与Boss相关的信息, 直至它们被击败.
+					若想禁用或配置进度模式, 请前往:
+					设置 > Mod设置 > Boss清单: 自定义Boss日志
+					并向下滚动至进度模式设置
+					'''
+			}
+
+			HintTexts: {
+				MarkEntry: 右键条目以将其标记为已击败
+				HideEntry: Alt+右键条目以将其从列表中隐藏
+				ClearMarked: Alt+左键'切换可见性'按钮以清除所有被强行标记为击败的条目
+				ClearHidden: Alt+右键'切换可见性'按钮以清除所有被隐藏的条目
+				ClearItems: Alt+右键'战利品&收藏品'按钮以清除所有获得的Boss物品
+				RemoveItem: Alt+右键物品栏以清除从Boss物品中获得的对应物品
+				ClearAllRecords: Alt+右键'记录'按钮以清除所有的记录
+				ClearRecord: Alt+右键记录图标以清除对应的记录
+			}
 		}
 
-		BossVictory: {
-			Generic: "{0} 杀死了所有玩家!"
-			KingSlime: 史莱姆王班师回朝...
-			EyeofCthulhu: 克苏鲁之眼隐没在暮色中...
-			EaterofWorlds: 世界吞噬者钻回了地下...
-			BrainofCthulhu: 克苏鲁之脑消失于赤色深渊...
-			QueenBee: 蜂后在蜂群中回巢...
-			SkeletronHead: 骷髅王的诅咒仍禁锢着老人...
-			WallofFlesh: 血肉之墙穿过了整个地狱...
-			TheTwins: "{0} 持续观察着一切..."
-			TheDestroyer: 毁灭者寻找着新的世界以吞噬之...
-			SkeletronPrime: 机械骷髅王开始寻找新的受害者...
-			Plantera: 世纪之花休眠于地下丛林...
-			Golem: 石巨人停止运作...
-			DukeFishron: 猪龙鱼公爵潜入深海...
-			CultistBoss: 拜月教邪教徒虔诚地崇拜着...
-			MoonLord: 月亮领主从世间离去...
-		}
+		ChatMessages: {
+			Despawn: {
+				Generic: "{0} 失去了对你的兴趣..."
+				Day: "{0} 在黎明时逃跑了..."
+			}
 
-		EventEnd: {
-			BloodMoon: 赤色之月落至地平线之下...
-			FrostMoon: 寒霜之月在日光中融化了...
-			PumpkinMoon: 南瓜月下的狂欢结束了...
-			SolarEclipse: 日食暂时停止了...
-		}
+			Defeated: {
+				Tower: "{0}已被击败!"
+				Limb: "{0}已被击倒!"
+			}
 
-		BossDefeated: {
-			Tower: "{0}已被击败!"
-			Limb: "{0}已被击倒!"
+			Loss: {
+				Generic: "{0} 杀死了所有玩家!"
+				KingSlime: 史莱姆王班师回朝...
+				EyeofCthulhu: 克苏鲁之眼隐没在暮色中...
+				EaterofWorlds: 世界吞噬者钻回了地下...
+				BrainofCthulhu: 克苏鲁之脑消失于赤色深渊...
+				QueenBee: 蜂后在蜂群中回巢...
+				SkeletronHead: 骷髅王的诅咒仍禁锢着老人...
+				WallofFlesh: 血肉之墙穿过了整个地狱...
+				TheTwins: "{0} 持续观察着一切..."
+				TheDestroyer: 毁灭者寻找着新的世界以吞噬之...
+				SkeletronPrime: 机械骷髅王开始寻找新的受害者...
+				Plantera: 世纪之花休眠于地下丛林...
+				Golem: 石巨人停止运作...
+				DukeFishron: 猪龙鱼公爵潜入深海...
+				CultistBoss: 拜月教邪教徒虔诚地崇拜着...
+				MoonLord: 月亮领主从世间离去...
+			}
+
+			EventEnd: {
+				BloodMoon: 赤色之月落至地平线之下...
+				FrostMoon: 寒霜之月在日光中融化了...
+				PumpkinMoon: 南瓜月下的狂欢结束了...
+				SolarEclipse: 日食暂时停止了...
+			}
 		}
 
 		BossSpawnInfo: {
@@ -79,261 +242,148 @@ Mods: {
 			TorchGod: 通过在地底放置101支火把来召唤. 事件开始于第101支火把被放置后.
 		}
 
-		BossLog: {
-			HoverText: {
-				ToggleFilters: 切换过滤器
-				JumpTOC: 目录
-				JumpCred: 感谢页面
-				NextBoss:
-					'''
-					下个Boss: 
-					{0}
-					'''
-				NextMiniBoss:
-					'''
-					下个小Boss: 
-					{0}
-					'''
-				NextEvent:
-					'''
-					下个事件: 
-					{0}
-					'''
-				ViewCollect: 点击以显示收藏品
-				ViewLoot: 点击以显示所有掉落物
-				ItemIsExpertOnly: 此物品仅在专家模式下可获得
-				ItemIsMasterOnly: 此物品仅在大师模式下可获得
-				ItemIsLocked: 此物品仅在满足特殊需求后解锁
-				CopyKey: 点击以复制内部'Boss键值'至剪切板
-				CopySource: 点击以复制内部'Mod源'至剪切板
-				ViewPage: 点击以查看页面
-				ToggleVisibility: 切换隐藏可见性
-				AllLoot: 已获得所有的战利品!
-				AllDropLoot: 已获得所有非收藏品的战利品!
-				AllCollectibles: 已获得所有的收藏品!
-				MaskedItems: 击败条目以查看其战利品和收藏品
-				ClaimRecord: 成为第一个打破世界纪录的人!
-				ProgressionModeIsEnabled:
-					'''
-					[i:888] 进度模式已完全或部分启用!
-					这会隐藏一些与Boss相关的信息, 直至它们被击败.
-					若想禁用或配置进度模式, 请前往:
-					设置 > Mod设置 > Boss清单: 自定义Boss日志
-					并向下滚动至进度模式设置
-					'''
-				ModCompletion: 点击以切换至Mod列表模式
-				EntryCompletion: 点击以切换至条目类型模式
+		Configs: {
+			Common: {
+				InvalidChange: 你不能在{0}存在时更改该配置!
+				HostChange: 仅允许主机更改此配置.
 			}
 
-			DrawnText: {
-				PreHardmode: 困难模式前
-				Hardmode: 困难模式
-				Defeated: 在{0}中已被击败
-				Undefeated: 在{0}中未被击败
-				RecipeFrom: 此合成配方来自: {0}
-				CycleRecipe: 切换至其他合成配方
-				Noncraftable: 此物品不可被合成
-				NoSpawnBoss: 此Boss不可被物品召唤
-				NoSpawnMiniBoss: 此小Boss不可被物品召唤
-				NoSpawnEvent: 此事件不可被物品召唤
-				NoInfo: 无可用信息
-				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
-				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
-				BeforeYouBegin: 在你开始之前...
-				EnableProgressionMode: 你想要开启进度模式吗?
-				SelectAnOption: 请在下方选择一项...
-				DisableProgressMode: 继续并禁用进度模式...
-				EnableProgressMode: 继续并完全开启进度模式...
-				ConfigProgressMode: 关闭Boss日志并配置进度模式...
-				DisableProgressPrompt: 
-					'''
-					不再显示此内容
-					(对于新创建的人物)
-					'''
-				ProgressionModeDescription:
-					'''
-					进度模式隐藏了很多Boss内容, 直至你击败对应的Boss或满足条件. 本模式极其适合盲打通关.
+			BossLogCustomization: {
+				Title: 自定义Boss日志
 
-					注意, 在选择任意选项之前, Boss日志将被禁用!
-					'''
-			}
+				Header: {
+					BossLogUI: "[i:149] [c/ffeb6e:Boss日志UI]"
+					BossLogChecklist: "[i:903] [c/ffeb6e:Boss日志清单]"
+					BlindMode: "[i:888] [c/ffeb6e:进度模式 - 击败Boss以解锁其条目!]"
+				}
 
-			Credits: {
-				Devs: 贡献者
-				Mods: 已注册的Mod
-				Notice: "[列表仅包含已加载的Mod]"
-				NoIcon: 未找到Mod图标!
-				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请在Mod的Steam创意工坊页面或Discord服务器告知他们!
-			}
+				Label: {
+					BossLogColor: Boss日志颜色
+					BossLogPos: 开启Boss日志的按钮的位置
+					
+					HideUnavailable: 隐藏不可用的Boss
+					HideUnsupported: 隐藏没有引用的Boss
+					OnlyBosses: 在Boss日志中仅显示Boss内容
+					FilterBosses: 过滤日志中不符合条件的Boss
+					FilterMiniBosses: 过滤日志中不符合条件的小Boss
+					FilterEvents: 过滤日志中不符合条件的事件
+					ColoredBossText: Boss文本变色
+					SelectedCheckmarkType: 标记模式
+					DrawNextMark: 提示下一个要挑战的Boss
+					LootChecklist: 开启战利品/收藏品清单
+					CheckDroppedLoot: 只检查可掉落的战利品
 
-			Terms: {
-				BossLog: Boss日志
-				ByHand: 空手制作
-				NoRecord: 没有记录!
-				Unchallenged: 没有挑战过!
-				Kills: 击杀次数
-				Deaths: 死亡次数
-				show: '{0}: 显示'
-				hide: '{0}: 隐藏'
-				hidewhencompleted: '{0}: 隐藏已击败的'
-				Bosses: Boss
-				MiniBosses: 小Boss
-				Events: 事件
-				Total: 总计
-				Records: 挑战记录
-				SpawnInfo: 生成信息
-				LootAndCollectibles: 掉落物 & 收藏品
-				PreviousAttempt: 上次尝试
-				FirstVictory: 首次胜利
-				PersonalBest: 个人的最佳记录
-				WorldRecord: 世界纪录
-				NewRecord: 新纪录!
-				NewWorldRecord: 世界纪录!
-				RecordHolder: 记录保持者
-				PreviousBest: 你以前的最佳纪录
-				NoHit: 无伤!
-			}
-			
-			RecordSlot: {
-				Title: {
-					PreviousAttempt: 尝试
-					FirstVictory: 游戏时间
-					PersonalBest: KD比
-					WorldRecord: 全球击败和死亡次数
-					Duration: 战斗持续时间
-					DurationWorld: 最短时间的战斗
-					HitsTaken: 受击数
-					HitsTakenWorld: 最低受击次数
+					EnableProgressionMode: 启用进度模式
+					DisableProgressionMode: 禁用进度模式
+					ProgressionPrompt: 禁用进度模式提示
+					MaskTextures: 隐藏材质直至其条目被击败
+					MaskNames: 隐藏名称直至其条目被击败
+					UnmaskNextCheck: 显示下一进度条目的名称
+					MaskBossLoot: 隐藏Boss掉落物直至其条目被击败
+					MaskHardMode: 隐藏困难模式内容直至玩家处于困难模式
 				}
 
 				Tooltip: {
-					Duration: 你击败该Boss所用的最短时间!
-					HitsTaken: 尽可能的闪避攻击! 试着无伤击败该Boss!
-					PreviousAttempt: 你遭遇该Boss的总次数!
-					PersonalBest: 你击败该Boss和该Boss击败你的总次数!
-					FirstVictory: 首次击败Boss前你的角色处于活动状态的总游戏时间!
-					WorldRecord: 与该Boss相关的全球击杀和死亡次数!
+					BossLogColor: 自定义你的Boss日志的颜色!
+					BossLogPos:
+						'''
+						在游戏中按住鼠标右键即可轻松将按钮移动到任意位置!
+						位置从屏幕右下角开始测量.
+						'''
+					
+					HideUnavailable: 
+						'''
+						如果启用, 则在Boss日志的目录中移除不可用的Boss.
+						例如非圣诞节时的雪人军团
+						'''
+					HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
+					OnlyBosses: 如果启用, 则清单和导航页仅会显示访问Boss条目.
+					ColoredBossText:
+						'''
+						目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
+						如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
+						'''					
+					DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
+					LootChecklist: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
+					CheckDroppedLoot: 如音乐盒这种不会由条目掉落的物品将不会计入战利品检查.
+				
+					ProgressionPrompt: 如果启用, 则阻止用于新创建的人物的提示出现.
+					UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
+					MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
 				}
 			}
 
-			HintTexts: {
-				MarkEntry: 右键条目以将其标记为已击败
-				HideEntry: Alt+右键条目以将其从列表中隐藏
-				ClearMarked: Alt+左键'切换可见性'按钮以清除所有被强行标记为击败的条目
-				ClearHidden: Alt+右键'切换可见性'按钮以清除所有被隐藏的条目
-				ClearItems: Alt+右键'战利品&收藏品'按钮以清除所有获得的Boss物品
-				RemoveItem: Alt+右键物品栏以清除从Boss物品中获得的对应物品
-				ClearAllRecords: Alt+右键'记录'按钮以清除所有的记录
-				ClearRecord: Alt+右键记录图标以清除对应的记录
-			}
-		}
+			OtherFeatures: {
+				Title: 其他功能
 
-		Configs: {
-			Title: {
-				BossLogCustomization: 自定义Boss日志
-				OtherFeatures: 其他功能
-				Debug: 调试界面
+				Header: {
+					ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
+					BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
+				}
+
+				Label: {
+					DespawnMessageType: Boss消失信息
+					LimbMessages: 节点击败消息
+					PillarMessages: 天界柱被击败信息
+					TimerSounds: 重生倒计时声音
+
+					TreasureBags: 宝藏袋在小地图上显示
+					Fragments: 四柱碎片在小地图上显示
+					Scales: 暗影鳞片和血腥样本在小地图上显示
+
+					BossRadar: 启用Boss雷达
+					RadarMiniBosses: 定位小Boss
+					RadarOpacity: Boss雷达不透明度
+					RadarBlacklist: 雷达黑名单
+				}
+
+				Tooltip: {
+					DespawnMessageType:
+						'''
+						当Boss消失时, 消失信息将出现在聊天栏中.
+						如果启用, 请在常规消息或唯一消息之间选择其一.
+						'''
+					LimbMessages:
+						'''
+						拥有多个部分的Boss将在某一个部分被击败时发送信息
+						如: 骷髅王的手
+						'''
+					PillarMessages: 当天界柱被击败时, 发送一条来自天界柱的消息
+					TimerSounds: 如果启用, 重生时间的最后3秒钟将有声音提示
+					RadarMiniBosses: 注意: 此选项仅用于有小地图图像的小Boss
+					RadarOpacity: 调整雷达图标的透明度
+					RadarBlacklist: 以下被选中的生物将不会被雷达定位
+				}
 			}
 
-			Header: {
-				BossLogUI: "[i:149] [c/ffeb6e:Boss日志UI]"
-				BossLogChecklist: "[i:903] [c/ffeb6e:Boss日志清单]"
-				BlindMode: "[i:888] [c/ffeb6e:进度模式 - 击败Boss以解锁其条目!]"
-				ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
-				ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
-				BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
-				Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
-				DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
-				DebugResetData: "[i:575] [c/ffeb6e:重置数据选项]"
-			}
+			Debug: {
+				Title: 调试界面
 
-			Label: {
-				BossLogColor: Boss日志颜色
-				BossLogPos: 开启Boss日志的按钮的位置
-				DrawNextMark: 提示下一个要挑战的Boss
-				LootChecklist: 开启战利品/收藏品清单
-				CheckDroppedLoot: 只检查可掉落的战利品
-				ColoredBossText: Boss文本变色
-				SelectedCheckmarkType: 标记模式
-				FilterBosses: 过滤日志中不符合条件的Boss
-				FilterMiniBosses: 过滤日志中不符合条件的小Boss
-				FilterEvents: 过滤日志中不符合条件的事件
-				OnlyBosses: 在Boss日志中仅显示Boss内容
-				HideUnavailable: 隐藏不可用的Boss
-				HideUnsupported: 隐藏没有引用的Boss
-				EnableProgressionMode: 启用进度模式
-				DisableProgressionMode: 禁用进度模式
-				ProgressionPrompt: 禁用进度模式提示
-				MaskTextures: 隐藏材质直至其条目被击败
-				MaskNames: 隐藏名称直至其条目被击败
-				UnmaskNextCheck: 显示下一进度条目的名称
-				MaskBossLoot: 隐藏Boss掉落物直至其条目被击败
-				MaskHardMode: 隐藏困难模式内容直至玩家处于困难模式
-				DespawnMessageType: Boss消失信息
-				PillarMessages: 天界柱被击败信息
-				LimbMessages: 节点击败消息
-				TimerSounds: 重生倒计时声音
-				TreasureBags: 宝藏袋在小地图上显示
-				Fragments: 四柱碎片在小地图上显示
-				Scales: 暗影鳞片和血腥样本在小地图上显示
-				BossRadar: 启用Boss雷达
-				RadarMiniBosses: 定位小Boss
-				RadarOpacity: Boss雷达不透明度
-				RadarBlacklist: 雷达黑名单
-				ModCallVerbose: Mod.Call日志详细信息
-				ShowProgressionValue: 使用进度值
-				AccessInternalNames: 访问内部名称
-				CollectionTypeDetection: 显示自动检测的集合类型
-				ResetLoot: 开启重置战利品和收藏品选项
-				ResetRecords: 开启重置记录选项
-				ResetForcedDowns: 开启重置被手动标记击败的条目选项
-				ResetHiddenEntries: 开启重置隐藏的条目选项
-				InactiveBossCheck: 检查不活跃的Boss
-				DisableNewRecords: 禁用更新新记录
-				DisableRecordTracking: 禁用完整的跟踪记录
-				ShowRecordTracking: 显示所选Boss的记录计时器和记录器
+				Header: {
+					Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
+					DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
+					DebugResetData: "[i:575] [c/ffeb6e:重置数据选项]"
+				}
+
+				Label: {		
+					ModCallVerbose: Mod.Call日志详细信息
+					ShowProgressionValue: 使用进度值
+					AccessInternalNames: 访问内部名称
+					CollectionTypeDetection: 显示自动检测的集合类型
+					InactiveBossCheck: 检查不活跃的Boss
+					DisableNewRecords: 禁用更新新记录
+					DisableRecordTracking: 禁用完整的跟踪记录
+					ShowRecordTracking: 显示所选Boss的记录计时器和记录器
+
+					ResetLoot: 开启重置战利品和收藏品选项
+					ResetRecords: 开启重置记录选项
+					ResetForcedDowns: 开启重置被手动标记击败的条目选项
+					ResetHiddenEntries: 开启重置隐藏的条目选项
+				}
 			}
 
 			Tooltip: {
-				BossLogColor: 自定义你的Boss日志的颜色!
-				BossLogPos:
-					'''
-					在游戏中按住鼠标右键即可轻松将按钮移动到任意位置!
-					位置从屏幕右下角开始测量.
-					'''
-				DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
-				LootChecklist: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
-				CheckDroppedLoot: 如音乐盒这种不会由条目掉落的物品将不会计入战利品检查.
-				ColoredBossText:
-					'''
-					目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
-					如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
-					'''
-				ProgressionPrompt: 如果启用, 则阻止用于新创建的人物的提示出现.
-				UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
-				MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
-				OnlyBosses: 如果启用, 则清单和导航页仅会显示访问Boss条目.
-				HideUnavailable: 
-					'''
-					如果启用, 则在Boss日志的目录中移除不可用的Boss.
-					例如非圣诞节时的雪人军团
-					'''
-				HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
-				DespawnMessageType:
-					'''
-					当Boss消失时, 消失信息将出现在聊天栏中.
-					如果启用, 请在常规消息或唯一消息之间选择其一.
-					'''
-				PillarMessages: 当天界柱被击败时, 发送一条来自天界柱的消息
-				LimbMessages:
-					'''
-					拥有多个部分的Boss将在某一个部分被击败时发送信息
-					如: 骷髅王的手
-					'''
-				TimerSounds: 如果启用, 重生时间的最后3秒钟将有声音提示
-				RadarMiniBosses: 注意: 此选项仅用于有小地图图像的小Boss
-				RadarOpacity: 调整雷达图标的透明度
-				RadarBlacklist: 以下被选中的生物将不会被雷达定位
 				ModCallVerbose: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
 				ShowProgressionValue:
 					'''
@@ -346,6 +396,19 @@ Mods: {
 					对于制作跨Mod内容的Mod开发人员很有用."
 					'''
 				CollectionTypeDetection: Boss的收藏品物品栏会被标记为指定的集合类型
+				InactiveBossCheck: 
+					'''
+					启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
+					如果启用了Boss消失信息，则当显Boss消失信息时，这也应该在聊框天中显示一条消息.
+					这些信息应该分别在Boss被击败或Boss消失时出现.
+					'''
+				DisableNewRecords: 
+					'''
+					启用后除了除了上次的尝试外所有的个人记录都不会被覆盖.
+					这也会禁止向世界记录服务器发送记录数据.
+					'''
+				ShowRecordTracking: 必须启用记录跟踪才会显示
+
 				ResetLoot: 
 					'''
 					alt + 右键所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
@@ -359,23 +422,6 @@ Mods: {
 					'''
 				ResetForcedDowns: alt + 右键目录页上的过滤标签以重置所有世界中的被手动标记击败.
 				ResetHiddenEntries: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
-				InactiveBossCheck: 
-					'''
-					启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
-					如果启用了Boss消失信息，则当显Boss消失信息时，这也应该在聊框天中显示一条消息.
-					这些信息应该分别在Boss被击败或Boss消失时出现.
-					'''
-				DisableNewRecords: 
-					'''
-					启用后除了除了上次的尝试外所有的个人记录都不会被覆盖.
-					这也会禁止向世界记录服务器发送记录数据.
-					'''
-				ShowRecordTracking: 必须启用记录跟踪才会显示
-			}
-
-			Notice: {
-				InvalidChange: 你不能在{0}存在时更改该配置!
-				HostChange: 仅允许主机更改此配置.
 			}
 		}
 	}
