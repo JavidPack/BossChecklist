@@ -4,10 +4,10 @@ Mods: {
 			Common: {
 				BossLog: Boss Log
 				Boss: Boss
-				MiniBoss: Mini-boss
-				Event: Event
 				BossPlural: Bosses
+				MiniBoss: Mini-boss
 				MiniBossPlural: Mini-bosses
+				Event: Event
 				EventPlural: Events
 			}
 
@@ -15,7 +15,11 @@ Mods: {
 				ToggleFilters: Toggle Filters
 				TableOfContents: Table of Contents
 				Credits: Credits
-				NextEntry: Next {0}:\n{1}
+				NextEntry: 
+					'''
+					Next {0}:
+					{1}
+					'''
 				
 				Records: Records
 				SpawnInfo: Spawn Info
@@ -27,6 +31,10 @@ Mods: {
 				Hardmode: Hardmode
 				ProgressBarListMods: Click to switch to Mod List mode
 				ProgressBarListTypes: Click to switch to Entry Type mode
+				
+				AllLoot: All boss loot obtained!
+				AllDropLoot: All non-collectible boss loot obtained!
+				AllCollectibles: All boss collectibles Obtained!
 
 				Filter:{
 					Show: '{0}: Shown'
@@ -49,78 +57,83 @@ Mods: {
 				Undefeated: Undefeated in {0}
 				CopyKey: Click to copy internal 'boss key' to clipboard
 				CopySource: Click to copy internal 'mod source' to clipboard
+				ViewPage: Click to view page
+				
+				NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
+				LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
+			}
 
-				Records: {
-					ClaimRecord: Be the first to claim the world record!
-					NoRecord: No record
-					Unchallenged: Unchallenged
-					Kills: kills
-					Deaths: deaths
-					
-					Total: Total
-					NewRecord: New Record!
-					NewWorldRecord: World Record!
-					RecordHolder: Record Holder(s)
-					PreviousBest: Your Previous Best
-					NoHit: No hit!
+			Records: {
+				NewRecord: New Record!
+				NewWorldRecord: World Record!
 
-					Category: {
-						PreviousAttempt: Previous Attempt
-						FirstVictory: First Victory
-						PersonalBest: Personal Best
-						WorldRecord: World Records
-					}
+				NoRecord: No record
+				Unchallenged: Unchallenged
+				Kills: kills
+				Deaths: deaths
+				Total: Total
+				NoHit: No hit!
+				
+				PreviousBest: Your Previous Best
+				ClaimRecord: Be the first to claim the world record!
+				RecordHolder: Record Holder(s)
 
-					Title: {
-						PreviousAttempt: Attempt
-						FirstVictory: Play Time
-						PersonalBest: Kill Death Ratio
-						WorldRecord: Global KDR
-						Duration: Fight Duration
-						DurationWorld: Quickest Fight
-						HitsTaken: Hits Received
-						HitsTakenWorld: Lowest Hits Taken
-					}
-
-					Tooltip: {
-						Duration: The quickest time this boss was defeated!
-						HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
-						PreviousAttempt: Total times you have encountered this boss!
-						PersonalBest: Total times you killed this boss and total times this boss has killed you!
-						FirstVictory: Total play time your character has been active, up until the first boss kill!
-						WorldRecord: Global kills and deaths from all players for this boss!
-					}
+				Category: {
+					PreviousAttempt: Previous Attempt
+					FirstVictory: First Victory
+					PersonalBest: Personal Best
+					WorldRecord: World Records
 				}
 
-				SpawnInfo: {
-					RecipeFrom: Recipe from: {0}
-					CycleRecipe: Cycle alternative recipes
-					Noncraftable: This item is not craftable
-					NoSpawnItem: This {0} has no spawn item
-					ByHand: By Hand
+				Title: {
+					PreviousAttempt: Attempt
+					FirstVictory: Play Time
+					PersonalBest: Kill Death Ratio
+					WorldRecord: Global KDR
+					Duration: Fight Duration
+					DurationWorld: Quickest Fight
+					HitsTaken: Hits Received
+					HitsTakenWorld: Lowest Hits Taken
 				}
 
-				LootAndCollection: {
-					MaskedItems: Defeat this entry to view its loot and collectibles
-					ItemIsExpertOnly: This item is only obtainable in expert mode
-					ItemIsMasterOnly: This item is only obtainable in master mode
-					ItemIsLocked: This item has special requirements to unlock
+				Tooltip: {
+					Duration: The quickest time this boss was defeated!
+					HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
+					PreviousAttempt: Total times you have encountered this boss!
+					PersonalBest: Total times you killed this boss and total times this boss has killed you!
+					FirstVictory: Total play time your character has been active, up until the first boss kill!
+					WorldRecord: Global kills and deaths from all players for this boss!
 				}
+			}
+
+			SpawnInfo: {
+				RecipeFrom: Recipe from: {0}
+				CycleRecipe: Cycle alternative recipes
+				Noncraftable: This item is not craftable
+				NoSpawnItem: This {0} has no spawn item
+				ByHand: By Hand
+			}
+
+			LootAndCollection: {
+				MaskedItems: Defeat this entry to view its loot and collectibles
+				ItemIsExpertOnly: This item is only obtainable in expert mode
+				ItemIsMasterOnly: This item is only obtainable in master mode
+				ItemIsLocked: This item has special requirements to unlock
 			}
 
 			ProgressionMode: {
 				BeforeYouBegin: Before you begin...
-				EnableProgressionMode: Do you want to enable Progression Mode?
+				AskEnable: Do you want to enable Progression Mode?
 				SelectAnOption: Please select an option below...
-				DisableProgressMode: Continue with progression mode disabled...
-				EnableProgressMode: Continue with progression mode fully enabled...
-				ConfigProgressMode: Close Boss Log and configure progression mode...
-				DisableProgressPrompt: 
+				SelectDisable: Continue with progression mode disabled...
+				SelectEnable: Continue with progression mode fully enabled...
+				SelectConfig: Close Boss Log and configure progression mode...
+				DisablePrompt: 
 					'''
 					Don't show this again
 					(For newly-created characters)
 					'''
-				ProgressionModeDescription:
+				Description:
 					'''
 					Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.
 					
@@ -134,22 +147,6 @@ Mods: {
 					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
 					and scroll down to the Progress Mode configs
 					'''
-			}
-
-			HoverText: {
-				ViewCollect: Click to view collectibles only
-				ViewLoot: Click to view all loot
-				ViewPage: Click to view page
-				AllLoot: All boss loot obtained!
-				AllDropLoot: All non-collectible boss loot obtained!
-				AllCollectibles: All boss collectibles Obtained!
-			}
-
-			DrawnText: {
-				NoInfo: No info available
-				NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
-				LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
-				
 			}
 
 			HintTexts: {
