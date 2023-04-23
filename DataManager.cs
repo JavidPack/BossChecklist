@@ -194,17 +194,15 @@ namespace BossChecklist
 			}
 		}
 
-		const string LangRecords = "Mods.BossChecklist.Log.Records";
-
 		/// <summary>
 		/// Gets the personal kills and deaths of an entry record in a string format.
 		/// If the designated boss has not been killed nor has killed a player, 'Unchallenged' will be returned instead.
 		/// </summary>
 		public string GetKDR() {
 			if (kills == 0 && deaths == 0)
-				return Language.GetTextValue($"{LangRecords}.Unchallenged");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged");
 
-			return $"{kills} {Language.GetTextValue($"{LangRecords}.Kills")} / {deaths} {Language.GetTextValue($"{LangRecords}.Deaths")}";
+			return $"{kills} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Kills")} / {deaths} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Deaths")}";
 		}
 
 		/// <summary>
@@ -215,7 +213,7 @@ namespace BossChecklist
 		/// <param name="sign">Only used when find a time difference using <see cref="TimeConversionDiff"/>.</param>
 		public static string TimeConversion(int ticks, string sign = "") {
 			if (ticks == -1)
-				return Language.GetTextValue($"{LangRecords}.NoRecord");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoRecord");
 
 			const int TicksPerSecond = 60;
 			const int TicksPerMinute = TicksPerSecond * 60;
@@ -270,10 +268,10 @@ namespace BossChecklist
 		/// <param name="count">The record being checked.</param>
 		public static string HitCount(int count) {
 			if (count == -1)
-				return Language.GetTextValue($"{LangRecords}.NoRecord");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoRecord");
 			
 			if (count == 0)
-				return Language.GetTextValue($"{LangRecords}.NoHit");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoHit");
 			
 			return count.ToString();
 		}
@@ -322,7 +320,7 @@ namespace BossChecklist
 		/// </summary>
 		public string PlayTimeToString() {
 			if (kills == 0)
-				return Language.GetTextValue($"{LangRecords}.Unchallenged");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged");
 
 			int hours = (int)(playTimeFirst / TimeSpan.TicksPerHour);
 			int minutes = (int)((playTimeFirst - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
@@ -429,17 +427,15 @@ namespace BossChecklist
 			}
 		}
 
-		const string LangRecords = "Mods.BossChecklist.Log.Records";
-
 		/// <summary>
 		/// Gets the total kills and deaths of an entry in a string format.
 		/// If the entry has not yet been defeated, 'Unchallenged' will be returned instead.
 		/// </summary>
 		public string GetGlobalKDR() {
 			if (totalKills == 0 && totalDeaths == 0)
-				return Language.GetTextValue($"{LangRecords}.Unchallenged");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged");
 
-			return $"{totalKills} {Language.GetTextValue($"{LangRecords}.Kills")} / {totalDeaths} {Language.GetTextValue($"{LangRecords}.Deaths")}";
+			return $"{totalKills} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Kills")} / {totalDeaths} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Deaths")}";
 		}
 
 		/// <summary>
@@ -448,9 +444,9 @@ namespace BossChecklist
 		/// </summary>
 		public string ListDurationRecordHolders() {
 			if (DurationEmpty)
-				return Language.GetTextValue($"{LangRecords}.ClaimRecord");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.ClaimRecord");
 
-			string list = Language.GetTextValue($"{LangRecords}.RecordHolder");
+			string list = Language.GetTextValue($"{BossLogUI.LangLog}.Records.RecordHolder");
 			foreach (string name in durationHolder) {
 				list += $"\n •{name}";
 			}
@@ -463,9 +459,9 @@ namespace BossChecklist
 		/// </summary>
 		public string ListHitsTakenRecordHolders() {
 			if (HitsTakenEmpty)
-				return Language.GetTextValue($"{LangRecords}.ClaimRecord");
+				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.ClaimRecord");
 
-			string list = Language.GetTextValue($"{LangRecords}.RecordHolder");
+			string list = Language.GetTextValue($"{BossLogUI.LangLog}.Records.RecordHolder");
 			foreach (string name in hitsTakenHolder) {
 				list += $"\n •{name}";
 			}

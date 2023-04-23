@@ -130,7 +130,7 @@ namespace BossChecklist.UIElements
 				// When hovering over the button, draw a 'Boss Log' text over the button
 				// text shouldn't appear if dragging the element
 				if (IsMouseHovering && !dragging) {
-					string hoverText = Language.GetTextValue($"{BossLogUI.LogPath}.Common.BossLog");
+					string hoverText = Language.GetTextValue($"{BossLogUI.LangLog}.Common.BossLog");
 					Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(hoverText);
 					Vector2 pos = new Vector2(inner.X - (stringAdjust.X / 3), inner.Y - 24);
 					spriteBatch.DrawString(FontAssets.MouseText.Value, hoverText, pos, Color.White);
@@ -247,7 +247,7 @@ namespace BossChecklist.UIElements
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
 
-				buttonText = Language.GetTextValue($"{BossLogUI.LogPath}.Tabs.{type}");
+				buttonText = Language.GetTextValue($"{BossLogUI.LangLog}.Tabs.{type}");
 				subPageType = type;
 			}
 
@@ -295,7 +295,7 @@ namespace BossChecklist.UIElements
 
 				bool isDemonAltar = hoverText == Language.GetTextValue("MapObject.DemonAltar");
 				bool isCrimsonAltar = hoverText == Language.GetTextValue("MapObject.CrimsonAltar");
-				bool byHand = hoverText == Language.GetTextValue($"{BossLogUI.LogPath}.SpawnInfo.ByHand");
+				bool byHand = hoverText == Language.GetTextValue($"{BossLogUI.LangLog}.SpawnInfo.ByHand");
 
 				if (item.type == ItemID.None && !isDemonAltar && !isCrimsonAltar)
 					return; // blank item slots should not be drawn
@@ -384,7 +384,7 @@ namespace BossChecklist.UIElements
 				Vector2 pos = new Vector2(inner.X + inner.Width / 2, inner.Y + inner.Height / 2);
 				if (progressRestricted) {
 					if (IsMouseHovering) {
-						BossUISystem.Instance.UIHoverText = $"{BossLogUI.LogPath}.LootAndCollection.MaskedItems";
+						BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.MaskedItems";
 						BossUISystem.Instance.UIHoverTextColor = Color.IndianRed;
 					}
 				}
@@ -392,21 +392,21 @@ namespace BossChecklist.UIElements
 					if (expertRestricted) {
 						spriteBatch.Draw(BossLogUI.RequestVanillaTexture("Images/UI/WorldCreation/IconDifficultyExpert").Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LogPath}.LootAndCollection.ItemIsExpertOnly";
+							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsExpertOnly";
 							BossUISystem.Instance.UIHoverTextColor = Main.DiscoColor; // mimics Expert Mode color
 						}
 					}
 					else if (masterRestricted) {
 						spriteBatch.Draw(BossLogUI.RequestVanillaTexture("Images/UI/WorldCreation/IconDifficultyMaster").Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LogPath}.LootAndCollection.ItemIsMasterOnly";
+							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsMasterOnly";
 							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
 						}
 					}
 					else if (OWmusicRestricted) {
 						spriteBatch.Draw(BossLogUI.RequestVanillaTexture("Images/UI/WorldCreation/IconRandomSeed").Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LogPath}.LootAndCollection.ItemIsLocked";
+							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsLocked";
 							BossUISystem.Instance.UIHoverTextColor = Color.Goldenrod;
 						}
 					}
@@ -483,18 +483,18 @@ namespace BossChecklist.UIElements
 				if (selectedLogPage == BossLogUI.Page_Prompt) {
 					if (Id == "PageOne") {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
-						string message = Language.GetTextValue($"{BossLogUI.LogPath}.ProgressionMode.BeforeYouBegin");
+						string message = Language.GetTextValue($"{BossLogUI.LangLog}.ProgressionMode.BeforeYouBegin");
 						Utils.DrawBorderString(spriteBatch, message, pos, Color.White, 0.8f);
 
 						float textScale = 1f;
-						message = Language.GetTextValue($"{BossLogUI.LogPath}.ProgressionMode.AskEnable");
+						message = Language.GetTextValue($"{BossLogUI.LangLog}.ProgressionMode.AskEnable");
 						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
 						pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
 					}
 					else if (Id == "PageTwo") {
 						float textScale = 1f;
-						string message = Language.GetTextValue($"{BossLogUI.LogPath}.ProgressionMode.SelectAnOption");
+						string message = Language.GetTextValue($"{BossLogUI.LangLog}.ProgressionMode.SelectAnOption");
 						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
 						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
 						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
@@ -560,11 +560,11 @@ namespace BossChecklist.UIElements
 							lastX = xHeadOffset;
 						}
 
-						string isDefeated = $"{Language.GetTextValue($"{BossLogUI.LogPath}.EntryPage.Defeated", Main.worldName)}";
-						string notDefeated = $"{Language.GetTextValue($"{BossLogUI.LogPath}.EntryPage.Undefeated", Main.worldName)}";
+						string isDefeated = $"{Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.Defeated", Main.worldName)}";
+						string notDefeated = $"{Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.Undefeated", Main.worldName)}";
 
 						if (entry.ForceDowned) {
-							isDefeated = $"''{Language.GetTextValue($"{BossLogUI.LogPath}.EntryPage.Defeated", Main.worldName)}''";
+							isDefeated = $"''{Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.Defeated", Main.worldName)}''";
 						}
 
 						Asset<Texture2D> texture = entry.IsDownedOrForced ? BossLogUI.Texture_Check_Check : BossLogUI.Texture_Check_X;
@@ -601,7 +601,7 @@ namespace BossChecklist.UIElements
 
 							// Hovering and rightclick will copy to clipboard
 							if (Main.MouseScreen.Between(clipRect.TopLeft(), clipRect.BottomRight())) {
-								string translated = Language.GetTextValue($"{BossLogUI.LogPath}.EntryPage.CopyKey");
+								string translated = Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.CopyKey");
 								BossUISystem.Instance.UIHoverText = $"{translated}:\n{entry.Key}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
 									Platform.Get<IClipboard>().Value = entry.Key;
@@ -613,7 +613,7 @@ namespace BossChecklist.UIElements
 							spriteBatch.Draw(clipboard, clipRect, copied);
 
 							if (Main.MouseScreen.Between(clipRect.TopLeft(), clipRect.BottomRight())) {
-								string translated = Language.GetTextValue($"{BossLogUI.LogPath}.EntryPage.CopySource");
+								string translated = Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.CopySource");
 								BossUISystem.Instance.UIHoverText = $"{translated}:\n{entry.modSource}";
 								if (Main.mouseLeft && Main.mouseLeftRelease) {
 									Platform.Get<IClipboard>().Value = entry.modSource;
@@ -810,7 +810,7 @@ namespace BossChecklist.UIElements
 			}
 
 			private string[] GetTitle(SubCategory sub) {
-				string path = $"{BossLogUI.LogPath}.Records";
+				string path = $"{BossLogUI.LangLog}.Records";
 				return new string[] {
 					Language.GetTextValue($"{path}.Category.{sub}"),
 					Language.GetTextValue($"{path}.Title.{sub}"),
@@ -821,7 +821,7 @@ namespace BossChecklist.UIElements
 
 			private string[] GetValue(SubCategory sub, PersonalStats stats, WorldStats worldStats) {
 				// Defaults to Previous Attempt, the subcategory users will first see
-				string unique = stats.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LogPath}.Records.Unchallenged") : stats.attempts.ToString();
+				string unique = stats.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : stats.attempts.ToString();
 				string duration = PersonalStats.TimeConversion(stats.durationPrev);
 				string hitsTaken = PersonalStats.HitCount(stats.hitsTakenPrev);
 
@@ -850,7 +850,7 @@ namespace BossChecklist.UIElements
 			}
 
 			private string[] GetTooltip(SubCategory sub) {
-				string path = $"{BossLogUI.LogPath}.Records.Tooltip";
+				string path = $"{BossLogUI.LangLog}.Records.Tooltip";
 				return new string[] {
 					"",
 					Language.GetTextValue($"{path}.{sub}"),
@@ -955,7 +955,7 @@ namespace BossChecklist.UIElements
 				Rectangle iconRect = new Rectangle(inner.X + (isMod ? 8 : 0), inner.Y + (isMod ? 8 : 0), 80, 80);
 				spriteBatch.Draw(icon.Value, iconRect, Color.White); // character/icon drawing
 				if (icon.Name == "Resources\\Credits_NoIcon" && Main.MouseScreen.Between(iconRect.TopLeft(), iconRect.BottomRight()))
-					BossUISystem.Instance.UIHoverText = Language.GetTextValue($"{BossLogUI.LogPath}.Credits.NoIcon");
+					BossUISystem.Instance.UIHoverText = Language.GetTextValue($"{BossLogUI.LangLog}.Credits.NoIcon");
 
 				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + (isMod ? 95 : 80), inner.Y + 11), Color.White); // Draw the dev/mod name as a string
 
@@ -1012,12 +1012,12 @@ namespace BossChecklist.UIElements
 			private string AssignToolTip() {
 				List<EntryInfo> entryList = BossChecklist.bossTracker.SortedEntries;
 				int page = BossUISystem.Instance.BossLog.PageNum;
-				string path = $"{BossLogUI.LogPath}.Tabs";
+				string path = $"{BossLogUI.LangLog}.Tabs";
 
 				return Id switch {
 					"TableOfContents" => page == BossLogUI.Page_TableOfContents ? $"{path}.ToggleFilters" : $"{path}.TableOfContents",
 					"Credits" => $"{path}.Credits",
-					_ => UpNext >= 0 ? Language.GetTextValue($"{path}.NextEntry", Language.GetTextValue($"{BossLogUI.LogPath}.Common.{entryList[UpNext].type}"), entryList[UpNext].DisplayName) : ""
+					_ => UpNext >= 0 ? Language.GetTextValue($"{path}.NextEntry", Language.GetTextValue($"{BossLogUI.LangLog}.Common.{entryList[UpNext].type}"), entryList[UpNext].DisplayName) : ""
 				};
 			}
 
@@ -1078,23 +1078,23 @@ namespace BossChecklist.UIElements
 				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
 				string hintText = "";
 				if (selectedLogPage == -1) {
-					hintText += Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.MarkEntry");
-					hintText += "\n" + Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.HideEntry");
+					hintText += Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.MarkEntry");
+					hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.HideEntry");
 					if (BossChecklist.DebugConfig.ResetForcedDowns) {
-						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.ClearMarked");
+						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearMarked");
 					}
 					if (BossChecklist.DebugConfig.ResetHiddenEntries) {
-						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.ClearHidden");
+						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearHidden");
 					}
 				}
 				else if (selectedLogPage >= 0) {
 					if (BossLogUI.SelectedSubPage == SubPage.Records && BossChecklist.DebugConfig.ResetRecordsBool && BossLogUI.RecordSubCategory != SubCategory.WorldRecord) {
 						//hintText += Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.ClearRecord"); // TODO: Make this function. Clear a singular record
-						hintText += Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.ClearAllRecords");
+						hintText += Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearAllRecords");
 					}
 					if (BossLogUI.SelectedSubPage == SubPage.LootAndCollectibles && BossChecklist.DebugConfig.ResetLootItems) {
-						hintText += Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.RemoveItem");
-						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.ClearItems");
+						hintText += Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.RemoveItem");
+						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearItems");
 					}
 				}
 
@@ -1124,7 +1124,7 @@ namespace BossChecklist.UIElements
 						spriteBatch.Draw(texture, pos, texture.Bounds, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LogPath}.ProgressionMode.IsEnabled";
+							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.ProgressionMode.IsEnabled";
 							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
 						}
 					}
@@ -1236,8 +1236,8 @@ namespace BossChecklist.UIElements
 
 				Rectangle parent = this.Parent.GetInnerDimensions().ToRectangle();
 				int hardModeOffset = entry.progression > BossTracker.WallOfFlesh ? 10 : 0;
-				string looted = Language.GetTextValue($"{BossLogUI.LogPath}.TableOfContents.AllLoot");
-				string collected = Language.GetTextValue($"{BossLogUI.LogPath}.TableOfContents.AllCollectibles");
+				string looted = Language.GetTextValue($"{BossLogUI.LangLog}.TableOfContents.AllLoot");
+				string collected = Language.GetTextValue($"{BossLogUI.LangLog}.TableOfContents.AllCollectibles");
 				Texture2D texture = null;
 				string hoverText = "";
 
@@ -1248,7 +1248,7 @@ namespace BossChecklist.UIElements
 				else if (allLoot || allCollectibles) {
 					texture = BossLogUI.Texture_Check_Chest.Value;
 					if (allLoot) {
-						looted = Language.GetTextValue($"{BossLogUI.LogPath}.TableOfContents.AllDropLoot");
+						looted = Language.GetTextValue($"{BossLogUI.LangLog}.TableOfContents.AllDropLoot");
 					}
 					hoverText = allLoot ? Language.GetTextValue(looted) : Language.GetTextValue(collected);
 				}

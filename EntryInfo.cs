@@ -193,7 +193,7 @@ namespace BossChecklist
 			this.spawnItem = spawnItem ?? new List<int>();
 			this.spawnInfo = info ?? "";
 			if (this.spawnInfo == "") {
-				this.spawnInfo = "Mods.BossChecklist.Log.SpawnInfo.NoInfo";
+				this.spawnInfo = $"{BossLogUI.LangLog}.SpawnInfo.NoInfo";
 			}
 
 			this.loot = new List<DropRateInfo>();
@@ -288,13 +288,12 @@ namespace BossChecklist
 			Func<bool> isDay = () => Main.dayTime;
 			Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
 
-			string ChatPath = "Mods.BossChecklist.ChatMessages";
-			string bossCustomKillMessage = $"{ChatPath}.Loss.{nameKey}";
+			string bossCustomKillMessage = $"{NPCAssist.LangChat}.Loss.{nameKey}";
 			if (!Language.Exists(bossCustomKillMessage)) {
-				bossCustomKillMessage = $"{ChatPath}.Loss.Generic"; // If the provided key wasn't found, default to the generic key
+				bossCustomKillMessage = $"{NPCAssist.LangChat}.Loss.Generic"; // If the provided key wasn't found, default to the generic key
 			}
 
-			Func<NPC, string> customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? $"{ChatPath}.Despawn.Day" : $"{ChatPath}.Despawn.Generic";
+			Func<NPC, string> customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
 
 			return new EntryInfo(
 				type,

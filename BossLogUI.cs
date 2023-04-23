@@ -147,7 +147,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> Texture_Content_ToggleHidden;
 
 		// Extra stuff
-		public const string LogPath = "Mods.BossChecklist.Log";
+		public const string LangLog = "Mods.BossChecklist.Log";
 		public static int headNum = -1;
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 		public UIImage PromptCheck; // checkmark for the toggle prompt config button
@@ -562,13 +562,13 @@ namespace BossChecklist
 		/// </summary>
 		private void UpdateFilterCheckAndTooltip() {
 			// ...Bosses
-			string path = $"{LogPath}.TableOfContents.Filter";
+			string path = $"{LangLog}.TableOfContents.Filter";
 
-			FilterIcons[0].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterBosses.Replace(" ", "")}", Language.GetTextValue($"{LogPath}.Common.BossPlural"));
+			FilterIcons[0].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterBosses.Replace(" ", "")}", Language.GetTextValue($"{LangLog}.Common.BossPlural"));
 			FilterChecks[0].SetImage(BossChecklist.BossLogConfig.FilterBosses == "Show" ? Texture_Check_Check : Texture_Check_Next);
 
 			// ...Mini-Bosses
-			FilterIcons[1].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", "")}", Language.GetTextValue($"{LogPath}.Common.MiniBossPlural"));
+			FilterIcons[1].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", "")}", Language.GetTextValue($"{LangLog}.Common.MiniBossPlural"));
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				FilterChecks[1].SetImage(Texture_Check_X);
 			}
@@ -583,7 +583,7 @@ namespace BossChecklist
 			}
 
 			// ...Events
-			FilterIcons[2].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterEvents.Replace(" ", "")}", Language.GetTextValue($"{LogPath}.Common.EventPlural"));
+			FilterIcons[2].hoverText = Language.GetTextValue($"{path}.{BossChecklist.BossLogConfig.FilterEvents.Replace(" ", "")}", Language.GetTextValue($"{LangLog}.Common.EventPlural"));
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				FilterChecks[2].SetImage(Texture_Check_X);
 			}
@@ -776,7 +776,7 @@ namespace BossChecklist
 			PageTwo.RemoveAllChildren();
 
 			// create a text box for the progression mode description
-			FittedTextPanel textBox = new FittedTextPanel($"{LogPath}.ProgressionMode.Description");
+			FittedTextPanel textBox = new FittedTextPanel($"{LangLog}.ProgressionMode.Description");
 			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
 			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
 			textBox.Left.Pixels = 10;
@@ -824,10 +824,10 @@ namespace BossChecklist
 			};
 
 			FittedTextPanel[] textOptions = new FittedTextPanel[] {
-				new FittedTextPanel($"{LogPath}.ProgressionMode.SelectDisable"),
-				new FittedTextPanel($"{LogPath}.ProgressionMode.SelectEnable"),
-				new FittedTextPanel($"{LogPath}.ProgressionMode.SelectConfig"),
-				new FittedTextPanel($"{LogPath}.ProgressionMode.DisablePrompt"),
+				new FittedTextPanel($"{LangLog}.ProgressionMode.SelectDisable"),
+				new FittedTextPanel($"{LangLog}.ProgressionMode.SelectEnable"),
+				new FittedTextPanel($"{LangLog}.ProgressionMode.SelectConfig"),
+				new FittedTextPanel($"{LangLog}.ProgressionMode.DisablePrompt"),
 			};
 
 			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? Texture_Check_Check : Texture_Check_X);
@@ -1089,7 +1089,7 @@ namespace BossChecklist
 					// TODO: this will likely always output the NotImplemented, but I don't want to remove it just yet
 					bool entryHasOldCall = BossChecklist.bossTracker.OldCalls.Values.Any(x => x.Contains(GetLogEntryInfo.name));
 					string message = entryHasOldCall ? "NotImplemented" : "LogFeaturesNotAvailable";
-					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LogPath}.EntryPage.{message}");
+					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.EntryPage.{message}");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = -12;
@@ -1109,13 +1109,13 @@ namespace BossChecklist
 			hardmodeList.Clear();
 
 			// Pre-Hard Mode List Title
-			string title = Language.GetTextValue($"{LogPath}.TableOfContents.PreHardmode");
+			string title = Language.GetTextValue($"{LangLog}.TableOfContents.PreHardmode");
 			PageOneTitle.SetText(title);
 			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageOne.Append(PageOneTitle);
 
 			// Hard Mode List Title
-			title = Language.GetTextValue($"{LogPath}.TableOfContents.Hardmode");
+			title = Language.GetTextValue($"{LangLog}.TableOfContents.Hardmode");
 			PageTwoTitle.SetText(title);
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
@@ -1303,19 +1303,19 @@ namespace BossChecklist
 		/// </summary>
 		private void UpdateCredits() {
 			// Developers Title
-			string title = Language.GetTextValue($"{LogPath}.Credits.Devs");
+			string title = Language.GetTextValue($"{LangLog}.Credits.Devs");
 			PageOneTitle.SetText(title);
 			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageOne.Append(PageOneTitle);
 
 			// Registered Mods Title
-			title = Language.GetTextValue($"{LogPath}.Credits.Mods");
+			title = Language.GetTextValue($"{LangLog}.Credits.Mods");
 			PageTwoTitle.SetText(title);
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
 
 			// Registered Mods subtitle
-			title = Language.GetTextValue($"{LogPath}.Credits.Notice");
+			title = Language.GetTextValue($"{LangLog}.Credits.Notice");
 			UIText subtitle = new UIText(title) {
 				TextColor = Color.Salmon
 			};
@@ -1372,7 +1372,7 @@ namespace BossChecklist
 				brokenPanel.Left.Pixels = 18;
 				PageTwo.Append(brokenPanel);
 
-				FittedTextPanel brokenDisplay = new FittedTextPanel("Mods.BossChecklist.BossLog.Credits.ModsEmpty");
+				FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.Credits.ModsEmpty");
 				brokenDisplay.Height.Pixels = 200;
 				brokenDisplay.Width.Pixels = 340;
 				brokenDisplay.Top.Pixels = 0;
@@ -1467,7 +1467,7 @@ namespace BossChecklist
 						EntryInfo relatedEntry = BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == entryKey)];
 
 						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
-						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LogPath}.EntryPage.ViewPage");
+						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 						Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
 						NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
@@ -1523,7 +1523,7 @@ namespace BossChecklist
 			// Once the spawn description has been made, start structuring the spawn items showcase
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
 			if (GetLogEntryInfo.spawnItem.Count == 0 || GetLogEntryInfo.spawnItem[SpawnItemSelected] == ItemID.None) {
-				UIText info = new UIText(Language.GetTextValue($"{LogPath}.SpawnInfo.NoSpawnItem", Language.GetTextValue($"{LogPath}.Common.{GetLogEntryInfo.type}")));
+				UIText info = new UIText(Language.GetTextValue($"{LangLog}.SpawnInfo.NoSpawnItem", Language.GetTextValue($"{LangLog}.Common.{GetLogEntryInfo.type}")));
 				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
 				PageTwo.Append(info);
@@ -1606,7 +1606,7 @@ namespace BossChecklist
 
 			// If no recipes were found, skip the recipe item slot code and inform the user the item is not craftable
 			if (TotalRecipes == 0) {
-				string noncraftable = Language.GetTextValue($"{LogPath}.SpawnInfo.Noncraftable");
+				string noncraftable = Language.GetTextValue($"{LangLog}.SpawnInfo.Noncraftable");
 				UIText craftText = new UIText(noncraftable, 0.8f);
 				craftText.Left.Pixels = 10;
 				craftText.Top.Pixels = 205;
@@ -1615,7 +1615,7 @@ namespace BossChecklist
 			}
 			else {
 				// display where the recipe originates form
-				string recipeMessage = Language.GetTextValue($"{LogPath}.SpawnInfo.RecipeFrom", recipeMod);
+				string recipeMessage = Language.GetTextValue($"{LangLog}.SpawnInfo.RecipeFrom", recipeMod);
 				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
 				ModdedRecipe.Left.Pixels = 10;
 				ModdedRecipe.Top.Pixels = 205;
@@ -1623,7 +1623,7 @@ namespace BossChecklist
 
 				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
 				if (TotalRecipes > 1) {
-					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, $"{LogPath}.SpawnInfo.CycleRecipe") {
+					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, $"{LangLog}.SpawnInfo.CycleRecipe") {
 						Id = "CycleItem_" + TotalRecipes
 					};
 					CycleItem.Left.Pixels = 240;
@@ -1662,7 +1662,7 @@ namespace BossChecklist
 			if (requiredTiles.Count == 0) {
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
 				// TODO: Change the Power Glove to the Hand of Creation
-				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue($"{LogPath}.SpawnInfo.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
+				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue($"{LangLog}.SpawnInfo.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
 				craftItem.Top.Pixels = 240 + (48 * (row + 2));
 				craftItem.Left.Pixels = 20;
 				PageTwo.Append(craftItem);

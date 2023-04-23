@@ -420,12 +420,12 @@ namespace BossChecklist
 					//bool clientNewRecord = reader.ReadBoolean();
 					bool clientWorldRecord = reader.ReadBoolean();
 					if (clientWorldRecord) {
-						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NewWorldRecord");
+						string message = Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewWorldRecord");
 						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
 					}
 					/*
 					else if (clientNewRecord) {
-						string message = Language.GetTextValue("Mods.BossChecklist.BossLog.Terms.NewRecord");
+						string message = Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewRecord");
 						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
 					}
 					*/
