@@ -432,7 +432,6 @@ namespace BossChecklist
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 5 + Texture_Nav_SubPage.Value.Height + 10;
 			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
-			lootButton.OnRightClick += RemoveItem;
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
 			scrollOne = new LogScrollbar();
@@ -709,17 +708,19 @@ namespace BossChecklist
 		/// </summary>
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
 			if (!BossChecklist.DebugConfig.ResetLootItems || SelectedSubPage != SubPage.LootAndCollectibles)
-				return; // do not do anything if not on the loot page (ex. can't remove loot on spawn info page)
+				return; // do not do anything if the loot page isn't the active
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
-				return; // player must be holding alt
+				return; // player must be holding alt to remove any items
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			// Alt right-click the "Loot / Collection" button to entirely clear the selected boss page's loot/collection list
-			// Alt right-click an item slot to remove that item from the selected boss page's loot/collection list
+			// Alt right-click the treasure bag icon to clear the items in the selected entry's page from the player's obtained items list
+			// Alt right-click an item slot to remove that item from the player's obtained items list
 			// Note: items removed are removed from ALL boss loot pages retroactively
-			if (listeningElement is SubPageButton) {
-				modPlayer.BossItemsCollected.Clear();
+			if (listeningElement is NavigationalButton) {
+				foreach (int item in GetLogEntryInfo.lootItemTypes) {
+					modPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
+				}
 			}
 			else if (listeningElement is LogItemSlot slot) {
 				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
@@ -1475,7 +1476,7 @@ namespace BossChecklist
 						Asset<Texture2D> recordIcon = RequestResource($"Nav_Record_{RecordSubCategory}");
 						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, true) {
 							Id = "SubCategory",
-							hoverText = "Cycle record subcategory" // TODO: add translation for this
+							hoverText = Language.GetTextValue($"{LangLog}.Records.Category.Cycle")
 						};
 						RecordSubCategoryButton.Left.Pixels = slot.Width.Pixels - recordIcon.Value.Width - 15;
 						RecordSubCategoryButton.Top.Pixels = slot.Height.Pixels / 2 - recordIcon.Value.Height / 2;
@@ -1738,6 +1739,17 @@ namespace BossChecklist
 			pageTwoItemList.Top.Pixels = 125;
 			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
+
+			// create an image of the entry's treasure bag
+			if (GetLogEntryInfo.treasureBag > 0)
+				Main.instance.LoadItem(GetLogEntryInfo.treasureBag);
+
+			Asset<Texture2D> bagTexture = GetLogEntryInfo.treasureBag > 0 ? TextureAssets.Item[GetLogEntryInfo.treasureBag] : RequestResource("Extra_TreasureBag");
+			NavigationalButton treasureBag = new NavigationalButton(bagTexture, false);
+			treasureBag.Left.Pixels = PageTwo.Width.Pixels / 2 - bagTexture.Value.Width / 2;
+			treasureBag.Top.Pixels = 88;
+			treasureBag.OnRightClick += RemoveItem;
+			PageTwo.Append(treasureBag);
 
 			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
 			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collection)); // combined list of loot and collectibles

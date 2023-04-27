@@ -753,18 +753,6 @@ namespace BossChecklist.UIElements
 						}
 						else if (BossLogUI.SelectedSubPage == SubPage.LootAndCollectibles) {
 							// Loot Table Subpage
-							Asset<Texture2D> bagTexture;
-							if (entry.treasureBag != 0) {
-								Main.instance.LoadItem(entry.treasureBag);
-								bagTexture = TextureAssets.Item[entry.treasureBag];
-							}
-							else {
-								bagTexture = BossLogUI.RequestResource("Extra_TreasureBag");
-							}
-							DrawAnimation drawAnim = Main.itemAnimations[entry.treasureBag]; // 0 is null
-							Rectangle srcRect = drawAnim != null ? drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
-							Rectangle posRect = new Rectangle(pageRect.X + (pageRect.Width / 2) - 5 - (bagTexture.Width() / 2), pageRect.Y + 88, srcRect.Width, srcRect.Height);
-							spriteBatch.Draw(bagTexture.Value, posRect, srcRect, Color.White);
 						}
 					}
 				}

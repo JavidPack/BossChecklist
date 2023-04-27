@@ -83,6 +83,7 @@ Mods: {
 					FirstVictory: First Victory
 					PersonalBest: Personal Best
 					WorldRecord: World Records
+					Cycle: Cycle record categories
 				}
 
 				Title: {
@@ -151,14 +152,14 @@ Mods: {
 			}
 
 			HintTexts: {
-				MarkEntry: RightClick an entry to mark it as defeated
-				HideEntry: Alt+RightClick an entry to hide it from the list
-				ClearMarked: Alt+LeftClick the 'Toggle Visibility button to clear all forced marks
-				ClearHidden: Alt+RightClick the 'Toggle Visibility' button to clear all hidden entries
-				ClearItems: Alt+RightClick the 'Loot & Collection' button to clear all obtained boss items
-				RemoveItem: Alt+RightClick an itemslot to clear that item from your obtained boss items
-				ClearAllRecords: Alt+RightClick the 'Records' Button to clear all your records
-				ClearRecord: Alt+RightClick a record icon to clear that record
+				MarkEntry: Mark an entry in the checklist as defeated by right-clicking it
+				HideEntry: Hide an entry from the checklist by holding alt and right-clicking it
+				ClearMarked: Clear all marked entries to their original defeated state by holding alt and right-clicking the....
+				ClearHidden: Clear all hidden entries to their original hidden state by holding alt and right-clicking the 'Toggle hidden visibility' filter
+				ClearItems: Mark all items on this entry's page as unobtained by holding alt and right-clicking the treasure bag
+				RemoveItem: Mark an item as unobtained by holding alt and right-clicking the desired item slot
+				ClearAllRecords: Clear all records for this boss by holding alt and right-clicking the 'Cycle Record SubCategory' button
+				ClearRecord: Clear a record value by holding alt and right-clicking its icon
 			}
 		}
 
