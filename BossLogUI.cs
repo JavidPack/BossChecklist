@@ -390,7 +390,7 @@ namespace BossChecklist
 
 			int offsetY = 0;
 			foreach (KeyValuePair<string, Asset<Texture2D>> pair in filterTextures) {
-				NavigationalButton filter = new NavigationalButton(pair.Value) {
+				NavigationalButton filter = new NavigationalButton(pair.Value, false) {
 					Id = pair.Key
 				};
 				filter.Top.Pixels = offsetY + 15;
@@ -1417,8 +1417,10 @@ namespace BossChecklist
 						$"\nBoss Records can be toggled under the Feature Testing configs.";
 				}
 
-				NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, noticeText) {
-					Id = "bnuuyIcon"
+				NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, false) {
+					Id = "bnuuyIcon",
+					hoverText = noticeText,
+					hoverTextColor = Color.Gold
 				};
 				bnuuyIcon.Left.Pixels = (PageTwo.Width.Pixels - (lootButton.Left.Pixels / 2) - bnuuy.Value.Width / 2);
 				bnuuyIcon.Top.Pixels = lootButton.Top.Pixels;
@@ -1454,8 +1456,9 @@ namespace BossChecklist
 				if (i == 0) {
 					if (GetLogEntryInfo.type == EntryType.Boss) {
 						Asset<Texture2D> recordIcon = RequestResource($"Nav_Record_{RecordSubCategory}");
-						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, "Cycle record cubcategory") {
-							Id = "SubCategory"
+						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, true) {
+							Id = "SubCategory",
+							hoverText = "Cycle record subcategory" // TODO: add translation for this
 						};
 						RecordSubCategoryButton.Left.Pixels = slot.Width.Pixels - recordIcon.Value.Width - 15;
 						RecordSubCategoryButton.Top.Pixels = slot.Height.Pixels / 2 - recordIcon.Value.Height / 2;
@@ -1470,9 +1473,10 @@ namespace BossChecklist
 						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 						Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
-						NavigationalButton entryIcon = new NavigationalButton(headIcon, hoverText, iconColor) {
+						NavigationalButton entryIcon = new NavigationalButton(headIcon, false, iconColor) {
 							Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
-							Anchor = relatedEntry.GetIndex
+							Anchor = relatedEntry.GetIndex,
+							hoverText = hoverText
 						};
 						entryIcon.Left.Pixels = 15 + offset;
 						entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
@@ -1623,8 +1627,9 @@ namespace BossChecklist
 
 				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
 				if (TotalRecipes > 1) {
-					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, $"{LangLog}.SpawnInfo.CycleRecipe") {
-						Id = "CycleItem_" + TotalRecipes
+					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, true) {
+						Id = "CycleItem_" + TotalRecipes,
+						hoverText = $"{LangLog}.SpawnInfo.CycleRecipe"
 					};
 					CycleItem.Left.Pixels = 240;
 					CycleItem.Top.Pixels = 240;

@@ -157,28 +157,19 @@ namespace BossChecklist.UIElements
 			public int? Anchor { get; init; } = null;
 
 			internal Asset<Texture2D> texture;
-			internal string hoverText;
 			internal Color iconColor;
 			internal bool hoverButton;
 
-			public NavigationalButton(Asset<Texture2D> texture, bool hoverButton) {
+			internal string hoverText;
+			internal Color hoverTextColor;
+
+			public NavigationalButton(Asset<Texture2D> texture, bool hoverButton, Color color = default) {
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
 
 				this.texture = texture;
-				this.hoverText = null;
-				this.iconColor = Color.White;
+				this.iconColor = hoverButton || color == default ? Color.White : color;
 				this.hoverButton = hoverButton;
-			}
-
-			public NavigationalButton(Asset<Texture2D> texture, string hoverText = null, Color color = default) {
-				Width.Pixels = texture.Value.Width;
-				Height.Pixels = texture.Value.Height;
-
-				this.texture = texture;
-				this.hoverText = hoverText;
-				this.iconColor = color == default ? Color.White : color;
-				this.hoverButton = false;
 			}
 
 			public override void Click(UIMouseEvent evt) {
@@ -234,8 +225,10 @@ namespace BossChecklist.UIElements
 				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), hoverButton ? HoverColor : iconColor);
 				base.Draw(spriteBatch);
 
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface && !string.IsNullOrEmpty(hoverText))
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface && !string.IsNullOrEmpty(hoverText)) {
 					BossUISystem.Instance.UIHoverText = Language.GetTextValue(hoverText);
+					BossUISystem.Instance.UIHoverTextColor = hoverTextColor;
+				}
 			}
 		}
 
