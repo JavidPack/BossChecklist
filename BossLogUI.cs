@@ -70,7 +70,6 @@ namespace BossChecklist
 		public LogTab MiniBossTab;
 		public LogTab EventTab;
 		public BookUI InfoTab; // shows users info about the enabled progression mode
-		public BookUI ShortcutsTab; // shows users how to change an entry's hidden/defeation state
 		public BookUI filterPanel; // contains the filter buttons
 		public List<NavigationalButton> FilterIcons;
 		private List<UIImage> FilterChecks; // checkmarks for the filters
@@ -176,7 +175,6 @@ namespace BossChecklist
 			set {
 				if (value) {
 					Append(BookArea);
-					Append(ShortcutsTab);
 					Append(InfoTab);
 					Append(ToCTab);
 					Append(filterPanel);
@@ -197,7 +195,6 @@ namespace BossChecklist
 					RemoveChild(filterPanel);
 					RemoveChild(ToCTab);
 					RemoveChild(InfoTab);
-					RemoveChild(ShortcutsTab);
 					RemoveChild(BookArea);
 				}
 				bossLogVisible = value;
@@ -314,10 +311,6 @@ namespace BossChecklist
 
 			InfoTab = new BookUI(Texture_Log_Tab2) {
 				Id = "Info_Tab"
-			};
-
-			ShortcutsTab = new BookUI(Texture_Log_Tab2) {
-				Id = "Shortcut_Tab"
 			};
 
 			ToCTab = new LogTab(Texture_Log_Tab, Texture_Nav_TableOfContents) {
@@ -504,11 +497,8 @@ namespace BossChecklist
 			if (PageNum == Page_Prompt)
 				return; // Tab positioning does not need to occur as they will not be drawn
 
-			ShortcutsTab.Left.Pixels = BookArea.Left.Pixels + 40;
-			ShortcutsTab.Top.Pixels = BookArea.Top.Pixels - Texture_Log_Tab2.Value.Height + 6;
-
-			InfoTab.Left.Pixels = ShortcutsTab.Left.Pixels + ShortcutsTab.Width.Pixels - 8;
-			InfoTab.Top.Pixels = ShortcutsTab.Top.Pixels;
+			InfoTab.Left.Pixels = BookArea.Left.Pixels + 40;
+			InfoTab.Top.Pixels = BookArea.Top.Pixels - Texture_Log_Tab2.Value.Height + 6;
 
 			int offsetY = 50;
 
@@ -1120,6 +1110,22 @@ namespace BossChecklist
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
 
+			string hintText = Language.GetTextValue($"{LangLog}.HintTexts.MarkEntry") + "\n" + Language.GetTextValue($"{LangLog}.HintTexts.HideEntry");
+			if (BossChecklist.DebugConfig.ResetForcedDowns) {
+				hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearMarked");
+			}
+			if (BossChecklist.DebugConfig.ResetHiddenEntries) {
+				hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearHidden");
+			}
+
+			Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
+			NavigationalButton tips = new NavigationalButton(icon, true) {
+				hoverText = hintText
+			};
+			tips.Left.Pixels = PageOneTitle.Left.Pixels / 2 - icon.Value.Width / 2;
+			tips.Top.Pixels = PageOneTitle.Top.Pixels - 10;
+			PageOne.Append(tips);
+
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
 
@@ -1398,6 +1404,17 @@ namespace BossChecklist
 				bool noKills = stats.kills == 0; // has the player killed this boss before?
 				if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
 					RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.
+				}
+
+				if (BossChecklist.DebugConfig.ResetRecordsBool) {
+					// TODO: Add the functionaility of clearing a singular record by alt+reight-clicking the record achievement icon
+					Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
+					NavigationalButton tips = new NavigationalButton(icon, true) {
+						hoverText = Language.GetTextValue($"{LangLog}.HintTexts.ClearAllRecords")
+					};
+					tips.Left.Pixels = lootButton.Left.Pixels / 2 - icon.Value.Width / 2;
+					tips.Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - icon.Value.Height / 2;
+					PageTwo.Append(tips);
 				}
 
 				#region Experimental Feature Notice
@@ -1795,6 +1812,16 @@ namespace BossChecklist
 
 				PageTwo.Append(scrollTwo);
 				pageTwoItemList.SetScrollbar(scrollTwo);
+			}
+
+			if (BossChecklist.DebugConfig.ResetLootItems) {
+				Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
+				NavigationalButton tips = new NavigationalButton(icon, true) {
+					hoverText = Language.GetTextValue($"{LangLog}.HintTexts.RemoveItem") + "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearItems")
+				};
+				tips.Left.Pixels = lootButton.Left.Pixels / 2 - icon.Value.Width / 2;
+				tips.Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - icon.Value.Height / 2;
+				PageTwo.Append(tips);
 			}
 		}
 

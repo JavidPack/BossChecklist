@@ -1067,33 +1067,6 @@ namespace BossChecklist.UIElements
 				book = texture;
 			}
 
-			internal string DetermineHintText() {
-				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
-				string hintText = "";
-				if (selectedLogPage == -1) {
-					hintText += Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.MarkEntry");
-					hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.HideEntry");
-					if (BossChecklist.DebugConfig.ResetForcedDowns) {
-						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearMarked");
-					}
-					if (BossChecklist.DebugConfig.ResetHiddenEntries) {
-						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearHidden");
-					}
-				}
-				else if (selectedLogPage >= 0) {
-					if (BossLogUI.SelectedSubPage == SubPage.Records && BossChecklist.DebugConfig.ResetRecordsBool && BossLogUI.RecordSubCategory != SubCategory.WorldRecord) {
-						//hintText += Language.GetTextValue($"{BossLogUI.LogPath}.HintTexts.ClearRecord"); // TODO: Make this function. Clear a singular record
-						hintText += Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearAllRecords");
-					}
-					if (BossLogUI.SelectedSubPage == SubPage.LootAndCollectibles && BossChecklist.DebugConfig.ResetLootItems) {
-						hintText += Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.RemoveItem");
-						hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearItems");
-					}
-				}
-
-				return hintText;
-			}
-
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
@@ -1118,22 +1091,6 @@ namespace BossChecklist.UIElements
 
 						if (IsMouseHovering) {
 							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.ProgressionMode.IsEnabled";
-							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
-						}
-					}
-					return;
-				}
-				else if (Id == "Shortcut_Tab") {
-					if (!string.IsNullOrEmpty(DetermineHintText())) {
-						Rectangle rect = GetDimensions().ToRectangle();
-						spriteBatch.Draw(book.Value, rect, Color.Tan);
-
-						Texture2D texture = BossLogUI.Texture_Content_Shortcuts.Value;
-						Vector2 pos = new Vector2(rect.X + rect.Width / 2 - texture.Width / 2, rect.Y + rect.Height / 2 - texture.Height / 2);
-						spriteBatch.Draw(texture, pos, texture.Bounds, Color.White);
-
-						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = DetermineHintText();
 							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
 						}
 					}
