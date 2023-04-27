@@ -83,6 +83,7 @@ Mods: {
 					FirstVictory: 首次胜利
 					PersonalBest: 个人的最佳记录
 					WorldRecord: 世界纪录
+					Cycle: 全部记录分类
 				}
 
 				Title: {
@@ -152,13 +153,13 @@ Mods: {
 
 			HintTexts: {
 				MarkEntry: 右键条目以将其标记为已击败
-				HideEntry: Alt+右键条目以将其从列表中隐藏
-				ClearMarked: Alt+左键'切换可见性'按钮以清除所有被强行标记为击败的条目
-				ClearHidden: Alt+右键'切换可见性'按钮以清除所有被隐藏的条目
-				ClearItems: Alt+右键'战利品&收藏品'按钮以清除所有获得的Boss物品
-				RemoveItem: Alt+右键物品栏以清除从Boss物品中获得的对应物品
-				ClearAllRecords: Alt+右键'记录'按钮以清除所有的记录
-				ClearRecord: Alt+右键记录图标以清除对应的记录
+				HideEntry: 长按Alt并右键条目以将其从列表中隐藏
+				ClearMarked: 长按Alt并左键'...'按钮以将所有被标记的条目恢复至原始击败状态
+				ClearHidden: 长按Alt并右键'切换可见性'按钮以将所有被隐藏的条目恢复至原始隐藏状态
+				ClearItems: 长按Alt并右键宝藏袋以将该条目页面的所有物品标记为未获取
+				RemoveItem: 长按Alt并右键条目页面内的物品以将选定的物品标记为未获取
+				ClearAllRecords: 长按Alt并右键'全部记录子类'按钮以清除该Boss的所有记录
+				ClearRecord: 长按Alt并右键记录值以清除对应的记录
 			}
 		}
 
