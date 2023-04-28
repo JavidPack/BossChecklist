@@ -141,7 +141,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> Texture_Credit_ModSlot;
 
 		public static Asset<Texture2D> Texture_Content_RecordSlot;
-		public static Asset<Texture2D> Texture_Content_CycleRecipe;
+		public static Asset<Texture2D> Texture_Content_Cycle;
 		public static Asset<Texture2D> Texture_Content_ToggleHidden;
 
 		// Extra stuff
@@ -295,7 +295,7 @@ namespace BossChecklist
 			Texture_Credit_ModSlot = RequestResource("Credits_Panel_Mod");
 
 			Texture_Content_RecordSlot = RequestResource("Extra_RecordSlot");
-			Texture_Content_CycleRecipe = RequestResource("Extra_CycleRecipe");
+			Texture_Content_Cycle = RequestResource("Extra_CycleRecipe");
 			Texture_Content_ToggleHidden = RequestResource("Nav_Hidden");
 
 			bosslogbutton = new OpenLogButton(Texture_Button_Book);
@@ -1643,12 +1643,12 @@ namespace BossChecklist
 
 				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
 				if (TotalRecipes > 1) {
-					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_CycleRecipe, true) {
+					NavigationalButton CycleItem = new NavigationalButton(Texture_Content_Cycle, true) {
 						Id = "CycleItem_" + TotalRecipes,
 						hoverText = $"{LangLog}.SpawnInfo.CycleRecipe"
 					};
-					CycleItem.Left.Pixels = 240;
-					CycleItem.Top.Pixels = 240;
+					CycleItem.Left.Pixels = 20 + (int)(TextureAssets.InventoryBack9.Width() * 0.85f / 2 - Texture_Content_Cycle.Value.Width / 2);
+					CycleItem.Top.Pixels = 240 + (int)(TextureAssets.InventoryBack9.Height() * 0.85f / 2 - Texture_Content_Cycle.Value.Height / 2);
 					CycleItem.OnClick += ChangeSpawnItem;
 					PageTwo.Append(CycleItem);
 				}
