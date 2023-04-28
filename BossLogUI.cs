@@ -142,7 +142,6 @@ namespace BossChecklist
 
 		public static Asset<Texture2D> Texture_Content_RecordSlot;
 		public static Asset<Texture2D> Texture_Content_CycleRecipe;
-		public static Asset<Texture2D> Texture_Content_Shortcuts;
 		public static Asset<Texture2D> Texture_Content_ToggleHidden;
 
 		// Extra stuff
@@ -288,16 +287,15 @@ namespace BossChecklist
 			Texture_Check_Check = RequestResource("Checks_Check");
 			Texture_Check_X = RequestResource("Checks_X");
 			Texture_Check_Next = RequestResource("Checks_Next");
-			Texture_Check_Strike = RequestResource("Checks_StrikeNext");
+			Texture_Check_Strike = RequestResource("Checks_Strike");
 			Texture_Check_Chest = RequestResource("Checks_Chest");
-			Texture_Check_GoldChest = RequestResource("Checks_GoldChest");
+			Texture_Check_GoldChest = RequestResource("Checks_Chest_Gold");
 
 			Texture_Credit_DevSlot = RequestResource("Credits_Panel_Dev");
 			Texture_Credit_ModSlot = RequestResource("Credits_Panel_Mod");
 
 			Texture_Content_RecordSlot = RequestResource("Extra_RecordSlot");
 			Texture_Content_CycleRecipe = RequestResource("Extra_CycleRecipe");
-			Texture_Content_Shortcuts = RequestResource("Extra_Shortcuts");
 			Texture_Content_ToggleHidden = RequestResource("Nav_Hidden");
 
 			bosslogbutton = new OpenLogButton(Texture_Button_Book);
