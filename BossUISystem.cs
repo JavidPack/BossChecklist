@@ -150,10 +150,9 @@ namespace BossChecklist
 				layers.Insert(++mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Custom UI Hover Text",
 					delegate {
 						// Detect if the hover text is a single localization key and draw the hover text accordingly
-						if (!string.IsNullOrEmpty(UIHoverText)) {
-							string text = Language.GetTextValue(UIHoverText);
-							DrawTooltipBackground(text, UIHoverTextColor);
-						}
+						if (!string.IsNullOrEmpty(UIHoverText))
+							DrawTooltipBackground(Language.GetTextValue(UIHoverText), UIHoverTextColor);
+
 						// Reset text and color back to default state
 						UIHoverText = "";
 						UIHoverTextColor = default;

@@ -269,12 +269,10 @@ namespace BossChecklist.UIElements
 			private readonly float scale;
 			internal bool hasItem;
 
-			public LogItemSlot(Item item, bool hasItem, string hoverText = "", int context = ItemSlot.Context.TrashItem, float scale = 1f) {
+			public LogItemSlot(Item item, int context = ItemSlot.Context.TrashItem, float scale = 1f) {
 				this.context = context;
 				this.scale = scale;
 				this.item = item;
-				this.hoverText = hoverText;
-				this.hasItem = hasItem;
 
 				Width.Set(TextureAssets.InventoryBack9.Width() * scale, 0f);
 				Height.Set(TextureAssets.InventoryBack9.Height() * scale, 0f);
@@ -285,11 +283,7 @@ namespace BossChecklist.UIElements
 				float oldScale = Main.inventoryScale;
 				Main.inventoryScale = scale;
 
-				bool isDemonAltar = hoverText == Language.GetTextValue("MapObject.DemonAltar");
-				bool isCrimsonAltar = hoverText == Language.GetTextValue("MapObject.CrimsonAltar");
-				bool byHand = hoverText == Language.GetTextValue($"{BossLogUI.LangLog}.SpawnInfo.ByHand");
-
-				if (item.type == ItemID.None && !isDemonAltar && !isCrimsonAltar)
+				if (item.type == ItemID.None && string.IsNullOrEmpty(hoverText))
 					return; // blank item slots should not be drawn
 
 				if (!Id.StartsWith("loot_")) {
@@ -297,11 +291,11 @@ namespace BossChecklist.UIElements
 					Main.inventoryScale = oldScale;
 
 					// Draws the evil altars in the designated slots if needed
-					if (isCrimsonAltar || isDemonAltar) {
+					if (!string.IsNullOrEmpty(hoverText) && hoverText.EndsWith("Altar")) {
 						Main.instance.LoadTiles(TileID.DemonAltar);
 						int offsetX = 0;
 						int offsetY = 0;
-						int offsetSrc = isCrimsonAltar ? 3 : 0;
+						int offsetSrc = WorldGen.crimson ? 3 : 0;
 						for (int i = 0; i < 6; i++) {
 							float scale = 0.64f;
 							Rectangle src = new Rectangle((offsetX + offsetSrc) * 18, offsetY * 18, 16, 16 + (offsetY * 2));
@@ -321,7 +315,7 @@ namespace BossChecklist.UIElements
 
 					// Hover text
 					if (IsMouseHovering) {
-						if (isCrimsonAltar || isDemonAltar || byHand || item.type == ItemID.None) {
+						if (!string.IsNullOrEmpty(hoverText)) {
 							BossUISystem.Instance.UIHoverText = hoverText; // Empty item, default to hoverText if applicable
 						}
 						else {

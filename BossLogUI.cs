@@ -1557,7 +1557,7 @@ namespace BossChecklist
 				spawn.stack = 101; // apply a custom stack count for the torches needed for the Torch God summoning event
 			}
 
-			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, false, spawn.HoverName, ItemSlot.Context.EquipDye);
+			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, ItemSlot.Context.EquipDye);
 			spawnItemSlot.Left.Pixels = 48 + (56 * 2);
 			spawnItemSlot.Top.Pixels = 230;
 			PageTwo.Append(spawnItemSlot);
@@ -1659,7 +1659,7 @@ namespace BossChecklist
 			// To note, we do not need an item row as recipes have a max ingredient size of 14, so there is no need for a scrollbar
 			foreach (Item item in ingredients) {
 				// Create an item slot for the current item
-				LogItemSlot ingList = new LogItemSlot(item, false, item.HoverName, ItemSlot.Context.GuideItem, 0.85f) {
+				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f) {
 					Id = $"ingredient_{item.type}"
 				};
 				ingList.Left.Pixels = 20 + (48 * col);
@@ -1683,7 +1683,9 @@ namespace BossChecklist
 			if (requiredTiles.Count == 0) {
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
 				// TODO: Change the Power Glove to the Hand of Creation
-				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), false, Language.GetTextValue($"{LangLog}.SpawnInfo.ByHand"), ItemSlot.Context.EquipArmorVanity, 0.85f);
+				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), ItemSlot.Context.EquipArmorVanity, 0.85f) {
+					hoverText = $"{LangLog}.SpawnInfo.ByHand"
+				};
 				craftItem.Top.Pixels = 240 + (48 * (row + 2));
 				craftItem.Left.Pixels = 20;
 				PageTwo.Append(craftItem);
@@ -1695,17 +1697,9 @@ namespace BossChecklist
 					if (tile == -1)
 						break; // Prevents extra empty slots from being created
 
-					string hoverText = "";
+					string altarType = WorldGen.crimson ? "MapObject.CrimsonAltar" : "MapObject.DemonAltar";
 					Item craftStation = new Item(0);
-					if (tile == TileID.DemonAltar) {
-						// Demon altars do not have an item id, so a texture will be created solely to be drawn here
-						// A demon altar will be displayed if the world evil is corruption
-						// A crimson altar will be displayed if the world evil is crimson
-						string demonAltar = Language.GetTextValue("MapObject.DemonAltar");
-						string crimsonAltar = Language.GetTextValue("MapObject.CrimsonAltar");
-						hoverText = WorldGen.crimson ? crimsonAltar : demonAltar;
-					}
-					else {
+					if (tile != TileID.DemonAltar) {
 						// Look for items that create the tile when placed, and use that item for the item slot
 						foreach (Item item in ContentSamples.ItemsByType.Values) {
 							if (item.createTile == tile) {
@@ -1715,7 +1709,9 @@ namespace BossChecklist
 						}
 					}
 
-					LogItemSlot tileList = new LogItemSlot(craftStation, false, hoverText, ItemSlot.Context.EquipArmorVanity, 0.85f);
+					LogItemSlot tileList = new LogItemSlot(craftStation, ItemSlot.Context.EquipArmorVanity, 0.85f) {
+						hoverText = tile == TileID.DemonAltar ? altarType : null
+					};
 					tileList.Left.Pixels = 20 + (48 * col);
 					tileList.Top.Pixels = 240 + (48 * (row + 2));
 					PageTwo.Append(tileList);
@@ -1786,8 +1782,9 @@ namespace BossChecklist
 				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
 
 				// Create an item slot for the current item
-				LogItemSlot itemSlot = new LogItemSlot(selectedItem, hasObtained, "", ItemSlot.Context.TrashItem) {
-					Id = "loot_" + item
+				LogItemSlot itemSlot = new LogItemSlot(selectedItem, ItemSlot.Context.TrashItem) {
+					Id = "loot_" + item,
+					hasItem = hasObtained
 				};
 				itemSlot.Left.Pixels = (col * 56) + 15;
 				itemSlot.OnRightClick += RemoveItem; // debug functionality
