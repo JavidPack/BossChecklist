@@ -5,7 +5,7 @@ Mods: {
 				BossLog: Boss日志
 				Boss: Boss
 				BossPlural: Boss
-				MiniBoss: Mini-boss
+				MiniBoss: 小boss
 				MiniBossPlural: 小Boss
 				Event: 事件
 				EventPlural: 事件
@@ -20,7 +20,7 @@ Mods: {
 				Credits: 感谢页面
 				NextEntry:
 					'''
-					Next {0}:
+					下个{0}:
 					{1}
 					'''
 				
@@ -121,7 +121,7 @@ Mods: {
 				RecipeFrom: 此合成配方来自: {0}
 				CycleRecipe: 切换至其他合成配方
 				Noncraftable: 此物品不可被合成
-				NoSpawnItem: This {0} has no spawn item
+				NoSpawnItem: 没有生成{0}的物品
 				ByHand: 空手制作
 			}
 
