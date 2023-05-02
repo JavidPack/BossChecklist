@@ -37,6 +37,9 @@ namespace BossChecklist.UIElements
 		/// All Log related UIElements should hide mouse over interactions and lock the vanilla scroll wheel
 		/// </summary>
 		internal class LogUIElement : UIElement {
+			public string hoverText;
+			internal Color hoverTextColor = Color.White;
+
 			public override void Update(GameTime gameTime) {
 				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
 					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
@@ -49,6 +52,11 @@ namespace BossChecklist.UIElements
 					HideMouseOverInteractions();
 
 				base.Draw(spriteBatch);
+
+				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrEmpty(hoverText)) {
+					BossUISystem.Instance.UIHoverText = hoverText;
+					BossUISystem.Instance.UIHoverTextColor = hoverTextColor;
+				}
 			}
 		}
 
@@ -177,9 +185,6 @@ namespace BossChecklist.UIElements
 			internal Color iconColor;
 			internal bool hoverButton;
 
-			internal string hoverText;
-			internal Color hoverTextColor;
-
 			public NavigationalButton(Asset<Texture2D> texture, bool hoverButton, Color color = default) {
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
@@ -235,11 +240,6 @@ namespace BossChecklist.UIElements
 			public override void Draw(SpriteBatch spriteBatch) {
 				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), hoverButton ? HoverColor : iconColor);
 				base.Draw(spriteBatch);
-
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface && !string.IsNullOrEmpty(hoverText)) {
-					BossUISystem.Instance.UIHoverText = Language.GetTextValue(hoverText);
-					BossUISystem.Instance.UIHoverTextColor = hoverTextColor;
-				}
 			}
 		}
 
@@ -273,7 +273,6 @@ namespace BossChecklist.UIElements
 		internal class IndicatorIcon : LogUIElement {
 			public string Id { get; init; }
 			public Color Color { get; set; } = Color.White;
-			public string hoverText;
 			internal Asset<Texture2D> texture;
 
 			public IndicatorIcon(Asset<Texture2D> texture) {
@@ -299,9 +298,6 @@ namespace BossChecklist.UIElements
 			public override void Draw(SpriteBatch spriteBatch) {
 				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), Color);
 				base.Draw(spriteBatch);
-
-				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrWhiteSpace(hoverText))
-					BossUISystem.Instance.UIHoverText = hoverText;
 			}
 		}
 
@@ -309,7 +305,6 @@ namespace BossChecklist.UIElements
 			public string Id { get; init; }
 			internal Asset<Texture2D> icon;
 			public Asset<Texture2D> check;
-			public string hoverText;
 
 			private string Cycle(string value, bool boss = false) {
 				return value switch {
@@ -378,9 +373,6 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(check.Value, new Vector2(inner.X + inner.Width - 10, inner.Y + inner.Height - 15), Color.White);
 
 				base.Draw(spriteBatch);
-
-				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrEmpty(hoverText))
-					BossUISystem.Instance.UIHoverText = hoverText;
 			}
 		}
 
@@ -416,7 +408,6 @@ namespace BossChecklist.UIElements
 
 		internal class LogItemSlot : LogUIElement {
 			public string Id { get; init; } = "";
-			internal string hoverText;
 			internal Item item;
 			private readonly int context;
 			private readonly float scale;
@@ -467,14 +458,9 @@ namespace BossChecklist.UIElements
 					}
 
 					// Hover text
-					if (IsMouseHovering) {
-						if (!string.IsNullOrEmpty(hoverText)) {
-							BossUISystem.Instance.UIHoverText = hoverText; // Empty item, default to hoverText if applicable
-						}
-						else {
-							Main.HoverItem = item;
-							Main.hoverItemName = item.HoverName;
-						}
+					if (IsMouseHovering && string.IsNullOrEmpty(hoverText)) {
+						Main.HoverItem = item;
+						Main.hoverItemName = item.HoverName;
 					}
 
 					return; // This should cover everything for item slots in the Spawn subpage (spawn item slot, recipe slots, and empty tile slots)
