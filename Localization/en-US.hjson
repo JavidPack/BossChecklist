@@ -9,6 +9,9 @@ Mods: {
 				MiniBossPlural: Mini-bosses
 				Event: Event
 				EventPlural: Events
+				Enabled: enabled
+				Disabled: disabled
+				PartiallyEnabled: partially enabled
 			}
 
 			Tabs: {
@@ -26,6 +29,12 @@ Mods: {
 				LootAndCollectibles: Loot & Collection
 			}
 
+			Indicator: {
+				ProgressionMode: Progression mode is {0}
+				OnlyBossContentEnabled: Only boss content is available to be displayed
+				OnlyBossContentDisabled: All content is available to be displayed
+			}
+
 			TableOfContents: {
 				PreHardmode: Pre-Hardmode
 				Hardmode: Hardmode
@@ -36,7 +45,7 @@ Mods: {
 				AllDropLoot: All non-collectible boss loot obtained!
 				AllCollectibles: All boss collectibles Obtained!
 
-				Filter:{
+				Filter: {
 					Show: '{0}: Shown'
 					Hide: '{0}: Hidden'
 					HideWhenCompleted: '{0}: Hidden when defeated'
@@ -154,7 +163,7 @@ Mods: {
 			HintTexts: {
 				MarkEntry: Mark an entry in the checklist as defeated by right-clicking it
 				HideEntry: Hide an entry from the checklist by holding alt and right-clicking it
-				ClearMarked: Clear all marked entries to their original defeated state by holding alt and right-clicking the....
+				ClearMarked: Clear all marked entries to their original defeated state by holding alt and right-clicking the filters tab
 				ClearHidden: Clear all hidden entries to their original hidden state by holding alt and right-clicking the 'Toggle hidden visibility' filter
 				ClearItems: Mark all items on this entry's page as unobtained by holding alt and right-clicking the treasure bag
 				RemoveItem: Mark an item as unobtained by holding alt and right-clicking the desired item slot

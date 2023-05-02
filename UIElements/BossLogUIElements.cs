@@ -21,8 +21,7 @@ using Terraria.UI.Chat;
 
 namespace BossChecklist.UIElements
 {
-	internal static class BossLogUIElements
-	{
+	internal static class BossLogUIElements {
 		/// <summary>
 		/// Hides certain mouse over interactions from appearing such as tile icons or NPC names.
 		/// </summary>
@@ -84,7 +83,7 @@ namespace BossChecklist.UIElements
 				else if (BossChecklist.DebugConfig.NewRecordsDisabled || BossChecklist.DebugConfig.RecordTrackingDisabled || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 					borderColor = Color.Firebrick; // If Records are disabled in any way, the book will be highlighted with a red border
 				}
-				else{
+				else {
 					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 					if (!modPlayer.hasOpenedTheBossLog || modPlayer.hasNewRecord.Any(x => x == true)) {
 						Color coverColor = BossChecklist.BossLogConfig.BossLogColor;
@@ -228,6 +227,155 @@ namespace BossChecklist.UIElements
 					BossUISystem.Instance.UIHoverText = Language.GetTextValue(hoverText);
 					BossUISystem.Instance.UIHoverTextColor = hoverTextColor;
 				}
+			}
+		}
+
+		internal class IndicatorPanel : UIElement {
+			private readonly Asset<Texture2D> section = BossLogUI.RequestResource("LogUI_IndicatorSection");
+			private readonly Asset<Texture2D> end = BossLogUI.RequestResource("LogUI_IndicatorEnd");
+			private readonly Asset<Texture2D> back = BossLogUI.RequestResource("Indicator_Back");
+
+			public IndicatorPanel() {
+				Width.Pixels = (end.Value.Width + back.Value.Width) * 2;
+				Height.Pixels = end.Value.Height;
+			}
+
+			public override void Update(GameTime gameTime) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					HideMouseOverInteractions();
+
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+				Rectangle centerPanel = new Rectangle(inner.X + end.Value.Width, inner.Y, inner.Width - (end.Value.Width * 2), inner.Height);
+				Rectangle endPanel = new Rectangle(inner.Right - end.Value.Width, inner.Y, end.Value.Width, end.Value.Height);
+
+				spriteBatch.Draw(end.Value, inner.TopLeft(), Color.White);
+				spriteBatch.Draw(section.Value, centerPanel, Color.White);
+				spriteBatch.Draw(end.Value, endPanel, end.Value.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 0f);
+
+				for (int i = 0; i < Children.Count(); i++) {
+					spriteBatch.Draw(back.Value, new Vector2(inner.X + 8 + (22 * i), inner.Y + 6), Color.White);
+				}
+
+				base.Draw(spriteBatch);
+			}
+		}
+
+		internal class IndicatorIcon : UIElement {
+			public string Id { get; init; }
+			public Color Color { get; set; } = Color.White;
+			public string hoverText;
+			internal Asset<Texture2D> texture;
+
+			public IndicatorIcon(Asset<Texture2D> texture) {
+				Width.Pixels = texture.Value.Width;
+				Height.Pixels = texture.Value.Height;
+				this.texture = texture;
+			}
+
+			public override void Click(UIMouseEvent evt) {
+				base.Click(evt);
+
+				if (Id == "Progression") {
+					BossUISystem.Instance.BossLog.CloseAndConfigure();
+				}
+				else if (Id == "OnlyBosses") {
+					BossChecklist.BossLogConfig.OnlyShowBossContent = !BossChecklist.BossLogConfig.OnlyShowBossContent;
+					BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+					BossChecklist.BossLogConfig.OnChanged();
+					BossUISystem.Instance.BossLog.RefreshPageContent();
+				}
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				base.Draw(spriteBatch);
+
+				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), Color);
+
+				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrWhiteSpace(hoverText))
+					BossUISystem.Instance.UIHoverText = hoverText;
+			}
+		}
+
+		internal class FilterIcon : UIElement {
+			public string Id { get; init; }
+			internal Asset<Texture2D> icon;
+			public Asset<Texture2D> check;
+			public string hoverText;
+
+			private string Cycle(string value, bool boss = false) {
+				return value switch {
+					"Show" => "Hide When Completed",
+					"Hide When Completed" => boss ? "Show" : "Hide",
+					"Hide" => "Show",
+					_ => ""
+				};
+			}
+
+			public FilterIcon(Asset<Texture2D> icon) {
+				Width.Pixels = icon.Value.Width;
+				Height.Pixels = icon.Value.Height;
+				this.icon = icon;
+			}
+
+			public string UpdateHoverText() {
+				string LangFilter = "Mods.BossChecklist.Log.TableOfContents.Filter";
+				string LangCommon = "Mods.BossChecklist.Log.Common";
+
+				if (Id == "Boss") {
+					return Language.GetTextValue($"{LangFilter}.{BossChecklist.BossLogConfig.FilterBosses.Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.BossPlural"));
+				}
+				else if (Id == "MiniBoss") {
+					return Language.GetTextValue($"{LangFilter}.{BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.MiniBossPlural"));
+				}
+				else if (Id == "Event") {
+					return Language.GetTextValue($"{LangFilter}.{BossChecklist.BossLogConfig.FilterEvents.Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.EventPlural"));
+				}
+				
+				return $"{LangFilter}.ToggleVisibility";
+			}
+
+			public override void Click(UIMouseEvent evt) {
+				base.Click(evt);
+
+				string ConfigHoverText = "";
+				if (Id == "Boss") {
+					BossChecklist.BossLogConfig.FilterBosses = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterBosses, true);
+				}
+				else if (Id == "MiniBoss") {
+					BossChecklist.BossLogConfig.FilterMiniBosses = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterMiniBosses);
+				}
+				else if (Id == "Event") {
+					BossChecklist.BossLogConfig.FilterEvents = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterEvents);
+				}
+				else if (Id == "Hidden") {
+					BossUISystem.Instance.BossLog.showHidden = !BossUISystem.Instance.BossLog.showHidden;
+					BossUISystem.Instance.BossLog.ClearHiddenList();
+				}
+				else if (Id == "Marked") {
+					// TODO: list only marked entries
+				}
+
+				if (!string.IsNullOrEmpty(ConfigHoverText))
+					BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+
+				BossUISystem.Instance.BossLog.UpdateFilterCheckAndTooltip(); // Update filter display state when clicked
+				BossUISystem.Instance.BossLog.RefreshPageContent();
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				base.Draw(spriteBatch);
+				Rectangle inner = GetInnerDimensions().ToRectangle();
+				spriteBatch.Draw(icon.Value, inner, Color.White);
+				if (check != null)
+					spriteBatch.Draw(check.Value, new Vector2(inner.X + inner.Width - 10, inner.Y + inner.Height - 15), Color.White);
+
+				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrEmpty(hoverText))
+					BossUISystem.Instance.UIHoverText = hoverText;
 			}
 		}
 
@@ -1035,50 +1183,6 @@ namespace BossChecklist.UIElements
 						BossUISystem.Instance.UIHoverText = AssignToolTip();
 					}
 				}
-			}
-		}
-
-		internal class BookUI : UIImage {
-			public string Id { get; init; } = "";
-			readonly Asset<Texture2D> book;
-			public BookUI(Asset<Texture2D> texture) : base(texture) {
-				Width.Pixels = texture.Value.Width;
-				Height.Pixels = texture.Value.Height;
-
-				book = texture;
-			}
-
-			public override void Update(GameTime gameTime) {
-				base.Update(gameTime);
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
-			}
-
-			protected override void DrawSelf(SpriteBatch spriteBatch) {
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					HideMouseOverInteractions();
-
-				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
-
-				if (Id == "Info_Tab") {
-					if (BossChecklist.BossLogConfig.AnyProgressionModeConfigUsed) {
-						Rectangle rect = GetDimensions().ToRectangle();
-						spriteBatch.Draw(book.Value, rect, Color.Firebrick);
-
-						Texture2D texture = BossLogUI.RequestVanillaTexture($"Images/Item_{ItemID.Blindfold}").Value;
-						float scale = 0.85f;
-						Vector2 pos = new Vector2(rect.X + rect.Width / 2 - texture.Width * scale / 2, rect.Y + rect.Height / 2 - texture.Height * scale / 2);
-						spriteBatch.Draw(texture, pos, texture.Bounds, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-
-						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.ProgressionMode.IsEnabled";
-							BossUISystem.Instance.UIHoverTextColor = Color.Wheat;
-						}
-					}
-					return;
-				}
-
-				base.DrawSelf(spriteBatch);
 			}
 		}
 
