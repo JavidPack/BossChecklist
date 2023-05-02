@@ -33,6 +33,25 @@ namespace BossChecklist.UIElements
 			Main.ItemIconCacheUpdate(0);
 		}
 
+		/// <summary>
+		/// All Log related UIElements should hide mouse over interactions and lock the vanilla scroll wheel
+		/// </summary>
+		internal class LogUIElement : UIElement {
+			public override void Update(GameTime gameTime) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
+
+				base.Update(gameTime);
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
+					HideMouseOverInteractions();
+
+				base.Draw(spriteBatch);
+			}
+		}
+
 		internal class OpenLogButton : UIImageButton {
 			internal Asset<Texture2D> texture;
 			private Vector2 offset;
@@ -150,7 +169,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class NavigationalButton : UIElement {
+		internal class NavigationalButton : LogUIElement {
 			public string Id { get; init; } = "";
 			public int? Anchor { get; init; } = null;
 
@@ -211,12 +230,6 @@ namespace BossChecklist.UIElements
 					SoundEngine.PlaySound(SoundID.MenuTick);
 			}
 
-			public override void Update(GameTime gameTime) {
-				base.Update(gameTime);
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					Main.LocalPlayer.mouseInterface = true;
-			}
-
 			private Color HoverColor => ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface ? Color.White : BossLogUI.faded;
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -230,7 +243,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class IndicatorPanel : UIElement {
+		internal class IndicatorPanel : LogUIElement {
 			private readonly Asset<Texture2D> section = BossLogUI.RequestResource("LogUI_IndicatorSection");
 			private readonly Asset<Texture2D> end = BossLogUI.RequestResource("LogUI_IndicatorEnd");
 			private readonly Asset<Texture2D> back = BossLogUI.RequestResource("Indicator_Back");
@@ -240,15 +253,7 @@ namespace BossChecklist.UIElements
 				Height.Pixels = end.Value.Height;
 			}
 
-			public override void Update(GameTime gameTime) {
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
-			}
-
 			public override void Draw(SpriteBatch spriteBatch) {
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					HideMouseOverInteractions();
-
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Rectangle centerPanel = new Rectangle(inner.X + end.Value.Width, inner.Y, inner.Width - (end.Value.Width * 2), inner.Height);
 				Rectangle endPanel = new Rectangle(inner.Right - end.Value.Width, inner.Y, end.Value.Width, end.Value.Height);
@@ -265,7 +270,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class IndicatorIcon : UIElement {
+		internal class IndicatorIcon : LogUIElement {
 			public string Id { get; init; }
 			public Color Color { get; set; } = Color.White;
 			public string hoverText;
@@ -292,16 +297,15 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				base.Draw(spriteBatch);
-
 				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), Color);
+				base.Draw(spriteBatch);
 
 				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrWhiteSpace(hoverText))
 					BossUISystem.Instance.UIHoverText = hoverText;
 			}
 		}
 
-		internal class FilterIcon : UIElement {
+		internal class FilterIcon : LogUIElement {
 			public string Id { get; init; }
 			internal Asset<Texture2D> icon;
 			public Asset<Texture2D> check;
@@ -368,11 +372,12 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				base.Draw(spriteBatch);
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				spriteBatch.Draw(icon.Value, inner, Color.White);
 				if (check != null)
 					spriteBatch.Draw(check.Value, new Vector2(inner.X + inner.Width - 10, inner.Y + inner.Height - 15), Color.White);
+
+				base.Draw(spriteBatch);
 
 				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrEmpty(hoverText))
 					BossUISystem.Instance.UIHoverText = hoverText;
@@ -409,7 +414,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LogItemSlot : UIElement {
+		internal class LogItemSlot : LogUIElement {
 			public string Id { get; init; } = "";
 			internal string hoverText;
 			internal Item item;
@@ -578,7 +583,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LootRow : UIElement {
+		internal class LootRow : LogUIElement {
 			readonly int order; // Had to put the itemslots in a row in order to be put in a UIList with scroll functionality
 
 			public LootRow(int order) {
@@ -593,24 +598,15 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LogPanel : UIElement {
+		internal class LogPanel : LogUIElement {
 			public string Id { get; init; } = "";
 
-			public override void Update(GameTime gameTime) {
-				base.Update(gameTime);
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
-			}
-
 			public override void Draw(SpriteBatch spriteBatch) {
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					HideMouseOverInteractions();
-
 				base.Draw(spriteBatch);
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
 				if (Id == "") {
 					spriteBatch.Draw(BossLogUI.Texture_Log_BackPanel.Value, pageRect, BossChecklist.BossLogConfig.BossLogColor); // Main panel draws the Log Book (with color)...
-					spriteBatch.Draw(BossLogUI.RequestResource("LogUI_Paper").Value, pageRect, Color.White); //.. and the paper on top
+					spriteBatch.Draw(BossLogUI.Texture_Log_Paper.Value, pageRect, Color.White); //.. and the paper on top
 				}
 
 				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
@@ -1095,7 +1091,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class LogTab : UIElement {
+		internal class LogTab : LogUIElement {
 			public string Id { get; init; } = "";
 			public int UpNext { get; set; } = -1;
 
@@ -1159,16 +1155,9 @@ namespace BossChecklist.UIElements
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 			}
 
-			public override void Update(GameTime gameTime) {
-				base.Update(gameTime);
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					PlayerInput.LockVanillaMouseScroll("BossChecklist/BossLogUIElement");
-			}
-
 			public override void Draw(SpriteBatch spriteBatch) {
-				if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
-					HideMouseOverInteractions();
 				// Tab drawing
+				base.Draw(spriteBatch);
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 
 				if (this.Visibile()) {
@@ -1349,7 +1338,7 @@ namespace BossChecklist.UIElements
 			}
 		}
 
-		internal class ProgressBar : UIElement {
+		internal class ProgressBar : LogUIElement {
 			internal readonly Asset<Texture2D> fullBar = BossLogUI.RequestResource("Extra_ProgressBar");
 			internal readonly float percentageTotal;
 			internal readonly Point countsTotal;
@@ -1497,6 +1486,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
+				base.Draw(spriteBatch);
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 
 				// drawing a percentage value above the bar

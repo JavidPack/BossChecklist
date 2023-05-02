@@ -71,7 +71,7 @@ namespace BossChecklist
 		public LogTab EventTab;
 		public IndicatorPanel IndicatorTab;
 		public List<IndicatorIcon> Indicators;
-		public UIImage FilterPanel; // contains the filter buttons
+		public FilterIcon FilterPanel; // contains the filter buttons, (not a filter icon, but it works)
 		public List<FilterIcon> FilterIcons;
 		public bool filterOpen = false; // when true, the filter panel is visible to the user
 
@@ -359,7 +359,7 @@ namespace BossChecklist
 
 			pageTwoItemList = new UIList();
 
-			FilterPanel = new UIImage(Texture_Log_FilterPanel);
+			FilterPanel = new FilterIcon(Texture_Log_FilterPanel);
 			FilterIcons = new List<FilterIcon>() {
 				new FilterIcon(Texture_Nav_Boss) { Id = "Boss" },
 				new FilterIcon(Texture_Nav_MiniBoss) { Id = "MiniBoss" },
