@@ -1059,7 +1059,7 @@ namespace BossChecklist.UIElements
 				Rectangle iconRect = new Rectangle(inner.X + (isMod ? 8 : 0), inner.Y + (isMod ? 8 : 0), 80, 80);
 				spriteBatch.Draw(icon.Value, iconRect, Color.White); // character/icon drawing
 				if (icon.Name == "Resources\\Credits_NoIcon" && Main.MouseScreen.Between(iconRect.TopLeft(), iconRect.BottomRight()))
-					BossUISystem.Instance.UIHoverText = Language.GetTextValue($"{BossLogUI.LangLog}.Credits.NoIcon");
+					BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.Credits.NoIcon";
 
 				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + (isMod ? 95 : 80), inner.Y + 11), Color.White); // Draw the dev/mod name as a string
 

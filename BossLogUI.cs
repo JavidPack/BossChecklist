@@ -1349,7 +1349,7 @@ namespace BossChecklist
 					// TODO: Add the functionaility of clearing a singular record by alt+reight-clicking the record achievement icon
 					Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
 					NavigationalButton tips = new NavigationalButton(icon, true) {
-						hoverText = Language.GetTextValue($"{LangLog}.HintTexts.ClearAllRecords")
+						hoverText = $"{LangLog}.HintTexts.ClearAllRecords"
 					};
 					tips.Left.Pixels = lootButton.Left.Pixels / 2 - icon.Value.Width / 2;
 					tips.Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - icon.Value.Height / 2;
@@ -1414,7 +1414,7 @@ namespace BossChecklist
 						Asset<Texture2D> recordIcon = RequestResource($"Nav_Record_{RecordSubCategory}");
 						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, true) {
 							Id = "SubCategory",
-							hoverText = Language.GetTextValue($"{LangLog}.Records.Category.Cycle")
+							hoverText = $"{LangLog}.Records.Category.Cycle"
 						};
 						RecordSubCategoryButton.Left.Pixels = slot.Width.Pixels - recordIcon.Value.Width - 15;
 						RecordSubCategoryButton.Top.Pixels = slot.Height.Pixels / 2 - recordIcon.Value.Height / 2;
