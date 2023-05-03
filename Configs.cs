@@ -207,30 +207,34 @@ namespace BossChecklist
 
 		internal bool AnyProgressionModeConfigUsed => MaskTextures || MaskNames || MaskBossLoot || MaskHardMode;
 
+		public void UpdateIndicators() {
+			BossLogUI Log = BossUISystem.Instance.BossLog;
+			string LangIndicator = "Mods.BossChecklist.Log.Indicator";
+			string LangCommon = "Mods.BossChecklist.Log.Common";
+
+			Log.Indicators[0].Color = OnlyShowBossContent ? Color.LightGreen : Color.DarkGray;
+			Log.Indicators[0].hoverText = OnlyShowBossContent ? $"{LangIndicator}.OnlyBossContentEnabled" : $"{LangIndicator}.OnlyBossContentDisabled";
+
+			if (ProgressionModeEnable) {
+				Log.Indicators[1].Color = Color.Tomato;
+				Log.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.Enabled"));
+			}
+			else if (AnyProgressionModeConfigUsed) {
+				Log.Indicators[1].Color = Color.Salmon;
+				Log.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.PartiallyEnabled"));
+			}
+			else {
+				Log.Indicators[1].Color = Color.DarkGray;
+				Log.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.Disabled"));
+			}
+			BossChecklist.instance.Logger.Info(Log.Indicators[1].hoverText);
+		}
+
 		public override void OnChanged() {
 			if (BossChecklist.instance == null)
 				return;
 
-			string LangIndicator = "Mods.BossChecklist.Log.Indicator";
-			string LangCommon = "Mods.BossChecklist.Log.Common";
-			if (ProgressionModeEnable) {
-				BossChecklist.instance.Logger.Info("Progression Mode is ENABLED");
-				BossUISystem.Instance.BossLog.Indicators[1].Color = Color.Tomato;
-				BossUISystem.Instance.BossLog.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.Enabled"));
-			}
-			else if (AnyProgressionModeConfigUsed) {
-				BossChecklist.instance.Logger.Info("Progression Mode is PARTIALLY ENABLED");
-				BossUISystem.Instance.BossLog.Indicators[1].Color = Color.Salmon;
-				BossUISystem.Instance.BossLog.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.PartiallyEnabled"));
-			}
-			else {
-				BossChecklist.instance.Logger.Info("Progression Mode is DISABLED");
-				BossUISystem.Instance.BossLog.Indicators[1].Color = Color.DarkGray;
-				BossUISystem.Instance.BossLog.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.Disabled"));
-			}
-
-			BossUISystem.Instance.BossLog.Indicators[0].Color = OnlyShowBossContent ? Color.LightGreen : Color.DarkGray;
-			BossUISystem.Instance.BossLog.Indicators[0].hoverText = OnlyShowBossContent ? $"{LangIndicator}.OnlyBossContentEnabled" : $"{LangIndicator}.OnlyBossContentDisabled";
+			UpdateIndicators();
 		}
 
 		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {

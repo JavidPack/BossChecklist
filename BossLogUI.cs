@@ -722,11 +722,11 @@ namespace BossChecklist
 
 			Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
 
-			backdrops[0].OnClick += (a, b) => ContinueDisabled();
+			backdrops[0].OnClick += (a, b) => SelectProgressionModeState(false);
 			backdrops[0].OnMouseOver += (a, b) => { backdrops[0].Color = bookColor; };
 			backdrops[0].OnMouseOut += (a, b) => { backdrops[0].Color = Color.White; };
 
-			backdrops[1].OnClick += (a, b) => ContinueEnabled();
+			backdrops[1].OnClick += (a, b) => SelectProgressionModeState(true);
 			backdrops[1].OnMouseOver += (a, b) => { backdrops[1].Color = bookColor; };
 			backdrops[1].OnMouseOut += (a, b) => { backdrops[1].Color = Color.White; };
 
@@ -789,29 +789,14 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Fully disables Progression Mode and redirects the player to the Table of Contents.
+		/// Fully enables or disables Progression Mode based on option selected and redirects the player to the Table of Contents.
 		/// </summary>
-		private void ContinueDisabled() {
-			BossChecklist.BossLogConfig.MaskTextures = false;
-			BossChecklist.BossLogConfig.MaskNames = false;
-			BossChecklist.BossLogConfig.UnmaskNextBoss = true;
-			BossChecklist.BossLogConfig.MaskBossLoot = false;
-			BossChecklist.BossLogConfig.MaskHardMode = false;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
-
-			PageNum = Page_TableOfContents; // switch page to Table of Contents when clicked
-		}
-
-		/// <summary>
-		/// Fully enables Progression Mode and redirects the player to the Table of Contents.
-		/// </summary>
-		private void ContinueEnabled() {
-			BossChecklist.BossLogConfig.MaskTextures = true;
-			BossChecklist.BossLogConfig.MaskNames = true;
-			BossChecklist.BossLogConfig.UnmaskNextBoss = false;
-			BossChecklist.BossLogConfig.MaskBossLoot = true;
-			BossChecklist.BossLogConfig.MaskHardMode = true;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+		private void SelectProgressionModeState(bool enabled) {
+			BossChecklist.BossLogConfig.ProgressionModeEnable = enabled;
+			BossChecklist.BossLogConfig.ProgressionModeDisable = !enabled;
+			BossChecklist.BossLogConfig.UnmaskNextBoss = !enabled;
+			BossChecklist.SaveConfig(BossChecklist.BossLogConfig); // save the option selected before proceeding
+			BossChecklist.BossLogConfig.UpdateIndicators();
 
 			PageNum = Page_TableOfContents; // switch page to Table of Contents when clicked
 		}

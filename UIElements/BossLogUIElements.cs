@@ -254,6 +254,9 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
+				if (BossUISystem.Instance.BossLog.PageNum == BossLogUI.Page_Prompt)
+					return;
+
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Rectangle centerPanel = new Rectangle(inner.X + end.Value.Width, inner.Y, inner.Width - (end.Value.Width * 2), inner.Height);
 				Rectangle endPanel = new Rectangle(inner.Right - end.Value.Width, inner.Y, end.Value.Width, end.Value.Height);
