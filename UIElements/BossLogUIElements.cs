@@ -345,10 +345,10 @@ namespace BossChecklist.UIElements
 				if (Id == "Boss") {
 					BossChecklist.BossLogConfig.FilterBosses = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterBosses, true);
 				}
-				else if (Id == "MiniBoss") {
+				else if (Id == "MiniBoss" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 					BossChecklist.BossLogConfig.FilterMiniBosses = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterMiniBosses);
 				}
-				else if (Id == "Event") {
+				else if (Id == "Event" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
 					BossChecklist.BossLogConfig.FilterEvents = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterEvents);
 				}
 				else if (Id == "Hidden") {
