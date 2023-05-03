@@ -292,8 +292,8 @@ namespace BossChecklist.UIElements
 				}
 				else if (Id == "OnlyBosses") {
 					BossChecklist.BossLogConfig.OnlyShowBossContent = !BossChecklist.BossLogConfig.OnlyShowBossContent;
-					BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
-					BossChecklist.BossLogConfig.OnChanged();
+					BossLogUI.PendingConfigChange = true;
+					BossChecklist.BossLogConfig.UpdateIndicators();
 					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
 			}
@@ -363,7 +363,7 @@ namespace BossChecklist.UIElements
 				}
 
 				if (!string.IsNullOrEmpty(ConfigHoverText))
-					BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+					BossLogUI.PendingConfigChange = true;
 
 				BossUISystem.Instance.BossLog.UpdateFilterCheckAndTooltip(); // Update filter display state when clicked
 				BossUISystem.Instance.BossLog.RefreshPageContent();

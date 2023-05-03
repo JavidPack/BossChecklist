@@ -155,6 +155,7 @@ namespace BossChecklist
 		// Boss Log visibiltiy helpers
 		private bool bossLogVisible;
 		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
+		internal static bool PendingConfigChange; // Allows configs to be updated on Log close, when needed
 		
 		private bool PendingPageChange; // Allows changing the page outside of the UIState without causing ordering or drawing issues.
 		private int PageChangeValue;
@@ -195,6 +196,11 @@ namespace BossChecklist
 					RemoveChild(FilterPanel);
 					RemoveChild(ToCTab);
 					RemoveChild(BookArea);
+
+					if (PendingConfigChange) {
+						PendingConfigChange = false;
+						BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+					}
 				}
 				bossLogVisible = value;
 			}
@@ -795,7 +801,7 @@ namespace BossChecklist
 			BossChecklist.BossLogConfig.ProgressionModeEnable = enabled;
 			BossChecklist.BossLogConfig.ProgressionModeDisable = !enabled;
 			BossChecklist.BossLogConfig.UnmaskNextBoss = !enabled;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig); // save the option selected before proceeding
+			PendingConfigChange = true; // save the option selected before proceeding
 			BossChecklist.BossLogConfig.UpdateIndicators();
 
 			PageNum = Page_TableOfContents; // switch page to Table of Contents when clicked
@@ -850,7 +856,7 @@ namespace BossChecklist
 		/// </summary>
 		private void DisablePromptMessage() {
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
-			BossChecklist.SaveConfig(BossChecklist.BossLogConfig);
+			PendingConfigChange = true;
 			if (BossChecklist.BossLogConfig.PromptDisabled) {
 				PromptCheck.SetImage(Texture_Check_Check);
 			}
