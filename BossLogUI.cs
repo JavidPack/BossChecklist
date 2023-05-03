@@ -317,7 +317,7 @@ namespace BossChecklist
 				Id = "TableOfContents"
 			};
 			ToCTab.OnClick += (a, b) => UpdateFilterTabPos(true);
-			ToCTab.OnRightClick += (a, b) => ClearForcedDowns();
+			ToCTab.OnRightClick += (a, b) => ClearMarkedDowns();
 
 			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss);
 			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss);
@@ -583,7 +583,7 @@ namespace BossChecklist
 			FilterIcons[3].check = showHidden ? Texture_Check_Check : Texture_Check_X;
 		}
 
-		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Forced Downs, Clear Records, Clear Boss Loot, etc
+		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Marked Downs, Clear Records, Clear Boss Loot, etc
 
 		public void ClearHiddenList() {
 			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenEntries.Count == 0)
@@ -604,17 +604,17 @@ namespace BossChecklist
 			RefreshPageContent();
 		}
 
-		private void ClearForcedDowns() {
-			if (!BossChecklist.DebugConfig.ResetForcedDowns || WorldAssist.ForcedMarkedEntries.Count == 0)
+		private void ClearMarkedDowns() {
+			if (!BossChecklist.DebugConfig.ResetForcedDowns || WorldAssist.MarkedEntries.Count == 0)
 				return;
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return;
 
-			WorldAssist.ForcedMarkedEntries.Clear();
+			WorldAssist.MarkedEntries.Clear();
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.RequestClearForceDowns);
+				packet.Write((byte)PacketMessageType.RequestClearMarkedDowns);
 				packet.Send();
 			}
 			RefreshPageContent();
@@ -1067,26 +1067,26 @@ namespace BossChecklist
 				string displayName = entry.DisplayName;
 				BossLogConfiguration cfg = BossChecklist.BossLogConfig;
 
-				bool namesMasked = cfg.MaskNames && !entry.IsDownedOrForced;
-				bool hardMode = cfg.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh && !entry.IsDownedOrForced;
-				bool availability = cfg.HideUnavailable && !entry.available() && !entry.IsDownedOrForced;
+				bool namesMasked = cfg.MaskNames && !entry.IsDownedOrMarked;
+				bool hardMode = cfg.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh && !entry.IsDownedOrMarked;
+				bool availability = cfg.HideUnavailable && !entry.available() && !entry.IsDownedOrMarked;
 				if (namesMasked || hardMode || availability) {
 					displayName = "???";
 				}
 
 				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
-					if (!entry.IsDownedOrForced && entry.available() && !entry.hidden && FindNextEntry() == entry.GetIndex) {
+					if (!entry.IsDownedOrMarked && entry.available() && !entry.hidden && FindNextEntry() == entry.GetIndex) {
 						displayName = entry.DisplayName;
 					}
 				}
 
 				// The first entry that isnt downed to have a nextCheck will set off the next check for the rest
 				// Entries that ARE downed will still be green due to the ordering of colors within the draw method
-				// Update forced downs. If the boss is actaully downed, remove the force check.
-				if (entry.ForceDowned) {
+				// Update marked downs. If the boss is actually downed, remove the mark.
+				if (entry.MarkedAsDowned) {
 					displayName += "*";
 					if (entry.downed()) {
-						WorldAssist.ForcedMarkedEntries.Remove(entry.Key);
+						WorldAssist.MarkedEntries.Remove(entry.Key);
 					}
 				}
 
@@ -1166,7 +1166,7 @@ namespace BossChecklist
 				}
 
 				Color textColor = Color.PapayaWhip; // default color when ColoredBossText is false
-				if ((!entry.available() && !entry.IsDownedOrForced) || entry.hidden) {
+				if ((!entry.available() && !entry.IsDownedOrMarked) || entry.hidden) {
 					textColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
 				}
 				else if (BossChecklist.BossLogConfig.ColoredBossText) {
@@ -1174,7 +1174,7 @@ namespace BossChecklist
 						textColor = Main.DiscoColor;
 					}
 					else {
-						textColor = entry.IsDownedOrForced ? Colors.RarityGreen : Colors.RarityRed;
+						textColor = entry.IsDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
 					}
 				}
 
@@ -1419,7 +1419,7 @@ namespace BossChecklist
 
 						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
 						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
-						Color iconColor = relatedEntry.IsDownedOrForced ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
+						Color iconColor = relatedEntry.IsDownedOrMarked ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
 						NavigationalButton entryIcon = new NavigationalButton(headIcon, false, iconColor) {
 							Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
@@ -1769,11 +1769,11 @@ namespace BossChecklist
 		/// </summary>
 		/// <param name="entryType">Add an entry type to specifically look for the next available entry of that type.</param>
 		/// <returns>The index of the next available entry within the SortedEntries list.</returns>
-		public static int FindNextEntry(EntryType? entryType = null) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrForced && x.VisibleOnChecklist() && (!entryType.HasValue || x.type == entryType));
+		public static int FindNextEntry(EntryType? entryType = null) => BossChecklist.bossTracker.SortedEntries.FindIndex(x => !x.IsDownedOrMarked && x.VisibleOnChecklist() && (!entryType.HasValue || x.type == entryType));
 
 		/// <summary> Determines if a texture should be masked by a black sihlouette. </summary>
 		public static Color MaskBoss(EntryInfo entry) {
-			if (!entry.IsDownedOrForced) {
+			if (!entry.IsDownedOrMarked) {
 				if (BossChecklist.BossLogConfig.MaskTextures) {
 					return Color.Black;
 				}

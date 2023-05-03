@@ -477,7 +477,7 @@ namespace BossChecklist.UIElements
 				/// Everything below is being set up for loot related itemslots ///
 				EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
 				bool hardModeMasked = BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh;
-				bool progressRestricted = !entry.IsDownedOrForced && (BossChecklist.BossLogConfig.MaskBossLoot || hardModeMasked);
+				bool progressRestricted = !entry.IsDownedOrMarked && (BossChecklist.BossLogConfig.MaskBossLoot || hardModeMasked);
 				bool expertRestricted = item.expert && !Main.expertMode;
 				bool masterRestricted = item.master && !Main.masterMode;
 				bool OWmusicRestricted = BossTracker.otherWorldMusicBoxTypes.Contains(item.type) && !BossLogUI.OtherworldUnlocked;
@@ -687,19 +687,19 @@ namespace BossChecklist.UIElements
 						string isDefeated = $"{Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.Defeated", Main.worldName)}";
 						string notDefeated = $"{Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.Undefeated", Main.worldName)}";
 
-						if (entry.ForceDowned) {
+						if (entry.MarkedAsDowned) {
 							isDefeated = $"''{Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.Defeated", Main.worldName)}''";
 						}
 
-						Asset<Texture2D> texture = entry.IsDownedOrForced ? BossLogUI.Texture_Check_Check : BossLogUI.Texture_Check_X;
+						Asset<Texture2D> texture = entry.IsDownedOrMarked ? BossLogUI.Texture_Check_Check : BossLogUI.Texture_Check_X;
 						Vector2 defeatpos = new Vector2(firstHeadPos.X + (firstHeadPos.Width / 2), firstHeadPos.Y + firstHeadPos.Height - (texture.Height() / 2));
 						spriteBatch.Draw(texture.Value, defeatpos, Color.White);
 
 						// Hovering over the head icon will display the defeated text
 						Rectangle hoverRect = new Rectangle(lastX, firstHeadPos.Y, totalWidth, firstHeadPos.Height);
 						if (Main.MouseScreen.Between(hoverRect.TopLeft(), hoverRect.BottomRight())) {
-							BossUISystem.Instance.UIHoverText = entry.IsDownedOrForced ? isDefeated : notDefeated;
-							BossUISystem.Instance.UIHoverTextColor = entry.IsDownedOrForced ? Colors.RarityGreen : Colors.RarityRed;
+							BossUISystem.Instance.UIHoverText = entry.IsDownedOrMarked ? isDefeated : notDefeated;
+							BossUISystem.Instance.UIHoverTextColor = entry.IsDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
 						}
 
 						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && entry.modSource != "Unknown";
@@ -1211,18 +1211,18 @@ namespace BossChecklist.UIElements
 					}
 				}
 				else {
-					if (WorldAssist.ForcedMarkedEntries.Contains(entry.Key)) {
-						WorldAssist.ForcedMarkedEntries.Remove(entry.Key); // if the entry was marked already, remove it
+					if (WorldAssist.MarkedEntries.Contains(entry.Key)) {
+						WorldAssist.MarkedEntries.Remove(entry.Key); // if the entry was marked already, remove it
 					}
 					else if (!entry.downed()) {
-						WorldAssist.ForcedMarkedEntries.Add(entry.Key); // if the entry was not marked already, add it if it is not already defeated
+						WorldAssist.MarkedEntries.Add(entry.Key); // if the entry was not marked already, add it if it is not already defeated
 					}
 
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestForceDownBoss);
+						packet.Write((byte)PacketMessageType.RequestMarkedDownEntry);
 						packet.Write(entry.Key);
-						packet.Write(entry.ForceDowned);
+						packet.Write(entry.MarkedAsDowned);
 						packet.Send(); // update the server with a packet
 					}
 				}
@@ -1282,7 +1282,7 @@ namespace BossChecklist.UIElements
 				Asset<Texture2D> checkGrid = BossLogUI.Texture_Check_Box;
 				string checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
 
-				if (entry.IsDownedOrForced) {
+				if (entry.IsDownedOrMarked) {
 					if (checkType == "X and  ☐") {
 						checkGrid = BossLogUI.Texture_Check_X;
 					}
@@ -1402,7 +1402,7 @@ namespace BossChecklist.UIElements
 						continue; // skip entry if it is not visible on the checklist or if it is not on the selected hardmode status
 
 					total++;
-					if (entry.IsDownedOrForced)
+					if (entry.IsDownedOrMarked)
 						downed++;
 				}
 

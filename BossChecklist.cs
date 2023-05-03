@@ -351,22 +351,22 @@ namespace BossChecklist
 					//else
 					//	ErrorLogger.Log("BossChecklist: Why is RequestHideBoss on Client/SP?");
 					break;
-				case PacketMessageType.RequestForceDownBoss:
+				case PacketMessageType.RequestMarkedDownEntry:
 					bossKey = reader.ReadString();
 					bool mark = reader.ReadBoolean();
 					if (mark) {
-						WorldAssist.ForcedMarkedEntries.Add(bossKey);
+						WorldAssist.MarkedEntries.Add(bossKey);
 					}
 					else {
-						WorldAssist.ForcedMarkedEntries.Remove(bossKey);
+						WorldAssist.MarkedEntries.Remove(bossKey);
 					}
 
 					if (Main.netMode == NetmodeID.Server) {
 						NetMessage.SendData(MessageID.WorldData);
 					}
 					break;
-				case PacketMessageType.RequestClearForceDowns:
-					WorldAssist.ForcedMarkedEntries.Clear();
+				case PacketMessageType.RequestClearMarkedDowns:
+					WorldAssist.MarkedEntries.Clear();
 					if (Main.netMode == NetmodeID.Server) {
 						NetMessage.SendData(MessageID.WorldData);
 					}

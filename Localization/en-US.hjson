@@ -389,7 +389,7 @@ Mods: {
 
 					ResetLoot: Enable Reset Loot and Collection Items Option
 					ResetRecords: Enable Reset Record Option
-					ResetForcedDowns: Enable Reset Forced Downed Entries Options
+					ResetForcedDowns: Enable Reset Marked Downed Entries Option
 					ResetHiddenEntries: Enable Reset Hidden Entries Option
 				}
 
@@ -430,7 +430,7 @@ Mods: {
 						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
 						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
 						'''
-					ResetForcedDowns: Reset all world forced downs by alt + right-clicking on the filters tab on the Table of Contents pages.
+					ResetForcedDowns: Reset all world marked downs by alt + right-clicking on the filters tab on the Table of Contents pages.
 					ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
 				}
 			}

@@ -28,7 +28,7 @@ namespace BossChecklist
 		public static bool[] CheckedRecordIndexes;
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
-		public static HashSet<string> ForcedMarkedEntries = new HashSet<string>();
+		public static HashSet<string> MarkedEntries = new HashSet<string>();
 
 		public static bool downedBloodMoon;
 		public static bool downedFrostMoon;
@@ -88,7 +88,7 @@ namespace BossChecklist
 
 		public override void OnWorldLoad() {
 			HiddenEntries.Clear();
-			ForcedMarkedEntries.Clear();
+			MarkedEntries.Clear();
 
 			ClearDownedBools();
 
@@ -115,7 +115,7 @@ namespace BossChecklist
 
 		public override void SaveWorldData(TagCompound tag) {
 			var HiddenBossesList = new List<string>(HiddenEntries);
-			var ForcedMarkedList = new List<string>(ForcedMarkedEntries);
+			var MarkedAsDownedList = new List<string>(MarkedEntries);
 
 			var downed = new List<string>();
 			if (downedBloodMoon)
@@ -143,7 +143,7 @@ namespace BossChecklist
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
-			tag["downed_Forced"] = ForcedMarkedList;
+			tag["downed_Forced"] = MarkedAsDownedList;
 
 			if (worldRecords != null) {
 				tag["WorldRecords"] = worldRecords.Concat(unloadedWorldRecords).ToList(); // Combine loaded and unloaded data to prevent lost world record data
@@ -172,9 +172,9 @@ namespace BossChecklist
 				HiddenEntries.Add(bossKey);
 			}
 
-			var ForcedMarkedList = tag.GetList<string>("downed_Forced");
-			foreach (var bossKey in ForcedMarkedList) {
-				ForcedMarkedEntries.Add(bossKey);
+			var MarkedAsDownedList = tag.GetList<string>("downed_Forced");
+			foreach (var bossKey in MarkedAsDownedList) {
+				MarkedEntries.Add(bossKey);
 			}
 
 			var downed = tag.GetList<string>("downed");
@@ -223,8 +223,8 @@ namespace BossChecklist
 				writer.Write(bossKey);
 			}
 
-			writer.Write(ForcedMarkedEntries.Count);
-			foreach (var bossKey in ForcedMarkedEntries) {
+			writer.Write(MarkedEntries.Count);
+			foreach (var bossKey in MarkedEntries) {
 				writer.Write(bossKey);
 			}
 		}
@@ -255,13 +255,13 @@ namespace BossChecklist
 				HiddenEntries.Add(reader.ReadString());
 			}
 
-			ForcedMarkedEntries.Clear();
+			MarkedEntries.Clear();
 			count = reader.ReadInt32();
 			for (int i = 0; i < count; i++) {
-				ForcedMarkedEntries.Add(reader.ReadString());
+				MarkedEntries.Add(reader.ReadString());
 			}
 
-			// Update checklist to match Hidden and Forced Downed entries
+			// Update checklist to match Hidden and Marked Downed entries
 			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 			if (BossChecklist.BossLogConfig.HideUnavailable && BossUISystem.Instance.BossLog.PageNum == -1) {
 				BossUISystem.Instance.BossLog.RefreshPageContent();

@@ -103,9 +103,9 @@ namespace BossChecklist
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
-		internal bool ForceDowned => WorldAssist.ForcedMarkedEntries.Contains(this.Key);
+		internal bool MarkedAsDowned => WorldAssist.MarkedEntries.Contains(this.Key);
 
-		internal bool IsDownedOrForced => downed() || ForceDowned;
+		internal bool IsDownedOrMarked => downed() || MarkedAsDowned;
 
 		internal int GetIndex => BossChecklist.bossTracker.SortedEntries.IndexOf(this);
 
@@ -147,7 +147,7 @@ namespace BossChecklist
 		/// <returns>If the entry should be visible</returns>
 		internal bool VisibleOnChecklist() {
 			bool HideUnsupported = modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
-			bool HideUnavailable = !available() && BossChecklist.BossLogConfig.HideUnavailable && !BossUISystem.Instance.BossLog.showHidden && !IsDownedOrForced; // entries that are labeled as not available
+			bool HideUnavailable = !available() && BossChecklist.BossLogConfig.HideUnavailable && !BossUISystem.Instance.BossLog.showHidden && !IsDownedOrMarked; // entries that are labeled as not available
 			bool HideHidden = hidden && !BossUISystem.Instance.BossLog.showHidden; // entries that are labeled as hidden
 			bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
 			if (HideUnavailable || HideHidden || SkipNonBosses || HideUnsupported) {
@@ -159,9 +159,9 @@ namespace BossChecklist
 			string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 			string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 
-			bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && IsDownedOrForced;
-			bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && IsDownedOrForced));
-			bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && IsDownedOrForced));
+			bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && IsDownedOrMarked;
+			bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && IsDownedOrMarked));
+			bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && IsDownedOrMarked));
 			if (FilterBoss || FilterMiniBoss || FilterEvent) {
 				return false;
 			}
