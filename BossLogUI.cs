@@ -595,6 +595,7 @@ namespace BossChecklist
 			WorldAssist.HiddenEntries.Clear();
 			showHidden = false;
 
+			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				ModPacket packet = BossChecklist.instance.GetPacket();
 				packet.Write((byte)PacketMessageType.RequestClearHidden);

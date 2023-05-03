@@ -356,7 +356,6 @@ namespace BossChecklist.UIElements
 				}
 				else if (Id == "Hidden") {
 					BossUISystem.Instance.BossLog.showHidden = !BossUISystem.Instance.BossLog.showHidden;
-					BossUISystem.Instance.BossLog.ClearHiddenList();
 				}
 				else if (Id == "Marked") {
 					// TODO: list only marked entries
@@ -367,6 +366,12 @@ namespace BossChecklist.UIElements
 
 				BossUISystem.Instance.BossLog.UpdateFilterCheckAndTooltip(); // Update filter display state when clicked
 				BossUISystem.Instance.BossLog.RefreshPageContent();
+			}
+
+			public override void RightClick(UIMouseEvent evt) {
+				base.RightClick(evt);
+				if (Id == "Hidden")
+					BossUISystem.Instance.BossLog.ClearHiddenList();
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
