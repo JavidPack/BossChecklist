@@ -158,6 +158,11 @@ namespace BossChecklist
 		// Continually track the duration of boss fights while boss NPCs are active
 		// If a player dies at any point while a boss is active, add to the death tracker for later
 		public override void PreUpdate() {
+			/* Debug tool for opening the Progression Mode prompt
+			if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
+				hasOpenedTheBossLog = false;
+			*/
+
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
 				return;
 
