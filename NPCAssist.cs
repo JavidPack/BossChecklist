@@ -102,7 +102,7 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Loops through all entries in BossTracker.SortedBosses to find EntryInfo that contains the specified npc type.
+		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type.
 		/// This method is mainly used for boss record purposes.
 		/// </summary>
 		/// <returns>A valid EntryInfo entry within the registered entries. Returns null if no entry can be found.</returns>
@@ -110,13 +110,9 @@ namespace BossChecklist
 			if (!BossChecklist.bossTracker.EntryCache[npcType])
 				return null; // the entry hasn't been registered
 
-			List<EntryInfo> entries = BossChecklist.bossTracker.SortedEntries;
-			for (int index = 0; index < entries.Count; index++) {
-				if (entries[index].type != EntryType.Boss)
-					continue; // skip non-boss
-
-				if (entries[index].npcIDs.Contains(npcType))
-					return entries[index]; // if the npc pool contains the npc type, return the current the index
+			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
+				if (entry.type == EntryType.Boss && entry.npcIDs.Contains(npcType))
+					return entry; // if the npc pool contains the npc type, return the current the index
 			}
 
 			return null; // no entry found

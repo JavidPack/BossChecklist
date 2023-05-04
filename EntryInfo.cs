@@ -180,13 +180,7 @@ namespace BossChecklist
 			this.available = available ?? (() => true);
 			this.hidden = false;
 
-			// Despawn messages for events are currently unsupported
-			if (type != EntryType.Event) {
-				this.customDespawnMessages = despawnMessages;
-			}
-			else {
-				this.customDespawnMessages = null;
-			}
+			this.customDespawnMessages = type != EntryType.Event ? despawnMessages : null; // Despawn messages for events are currently unsupported
 
 			relatedEntries = new List<string>();
 
@@ -278,22 +272,21 @@ namespace BossChecklist
 			string nameKey = name.Substring(name.LastIndexOf(".") + 1);
 			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
-			List<int> DayDespawners = new List<int>() {
-				NPCID.EyeofCthulhu,
-				NPCID.Retinazer,
-				NPCID.Spazmatism,
-				NPCID.TheDestroyer,
-			};
+			Func<NPC, string> customMessages = null;
 
-			Func<bool> isDay = () => Main.dayTime;
-			Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
+			if (type == EntryType.Boss) {
+				List<int> DayDespawners = new List<int>() {
+					NPCID.EyeofCthulhu,
+					NPCID.Retinazer,
+					NPCID.Spazmatism,
+					NPCID.TheDestroyer,
+				};
 
-			string bossCustomKillMessage = $"{NPCAssist.LangChat}.Loss.{nameKey}";
-			if (!Language.Exists(bossCustomKillMessage)) {
-				bossCustomKillMessage = $"{NPCAssist.LangChat}.Loss.Generic"; // If the provided key wasn't found, default to the generic key
+				Func<bool> isDay = () => Main.dayTime;
+				Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
+				string bossCustomKillMessage = $"{NPCAssist.LangChat}.Loss.{nameKey}";
+				customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
 			}
-
-			Func<NPC, string> customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
 
 			return new EntryInfo(
 				type,

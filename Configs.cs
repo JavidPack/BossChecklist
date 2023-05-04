@@ -383,11 +383,11 @@ namespace BossChecklist
 							continue;
 
 						EntryInfo entry = NPCAssist.GetEntryInfo(npc.type);
-						if (entry == null)
+						if (entry == null || entry.type != EntryType.Boss)
 							continue;
 
 						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Debug.Notice.InvalidChange", entry.DisplayName), Color.Orange);
-						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+						return; // If a boss is active, debug features are disabled until all bosses are inactive
 					}
 				}
 				if (value) {
@@ -409,11 +409,11 @@ namespace BossChecklist
 							continue;
 
 						EntryInfo entry = NPCAssist.GetEntryInfo(npc.type);
-						if (entry == null)
+						if (entry == null || entry.type != EntryType.Boss)
 							continue;
 
 						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.Debug.Notice.InvalidChange", entry.DisplayName), Color.Orange);
-						return; // If a boss/miniboss is active, debug features are disabled until all bosses are inactive
+						return; // If a boss is active, debug features are disabled until all bosses are inactive
 					}
 				}
 				if (value) {
