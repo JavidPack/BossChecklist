@@ -282,10 +282,10 @@ namespace BossChecklist
 					NPCID.TheDestroyer,
 				};
 
-				Func<bool> isDay = () => Main.dayTime;
-				Func<bool> AllPlayersAreDead = () => Main.player.All(plr => !plr.active || plr.dead);
-				string bossCustomKillMessage = $"{NPCAssist.LangChat}.Loss.{nameKey}";
-				customMessages = npc => AllPlayersAreDead() ? bossCustomKillMessage : DayDespawners.Contains(npc.type) && isDay() ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
+				bool DayCheck(int type) => Main.dayTime && DayDespawners.Contains(type);
+				bool AllPlayersAreDead() => Main.player.All(plr => !plr.active || plr.dead);
+				string customKey = $"{NPCAssist.LangChat}.Loss.{nameKey}";
+				customMessages = npc => AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
 			}
 
 			return new EntryInfo(
