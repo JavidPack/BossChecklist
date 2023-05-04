@@ -215,11 +215,9 @@ namespace BossChecklist
 							}
 							break;
 					}
-				}
-				else if (BossChecklist.DebugConfig.ModCallLogVerbose) {
-					string nullEntryInfo = $"Could not find {orphan.bossName} from {orphan.modSource} to add OrphanInfo to.";
-					string emptyValues = $"Orphan values for {orphan.bossName} from {orphan.modSource} found to be empty.";
-					BossChecklist.instance.Logger.Warn((entryInfo == null ? nullEntryInfo : "") + (orphan.values == null ? emptyValues : ""));
+
+					if (BossChecklist.DebugConfig.ModCallLogVerbose)
+						BossChecklist.instance.Logger.Info($"Entry successfully registered {orphan.values.Count} '{orphan.type}' orphan data value(s): [{entryInfo.modSource} {entryInfo.DisplayName}]");
 				}
 			}
 		}
@@ -1078,7 +1076,7 @@ namespace BossChecklist
 
 		internal void EnsureBossIsNotDuplicate(string mod, string bossname) {
 			if (SortedEntries.Any(x=> x.Key == $"{mod} {bossname}"))
-				throw new Exception($"The boss '{bossname}' from the mod '{mod}' has already been added. Check your code for duplicate entries or typos.");
+				throw new Exception($"Check your code for duplicate entries or typos, as this entry has already been registered: [{mod} {bossname}]");
 		}
 
 		internal void LogNewBoss(string mod, string name) {
@@ -1095,19 +1093,16 @@ namespace BossChecklist
 			Console.WriteLine();
 			Console.ResetColor();
 			if (OldCalls.Values.Any(x => x.Contains(name))) {
-				BossChecklist.instance.Logger.Info($"[Outdated Mod Call] Boss Log entry added: [{mod}] {name}");
+				BossChecklist.instance.Logger.Warn($"Entry successfully registered to the Boss Log: [{mod} {name}] (outdated mod call)");
 			}
 			else {
-				BossChecklist.instance.Logger.Info($"Boss Log entry successfully added: [{mod}] {name}");
+				BossChecklist.instance.Logger.Info($"Entry successfully registered to the Boss Log: [{mod} {name}]");
 			}
 		}
 
 		internal void AddOrphanData(string type, string bossKey, object values) {
-			OrphanType orphanType;
-			if (type == "AddToBossLoot") {
-				orphanType = OrphanType.Loot;
-			}
-			else if (type == "AddToBossCollection") {
+			OrphanType orphanType = OrphanType.Loot; // default to first type
+			if (type == "AddToBossCollection") {
 				orphanType = OrphanType.Collection;
 			}
 			else if (type == "AddToBossSpawnItems") {
@@ -1115,10 +1110,6 @@ namespace BossChecklist
 			}
 			else if (type == "AddToEventNPCs") {
 				orphanType = OrphanType.EventNPC;
-			}
-			else {
-				BossChecklist.instance.Logger.Warn($"Invalid orphan data found. ({type} for {bossKey})");
-				return;
 			}
 
 			ExtraData.Add(new OrphanInfo(orphanType, bossKey, values as List<int>));

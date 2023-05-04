@@ -295,6 +295,10 @@ namespace BossChecklist
 						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
 						InterpretObjectAsListOfInt(args[2]) // ID List
 					);
+					if (argsLength != 3) {
+						if (DebugConfig.ModCallLogVerbose)
+							Logger.Warn($"{message} mod call from the above mod is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4]-Other-Mod-Calls");
+					}
 					return "Success";
 				}
 				else {
