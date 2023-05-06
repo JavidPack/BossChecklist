@@ -50,6 +50,7 @@ Mods: {
 					Hide: '{0}: Hidden'
 					HideWhenCompleted: '{0}: Hidden when defeated'
 					ToggleVisibility: Toggle hidden visibility
+					Disabled: Filter disabled due to 'Only Show Boss Content' config
 				}
 			}
 

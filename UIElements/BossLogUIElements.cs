@@ -309,6 +309,35 @@ namespace BossChecklist.UIElements
 			internal Asset<Texture2D> icon;
 			public Asset<Texture2D> check;
 
+			public FilterIcon(Asset<Texture2D> icon) {
+				Width.Pixels = icon.Value.Width;
+				Height.Pixels = icon.Value.Height;
+				this.icon = icon;
+			}
+
+			private string GetConfigValue() {
+				return Id switch {
+					"Boss" => BossChecklist.BossLogConfig.FilterBosses.Replace(" ", ""),
+					"MiniBoss" => BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", ""),
+					"Event" => BossChecklist.BossLogConfig.FilterEvents.Replace(" ", ""),
+					_ => "Show"
+				};
+			}
+
+			public string UpdateHoverText() {
+				string LangFilter = "Mods.BossChecklist.Log.TableOfContents.Filter";
+				string LangCommon = "Mods.BossChecklist.Log.Common";
+
+				if (BossChecklist.BossLogConfig.OnlyShowBossContent && (Id == "MiniBoss" || Id == "Event"))
+					return $"{LangFilter}.Disabled";
+
+				return Id switch {
+					"Marked" => "", // TODO: Marked hovertext
+					"Hidden" => $"{LangFilter}.ToggleVisibility",
+					_ => Language.GetTextValue($"{LangFilter}.{GetConfigValue().Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.{Id}Plural"))
+				};
+			}
+
 			private string Cycle(string value, bool boss = false) {
 				return value switch {
 					"Show" => "Hide When Completed",
@@ -316,29 +345,6 @@ namespace BossChecklist.UIElements
 					"Hide" => "Show",
 					_ => ""
 				};
-			}
-
-			public FilterIcon(Asset<Texture2D> icon) {
-				Width.Pixels = icon.Value.Width;
-				Height.Pixels = icon.Value.Height;
-				this.icon = icon;
-			}
-
-			public string UpdateHoverText() {
-				string LangFilter = "Mods.BossChecklist.Log.TableOfContents.Filter";
-				string LangCommon = "Mods.BossChecklist.Log.Common";
-
-				if (Id == "Boss") {
-					return Language.GetTextValue($"{LangFilter}.{BossChecklist.BossLogConfig.FilterBosses.Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.BossPlural"));
-				}
-				else if (Id == "MiniBoss") {
-					return Language.GetTextValue($"{LangFilter}.{BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.MiniBossPlural"));
-				}
-				else if (Id == "Event") {
-					return Language.GetTextValue($"{LangFilter}.{BossChecklist.BossLogConfig.FilterEvents.Replace(" ", "")}", Language.GetTextValue($"{LangCommon}.EventPlural"));
-				}
-				
-				return $"{LangFilter}.ToggleVisibility";
 			}
 
 			public override void Click(UIMouseEvent evt) {
