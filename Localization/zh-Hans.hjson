@@ -50,6 +50,7 @@ Mods: {
 					Hide: '{0}: 隐藏'
 					HideWhenCompleted: '{0}: 隐藏已击败的'
 					ToggleVisibility: 切换隐藏可见性
+					Disabled: 由于'仅显示Boss内容'设置, 过滤器已禁用
 				}
 			}
 
