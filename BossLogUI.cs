@@ -319,9 +319,17 @@ namespace BossChecklist
 			ToCTab.OnClick += (a, b) => UpdateFilterTabPos(true);
 			ToCTab.OnRightClick += (a, b) => ClearMarkedDowns();
 
-			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss);
-			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss);
-			EventTab = new LogTab(Texture_Log_Tab, Texture_Nav_Event);
+			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss) {
+				Id = "Boss"
+			};
+
+			MiniBossTab = new LogTab(Texture_Log_Tab, Texture_Nav_MiniBoss) {
+				Id = "MiniBoss"
+			};
+
+			EventTab = new LogTab(Texture_Log_Tab, Texture_Nav_Event) {
+				Id = "Event"
+			};
 
 			CreditsTab = new LogTab(Texture_Log_Tab, Texture_Nav_Credits) {
 				Id = "Credits"

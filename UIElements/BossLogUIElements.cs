@@ -1105,6 +1105,9 @@ namespace BossChecklist.UIElements
 				if (page == BossLogUI.Page_Prompt)
 					return false; // Tabs never show up on the Progression Mode prompt
 
+				if (BossChecklist.BossLogConfig.OnlyShowBossContent && (Id == "MiniBoss" || Id == "Event"))
+					return false; // Mini-boss and Event tabs won't show when OnlyShowBossContent is enable
+
 				return Id switch {
 					"TableOfContents" => true,
 					"Credits" => page != BossLogUI.Page_Credits,
