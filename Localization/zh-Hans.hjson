@@ -389,7 +389,7 @@ Mods: {
 
 					ResetLoot: 开启重置战利品和收藏品选项
 					ResetRecords: 开启重置记录选项
-					ResetForcedDowns: 开启重置被手动标记击败的条目选项
+					ResetForcedDowns: 开启重置被标记为击败的条目选项
 					ResetHiddenEntries: 开启重置隐藏的条目选项
 				}
 			}
@@ -431,7 +431,7 @@ Mods: {
 					alt + 右键所选Boss页面上的记录会重置记录.
 					alt + 右键所选Boss页面上的'记录'按钮会重置所有Boss的记录.
 					'''
-				ResetForcedDowns: alt + 右键目录页上的过滤标签以重置所有世界中的被手动标记击败.
+				ResetForcedDowns: alt + 右键目录页上的过滤标签以重置所有世界中被标记的击败.
 				ResetHiddenEntries: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
 			}
 		}
