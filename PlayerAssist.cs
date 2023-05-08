@@ -76,14 +76,6 @@ namespace BossChecklist
 
 			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
 			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList();
-
-			// Recover old data to convert to new data // TODO: Remove in future update
-			TagCompound oldData = tag.Get<TagCompound>("BossItemsCollected");
-			if (oldData.Count != 0) {
-				foreach (KeyValuePair<string, object> bossRecords in oldData) {
-					BossItemsCollected.AddRange(oldData.GetList<ItemDefinition>(bossRecords.Key).ToList());
-				}
-			}
 		}
 
 		public override void OnEnterWorld(Player player) {
