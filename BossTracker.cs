@@ -211,7 +211,7 @@ namespace BossChecklist
 								entryInfo.npcIDs.AddRange(orphan.values);
 							}
 							else {
-								BossChecklist.instance.Logger.Info($"{orphan.bossName} from {orphan.modSource} is not an Event entry. AddToEventNPCs must be added to Events.");
+								BossChecklist.instance.Logger.Warn($"{orphan.bossName} from {orphan.modSource} is not an Event entry. AddToEventNPCs must be added to Events.");
 							}
 							break;
 					}
@@ -383,6 +383,7 @@ namespace BossChecklist
 						normalItems.Add(item);
 					}
 				}
+				normalItems.Sort();
 				entry.lootItemTypes = masterItems.Concat(expertItems).Concat(normalItems).ToList();
 			}
 		}
