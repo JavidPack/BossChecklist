@@ -1093,10 +1093,23 @@ namespace BossChecklist.UIElements
 
 		internal class LogTab : LogUIElement {
 			public string Id { get; init; } = "";
-			public int UpNext { get; set; } = -1;
-
 			internal Asset<Texture2D> texture;
 			internal Asset<Texture2D> icon;
+
+			private int? anchor = null;
+			public int? Anchor {
+				get => anchor;
+				set {
+					anchor = value;
+					if (Id == "TableOfContents") {
+						this.hoverText = value == null ? $"{BossLogUI.LangLog}.Tabs.ToggleFilters" : $"{BossLogUI.LangLog}.Tabs.TableOfContents";
+					}
+					else if (Id != "Credits" && value.HasValue && value.Value != -1) {
+						EntryInfo entry = BossChecklist.bossTracker.SortedEntries[value.Value];
+						this.hoverText = Language.GetTextValue($"{BossLogUI.LangLog}.Tabs.NextEntry", Language.GetTextValue($"{BossLogUI.LangLog}.Common.{entry.type}"), entry.DisplayName);
+					}
+				}
+			}
 
 			public LogTab(Asset<Texture2D> texture, Asset<Texture2D> icon) {
 				Width.Pixels = texture.Value.Width;
@@ -1117,7 +1130,7 @@ namespace BossChecklist.UIElements
 				return Id switch {
 					"TableOfContents" => true,
 					"Credits" => page != BossLogUI.Page_Credits,
-					_ => UpNext >= 0 && page != UpNext
+					_ => Anchor.HasValue && Anchor >= 0 && page != Anchor
 				};
 			}
 
@@ -1126,34 +1139,12 @@ namespace BossChecklist.UIElements
 				return Id switch {
 					"TableOfContents" => true,
 					"Credits" => false,
-					_ => page > UpNext || page == BossLogUI.Page_Credits
-				};
-			}
-
-			private string AssignToolTip() {
-				List<EntryInfo> entryList = BossChecklist.bossTracker.SortedEntries;
-				int page = BossUISystem.Instance.BossLog.PageNum;
-				string path = $"{BossLogUI.LangLog}.Tabs";
-
-				return Id switch {
-					"TableOfContents" => page == BossLogUI.Page_TableOfContents ? $"{path}.ToggleFilters" : $"{path}.TableOfContents",
-					"Credits" => $"{path}.Credits",
-					_ => UpNext >= 0 ? Language.GetTextValue($"{path}.NextEntry", Language.GetTextValue($"{BossLogUI.LangLog}.Common.{entryList[UpNext].type}"), entryList[UpNext].DisplayName) : ""
-				};
-			}
-
-			private int? DeterminePageNav() {
-				int page = BossUISystem.Instance.BossLog.PageNum;
-				return Id switch {
-					"TableOfContents" => page == BossLogUI.Page_TableOfContents ? null : -1,
-					"Credits" => -2,
-					_ => UpNext >= 0 ? UpNext : null
+					_ => page > Anchor || page == BossLogUI.Page_Credits
 				};
 			}
 
 			public override void Click(UIMouseEvent evt) {
 				base.Click(evt);
-				int? Anchor = DeterminePageNav();
 				if (Anchor.HasValue)
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 			}
@@ -1170,10 +1161,6 @@ namespace BossChecklist.UIElements
 					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (icon.Value.Width / 2) + offsetX, inner.Y + (inner.Height / 2) - (icon.Value.Height / 2));
 					Asset<Texture2D> iconTexture = Id == "TableOfContents" && BossUISystem.Instance.BossLog.PageNum == BossLogUI.Page_TableOfContents ? BossLogUI.Texture_Nav_Filter : icon;
 					spriteBatch.Draw(iconTexture.Value, pos, Color.White);
-
-					if (IsMouseHovering) {
-						BossUISystem.Instance.UIHoverText = AssignToolTip();
-					}
 				}
 			}
 		}
@@ -1235,6 +1222,18 @@ namespace BossChecklist.UIElements
 						packet.Send(); // update the server with a packet
 					}
 				}
+
+				// Update tabs when an entry is hidden/unhidden or marked/unmarked
+				if (entry.type == EntryType.Boss) {
+					BossUISystem.Instance.BossLog.BossTab.Anchor = BossLogUI.FindNextEntry(EntryType.Boss);
+				}
+				else if (entry.type == EntryType.MiniBoss) {
+					BossUISystem.Instance.BossLog.MiniBossTab.Anchor = BossLogUI.FindNextEntry(EntryType.MiniBoss);
+				}
+				else if (entry.type == EntryType.Event) {
+					BossUISystem.Instance.BossLog.EventTab.Anchor = BossLogUI.FindNextEntry(EntryType.Event);
+				}
+
 				BossUISystem.Instance.BossLog.RefreshPageContent(); // refresh the page to show visual changes
 			}
 

@@ -232,9 +232,9 @@ namespace BossChecklist
 					}
 				}
 				else {
-					BossTab.UpNext = FindNextEntry(EntryType.Boss); // Update the UpNext values for the entry tabs every time the Boss Log is opened
-					MiniBossTab.UpNext = FindNextEntry(EntryType.MiniBoss);
-					EventTab.UpNext = FindNextEntry(EntryType.Event);
+					BossTab.Anchor = FindNextEntry(EntryType.Boss); // Update the Anchors for all entry tabs every time the Boss Log is opened
+					MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
+					EventTab.Anchor = FindNextEntry(EntryType.Event);
 
 					if (modPlayer.enteredWorldReset) {
 						// If the Log has been opened before, check for a world change.
@@ -332,7 +332,9 @@ namespace BossChecklist
 			};
 
 			CreditsTab = new LogTab(Texture_Log_Tab, Texture_Nav_Credits) {
-				Id = "Credits"
+				Id = "Credits",
+				Anchor = -2,
+				hoverText = $"{LangLog}.Tabs.Credits" // hoverText will never change, so initialize it
 			};
 
 			PageOne = new LogPanel() {
@@ -609,6 +611,11 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearHidden);
 				packet.Send();
 			}
+
+			BossTab.Anchor = FindNextEntry(EntryType.Boss);
+			MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
+			EventTab.Anchor = FindNextEntry(EntryType.Event);
+
 			RefreshPageContent();
 		}
 
@@ -625,6 +632,11 @@ namespace BossChecklist
 				packet.Write((byte)PacketMessageType.RequestClearMarkedDowns);
 				packet.Send();
 			}
+
+			BossTab.Anchor = FindNextEntry(EntryType.Boss);
+			MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
+			EventTab.Anchor = FindNextEntry(EntryType.Event);
+
 			RefreshPageContent();
 		}
 
@@ -939,7 +951,7 @@ namespace BossChecklist
 		/// <param name="subCategory">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
 		private void UpdateSelectedPage(int pageNum, SubPage subPage, SubCategory subCategory = SubCategory.None) {
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
-			
+
 			// Only on boss pages does updating the category page matter
 			if (PageNum >= 0) {
 				SelectedSubPage = subPage;
@@ -948,6 +960,7 @@ namespace BossChecklist
 				}
 			}
 
+			ToCTab.Anchor = PageNum == Page_TableOfContents ? null : -1; // Update ToC/Filter tab anchor (and hover text)
 			RefreshPageContent();
 		}
 
