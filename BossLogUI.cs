@@ -220,14 +220,8 @@ namespace BossChecklist
 					modPlayer.hasOpenedTheBossLog = true; // This will only ever happen once per character
 					modPlayer.enteredWorldReset = false; // If opening for the first time, this doesn't need to occur again until the next world reset
 
-					// When opening for the first time, check if the Progression Mode prompt is enabled and provide the prompt
-					// If the prompt is disabled, just set the page to the Table of Contents.
-					if (!BossChecklist.BossLogConfig.PromptDisabled) {
-						PageNum = Page_Prompt; // All page logic is handled in this method, so return afterwards.
-					}
-					else {
-						PageNum = Page_TableOfContents;
-					}
+					// When opening for the first time, open the Progression Mode prompt if enabled. Otherwise, open the Table of Contents.
+					PageNum = BossChecklist.BossLogConfig.PromptDisabled ? Page_TableOfContents : Page_Prompt;
 				}
 				else {
 					BossTab.Anchor = FindNextEntry(EntryType.Boss); // Update the Anchors for all entry tabs every time the Boss Log is opened
