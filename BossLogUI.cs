@@ -222,8 +222,6 @@ namespace BossChecklist
 
 					// When opening for the first time, check if the Progression Mode prompt is enabled and provide the prompt
 					// If the prompt is disabled, just set the page to the Table of Contents.
-					// TODO: Disabled progression mode related stuff until it is reworked on until an issue with player data is resolved
-					// TODO: remove false from if statement once fixed
 					if (!BossChecklist.BossLogConfig.PromptDisabled) {
 						PageNum = Page_Prompt; // All page logic is handled in this method, so return afterwards.
 					}
