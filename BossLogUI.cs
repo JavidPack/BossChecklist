@@ -739,36 +739,20 @@ namespace BossChecklist
 				new UIImage(Texture_Content_RecordSlot)
 			};
 
-			Color bookColor = BossChecklist.BossLogConfig.BossLogColor;
-
 			backdrops[0].OnClick += (a, b) => SelectProgressionModeState(false);
-			backdrops[0].OnMouseOver += (a, b) => { backdrops[0].Color = bookColor; };
-			backdrops[0].OnMouseOut += (a, b) => { backdrops[0].Color = Color.White; };
-
 			backdrops[1].OnClick += (a, b) => SelectProgressionModeState(true);
-			backdrops[1].OnMouseOver += (a, b) => { backdrops[1].Color = bookColor; };
-			backdrops[1].OnMouseOut += (a, b) => { backdrops[1].Color = Color.White; };
-
 			backdrops[2].OnClick += (a, b) => CloseAndConfigure();
-			backdrops[2].OnMouseOver += (a, b) => { backdrops[2].Color = bookColor; };
-			backdrops[2].OnMouseOut += (a, b) => { backdrops[2].Color = Color.White; };
-
 			backdrops[3].OnClick += (a, b) => DisablePromptMessage();
-			backdrops[3].OnMouseOver += (a, b) => { backdrops[3].Color = bookColor; };
-			backdrops[3].OnMouseOut += (a, b) => { backdrops[3].Color = Color.White; };
-
-			Asset<Texture2D>[] buttonTextures = new Asset<Texture2D>[] {
-				RequestVanillaTexture($"Images/Item_{ItemID.SteampunkGoggles}"),
-				RequestVanillaTexture($"Images/Item_{ItemID.Blindfold}"),
-				RequestVanillaTexture($"Images/Item_{ItemID.Wrench}"),
-				Texture_Check_Box
-			};
+			foreach (UIImage backdrop in backdrops) {
+				backdrop.OnMouseOver += (a, b) => { backdrop.Color = BossChecklist.BossLogConfig.BossLogColor; };
+				backdrop.OnMouseOut += (a, b) => { backdrop.Color = Color.White; };
+			}
 
 			UIImage[] buttons = new UIImage[] {
-				new UIImage(buttonTextures[0]),
-				new UIImage(buttonTextures[1]),
-				new UIImage(buttonTextures[2]),
-				new UIImage(buttonTextures[3])
+				new UIImage(RequestVanillaTexture($"Images/Item_{ItemID.Binoculars}")),
+				new UIImage(RequestVanillaTexture($"Images/Item_{ItemID.Blindfold}")),
+				new UIImage(RequestVanillaTexture($"Images/UI/Camera_1")),
+				new UIImage(Texture_Check_Box)
 			};
 
 			FittedTextPanel[] textOptions = new FittedTextPanel[] {
@@ -780,14 +764,10 @@ namespace BossChecklist
 
 			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? Texture_Check_Check : Texture_Check_X);
 
-			for (int i = 0; i < buttonTextures.Length; i++) {
-				backdrops[i].Width.Pixels = Texture_Content_RecordSlot.Value.Width;
-				backdrops[i].Height.Pixels = Texture_Content_RecordSlot.Value.Height;
+			for (int i = 0; i < backdrops.Length; i++) {
 				backdrops[i].Left.Pixels = 25;
 				backdrops[i].Top.Pixels = 75 + (75 * i);
 
-				buttons[i].Width.Pixels = buttonTextures[i].Value.Width;
-				buttons[i].Height.Pixels = buttonTextures[i].Value.Height;
 				buttons[i].Left.Pixels = 15;
 				buttons[i].Top.Pixels = backdrops[i].Height.Pixels / 2 - buttons[i].Height.Pixels / 2;
 
@@ -798,7 +778,7 @@ namespace BossChecklist
 				textOptions[i].PaddingTop = 0;
 				textOptions[i].PaddingLeft = 15;
 
-				if (i == buttonTextures.Length - 1) {
+				if (i == backdrops.Length - 1) {
 					buttons[i].Append(PromptCheck);
 				}
 				backdrops[i].Append(buttons[i]);

@@ -395,9 +395,6 @@ namespace BossChecklist.UIElements
 			readonly SubPage subPageType;
 
 			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
-				Width.Pixels = texture.Value.Width;
-				Height.Pixels = texture.Value.Height;
-
 				buttonText = Language.GetTextValue($"{BossLogUI.LangLog}.Tabs.{type}");
 				subPageType = type;
 			}
@@ -904,9 +901,6 @@ namespace BossChecklist.UIElements
 			internal string tooltip;
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, string title, string value) : base(texture) {
-				Width.Pixels = texture.Value.Width;
-				Height.Pixels = texture.Value.Height;
-
 				this.title = title;
 				this.value = value;
 				this.ach = new Point(-1, -1);
@@ -1037,18 +1031,12 @@ namespace BossChecklist.UIElements
 			internal int[] entryCounts = null;
 
 			public ContributorCredit(Asset<Texture2D> texture, Asset<Texture2D> character, string name, string title) : base(texture) {
-				Width.Pixels = texture.Value.Width;
-				Height.Pixels = texture.Value.Height;
-
 				this.icon = character;
 				this.name = name;
 				this.devTitle = title;
 			}
 
 			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
-				Width.Pixels = texture.Value.Width;
-				Height.Pixels = texture.Value.Height;
-
 				this.icon = GetModIcon(modName);
 				this.name = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
 				this.entryCounts = BossUISystem.Instance.RegisteredMods[modName];
