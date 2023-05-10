@@ -28,19 +28,6 @@ namespace BossChecklist
 		Mount
 	}
 
-	enum PacketMessageType : byte
-	{
-		RequestHideBoss,
-		RequestClearHidden,
-		RequestMarkedDownEntry,
-		RequestClearMarkedDowns,
-		SendRecordsToServer,
-		RecordUpdate,
-		WorldRecordUpdate,
-		ResetTrackers,
-		PlayTimeRecordUpdate
-	}
-
 	[Flags]
 	internal enum NetRecordID : int
 	{

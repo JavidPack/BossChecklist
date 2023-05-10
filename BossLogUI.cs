@@ -595,19 +595,15 @@ namespace BossChecklist
 				return;
 
 			WorldAssist.HiddenEntries.Clear();
-			showHidden = false;
-
 			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.RequestClearHidden);
-				packet.Send();
-			}
+			Networking.RequestHiddenEntryUpdate();
+
 
 			BossTab.Anchor = FindNextEntry(EntryType.Boss);
 			MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
 			EventTab.Anchor = FindNextEntry(EntryType.Event);
 
+			showHidden = false;
 			RefreshPageContent();
 		}
 
@@ -619,11 +615,7 @@ namespace BossChecklist
 				return;
 
 			WorldAssist.MarkedEntries.Clear();
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.RequestClearMarkedDowns);
-				packet.Send();
-			}
+			Networking.RequestMarkedEntryUpdate();
 
 			BossTab.Anchor = FindNextEntry(EntryType.Boss);
 			MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
@@ -1078,8 +1070,9 @@ namespace BossChecklist
 				// Update marked downs. If the boss is actually downed, remove the mark.
 				if (entry.MarkedAsDowned) {
 					displayName += "*";
-					if (entry.downed()) {
+					if (WorldAssist.MarkedEntries.Contains(entry.Key) && entry.downed()) {
 						WorldAssist.MarkedEntries.Remove(entry.Key);
+						Networking.RequestMarkedEntryUpdate(entry.Key, entry.MarkedAsDowned);
 					}
 				}
 

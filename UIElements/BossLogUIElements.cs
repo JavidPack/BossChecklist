@@ -1186,29 +1186,19 @@ namespace BossChecklist.UIElements
 					}
 
 					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes(); // update the legacy checklist
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestHideBoss);
-						packet.Write(entry.Key);
-						packet.Write(entry.hidden);
-						packet.Send(); // update the server with a packet
-					}
+					Networking.RequestHiddenEntryUpdate(entry.Key, entry.hidden);
 				}
-				else {
+				else if (!entry.downed()) {
+					// Entries must not already be downed to add/remove them from the MarkedEntries list
+					// Entries that are downed will automatically be removed from the lsit when the TableOfContents list is generated
 					if (WorldAssist.MarkedEntries.Contains(entry.Key)) {
-						WorldAssist.MarkedEntries.Remove(entry.Key); // if the entry was marked already, remove it
+						WorldAssist.MarkedEntries.Remove(entry.Key);
 					}
-					else if (!entry.downed()) {
-						WorldAssist.MarkedEntries.Add(entry.Key); // if the entry was not marked already, add it if it is not already defeated
+					else {
+						WorldAssist.MarkedEntries.Add(entry.Key);
 					}
-
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.RequestMarkedDownEntry);
-						packet.Write(entry.Key);
-						packet.Write(entry.MarkedAsDowned);
-						packet.Send(); // update the server with a packet
-					}
+					
+					Networking.RequestMarkedEntryUpdate(entry.Key, entry.MarkedAsDowned);
 				}
 
 				// Update tabs when an entry is hidden/unhidden or marked/unmarked
