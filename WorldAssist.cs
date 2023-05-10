@@ -287,10 +287,9 @@ namespace BossChecklist
 				// If marked as active...
 				if (Tracker_ActiveEntry[recordIndex]) {
 					// ...remove any players that become inactive during the fight
-					for (int i = 0; i < Main.maxPlayers; i++) {
-						if (!Main.player[i].active) {
-							Tracker_StartingPlayers[recordIndex, i] = false;
-						}
+					foreach (Player player in Main.player) {
+						if (!player.active)
+							Tracker_StartingPlayers[recordIndex, player.whoAmI] = false;
 					}
 
 					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)

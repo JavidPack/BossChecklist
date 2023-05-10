@@ -37,14 +37,14 @@ namespace BossChecklist
 					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 				}
 				else if (Main.netMode == NetmodeID.Server) {
-					for (int j = 0; j < Main.maxPlayers; j++) {
-						if (!Main.player[j].active)
+					foreach (Player player in Main.player) {
+						if (!player.active)
 							continue; // skip any inactive players
 
-						WorldAssist.Tracker_StartingPlayers[recordIndex, j] = true; // Active players when the boss spawns will be counted
+						WorldAssist.Tracker_StartingPlayers[recordIndex, player.whoAmI] = true; // Active players when the boss spawns will be counted
 
 						// This is updated serverside
-						PlayerAssist modPlayer = Main.player[j].GetModPlayer<PlayerAssist>();
+						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 						modPlayer.Tracker_Duration[recordIndex] = 0;
 						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
 
@@ -53,8 +53,8 @@ namespace BossChecklist
 						ModPacket packet = Mod.GetPacket();
 						packet.Write((byte)PacketMessageType.ResetTrackers);
 						packet.Write(recordIndex);
-						packet.Write(Main.player[j].whoAmI);
-						packet.Send(toClient: Main.player[j].whoAmI); // Server --> Multiplayer client
+						packet.Write(player.whoAmI);
+						packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client
 					}
 				}
 			}
@@ -356,11 +356,11 @@ namespace BossChecklist
 			}
 
 			// World Record data has to be sent to ALL active players
-			for (int i = 0; i < Main.maxPlayers; i++) {
-				if (!Main.player[i].active)
+			foreach (Player player in Main.player) {
+				if (!player.active)
 					continue;
 
-				bool setWorldRecord = dHolders.Contains(Main.player[i].whoAmI) || htHolders.Contains(Main.player[i].whoAmI);
+				bool setWorldRecord = dHolders.Contains(player.whoAmI) || htHolders.Contains(player.whoAmI);
 
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((int)PacketMessageType.WorldRecordUpdate);
@@ -368,7 +368,7 @@ namespace BossChecklist
 				worldRecords.NetSend(packet, worldRecordType);
 				//packet.Write(newRecordSet);
 				packet.Write(setWorldRecord);
-				packet.Send(toClient: Main.player[i].whoAmI); // Server --> Multiplayer client
+				packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client
 			}
 		}
 
