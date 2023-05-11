@@ -151,15 +151,15 @@ namespace BossChecklist
 				writer.Write(hitsTakenPrev);
 
 				// ... and any first or new records we set will be flagged for sending
-				if (recordType.HasFlag(NetRecordID.Duration_Best)) {
+				if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
 					writer.Write(durationBest);
 					writer.Write(durationPrevBest);
 				}
-				if (recordType.HasFlag(NetRecordID.HitsTaken_Best)) {
+				if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 					writer.Write(hitsTakenBest);
 					writer.Write(hitsTakenPrevBest);
 				}
-				if (recordType.HasFlag(NetRecordID.FirstRecord)) {
+				if (recordType.HasFlag(NetRecordID.FirstVictory)) {
 					writer.Write(durationFirst);
 					writer.Write(hitsTakenFirst);
 				}
@@ -179,15 +179,15 @@ namespace BossChecklist
 				durationPrev = reader.ReadInt32();
 				hitsTakenPrev = reader.ReadInt32();
 
-				if (recordType.HasFlag(NetRecordID.Duration_Best)) {
+				if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
 					durationBest = reader.ReadInt32();
 					durationPrevBest = reader.ReadInt32();
 				}
-				if (recordType.HasFlag(NetRecordID.HitsTaken_Best)) {
+				if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 					hitsTakenBest = reader.ReadInt32();
 					hitsTakenPrevBest = reader.ReadInt32();
 				}
-				if (recordType.HasFlag(NetRecordID.FirstRecord)) {
+				if (recordType.HasFlag(NetRecordID.FirstVictory)) {
 					durationFirst = reader.ReadInt32();
 					hitsTakenFirst = reader.ReadInt32();
 				}
@@ -386,14 +386,14 @@ namespace BossChecklist
 			writer.Write((int)netRecords);
 
 			// Packet should have any beaten record values and holders written on it
-			if (netRecords.HasFlag(NetRecordID.Duration_Best)) {
+			if (netRecords.HasFlag(NetRecordID.PersonalBest_Duration)) {
 				writer.Write(durationWorld);
 				writer.Write(durationHolder.Count);
 				foreach (string name in durationHolder) {
 					writer.Write(name);
 				}
 			}
-			if (netRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
+			if (netRecords.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 				writer.Write(hitsTakenWorld);
 				writer.Write(hitsTakenHolder.Count);
 				foreach (string name in hitsTakenHolder) {
@@ -409,7 +409,7 @@ namespace BossChecklist
 			totalKills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
 
 			// Set the world record values and holders
-			if (netRecords.HasFlag(NetRecordID.Duration_Best)) {
+			if (netRecords.HasFlag(NetRecordID.PersonalBest_Duration)) {
 				durationWorld = reader.ReadInt32();
 				int durationHolderTotal = reader.ReadInt32();
 				durationHolder.Clear();
@@ -417,7 +417,7 @@ namespace BossChecklist
 					durationHolder.Add(reader.ReadString());
 				}
 			}
-			if (netRecords.HasFlag(NetRecordID.HitsTaken_Best)) {
+			if (netRecords.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 				hitsTakenWorld = reader.ReadInt32();
 				int hitsTakenHolderTotal = reader.ReadInt32();
 				hitsTakenHolder.Clear();
@@ -467,5 +467,16 @@ namespace BossChecklist
 			}
 			return list;
 		}
+	}
+
+	[Flags]
+	internal enum NetRecordID : int {
+		PreviousAttemptOnly = 0,
+		PersonalBest_Duration = 1,
+		PersonalBest_HitsTaken = 2,
+		FirstVictory = 4,
+		PersonalBest_Reset = 8, // Resetting personal best records will also remove record from World Records
+		FirstVictory_Reset = 16,
+		ResetAll = 24
 	}
 }

@@ -250,13 +250,13 @@ namespace BossChecklist
 
 				// For each record type we check if its beats the current record or if it is not set already
 				// If it is beaten, we add a flag to recordType to allow the record tracker numbers to override the current record
-				NetRecordID recordType = NetRecordID.None;
+				NetRecordID recordType = NetRecordID.PreviousAttemptOnly;
 
 				serverStatistics.kills++;
 
 				// If this was the first record made for the boss, set add them to the recordType
 				if (serverStatistics.durationFirst == -1 && serverStatistics.hitsTakenFirst == -1) {
-					recordType |= NetRecordID.FirstRecord;
+					recordType |= NetRecordID.FirstVictory;
 					serverStatistics.durationFirst = trackedDuration;
 					serverStatistics.hitsTakenFirst = trackedHitsTaken;
 				}
@@ -266,7 +266,7 @@ namespace BossChecklist
 				// If the current Best is -1, it was a first record, which means there was no prevBest (logic still works!)
 				serverStatistics.durationPrev = trackedDuration;
 				if (trackedDuration < serverStatistics.durationBest || serverStatistics.durationBest == -1) {
-					recordType |= NetRecordID.Duration_Best;
+					recordType |= NetRecordID.PersonalBest_Duration;
 					serverStatistics.durationPrevBest = serverStatistics.durationBest;
 					serverStatistics.durationBest = trackedDuration;
 					if (serverStatistics.durationBest != -1) {
@@ -276,7 +276,7 @@ namespace BossChecklist
 
 				serverStatistics.hitsTakenPrev = trackedHitsTaken;
 				if (trackedHitsTaken < serverStatistics.hitsTakenBest || serverStatistics.hitsTakenBest == -1) {
-					recordType |= NetRecordID.HitsTaken_Best;
+					recordType |= NetRecordID.PersonalBest_HitsTaken;
 					serverStatistics.hitsTakenPrevBest = serverStatistics.hitsTakenBest;
 					serverStatistics.hitsTakenBest = trackedHitsTaken;
 					if (serverStatistics.durationBest != -1) {
@@ -321,11 +321,11 @@ namespace BossChecklist
 			Console.WriteLine($"World records have been updated!");
 			Console.ResetColor();
 
-			NetRecordID worldRecordType = NetRecordID.None;
+			NetRecordID worldRecordType = NetRecordID.PreviousAttemptOnly;
 
 			// Apply new world record values and send them through packets for player clients
 			if (dCompareValue != -1 && dHolders.Count > 0) {
-				worldRecordType |= NetRecordID.Duration_Best;
+				worldRecordType |= NetRecordID.PersonalBest_Duration;
 
 				// If the compare value is better than the original record, clear the holders list
 				if (dCompareValue < worldRecords.durationWorld) {
@@ -342,7 +342,7 @@ namespace BossChecklist
 			}
 
 			if (htCompareValue != -1 && htHolders.Count > 0) {
-				worldRecordType |= NetRecordID.HitsTaken_Best;
+				worldRecordType |= NetRecordID.PersonalBest_HitsTaken;
 
 				if (htCompareValue < worldRecords.hitsTakenWorld) {
 					worldRecords.hitsTakenHolder.Clear();
