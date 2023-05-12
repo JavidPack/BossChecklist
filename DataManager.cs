@@ -8,6 +8,18 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
+	[Flags]
+	internal enum NetRecordID : int {
+		None = 0,
+		PreviousAttemptOnly = 1,
+		PersonalBest_Duration = 2,
+		PersonalBest_HitsTaken = 4,
+		FirstVictory = 8,
+		PersonalBest_Reset = 16, // Resetting personal best records will also remove record from World Records
+		FirstVictory_Reset = 32,
+		ResettingRecord = PersonalBest_Reset | FirstVictory_Reset
+	}
+
 	/// <summary>
 	/// Record container for player-based records. All personal records should be stored here and saved to a ModPlayer.
 	/// </summary>
@@ -141,11 +153,10 @@ namespace BossChecklist
 		}
 
 		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {
-			// Write the record type(s) we are changing. NetRecieve will need to read this value.
-			writer.Write((int)recordType);
+			writer.Write((int)recordType); // Write the record type(s) we are changing as NetRecieve will need to read this value.
 
 			// If the record type is a reset, nothing else needs to be done, as the records will be wiped. Otherwise...
-			if (!recordType.HasFlag(NetRecordID.ResetAll)) {
+			if (!recordType.HasFlag(NetRecordID.ResettingRecord)) {
 				// ...previous records are always overwritten for the player to view...
 				writer.Write(durationPrev);
 				writer.Write(hitsTakenPrev);
@@ -168,11 +179,14 @@ namespace BossChecklist
 
 		internal void NetRecieve(BinaryReader reader) {
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
-			if (recordType.HasFlag(NetRecordID.ResetAll)) {
-				// ResetAll resets all fields to their default value
-				kills = deaths = attempts = 0;
-				playTimeFirst = -1;
-				durationPrev = durationBest = durationFirst = hitsTakenPrev = hitsTakenBest = hitsTakenFirst = -1;
+			if (recordType.HasFlag(NetRecordID.ResettingRecord)) {
+				if (recordType.HasFlag(NetRecordID.FirstVictory_Reset)) {
+					playTimeFirst = -1;
+					durationFirst = hitsTakenFirst = -1;
+				}
+				if (recordType.HasFlag(NetRecordID.PersonalBest_Reset)) {
+					durationBest = durationPrevBest = hitsTakenBest = hitsTakenPrevBest = -1;
+				}
 			}
 			else {
 				kills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
@@ -467,16 +481,5 @@ namespace BossChecklist
 			}
 			return list;
 		}
-	}
-
-	[Flags]
-	internal enum NetRecordID : int {
-		PreviousAttemptOnly = 0,
-		PersonalBest_Duration = 1,
-		PersonalBest_HitsTaken = 2,
-		FirstVictory = 4,
-		PersonalBest_Reset = 8, // Resetting personal best records will also remove record from World Records
-		FirstVictory_Reset = 16,
-		ResetAll = 24
 	}
 }
