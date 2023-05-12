@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader.IO;
 
@@ -12,11 +13,15 @@ namespace BossChecklist
 	internal enum NetRecordID : int {
 		None = 0,
 		PreviousAttemptOnly = 1,
-		PersonalBest_Duration = 2,
-		PersonalBest_HitsTaken = 4,
-		FirstVictory = 8,
-		PersonalBest_Reset = 16, // Resetting personal best records will also remove record from World Records
-		FirstVictory_Reset = 32,
+		FirstVictory = 2,
+		PersonalBest_Duration = 4,
+		PersonalBest_HitsTaken = 8,
+		NewPersonalBest = PersonalBest_Duration | PersonalBest_HitsTaken,
+		WorldRecord_Duration = 16,
+		WorldRecord_HitsTaken = 32,
+		WorldRecord = WorldRecord_Duration | WorldRecord_HitsTaken,
+		PersonalBest_Reset = 64, // Resetting personal best records will also remove record from World Records
+		FirstVictory_Reset = 128,
 		ResettingRecord = PersonalBest_Reset | FirstVictory_Reset
 	}
 
@@ -166,10 +171,12 @@ namespace BossChecklist
 					writer.Write(durationBest);
 					writer.Write(durationPrevBest);
 				}
+
 				if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 					writer.Write(hitsTakenBest);
 					writer.Write(hitsTakenPrevBest);
 				}
+
 				if (recordType.HasFlag(NetRecordID.FirstVictory)) {
 					writer.Write(durationFirst);
 					writer.Write(hitsTakenFirst);
@@ -184,6 +191,7 @@ namespace BossChecklist
 					playTimeFirst = -1;
 					durationFirst = hitsTakenFirst = -1;
 				}
+
 				if (recordType.HasFlag(NetRecordID.PersonalBest_Reset)) {
 					durationBest = durationPrevBest = hitsTakenBest = hitsTakenPrevBest = -1;
 				}
@@ -197,13 +205,23 @@ namespace BossChecklist
 					durationBest = reader.ReadInt32();
 					durationPrevBest = reader.ReadInt32();
 				}
+
 				if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 					hitsTakenBest = reader.ReadInt32();
 					hitsTakenPrevBest = reader.ReadInt32();
 				}
+
 				if (recordType.HasFlag(NetRecordID.FirstVictory)) {
 					durationFirst = reader.ReadInt32();
 					hitsTakenFirst = reader.ReadInt32();
+				}
+
+				// This should always be read by Multiplayer clients, so create combat texts on new records
+				if (recordType.HasFlag(NetRecordID.WorldRecord)) {
+					CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New Record!", true);
+				}
+				else if (recordType.HasFlag(NetRecordID.NewPersonalBest)) {
+					CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New World Record!", true);
 				}
 			}
 		}
@@ -396,18 +414,18 @@ namespace BossChecklist
 		}
 
 		internal void NetSend(BinaryWriter writer, NetRecordID netRecords) {
-			// Write the record type(s) we are changing. NetRecieve will need to read this value.
-			writer.Write((int)netRecords);
+			writer.Write((int)netRecords); // Write the record type(s) we are changing. NetRecieve will need to read this value.
 
 			// Packet should have any beaten record values and holders written on it
-			if (netRecords.HasFlag(NetRecordID.PersonalBest_Duration)) {
+			if (netRecords.HasFlag(NetRecordID.WorldRecord_Duration)) {
 				writer.Write(durationWorld);
 				writer.Write(durationHolder.Count);
 				foreach (string name in durationHolder) {
 					writer.Write(name);
 				}
 			}
-			if (netRecords.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
+
+			if (netRecords.HasFlag(NetRecordID.WorldRecord_HitsTaken)) {
 				writer.Write(hitsTakenWorld);
 				writer.Write(hitsTakenHolder.Count);
 				foreach (string name in hitsTakenHolder) {
@@ -417,13 +435,12 @@ namespace BossChecklist
 		}
 
 		internal void NetRecieve(BinaryReader reader) {
-			// Read the type of record being updated
-			NetRecordID netRecords = (NetRecordID)reader.ReadInt32();
-
+			NetRecordID netRecords = (NetRecordID)reader.ReadInt32(); // Read the type of record being updated
 			totalKills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
+			//TODO: figure out death counts
 
 			// Set the world record values and holders
-			if (netRecords.HasFlag(NetRecordID.PersonalBest_Duration)) {
+			if (netRecords.HasFlag(NetRecordID.WorldRecord_Duration)) {
 				durationWorld = reader.ReadInt32();
 				int durationHolderTotal = reader.ReadInt32();
 				durationHolder.Clear();
@@ -431,7 +448,8 @@ namespace BossChecklist
 					durationHolder.Add(reader.ReadString());
 				}
 			}
-			if (netRecords.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
+
+			if (netRecords.HasFlag(NetRecordID.WorldRecord_HitsTaken)) {
 				hitsTakenWorld = reader.ReadInt32();
 				int hitsTakenHolderTotal = reader.ReadInt32();
 				hitsTakenHolder.Clear();

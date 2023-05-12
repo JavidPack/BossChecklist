@@ -418,21 +418,6 @@ namespace BossChecklist
 					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
 					recordIndex = reader.ReadInt32();
 					WorldAssist.worldRecords[recordIndex].stats.NetRecieve(reader);
-
-					// Display 'New World Record!' text if the player was within the new list of record holders
-					// Otherwise, if the player got a new personal best record, display the 'New Record!' text
-					//bool clientNewRecord = reader.ReadBoolean();
-					bool clientWorldRecord = reader.ReadBoolean();
-					if (clientWorldRecord) {
-						string message = Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewWorldRecord");
-						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
-					}
-					/*
-					else if (clientNewRecord) {
-						string message = Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewRecord");
-						CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, message, true);
-					}
-					*/
 					break;
 				case PacketMessageType.PlayTimeRecordUpdate:
 					recordIndex = reader.ReadInt32();
