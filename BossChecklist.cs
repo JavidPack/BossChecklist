@@ -414,15 +414,14 @@ namespace BossChecklist
 					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.WorldRecordUpdate:
-					// World Records should be shared for all clients
-					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
+					// World Records should be shared to all clients
 					recordIndex = reader.ReadInt32();
 					WorldAssist.worldRecords[recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.PlayTimeRecordUpdate:
 					recordIndex = reader.ReadInt32();
 					long playTime = reader.ReadInt64();
-					Main.player[whoAmI].GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.playTimeFirst = playTime;
+					ServerCollectedRecords[whoAmI][recordIndex].stats.playTimeFirst = playTime;
 					break;
 				case PacketMessageType.ResetTrackers:
 					recordIndex = reader.ReadInt32();

@@ -53,6 +53,33 @@ namespace BossChecklist
 			packet.Send(); // Multiplayer --> Server
 		}
 
+
+		/// <summary>
+		/// Updates the player's first victory play time record and sends it to the server.
+		/// <para>Only runs on a Multiplayer client.</para>
+		/// </summary>
+		public static void SubmitPlayTimeToServer(NPC npc, int recordIndex) {
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+				return;
+
+			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex, Main.myPlayer])
+				return; // Player must have contributed to the boss fight
+
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats;
+			if (statistics.playTimeFirst == -1)
+				return;
+
+			statistics.playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // update player's records
+
+			// Send the data to the server
+			ModPacket packet = BossChecklist.instance.GetPacket();
+			packet.Write((byte)PacketMessageType.PlayTimeRecordUpdate);
+			packet.Write(recordIndex);
+			packet.Write(statistics.playTimeFirst);
+			packet.Send(); // Multiplayer client --> Server
+		}
+
 		/// <summary>
 		/// Compares the record tracker data from all players against the server's saved records.
 		/// World records will be checked and updated during this process.
@@ -179,7 +206,7 @@ namespace BossChecklist
 						continue;
 
 					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((int)PacketMessageType.WorldRecordUpdate);
+					packet.Write((byte)PacketMessageType.WorldRecordUpdate);
 					packet.Write(recordIndex);
 					worldRecords.NetSend(packet, worldNetRecord);
 					packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client

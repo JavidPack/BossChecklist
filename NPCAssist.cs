@@ -75,7 +75,7 @@ namespace BossChecklist
 				int index = entry.GetIndex;
 				int recordIndex = entry.GetRecordIndex;
 				if (FullyInactive(npc, index, true)) {
-					if (!BossChecklist.DebugConfig.NewRecordsDisabled && !BossChecklist.DebugConfig.RecordTrackingDisabled) {
+					if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 						if (Main.netMode == NetmodeID.Server) {
 							Networking.UpdateServerRecords(npc, recordIndex);
 						}
@@ -83,7 +83,7 @@ namespace BossChecklist
 							CheckRecords(npc, recordIndex);
 						}
 						else if (Main.netMode == NetmodeID.MultiplayerClient) {
-							SubmitPlayTimeFirstStat(npc, recordIndex);
+							Networking.SubmitPlayTimeToServer(npc, recordIndex);
 						}
 					}
 
@@ -262,30 +262,6 @@ namespace BossChecklist
 				newWorldRecord = true;
 			}
 			return newWorldRecord; // Will be used to display CombatTexts of "New Record!" or "New World Record!"
-		}
-
-		/// <summary>
-		/// Allows the player's playtime stat to be updated in multiplayer.
-		/// </summary>
-		public void SubmitPlayTimeFirstStat(NPC npc, int recordIndex) {
-			if (Main.netMode != NetmodeID.MultiplayerClient)
-				return;
-
-			if (!npc.playerInteraction[Main.myPlayer] || !WorldAssist.Tracker_StartingPlayers[recordIndex, Main.myPlayer])
-				return; // Player must have contributed to the boss fight
-
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			PersonalStats statistics = modPlayer.RecordsForWorld[recordIndex].stats;
-			if (statistics.playTimeFirst == -1) {
-				statistics.playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks;
-
-				// Send the data to the server
-				ModPacket packet = Mod.GetPacket();
-				packet.Write((int)PacketMessageType.PlayTimeRecordUpdate);
-				packet.Write(recordIndex);
-				packet.Write(statistics.playTimeFirst);
-				packet.Send(); // Multiplayer client --> Server
-			}
 		}
 
 		/// <summary>
