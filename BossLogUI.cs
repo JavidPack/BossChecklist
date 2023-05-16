@@ -247,9 +247,8 @@ namespace BossChecklist
 			else if (PageNum >= 0) {
 				// If UI is closed on a new record page, remove the new record from the list
 				int selectedEntryIndex = GetLogEntryInfo.GetRecordIndex;
-				if (selectedEntryIndex != -1 && modPlayer.hasNewRecord.Length > 0) {
+				if (selectedEntryIndex != -1 && modPlayer.hasNewRecord.Length > 0)
 					modPlayer.hasNewRecord[selectedEntryIndex] = false;
-				}
 			}
 
 			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
@@ -842,12 +841,7 @@ namespace BossChecklist
 		private void DisablePromptMessage() {
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
 			PendingConfigChange = true;
-			if (BossChecklist.BossLogConfig.PromptDisabled) {
-				PromptCheck.SetImage(Texture_Check_Check);
-			}
-			else {
-				PromptCheck.SetImage(Texture_Check_X);
-			}
+			PromptCheck.SetImage(BossChecklist.BossLogConfig.PromptDisabled ? Texture_Check_Check : Texture_Check_X);
 		}
 
 		/// <summary>
@@ -858,9 +852,8 @@ namespace BossChecklist
 				return;
 			// Remove new records when navigating from a page with a new record
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && GetLogEntryInfo.GetRecordIndex != -1) {
+			if (PageNum >= 0 && GetLogEntryInfo.GetRecordIndex != -1)
 				modPlayer.hasNewRecord[GetLogEntryInfo.GetRecordIndex] = false;
-			}
 
 			// Calculate what page the Log needs to update to
 			List<EntryInfo> BossList = BossChecklist.bossTracker.SortedEntries;
@@ -884,14 +877,8 @@ namespace BossChecklist
 					// or until its reached page -1 (table of contents) or -2 (credits)
 					while (NewPageValue >= 0) {
 						EntryInfo currentBoss = BossList[NewPageValue];
-						if (!currentBoss.hidden && currentBoss.available()) {
-							if (!BossChecklist.BossLogConfig.OnlyShowBossContent) {
-								break; // if 'only show bosses' is not enabled
-							}
-							else if (currentBoss.type == EntryType.Boss) {
-								break; // or if it IS enabled and the entry is a boss
-							}
-						}
+						if (!currentBoss.hidden && currentBoss.available() && (!BossChecklist.BossLogConfig.OnlyShowBossContent || currentBoss.type == EntryType.Boss))
+							break; // if 'only show bosses' is not enabled or if it IS enabled and the entry is a boss
 
 						// same calulation as before, but repeated until a valid page is selected
 						if (button.Id == "Next") {
@@ -919,9 +906,8 @@ namespace BossChecklist
 			// Only on boss pages does updating the category page matter
 			if (PageNum >= 0) {
 				SelectedSubPage = subPage;
-				if (subCategory != SubCategory.None) {
+				if (subCategory != SubCategory.None)
 					RecordSubCategory = subCategory;
-				}
 			}
 
 			ToCTab.Anchor = PageNum == Page_TableOfContents ? null : -1; // Update ToC/Filter tab anchor (and hover text)
@@ -1055,15 +1041,9 @@ namespace BossChecklist
 				bool namesMasked = cfg.MaskNames && !entry.IsDownedOrMarked;
 				bool hardMode = cfg.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh && !entry.IsDownedOrMarked;
 				bool availability = cfg.HideUnavailable && !entry.available() && !entry.IsDownedOrMarked;
-				if (namesMasked || hardMode || availability) {
+				bool maskedButNext = cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss && !entry.IsDownedOrMarked && entry.available() && !entry.hidden && FindNextEntry() == entry.GetIndex;
+				if ((namesMasked || hardMode || availability) && !maskedButNext)
 					displayName = "???";
-				}
-
-				if (cfg.DrawNextMark && cfg.MaskNames && cfg.UnmaskNextBoss) {
-					if (!entry.IsDownedOrMarked && entry.available() && !entry.hidden && FindNextEntry() == entry.GetIndex) {
-						displayName = entry.DisplayName;
-					}
-				}
 
 				// The first entry that isnt downed to have a nextCheck will set off the next check for the rest
 				// Entries that ARE downed will still be green due to the ordering of colors within the draw method
@@ -1084,11 +1064,10 @@ namespace BossChecklist
 
 					// Loop through player saved loot and boss loot to see if every item was obtained
 					foreach (int loot in entry.lootItemTypes) {
-						int index = entry.loot.FindIndex(x => x.itemId == loot);
-
 						if (loot == entry.treasureBag)
 							continue;
 
+						int index = entry.loot.FindIndex(x => x.itemId == loot);
 						if (index != -1 && entry.loot[index].conditions is not null) {
 							bool isCorruptionLocked = WorldGen.crimson && entry.loot[index].conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
 							bool isCrimsonLocked = !WorldGen.crimson && entry.loot[index].conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
@@ -1145,9 +1124,8 @@ namespace BossChecklist
 							}
 						}
 
-						if (collectCount == entry.collection.Count) {
+						if (collectCount == entry.collection.Count)
 							allCollect = false; // If all the items were skipped due to the DroppedLootCheck config, don't mark as all collectibles obtained
-						}
 					}
 				}
 
@@ -1215,9 +1193,8 @@ namespace BossChecklist
 			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
 			PageOne.Append(prehardmodeBar);
-			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode) {
+			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode)
 				PageTwo.Append(hardmodeBar);
-			}
 		}
 
 		/// <summary>
@@ -1676,9 +1653,8 @@ namespace BossChecklist
 					bool isCorruptionLocked = WorldGen.crimson && loot.conditions.Any(x => x is Conditions.IsCorruption || x is Conditions.IsCorruptionAndNotExpert);
 					bool isCrimsonLocked = !WorldGen.crimson && loot.conditions.Any(x => x is Conditions.IsCrimson || x is Conditions.IsCrimsonAndNotExpert);
 
-					if (bossItems.Contains(loot.itemId) && (isCorruptionLocked || isCrimsonLocked)) {
+					if (bossItems.Contains(loot.itemId) && (isCorruptionLocked || isCrimsonLocked))
 						bossItems.Remove(loot.itemId);
-					}
 				}
 			}
 
@@ -1686,9 +1662,8 @@ namespace BossChecklist
 			if (bossItems.Intersect(BossTracker.otherWorldMusicBoxTypes).Any()) {
 				FieldInfo TOWMusicUnlocked = typeof(Main).GetField("TOWMusicUnlocked", BindingFlags.Static | BindingFlags.NonPublic);
 				bool OWUnlocked = (bool)TOWMusicUnlocked.GetValue(null);
-				if (OtherworldUnlocked != OWUnlocked) {
+				if (OtherworldUnlocked != OWUnlocked)
 					OtherworldUnlocked = OWUnlocked;
-				}
 			}
 
 			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
@@ -1770,10 +1745,7 @@ namespace BossChecklist
 					return Color.Black;
 				}
 			}
-			else if (entry.hidden) {
-				return Color.Black;
-			}
-			return Color.White;
+			return entry.hidden ? Color.Black : Color.White;
 		}
 
 		public static void OverrideForGroups(Recipe recipe, Item item) {
