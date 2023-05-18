@@ -9,11 +9,13 @@ Mods: {
 				MiniBossPlural: Мини-боссы
 				Event: Event
 				EventPlural: События
+				Enabled: включён
+				Disabled: выключен
+				PartiallyEnabled: частично включён
 			}
 
 			Tabs: {
 				ToggleFilters: Переключить фильтры
-
 				TableOfContents: Оглавление
 				Credits: Конец
 				NextEntry: 
@@ -27,6 +29,12 @@ Mods: {
 				LootAndCollectibles: Коллекция
 			}
 
+			Indicator: {
+				ProgressionMode: Режим прогрессии {0}
+				OnlyBossContentEnabled: Доступен только контент боссов для отображения
+				OnlyBossContentDisabled: Доступен весь контент для отображения
+			}
+
 			TableOfContents: {
 				PreHardmode: Пре-хардмод
 				Hardmode: Хардмод
@@ -37,11 +45,12 @@ Mods: {
 				AllDropLoot: Вся не коллекционные предметы босса получены!
 				AllCollectibles: Все коллекционные предметы босса получены!
 
-				Filter:{
+				Filter: {
 					Show: '{0}: Показаны'
 					Hide: '{0}: Скрыты'
 					HideWhenCompleted: '{0}: Скрыты после победы'
 					ToggleVisibility: Переключить видимость скрытых целей
+					Disabled: Фильтер отключён из-за настройки 'Босс-журнал показывает только боссов'
 				}
 			}
 			
@@ -84,6 +93,7 @@ Mods: {
 					FirstVictory: Первая победа
 					PersonalBest: Личный рекорд
 					WorldRecord: Рекорды мира
+					Cycle: Переключение категорий рекордов
 				}
 
 				Title: {
@@ -156,14 +166,14 @@ Mods: {
 			}
 
 			HintTexts: {
-				MarkEntry: Нажмите ПКМ по боссу, чтобы отметить его побеждённого
-				HideEntry: Нажмите Alt+ПКМ по боссу, чтобы скрыть его из списка
-				ClearMarked: Нажмите Alt+ЛКМ по кнопке 'Переключить видимость скрытых целей', чтобы сбросить все принудительные пометки
-				ClearHidden: Нажмите Alt+ПКМ по кнопке 'Переключить видимость скрытых целей', чтобы сбросить все скрытые записи
-				ClearItems: Нажмите Alt+ПКМ по кнопке 'Коллекция', чтобы сбросить все полученные предметы босса
-				RemoveItem: Нажмите Alt+ПКМ по предмету, чтобы удалить его из списка полученных предметов босса
-				ClearAllRecords: Нажмите Alt+ПКМ по кнопке 'Рекорды', чтобы сбросить все рекорды
-				ClearRecord: Нажмите Alt+ПКМ по иконке рекорда, чтобы сбросить этот рекорд
+				MarkEntry: Нажмите ПКМ по записи в списке, чтобы пометить её как выполненную
+				HideEntry: Удерживайте Alt и нажмите ПКМ по записи в списке, чтобы скрыть её
+				ClearMarked: Удерживайте Alt и нажмите ПКМ по вкладке фильтров, чтобы очистить все помеченные записи, вернув их в исходное состояние
+				ClearHidden: Удерживайте Alt и нажмите ПКМ по фильтру 'Переключить видимость скрытых целей', чтобы очистить все скрытые записи, вернув их в исходное скрытое состояние
+				ClearItems: Удерживайте Alt и нажмите ПКМ по мешку с сокровищами на странице записи, чтобы пометить все предметы как не полученные
+				RemoveItem: Удерживайте Alt и нажмите ПКМ по желаемой ячейке предмета, чтобы пометить её как не полученную
+				ClearAllRecords: Удерживайте Alt и нажмите ПКМ по кнопке 'Категории рекордов', чтобы очистить все рекорды для этого босса
+				ClearRecord: Удерживайте Alt и нажмите ПКМ по иконке рекорда, чтобы очистить значение рекорда
 			}
 		}
 
@@ -254,189 +264,6 @@ Mods: {
 				HostChange: Только хост может изменить эту настройку.
 			}
 
-			BossLogCustomization: {
-				Title: Boss Log Customization
-
-				Header: {
-					BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
-					BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
-					BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
-				}
-
-				Label: {
-					BossLogColor: Boss Log Color
-					BossLogPos: Open Log Button Position
-					
-					HideUnavailable: Hide unavailable bosses
-					HideUnsupported: Hide unsupported bosses
-					OnlyBosses: Boss Log only shows boss content
-					FilterBosses: Filter bosses in list
-					FilterMiniBosses: Filter mini bosses in list
-					FilterEvents: Filter events in list
-					ColoredBossText: Colored Boss Text
-					SelectedCheckmarkType: Checklist Marking Type
-					DrawNextMark: Next Boss Check
-					LootChecklist: Enable loot/collectible checklist
-					CheckDroppedLoot: Only check droppable loot
-
-					EnableProgressionMode: Enable Progression Mode
-					DisableProgressionMode: Disable Progression Mode
-					ProgressionPrompt: Disable Progression Mode prompt
-					MaskTextures: Hide textures until entry is defeated
-					MaskNames: Hide names until entry is defeated
-					UnmaskNextCheck: Show the name of the next entry to fight
-					MaskBossLoot: Hide boss drops until entry is defeated
-					MaskHardMode: Hide hardmode content until in hardmode
-				}
-
-				Tooltip: {
-					BossLogColor: Choose the color of your Boss Log!
-					BossLogPos:
-						'''
-						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
-						Position is measured from bottom right corner of screen.
-						'''
-					
-					HideUnavailable: 
-						'''
-						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
-						Ex. Frost Legion while it is not Xmas
-						'''
-					HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
-					OnlyBosses: If enabled, the checklist and page navigation will only give access boss entries.
-					ColoredBossText:
-						'''
-						The boss text in the table of contents will be green when defeated and red when not.
-						If next check is enabled, the next boss will be yellow.
-						'''
-					DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
-					LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
-					CheckDroppedLoot: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
-				
-					ProgressionPrompt: While enabled, this will prevent the prompt from appearing for newly-created characters.
-					UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
-					MaskHardMode: Hides ALL content, overriding the options you have toggled above.
-				}
-			}
-
-			OtherFeatures: {
-				Title: Other features
-
-				Header: {
-					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
-					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
-					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
-				}
-
-				Label: {
-					DespawnMessageType: Boss Despawn Messages
-					LimbMessages: Segment Defeated Messages
-					PillarMessages: Pillar Defeated Messages
-					TimerSounds: Respawn Timer Sounds
-
-					TreasureBags: Treasure bags display on the map
-					Fragments: Fragments display on the map
-					Scales: Shadow Scales and Tissue Samples display on the map
-
-					BossRadar: Enable Boss Radar
-					RadarMiniBosses: Whitelist mini bosses
-					RadarOpacity: Radar Opacity
-					RadarBlacklist: Radar Blacklist
-				}
-
-				Tooltip: {
-					DespawnMessageType:
-						'''
-						Despawn messages will appear in chat when a boss becomes inactive.
-						If enabled, choose betweem generic or unique messages.
-						'''
-					LimbMessages:
-						'''
-						Multi-segmented bosses will send messages when a segment is defeated
-						Ex. Skeletron's hands
-						'''
-					PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
-					TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
-					RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
-					RadarOpacity: Adjust how transparent the radar's icon will be
-					RadarBlacklist: The selected NPCs will not be tracked by the radar
-				}
-			}
-
-			Debug: {
-				Title: Debug Interface
-
-				Header: {
-					Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
-					DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
-					DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
-				}
-
-				Label: {
-					ModCallVerbose: Mod.Call Log Verbose
-					ShowProgressionValue: Access Progression Values
-					AccessInternalNames: Access Internal Names
-					CollectionTypeDetection: Show Auto-detected Collection Type
-					InactiveBossCheck: Inactive Boss Check
-					DisableNewRecords: Disable updating personal records
-					DisableRecordTracking: Disable record tracking
-					ShowRecordTracking: Show record timers and counters of a selected Boss
-
-					ResetLoot: Enable Reset Loot and Collection Items Option
-					ResetRecords: Enable Reset Record Option
-					ResetForcedDowns: Enable Reset Forced Downed Entries Options
-					ResetHiddenEntries: Enable Reset Hidden Entries Option
-				}
-
-				Tooltip: {
-					ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
-					ShowProgressionValue:
-						'''
-						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
-						The progression value is what determines how entries are ordered in the checklist.
-						'''
-					AccessInternalNames:
-						'''
-						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
-						Useful for mod developers making cross-mod content.
-						'''
-					CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
-					InactiveBossCheck: 
-						'''
-						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
-						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
-						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
-						'''
-					DisableNewRecords:
-						'''
-						While enabled, all personal records will not be overwritten except for Previous Attempt.
-						This will also disable sending record data to the server for world records.
-						'''
-					ShowRecordTracking: Record Tracking must be enabled for this to show
-
-					ResetLoot: 
-						'''
-						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
-						Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
-						This will apply to ALL boss loot lists.
-						'''
-					ResetRecords: 
-						'''
-						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
-						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
-						'''
-					ResetForcedDowns: Reset all world forced downs by alt + right-clicking on the filters tab on the Table of Contents pages.
-					ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
-				}
-			}
-		}
-	}
-}
-
-Mods: {
-	BossChecklist: {
-
-		Configs: {
 			BossLogCustomization: {
 				Title: Настройки Босс-журнала
 
@@ -567,7 +394,7 @@ Mods: {
 
 					ResetLoot: Включить опцию сброса добычи и коллекции
 					ResetRecords: Включить опцию сброса рекордов
-					ResetForcedDowns: Включить опцию сброса принудительно поверженных целей
+					ResetForcedDowns: Включить опцию сброса помеченных поверженных целей
 					ResetHiddenEntries: Включить опцию сброса скрытых записей
 				}
 
@@ -608,7 +435,7 @@ Mods: {
 						Сбрасывает отдельный рекорд, нажав Alt+ПКМ по иконке рекорда на выбранной странице босса.
 						Сбрасывает все рекорды, нажав Alt+ПКМ по кнопке 'Рекорды' на выбранной странице босса.
 						'''
-					ResetForcedDowns: Сбрасывает все принудительно поверженные цели мира, нажав Alt+ПКМ по вкладке фильтры в оглавлении.
+					ResetForcedDowns: Сбрасывает все помеченные поверженные цели мира, нажав Alt+ПКМ по вкладке фильтры в оглавлении.
 					ResetHiddenEntries: Сбрасывает все скрытые записи, нажав Alt+ПКМ по кнопке 'Переключить видимость скрытых целей', расположенной в кладке фильтров.
 				}
 			}
