@@ -213,6 +213,14 @@ namespace BossChecklist.UIElements
 
 					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
+
+				if (Id == "CopyKey") {
+					string bossKey = BossUISystem.Instance.BossLog.GetLogEntryInfo.Key;
+					if (Platform.Get<IClipboard>().Value != bossKey) {
+						Platform.Get<IClipboard>().Value = bossKey;
+						SoundEngine.PlaySound(SoundID.Unlock);
+					}
+				}
 			}
 
 			public override void RightClick(UIMouseEvent evt) {
@@ -675,7 +683,7 @@ namespace BossChecklist.UIElements
 							if (entry.Key == "Terraria Deerclops") {
 								src = new Rectangle(2, 0, 48, 40);
 							}
-							int xHeadOffset = pageRect.X + pageRect.Width - src.Width - 10 - ((src.Width + 2) * offset);
+							int xHeadOffset = pageRect.Right - src.Width - 10 - ((src.Width + 2) * offset);
 							Rectangle headPos = new Rectangle(xHeadOffset, pageRect.Y + 5, src.Width, src.Height);
 							if (!countedFirstHead) {
 								firstHeadPos = headPos;
@@ -705,48 +713,12 @@ namespace BossChecklist.UIElements
 							BossUISystem.Instance.UIHoverTextColor = entry.IsDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
 						}
 
-						bool enabledCopyButtons = BossChecklist.DebugConfig.AccessInternalNames && entry.modSource != "Unknown";
-						Vector2 pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 5);
+						Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
 						string progression = BossChecklist.DebugConfig.ShowProgressionValue ? $"[{entry.progression}f] " : "";
 						Utils.DrawBorderString(spriteBatch, progression + entry.DisplayName, pos, Color.Goldenrod);
 
-						if (enabledCopyButtons) {
-							Texture2D clipboard = BossLogUI.RequestVanillaTexture("Images/UI/CharCreation/Copy").Value;
-							Vector2 vec2 = new Vector2(pageRect.X + 5, pos.Y);
-							spriteBatch.Draw(clipboard, vec2, Color.Goldenrod);
-						}
-
-						pos = new Vector2(pageRect.X + 5 + (enabledCopyButtons ? 25 : 0), pageRect.Y + 30);
+						pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
 						Utils.DrawBorderString(spriteBatch, entry.SourceDisplayName, pos, new Color(150, 150, 255));
-
-						if (enabledCopyButtons) {
-							Texture2D clipboard = BossLogUI.RequestVanillaTexture("Images/UI/CharCreation/Copy").Value;
-							Rectangle clipRect = new Rectangle(pageRect.X + 5, pageRect.Y + 5, clipboard.Width, clipboard.Height);
-
-							Color copied = (Platform.Get<IClipboard>().Value == entry.Key) ? Color.Gold : Color.White;
-							spriteBatch.Draw(clipboard, clipRect, copied);
-
-							// Hovering and rightclick will copy to clipboard
-							if (Main.MouseScreen.Between(clipRect.TopLeft(), clipRect.BottomRight())) {
-								string translated = Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.CopyKey");
-								BossUISystem.Instance.UIHoverText = $"{translated}:\n{entry.Key}";
-								if (Main.mouseLeft && Main.mouseLeftRelease) {
-									Platform.Get<IClipboard>().Value = entry.Key;
-								}
-							}
-
-							clipRect.Y += 25;
-							copied = (Platform.Get<IClipboard>().Value == entry.modSource) ? Color.Gold : Color.White;
-							spriteBatch.Draw(clipboard, clipRect, copied);
-
-							if (Main.MouseScreen.Between(clipRect.TopLeft(), clipRect.BottomRight())) {
-								string translated = Language.GetTextValue($"{BossLogUI.LangLog}.EntryPage.CopySource");
-								BossUISystem.Instance.UIHoverText = $"{translated}:\n{entry.modSource}";
-								if (Main.mouseLeft && Main.mouseLeftRelease) {
-									Platform.Get<IClipboard>().Value = entry.modSource;
-								}
-							}
-						}
 					}
 					else if (Id == "PageTwo" && entry.modSource != "Unknown") {
 						if (BossLogUI.SelectedSubPage == SubPage.Records) {

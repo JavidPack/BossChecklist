@@ -143,6 +143,7 @@ namespace BossChecklist
 		public static Asset<Texture2D> Texture_Content_RecordSlot;
 		public static Asset<Texture2D> Texture_Content_Cycle;
 		public static Asset<Texture2D> Texture_Content_ToggleHidden;
+		public static Asset<Texture2D> Texture_Content_BossKey;
 
 		// Extra stuff
 		public const string LangLog = "Mods.BossChecklist.Log";
@@ -294,6 +295,7 @@ namespace BossChecklist
 			Texture_Content_RecordSlot = RequestResource("Extra_RecordSlot");
 			Texture_Content_Cycle = RequestResource("Extra_CycleRecipe");
 			Texture_Content_ToggleHidden = RequestResource("Nav_Hidden");
+			Texture_Content_BossKey = RequestResource("Extra_Key");
 
 			bosslogbutton = new OpenLogButton(Texture_Button_Book);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
@@ -962,6 +964,16 @@ namespace BossChecklist
 			}
 
 			if (PageNum >= 0) {
+				if (BossChecklist.DebugConfig.AccessInternalNames && GetLogEntryInfo.modSource != "Unknown") {
+					NavigationalButton keyButton = new NavigationalButton(Texture_Content_BossKey, true) {
+						Id = "CopyKey",
+						hoverText = $"{Language.GetTextValue($"{LangLog}.EntryPage.CopyKey")}:\n{GetLogEntryInfo.Key}"
+					};
+					keyButton.Left.Pixels = 5;
+					keyButton.Top.Pixels = 55;
+					PageOne.Append(keyButton);
+				}
+
 				// Entry pages need to have the category pages set up, but only for entries fully implemented
 				if (GetLogEntryInfo.modSource != "Unknown") {
 					PageTwo.Append(recordButton);
