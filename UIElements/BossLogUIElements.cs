@@ -194,8 +194,8 @@ namespace BossChecklist.UIElements
 				this.hoverButton = hoverButton;
 			}
 
-			public override void Click(UIMouseEvent evt) {
-				base.Click(evt);
+			public override void LeftClick(UIMouseEvent evt) {
+				base.LeftClick(evt);
 				if (Anchor.HasValue)
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 
@@ -292,8 +292,8 @@ namespace BossChecklist.UIElements
 				this.texture = texture;
 			}
 
-			public override void Click(UIMouseEvent evt) {
-				base.Click(evt);
+			public override void LeftClick(UIMouseEvent evt) {
+				base.LeftClick(evt);
 
 				if (Id == "Progression") {
 					BossUISystem.Instance.BossLog.CloseAndConfigure();
@@ -355,8 +355,8 @@ namespace BossChecklist.UIElements
 				};
 			}
 
-			public override void Click(UIMouseEvent evt) {
-				base.Click(evt);
+			public override void LeftClick(UIMouseEvent evt) {
+				base.LeftClick(evt);
 
 				string ConfigHoverText = "";
 				if (Id == "Boss") {
@@ -1103,8 +1103,8 @@ namespace BossChecklist.UIElements
 				};
 			}
 
-			public override void Click(UIMouseEvent evt) {
-				base.Click(evt);
+			public override void LeftClick(UIMouseEvent evt) {
+				base.LeftClick(evt);
 				if (Anchor.HasValue)
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 			}
@@ -1143,7 +1143,7 @@ namespace BossChecklist.UIElements
 				TextColor = this.defaultColor = markAsNext && BossChecklist.BossLogConfig.ColoredBossText ? new Color(248, 235, 91) : entryColor;
 			}
 
-			public override void Click(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = entry.GetIndex; // jump to entry page
+			public override void LeftClick(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = entry.GetIndex; // jump to entry page
 
 			public override void RightClick(UIMouseEvent evt) {
 				// Right-click an entry to mark it as completed
@@ -1423,8 +1423,8 @@ namespace BossChecklist.UIElements
 				}
 			}
 
-			public override void Click(UIMouseEvent evt) {
-				base.Click(evt);
+			public override void LeftClick(UIMouseEvent evt) {
+				base.LeftClick(evt);
 				BossUISystem.Instance.BossLog.barState = !BossUISystem.Instance.BossLog.barState;
 				GenerateDividers(); // update the dividers based on the new bar state
 			}

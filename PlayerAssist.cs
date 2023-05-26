@@ -78,7 +78,7 @@ namespace BossChecklist
 			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList();
 		}
 
-		public override void OnEnterWorld(Player player) {
+		public override void OnEnterWorld() {
 			// PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
 			enteredWorldReset = true;
 
@@ -155,18 +155,16 @@ namespace BossChecklist
 				hasOpenedTheBossLog = false;
 			*/
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
-					// If a boss is marked active and this player is a 'starting player'
-					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
-						if (Player.dead) {
-							Tracker_Deaths[recordIndex] = true;
-						}
-						Tracker_Duration[recordIndex]++;
+			for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
+				// If a boss is marked active and this player is a 'starting player'
+				if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
+					if (Player.dead) {
+						Tracker_Deaths[recordIndex] = true;
 					}
+					Tracker_Duration[recordIndex]++;
 				}
 			}
 		}
@@ -174,45 +172,37 @@ namespace BossChecklist
 		// When a player is dead they are marked as such in the Death tracker
 		// On respawn, add to the total deaths towards marked bosses
 		// ActiveBossesList and StartingPlayers doesn't need to be checked since it was checked when setting the tracker bool to true
-		public override void OnRespawn(Player player) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255 || player.whoAmI != Player.whoAmI)
+		public override void OnRespawn() {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-				for (int recordIndex = 0; recordIndex < Tracker_Deaths.Length; recordIndex++) {
-					if (Tracker_Deaths[recordIndex]) {
-						Tracker_Deaths[recordIndex] = false;
-						RecordsForWorld[recordIndex].stats.deaths++;
-						WorldAssist.worldRecords[recordIndex].stats.totalDeaths++;
-					}
+			for (int recordIndex = 0; recordIndex < Tracker_Deaths.Length; recordIndex++) {
+				if (Tracker_Deaths[recordIndex]) {
+					Tracker_Deaths[recordIndex] = false;
+					RecordsForWorld[recordIndex].stats.deaths++;
+					WorldAssist.worldRecords[recordIndex].stats.totalDeaths++;
 				}
 			}
 		}
-
 		// Whenever the player is hurt, add to the HitsTaken tracker
-		public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit, int cooldownCounter) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+		public override void OnHurt(Player.HurtInfo info) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			if (!BossChecklist.DebugConfig.RecordTrackingDisabled && damage > 0) {
-				for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
-					if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
-						Tracker_HitsTaken[recordIndex]++;
-					}
+			for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
+				if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
+					Tracker_HitsTaken[recordIndex]++;
 				}
 			}
 		}
 
 		public override void UpdateDead() {
-			if (Main.netMode == NetmodeID.Server || Main.myPlayer != Player.whoAmI)
+			if (Main.netMode == NetmodeID.Server || Player.whoAmI == 255)
 				return;
 
 			// Timer sounds when a player is about to respawn
-			if (BossChecklist.ClientConfig.TimerSounds) {
-				if (Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0) {
-					SoundEngine.PlaySound(SoundID.MaxMana);
-				}
-			}
+			if (BossChecklist.ClientConfig.TimerSounds && Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0)
+				SoundEngine.PlaySound(SoundID.MaxMana);
 		}
 	}
 }

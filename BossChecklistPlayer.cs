@@ -44,7 +44,7 @@ namespace BossChecklist
 				BossUISystem.Instance.BossLog.ToggleBossLog(false);
 		}
 
-		public override void OnEnterWorld(Player player) {
+		public override void OnEnterWorld() {
 			BossChecklistUI.Visible = false;
 			BossUISystem.Instance.BossLog.ToggleBossLog(false);
 		}

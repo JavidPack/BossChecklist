@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -26,7 +27,7 @@ namespace BossChecklist
 			return base.OnPickup(item, player);
 		}
 
-		public override void OnCreate(Item item, ItemCreationContext context) {
+		public override void OnCreated(Item item, ItemCreationContext context) {
 			if (Main.netMode != NetmodeID.Server && BossChecklist.bossTracker.EntryLootCache[item.type]) {
 				List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
 				if (!itemsList.Any(x => x.Type == item.type)) {

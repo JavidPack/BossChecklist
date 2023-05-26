@@ -50,10 +50,10 @@ namespace BossChecklist
 		bool Tracker_SolarEclipse = false;
 
 		public override void Load() {
-			On.Terraria.GameContent.Events.DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
+			On_DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
 		}
 
-		private void DD2Event_WinInvasionInternal(On.Terraria.GameContent.Events.DD2Event.orig_WinInvasionInternal orig) {
+		private void DD2Event_WinInvasionInternal(On_DD2Event.orig_WinInvasionInternal orig) {
 			orig();
 			if (DD2Event.OngoingDifficulty == 2)
 				downedInvasionT2Ours = true;

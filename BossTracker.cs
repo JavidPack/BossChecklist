@@ -349,7 +349,7 @@ namespace BossChecklist
 
 				// If the treasure bag is assigned, look through its loot table for expert exclusive items
 				if (entry.treasureBag != 0) {
-					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForItemID(entry.treasureBag, false);
+					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForItemID(entry.treasureBag);
 					List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
 					foreach (IItemDropRule item in dropRules) {
 						item.ReportDroprates(itemDropInfo, new DropRateInfoChainFeed(1f));
