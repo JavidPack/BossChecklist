@@ -264,64 +264,121 @@ Mods: {
 					BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
 				}
 
-				Label: {
-					BossLogColor: Boss Log Color
-					BossLogPos: Open Log Button Position
-					HideUnavailable: Hide unavailable bosses
-					HideUnsupported: Hide unsupported bosses
-					OnlyBosses: Boss Log only shows boss content
-					FilterBosses: Filter bosses in list
-					FilterMiniBosses: Filter mini bosses in list
-					FilterEvents: Filter events in list
-					ColoredBossText: Colored Boss Text
-					SelectedCheckmarkType: Checklist Marking Type
-					DrawNextMark: Next Boss Check
-					LootChecklist: Enable loot/collectible checklist
-					CheckDroppedLoot: Only check droppable loot
-					EnableProgressionMode: Enable Progression Mode
-					DisableProgressionMode: Disable Progression Mode
-					ProgressionPrompt: Disable Progression Mode prompt
-					MaskTextures: Hide textures until entry is defeated
-					MaskNames: Hide names until entry is defeated
-					UnmaskNextCheck: Show the name of the next entry to fight
-					MaskBossLoot: Hide boss drops until entry is defeated
-					MaskHardMode: Hide hardmode content until in hardmode
+				BossLogColor: {
+					Label: Boss Log Color
+					Tooltip: Choose the color of your Boss Log!
 				}
 
-				Tooltip: {
-					BossLogColor: Choose the color of your Boss Log!
-					BossLogPos:
+				BossLogPos: {
+					Label: Open Log Button Position
+					Tooltip:
 						'''
 						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
 						Position is measured from bottom right corner of screen.
 						'''
-					HideUnavailable:
+				}
+
+				HideUnavailable: {
+					Label: Hide unavailable bosses
+					Tooltip:
 						'''
 						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
 						Ex. Frost Legion while it is not Xmas
 						'''
-					HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
-					OnlyBosses: If enabled, the checklist and page navigation will only give access boss entries.
-					FilterBosses: ""
-					FilterMiniBosses: ""
-					FilterEvents: ""
-					ColoredBossText:
+				}
+
+				HideUnsupported: {
+					Label: Hide unsupported bosses
+					Tooltip: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
+				}
+
+				OnlyBosses: {
+					Label: Boss Log only shows boss content
+					Tooltip: If enabled, the checklist and page navigation will only give access boss entries.
+				}
+
+				FilterBosses: {
+					Label: Filter bosses in list
+					Tooltip: ""
+				}
+
+				FilterMiniBosses: {
+					Label: Filter mini bosses in list
+					Tooltip: ""
+				}
+
+				FilterEvents: {
+					Label: Filter events in list
+					Tooltip: ""
+				}
+
+				ColoredBossText: {
+					Label: Colored Boss Text
+					Tooltip:
 						'''
 						The boss text in the table of contents will be green when defeated and red when not.
 						If next check is enabled, the next boss will be yellow.
 						'''
-					SelectedCheckmarkType: ""
-					DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
-					LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
-					CheckDroppedLoot: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
-					DisableProgressionMode: ""
-					EnableProgressionMode: ""
-					ProgressionPrompt: While enabled, this will prevent the prompt from appearing for newly-created characters.
-					MaskTextures: ""
-					MaskNames: ""
-					UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
-					MaskBossLoot: ""
-					MaskHardMode: Hides ALL content, overriding the options you have toggled above.
+				}
+
+				SelectedCheckmarkType: {
+					Label: Checklist Marking Type
+					Tooltip: ""
+				}
+
+				DrawNextMark: {
+					Label: Next Boss Check
+					Tooltip: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
+				}
+
+				LootChecklist: {
+					Label: Enable loot/collectible checklist
+					Tooltip: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
+				}
+
+				CheckDroppedLoot: {
+					Label: Only check droppable loot
+					Tooltip: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
+				}
+
+				EnableProgressionMode: {
+					Label: Enable Progression Mode
+					Tooltip: ""
+				}
+
+				DisableProgressionMode: {
+					Label: Disable Progression Mode
+					Tooltip: ""
+				}
+
+				ProgressionPrompt: {
+					Label: Disable Progression Mode prompt
+					Tooltip: While enabled, this will prevent the prompt from appearing for newly-created characters.
+				}
+
+				MaskTextures: {
+					Label: Hide textures until entry is defeated
+					Tooltip: ""
+				}
+
+				MaskNames: {
+					Label: Hide names until entry is defeated
+					Tooltip: ""
+				}
+
+				UnmaskNextCheck: {
+					Label: Show the name of the next entry to fight
+					Tooltip: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
+				}
+
+				MaskBossLoot: {
+					Label: Hide boss drops until entry is defeated
+					Tooltip: ""
+				}
+
+				MaskHardMode: {
+					Label: Hide hardmode content until in hardmode
+					Tooltip: Hides ALL content, overriding the options you have toggled above.
 				}
 			}
 
@@ -334,40 +391,67 @@ Mods: {
 					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
 				}
 
-				Label: {
-					DespawnMessageType: Boss Despawn Messages
-					LimbMessages: Segment Defeated Messages
-					PillarMessages: Pillar Defeated Messages
-					TimerSounds: Respawn Timer Sounds
-					TreasureBags: Treasure bags display on the map
-					Fragments: Fragments display on the map
-					Scales: Shadow Scales and Tissue Samples display on the map
-					BossRadar: Enable Boss Radar
-					RadarMiniBosses: Whitelist mini bosses
-					RadarOpacity: Radar Opacity
-					RadarBlacklist: Radar Blacklist
-				}
-
-				Tooltip: {
-					DespawnMessageType:
+				DespawnMessageType: {
+					Label: Boss Despawn Messages
+					Tooltip:
 						'''
 						Despawn messages will appear in chat when a boss becomes inactive.
 						If enabled, choose betweem generic or unique messages.
 						'''
-					LimbMessages:
+				}
+
+				LimbMessages: {
+					Label: Segment Defeated Messages
+					Tooltip:
 						'''
 						Multi-segmented bosses will send messages when a segment is defeated
 						Ex. Skeletron's hands
 						'''
-					PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
-					TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
-					TreasureBags: ""
-					Fragments: ""
-					Scales: ""
-					BossRadar: ""
-					RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
-					RadarOpacity: Adjust how transparent the radar's icon will be
-					RadarBlacklist: The selected NPCs will not be tracked by the radar
+				}
+
+				PillarMessages: {
+					Label: Pillar Defeated Messages
+					Tooltip: When defeated, the chat sends a defeated message for Lunar Pillars
+				}
+
+				TimerSounds: {
+					Label: Respawn Timer Sounds
+					Tooltip: If enabled, the last 3 seconds of your respawn time will have sound indicators
+				}
+
+				TreasureBags: {
+					Label: Treasure bags display on the map
+					Tooltip: ""
+				}
+
+				Fragments: {
+					Label: Fragments display on the map
+					Tooltip: ""
+				}
+
+				Scales: {
+					Label: Shadow Scales and Tissue Samples display on the map
+					Tooltip: ""
+				}
+
+				BossRadar: {
+					Label: Enable Boss Radar
+					Tooltip: ""
+				}
+
+				RadarMiniBosses: {
+					Label: Whitelist mini bosses
+					Tooltip: Note: This only works properly with mini bosses that have head icons
+				}
+
+				RadarOpacity: {
+					Label: Radar Opacity
+					Tooltip: Adjust how transparent the radar's icon will be
+				}
+
+				RadarBlacklist: {
+					Label: Radar Blacklist
+					Tooltip: The selected NPCs will not be tracked by the radar
 				}
 			}
 
@@ -381,68 +465,104 @@ Mods: {
 					FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
 				}
 
-				Label: {
-					ModCallVerbose: Mod.Call Log Verbose
-					ShowProgressionValue: Access Progression Values
-					AccessInternalNames: Access Internal Names
-					CollectionTypeDetection: Show Auto-detected Collection Type
-					InactiveBossCheck: Inactive Boss Check
-					DisableNewRecords: Disable updating personal records
-					DisableRecordTracking: Disable record tracking
-					ShowRecordTracking: Show record timers and counters of a selected Boss
-					ResetLoot: Enable Reset Loot and Collection Items Option
-					ResetRecords: Enable Reset Record Option
-					ResetForcedDowns: Enable Reset Marked Downed Entries Option
-					ResetHiddenEntries: Enable Reset Hidden Entries Option
-					RecordFeatureTesting: Disable 'Boss Record' feature testing
-					WorldRecordFeatureTesting: Disable 'World Record' feature testing
+				ModCallVerbose: {
+					Label: Mod.Call Log Verbose
+					Tooltip: If true, logs will display all bosses added to Boss Checklist within the server console
 				}
 
-				Tooltip: {
-					ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
-					ShowProgressionValue:
+				ShowProgressionValue: {
+					Label: Access Progression Values
+					Tooltip:
 						'''
 						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
 						The progression value is what determines how entries are ordered in the checklist.
 						'''
-					AccessInternalNames:
+				}
+
+				AccessInternalNames: {
+					Label: Access Internal Names
+					Tooltip:
 						'''
 						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
 						Useful for mod developers making cross-mod content.
 						'''
-					CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
-					InactiveBossCheck:
+				}
+
+				CollectionTypeDetection: {
+					Label: Show Auto-detected Collection Type
+					Tooltip: Boss collection itemslots will be labeled with the assigned collection type
+				}
+
+				InactiveBossCheck: {
+					Label: Inactive Boss Check
+					Tooltip:
 						'''
 						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
 						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
 						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
 						'''
-					DisableNewRecords:
+				}
+
+				DisableNewRecords: {
+					Label: Disable updating personal records
+					Tooltip:
 						'''
 						While enabled, all personal records will not be overwritten except for Previous Attempt.
 						This will also disable sending record data to the server for world records.
 						'''
-					ShowRecordTracking: Record Tracking must be enabled for this to show
-					ResetLoot:
+				}
+
+				DisableRecordTracking: {
+					Label: Disable record tracking
+					Tooltip: ""
+				}
+
+				ShowRecordTracking: {
+					Label: Show record timers and counters of a selected Boss
+					Tooltip: Record Tracking must be enabled for this to show
+				}
+
+				ResetLoot: {
+					Label: Enable Reset Loot and Collection Items Option
+					Tooltip:
 						'''
 						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
 						Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
 						This will apply to ALL boss loot lists.
 						'''
-					ResetRecords:
+				}
+
+				ResetRecords: {
+					Label: Enable Reset Record Option
+					Tooltip:
 						'''
 						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
 						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
 						'''
-					ResetForcedDowns: Reset all world marked downs by alt + right-clicking on the filters tab on the Table of Contents pages.
-					ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
-					DisableRecordTracking: ""
-					RecordFeatureTesting:
+				}
+
+				ResetForcedDowns: {
+					Label: Enable Reset Marked Downed Entries Option
+					Tooltip: Reset all world marked downs by alt + right-clicking on the filters tab on the Table of Contents pages.
+				}
+
+				ResetHiddenEntries: {
+					Label: Enable Reset Hidden Entries Option
+					Tooltip: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
+				}
+
+				RecordFeatureTesting: {
+					Label: Disable 'Boss Record' feature testing
+					Tooltip:
 						'''
 						Prevents Boss Records code from running, effectively disabling it while its in feature testing.
 						This feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.
 						'''
-					WorldRecordFeatureTesting:
+				}
+
+				WorldRecordFeatureTesting: {
+					Label: Disable 'World Record' feature testing
+					Tooltip:
 						'''
 						Prevents World Records code from running, effectively disabling it while its in feature testing.
 						As of now this feature is known to not work and may cause issues.

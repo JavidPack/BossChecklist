@@ -264,64 +264,121 @@ Mods: {
 					BlindMode: "[i:888] [c/ffeb6e:进度模式 - 击败Boss以解锁其条目!]"
 				}
 
-				Label: {
-					BossLogColor: Boss日志颜色
-					BossLogPos: 开启Boss日志的按钮的位置
-					HideUnavailable: 隐藏不可用的Boss
-					HideUnsupported: 隐藏没有引用的Boss
-					OnlyBosses: 在Boss日志中仅显示Boss内容
-					FilterBosses: 过滤日志中不符合条件的Boss
-					FilterMiniBosses: 过滤日志中不符合条件的小Boss
-					FilterEvents: 过滤日志中不符合条件的事件
-					ColoredBossText: Boss文本变色
-					SelectedCheckmarkType: 标记模式
-					DrawNextMark: 提示下一个要挑战的Boss
-					LootChecklist: 开启战利品/收藏品清单
-					CheckDroppedLoot: 只检查可掉落的战利品
-					EnableProgressionMode: 启用进度模式
-					DisableProgressionMode: 禁用进度模式
-					ProgressionPrompt: 禁用进度模式提示
-					MaskTextures: 隐藏材质直至其条目被击败
-					MaskNames: 隐藏名称直至其条目被击败
-					UnmaskNextCheck: 显示下一进度条目的名称
-					MaskBossLoot: 隐藏Boss掉落物直至其条目被击败
-					MaskHardMode: 隐藏困难模式内容直至玩家处于困难模式
+				BossLogColor: {
+					Label: Boss日志颜色
+					Tooltip: 自定义你的Boss日志的颜色!
 				}
 
-				Tooltip: {
-					BossLogColor: 自定义你的Boss日志的颜色!
-					BossLogPos:
+				BossLogPos: {
+					Label: 开启Boss日志的按钮的位置
+					Tooltip:
 						'''
 						在游戏中按住鼠标右键即可轻松将按钮移动到任意位置!
 						位置从屏幕右下角开始测量.
 						'''
-					HideUnavailable:
+				}
+
+				HideUnavailable: {
+					Label: 隐藏不可用的Boss
+					Tooltip:
 						'''
 						如果启用, 则在Boss日志的目录中移除不可用的Boss.
 						例如非圣诞节时的雪人军团
 						'''
-					HideUnsupported: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
-					OnlyBosses: 如果启用, 则清单和导航页仅会显示访问Boss条目.
-					// FilterBosses: ""
-					// FilterMiniBosses: ""
-					// FilterEvents: ""
-					ColoredBossText:
+				}
+
+				HideUnsupported: {
+					Label: 隐藏没有引用的Boss
+					Tooltip: 如果启用, 则尚未完美引用的Boss将从Boss日志的目录中隐藏.
+				}
+
+				OnlyBosses: {
+					Label: 在Boss日志中仅显示Boss内容
+					Tooltip: 如果启用, 则清单和导航页仅会显示访问Boss条目.
+				}
+
+				FilterBosses: {
+					Label: 过滤日志中不符合条件的Boss
+					// Tooltip: ""
+				}
+
+				FilterMiniBosses: {
+					Label: 过滤日志中不符合条件的小Boss
+					// Tooltip: ""
+				}
+
+				FilterEvents: {
+					Label: 过滤日志中不符合条件的事件
+					// Tooltip: ""
+				}
+
+				ColoredBossText: {
+					Label: Boss文本变色
+					Tooltip:
 						'''
 						目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
 						如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
 						'''
-					// SelectedCheckmarkType: ""
-					DrawNextMark: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
-					LootChecklist: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
-					CheckDroppedLoot: 如音乐盒这种不会由条目掉落的物品将不会计入战利品检查.
-					// DisableProgressionMode: ""
-					// EnableProgressionMode: ""
-					ProgressionPrompt: 如果启用, 则阻止用于新创建的人物的提示出现.
-					// MaskTextures: ""
-					// MaskNames: ""
-					UnmaskNextCheck: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
-					// MaskBossLoot: ""
-					MaskHardMode: 隐藏所有内容, 覆盖上面选择的选项.
+				}
+
+				SelectedCheckmarkType: {
+					Label: 标记模式
+					// Tooltip: ""
+				}
+
+				DrawNextMark: {
+					Label: 提示下一个要挑战的Boss
+					Tooltip: 在状态框中作一个标记, 表明它是下一个需要被击败的Boss.
+				}
+
+				LootChecklist: {
+					Label: 开启战利品/收藏品清单
+					Tooltip: 目录还会检查你是否获得了Boss的所有战利品和收藏品.
+				}
+
+				CheckDroppedLoot: {
+					Label: 只检查可掉落的战利品
+					Tooltip: 如音乐盒这种不会由条目掉落的物品将不会计入战利品检查.
+				}
+
+				EnableProgressionMode: {
+					Label: 启用进度模式
+					// Tooltip: ""
+				}
+
+				DisableProgressionMode: {
+					Label: 禁用进度模式
+					// Tooltip: ""
+				}
+
+				ProgressionPrompt: {
+					Label: 禁用进度模式提示
+					Tooltip: 如果启用, 则阻止用于新创建的人物的提示出现.
+				}
+
+				MaskTextures: {
+					Label: 隐藏材质直至其条目被击败
+					// Tooltip: ""
+				}
+
+				MaskNames: {
+					Label: 隐藏名称直至其条目被击败
+					// Tooltip: ""
+				}
+
+				UnmaskNextCheck: {
+					Label: 显示下一进度条目的名称
+					Tooltip: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
+				}
+
+				MaskBossLoot: {
+					Label: 隐藏Boss掉落物直至其条目被击败
+					// Tooltip: ""
+				}
+
+				MaskHardMode: {
+					Label: 隐藏困难模式内容直至玩家处于困难模式
+					Tooltip: 隐藏所有内容, 覆盖上面选择的选项.
 				}
 			}
 
@@ -334,40 +391,67 @@ Mods: {
 					ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
 				}
 
-				Label: {
-					DespawnMessageType: Boss消失信息
-					LimbMessages: 节点击败消息
-					PillarMessages: 天界柱被击败信息
-					TimerSounds: 重生倒计时声音
-					TreasureBags: 宝藏袋在小地图上显示
-					Fragments: 四柱碎片在小地图上显示
-					Scales: 暗影鳞片和血腥样本在小地图上显示
-					BossRadar: 启用Boss雷达
-					RadarMiniBosses: 定位小Boss
-					RadarOpacity: Boss雷达不透明度
-					RadarBlacklist: 雷达黑名单
-				}
-
-				Tooltip: {
-					DespawnMessageType:
+				DespawnMessageType: {
+					Label: Boss消失信息
+					Tooltip:
 						'''
 						当Boss消失时, 消失信息将出现在聊天栏中.
 						如果启用, 请在常规消息或唯一消息之间选择其一.
 						'''
-					LimbMessages:
+				}
+
+				LimbMessages: {
+					Label: 节点击败消息
+					Tooltip:
 						'''
 						拥有多个部分的Boss将在某一个部分被击败时发送信息
 						如: 骷髅王的手
 						'''
-					PillarMessages: 当天界柱被击败时, 发送一条来自天界柱的消息
-					TimerSounds: 如果启用, 重生时间的最后3秒钟将有声音提示
-					// TreasureBags: ""
-					// Fragments: ""
-					// Scales: ""
-					// BossRadar: ""
-					RadarMiniBosses: 注意: 此选项仅用于有小地图图像的小Boss
-					RadarOpacity: 调整雷达图标的透明度
-					RadarBlacklist: 以下被选中的生物将不会被雷达定位
+				}
+
+				PillarMessages: {
+					Label: 天界柱被击败信息
+					Tooltip: 当天界柱被击败时, 发送一条来自天界柱的消息
+				}
+
+				TimerSounds: {
+					Label: 重生倒计时声音
+					Tooltip: 如果启用, 重生时间的最后3秒钟将有声音提示
+				}
+
+				TreasureBags: {
+					Label: 宝藏袋在小地图上显示
+					// Tooltip: ""
+				}
+
+				Fragments: {
+					Label: 四柱碎片在小地图上显示
+					// Tooltip: ""
+				}
+
+				Scales: {
+					Label: 暗影鳞片和血腥样本在小地图上显示
+					// Tooltip: ""
+				}
+
+				BossRadar: {
+					Label: 启用Boss雷达
+					// Tooltip: ""
+				}
+
+				RadarMiniBosses: {
+					Label: 定位小Boss
+					Tooltip: 注意: 此选项仅用于有小地图图像的小Boss
+				}
+
+				RadarOpacity: {
+					Label: Boss雷达不透明度
+					Tooltip: 调整雷达图标的透明度
+				}
+
+				RadarBlacklist: {
+					Label: 雷达黑名单
+					Tooltip: 以下被选中的生物将不会被雷达定位
 				}
 			}
 
@@ -381,68 +465,104 @@ Mods: {
 					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
 				}
 
-				Label: {
-					ModCallVerbose: Mod.Call日志详细信息
-					ShowProgressionValue: 使用进度值
-					AccessInternalNames: 访问内部名称
-					CollectionTypeDetection: 显示自动检测的集合类型
-					InactiveBossCheck: 检查不活跃的Boss
-					DisableNewRecords: 禁用更新新记录
-					DisableRecordTracking: 禁用完整的跟踪记录
-					ShowRecordTracking: 显示所选Boss的记录计时器和记录器
-					ResetLoot: 开启重置战利品和收藏品选项
-					ResetRecords: 开启重置记录选项
-					ResetForcedDowns: 开启重置被标记为击败的条目选项
-					ResetHiddenEntries: 开启重置隐藏的条目选项
-					// RecordFeatureTesting: Disable 'Boss Record' feature testing
-					// WorldRecordFeatureTesting: Disable 'World Record' feature testing
+				ModCallVerbose: {
+					Label: Mod.Call日志详细信息
+					Tooltip: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
 				}
 
-				Tooltip: {
-					ModCallVerbose: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
-					ShowProgressionValue:
+				ShowProgressionValue: {
+					Label: 使用进度值
+					Tooltip:
 						'''
 						当光标悬停在目录中的条目上以及查看条目的页面时, 显示其进度值.
 						进度值决定了条目在清单中的排序.
 						'''
-					AccessInternalNames:
+				}
+
+				AccessInternalNames: {
+					Label: 访问内部名称
+					Tooltip:
 						'''
 						在Boss的条目页面上添加一个按钮, 其可以将Boss键值和Mod源复制到游戏中的剪贴板.
 						对于制作跨Mod内容的Mod开发人员很有用."
 						'''
-					CollectionTypeDetection: Boss的收藏品物品栏会被标记为指定的集合类型
-					InactiveBossCheck:
+				}
+
+				CollectionTypeDetection: {
+					Label: 显示自动检测的集合类型
+					Tooltip: Boss的收藏品物品栏会被标记为指定的集合类型
+				}
+
+				InactiveBossCheck: {
+					Label: 检查不活跃的Boss
+					Tooltip:
 						'''
 						启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
 						如果启用了Boss消失信息，则当显Boss消失信息时，这也应该在聊框天中显示一条消息.
 						这些信息应该分别在Boss被击败或Boss消失时出现.
 						'''
-					DisableNewRecords:
+				}
+
+				DisableNewRecords: {
+					Label: 禁用更新新记录
+					Tooltip:
 						'''
 						启用后除了除了上次的尝试外所有的个人记录都不会被覆盖.
 						这也会禁止向世界记录服务器发送记录数据.
 						'''
-					ShowRecordTracking: 必须启用记录跟踪才会显示
-					ResetLoot:
+				}
+
+				DisableRecordTracking: {
+					Label: 禁用完整的跟踪记录
+					// Tooltip: ""
+				}
+
+				ShowRecordTracking: {
+					Label: 显示所选Boss的记录计时器和记录器
+					Tooltip: 必须启用记录跟踪才会显示
+				}
+
+				ResetLoot: {
+					Label: 开启重置战利品和收藏品选项
+					Tooltip:
 						'''
 						alt + 右键所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
 						alt + 右键'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
 						这会应用于所有Boss战利品列表.
 						'''
-					ResetRecords:
+				}
+
+				ResetRecords: {
+					Label: 开启重置记录选项
+					Tooltip:
 						'''
 						alt + 右键所选Boss页面上的记录会重置记录.
 						alt + 右键所选Boss页面上的'记录'按钮会重置所有Boss的记录.
 						'''
-					ResetForcedDowns: alt + 右键目录页上的过滤标签以重置所有世界中被标记的击败.
-					ResetHiddenEntries: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
-					// DisableRecordTracking: ""
-					/* RecordFeatureTesting:
+				}
+
+				ResetForcedDowns: {
+					Label: 开启重置被标记为击败的条目选项
+					Tooltip: alt + 右键目录页上的过滤标签以重置所有世界中被标记的击败.
+				}
+
+				ResetHiddenEntries: {
+					Label: 开启重置隐藏的条目选项
+					Tooltip: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
+				}
+
+				RecordFeatureTesting: {
+					// Label: Disable 'Boss Record' feature testing
+					/* Tooltip:
 						'''
 						Prevents Boss Records code from running, effectively disabling it while its in feature testing.
 						This feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.
 						''' */
-					/* WorldRecordFeatureTesting:
+				}
+
+				WorldRecordFeatureTesting: {
+					// Label: Disable 'World Record' feature testing
+					/* Tooltip:
 						'''
 						Prevents World Records code from running, effectively disabling it while its in feature testing.
 						As of now this feature is known to not work and may cause issues.
