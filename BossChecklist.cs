@@ -44,8 +44,8 @@ namespace BossChecklist
 
 		public override void Load() {
 			instance = this;
-			ToggleChecklistHotKey = KeybindLoader.RegisterKeybind(this, "Toggle Boss Checklist", "P");
-			ToggleBossLog = KeybindLoader.RegisterKeybind(this, "Toggle Boss Log", "L");
+			ToggleChecklistHotKey = KeybindLoader.RegisterKeybind(this, "ToggleChecklist", "P");
+			ToggleBossLog = KeybindLoader.RegisterKeybind(this, "ToggleLog", "L");
 
 			tremorLoaded = ModLoader.TryGetMod("Tremor", out Mod mod);
 

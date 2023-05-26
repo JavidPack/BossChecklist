@@ -1,39 +1,209 @@
 Mods: {
 	BossChecklist: {
-		BossDespawn: {
-			Generic: "{0} não está mais atrás de você..."
-			Day: "{0} foge enquanto o sol nasce..."
+		Log: {
+			Common: {
+				// BossLog: Boss Log
+				// Boss: Boss
+				// BossPlural: Bosses
+				// MiniBoss: Mini-boss
+				// MiniBossPlural: Mini-bosses
+				// Event: Event
+				// EventPlural: Events
+				// Enabled: enabled
+				// Disabled: disabled
+				// PartiallyEnabled: partially enabled
+			}
+
+			Tabs: {
+				// ToggleFilters: Toggle Filters
+				// TableOfContents: Table of Contents
+				// Credits: Credits
+				/* NextEntry:
+					'''
+					Next {0}:
+					{1}
+					''' */
+				// Records: Records
+				// SpawnInfo: Spawn Info
+				// LootAndCollectibles: Loot & Collection
+			}
+
+			Indicator: {
+				// ProgressionMode: Progression mode is {0}
+				// OnlyBossContentEnabled: Only boss content is available to be displayed
+				// OnlyBossContentDisabled: All content is available to be displayed
+			}
+
+			TableOfContents: {
+				// PreHardmode: Pre-Hardmode
+				// Hardmode: Hardmode
+				// ProgressBarListMods: Click to switch to Mod List mode
+				// ProgressBarListTypes: Click to switch to Entry Type mode
+				// AllLoot: All boss loot obtained!
+				// AllDropLoot: All non-collectible boss loot obtained!
+				// AllCollectibles: All boss collectibles Obtained!
+
+				Filter: {
+					// Show: "{0}: Shown"
+					// Hide: "{0}: Hidden"
+					// HideWhenCompleted: "{0}: Hidden when defeated"
+					// ToggleVisibility: Toggle hidden visibility
+					// Disabled: Filter disabled due to 'Only Show Boss Content' config
+				}
+			}
+
+			Credits: {
+				// Devs: Contributors
+				// Mods: Registered Mods
+				// Notice: "[List only contains loaded mods]"
+				// NoIcon: Mod icon not found!
+				// ModsEmpty: None of the loaded mods have any submissions registered to the Boss Log. If you want your favorite mods to be included, inform the mod's team on their steam workshop page or discord server!
+			}
+
+			EntryPage: {
+				// Defeated: Defeated in {0}
+				// Undefeated: Undefeated in {0}
+				// CopyKey: Click to copy internal 'boss key' to clipboard
+				// CopySource: Click to copy internal 'mod source' to clipboard
+				// ViewPage: Click to view page
+				// NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
+				// LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
+			}
+
+			Records: {
+				// NewRecord: New Record!
+				// NewWorldRecord: World Record!
+				// NoRecord: No record
+				// Unchallenged: Unchallenged
+				// Kills: kills
+				// Deaths: deaths
+				// Total: Total
+				// NoHit: No hit!
+				// PreviousBest: Your Previous Best
+				// ClaimRecord: Be the first to claim the world record!
+				// RecordHolder: Record Holder(s)
+
+				Category: {
+					// PreviousAttempt: Previous Attempt
+					// FirstVictory: First Victory
+					// PersonalBest: Personal Best
+					// WorldRecord: World Records
+					// Cycle: Cycle record categories
+				}
+
+				Title: {
+					// PreviousAttempt: Attempt
+					// FirstVictory: Play Time
+					// PersonalBest: Kill Death Ratio
+					// WorldRecord: Global KDR
+					// Duration: Fight Duration
+					// DurationWorld: Quickest Fight
+					// HitsTaken: Hits Received
+					// HitsTakenWorld: Lowest Hits Taken
+				}
+
+				Tooltip: {
+					// Duration: The quickest time this boss was defeated!
+					// HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
+					// PreviousAttempt: Total times you have encountered this boss!
+					// PersonalBest: Total times you killed this boss and total times this boss has killed you!
+					// FirstVictory: Total play time your character has been active, up until the first boss kill!
+					// WorldRecord: Global kills and deaths from all players for this boss!
+				}
+			}
+
+			SpawnInfo: {
+				// NoInfo: No info available
+				// RecipeFrom: Recipe from: {0}
+				// CycleRecipe: Cycle alternative recipes
+				// Noncraftable: This item is not craftable
+				// NoSpawnItem: This {0} has no spawn item
+				// ByHand: By Hand
+			}
+
+			LootAndCollection: {
+				// MaskedItems: Defeat this entry to view its loot and collectibles
+				// ItemIsExpertOnly: This item is only obtainable in expert mode
+				// ItemIsMasterOnly: This item is only obtainable in master mode
+				// ItemIsLocked: This item has special requirements to unlock
+			}
+
+			ProgressionMode: {
+				// BeforeYouBegin: Before you begin...
+				// AskEnable: Do you want to enable Progression Mode?
+				// SelectAnOption: Please select an option below...
+				// SelectDisable: Continue with progression mode disabled...
+				// SelectEnable: Continue with progression mode fully enabled...
+				// SelectConfig: Close Boss Log and configure progression mode...
+				/* DisablePrompt:
+					'''
+					Don't show this again
+					(For newly-created characters)
+					''' */
+				/* Description:
+					'''
+					Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.
+
+					Note, the Boss Log is disabled until one of the options is selected!
+					''' */
+				/* IsEnabled:
+					'''
+					[i:888] Progression Mode is fully or partially enabled!
+					This will mask some information about bosses until they have been defeated.
+					To disable or configure progression mode go to:
+					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
+					and scroll down to the Progress Mode configs
+					''' */
+			}
+
+			HintTexts: {
+				// MarkEntry: Mark an entry in the checklist as defeated by right-clicking it
+				// HideEntry: Hide an entry from the checklist by holding alt and right-clicking it
+				// ClearMarked: Clear all marked entries to their original defeated state by holding alt and right-clicking the filters tab
+				// ClearHidden: Clear all hidden entries to their original hidden state by holding alt and right-clicking the 'Toggle hidden visibility' filter
+				// ClearItems: Mark all items on this entry's page as unobtained by holding alt and right-clicking the treasure bag
+				// RemoveItem: Mark an item as unobtained by holding alt and right-clicking the desired item slot
+				// ClearAllRecords: Clear all records for this boss by holding alt and right-clicking the 'Cycle Record SubCategory' button
+				// ClearRecord: Clear a record value by holding alt and right-clicking its icon
+			}
 		}
 
-		BossVictory: {
-			Generic: "{0} matou todos os jogadores!"
-			KingSlime: A Geleia Rei sai em triunfo...
-			EyeofCthulhu: O Olho de Cthulhu desapareceu no céu noturno...
-			EaterofWorlds: O Devorador de Mundos cava de volta ao subterrâneo...
-			BrainofCthulhu: O Cérebro de Cthulhu some nas profundezas do carmim...
-			QueenBee: A Abelha Rainha retorna ao ninho de sua colônia...
-			Skeletron: O Esqueletron continua a torturar o Velho...
-			WallofFlesh: A Parede de Carne conseguiu cruzar o submundo...
-			Twins: "{0} continua suas observações..."
-			TheDestroyer: O Destruidor busca outro mundo para devorar...
-			SkeletronPrime: O Esqueletron Alfa começa a procurar uma nova vítima...
-			Plantera: Plantera continua seu descanso na selva...
-			Golem: Golem desativa nas entranhas do templo...
-			DukeFishron: O Duque Peixe-dragão retorna às profundezas do oceano...
-			LunaticCultist: O Cultista Lunático volta a sua devoção...
-			MoonLord: O Senhor da Lua deixou este reino...
-		}
+		ChatMessages: {
+			Despawn: {
+				// Generic: "{0} is no longer after you..."
+				// Day: "{0} flees as the sun rises..."
+			}
 
-		EventEnd: {
-			BloodMoon: A Lua de Sangue cai além do horizonte...
-			FrostMoon: A Lua Congelada derrete quando o sol nasce...
-			PumpkinMoon: A Lua de Abóbora termina sua colheita...
-			SolarEclipse: O eclipse solar acabou... até a próxima...
-		}
+			Defeated: {
+				// Tower: The {0} has been destroyed!
+				// Limb: "{0} down!"
+			}
 
-		BossDefeated: {
-			Tower: A {0} foi destruída!
-			Limb: O {0} caiu!
+			Loss: {
+				// Generic: "{0} has killed every player!"
+				// KingSlime: King Slime leaves in triumph...
+				// EyeofCthulhu: Eye of Cthulhu has disappeared into the night sky...
+				// EaterofWorlds: Eater of Worlds burrows back underground...
+				// BrainofCthulhu: Brain of Cthulhu vanishes into the pits of the crimson...
+				// QueenBee: Queen Bee returns to her colony's nest...
+				// SkeletronHead: Skeletron continues to torture the Old Man...
+				// WallofFlesh: Wall of Flesh has managed to cross the underworld...
+				// TheTwins: "{0} continues its observations..."
+				// TheDestroyer: The Destroyer seeks for another world to devour...
+				// SkeletronPrime: Skeletron Prime begins searching for a new victim...
+				// Plantera: Plantera continues its rest within the jungle...
+				// Golem: Golem deactivates in the bowels of the temple...
+				// DukeFishron: Duke Fishron returns to the ocean depths...
+				// CultistBoss: Lunatic Cultist goes back to its devoted worship...
+				// MoonLord: Moon Lord has left this realm...
+			}
+
+			EventEnd: {
+				// BloodMoon: The Blood Moon falls past the horizon...
+				// FrostMoon: The Frost Moon melts as the sun rises...
+				// PumpkinMoon: The Pumpkin Moon ends its harvest...
+				// SolarEclipse: The solar eclipse has ended... until next time...
+			}
 		}
 
 		BossSpawnInfo: {
@@ -43,12 +213,15 @@ Mods: {
 			BrainofCthulhu: Use [i:1331] ou quebre 3 Corações de Carmesim em um abismo do carmim.
 			QueenBee: Use [i:1133] ou quebre uma larva de uma Colmeia encontrada na selva.
 			SkeletronHead: Visite o calabouço e fale com o velho à noite ou mate o Alfaiate com [i:1307] à noite.
+			// Deerclops: Use [i:5120] in a Snow biome. Spawns naturally at midnight during a Blizzard.
 			WallofFlesh: Invoque jogando [i:267] na lava no Submundo. [c/FF0000:Inicia o Modo Difícil!]
+			// QueenSlimeBoss: Use [i:4988] in the Hallow biome, which can be found in the Underground Hallow among Crystal Shards growing on Pearlstone and Pink Ice blocks.
 			TheTwins: 10% de chance de surgirem aleatoriamente a cada noite após o primeiro altar ser destruído, até que um chefe mecânico seja derrotado. Alternativamente, Use [i:544] à noite para invocá-los.
 			TheDestroyer: 10% de chance de surgir aleatoriamente a cada noite após o primeiro altar ser destruído, até que um chefe mecânico seja derrotado. Use [i:556] à noite para invocar.
 			SkeletronPrime: 10% de chance de surgir aleatoriamente a cada noite após o primeiro altar ser destruído, até que um chefe mecânico seja derrotado. Use [i:557] à noite para invocar.
 			Plantera: Quebre um Bulbo da Plantera na selva depois que 3 Chefes mecânicos forem derrotados.
 			Golem: Use [i:1293] em um Altar Lagharto, encontrado nas profundezas do Templo da Selva.
+			// HallowBoss: Kill [i:4961] in the Hallow biome, which can be found on the Hallow surface between 7:30pm and 12:00am after Plantera has been defeated.
 			DD2Betsy: Surge na Onda 7, a onda final, do Exército do Ancião (Nível 3).
 			DukeFishron: Pesque no oceano usando o [i:2673] como isca.
 			CultistBoss: Mate os 4 cultistas fora do calabouço após derrotar o Golem.
@@ -58,7 +231,7 @@ Mods: {
 			GoblinArmy: Tem uma chance de 1 em 3 de ocorrer a cada amanhecer se pelo menos uma Esfera das Sombras/Coração Carmesim for destruído, pelo menos um jogador tiver 200 de vida ou mais e não houver um Exército Goblin em andamento. Ele também pode ser convocado manualmente usando um [i:361]. Dura até que inimigos suficientes sejam derrotados.
 			OldOnesArmy: Depois de encontrar o Taberneiro, compre e ative [i:3816] com [i:3828]. Dura até que inimigos suficientes sejam derrotados.
 			FrostLegion: Use um [i:602], que pode ser encontrado abrindo [i:1869], durante a temporada de Natal. Dura até que inimigos suficientes sejam derrotados.
-			SolarEclipse: Tem uma chance de 1/20 de ocorrer cada dia no amanhecer, assim que qualquer Chefe Mecânico for derrotado. Alternativamente, invoque com um [i:2767]. Dura até o anoitecer.
+			// Eclipse: Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:2767]. Lasts until nightfall.
 			PirateInvasion: Ocorre aleatoriamente quando pelo menos um altar for destruído. Pode ser invocada com um [i:1315], que pode ser obtido matando qualquer inimigo no bioma de Oceano durante o Modo Difícil. Dura até que inimigos suficientes sejam derrotados.
 			PumpkinMoon: Invocado com um [i:1844] à noite. Dura até o amanhecer.
 			FrostMoon: Invocado com um [i:1958] à noite. Dura até o amanhecer.
@@ -73,157 +246,211 @@ Mods: {
 			DD2OgreT3: Aparece na onda 7 (Nível 2) e ondas 4 & 6 (Nível 3) durante o evento do Exército do Ancião! Comece o Exército do Ancião com [i:3816] e [i:3828]
 			DD2DarkMageT3: Aparece na onda 5 (Nível 1) e ondas 5 & 6 (Nível 3) durante o evento do Exército do Ancião! Comece o Exército do Ancião com [i:3816] e [i:3828]
 			MartianSaucer: Ocasionalmente aparece durante a Loucura de Marte! Comece uma Loucura de Marte sendo detectado por uma sonda alienígena.
+			// TorchGod: Place 101 torches while underground. The event starts once the last torch is placed.
 		}
 
-		BossLog: {
-			HoverText: {
-				ToggleFilters: Alternar Filtros
-				JumpTOC: Pular para o Índice
-				JumpCred: Pular para os Créditos
-				JumpBoss:
-					'''
-					Pular para o próximo chefe:
-					{0}
-					'''
-				JumpMini:
-					'''
-					Pular para o próximo mini chefe:
-					{0}
-					'''
-				JumpEvent:
-					'''
-					Pular para o próximo evento:
-					{0}
-					'''
-				ViewCollect: Clique para ver apenas os colecionáveis
-				ViewLoot: Clique para ver todos os espólios
-				ItemIsExpertOnly: Este item só pode ser obtido no modo perito
-			}
-
-			DrawnText: {
-				PreHardmode: Pré-modo difícil
-				Hardmode: Modo difícil
-				Defeated: Derrotado em {0}
-				Undefeated: Não Derrotado em {0}
-				Records: Recordes
-				SpawnInfo: Informações de Surgimento
-				LootCollect: Espólios & Coleção
-				KDR: Taxa de Vitórias e Mortes
-				Duration: Duração da Luta
-				Health: Estado de Vida mais Baixo
-				Dodge: Acertos levados
-				RecipeFrom: Receita de: {0}
-				CycleRecipe: Alterne entre receitas alternativas
-				Noncraftable: Esse item não é criável
-				NoSpawnBoss: Esse chefe não tem item de invocação
-				NoSpawnMiniBoss: Esse mini chefe não tem item de invocação
-				NoSpawnEvent: This event has no spawn item
-				NoInfo: Nenhuma informação disponível
-				NotImplemented: A exibição desta página não está disponível. O mod não enviou uma página ou a configurou incorretamente.
-				LogFeaturesNotAvailable: Recordes, itens de invocação e a tabela de espólios estão desabilitados para esta página. O mod não enviou informações suficientes para uma página ou a configurou incorretamente.
-				NoModsSupported: Nenhum de seus mods carregados adicionou páginas ao Registro de Chefes. Se você quiser que seus mods favoritos sejam incluídos, sugira adicionar suas próprias páginas de chefe ao Discord ou à página de fóruns do mod!
-			}
-
-			Credits: {
-				ThanksDevs: Agradecimentos especiais para:
-				ThanksMods: Obrigado a todos os mods que optaram por participar!
-				Notice: "[Esta lista contém apenas mods carregados]"
-			}
-
-			Terms: {
-				BossLog: Registro de Chefes
-				ByHand: À mão
-				NoRecord: Nenhum recorde!
-				Unchallenged: Não Desafiado!
-				Kills: vitórias
-				Deaths: mortes
-				show: Mostrar
-				hide: Ocultar
-				hidewhencompleted: Ocultar quando concluído
-				Bosses: Chefes
-				MiniBosses: Mini chefes
-				Events: Eventos
-			}
+		Keybinds: {
+			// ToggleChecklist.DisplayName: Toggle Boss Checklist
+			// ToggleLog.DisplayName: Toggle Boss Log
 		}
 
 		Configs: {
-			Title: {
-				BossLogCustomization: Personalização do Registro de Chefes
-				OtherFeatures: Outros recursos
-				Debug: Interface de Depuração
+			// BossLogConfiguration.DisplayName: Boss Log Customization
+			// ClientConfiguration.DisplayName: Other features
+			// DebugConfiguration.DisplayName: Debug Interface
+
+			Common: {
+				// InvalidChange: You cannot change this config while {0} is active!
+				// HostChange: Only the host is allowed to change this config.
 			}
 
-			Header: {
-				BossLogUI: "[i:149] [c/ffeb6e:IU do Registro de Chefes]"
-				ChatMessages: "[i:3037] [c/ffeb6e:Mensagens do Bate-Papo]"
-				ItemMapDetection: "[i:893] [c/ffeb6e:Detecção de Items no Mapa]"
-				BossRadar: "[i:3084] [c/ffeb6e:Radar de Chefes]"
-				Debug: "[i:3625] [c/ffeb6e:Depuração para desenvolvedores]"
+			BossLogCustomization: {
+				Header: {
+					// BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
+					// BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
+					// BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
+				}
+
+				Label: {
+					// BossLogColor: Boss Log Color
+					// BossLogPos: Open Log Button Position
+					// HideUnavailable: Hide unavailable bosses
+					// HideUnsupported: Hide unsupported bosses
+					// OnlyBosses: Boss Log only shows boss content
+					// FilterBosses: Filter bosses in list
+					// FilterMiniBosses: Filter mini bosses in list
+					// FilterEvents: Filter events in list
+					// ColoredBossText: Colored Boss Text
+					// SelectedCheckmarkType: Checklist Marking Type
+					// DrawNextMark: Next Boss Check
+					// LootChecklist: Enable loot/collectible checklist
+					// CheckDroppedLoot: Only check droppable loot
+					// EnableProgressionMode: Enable Progression Mode
+					// DisableProgressionMode: Disable Progression Mode
+					// ProgressionPrompt: Disable Progression Mode prompt
+					// MaskTextures: Hide textures until entry is defeated
+					// MaskNames: Hide names until entry is defeated
+					// UnmaskNextCheck: Show the name of the next entry to fight
+					// MaskBossLoot: Hide boss drops until entry is defeated
+					// MaskHardMode: Hide hardmode content until in hardmode
+				}
+
+				Tooltip: {
+					// BossLogColor: Choose the color of your Boss Log!
+					/* BossLogPos:
+						'''
+						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
+						Position is measured from bottom right corner of screen.
+						''' */
+					/* HideUnavailable:
+						'''
+						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
+						Ex. Frost Legion while it is not Xmas
+						''' */
+					// HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
+					// OnlyBosses: If enabled, the checklist and page navigation will only give access boss entries.
+					// FilterBosses: ""
+					// FilterMiniBosses: ""
+					// FilterEvents: ""
+					/* ColoredBossText:
+						'''
+						The boss text in the table of contents will be green when defeated and red when not.
+						If next check is enabled, the next boss will be yellow.
+						''' */
+					// SelectedCheckmarkType: ""
+					// DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
+					// LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
+					// CheckDroppedLoot: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
+					// DisableProgressionMode: ""
+					// EnableProgressionMode: ""
+					// ProgressionPrompt: While enabled, this will prevent the prompt from appearing for newly-created characters.
+					// MaskTextures: ""
+					// MaskNames: ""
+					// UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
+					// MaskBossLoot: ""
+					// MaskHardMode: Hides ALL content, overriding the options you have toggled above.
+				}
 			}
 
-			Label: {
-				BossLogColor: Cor do Registro de Chefes
-				BossLogPos: Posição do Botão Abrir Registros
-				DrawNextMark: Verificar Próximo Chefe
-				ColoredBossText: Texto de Chefe Colorido
-				BossSilhouettes: Silhuetas de chefe
-				CountDownedBosses: Exibição de Conclusão de Chefe
-				SelectedCheckmarkType: Tipo de Marcação da Lista de Verificação
-				FilterBosses: Filtrar chefes na lista
-				FilterMiniBosses: Filtrar mini chefes na lista
-				FilterEvents: Filtrar eventos na lista
-				HideUnavailable: Esconder chefes indisponíveis ou escondidos
-				HideUnsupported: Esconder Chefes Não Suportados
-				DespawnMessageType: Mensagens de Desaparecimento de Chefe
-				PillarMessages: Mensagens de Derrota de Colunas
-				LimbMessages: Mensagens de Derrota de Segmentos
-				RespawnTimer: Habilitar Cronômetro de Renascimento
-				TimerSounds: Sons do Cronômetro de Renascimento
-				TreasureBags: Bolsas do tesouro exibidas no mapa
-				Fragments: Fragmentos exibidos no mapa
-				Scales: Placas das Sombras e Amostras de Tecido exibidos no mapa
-				BossRadar: Ativar o Radar de chefes
-				RadarMiniBosses: Permitir mini chefes
-				RadarOpacity: Opacidade do Radar
-				RadarBlacklist: Lista Negra do Radar
+			OtherFeatures: {
+				Header: {
+					// BossRadar: Boss Radar Bool Header
+					// ChatMessages: Despawn Message Type Header
+					// ItemMapDetection: Treasure Bags Bool Header
+				}
+
+				Label: {
+					// DespawnMessageType: Boss Despawn Messages
+					// LimbMessages: Segment Defeated Messages
+					// PillarMessages: Pillar Defeated Messages
+					// TimerSounds: Respawn Timer Sounds
+					// TreasureBags: Treasure bags display on the map
+					// Fragments: Fragments display on the map
+					// Scales: Shadow Scales and Tissue Samples display on the map
+					// BossRadar: Enable Boss Radar
+					// RadarMiniBosses: Whitelist mini bosses
+					// RadarOpacity: Radar Opacity
+					// RadarBlacklist: Radar Blacklist
+				}
+
+				Tooltip: {
+					/* DespawnMessageType:
+						'''
+						Despawn messages will appear in chat when a boss becomes inactive.
+						If enabled, choose betweem generic or unique messages.
+						''' */
+					/* LimbMessages:
+						'''
+						Multi-segmented bosses will send messages when a segment is defeated
+						Ex. Skeletron's hands
+						''' */
+					// PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
+					// TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
+					// TreasureBags: ""
+					// Fragments: ""
+					// Scales: ""
+					// BossRadar: ""
+					// RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
+					// RadarOpacity: Adjust how transparent the radar's icon will be
+					// RadarBlacklist: The selected NPCs will not be tracked by the radar
+				}
 			}
 
-			Tooltip: {
-				BossLogColor: Escolha a cor do seu Registro de Chefes!
-				BossLogPos:
-					'''
-					Segure com o botão direito no jogo para mover o botão onde você quiser com facilidade!
-					A posição é medida a partir do canto inferior direito da tela
-					'''
-				DrawNextMark: Coloca um círculo na caixa de seleção para indicar que é o próximo chefe não derrotado a lutar
-				ColoredBossText:
-					'''
-					O Texto de chefe no índice será verde quando derrotado e vermelho quando não.
-					Se a próxima seleção estiver ativada, o chefe seguinte será amarelo
-					'''
-				CountDownedBosses: Se ativado, o índice exibirá quantos chefes foram derrotados em comparação com o valor total.
-				BossSilhouettes: Esconde as imagens dos chefes quando eles não foram derrotados.
-				HideUnavailable: Se ativado, chefes indisponíveis e escondidos serão removidos do índice do Registro de Chefes.
-				HideUnsupported: Se ativado, os chefes que não foram totalmente integrados serão removidos do índice do Registro de Chefes.
-				DespawnMessageType:
-					'''
-					Mensagens de desaparecimento aparecerão no bate-papo quando um chefe se tornar inativo.
-					Se ativado, escolha entre mensagens genéricas ou únicas.
-					'''
-				PillarMessages: Quando derrotadas, o bate-papo envia uma mensagem de derrota para as Colunas Lunares
-				LimbMessages:
-					'''
-					Chefes com múltiplos segmentos enviarão mensagens quando um segmento for derrotaro
-					Ex. as mãos do Esqueletron
-					'''
-				TimerSounds: Se ativado, os últimos 3 segundos do seu tempo de renascimento terão indicadores de som
-				RadarMiniBosses: Nota: Isso só funciona corretamente com mini chefes que têm ícones de cabeça
-				RadarOpacity: Ajusta a transparência do ícone do radar
-				RadarBlacklist: Os NPCs selecionados não serão rastreados pelo radar
-			}
+			Debug: {
+				Header: {
+					// Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
+					// DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
+					// DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
+					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
+				}
 
-			Notice: {
-				InvalidChange: Você não pode mudar isso enquanto um chefe estiver ativo!
+				Label: {
+					// ModCallVerbose: Mod.Call Log Verbose
+					// ShowProgressionValue: Access Progression Values
+					// AccessInternalNames: Access Internal Names
+					// CollectionTypeDetection: Show Auto-detected Collection Type
+					// InactiveBossCheck: Inactive Boss Check
+					// DisableNewRecords: Disable updating personal records
+					// DisableRecordTracking: Disable record tracking
+					// ShowRecordTracking: Show record timers and counters of a selected Boss
+					// ResetLoot: Enable Reset Loot and Collection Items Option
+					// ResetRecords: Enable Reset Record Option
+					// ResetForcedDowns: Enable Reset Marked Downed Entries Option
+					// ResetHiddenEntries: Enable Reset Hidden Entries Option
+					// RecordFeatureTesting: Disable 'Boss Record' feature testing
+					// WorldRecordFeatureTesting: Disable 'World Record' feature testing
+				}
+
+				Tooltip: {
+					// ModCallVerbose: If true, logs will display all bosses added to Boss Checklist within the server console
+					/* ShowProgressionValue:
+						'''
+						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
+						The progression value is what determines how entries are ordered in the checklist.
+						''' */
+					/* AccessInternalNames:
+						'''
+						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
+						Useful for mod developers making cross-mod content.
+						''' */
+					// CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
+					/* InactiveBossCheck:
+						'''
+						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
+						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
+						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
+						''' */
+					/* DisableNewRecords:
+						'''
+						While enabled, all personal records will not be overwritten except for Previous Attempt.
+						This will also disable sending record data to the server for world records.
+						''' */
+					// ShowRecordTracking: Record Tracking must be enabled for this to show
+					/* ResetLoot:
+						'''
+						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
+						Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
+						This will apply to ALL boss loot lists.
+						''' */
+					/* ResetRecords:
+						'''
+						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
+						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
+						''' */
+					// ResetForcedDowns: Reset all world marked downs by alt + right-clicking on the filters tab on the Table of Contents pages.
+					// ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
+					// DisableRecordTracking: ""
+					/* RecordFeatureTesting:
+						'''
+						Prevents Boss Records code from running, effectively disabling it while its in feature testing.
+						This feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.
+						''' */
+					/* WorldRecordFeatureTesting:
+						'''
+						Prevents World Records code from running, effectively disabling it while its in feature testing.
+						As of now this feature is known to not work and may cause issues.
+						''' */
+				}
 			}
 		}
 	}

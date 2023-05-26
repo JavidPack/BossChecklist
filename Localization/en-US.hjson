@@ -18,12 +18,11 @@ Mods: {
 				ToggleFilters: Toggle Filters
 				TableOfContents: Table of Contents
 				Credits: Credits
-				NextEntry: 
+				NextEntry:
 					'''
 					Next {0}:
 					{1}
 					'''
-				
 				Records: Records
 				SpawnInfo: Spawn Info
 				LootAndCollectibles: Loot & Collection
@@ -40,15 +39,14 @@ Mods: {
 				Hardmode: Hardmode
 				ProgressBarListMods: Click to switch to Mod List mode
 				ProgressBarListTypes: Click to switch to Entry Type mode
-				
 				AllLoot: All boss loot obtained!
 				AllDropLoot: All non-collectible boss loot obtained!
 				AllCollectibles: All boss collectibles Obtained!
 
 				Filter: {
-					Show: '{0}: Shown'
-					Hide: '{0}: Hidden'
-					HideWhenCompleted: '{0}: Hidden when defeated'
+					Show: "{0}: Shown"
+					Hide: "{0}: Hidden"
+					HideWhenCompleted: "{0}: Hidden when defeated"
 					ToggleVisibility: Toggle hidden visibility
 					Disabled: Filter disabled due to 'Only Show Boss Content' config
 				}
@@ -68,7 +66,6 @@ Mods: {
 				CopyKey: Click to copy internal 'boss key' to clipboard
 				CopySource: Click to copy internal 'mod source' to clipboard
 				ViewPage: Click to view page
-				
 				NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
 				LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
 			}
@@ -76,14 +73,12 @@ Mods: {
 			Records: {
 				NewRecord: New Record!
 				NewWorldRecord: World Record!
-
 				NoRecord: No record
 				Unchallenged: Unchallenged
 				Kills: kills
 				Deaths: deaths
 				Total: Total
 				NoHit: No hit!
-				
 				PreviousBest: Your Previous Best
 				ClaimRecord: Be the first to claim the world record!
 				RecordHolder: Record Holder(s)
@@ -140,7 +135,7 @@ Mods: {
 				SelectDisable: Continue with progression mode disabled...
 				SelectEnable: Continue with progression mode fully enabled...
 				SelectConfig: Close Boss Log and configure progression mode...
-				DisablePrompt: 
+				DisablePrompt:
 					'''
 					Don't show this again
 					(For newly-created characters)
@@ -148,7 +143,7 @@ Mods: {
 				Description:
 					'''
 					Progression mode hides a lot of boss content until youve beaten said boss or some other requirement. This mode is great for blind play-throughs.
-					
+
 					Note, the Boss Log is disabled until one of the options is selected!
 					'''
 				IsEnabled:
@@ -254,15 +249,22 @@ Mods: {
 			TorchGod: Place 101 torches while underground. The event starts once the last torch is placed.
 		}
 
+		Keybinds: {
+			ToggleChecklist.DisplayName: Toggle Boss Checklist
+			ToggleLog.DisplayName: Toggle Boss Log
+		}
+
 		Configs: {
+			BossLogConfiguration.DisplayName: Boss Log Customization
+			ClientConfiguration.DisplayName: Other features
+			DebugConfiguration.DisplayName: Debug Interface
+
 			Common: {
 				InvalidChange: You cannot change this config while {0} is active!
 				HostChange: Only the host is allowed to change this config.
 			}
 
 			BossLogCustomization: {
-				Title: Boss Log Customization
-
 				Header: {
 					BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
 					BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
@@ -272,7 +274,6 @@ Mods: {
 				Label: {
 					BossLogColor: Boss Log Color
 					BossLogPos: Open Log Button Position
-					
 					HideUnavailable: Hide unavailable bosses
 					HideUnsupported: Hide unsupported bosses
 					OnlyBosses: Boss Log only shows boss content
@@ -284,7 +285,6 @@ Mods: {
 					DrawNextMark: Next Boss Check
 					LootChecklist: Enable loot/collectible checklist
 					CheckDroppedLoot: Only check droppable loot
-
 					EnableProgressionMode: Enable Progression Mode
 					DisableProgressionMode: Disable Progression Mode
 					ProgressionPrompt: Disable Progression Mode prompt
@@ -302,36 +302,41 @@ Mods: {
 						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
 						Position is measured from bottom right corner of screen.
 						'''
-					
-					HideUnavailable: 
+					HideUnavailable:
 						'''
 						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
 						Ex. Frost Legion while it is not Xmas
 						'''
 					HideUnsupported: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
 					OnlyBosses: If enabled, the checklist and page navigation will only give access boss entries.
+					FilterBosses: ""
+					FilterMiniBosses: ""
+					FilterEvents: ""
 					ColoredBossText:
 						'''
 						The boss text in the table of contents will be green when defeated and red when not.
 						If next check is enabled, the next boss will be yellow.
 						'''
+					SelectedCheckmarkType: ""
 					DrawNextMark: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
 					LootChecklist: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
 					CheckDroppedLoot: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
-				
+					DisableProgressionMode: ""
+					EnableProgressionMode: ""
 					ProgressionPrompt: While enabled, this will prevent the prompt from appearing for newly-created characters.
+					MaskTextures: ""
+					MaskNames: ""
 					UnmaskNextCheck: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
+					MaskBossLoot: ""
 					MaskHardMode: Hides ALL content, overriding the options you have toggled above.
 				}
 			}
 
 			OtherFeatures: {
-				Title: Other features
-
 				Header: {
-					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
-					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
-					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
+					BossRadar: Boss Radar Bool Header
+					ChatMessages: Despawn Message Type Header
+					ItemMapDetection: Treasure Bags Bool Header
 				}
 
 				Label: {
@@ -339,11 +344,9 @@ Mods: {
 					LimbMessages: Segment Defeated Messages
 					PillarMessages: Pillar Defeated Messages
 					TimerSounds: Respawn Timer Sounds
-
 					TreasureBags: Treasure bags display on the map
 					Fragments: Fragments display on the map
 					Scales: Shadow Scales and Tissue Samples display on the map
-
 					BossRadar: Enable Boss Radar
 					RadarMiniBosses: Whitelist mini bosses
 					RadarOpacity: Radar Opacity
@@ -363,6 +366,10 @@ Mods: {
 						'''
 					PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
 					TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
+					TreasureBags: ""
+					Fragments: ""
+					Scales: ""
+					BossRadar: ""
 					RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
 					RadarOpacity: Adjust how transparent the radar's icon will be
 					RadarBlacklist: The selected NPCs will not be tracked by the radar
@@ -370,12 +377,11 @@ Mods: {
 			}
 
 			Debug: {
-				Title: Debug Interface
-
 				Header: {
 					Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
 					DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
+					FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
 				}
 
 				Label: {
@@ -387,11 +393,12 @@ Mods: {
 					DisableNewRecords: Disable updating personal records
 					DisableRecordTracking: Disable record tracking
 					ShowRecordTracking: Show record timers and counters of a selected Boss
-
 					ResetLoot: Enable Reset Loot and Collection Items Option
 					ResetRecords: Enable Reset Record Option
 					ResetForcedDowns: Enable Reset Marked Downed Entries Option
 					ResetHiddenEntries: Enable Reset Hidden Entries Option
+					RecordFeatureTesting: Disable 'Boss Record' feature testing
+					WorldRecordFeatureTesting: Disable 'World Record' feature testing
 				}
 
 				Tooltip: {
@@ -407,7 +414,7 @@ Mods: {
 						Useful for mod developers making cross-mod content.
 						'''
 					CollectionTypeDetection: Boss collection itemslots will be labeled with the assigned collection type
-					InactiveBossCheck: 
+					InactiveBossCheck:
 						'''
 						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
 						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
@@ -419,20 +426,30 @@ Mods: {
 						This will also disable sending record data to the server for world records.
 						'''
 					ShowRecordTracking: Record Tracking must be enabled for this to show
-
-					ResetLoot: 
+					ResetLoot:
 						'''
 						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
 						Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
 						This will apply to ALL boss loot lists.
 						'''
-					ResetRecords: 
+					ResetRecords:
 						'''
 						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
 						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
 						'''
 					ResetForcedDowns: Reset all world marked downs by alt + right-clicking on the filters tab on the Table of Contents pages.
 					ResetHiddenEntries: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
+					DisableRecordTracking: ""
+					RecordFeatureTesting:
+						'''
+						Prevents Boss Records code from running, effectively disabling it while its in feature testing.
+						This feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.
+						'''
+					WorldRecordFeatureTesting:
+						'''
+						Prevents World Records code from running, effectively disabling it while its in feature testing.
+						As of now this feature is known to not work and may cause issues.
+						'''
 				}
 			}
 		}
