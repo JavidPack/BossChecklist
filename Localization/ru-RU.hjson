@@ -259,16 +259,9 @@ Mods: {
 		}
 
 		Configs: {
-			// BossLogConfiguration.DisplayName: Boss Log Customization
-			// ClientConfiguration.DisplayName: Other features
-			// DebugConfiguration.DisplayName: Debug Interface
+			BossLogConfiguration: {
+				// DisplayName: Boss Log Customization
 
-			Common: {
-				InvalidChange: Вы не можете изменить эту настройку, пока {0} активен!
-				HostChange: Только хост может изменить эту настройку.
-			}
-
-			BossLogCustomization: {
 				Header: {
 					BossLogUI: "[i:149] [c/ffeb6e:Интерфейс Босс-журнала]"
 					BossLogChecklist: "[i:903] [c/ffeb6e:Отметки Босс-журнала]"
@@ -336,51 +329,11 @@ Mods: {
 				}
 			}
 
-			OtherFeatures: {
-				Header: {
-					BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
-					ChatMessages: "[i:3037] [c/ffeb6e:Сообщения чата]"
-					ItemMapDetection: "[i:893] [c/ffeb6e:Определение предметов на карте]"
-				}
+			// ClientConfiguration.DisplayName: Other features
 
-				Label: {
-					DespawnMessageType: Сообщение об исчезновении босса
-					LimbMessages: Сообщения о победе над сегментами
-					PillarMessages: Сообщения о победе над Башнями
-					TimerSounds: Звуки таймера возрождения
-					TreasureBags: Отображение мешков с сокровищами на карте
-					Fragments: Отображение фрагментов на карте
-					Scales: Отображение теневых чешуек и образцов ткани на карте
-					BossRadar: Включить босс-радар
-					RadarMiniBosses: Белый список мини-боссов
-					RadarOpacity: Прозрачность радара
-					RadarBlacklist: Чёрный список радара
-				}
+			DebugConfiguration: {
+				// DisplayName: Debug Interface
 
-				Tooltip: {
-					DespawnMessageType:
-						'''
-						Сообщения об исчезновении босса отображаются в чате, когда босс неактивен.
-						Если эта настройка включена, можно выбрать между обычными и уникальными сообщениями.
-						'''
-					LimbMessages:
-						'''
-						При поражении отдельного сегмента босса будет отправляться сообщение в чат
-						Например, Руки Скелетрона
-						'''
-					PillarMessages: После уничтожения Небесной башни, в чат отправляется сообщение о победе
-					TimerSounds: Если эта настройка включена, последние 3 секунды вашего времени возрождения будут сопровождаться звуковыми сигналами
-					// TreasureBags: ""
-					// Fragments: ""
-					// Scales: ""
-					// BossRadar: ""
-					RadarMiniBosses: Примечание: Это работает корректно только с мини-боссами, у которых есть иконка на карте
-					RadarOpacity: Настройка прозрачности иконки радара
-					RadarBlacklist: Выбранные НИПы не будут отслеживаться радаром
-				}
-			}
-
-			Debug: {
 				Header: {
 					Debug: "[i:3625] [c/ffeb6e:Инструменты для разработчиков модов]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:Инструменты отладки отслеживания рекордов]"
@@ -454,6 +407,55 @@ Mods: {
 						Prevents World Records code from running, effectively disabling it while its in feature testing.
 						As of now this feature is known to not work and may cause issues.
 						''' */
+				}
+			}
+
+			Common: {
+				InvalidChange: Вы не можете изменить эту настройку, пока {0} активен!
+				HostChange: Только хост может изменить эту настройку.
+			}
+
+			OtherFeatures: {
+				Header: {
+					BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
+					ChatMessages: "[i:3037] [c/ffeb6e:Сообщения чата]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:Определение предметов на карте]"
+				}
+
+				Label: {
+					DespawnMessageType: Сообщение об исчезновении босса
+					LimbMessages: Сообщения о победе над сегментами
+					PillarMessages: Сообщения о победе над Башнями
+					TimerSounds: Звуки таймера возрождения
+					TreasureBags: Отображение мешков с сокровищами на карте
+					Fragments: Отображение фрагментов на карте
+					Scales: Отображение теневых чешуек и образцов ткани на карте
+					BossRadar: Включить босс-радар
+					RadarMiniBosses: Белый список мини-боссов
+					RadarOpacity: Прозрачность радара
+					RadarBlacklist: Чёрный список радара
+				}
+
+				Tooltip: {
+					DespawnMessageType:
+						'''
+						Сообщения об исчезновении босса отображаются в чате, когда босс неактивен.
+						Если эта настройка включена, можно выбрать между обычными и уникальными сообщениями.
+						'''
+					LimbMessages:
+						'''
+						При поражении отдельного сегмента босса будет отправляться сообщение в чат
+						Например, Руки Скелетрона
+						'''
+					PillarMessages: После уничтожения Небесной башни, в чат отправляется сообщение о победе
+					TimerSounds: Если эта настройка включена, последние 3 секунды вашего времени возрождения будут сопровождаться звуковыми сигналами
+					// TreasureBags: ""
+					// Fragments: ""
+					// Scales: ""
+					// BossRadar: ""
+					RadarMiniBosses: Примечание: Это работает корректно только с мини-боссами, у которых есть иконка на карте
+					RadarOpacity: Настройка прозрачности иконки радара
+					RadarBlacklist: Выбранные НИПы не будут отслеживаться радаром
 				}
 			}
 		}

@@ -255,16 +255,9 @@ Mods: {
 		}
 
 		Configs: {
-			// BossLogConfiguration.DisplayName: Boss Log Customization
-			// ClientConfiguration.DisplayName: Other features
-			// DebugConfiguration.DisplayName: Debug Interface
+			BossLogConfiguration: {
+				// DisplayName: Boss Log Customization
 
-			Common: {
-				InvalidChange: 你不能在{0}存在时更改该配置!
-				HostChange: 仅允许主机更改此配置.
-			}
-
-			BossLogCustomization: {
 				Header: {
 					BossLogUI: "[i:149] [c/ffeb6e:Boss日志UI]"
 					BossLogChecklist: "[i:903] [c/ffeb6e:Boss日志清单]"
@@ -332,51 +325,11 @@ Mods: {
 				}
 			}
 
-			OtherFeatures: {
-				Header: {
-					BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
-					ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
-					ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
-				}
+			// ClientConfiguration.DisplayName: Other features
 
-				Label: {
-					DespawnMessageType: Boss消失信息
-					LimbMessages: 节点击败消息
-					PillarMessages: 天界柱被击败信息
-					TimerSounds: 重生倒计时声音
-					TreasureBags: 宝藏袋在小地图上显示
-					Fragments: 四柱碎片在小地图上显示
-					Scales: 暗影鳞片和血腥样本在小地图上显示
-					BossRadar: 启用Boss雷达
-					RadarMiniBosses: 定位小Boss
-					RadarOpacity: Boss雷达不透明度
-					RadarBlacklist: 雷达黑名单
-				}
+			DebugConfiguration: {
+				// DisplayName: Debug Interface
 
-				Tooltip: {
-					DespawnMessageType:
-						'''
-						当Boss消失时, 消失信息将出现在聊天栏中.
-						如果启用, 请在常规消息或唯一消息之间选择其一.
-						'''
-					LimbMessages:
-						'''
-						拥有多个部分的Boss将在某一个部分被击败时发送信息
-						如: 骷髅王的手
-						'''
-					PillarMessages: 当天界柱被击败时, 发送一条来自天界柱的消息
-					TimerSounds: 如果启用, 重生时间的最后3秒钟将有声音提示
-					// TreasureBags: ""
-					// Fragments: ""
-					// Scales: ""
-					// BossRadar: ""
-					RadarMiniBosses: 注意: 此选项仅用于有小地图图像的小Boss
-					RadarOpacity: 调整雷达图标的透明度
-					RadarBlacklist: 以下被选中的生物将不会被雷达定位
-				}
-			}
-
-			Debug: {
 				Header: {
 					Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
@@ -450,6 +403,55 @@ Mods: {
 						Prevents World Records code from running, effectively disabling it while its in feature testing.
 						As of now this feature is known to not work and may cause issues.
 						''' */
+				}
+			}
+
+			Common: {
+				InvalidChange: 你不能在{0}存在时更改该配置!
+				HostChange: 仅允许主机更改此配置.
+			}
+
+			OtherFeatures: {
+				Header: {
+					BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
+					ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
+				}
+
+				Label: {
+					DespawnMessageType: Boss消失信息
+					LimbMessages: 节点击败消息
+					PillarMessages: 天界柱被击败信息
+					TimerSounds: 重生倒计时声音
+					TreasureBags: 宝藏袋在小地图上显示
+					Fragments: 四柱碎片在小地图上显示
+					Scales: 暗影鳞片和血腥样本在小地图上显示
+					BossRadar: 启用Boss雷达
+					RadarMiniBosses: 定位小Boss
+					RadarOpacity: Boss雷达不透明度
+					RadarBlacklist: 雷达黑名单
+				}
+
+				Tooltip: {
+					DespawnMessageType:
+						'''
+						当Boss消失时, 消失信息将出现在聊天栏中.
+						如果启用, 请在常规消息或唯一消息之间选择其一.
+						'''
+					LimbMessages:
+						'''
+						拥有多个部分的Boss将在某一个部分被击败时发送信息
+						如: 骷髅王的手
+						'''
+					PillarMessages: 当天界柱被击败时, 发送一条来自天界柱的消息
+					TimerSounds: 如果启用, 重生时间的最后3秒钟将有声音提示
+					// TreasureBags: ""
+					// Fragments: ""
+					// Scales: ""
+					// BossRadar: ""
+					RadarMiniBosses: 注意: 此选项仅用于有小地图图像的小Boss
+					RadarOpacity: 调整雷达图标的透明度
+					RadarBlacklist: 以下被选中的生物将不会被雷达定位
 				}
 			}
 		}

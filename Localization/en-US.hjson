@@ -255,16 +255,9 @@ Mods: {
 		}
 
 		Configs: {
-			BossLogConfiguration.DisplayName: Boss Log Customization
-			ClientConfiguration.DisplayName: Other features
-			DebugConfiguration.DisplayName: Debug Interface
+			BossLogConfiguration: {
+				DisplayName: Boss Log Customization
 
-			Common: {
-				InvalidChange: You cannot change this config while {0} is active!
-				HostChange: Only the host is allowed to change this config.
-			}
-
-			BossLogCustomization: {
 				Header: {
 					BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
 					BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
@@ -332,51 +325,11 @@ Mods: {
 				}
 			}
 
-			OtherFeatures: {
-				Header: {
-					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
-					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
-					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
-				}
+			ClientConfiguration.DisplayName: Other features
 
-				Label: {
-					DespawnMessageType: Boss Despawn Messages
-					LimbMessages: Segment Defeated Messages
-					PillarMessages: Pillar Defeated Messages
-					TimerSounds: Respawn Timer Sounds
-					TreasureBags: Treasure bags display on the map
-					Fragments: Fragments display on the map
-					Scales: Shadow Scales and Tissue Samples display on the map
-					BossRadar: Enable Boss Radar
-					RadarMiniBosses: Whitelist mini bosses
-					RadarOpacity: Radar Opacity
-					RadarBlacklist: Radar Blacklist
-				}
+			DebugConfiguration: {
+				DisplayName: Debug Interface
 
-				Tooltip: {
-					DespawnMessageType:
-						'''
-						Despawn messages will appear in chat when a boss becomes inactive.
-						If enabled, choose betweem generic or unique messages.
-						'''
-					LimbMessages:
-						'''
-						Multi-segmented bosses will send messages when a segment is defeated
-						Ex. Skeletron's hands
-						'''
-					PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
-					TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
-					TreasureBags: ""
-					Fragments: ""
-					Scales: ""
-					BossRadar: ""
-					RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
-					RadarOpacity: Adjust how transparent the radar's icon will be
-					RadarBlacklist: The selected NPCs will not be tracked by the radar
-				}
-			}
-
-			Debug: {
 				Header: {
 					Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
@@ -450,6 +403,55 @@ Mods: {
 						Prevents World Records code from running, effectively disabling it while its in feature testing.
 						As of now this feature is known to not work and may cause issues.
 						'''
+				}
+			}
+
+			Common: {
+				InvalidChange: You cannot change this config while {0} is active!
+				HostChange: Only the host is allowed to change this config.
+			}
+
+			OtherFeatures: {
+				Header: {
+					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
+					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
+				}
+
+				Label: {
+					DespawnMessageType: Boss Despawn Messages
+					LimbMessages: Segment Defeated Messages
+					PillarMessages: Pillar Defeated Messages
+					TimerSounds: Respawn Timer Sounds
+					TreasureBags: Treasure bags display on the map
+					Fragments: Fragments display on the map
+					Scales: Shadow Scales and Tissue Samples display on the map
+					BossRadar: Enable Boss Radar
+					RadarMiniBosses: Whitelist mini bosses
+					RadarOpacity: Radar Opacity
+					RadarBlacklist: Radar Blacklist
+				}
+
+				Tooltip: {
+					DespawnMessageType:
+						'''
+						Despawn messages will appear in chat when a boss becomes inactive.
+						If enabled, choose betweem generic or unique messages.
+						'''
+					LimbMessages:
+						'''
+						Multi-segmented bosses will send messages when a segment is defeated
+						Ex. Skeletron's hands
+						'''
+					PillarMessages: When defeated, the chat sends a defeated message for Lunar Pillars
+					TimerSounds: If enabled, the last 3 seconds of your respawn time will have sound indicators
+					TreasureBags: ""
+					Fragments: ""
+					Scales: ""
+					BossRadar: ""
+					RadarMiniBosses: Note: This only works properly with mini bosses that have head icons
+					RadarOpacity: Adjust how transparent the radar's icon will be
+					RadarBlacklist: The selected NPCs will not be tracked by the radar
 				}
 			}
 		}
