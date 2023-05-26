@@ -193,7 +193,7 @@ namespace BossChecklist
 					Logger.Error($"Call Error: Unknown Message: {message}");
 
 					// Track old mod calls to later inform mod developers to update their mod calls.
-					if (message.Contains("AddBoss") || message.Contains("AddMiniboss") || message.Contains("AddEvent")) {
+					if (message.Contains("AddBoss") || message.Contains("AddMiniBoss") || message.Contains("AddEvent")) {
 						string bossName = "unknown";
 						if (args[1] is Mod) {
 							string translation = args[2] as string;
