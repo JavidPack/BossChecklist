@@ -16,12 +16,11 @@ namespace BossChecklist
 	internal class EntryInfo // Inheritance for Event instead?
 	{
 		// This localization-ignoring string is used for cross mod queries and networking. Each key is completely unique.
-		internal string Key => modSource + " " + internalName;
+		internal string Key { get; init; }
 
 		internal EntryType type;
 		internal string modSource;
-		internal string internalName; // This should be unique per mod.
-		internal string name; // This should not be used for displaying purposes. Use 'EntryInfo.GetDisplayName' instead.
+		internal LocalizedText name; // This should not be used for displaying purposes. Use 'EntryInfo.GetDisplayName' instead.
 		internal List<int> npcIDs;
 		internal float progression;
 		internal Func<bool> downed;
@@ -32,7 +31,7 @@ namespace BossChecklist
 		internal List<string> relatedEntries;
 
 		internal List<int> spawnItem;
-		internal string spawnInfo;
+		internal LocalizedText spawnInfo;
 
 		internal int treasureBag = 0;
 		internal List<int> collection;
@@ -40,8 +39,8 @@ namespace BossChecklist
 		internal List<DropRateInfo> loot;
 		internal List<int> lootItemTypes;
 
-		internal Asset<Texture2D> portraitTexture;
-		internal Action<SpriteBatch, Rectangle, Color> customDrawing;
+		internal Asset<Texture2D> portraitTexture; // used for vanilla entry portrait drawing
+		internal Action<SpriteBatch, Rectangle, Color> customDrawing; // used for modded entry portrait drawing
 		internal List<Asset<Texture2D>> headIconTextures;
 
 		/*
@@ -76,7 +75,6 @@ namespace BossChecklist
 				{ "key", Key },
 				{ "modSource", modSource },
 				{ "displayName", name },
-				{ "internalName", internalName },
 
 				{ "progression", progression },
 				{ "downed", new Func<bool>(downed) },
@@ -95,11 +93,9 @@ namespace BossChecklist
 			return dict;
 		}
 
-		string GetTextFromPossibleTranslationKey(string input) => Language.GetTextValue(input.Substring(input.StartsWith("$") == true ? 1 : 0));
+		internal string DisplayName => Language.GetTextValue(name.Key);
 
-		internal string DisplayName => GetTextFromPossibleTranslationKey(this.name);
-
-		internal string DisplaySpawnInfo => GetTextFromPossibleTranslationKey(this.spawnInfo);
+		internal string DisplaySpawnInfo => Language.GetTextValue(spawnInfo.Key);
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
@@ -169,67 +165,62 @@ namespace BossChecklist
 			return true; // if it passes all the checks, it should be shown
 		}
 
-		internal EntryInfo(EntryType type, string modSource, string name, List<int> npcIDs, float progression, Func<bool> downed, Func<bool> available, List<int> collection, List<int> spawnItem, string info, Func<NPC, string> despawnMessages = null, Action<SpriteBatch, Rectangle, Color> customDrawing = null, List<string> overrideHeadTextures = null) {
-			this.type = type;
-			this.modSource = modSource;
-			this.internalName = name.StartsWith("$") ? name.Substring(name.LastIndexOf('.') + 1) : name;
-			this.name = name;
-			this.npcIDs = npcIDs;
-			this.progression = progression;
-			this.downed = downed;
-			this.available = available ?? (() => true);
-			this.hidden = false;
-
-			this.customDespawnMessages = type != EntryType.Event ? despawnMessages : null; // Despawn messages for events are currently unsupported
-
-			relatedEntries = new List<string>();
-
-			this.spawnItem = spawnItem ?? new List<int>();
-			this.spawnInfo = info ?? "";
-			if (this.spawnInfo == "") {
-				this.spawnInfo = $"{BossLogUI.LangLog}.SpawnInfo.NoInfo";
-			}
-
-			this.loot = new List<DropRateInfo>();
-			this.lootItemTypes = new List<int>();
-			this.collection = collection ?? new List<int>();
-			this.collectType = new Dictionary<int, CollectionType>(); // This will be set up after all orphan data is submitted in Mod.AddRecipes
-
-			this.portraitTexture = null;
-			this.customDrawing = customDrawing;
-			this.headIconTextures = new List<Asset<Texture2D>>();
-			if (overrideHeadTextures == null) {
-				foreach (int npc in npcIDs) {
-					// No need to check for events, as events must have a custom icon to begin with.
-					if (type == EntryType.Boss || type == EntryType.MiniBoss) {
-						if (NPCID.Sets.BossHeadTextures[npc] != -1) {
-							headIconTextures.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]);
-						}
-					}
-				}
-			}
-			else {
-				foreach (string texturePath in overrideHeadTextures) {
-					headIconTextures.Add(ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad));
-				}
-			}
-			if (headIconTextures.Count == 0) {
-				headIconTextures.Add(TextureAssets.NpcHead[0]);
-			}
-
+		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, LocalizedText name, List<int> npcIDs, Func<bool> downed, LocalizedText spawnInfo, Dictionary<string, object> extraData = null) {
 			// Add the mod source to the opted mods list of the credits page if its not already and add the entry type
 			if (modSource != "Terraria" && modSource != "Unknown") {
 				BossUISystem.Instance.RegisteredMods.TryAdd(modSource, new int[3]);
-				BossUISystem.Instance.RegisteredMods[modSource][(int)type]++;
+				BossUISystem.Instance.RegisteredMods[modSource][(int)entryType]++;
 			}
+
+			// required entry data
+			this.Key = modSource + " " + internalName;
+			this.type = entryType;
+			this.modSource = modSource;
+			this.progression = progression;
+
+			this.name = name;
+			this.npcIDs = npcIDs;
+			this.downed = downed;
+			this.spawnInfo = spawnInfo;
+
+			// self-initializing data
+			this.hidden = false; // defaults to false, hidden status can be toggled per world
+			this.relatedEntries = new List<string>(); /// Setup in <see cref="BossTracker.SetupEntryRelations"/>
+			this.loot = new List<DropRateInfo>(); /// Setup in <see cref="BossTracker.FinalizeEntryLootTables"/>
+			this.lootItemTypes = new List<int>(); /// Setup in <see cref="BossTracker.FinalizeEntryLootTables"/>
+			this.collectType = new Dictionary<int, CollectionType>(); /// Setup in <see cref="BossTracker.FinalizeCollectionTypes"/>
+
+			// optional extra data
+			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : new List<int>());
+			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
+
+			this.available = extraData?.ContainsKey("availability") == true ? extraData["availability"] as Func<bool> : () => true;
+			this.spawnItem = extraData?.ContainsKey("spawnItem") == true ? InterpretObjectAsListOfInt(extraData["spawnItem"]) : new List<int>();
+			this.collection = extraData?.ContainsKey("collectibles") == true ? InterpretObjectAsListOfInt(extraData["collectibles"]) : new List<int>();
+			this.customDrawing = extraData?.ContainsKey("customPortrait") == true ? extraData["customPortrait"] as Action<SpriteBatch, Rectangle, Color> : null;
+			this.customDespawnMessages = entryType != EntryType.Event && extraData?.ContainsKey("despawnMessage") == true ? extraData["despawnMessage"] as Func<NPC, string> : null;
+
+			headIconTextures = new List<Asset<Texture2D>>();
+			if (extraData?.ContainsKey("overrideHeadTextures") == true) {
+				foreach (string texturePath in InterpretObjectAsListOfStrings(extraData["overrideHeadTextures"])) {
+					headIconTextures.Add(ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad));
+				}
+			}
+			else {
+				foreach (int npc in npcIDs) {
+					if (entryType != EntryType.Event && NPCID.Sets.BossHeadTextures[npc] != -1)
+						headIconTextures.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]); // Skip events. Events must use a custom icon to display.
+				}
+			}
+
+			if (headIconTextures.Count == 0)
+				headIconTextures.Add(TextureAssets.NpcHead[0]); // If the head textures is empty, fill it with the '?' head icon so modder's see something is wrong
 		}
 
 		// Workaround for vanilla events with illogical translation keys.
 		internal EntryInfo WithCustomTranslationKey(string translationKey) {
 			// EntryInfo.name should remain as a translation key.
-			this.name = translationKey;
-			// Replace internal name (which would originally be illogicgal) with the printed name
-			this.internalName = Language.GetTextValue(translationKey.Substring(1)).Replace(" ", "").Replace("'", "");
+			this.name = Language.GetText(translationKey);
 			return this;
 		}
 
@@ -267,13 +258,11 @@ namespace BossChecklist
 			}
 			return this;
 		}
-
-		internal static EntryInfo MakeVanillaBoss(EntryType type, float progression, string name, List<int> ids, Func<bool> downed, List<int> spawnItem) {
-			string nameKey = name.Substring(name.LastIndexOf(".") + 1);
-			string tremor = name == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed) {
+			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
+			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
 			Func<NPC, string> customMessages = null;
-
 			if (type == EntryType.Boss) {
 				List<int> DayDespawners = new List<int>() {
 					NPCID.EyeofCthulhu,
@@ -289,37 +278,77 @@ namespace BossChecklist
 			}
 
 			return new EntryInfo(
-				type,
-				"Terraria",
-				name,
-				ids,
-				progression,
-				downed,
-				() => true,
-				BossChecklist.bossTracker.BossCollections.GetValueOrDefault($"Terraria {nameKey}"),
-				spawnItem,
-				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}",
-				customMessages
+				entryType: type,
+				modSource: "Terraria",
+				internalName: nameKey,
+				progression: val,
+				name: Language.GetText(key),
+				npcIDs: new List<int>() { npcID },
+				downed: downed,
+				Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}"),
+				extraData: new Dictionary<string, object>() {
+					{ "spawnItem", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "despawnMessage", customMessages },
+				}
 			);
 		}
 
-		internal static EntryInfo MakeVanillaEvent(float progression, string name, Func<bool> downed, List<int> spawnItem) {
-			string nameKey = name.StartsWith("$") ? name.Substring(name.LastIndexOf(".") + 1) : name.Replace(" ", "").Replace("'", "");
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed) {
+			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
+			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
+
+			Func<NPC, string> customMessages = null;
+			if (type == EntryType.Boss) {
+				List<int> DayDespawners = new List<int>() {
+					NPCID.EyeofCthulhu,
+					NPCID.Retinazer,
+					NPCID.Spazmatism,
+					NPCID.TheDestroyer,
+				};
+
+				bool DayCheck(int type) => Main.dayTime && DayDespawners.Contains(type);
+				bool AllPlayersAreDead() => Main.player.All(plr => !plr.active || plr.dead);
+				string customKey = $"{NPCAssist.LangChat}.Loss.{nameKey}";
+				customMessages = npc => AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
+			}
+
 			return new EntryInfo(
-				EntryType.Event,
-				"Terraria",
-				name,
-				BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
-				progression,
-				downed,
-				() => true,
-				BossChecklist.bossTracker.BossCollections.GetValueOrDefault($"Terraria {nameKey}"),
-				spawnItem,
-				$"Mods.BossChecklist.BossSpawnInfo.{nameKey}"
+				entryType: type,
+				modSource: "Terraria",
+				internalName: nameKey,
+				progression: val,
+				name: Language.GetText(key),
+				npcIDs: ids,
+				downed: downed,
+				spawnInfo: Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}"),
+				extraData: new Dictionary<string, object>() {
+					{ "spawnItem", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "despawnMessage", customMessages },
+				}
 			);
 		}
 
-		public override string ToString() => $"{progression} {name} {modSource}";
+		internal static EntryInfo MakeVanillaEvent(float val, string key, Func<bool> downed) {
+			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
+			return new EntryInfo(
+				entryType: EntryType.Event,
+				modSource: "Terraria",
+				internalName: nameKey,
+				progression: val,
+				name: Language.GetText(key),
+				npcIDs: BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
+				downed: downed,
+				spawnInfo: Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}"),
+				extraData: new Dictionary<string, object>() {
+					{ "spawnItem", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
+				}
+			);
+		}
+
+		public override string ToString() => $"{progression} {Key}";
 	}
 
 	internal class OrphanInfo
