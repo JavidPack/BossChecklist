@@ -15,7 +15,7 @@ Mods: {
 			}
 
 			Tabs: {
-				// ToggleFilters: Toggle Filters
+				ToggleFilters: Cambiar filtros
 				// TableOfContents: Table of Contents
 				// Credits: Credits
 				/* NextEntry:
@@ -61,23 +61,23 @@ Mods: {
 			}
 
 			EntryPage: {
-				// Defeated: Defeated in {0}
-				// Undefeated: Undefeated in {0}
-				// CopyKey: Click to copy internal 'boss key' to clipboard
-				// CopySource: Click to copy internal 'mod source' to clipboard
-				// ViewPage: Click to view page
-				// NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
-				// LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
+				Defeated: Derrotado en {0}
+				Undefeated: No derrotado en {0}
+				CopyKey: Haz clic para copiar la 'llave del jefe' interna al portapapeles
+				CopySource: Haz clic para copiar la "fuente del mod" interna al portapapeles
+				ViewPage: Haz clic para ver la página
+				NotImplemented: La presentación de esta página no está disponible. El mod no ha presentado la página o la ha configurado incorrectamente.
+				LogFeaturesNotAvailable: Los registros, los objetos de invocación y la tabla de botín están desactivados para esta página. El mod no ha enviado suficiente información para la página o la ha configurado incorrectamente.
 			}
 
 			Records: {
-				// NewRecord: New Record!
-				// NewWorldRecord: World Record!
-				// NoRecord: No record
-				// Unchallenged: Unchallenged
-				// Kills: kills
-				// Deaths: deaths
-				// Total: Total
+				NewRecord: ¡Nuevo récord!
+				NewWorldRecord: ¡Récord mundial!
+				NoRecord: ¡No hay registros!
+				Unchallenged: ¡No enfrentado!
+				Kills: victorias
+				Deaths: derrotas
+				Total: Total
 				// NoHit: No hit!
 				// PreviousBest: Your Previous Best
 				// ClaimRecord: Be the first to claim the world record!
@@ -170,39 +170,39 @@ Mods: {
 
 		ChatMessages: {
 			Despawn: {
-				// Generic: "{0} is no longer after you..."
-				// Day: "{0} flees as the sun rises..."
+				Generic: "{0} ya no va a por ti..."
+				Day: "{0} desaparece al salir el sol..."
 			}
 
 			Defeated: {
-				// Tower: The {0} has been destroyed!
-				// Limb: "{0} down!"
+				Tower: ¡{0} ha sido derrotado!
+				Limb: ¡{0} ha caído!
 			}
 
 			Loss: {
-				// Generic: "{0} has killed every player!"
-				// KingSlime: King Slime leaves in triumph...
-				// EyeofCthulhu: Eye of Cthulhu has disappeared into the night sky...
-				// EaterofWorlds: Eater of Worlds burrows back underground...
-				// BrainofCthulhu: Brain of Cthulhu vanishes into the pits of the crimson...
-				// QueenBee: Queen Bee returns to her colony's nest...
+				Generic: ¡{0} ha matado a todos los jugadores!
+				KingSlime: El Rey Slime se va triunfante...
+				EyeofCthulhu: El Ojo de Cthulhu ha desaparecido en el cielo nocturno...
+				EaterofWorlds: El Devorador de Mundos se esconde bajo tierra...
+				BrainofCthulhu: El Cerebro de Cthulhu se pierde en las fosas del carmesí...
+				QueenBee: La Abeja reina vuelve a su colmena...
 				// SkeletronHead: Skeletron continues to torture the Old Man...
-				// WallofFlesh: Wall of Flesh has managed to cross the underworld...
+				WallofFlesh: El Muro carnoso ha logrado cruzar el inframundo...
 				// TheTwins: "{0} continues its observations..."
-				// TheDestroyer: The Destroyer seeks for another world to devour...
-				// SkeletronPrime: Skeletron Prime begins searching for a new victim...
-				// Plantera: Plantera continues its rest within the jungle...
-				// Golem: Golem deactivates in the bowels of the temple...
-				// DukeFishron: Duke Fishron returns to the ocean depths...
+				TheDestroyer: El Destructor busca otro mundo para devorar...
+				SkeletronPrime: El Esqueletrón mayor inicia la búsqueda de una nueva víctima...
+				Plantera: Plantera continúa descansando en la selva...
+				Golem: El Golem se desactiva en las entrañas del templo...
+				DukeFishron: El Duque Fishron regresa a las profundidades del océano...
 				// CultistBoss: Lunatic Cultist goes back to its devoted worship...
-				// MoonLord: Moon Lord has left this realm...
+				MoonLord: El Señor de la Luna ha dejado este reino...
 			}
 
 			EventEnd: {
-				// BloodMoon: The Blood Moon falls past the horizon...
-				// FrostMoon: The Frost Moon melts as the sun rises...
-				// PumpkinMoon: The Pumpkin Moon ends its harvest...
-				// SolarEclipse: The solar eclipse has ended... until next time...
+				BloodMoon: La Luna de Sangre desaparece en el horizonte...
+				FrostMoon: La Luna Gélida se derrite al salir el sol...
+				PumpkinMoon: La Luna Calabaza termina su cosecha...
+				SolarEclipse: El Eclipse Solar ha concluido por ahora...
 			}
 		}
 
@@ -256,12 +256,12 @@ Mods: {
 
 		Configs: {
 			BossLogConfiguration: {
-				// DisplayName: Boss Log Customization
+				DisplayName: Personalizar registro de jefes
 
 				Headers: {
-					// BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
-					// BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
-					// BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
+					BossLogUI: "[i:149] [c/ffeb6e:IU de Registro de jefes]"
+					BossLogChecklist: "[i:903] [c/ffeb6e:Lista del Registro de jefes]"
+					BlindMode: "[i:888] [c/ffeb6e:Modo de progresión - ¡Derrota a los jefes para desbloquear su entrada!]"
 				}
 
 				Label: {
@@ -326,7 +326,7 @@ Mods: {
 			}
 
 			ClientConfiguration: {
-				// DisplayName: Other features
+				DisplayName: Otras características
 
 				Headers: {
 					// BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
@@ -372,10 +372,10 @@ Mods: {
 			}
 
 			DebugConfiguration: {
-				// DisplayName: Debug Interface
+				DisplayName: Interfaz de depuración
 
 				Headers: {
-					// Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
+					Debug: "[i:3625] [c/ffeb6e:Depuración para desarrolladores]"
 					// DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
 					// DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
 					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
@@ -452,7 +452,7 @@ Mods: {
 
 			Common: {
 				// InvalidChange: You cannot change this config while {0} is active!
-				// HostChange: Only the host is allowed to change this config.
+				HostChange: Solo el anfitrión puede cambiar esta configuración.
 			}
 		}
 	}
