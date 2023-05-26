@@ -19,15 +19,11 @@ namespace BossChecklist
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(typeof(Color), "87, 181, 92, 255"), ColorNoAlpha]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.BossLogColor.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.BossLogColor.Tooltip")]
 		public Color BossLogColor { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(typeof(Vector2), "-270, -50")]
 		[Range(-1920f, 0f)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.BossLogPos.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.BossLogPos.Tooltip")]
 		public Vector2 BossLogPos { get; set; }
 
 		[Header("BossLogChecklist")]
@@ -39,14 +35,10 @@ namespace BossChecklist
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.HideUnavailable.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.HideUnavailable.Tooltip")]
 		public bool HideUnavailable { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.HideUnsupported.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.HideUnsupported.Tooltip")]
 		public bool HideUnsupported { get; set; }
 
 		private bool BossesOnly;
@@ -69,8 +61,6 @@ namespace BossChecklist
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.FilterBosses.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.FilterBosses.Tooltip")]
 		[OptionStrings(new string[] { "Show", "Hide When Completed" })]
 		[DefaultValue("Show")]
 		public string FilterBosses { get; set; }
@@ -79,8 +69,6 @@ namespace BossChecklist
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.FilterMiniBosses.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.FilterMiniBosses.Tooltip")]
 		[OptionStrings(new string[] { "Show", "Hide When Completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterMiniBosses {
@@ -97,8 +85,6 @@ namespace BossChecklist
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.FilterEvents.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.FilterEvents.Tooltip")]
 		[OptionStrings(new string[] { "Show", "Hide When Completed", "Hide" })]
 		[DefaultValue("Show")]
 		public string FilterEvents {
@@ -113,23 +99,17 @@ namespace BossChecklist
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.ColoredBossText.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.ColoredBossText.Tooltip")]
 		public bool ColoredBossText { get; set; }
 
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(250, 235, 215)]
 		[DrawTicks]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.SelectedCheckmarkType.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.SelectedCheckmarkType.Tooltip")]
 		[OptionStrings(new string[] { "✓  ☐", "✓  X", "X  ☐", "Strike-through" })]
 		[DefaultValue("✓  ☐")]
 		public string SelectedCheckmarkType { get; set; }
 
 		[BackgroundColor(200, 188, 172)]
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.DrawNextMark.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.DrawNextMark.Tooltip")]
 		public bool DrawNextMark { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
@@ -185,14 +165,10 @@ namespace BossChecklist
 
 		[BackgroundColor(178, 34, 34)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskTextures.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskTextures.Tooltip")]
 		public bool MaskTextures { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskNames.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskNames.Tooltip")]
 		public bool MaskNames { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
@@ -203,14 +179,10 @@ namespace BossChecklist
 
 		[BackgroundColor(178, 34, 34)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskBossLoot.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskBossLoot.Tooltip")]
 		public bool MaskBossLoot { get; set; }
 
 		[BackgroundColor(178, 34, 34)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskHardMode.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.MaskHardMode.Tooltip")]
 		public bool MaskHardMode { get; set; }
 
 		internal bool AnyProgressionModeConfigUsed => MaskTextures || MaskNames || MaskBossLoot || MaskHardMode;
@@ -258,25 +230,17 @@ namespace BossChecklist
 		[Header("ChatMessages")]
 
 		[DrawTicks]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.DespawnMessageType.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.DespawnMessageType.Tooltip")]
 		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
 		[DefaultValue("Generic")]
 		public string DespawnMessageType { get; set; }
 
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.LimbMessages.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.LimbMessages.Tooltip")]
 		public bool LimbMessages { get; set; }
 
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.PillarMessages.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.PillarMessages.Tooltip")]
 		public bool PillarMessages { get; set; }
 
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.TimerSounds.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.TimerSounds.Tooltip")]
 		public bool TimerSounds { get; set; }
 
 		[Header("ItemMapDetection")]
@@ -304,8 +268,6 @@ namespace BossChecklist
 		public bool BossRadarBool { get; set; }
 
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.RadarMiniBosses.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.RadarMiniBosses.Tooltip")]
 		public bool RadarMiniBosses { get; set; }
 
 		public const float OpacityFloatMin = 0.35f;
@@ -316,8 +278,6 @@ namespace BossChecklist
 		[DefaultValue(0.75f)]
 		public float OpacityFloat { get; set; }
 
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.RadarBlacklist.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.RadarBlacklist.Tooltip")]
 		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
 
 		[OnDeserialized]
@@ -356,14 +316,10 @@ namespace BossChecklist
 
 		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ShowProgressionValue.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ShowProgressionValue.Tooltip")]
 		public bool ShowProgressionValue { get; set; }
 
 		[BackgroundColor(80, 80, 80)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.AccessInternalNames.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.AccessInternalNames.Tooltip")]
 		public bool AccessInternalNames { get; set; }
 
 		[BackgroundColor(255, 250, 250)]
@@ -455,14 +411,10 @@ namespace BossChecklist
 
 		[BackgroundColor(80, 80, 80)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetForcedDowns.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetForcedDowns.Tooltip")]
 		public bool ResetForcedDowns { get; set; }
 
 		[BackgroundColor(255, 250, 250)]
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetHiddenEntries.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetHiddenEntries.Tooltip")]
 		public bool ResetHiddenEntries { get; set; }
 
 		[Header("FeatureTesting")]
