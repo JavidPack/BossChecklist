@@ -300,7 +300,7 @@ namespace BossChecklist
 			bosslogbutton = new OpenLogButton(Texture_Button_Book);
 			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
 			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
-			bosslogbutton.OnClick += (a, b) => ToggleBossLog(true);
+			bosslogbutton.OnLeftClick += (a, b) => ToggleBossLog(true);
 
 			BookArea = new LogPanel();
 			BookArea.Width.Pixels = Texture_Log_BackPanel.Value.Width;
@@ -309,7 +309,7 @@ namespace BossChecklist
 			ToCTab = new LogTab(Texture_Log_Tab, Texture_Nav_TableOfContents) {
 				Id = "TableOfContents"
 			};
-			ToCTab.OnClick += (a, b) => UpdateFilterTabPos(true);
+			ToCTab.OnLeftClick += (a, b) => UpdateFilterTabPos(true);
 			ToCTab.OnRightClick += (a, b) => ClearMarkedDowns();
 
 			BossTab = new LogTab(Texture_Log_Tab, Texture_Nav_Boss) {
@@ -346,7 +346,7 @@ namespace BossChecklist
 			};
 			PrevPage.Left.Pixels = 8;
 			PrevPage.Top.Pixels = 416;
-			PrevPage.OnClick += PageChangerClicked;
+			PrevPage.OnLeftClick += PageChangerClicked;
 
 			prehardmodeList = new UIList();
 			prehardmodeList.Left.Pixels = 4;
@@ -404,7 +404,7 @@ namespace BossChecklist
 			};
 			NextPage.Left.Pixels = PageTwo.Width.Pixels - NextPage.Width.Pixels - 12;
 			NextPage.Top.Pixels = 416;
-			NextPage.OnClick += PageChangerClicked;
+			NextPage.OnLeftClick += PageChangerClicked;
 			PageTwo.Append(NextPage);
 
 			hardmodeList = new UIList();
@@ -417,18 +417,18 @@ namespace BossChecklist
 			recordButton = new SubPageButton(Texture_Nav_SubPage, SubPage.Records);
 			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 5;
-			recordButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Records);
+			recordButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Records);
 			recordButton.OnRightClick += (a, b) => ResetStats();
 
 			spawnButton = new SubPageButton(Texture_Nav_SubPage, SubPage.SpawnInfo);
 			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
 			spawnButton.Top.Pixels = 5;
-			spawnButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.SpawnInfo);
+			spawnButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.SpawnInfo);
 
 			lootButton = new SubPageButton(Texture_Nav_SubPage, SubPage.LootAndCollectibles);
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 5 + Texture_Nav_SubPage.Value.Height + 10;
-			lootButton.OnClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
+			lootButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
 			scrollOne = new LogScrollbar();
@@ -732,10 +732,10 @@ namespace BossChecklist
 				new UIImage(Texture_Content_RecordSlot)
 			};
 
-			backdrops[0].OnClick += (a, b) => SelectProgressionModeState(false);
-			backdrops[1].OnClick += (a, b) => SelectProgressionModeState(true);
-			backdrops[2].OnClick += (a, b) => CloseAndConfigure();
-			backdrops[3].OnClick += (a, b) => DisablePromptMessage();
+			backdrops[0].OnLeftClick += (a, b) => SelectProgressionModeState(false);
+			backdrops[1].OnLeftClick += (a, b) => SelectProgressionModeState(true);
+			backdrops[2].OnLeftClick += (a, b) => CloseAndConfigure();
+			backdrops[3].OnLeftClick += (a, b) => DisablePromptMessage();
 			foreach (UIImage backdrop in backdrops) {
 				backdrop.OnMouseOver += (a, b) => { backdrop.Color = BossChecklist.BossLogConfig.BossLogColor; };
 				backdrop.OnMouseOut += (a, b) => { backdrop.Color = Color.White; };
@@ -1477,7 +1477,7 @@ namespace BossChecklist
 				};
 				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
 				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
-				PrevItem.OnClick += ChangeSpawnItem;
+				PrevItem.OnLeftClick += ChangeSpawnItem;
 				PageTwo.Append(PrevItem);
 			}
 			// a next button will appear if it is not the last item listed
@@ -1487,7 +1487,7 @@ namespace BossChecklist
 				};
 				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
 				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
-				NextItem.OnClick += ChangeSpawnItem;
+				NextItem.OnLeftClick += ChangeSpawnItem;
 				PageTwo.Append(NextItem);
 			}
 
@@ -1556,7 +1556,7 @@ namespace BossChecklist
 					};
 					CycleItem.Left.Pixels = 20 + (int)(TextureAssets.InventoryBack9.Width() * 0.85f / 2 - Texture_Content_Cycle.Value.Width / 2);
 					CycleItem.Top.Pixels = 240 + (int)(TextureAssets.InventoryBack9.Height() * 0.85f / 2 - Texture_Content_Cycle.Value.Height / 2);
-					CycleItem.OnClick += ChangeSpawnItem;
+					CycleItem.OnLeftClick += ChangeSpawnItem;
 					PageTwo.Append(CycleItem);
 				}
 			}

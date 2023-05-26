@@ -41,10 +41,10 @@ namespace BossChecklist.UIElements
 			moreInfo = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/UIElements/info", ReLogic.Content.AssetRequestMode.ImmediateLoad), "More Info");
 			moreInfo.Left.Set(-24, 1f);
 			moreInfo.SetVisibility(1f, 0.7f);
-			moreInfo.OnClick += MoreInfo_OnClick;
+			moreInfo.OnLeftClick += MoreInfo_OnClick;
 			bossIndex = boss.GetIndex;
 
-			OnClick += Box_OnClick;
+			OnLeftClick += Box_OnClick;
 		}
 
 		private void MoreInfo_OnClick(UIMouseEvent evt, UIElement listeningElement) {

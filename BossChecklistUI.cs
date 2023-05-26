@@ -87,28 +87,28 @@ namespace BossChecklist.UIElements
 			checklistPanel.Append(buttonPanel);
 
 			toggleCompletedButton = new UIHoverImageButton(TextureAssets.MagicPixel, "Toggle Completed");
-			toggleCompletedButton.OnClick += ToggleCompletedButtonClicked;
+			toggleCompletedButton.OnLeftClick += ToggleCompletedButtonClicked;
 			toggleCompletedButton.Left.Pixels = spacing;
 			toggleCompletedButton.Top.Pixels = 0;
 			toggleCompletedButton.SetVisibility(1f, 0.7f);
 			buttonPanel.Append(toggleCompletedButton);
 
 			toggleMiniBossButton = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Miniboss", AssetRequestMode.ImmediateLoad), "Toggle Mini Bosses");
-			toggleMiniBossButton.OnClick += ToggleMiniBossButtonClicked;
+			toggleMiniBossButton.OnLeftClick += ToggleMiniBossButtonClicked;
 			toggleMiniBossButton.Left.Pixels = spacing + 32;
 			toggleMiniBossButton.Top.Pixels = 0;
 			toggleMiniBossButton.SetVisibility(1f, 0.7f);
 			buttonPanel.Append(toggleMiniBossButton);
 
 			toggleEventButton = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Event", AssetRequestMode.ImmediateLoad), "Toggle Events");
-			toggleEventButton.OnClick += ToggleEventButtonClicked;
+			toggleEventButton.OnLeftClick += ToggleEventButtonClicked;
 			toggleEventButton.Left.Pixels = spacing + 64;
 			toggleEventButton.Top.Pixels = 0;
 			toggleEventButton.SetVisibility(1f, 0.7f);
 			buttonPanel.Append(toggleEventButton);
 
 			toggleHiddenButton = new UIHoverImageButton(ModContent.Request<Texture2D>("BossChecklist/Resources/Nav_Hidden", AssetRequestMode.ImmediateLoad), "Toggle Show Hidden Bosses\n(Alt-Click to clear Hidden bosses)\n(Alt-Click on boss to hide)");
-			toggleHiddenButton.OnClick += ToggleHiddenButtonClicked;
+			toggleHiddenButton.OnLeftClick += ToggleHiddenButtonClicked;
 			toggleHiddenButton.Left.Pixels = spacing + 96;
 			toggleHiddenButton.Top.Pixels = 0;
 			toggleHiddenButton.SetVisibility(1f, 0.7f);
