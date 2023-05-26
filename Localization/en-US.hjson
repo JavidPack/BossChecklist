@@ -334,9 +334,9 @@ Mods: {
 
 			OtherFeatures: {
 				Header: {
-					BossRadar: Boss Radar Bool Header
-					ChatMessages: Despawn Message Type Header
-					ItemMapDetection: Treasure Bags Bool Header
+					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
+					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
 				}
 
 				Label: {
