@@ -5,5 +5,4 @@ homepage = http://forums.terraria.org/index.php?threads/boss-checklist-in-game-p
 hideCode = false
 hideResources = false
 includeSource = true
-includePDB = true
 buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config, lib\*, .gitignore, .git\*
