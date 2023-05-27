@@ -195,7 +195,7 @@ namespace BossChecklist
 			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
 
 			this.available = extraData?.ContainsKey("availability") == true ? extraData["availability"] as Func<bool> : () => true;
-			this.spawnItem = extraData?.ContainsKey("spawnItem") == true ? InterpretObjectAsListOfInt(extraData["spawnItem"]) : new List<int>();
+			this.spawnItem = extraData?.ContainsKey("spawnItems") == true ? InterpretObjectAsListOfInt(extraData["spawnItems"]) : new List<int>();
 			this.collection = extraData?.ContainsKey("collectibles") == true ? InterpretObjectAsListOfInt(extraData["collectibles"]) : new List<int>();
 			this.customDrawing = extraData?.ContainsKey("customPortrait") == true ? extraData["customPortrait"] as Action<SpriteBatch, Rectangle, Color> : null;
 			this.customDespawnMessages = entryType != EntryType.Event && extraData?.ContainsKey("despawnMessage") == true ? extraData["despawnMessage"] as Func<NPC, string> : null;
