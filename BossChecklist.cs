@@ -152,9 +152,14 @@ namespace BossChecklist
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
 				
 				if (message == "LogBoss" || message == "LogMiniBoss" || message == "LogEvent") {
+					if (args[1] is not Mod) {
+						Logger.Warn($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance to generate an entry key.");
+						return "Failure";
+					}
+
 					string internalName = args[2] as string;
 					if (!internalName.Any(char.IsLetter)) {
-						Logger.Warn($"Invalid internal name passed. '{internalName}' contains whitespaces or non-alpha characters.");
+						Logger.Warn($"Invalid internal name passed ({internalName}). Your call must contain a string without whitespaces or any non-alpha characters to generate an entry key.");
 						return "Failure";
 					}
 
