@@ -263,7 +263,7 @@ namespace BossChecklist
 			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
 			Func<NPC, LocalizedText> customMessages = null;
-			if (type == EntryType.Boss) {
+			if (type == EntryType.Boss) { // BossChecklist only has despawn messages for vanilla Bosses
 				List<int> DayDespawners = new List<int>() {
 					NPCID.EyeofCthulhu,
 					NPCID.Retinazer,
@@ -271,10 +271,17 @@ namespace BossChecklist
 					NPCID.TheDestroyer,
 				};
 
-				bool DayCheck(int type) => Main.dayTime && DayDespawners.Contains(type);
-				bool AllPlayersAreDead() => Main.player.All(plr => !plr.active || plr.dead);
-				string customKey = $"{NPCAssist.LangChat}.Loss.{nameKey}";
-				customMessages = npc => Language.GetText(AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic");
+				customMessages = delegate (NPC npc) {
+					if (Main.player.All(plr => !plr.active || plr.dead)) {
+						return Language.GetText($"{NPCAssist.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
+					}
+					else if (Main.dayTime && DayDespawners.Contains(npc.type)) {
+						return Language.GetText($"{NPCAssist.LangChat}.Despawn.Day"); // Despawn message when it turns to day
+					}
+
+					// unique despawn messages should default to the generic message when no conditions are met
+					return Language.GetText($"{NPCAssist.LangChat}.Despawn.Generic");
+				};
 			}
 
 			return new EntryInfo(
