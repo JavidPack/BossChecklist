@@ -179,7 +179,7 @@ namespace BossChecklist
 			this.progression = progression;
 
 			this.name = name;
-			this.npcIDs = npcIDs;
+			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
 			this.spawnInfo = spawnInfo;
 
