@@ -26,7 +26,7 @@ namespace BossChecklist
 		internal Func<bool> downed;
 		internal Func<bool> available;
 		internal bool hidden;
-		internal Func<NPC, string> customDespawnMessages;
+		internal Func<NPC, LocalizedText> customDespawnMessages;
 
 		internal List<string> relatedEntries;
 
@@ -198,7 +198,7 @@ namespace BossChecklist
 			this.spawnItem = extraData?.ContainsKey("spawnItems") == true ? InterpretObjectAsListOfInt(extraData["spawnItems"]) : new List<int>();
 			this.collection = extraData?.ContainsKey("collectibles") == true ? InterpretObjectAsListOfInt(extraData["collectibles"]) : new List<int>();
 			this.customDrawing = extraData?.ContainsKey("customPortrait") == true ? extraData["customPortrait"] as Action<SpriteBatch, Rectangle, Color> : null;
-			this.customDespawnMessages = entryType != EntryType.Event && extraData?.ContainsKey("despawnMessage") == true ? extraData["despawnMessage"] as Func<NPC, string> : null;
+			this.customDespawnMessages = entryType != EntryType.Event && extraData?.ContainsKey("despawnMessage") == true ? extraData["despawnMessage"] as Func<NPC, LocalizedText> : null;
 
 			headIconTextures = new List<Asset<Texture2D>>();
 			if (extraData?.ContainsKey("overrideHeadTextures") == true) {
@@ -262,7 +262,7 @@ namespace BossChecklist
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
 			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
-			Func<NPC, string> customMessages = null;
+			Func<NPC, LocalizedText> customMessages = null;
 			if (type == EntryType.Boss) {
 				List<int> DayDespawners = new List<int>() {
 					NPCID.EyeofCthulhu,
@@ -274,7 +274,7 @@ namespace BossChecklist
 				bool DayCheck(int type) => Main.dayTime && DayDespawners.Contains(type);
 				bool AllPlayersAreDead() => Main.player.All(plr => !plr.active || plr.dead);
 				string customKey = $"{NPCAssist.LangChat}.Loss.{nameKey}";
-				customMessages = npc => AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
+				customMessages = npc => Language.GetText(AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic");
 			}
 
 			return new EntryInfo(
@@ -298,7 +298,7 @@ namespace BossChecklist
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
 			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
-			Func<NPC, string> customMessages = null;
+			Func<NPC, LocalizedText> customMessages = null;
 			if (type == EntryType.Boss) {
 				List<int> DayDespawners = new List<int>() {
 					NPCID.EyeofCthulhu,
@@ -310,7 +310,7 @@ namespace BossChecklist
 				bool DayCheck(int type) => Main.dayTime && DayDespawners.Contains(type);
 				bool AllPlayersAreDead() => Main.player.All(plr => !plr.active || plr.dead);
 				string customKey = $"{NPCAssist.LangChat}.Loss.{nameKey}";
-				customMessages = npc => AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic";
+				customMessages = npc => Language.GetText(AllPlayersAreDead() ? customKey : DayCheck(npc.type) ? $"{NPCAssist.LangChat}.Despawn.Day" : $"{NPCAssist.LangChat}.Despawn.Generic");
 			}
 
 			return new EntryInfo(

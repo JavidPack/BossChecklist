@@ -295,13 +295,13 @@ namespace BossChecklist
 					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
 					if (NPCAssist.FullyInactive(npc, entry.GetIndex)) {
 						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-						string message = NPCAssist.GetDespawnMessage(npc, entry.GetIndex);
-						if (!string.IsNullOrEmpty(message)) {
+						LocalizedText message = NPCAssist.GetDespawnMessage(npc, entry.GetIndex);
+						if (message != null) {
 							if (Main.netMode == NetmodeID.SinglePlayer) {
-								Main.NewText(Language.GetTextValue(message, npc.FullName), Colors.RarityPurple);
+								Main.NewText(Language.GetTextValue(message.Key, npc.FullName), Colors.RarityPurple);
 							}
 							else {
-								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message, npc.FullName), Colors.RarityPurple);
+								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message.Key, npc.FullName), Colors.RarityPurple);
 							}
 						}
 					}
