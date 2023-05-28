@@ -17,9 +17,8 @@ namespace <YourModsNamespace>
 
 		public class BossChecklistBossInfo
 		{
-			internal string key = ""; // equal to "modSource internalName"
+			internal string key = ""; // unique identifier for an entry
 			internal string modSource = "";
-			internal string internalName = "";
 			internal string displayName = "";
 
 			internal float progression = 0f; // See https://github.com/JavidPack/BossChecklist/blob/master/BossTracker.cs#L13 for vanilla boss values
@@ -49,7 +48,6 @@ namespace <YourModsNamespace>
 					bossInfos = bossInfoList.ToDictionary(boss => boss.Key, boss => new BossChecklistBossInfo() {
 						key = boss.Value.ContainsKey("key") ? boss.Value["key"] as string : "",
 						modSource = boss.Value.ContainsKey("modSource") ? boss.Value["modSource"] as string : "",
-						internalName = boss.Value.ContainsKey("internalName") ? boss.Value["internalName"] as string : "",
 						displayName = boss.Value.ContainsKey("displayName") ? boss.Value["displayName"] as string : "",
 
 						progression = boss.Value.ContainsKey("progression") ? Convert.ToSingle(boss.Value["progression"]) : 0f,
