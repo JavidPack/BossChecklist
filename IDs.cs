@@ -2,21 +2,6 @@
 
 namespace BossChecklist
 {
-	internal enum EntryType
-	{
-		Boss,
-		MiniBoss,
-		Event
-	}
-
-	internal enum OrphanType
-	{
-		Loot,
-		Collection,
-		SpawnItem,
-		EventNPC
-	}
-
 	internal enum CollectionType
 	{
 		Generic,

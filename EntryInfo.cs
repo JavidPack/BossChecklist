@@ -13,6 +13,12 @@ using Microsoft.Xna.Framework;
 
 namespace BossChecklist
 {
+	internal enum EntryType {
+		Boss,
+		MiniBoss,
+		Event
+	}
+
 	internal class EntryInfo // Inheritance for Event instead?
 	{
 		// This localization-ignoring string is used for cross mod queries and networking. Each key is completely unique.
@@ -363,6 +369,13 @@ namespace BossChecklist
 		}
 
 		public override string ToString() => $"{progression} {Key}";
+	}
+
+	internal enum OrphanType {
+		Loot,
+		Collection,
+		SpawnItem,
+		EventNPC
 	}
 
 	internal class OrphanInfo
