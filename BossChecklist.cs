@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -176,16 +174,33 @@ namespace BossChecklist
 					);
 					return "Success";
 				}
-				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
-					bossTracker.AddOrphanData(
-						message, // OrphanType
-						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
-						InterpretObjectAsListOfInt(args[2]) // ID List
-					);
-					if (argsLength != 3) {
-						if (DebugConfig.ModCallLogVerbose)
-							Logger.Warn($"{message} mod call from the above mod is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4]-Other-Mod-Calls");
+				else if (message.StartsWith("Modify")) {
+					OrphanType? DetermineOrphanType() {
+						return message switch {
+							"ModifyEntryLoot" => OrphanType.Loot,
+							"ModifyEntryCollections" => OrphanType.Collection,
+							"ModifyEntrySpawnItems" => OrphanType.SpawnItem,
+							"ModifyEventNPCs" => OrphanType.EventNPC,
+							_ => null
+						};
 					}
+
+					if (DetermineOrphanType() == null) {
+						Logger.Error($"Call Error: Unknown Message: {message}");
+						return "Failue";
+					}
+
+					if (args[1] is not Mod) {
+						Logger.Error($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance for logging purposes.");
+						return "Failure";
+					}
+
+					bossTracker.AddOrphanData(
+						DetermineOrphanType().Value, // OrphanType
+						args[1] as Mod,
+						args[2] as Dictionary<string, object> // ID List
+					);
+
 					return "Success";
 				}
 				// TODO

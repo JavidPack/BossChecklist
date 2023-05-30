@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -194,30 +192,36 @@ namespace BossChecklist
 
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {
-				EntryInfo entryInfo = SortedEntries.Find(entry => entry.Key == orphan.Key);
-				if (entryInfo != null && orphan.values != null) {
-					switch (orphan.type) {
-						case OrphanType.Loot:
-							entryInfo.lootItemTypes.AddRange(orphan.values);
-							break;
-						case OrphanType.Collection:
-							entryInfo.collection.AddRange(orphan.values);
-							break;
-						case OrphanType.SpawnItem:
-							entryInfo.spawnItem.AddRange(orphan.values);
-							break;
-						case OrphanType.EventNPC:
-							if (entryInfo.type == EntryType.Event) {
-								entryInfo.npcIDs.AddRange(orphan.values);
-							}
-							else {
-								BossChecklist.instance.Logger.Warn($"{orphan.bossName} from {orphan.modSource} is not an Event entry. AddToEventNPCs must be added to Events.");
-							}
-							break;
+				foreach (KeyValuePair<string, object> submission in orphan.values) {
+					EntryInfo entry = SortedEntries.Find(entry => submission.Key == entry.Key);
+					if (entry is null) {
+						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key})");
+						continue;
+					}
+
+					object data = submission.Value;
+					List<int> InterpretDataAsListOfInt = data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : new List<int>());
+					
+					if (orphan.type == OrphanType.Loot) {
+						entry.lootItemTypes.AddRange(InterpretDataAsListOfInt);
+					}
+					else if (orphan.type == OrphanType.Collection) {
+						entry.collection.AddRange(InterpretDataAsListOfInt);
+					}
+					else if (orphan.type == OrphanType.SpawnItem) {
+						entry.spawnItem.AddRange(InterpretDataAsListOfInt);
+					}
+					else if (orphan.type == OrphanType.EventNPC) {
+						if (entry.type == EntryType.Event) {
+							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
+						}
+						else {
+							BossChecklist.instance.Logger.Warn($"{entry.Key} is not an event entry and cannot take calls from {OrphanType.EventNPC}");
+						}
 					}
 
 					if (BossChecklist.DebugConfig.ModCallLogVerbose)
-						BossChecklist.instance.Logger.Info($"Entry successfully registered {orphan.values.Count} '{orphan.type}' orphan data value(s): [{entryInfo.modSource} {entryInfo.DisplayName}]");
+						BossChecklist.instance.Logger.Info($"{orphan.modSource} successfully registered {InterpretDataAsListOfInt.Count} '{orphan.type}' orphan data value(s) for {entry.Key}");
 				}
 			}
 		}
@@ -1091,6 +1095,15 @@ namespace BossChecklist
 			LogNewBoss(mod?.Name ?? "Unknown", iName);
 		}
 
+		internal void AddOrphanData(OrphanType type, Mod mod, Dictionary<string, object> values) {
+			if (values is null) {
+				BossChecklist.instance.Logger.Warn($"{type} mod call from {mod.Name} is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4]-Other-Mod-Calls");
+			}
+			else {
+				ExtraData.Add(new OrphanInfo(type, mod.Name, values));
+			}
+		}
+
 		internal void EnsureBossIsNotDuplicate(string mod, string internalName) {
 			if (SortedEntries.Any(x=> x.Key == $"{mod} {internalName}"))
 				throw new Exception($"Check your code for duplicate entries or typos, as this entry has already been registered: [{mod} {internalName}]");
@@ -1115,21 +1128,6 @@ namespace BossChecklist
 			else {
 				BossChecklist.instance.Logger.Info($"Entry successfully registered to the Boss Log: [{mod} {name}]");
 			}
-		}
-
-		internal void AddOrphanData(string type, string bossKey, object values) {
-			OrphanType orphanType = OrphanType.Loot; // default to first type
-			if (type == "AddToBossCollection") {
-				orphanType = OrphanType.Collection;
-			}
-			else if (type == "AddToBossSpawnItems") {
-				orphanType = OrphanType.SpawnItem;
-			}
-			else if (type == "AddToEventNPCs") {
-				orphanType = OrphanType.EventNPC;
-			}
-
-			ExtraData.Add(new OrphanInfo(orphanType, bossKey, values as List<int>));
 		}
 	}
 }

@@ -381,31 +381,24 @@ namespace BossChecklist
 	internal class OrphanInfo
 	{
 		internal OrphanType type;
-		internal string Key;
 		internal string modSource;
-		internal string bossName;
+		internal Dictionary<string, object> values;
 
-		internal List<int> values;
-		// Use cases for values...
-		/// Adding Spawn Item IDs to a boss
-		/// Adding Collectible item IDs to a boss
-		/// Adding NPC IDs to an event
-
-		internal OrphanInfo(OrphanType type, string bossKey, List<int> values) {
+		internal OrphanInfo(OrphanType type, string modSource, Dictionary<string, object> values) {
 			this.type = type;
-			this.Key = bossKey;
-			this.values = values;
+			this.modSource = modSource;
 
-			List<EntryInfo> bosses = BossChecklist.bossTracker.SortedEntries;
-			int index = bosses.FindIndex(x => x.Key == this.Key);
-			if (index != -1) {
-				modSource = bosses[index].SourceDisplayName;
-				bossName = bosses[index].DisplayName;
+			// Sort through the data submissions to remove any invalid data
+			foreach (string Key in values.Keys) {
+				if (!Key.Contains(' ')) {
+					values.Remove(Key); // remove submissions with invalid keys (no space between modSource and internalName)
+					BossChecklist.instance.Logger.Warn($"A {type} call from {modSource} contains an invalid key ({Key})");
+				}
+				else if (!ModLoader.TryGetMod(Key.Substring(0, Key.IndexOf(" ")), out Mod mod)) {
+					values.Remove(Key); // remove submissions that use an entry key from an unloaded mod
+				}
 			}
-			else {
-				modSource = "Unknown";
-				bossName = "Unknown";
-			}
+			this.values = values;
 		}
 	}
 }
