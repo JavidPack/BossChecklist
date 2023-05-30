@@ -174,13 +174,13 @@ namespace BossChecklist
 					);
 					return "Success";
 				}
-				else if (message.StartsWith("Modify")) {
+				else if (message.StartsWith("Submit")) {
 					OrphanType? DetermineOrphanType() {
 						return message switch {
-							"ModifyEntryLoot" => OrphanType.Loot,
-							"ModifyEntryCollections" => OrphanType.Collection,
-							"ModifyEntrySpawnItems" => OrphanType.SpawnItem,
-							"ModifyEventNPCs" => OrphanType.EventNPC,
+							"SubmitEntryLoot" => OrphanType.Loot,
+							"SubmitEntryCollections" => OrphanType.Collection,
+							"SubmitEntrySpawnItems" => OrphanType.SpawnItem,
+							"SubmitEventNPCs" => OrphanType.EventNPC,
 							_ => null
 						};
 					}
