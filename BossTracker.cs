@@ -1097,7 +1097,7 @@ namespace BossChecklist
 
 		internal void AddOrphanData(OrphanType type, Mod mod, Dictionary<string, object> values) {
 			if (values is null) {
-				BossChecklist.instance.Logger.Warn($"{type} mod call from {mod.Name} is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4]-Other-Mod-Calls");
+				BossChecklist.instance.Logger.Warn($"{type} mod call from {mod.Name} is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls");
 			}
 			else {
 				ExtraData.Add(new OrphanInfo(type, mod.Name, values));
