@@ -13,7 +13,7 @@ namespace <YourModsNamespace>
 	{
 		// Boss Checklist might add new features, so a version is passed into GetBossInfo. 
 		// If a new version of the GetBossInfo Call is implemented, find this class in the Boss Checklist Github once again and replace this version with the new version: https://github.com/JavidPack/BossChecklist/blob/master/BossChecklistIntegrationExample.cs
-		private static readonly Version BossChecklistAPIVersion = new Version(1, 1); // Do not change this yourself.
+		private static readonly Version BossChecklistAPIVersion = new Version(1, 6); // Do not change this yourself.
 
 		public class BossChecklistBossInfo
 		{
