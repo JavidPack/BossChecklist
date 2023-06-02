@@ -150,7 +150,7 @@ namespace BossChecklist
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
 				
 				if (message == "LogBoss" || message == "LogMiniBoss" || message == "LogEvent") {
-					if (args[1] is not Mod) {
+					if (args[1] is not Mod submittedMod) {
 						Logger.Warn($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance to generate an entry key.");
 						return "Failure";
 					}
@@ -163,7 +163,7 @@ namespace BossChecklist
 
 					bossTracker.AddEntry(
 						message == "LogBoss" ? EntryType.Boss : message == "LogMiniBoss" ? EntryType.MiniBoss : EntryType.Event,
-						args[1] as Mod, // Mod
+						submittedMod, // Mod
 						internalName, // Internal Name
 						Convert.ToSingle(args[3]), // Prog
 						args[4] as LocalizedText, // Name Translation
@@ -190,14 +190,14 @@ namespace BossChecklist
 						return "Failue";
 					}
 
-					if (args[1] is not Mod) {
+					if (args[1] is not Mod submittedMod) {
 						Logger.Error($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance for logging purposes.");
 						return "Failure";
 					}
 
 					bossTracker.AddOrphanData(
 						DetermineOrphanType().Value, // OrphanType
-						args[1] as Mod,
+						submittedMod,
 						args[2] as Dictionary<string, object> // ID List
 					);
 
@@ -216,13 +216,11 @@ namespace BossChecklist
 					if (message.Contains("AddBoss") || message.Contains("AddMiniBoss") || message.Contains("AddEvent")) {
 						string bossName = "unknown";
 						if (args[1] is Mod) {
-							string translation = args[2] as string;
-							if (translation.StartsWith("$"))
-								translation = translation.Substring(1);
-							bossName = Language.GetTextValue(translation);
+							string submittedName = args[2] as string;
+							bossName = Language.GetTextValue(submittedName.StartsWith("$") ? submittedName.Substring(1) : submittedName);
 						}
-						else if (args[1] is string) {
-							bossName = args[1] as string;
+						else if (args[1] is string submittedName) {
+							bossName = submittedName;
 						}
 
 						bossTracker.AnyModHasOldCall = true;
