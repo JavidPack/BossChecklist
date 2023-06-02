@@ -184,10 +184,13 @@ namespace BossChecklist
 			this.modSource = modSource;
 			this.progression = progression;
 
-			this.name = name;
 			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
-			this.spawnInfo = spawnInfo;
+
+			// Localization checks
+			string prefix = type == EntryType.Event ? $"Mods.{modSource}.BossChecklistIntegration.{internalName}" : $"Mods.{modSource}.NPCs.{ModContent.GetModNPC(npcIDs[0]).Name}.BossChecklistIntegration";
+			this.name = name ?? Language.GetText(prefix + ".EntryName");
+			this.spawnInfo = spawnInfo ?? Language.GetText(prefix + ".SpawnInfo");
 
 			// self-initializing data
 			this.hidden = false; // defaults to false, hidden status can be toggled per world
