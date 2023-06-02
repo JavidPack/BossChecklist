@@ -334,6 +334,11 @@ namespace BossChecklist
 		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.InactiveBossCheck.Tooltip")]
 		public bool ShowInactiveBossCheck { get; set; }
 
+		[BackgroundColor(80, 80, 80)]
+		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.DisableAutoLocalization.Label")]
+		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.DisableAutoLocalization.Tooltip")]
+		public bool DisableAutoLocalization { get; set; }
+
 		[Header("DebugRecordTracker")]
 
 		[BackgroundColor(255, 250, 250)]

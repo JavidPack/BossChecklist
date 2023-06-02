@@ -214,17 +214,29 @@ namespace BossChecklist
 
 					// Track old mod calls to later inform mod developers to update their mod calls.
 					if (message.Contains("AddBoss") || message.Contains("AddMiniBoss") || message.Contains("AddEvent")) {
-						string bossName = "unknown";
-						if (args[1] is Mod) {
+						string entryNameValue = "unknown";
+						if (args[1] is Mod mod) {
 							string submittedName = args[2] as string;
-							bossName = Language.GetTextValue(submittedName.StartsWith("$") ? submittedName.Substring(1) : submittedName);
+							string keyOrValue = submittedName.StartsWith("$") ? submittedName.Substring(1) : submittedName;
+							entryNameValue = Language.GetTextValue(keyOrValue);
+
+							if (DebugConfig.DisableAutoLocalization) {
+								if (message.Contains("Event")) {
+									SetupLocalizationForEvent(mod.Name, Language.GetTextValue(entryNameValue.Replace(" ", "")), keyOrValue, args[9] as string, args[10] as string);
+								}
+								else {
+									List<int> npcs = InterpretObjectAsListOfInt(args[3]);
+									if (npcs.Count > 0)
+										SetupLocalizationForNPC(npcs[0], keyOrValue, args[9] as string, args[10] as string);
+								}
+							}							
 						}
 						else if (args[1] is string submittedName) {
-							bossName = submittedName;
+							entryNameValue = submittedName;
 						}
 
 						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, bossName);
+						AddToOldCalls(message, entryNameValue);
 					}
 				}
 			}
@@ -243,6 +255,25 @@ namespace BossChecklist
 				if (!bossTracker.OldCalls.TryGetValue(message, out List<string> oldCallsList))
 					bossTracker.OldCalls.Add(message, oldCallsList = new List<string>());
 				oldCallsList.Add(name);
+			}
+
+			void SetupLocalizationForNPC(int npcType, string entryName, string spawnInfo, string despawnMessage) {
+				spawnInfo ??= "";
+				despawnMessage ??= "";
+
+				ModContent.GetModNPC(npcType).GetLocalization("BossChecklistIntegration.EntryName", () => Language.GetTextValue(entryName));
+				ModContent.GetModNPC(npcType).GetLocalization("BossChecklistIntegration.SpawnInfo", () => Language.GetTextValue(spawnInfo));
+				ModContent.GetModNPC(npcType).GetLocalization("BossChecklistIntegration.DespawnMessage", () => Language.GetTextValue(despawnMessage));
+			}
+
+			void SetupLocalizationForEvent(string modName, string internalName, string entryName, string spawnInfo, string despawnMessage) {
+				string RegisterKey = $"Mods.{modName}.BossChecklistIntegration.{internalName}";
+				spawnInfo ??= "";
+				despawnMessage ??= "";
+
+				Language.GetOrRegister(RegisterKey + ".EntryName", () => Language.GetTextValue(entryName));
+				Language.GetOrRegister(RegisterKey + ".SpawnInfo", () => Language.GetTextValue(spawnInfo));
+				Language.GetOrRegister(RegisterKey + ".DespawnMessage", () => Language.GetTextValue(despawnMessage));
 			}
 		}
 
