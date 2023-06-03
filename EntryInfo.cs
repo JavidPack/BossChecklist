@@ -200,6 +200,9 @@ namespace BossChecklist
 					int primaryNPCID = npcIDs?.Count > 0 ? npcIDs[0] : 0;
 					if (ModContent.GetModNPC(primaryNPCID) is ModNPC modNPC) {
 						prefix = modNPC.GetLocalizationKey("BossChecklistIntegration");
+						// For single NPC bosses, assume EntryName is DisplayName rather than registering a localization key.
+						if (/*internalName == modNPC.Name &&*/ npcIDs.Count == 1 && !Language.Exists($"{prefix}.EntryName"))
+							name ??= modNPC.DisplayName;
 						name ??= Language.GetOrRegister($"{prefix}.EntryName", () => Regex.Replace(internalName, "([A-Z])", " $1").Trim());
 						spawnInfo ??= Language.GetOrRegister($"{prefix}.SpawnInfo", () => "Conditions unknown"); // Register English/default, not localized.
 					}

@@ -259,7 +259,8 @@ namespace BossChecklist
 
 			void SetupLocalizationForNPC(int npcType, string entryName, string spawnInfo, string despawnMessage) {
 				ModNPC modNPC = ModContent.GetModNPC(npcType);
-				modNPC.GetLocalization("BossChecklistIntegration.EntryName", () => GetLocalizationEntryValueFromObsoleteSubmission(entryName));
+				if(modNPC.DisplayName.Value != Language.GetTextValue(entryName)) // No need to register localization key if equal to displayname. Updated Call code will also assume similar logic.
+					modNPC.GetLocalization("BossChecklistIntegration.EntryName", () => GetLocalizationEntryValueFromObsoleteSubmission(entryName));
 				if(spawnInfo != null) // Required in 1.4.4, so register even if null.
 					modNPC.GetLocalization("BossChecklistIntegration.SpawnInfo", () => GetLocalizationEntryValueFromObsoleteSubmission(spawnInfo));
 				else
