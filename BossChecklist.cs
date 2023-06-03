@@ -156,7 +156,7 @@ namespace BossChecklist
 					}
 
 					string internalName = args[2] as string;
-					if (!internalName.Any(char.IsLetter)) {
+					if (!internalName.All(char.IsLetter)) {
 						Logger.Warn($"Invalid internal name passed ({internalName}). Your call must contain a string without whitespaces or any non-alpha characters to generate an entry key.");
 						return "Failure";
 					}
