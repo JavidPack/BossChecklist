@@ -100,9 +100,9 @@ namespace BossChecklist
 			return dict;
 		}
 
-		internal string DisplayName => Language.GetTextValue(name.Key);
+		internal string DisplayName => name.Value;
 
-		internal string DisplaySpawnInfo => Language.GetTextValue(spawnInfo.Key);
+		internal string DisplaySpawnInfo => spawnInfo.Value;
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
