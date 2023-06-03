@@ -207,6 +207,7 @@ Mods: {
 		}
 
 		BossSpawnInfo: {
+			// Unknown: Spawn conditions unknown
 			KingSlime: Usando [i:560], al azar al no estar en el centro del mapa o matando 150 slimes durante la Lluvia de slimes.
 			EyeofCthulhu: Usando [i:43] de noche, o con 1/3 de probabilidades de aparecer por la noche teniendo más de 200 PS.
 			EaterofWorldsHead: Usando [i:70] o rompiendo 3 orbes sombríos en un abismo corrupto.
@@ -500,6 +501,16 @@ Mods: {
 						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
 						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
 						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
+						''' */
+				}
+
+				DisableAutoLocalization: {
+					// Label: Disable Auto Localization
+					/* Tooltip:
+						'''
+						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
+						The new calls do not require these localizations but will default to them if null is passed.
+						Set to true to prevent new localizations from being created by BossChecklist.
 						''' */
 				}
 

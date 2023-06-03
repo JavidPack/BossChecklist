@@ -207,6 +207,7 @@ Mods: {
 		}
 
 		BossSpawnInfo: {
+			// Unknown: Spawn conditions unknown
 			KingSlime: 使用 [i:560], 或在地图外侧的两个 1/6 （最左边或最右边）范围内随机生成, 或者在史莱姆雨期间杀死 150 个史莱姆.
 			EyeofCthulhu: 在夜晚使用 [i:43], 当至少一名玩家最大生命值大于等于 200, 防御值大于等于 10 且未曾被击败时在每个夜晚有 1/3 的几率生成.
 			EaterofWorldsHead: 在腐化之地使用 [i:70] 或在腐化之地的裂缝中破坏 3 个暗影珠.
@@ -501,6 +502,16 @@ Mods: {
 						如果启用了Boss消失信息，则当显Boss消失信息时，这也应该在聊框天中显示一条消息.
 						这些信息应该分别在Boss被击败或Boss消失时出现.
 						'''
+				}
+
+				DisableAutoLocalization: {
+					// Label: Disable Auto Localization
+					/* Tooltip:
+						'''
+						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
+						The new calls do not require these localizations but will default to them if null is passed.
+						Set to true to prevent new localizations from being created by BossChecklist.
+						''' */
 				}
 
 				DisableNewRecords: {

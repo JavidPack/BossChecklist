@@ -207,6 +207,7 @@ Mods: {
 		}
 
 		BossSpawnInfo: {
+			Unknown: Spawn conditions unknown
 			KingSlime: Use [i:560], randomly in outer 3rds of map, or kill 150 slimes during slime rain.
 			EyeofCthulhu: Use [i:43] at night, or 1/3 chance nightly if over 200 HP.
 			EaterofWorldsHead: Use [i:70] or break 3 Shadow Orbs in a corruption chasm.

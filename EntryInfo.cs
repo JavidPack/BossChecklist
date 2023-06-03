@@ -10,6 +10,7 @@ using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using System.Text.RegularExpressions;
 
 namespace BossChecklist
 {
@@ -188,9 +189,30 @@ namespace BossChecklist
 			this.downed = downed;
 
 			// Localization checks
-			string prefix = type == EntryType.Event ? $"Mods.{modSource}.BossChecklistIntegration.{internalName}" : $"Mods.{modSource}.NPCs.{ModContent.GetModNPC(npcIDs[0]).Name}.BossChecklistIntegration";
-			this.name = name ?? Language.GetText(prefix + ".EntryName");
-			this.spawnInfo = spawnInfo ?? Language.GetText(prefix + ".SpawnInfo");
+			if(name == null || spawnInfo == null) {
+				// Modded. Ensure that all nulls passed in autoregister a localization key.
+				string prefix;
+				if (type == EntryType.Event) {
+					name ??= Language.GetOrRegister($"Mods.{modSource}.BossChecklistIntegration.{internalName}.EntryName", () => Regex.Replace(internalName, "([A-Z])", " $1").Trim()); // Add spaces before each capital letter.
+					spawnInfo ??= Language.GetOrRegister($"Mods.{modSource}.BossChecklistIntegration.{internalName}.SpawnInfo", () => "Spawn conditions unknown");
+				}
+				else {
+					int primaryNPCID = npcIDs?.Count > 0 ? npcIDs[0] : 0;
+					if (ModContent.GetModNPC(primaryNPCID) is ModNPC modNPC) {
+						prefix = modNPC.GetLocalizationKey("BossChecklistIntegration");
+						name ??= Language.GetOrRegister($"{prefix}.EntryName", () => Regex.Replace(internalName, "([A-Z])", " $1").Trim());
+						spawnInfo ??= Language.GetOrRegister($"{prefix}.SpawnInfo", () => "Conditions unknown"); // Register English/default, not localized.
+					}
+					else {
+						// Mod registered boss for vanilla npc or no npcids?
+						name ??= Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
+						spawnInfo ??= Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
+					}
+				}
+			}
+
+			this.name = name;
+			this.spawnInfo = spawnInfo;
 
 			// self-initializing data
 			this.hidden = false; // defaults to false, hidden status can be toggled per world
