@@ -222,12 +222,12 @@ namespace BossChecklist
 
 							if (!DebugConfig.DisableAutoLocalization) {
 								if (message.Contains("Event")) {
-									SetupLocalizationForEvent(mod.Name, Language.GetTextValue(entryNameValue.Replace(" ", "")), submittedName, args[9] as string, args[10] as string);
+									SetupLocalizationForEvent(mod.Name, Language.GetTextValue(entryNameValue.Replace(" ", "")), submittedName, args[9] as string, args[10]);
 								}
 								else {
 									List<int> npcs = InterpretObjectAsListOfInt(args[3]);
 									if (npcs.Count > 0)
-										SetupLocalizationForNPC(npcs[0], submittedName, args[9] as string, args[10] as string);
+										SetupLocalizationForNPC(npcs[0], submittedName, args[9] as string, args[10]);
 								}
 							}							
 						}
@@ -257,7 +257,7 @@ namespace BossChecklist
 				oldCallsList.Add(name);
 			}
 
-			void SetupLocalizationForNPC(int npcType, string entryName, string spawnInfo, string despawnMessage) {
+			void SetupLocalizationForNPC(int npcType, string entryName, string spawnInfo, object despawnMessage) {
 				ModNPC modNPC = ModContent.GetModNPC(npcType);
 				if(modNPC.DisplayName.Value != Language.GetTextValue(entryName)) // No need to register localization key if equal to displayname. Updated Call code will also assume similar logic.
 					modNPC.GetLocalization("BossChecklistIntegration.EntryName", () => GetLocalizationEntryValueFromObsoleteSubmission(entryName));
@@ -265,19 +265,27 @@ namespace BossChecklist
 					modNPC.GetLocalization("BossChecklistIntegration.SpawnInfo", () => GetLocalizationEntryValueFromObsoleteSubmission(spawnInfo));
 				else
 					modNPC.GetLocalization("BossChecklistIntegration.SpawnInfo", () => "Spawn conditions unknown");
-				if (despawnMessage != null) // optional, don't register unless provided
-					modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage));
+				if (despawnMessage != null) { // optional, don't register unless provided
+					if (despawnMessage is string)
+						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage as string));
+					else if (despawnMessage is Func<NPC, string>)
+						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => "");
+				}
 			}
 
-			void SetupLocalizationForEvent(string modName, string internalName, string entryName, string spawnInfo, string despawnMessage) {
+			void SetupLocalizationForEvent(string modName, string internalName, string entryName, string spawnInfo, object despawnMessage) {
 				string RegisterKey = $"Mods.{modName}.BossChecklistIntegration.{internalName}";
 				Language.GetOrRegister(RegisterKey + ".EntryName", () => GetLocalizationEntryValueFromObsoleteSubmission(entryName));
 				if (spawnInfo != null)
 					Language.GetOrRegister(RegisterKey + ".SpawnInfo", () => GetLocalizationEntryValueFromObsoleteSubmission(spawnInfo));
 				else
 					Language.GetOrRegister(RegisterKey + ".SpawnInfo", () => "Spawn conditions unknown");
-				if (despawnMessage != null)
-					Language.GetOrRegister(RegisterKey + ".DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage));
+				if (despawnMessage != null) {
+					if (despawnMessage is string)
+						Language.GetOrRegister(RegisterKey + ".DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage as string));
+					else if (despawnMessage is Func<NPC, string>)
+						Language.GetOrRegister(RegisterKey + ".DespawnMessage", () => "");
+				}
 			}
 
 			string GetLocalizationEntryValueFromObsoleteSubmission(string input) {
