@@ -269,7 +269,7 @@ namespace BossChecklist
 					if (despawnMessage is string)
 						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage as string));
 					else if (despawnMessage is Func<NPC, string>)
-						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => "");
+						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => "{0} is no longer after you...");
 				}
 			}
 
