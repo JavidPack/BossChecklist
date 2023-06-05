@@ -252,7 +252,17 @@ namespace BossChecklist
 			this.spawnItem = extraData?.ContainsKey("spawnItems") == true ? InterpretObjectAsListOfInt(extraData["spawnItems"]) : new List<int>();
 			this.collection = extraData?.ContainsKey("collectibles") == true ? InterpretObjectAsListOfInt(extraData["collectibles"]) : new List<int>();
 			this.customDrawing = extraData?.ContainsKey("customPortrait") == true ? extraData["customPortrait"] as Action<SpriteBatch, Rectangle, Color> : null;
-			this.customDespawnMessages = entryType != EntryType.Event && extraData?.ContainsKey("despawnMessage") == true ? extraData["despawnMessage"] as Func<NPC, LocalizedText> : null;
+			if (extraData?.ContainsKey("despawnMessage") == true) {
+				if (extraData["despawnMessage"] is Func<NPC, LocalizedText> multiMessage) {
+					this.customDespawnMessages = multiMessage;
+				}
+				else if (extraData["despawnMessage"] is LocalizedText singleMessage) {
+					this.customDespawnMessages = (NPC npc) => singleMessage.WithFormatArgs(npc.FullName);
+				}
+				else {
+					this.customDespawnMessages = null;
+				}
+			}
 
 			headIconTextures = new List<Asset<Texture2D>>();
 			if (extraData?.ContainsKey("overrideHeadTextures") == true) {
