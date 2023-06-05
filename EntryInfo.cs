@@ -91,7 +91,7 @@ namespace BossChecklist
 				{ "isEvent", type.Equals(EntryType.Event) },
 
 				{ "npcIDs", new List<int>(npcIDs) },
-				{ "spawnItem", new List<int>(spawnItem) },
+				{ "spawnItems", new List<int>(spawnItem) },
 				{ "treasureBag", treasureBag },
 				{ "loot", new List<DropRateInfo>(loot) },
 				{ "collection", new List<int>(collection) }
@@ -359,7 +359,7 @@ namespace BossChecklist
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}") },
-					{ "spawnItem", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
 				}
@@ -402,7 +402,7 @@ namespace BossChecklist
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}") },
-					{ "spawnItem", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
 				}
@@ -421,7 +421,7 @@ namespace BossChecklist
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
-					{ "spawnItem", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
 				}
 			);
