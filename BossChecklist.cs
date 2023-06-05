@@ -169,8 +169,7 @@ namespace BossChecklist
 						args[4] as LocalizedText, // Name Translation
 						InterpretObjectAsListOfInt(args[5]), // NPC IDs
 						args[6] as Func<bool>, // Downed
-						args[7] as LocalizedText, // Spawn Info
-						args[8] as Dictionary<string, object>
+						args[7] as Dictionary<string, object>
 					);
 					return "Success";
 				}
