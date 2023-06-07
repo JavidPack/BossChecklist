@@ -297,10 +297,10 @@ namespace BossChecklist
 						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
 						if (entry.GetDespawnMessage(npc) is LocalizedText message) {
 							if (Main.netMode == NetmodeID.SinglePlayer) {
-								Main.NewText(Language.GetTextValue(message.Key, npc.FullName), Colors.RarityPurple);
+								Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 							}
 							else {
-								ChatHelper.BroadcastChatMessage(NetworkText.FromKey(message.Key, npc.FullName), Colors.RarityPurple);
+								ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
 							}
 						}
 					}

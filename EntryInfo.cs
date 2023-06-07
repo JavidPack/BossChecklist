@@ -258,7 +258,7 @@ namespace BossChecklist
 					this.customDespawnMessages = multiMessage;
 				}
 				else if (extraData["despawnMessage"] is LocalizedText singleMessage) {
-					this.customDespawnMessages = (NPC npc) => singleMessage.WithFormatArgs(npc.FullName);
+					this.customDespawnMessages = (NPC npc) => singleMessage;
 				}
 				else {
 					this.customDespawnMessages = null;
