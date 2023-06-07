@@ -175,7 +175,7 @@ Mods: {
 			}
 
 			Defeated: {
-				Tower: "{0}已被击败!"
+				Tower: {0}已被摧毁!
 				Limb: "{0}已被击倒!"
 			}
 
@@ -251,8 +251,8 @@ Mods: {
 		}
 
 		Keybinds: {
-			// ToggleChecklist.DisplayName: Toggle Boss Checklist
-			// ToggleLog.DisplayName: Toggle Boss Log
+			ToggleChecklist.DisplayName: 开关Boss清单
+			ToggleLog.DisplayName: 开关Boss日志
 		}
 
 		Configs: {
@@ -300,17 +300,17 @@ Mods: {
 
 				FilterBosses: {
 					Label: 过滤日志中不符合条件的Boss
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				FilterMiniBosses: {
 					Label: 过滤日志中不符合条件的小Boss
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				FilterEvents: {
 					Label: 过滤日志中不符合条件的事件
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				ColoredBossText: {
@@ -324,7 +324,7 @@ Mods: {
 
 				SelectedCheckmarkType: {
 					Label: 标记模式
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				DrawNextMark: {
@@ -344,12 +344,12 @@ Mods: {
 
 				EnableProgressionMode: {
 					Label: 启用进度模式
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				DisableProgressionMode: {
 					Label: 禁用进度模式
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				ProgressionPrompt: {
@@ -359,12 +359,12 @@ Mods: {
 
 				MaskTextures: {
 					Label: 隐藏材质直至其条目被击败
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				MaskNames: {
 					Label: 隐藏名称直至其条目被击败
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				UnmaskNextCheck: {
@@ -374,7 +374,7 @@ Mods: {
 
 				MaskBossLoot: {
 					Label: 隐藏Boss掉落物直至其条目被击败
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				MaskHardMode: {
@@ -422,22 +422,22 @@ Mods: {
 
 				TreasureBags: {
 					Label: 宝藏袋在小地图上显示
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				Fragments: {
 					Label: 四柱碎片在小地图上显示
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				Scales: {
 					Label: 暗影鳞片和血腥样本在小地图上显示
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				BossRadar: {
 					Label: 启用Boss雷达
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				RadarMiniBosses: {
@@ -463,7 +463,7 @@ Mods: {
 					Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
 					DebugResetData: "[i:575] [c/ffeb6e:重置数据选项]"
-					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
+					FeatureTesting: "[i:2172] [c/ffeb6e:功能测试]"
 				}
 
 				ModCallVerbose: {
@@ -525,7 +525,7 @@ Mods: {
 
 				DisableRecordTracking: {
 					Label: 禁用完整的跟踪记录
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				ShowRecordTracking: {
@@ -563,21 +563,21 @@ Mods: {
 				}
 
 				RecordFeatureTesting: {
-					// Label: Disable 'Boss Record' feature testing
-					/* Tooltip:
+					Label: 禁用'Boss记录'功能测试
+					Tooltip:
 						'''
-						Prevents Boss Records code from running, effectively disabling it while its in feature testing.
-						This feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.
-						''' */
+						阻止Boss记录代码的运行, 能够有效的在处于测试功能时将其禁用.
+						在功能测试下线并在所有用户中完全启用之前, 此功能将需要测试和Bug报告.
+						'''
 				}
 
 				WorldRecordFeatureTesting: {
-					// Label: Disable 'World Record' feature testing
-					/* Tooltip:
+					Label: 禁用'世界记录'功能测试
+					Tooltip:
 						'''
-						Prevents World Records code from running, effectively disabling it while its in feature testing.
-						As of now this feature is known to not work and may cause issues.
-						''' */
+						阻止世界记录代码的运行, 能够有效的在处于测试功能时将其禁用.
+						到目前为止, 已知此功能不起作用, 并可能会导致问题.
+						'''
 				}
 			}
 
