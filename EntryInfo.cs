@@ -192,7 +192,7 @@ namespace BossChecklist
 			return true; // if it passes all the checks, it should be shown
 		}
 
-		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, LocalizedText name, List<int> npcIDs, Func<bool> downed, Dictionary<string, object> extraData = null) {
+		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, List<int> npcIDs, Func<bool> downed, Dictionary<string, object> extraData = null) {
 			// Add the mod source to the opted mods list of the credits page if its not already and add the entry type
 			if (modSource != "Terraria" && modSource != "Unknown") {
 				BossUISystem.Instance.RegisteredMods.TryAdd(modSource, new int[3]);
@@ -209,6 +209,7 @@ namespace BossChecklist
 			this.downed = downed;
 
 			// Localization checks
+			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;
 			LocalizedText spawnInfo = extraData?.ContainsKey("spawnInfo") == true ? extraData["spawnInfo"] as LocalizedText : null;
 
 			if (name == null || spawnInfo == null) {
@@ -353,10 +354,10 @@ namespace BossChecklist
 				modSource: "Terraria",
 				internalName: nameKey,
 				progression: val,
-				name: Language.GetText(key),
 				npcIDs: new List<int>() { npcID },
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
+					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
@@ -395,10 +396,10 @@ namespace BossChecklist
 				modSource: "Terraria",
 				internalName: nameKey,
 				progression: val,
-				name: Language.GetText(key),
 				npcIDs: ids,
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
+					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
@@ -414,10 +415,10 @@ namespace BossChecklist
 				modSource: "Terraria",
 				internalName: nameKey,
 				progression: val,
-				name: Language.GetText(key),
 				npcIDs: BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
+					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
