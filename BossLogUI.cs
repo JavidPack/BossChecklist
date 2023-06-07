@@ -981,8 +981,8 @@ namespace BossChecklist
 					PageTwo.Append(lootButton);
 				}
 				else {
-					// if the boss has an unknown source, it is likely that the mod call for it is using the old mod call
-					// this should be brought to the developer's attention, so a message will be displayed on the boss's page
+					// Old mod calls are no longer supported and will not add entries
+					// if somehow the entry has an unknown source, make a panel to show something went wrong
 					UIPanel brokenPanel = new UIPanel();
 					brokenPanel.Height.Pixels = 160;
 					brokenPanel.Width.Pixels = 340;
@@ -990,10 +990,7 @@ namespace BossChecklist
 					brokenPanel.Left.Pixels = 3;
 					PageTwo.Append(brokenPanel);
 
-					// TODO: this will likely always output the NotImplemented, but I don't want to remove it just yet
-					bool entryHasOldCall = BossChecklist.bossTracker.OldCalls.Values.Any(x => x.Contains(GetLogEntryInfo.name));
-					string message = entryHasOldCall ? "NotImplemented" : "LogFeaturesNotAvailable";
-					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.EntryPage.{message}");
+					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.EntryPage.LogFeaturesNotAvailable");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = -12;

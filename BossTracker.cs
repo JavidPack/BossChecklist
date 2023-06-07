@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -79,96 +77,96 @@ namespace BossChecklist
 		private void InitializeVanillaEntries() {
 			SortedEntries = new List<EntryInfo> {
 				// Bosses -- Vanilla
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "$NPCName.KingSlime", new List<int>() { NPCID.KingSlime }, () => NPC.downedSlimeKing, new List<int>() { ItemID.SlimeCrown })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "NPCName.KingSlime", NPCID.KingSlime, () => NPC.downedSlimeKing)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.KingSlime}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "$NPCName.EyeofCthulhu", new List<int>() { NPCID.EyeofCthulhu }, () => NPC.downedBoss1, new List<int>() { ItemID.SuspiciousLookingEye }),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.EaterofWorldsHead", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2, new List<int>() { ItemID.WormFood })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "NPCName.EyeofCthulhu", NPCID.EyeofCthulhu, () => NPC.downedBoss1),
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "NPCName.EaterofWorldsHead", new List<int>() { NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail }, () => NPC.downedBoss2)
 					.WithCustomAvailability(() => !WorldGen.crimson || Main.drunkWorld || ModLoader.TryGetMod("BothEvils", out Mod mod))
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.EaterofWorldsHead}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "$NPCName.BrainofCthulhu", new List<int>() { NPCID.BrainofCthulhu }, () => NPC.downedBoss2, new List<int>() { ItemID.BloodySpine })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, EaterOfWorlds, "NPCName.BrainofCthulhu", NPCID.BrainofCthulhu, () => NPC.downedBoss2)
 					.WithCustomAvailability(() => WorldGen.crimson || Main.drunkWorld || ModLoader.TryGetMod("BothEvils", out Mod mod)),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "$NPCName.QueenBee", new List<int>() { NPCID.QueenBee }, () => NPC.downedQueenBee, new List<int>() { ItemID.Abeemination }),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "$NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead, NPCID.SkeletronHand }, () => NPC.downedBoss3, new List<int>() { ItemID.ClothierVoodooDoll })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "NPCName.QueenBee", NPCID.QueenBee, () => NPC.downedQueenBee),
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead, NPCID.SkeletronHand }, () => NPC.downedBoss3)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronHead}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "$NPCName.Deerclops", new List<int>() { NPCID.Deerclops }, () => NPC.downedDeerclops, new List<int>() { ItemID.DeerThing })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "NPCName.Deerclops", NPCID.Deerclops, () => NPC.downedDeerclops)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Deerclops}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "$NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh, NPCID.WallofFleshEye }, () => Main.hardMode, new List<int>() { ItemID.GuideVoodooDoll })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, WallOfFlesh, "NPCName.WallofFlesh", new List<int>() { NPCID.WallofFlesh, NPCID.WallofFleshEye }, () => Main.hardMode)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.WallofFlesh}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, QueenSlime, "$NPCName.QueenSlimeBoss", new List<int>() { NPCID.QueenSlimeBoss }, () => NPC.downedQueenSlime, new List<int>() { ItemID.QueenSlimeCrystal })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, QueenSlime, "NPCName.QueenSlimeBoss", NPCID.QueenSlimeBoss, () => NPC.downedQueenSlime)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.QueenSlimeBoss}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "$Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2, new List<int>() { ItemID.MechanicalEye })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, TheTwins, "Enemies.TheTwins", new List<int>() { NPCID.Retinazer, NPCID.Spazmatism }, () => NPC.downedMechBoss2)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Retinazer}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "$NPCName.TheDestroyer", new List<int>() { NPCID.TheDestroyer }, () => NPC.downedMechBoss1, new List<int>() { ItemID.MechanicalWorm })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "NPCName.TheDestroyer", NPCID.TheDestroyer, () => NPC.downedMechBoss1)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.TheDestroyer}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "$NPCName.SkeletronPrime", new List<int>() { NPCID.SkeletronPrime }, () => NPC.downedMechBoss3, new List<int>() { ItemID.MechanicalSkull })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "NPCName.SkeletronPrime", NPCID.SkeletronPrime, () => NPC.downedMechBoss3)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronPrime}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "$NPCName.Plantera", new List<int>() { NPCID.Plantera }, () => NPC.downedPlantBoss, new List<int>() { }),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "$NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss, new List<int>() { ItemID.LihzahrdPowerCell, ItemID.LihzahrdAltar })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "NPCName.Plantera", NPCID.Plantera, () => NPC.downedPlantBoss),
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "$NPCName.DD2Betsy", new List<int>() { NPCID.DD2Betsy }, () => WorldAssist.downedInvasionT3Ours, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "NPCName.DD2Betsy", NPCID.DD2Betsy, () => WorldAssist.downedInvasionT3Ours)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2Betsy}"),
 					// No despawn message due to being in an event
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "$NPCName.HallowBoss", new List<int>() { NPCID.HallowBoss }, () => NPC.downedEmpressOfLight, new List<int>() { ItemID.EmpressButterfly })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "NPCName.HallowBoss", NPCID.HallowBoss, () => NPC.downedEmpressOfLight)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.HallowBoss}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "$NPCName.DukeFishron", new List<int>() { NPCID.DukeFishron }, () => NPC.downedFishron, new List<int>() { ItemID.TruffleWorm }),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "$NPCName.CultistBoss", new List<int>() { NPCID.CultistBoss }, () => NPC.downedAncientCultist, new List<int>() { })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "NPCName.DukeFishron", NPCID.DukeFishron, () => NPC.downedFishron),
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "NPCName.CultistBoss", NPCID.CultistBoss, () => NPC.downedAncientCultist)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.CultistBoss}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "$Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord, new List<int>() { ItemID.CelestialSigil })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
-				EntryInfo.MakeVanillaEvent(TorchGod, "$NPCName.TorchGod", () => WorldAssist.downedTorchGod, new List<int>() { ItemID.Torch })
+				EntryInfo.MakeVanillaEvent(TorchGod, "NPCName.TorchGod", () => WorldAssist.downedTorchGod)
 					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
-				EntryInfo.MakeVanillaEvent(BloodMoon, "$Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon, new List<int>() { ItemID.BloodMoonStarter })
+				EntryInfo.MakeVanillaEvent(BloodMoon, "Bestiary_Events.BloodMoon", () => WorldAssist.downedBloodMoon)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventBloodMoon")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventBloodMoon_Head"),
 				// EntryInfo.MakeVanillaBoss(BossChecklistType.MiniBoss,WallOfFlesh + 0.1f, "Clown", new List<int>() { NPCID.Clown}, () => NPC.downedClown, new List<int>() { }, $"Spawns during Hardmode Bloodmoon"),
-				EntryInfo.MakeVanillaEvent(GoblinArmy, "Goblin Army", () => NPC.downedGoblins, new List<int>() { ItemID.GoblinBattleStandard })
-					.WithCustomTranslationKey("$LegacyInterface.88")
+				EntryInfo.MakeVanillaEvent(GoblinArmy, "Goblin Army", () => NPC.downedGoblins)
+					.WithCustomTranslationKey("LegacyInterface.88")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventGoblinArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_9"),
-				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty, new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand })
-					.WithCustomTranslationKey("$DungeonDefenders2.InvasionProgressTitle")
+				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty)
+					.WithCustomTranslationKey("DungeonDefenders2.InvasionProgressTitle")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_79"),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, DarkMage, "$NPCName.DD2DarkMageT3", new List<int>() { NPCID.DD2DarkMageT3 }, () => WorldAssist.downedDarkMage, new List<int>() { })
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, DarkMage, "NPCName.DD2DarkMageT3", new List<int>() { NPCID.DD2DarkMageT3 }, () => WorldAssist.downedDarkMage)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2DarkMageT3}"),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, Ogre, "$NPCName.DD2OgreT3", new List<int>() { NPCID.DD2OgreT3 }, () => WorldAssist.downedOgre, new List<int>() { })
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, Ogre, "NPCName.DD2OgreT3", new List<int>() { NPCID.DD2OgreT3 }, () => WorldAssist.downedOgre)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2OgreT3}"),
-				EntryInfo.MakeVanillaEvent(FrostLegion, "Frost Legion", () => NPC.downedFrost, new List<int>() { ItemID.SnowGlobe })
-					.WithCustomTranslationKey("$LegacyInterface.87")
+				EntryInfo.MakeVanillaEvent(FrostLegion, "Frost Legion", () => NPC.downedFrost)
+					.WithCustomTranslationKey("LegacyInterface.87")
 					.WithCustomAvailability(() => Main.xMas)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventFrostLegion")
 					.WithCustomHeadIcon("Terraria/Images/Extra_7"),
-				EntryInfo.MakeVanillaEvent(PirateInvasion, "Pirate Invasion", () => NPC.downedPirates, new List<int>() { ItemID.PirateMap })
-					.WithCustomTranslationKey("$LegacyInterface.86")
+				EntryInfo.MakeVanillaEvent(PirateInvasion, "Pirate Invasion", () => NPC.downedPirates)
+					.WithCustomTranslationKey("LegacyInterface.86")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventPirateInvasion")
 					.WithCustomHeadIcon("Terraria/Images/Extra_11"),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, PirateShip, "$NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman, new List<int>() { })
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, PirateShip, "NPCName.PirateShip", new List<int>() { NPCID.PirateShip }, () => WorldAssist.downedFlyingDutchman)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.PirateShip}"),
-				EntryInfo.MakeVanillaEvent(SolarEclipse, "$Bestiary_Events.Eclipse", () => WorldAssist.downedSolarEclipse, new List<int>() { ItemID.SolarTablet })
+				EntryInfo.MakeVanillaEvent(SolarEclipse, "Bestiary_Events.Eclipse", () => WorldAssist.downedSolarEclipse)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventSolarEclipse")
 					.WithCustomHeadIcon($"BossChecklist/Resources/BossTextures/EventSolarEclipse_Head"),
-				EntryInfo.MakeVanillaEvent(PumpkinMoon, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon, new List<int>() { ItemID.PumpkinMoonMedallion })
-					.WithCustomTranslationKey("$LegacyInterface.84")
+				EntryInfo.MakeVanillaEvent(PumpkinMoon, "Pumpkin Moon", () => WorldAssist.downedPumpkinMoon)
+					.WithCustomTranslationKey("LegacyInterface.84")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventPumpkinMoon")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_12"),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, MourningWood, "$NPCName.MourningWood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree, new List<int>() { }),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, Pumpking, "$NPCName.Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing, new List<int>() { })
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, MourningWood, "NPCName.MourningWood", new List<int>() { NPCID.MourningWood }, () => NPC.downedHalloweenTree),
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, Pumpking, "NPCName.Pumpking", new List<int>() { NPCID.Pumpking }, () => NPC.downedHalloweenKing)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Pumpking}"),
-				EntryInfo.MakeVanillaEvent(FrostMoon, "Frost Moon", () => WorldAssist.downedFrostMoon, new List<int>() { ItemID.NaughtyPresent })
-					.WithCustomTranslationKey("$LegacyInterface.83")
+				EntryInfo.MakeVanillaEvent(FrostMoon, "Frost Moon", () => WorldAssist.downedFrostMoon)
+					.WithCustomTranslationKey("LegacyInterface.83")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventFrostMoon")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_8"),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, Everscream, "$NPCName.Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree, new List<int>() { }),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, SantaNK1, "$NPCName.SantaNK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank, new List<int>() { }),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, IceQueen, "$NPCName.IceQueen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen, new List<int>() { }),
-				EntryInfo.MakeVanillaEvent(MartianMadness, "Martian Madness", () => NPC.downedMartians, new List<int>() { })
-					.WithCustomTranslationKey("$LegacyInterface.85")
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, Everscream, "NPCName.Everscream", new List<int>() { NPCID.Everscream }, () => NPC.downedChristmasTree),
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, SantaNK1, "NPCName.SantaNK1", new List<int>() { NPCID.SantaNK1 }, () => NPC.downedChristmasSantank),
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, IceQueen, "NPCName.IceQueen", new List<int>() { NPCID.IceQueen }, () => NPC.downedChristmasIceQueen),
+				EntryInfo.MakeVanillaEvent(MartianMadness, "Martian Madness", () => NPC.downedMartians)
+					.WithCustomTranslationKey("LegacyInterface.85")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventMartianMadness")
 					.WithCustomHeadIcon($"Terraria/Images/Extra_10"),
-				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, MartianSaucer, "$NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer, new List<int>() { }),
-				EntryInfo.MakeVanillaEvent(LunarEvent, "Lunar Event", () => NPC.downedTowers, new List<int>() { })
+				EntryInfo.MakeVanillaBoss(EntryType.MiniBoss, MartianSaucer, "NPCName.MartianSaucer", new List<int>() { NPCID.MartianSaucer, NPCID.MartianSaucerCore }, () => WorldAssist.downedMartianSaucer),
+				EntryInfo.MakeVanillaEvent(LunarEvent, "Lunar Event", () => NPC.downedTowers)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventLunarEvent")
 					.WithCustomHeadIcon(new List<string>() {
 						$"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.LunarTowerNebula]}",
@@ -194,30 +192,36 @@ namespace BossChecklist
 
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {
-				EntryInfo entryInfo = SortedEntries.Find(entry => entry.Key == orphan.Key);
-				if (entryInfo != null && orphan.values != null) {
-					switch (orphan.type) {
-						case OrphanType.Loot:
-							entryInfo.lootItemTypes.AddRange(orphan.values);
-							break;
-						case OrphanType.Collection:
-							entryInfo.collection.AddRange(orphan.values);
-							break;
-						case OrphanType.SpawnItem:
-							entryInfo.spawnItem.AddRange(orphan.values);
-							break;
-						case OrphanType.EventNPC:
-							if (entryInfo.type == EntryType.Event) {
-								entryInfo.npcIDs.AddRange(orphan.values);
-							}
-							else {
-								BossChecklist.instance.Logger.Warn($"{orphan.bossName} from {orphan.modSource} is not an Event entry. AddToEventNPCs must be added to Events.");
-							}
-							break;
+				foreach (KeyValuePair<string, object> submission in orphan.values) {
+					EntryInfo entry = SortedEntries.Find(entry => submission.Key == entry.Key);
+					if (entry is null) {
+						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key})");
+						continue;
+					}
+
+					object data = submission.Value;
+					List<int> InterpretDataAsListOfInt = data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : new List<int>());
+					
+					if (orphan.type == OrphanType.Loot) {
+						entry.lootItemTypes.AddRange(InterpretDataAsListOfInt);
+					}
+					else if (orphan.type == OrphanType.Collection) {
+						entry.collection.AddRange(InterpretDataAsListOfInt);
+					}
+					else if (orphan.type == OrphanType.SpawnItem) {
+						entry.spawnItem.AddRange(InterpretDataAsListOfInt);
+					}
+					else if (orphan.type == OrphanType.EventNPC) {
+						if (entry.type == EntryType.Event) {
+							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
+						}
+						else {
+							BossChecklist.instance.Logger.Warn($"{entry.Key} is not an event entry and cannot take calls from {OrphanType.EventNPC}");
+						}
 					}
 
 					if (BossChecklist.DebugConfig.ModCallLogVerbose)
-						BossChecklist.instance.Logger.Info($"Entry successfully registered {orphan.values.Count} '{orphan.type}' orphan data value(s): [{entryInfo.modSource} {entryInfo.DisplayName}]");
+						BossChecklist.instance.Logger.Info($"{orphan.modSource} successfully registered {InterpretDataAsListOfInt.Count} '{orphan.type}' orphan data value(s) for {entry.Key}");
 				}
 			}
 		}
@@ -278,10 +282,14 @@ namespace BossChecklist
 			EntriesFinalized = true;
 			if (AnyModHasOldCall) {
 				foreach (var oldCall in OldCalls) {
-					BossChecklist.instance.Logger.Info($"{oldCall.Key} calls for the following either not utilizing Boss Log features or is using an old call method for it. Mod developers should update mod calls with proper information to improve user experience. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
+					string entryType = oldCall.Key.Substring(3);
+					if (entryType.EndsWith("WithInfo"))
+						entryType = entryType.Substring(0, entryType.Length - "WithInfo".Length);
+
+					BossChecklist.instance.Logger.Info($"The '{oldCall.Key}' call is an old call and is now obsolete. Use 'Log{entryType}' instead. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
 				}
 				OldCalls.Clear();
-				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/%5B1.4-alpha%5D-Mod-Call-Structure");
+				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call");
 			}
 
 			// The server must populate for collected records after all entries have been counted and sorted.
@@ -406,10 +414,48 @@ namespace BossChecklist
 			}
 		}
 
-		internal readonly Dictionary<string, List<int>> BossCollections = new Dictionary<string, List<int>>() {
+		internal readonly Dictionary<string, List<int>> EntrySpawnItems = new Dictionary<string, List<int>>() {
+			#region Boss SpawnItems
+			{ "Terraria KingSlime", new List<int>() { ItemID.SlimeCrown } },
+			{ "Terraria EyeofCthulhu", new List<int>() { ItemID.SuspiciousLookingEye } },
+			{ "Terraria EaterofWorldsHead", new List<int>() { ItemID.WormFood } },
+			{ "Terraria BrainofCthulhu", new List<int>() { ItemID.BloodySpine } },
+			{ "Terraria QueenBee", new List<int>() { ItemID.Abeemination } },
+			{ "Terraria SkeletronHead", new List<int>() { ItemID.ClothierVoodooDoll } },
+			{ "Terraria Deerclops", new List<int>() { ItemID.DeerThing } },
+			{ "Terraria WallofFlesh", new List<int>() { ItemID.GuideVoodooDoll } },
+			{ "Terraria QueenSlimeBoss", new List<int>() { ItemID.QueenSlimeCrystal } },
+			{ "Terraria TheTwins", new List<int>() { ItemID.MechanicalEye } },
+			{ "Terraria TheDestroyer", new List<int>() { ItemID.MechanicalWorm } },
+			{ "Terraria SkeletronPrime", new List<int>() { ItemID.MechanicalSkull } },
+			// Terraria Plantera: none
+			{ "Terraria Golem", new List<int>() { ItemID.LihzahrdAltar, ItemID.LihzahrdPowerCell } },
+			{ "Terraria HallowBoss", new List<int>() { ItemID.EmpressButterfly } },
+			{ "Terraria DD2Betsy", new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand } },
+			{ "Terraria DukeFishron", new List<int>() { ItemID.TruffleWorm } },
+			// Terraria CultistBoss : none
+			{ "Terraria MoonLord", new List<int>() { ItemID.CelestialSigil } },
+			#endregion
+			// Mini-bosses tied to events will not display spawn items
+			#region Event Collectibles
+			{ "Terraria TorchGod", new List<int>() { ItemID.Torch } },
+			{ "Terraria BloodMoon", new List<int>() { ItemID.BloodMoonStarter } },
+			{ "Terraria GoblinArmy", new List<int>() { ItemID.GoblinBattleStandard } },
+			{ "Terraria OldOnesArmy", new List<int>() { ItemID.DD2ElderCrystal, ItemID.DD2ElderCrystalStand } },
+			{ "Terraria FrostLegion", new List<int>() { ItemID.SnowGlobe } },
+			{ "Terraria Eclipse", new List<int>() { ItemID.SolarTablet } },
+			{ "Terraria PirateInvasion", new List<int>() { ItemID.PirateMap } },
+			{ "Terraria PumpkinMoon", new List<int>() { ItemID.PumpkinMoonMedallion } },
+			{ "Terraria FrostMoon", new List<int>() { ItemID.NaughtyPresent } },
+			// Terraria MartianMadness: none
+			// Terraria LunarEvent: none
+			#endregion
+		};
+
+		internal readonly Dictionary<string, List<int>> EntryCollections = new Dictionary<string, List<int>>() {
 			#region Boss Collectibles
 			{ "Terraria KingSlime",
-				new List<int>(){
+				new List<int>() {
 					ItemID.KingSlimeMasterTrophy,
 					ItemID.KingSlimePetItem,
 					ItemID.KingSlimeTrophy,
@@ -419,7 +465,7 @@ namespace BossChecklist
 				}
 			},
 			{ "Terraria EyeofCthulhu",
-				new List<int>(){
+				new List<int>() {
 					ItemID.EyeofCthulhuMasterTrophy,
 					ItemID.EyeOfCthulhuPetItem,
 					ItemID.EyeofCthulhuTrophy,
@@ -1043,41 +1089,24 @@ namespace BossChecklist
 			ItemID.MusicBoxOWHallow,
 		};
 
-		// Old version compatibility methods
-		internal void AddBoss(string bossname, float bossValue, Func<bool> bossDowned, string spawnInfo = null, Func<bool> available = null) {
-			SortedEntries.Add(new EntryInfo(EntryType.Boss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), spawnInfo, null, null));
+		internal void AddEntry(EntryType type, Mod mod, string iName, float val, Func<bool> down, List<int> id, Dictionary<string, object> extra = null) {
+			EnsureBossIsNotDuplicate(mod?.Name ?? "Unknown", iName);
+			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, val, down, id, extra));
+			LogNewBoss(mod?.Name ?? "Unknown", iName);
 		}
 
-		internal void AddMiniBoss(string bossname, float bossValue, Func<bool> bossDowned, string spawnInfo = null, Func<bool> available = null) {
-			SortedEntries.Add(new EntryInfo(EntryType.MiniBoss, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), spawnInfo, null, null));
+		internal void AddOrphanData(OrphanType type, Mod mod, Dictionary<string, object> values) {
+			if (values is null) {
+				BossChecklist.instance.Logger.Warn($"{type} mod call from {mod.Name} is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls");
+			}
+			else {
+				ExtraData.Add(new OrphanInfo(type, mod.Name, values));
+			}
 		}
 
-		internal void AddEvent(string bossname, float bossValue, Func<bool> bossDowned, string spawnInfo = null, Func<bool> available = null) {
-			SortedEntries.Add(new EntryInfo(EntryType.Event, "Unknown", bossname, new List<int>(), bossValue, bossDowned, available, new List<int>(), new List<int>(), spawnInfo, null, null));
-		}
-
-		// New system
-		internal void AddBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null, List<string> headTextures = null) {
-			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedEntries.Add(new EntryInfo(EntryType.Boss, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, despawn, drawing, headTextures));
-			LogNewBoss(source?.Name ?? "Unknown", Language.GetTextValue(name.StartsWith("?") ? name.Substring(1) : name));
-		}
-
-		internal void AddMiniBoss(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Func<NPC, string> despawn = null, Action<SpriteBatch, Rectangle, Color> drawing = null, List<string> headTextures = null) {
-			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedEntries.Add(new EntryInfo(EntryType.MiniBoss, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, despawn, drawing, headTextures));
-			LogNewBoss(source?.Name ?? "Unknown", Language.GetTextValue(name.StartsWith("?") ? name.Substring(1) : name));
-		}
-
-		internal void AddEvent(Mod source, string name, List<int> id, float val, Func<bool> down, Func<bool> available, List<int> collect, List<int> spawn, string info, Action<SpriteBatch, Rectangle, Color> drawing = null, List<string> headTextures = null) {
-			EnsureBossIsNotDuplicate(source?.Name ?? "Unknown", name);
-			SortedEntries.Add(new EntryInfo(EntryType.Event, source?.Name ?? "Unknown", name, id, val, down, available, collect, spawn, info, null, drawing, headTextures));
-			LogNewBoss(source?.Name ?? "Unknown", Language.GetTextValue(name.StartsWith("?") ? name.Substring(1) : name));
-		}
-
-		internal void EnsureBossIsNotDuplicate(string mod, string bossname) {
-			if (SortedEntries.Any(x=> x.Key == $"{mod} {bossname}"))
-				throw new Exception($"Check your code for duplicate entries or typos, as this entry has already been registered: [{mod} {bossname}]");
+		internal void EnsureBossIsNotDuplicate(string mod, string internalName) {
+			if (SortedEntries.Any(x=> x.Key == $"{mod} {internalName}"))
+				throw new Exception($"Check your code for duplicate entries or typos, as this entry has already been registered: [{mod} {internalName}]");
 		}
 
 		internal void LogNewBoss(string mod, string name) {
@@ -1099,21 +1128,6 @@ namespace BossChecklist
 			else {
 				BossChecklist.instance.Logger.Info($"Entry successfully registered to the Boss Log: [{mod} {name}]");
 			}
-		}
-
-		internal void AddOrphanData(string type, string bossKey, object values) {
-			OrphanType orphanType = OrphanType.Loot; // default to first type
-			if (type == "AddToBossCollection") {
-				orphanType = OrphanType.Collection;
-			}
-			else if (type == "AddToBossSpawnItems") {
-				orphanType = OrphanType.SpawnItem;
-			}
-			else if (type == "AddToEventNPCs") {
-				orphanType = OrphanType.EventNPC;
-			}
-
-			ExtraData.Add(new OrphanInfo(orphanType, bossKey, values as List<int>));
 		}
 	}
 }

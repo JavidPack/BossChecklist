@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,17 +21,6 @@ namespace BossChecklist
 
 		public static Dictionary<int, int> itemToMusicReference;
 
-		// Mods that have been added manually
-		internal bool vanillaLoaded = true;
-		//internal bool thoriumLoaded;
-
-		// Mods that have been added natively, no longer need code here.
-		internal static bool tremorLoaded;
-		//internal bool bluemagicLoaded;
-		//internal bool joostLoaded;
-		//internal bool calamityLoaded;
-		//internal bool pumpkingLoaded;
-
 		internal static ClientConfiguration ClientConfig;
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
@@ -46,8 +33,6 @@ namespace BossChecklist
 			instance = this;
 			ToggleChecklistHotKey = KeybindLoader.RegisterKeybind(this, "ToggleChecklist", "P");
 			ToggleBossLog = KeybindLoader.RegisterKeybind(this, "ToggleLog", "L");
-
-			tremorLoaded = ModLoader.TryGetMod("Tremor", out Mod mod);
 
 			FieldInfo itemToMusicField = typeof(MusicLoader).GetField("itemToMusic", BindingFlags.Static | BindingFlags.NonPublic);
 			itemToMusicReference = (Dictionary<int, int>)itemToMusicField.GetValue(null);
@@ -147,140 +132,60 @@ namespace BossChecklist
 					}
 					return "Failure";
 				}
+
 				if (bossTracker.EntriesFinalized)
 					throw new Exception($"Call Error: The attempted message, \"{message}\", was sent too late. BossChecklist expects Call messages up until before AddRecipes.");
-				if (message == "AddBoss" || message == "AddBossWithInfo") { // For compatability reasons
-					if (argsLength < 7) {
-						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[1] as string);
-						bossTracker.AddBoss(
-							args[1] as string, // Boss Name
-							Convert.ToSingle(args[2]), // Prog
-							args[3] as Func<bool>, // Downed
-							args[4] as string, // Info
-							args[5] as Func<bool> // Available
-						);
+				
+				if (message == "LogBoss" || message == "LogMiniBoss" || message == "LogEvent") {
+					if (args[1] is not Mod submittedMod) {
+						Logger.Warn($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance to generate an entry key.");
+						return "Failure";
 					}
-					else if (args[1] as Mod == null) {
-						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[4] as string);
-						bossTracker.AddBoss(
-							args[3] as Mod, // Mod
-							args[4] as string, // Boss Name
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							Convert.ToSingle(args[1]), // Prog
-							args[5] as Func<bool>, // Downed
-							args[13] as Func<bool>, // Available
-							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
-							args[9] as string // Spawn Info
-						);
+
+					string internalName = args[2] as string;
+					if (!internalName.All(char.IsLetterOrDigit)) {
+						Logger.Warn($"Invalid internal name passed ({internalName}). Your call must contain a string comprised of letters and/or digits without whitespace characters in order to generate an entry key.");
+						return "Failure";
 					}
-					else {
-						bossTracker.AddBoss(
-							args[1] as Mod, // Mod
-							args[2] as string, // Boss Name
-							InterpretObjectAsListOfInt(args[3]), // IDs
-							Convert.ToSingle(args[4]), // Prog
-							args[5] as Func<bool>, // Downed
-							args[6] as Func<bool>, // Available
-							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Spawn Items
-							args[9] as string, // Spawn Info
-							InterpretObjectAsStringFunction(args[10]), // Despawn message
-							args[11] as Action<SpriteBatch, Rectangle, Color>, // Custom Drawing
-							InterpretObjectAsListOfStrings(args[12])
-						);
-					}
+
+					bossTracker.AddEntry(
+						message == "LogBoss" ? EntryType.Boss : message == "LogMiniBoss" ? EntryType.MiniBoss : EntryType.Event,
+						submittedMod, // Mod
+						internalName, // Internal Name
+						Convert.ToSingle(args[3]), // Prog
+						args[4] as Func<bool>, // Downed
+						InterpretObjectAsListOfInt(args[5]), // NPC IDs
+						args[6] as Dictionary<string, object>
+					);
 					return "Success";
 				}
-				else if (message == "AddMiniBoss" || message == "AddMiniBossWithInfo") {
-					if (argsLength < 7) {
-						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[1] as string);
-						bossTracker.AddMiniBoss(
-							args[1] as string, // MiniBoss Name
-							Convert.ToSingle(args[2]), // Prog
-							args[3] as Func<bool>, // Downed
-							args[4] as string, // Info
-							args[5] as Func<bool> // Available
-						);
+				else if (message.StartsWith("Submit")) {
+					OrphanType? DetermineOrphanType() {
+						return message switch {
+							"SubmitEntryLoot" => OrphanType.Loot,
+							"SubmitEntryCollections" => OrphanType.Collection,
+							"SubmitEntrySpawnItems" => OrphanType.SpawnItem,
+							"SubmitEventNPCs" => OrphanType.EventNPC,
+							_ => null
+						};
 					}
-					else if (args[1] as Mod == null) {
-						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[4] as string);
-						bossTracker.AddMiniBoss(
-							args[3] as Mod, // Mod
-							args[4] as string, // Boss Name
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							Convert.ToSingle(args[1]), // Prog
-							args[5] as Func<bool>, // Downed
-							args[13] as Func<bool>, // Available
-							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
-							args[9] as string // Spawn Info
-						);
+
+					if (DetermineOrphanType() == null) {
+						Logger.Error($"Call Error: Unknown Message: {message}");
+						return "Failue";
 					}
-					else {
-						bossTracker.AddMiniBoss(
-							args[1] as Mod, // Mod
-							args[2] as string, // Boss Name
-							InterpretObjectAsListOfInt(args[3]), // IDs
-							Convert.ToSingle(args[4]), // Prog
-							args[5] as Func<bool>, // Downed
-							args[6] as Func<bool>, // Available
-							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Spawn Items
-							args[9] as string, // Spawn Info
-							InterpretObjectAsStringFunction(args[10]), // Despawn message
-							args[11] as Action<SpriteBatch, Rectangle, Color>, // Custom Drawing
-							InterpretObjectAsListOfStrings(args[12])
-						);
+
+					if (args[1] is not Mod submittedMod) {
+						Logger.Error($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance for logging purposes.");
+						return "Failure";
 					}
-					return "Success";
-				}
-				else if (message == "AddEvent" || message == "AddEventWithInfo") {
-					if (argsLength < 7) {
-						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[1] as string);
-						bossTracker.AddEvent(
-							args[1] as string, // Event Name
-							Convert.ToSingle(args[2]), // Prog
-							args[3] as Func<bool>, // Downed
-							args[4] as string, // Info
-							args[5] as Func<bool> // Available
-						);
-					}
-					else if (args[1] as Mod == null) {
-						bossTracker.AnyModHasOldCall = true;
-						AddToOldCalls(message, args[4] as string);
-						bossTracker.AddEvent(
-							args[3] as Mod, // Mod
-							args[4] as string, // Boss Name
-							InterpretObjectAsListOfInt(args[2]), // IDs
-							Convert.ToSingle(args[1]), // Prog
-							args[5] as Func<bool>, // Downed
-							args[13] as Func<bool>, // Available
-							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[6]), // Spawn Items
-							args[9] as string // Spawn Info
-						);
-					}
-					else {
-						bossTracker.AddEvent(
-							args[1] as Mod, // Mod
-							args[2] as string, // Boss Name
-							InterpretObjectAsListOfInt(args[3]), // IDs
-							Convert.ToSingle(args[4]), // Prog
-							args[5] as Func<bool>, // Downed
-							args[6] as Func<bool>, // Available
-							InterpretObjectAsListOfInt(args[7]), // Collection
-							InterpretObjectAsListOfInt(args[8]), // Spawn Items
-							args[9] as string, // Spawn Info
-							args[10] as Action<SpriteBatch, Rectangle, Color>, // Custom Drawing
-							InterpretObjectAsListOfStrings(args[11])
-						);
-					}
+
+					bossTracker.AddOrphanData(
+						DetermineOrphanType().Value, // OrphanType
+						submittedMod,
+						args[2] as Dictionary<string, object> // ID List
+					);
+
 					return "Success";
 				}
 				// TODO
@@ -289,20 +194,35 @@ namespace BossChecklist
 				//	// Returns List<Tuple<string, float, int, bool>>: Name, value, bosstype(boss, miniboss, event), downed.
 				//	return bossTracker.allBosses.Select(x => new Tuple<string, float, int, bool>(x.name, x.progression, (int)x.type, x.downed())).ToList();
 				//}
-				else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
-					bossTracker.AddOrphanData(
-						message, // OrphanType
-						args[1] as string, // Boss Key (obtainable via the BossLog, when display config is enabled)
-						InterpretObjectAsListOfInt(args[2]) // ID List
-					);
-					if (argsLength != 3) {
-						if (DebugConfig.ModCallLogVerbose)
-							Logger.Warn($"{message} mod call from the above mod is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4]-Other-Mod-Calls");
-					}
-					return "Success";
-				}
 				else {
 					Logger.Error($"Call Error: Unknown Message: {message}");
+
+					// Track old mod calls to later inform mod developers to update their mod calls.
+					if (message.Contains("AddBoss") || message.Contains("AddMiniBoss") || message.Contains("AddEvent")) {
+						string entryNameValue = "unknown";
+						if (args[1] is Mod mod) {
+							string submittedName = args[2] as string;
+							string keyOrValue = submittedName.StartsWith("$") ? submittedName.Substring(1) : submittedName;
+							entryNameValue = Language.GetTextValue(keyOrValue);
+
+							if (!DebugConfig.DisableAutoLocalization) {
+								if (message.Contains("Event")) {
+									SetupLocalizationForEvent(mod.Name, Language.GetTextValue(entryNameValue.Replace(" ", "")), submittedName, args[9] as string, args[10]);
+								}
+								else {
+									List<int> npcs = InterpretObjectAsListOfInt(args[3]);
+									if (npcs.Count > 0)
+										SetupLocalizationForNPC(npcs[0], submittedName, args[9] as string, args[10]);
+								}
+							}							
+						}
+						else if (args[1] is string submittedName) {
+							entryNameValue = submittedName;
+						}
+
+						bossTracker.AnyModHasOldCall = true;
+						AddToOldCalls(message, entryNameValue);
+					}
 				}
 			}
 			catch (Exception e) {
@@ -320,6 +240,41 @@ namespace BossChecklist
 				if (!bossTracker.OldCalls.TryGetValue(message, out List<string> oldCallsList))
 					bossTracker.OldCalls.Add(message, oldCallsList = new List<string>());
 				oldCallsList.Add(name);
+			}
+
+			void SetupLocalizationForNPC(int npcType, string entryName, string spawnInfo, object despawnMessage) {
+				ModNPC modNPC = ModContent.GetModNPC(npcType);
+				if(modNPC.DisplayName.Value != Language.GetTextValue(entryName)) // No need to register localization key if equal to displayname. Updated Call code will also assume similar logic.
+					modNPC.GetLocalization("BossChecklistIntegration.EntryName", () => GetLocalizationEntryValueFromObsoleteSubmission(entryName));
+				if(spawnInfo != null) // Required in 1.4.4, so register even if null.
+					modNPC.GetLocalization("BossChecklistIntegration.SpawnInfo", () => GetLocalizationEntryValueFromObsoleteSubmission(spawnInfo));
+				else
+					modNPC.GetLocalization("BossChecklistIntegration.SpawnInfo", () => "Spawn conditions unknown");
+				if (despawnMessage != null) { // optional, don't register unless provided
+					if (despawnMessage is string)
+						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage as string));
+					else if (despawnMessage is Func<NPC, string>)
+						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => "{0} is no longer after you...");
+				}
+			}
+
+			void SetupLocalizationForEvent(string modName, string internalName, string entryName, string spawnInfo, object despawnMessage) {
+				string RegisterKey = $"Mods.{modName}.BossChecklistIntegration.{internalName}";
+				Language.GetOrRegister(RegisterKey + ".EntryName", () => GetLocalizationEntryValueFromObsoleteSubmission(entryName));
+				if (spawnInfo != null)
+					Language.GetOrRegister(RegisterKey + ".SpawnInfo", () => GetLocalizationEntryValueFromObsoleteSubmission(spawnInfo));
+				else
+					Language.GetOrRegister(RegisterKey + ".SpawnInfo", () => "Spawn conditions unknown");
+				if (despawnMessage != null) {
+					if (despawnMessage is string)
+						Language.GetOrRegister(RegisterKey + ".DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage as string));
+					else if (despawnMessage is Func<NPC, string>)
+						Language.GetOrRegister(RegisterKey + ".DespawnMessage", () => "");
+				}
+			}
+
+			string GetLocalizationEntryValueFromObsoleteSubmission(string input) {
+				return input.StartsWith("$") ? $"{{{input}}}" : input;
 			}
 		}
 

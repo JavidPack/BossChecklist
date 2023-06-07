@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Chat;
@@ -136,31 +135,6 @@ namespace BossChecklist
 				return true; // If excluding the passed NPC from the active check, this should return true
 
 			return !npc.active; // otherwise, return the NPC's active status
-		}
-
-		/// <summary>
-		/// Determines what despawn message should be used based on client configuration and submitted entry info.
-		/// </summary>
-		/// <returns>A string or key of the despawn message of the passed npc. Returns null if no message can be found.</returns>
-		public static string GetDespawnMessage(NPC npc, int index) {
-			if (npc.life <= 0)
-				return null; // If the boss was killed, don't display a despawn message
-
-			string messageType = BossChecklist.ClientConfig.DespawnMessageType;
-			if (messageType == "Unique") {
-				// When unique despawn messages are enabled, pass the NPC for the custom message function provided by the entry
-				string customMessage = BossChecklist.bossTracker.SortedEntries[index].customDespawnMessages(npc);
-				if (!string.IsNullOrEmpty(customMessage))
-					return customMessage; // this will only return a unique message if the custom message function properly assigns one
-			}
-
-			if (messageType != "Disabled") {
-				// If the Unique message was empty/null or the player is using Generic despawn messages, try to find an appropriate despawn message to send
-				// Return a generic despawn message if any player is left alive or return a boss victory despawn message if all player's were killed
-				return Main.player.Any(plr => plr.active && !plr.dead) ? $"{LangChat}.Despawn.Generic" : $"{LangChat}.Loss.Generic";
-			}
-			// The despawn message feature was disabled. Return an empty message.
-			return null;
 		}
 
 		/// <summary>

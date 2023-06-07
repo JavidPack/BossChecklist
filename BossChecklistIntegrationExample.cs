@@ -13,13 +13,12 @@ namespace <YourModsNamespace>
 	{
 		// Boss Checklist might add new features, so a version is passed into GetBossInfo. 
 		// If a new version of the GetBossInfo Call is implemented, find this class in the Boss Checklist Github once again and replace this version with the new version: https://github.com/JavidPack/BossChecklist/blob/master/BossChecklistIntegrationExample.cs
-		private static readonly Version BossChecklistAPIVersion = new Version(1, 1); // Do not change this yourself.
+		private static readonly Version BossChecklistAPIVersion = new Version(1, 6); // Do not change this yourself.
 
 		public class BossChecklistBossInfo
 		{
-			internal string key = ""; // equal to "modSource internalName"
+			internal string key = ""; // unique identifier for an entry
 			internal string modSource = "";
-			internal string internalName = "";
 			internal string displayName = "";
 
 			internal float progression = 0f; // See https://github.com/JavidPack/BossChecklist/blob/master/BossTracker.cs#L13 for vanilla boss values
@@ -49,7 +48,6 @@ namespace <YourModsNamespace>
 					bossInfos = bossInfoList.ToDictionary(boss => boss.Key, boss => new BossChecklistBossInfo() {
 						key = boss.Value.ContainsKey("key") ? boss.Value["key"] as string : "",
 						modSource = boss.Value.ContainsKey("modSource") ? boss.Value["modSource"] as string : "",
-						internalName = boss.Value.ContainsKey("internalName") ? boss.Value["internalName"] as string : "",
 						displayName = boss.Value.ContainsKey("displayName") ? boss.Value["displayName"] as string : "",
 
 						progression = boss.Value.ContainsKey("progression") ? Convert.ToSingle(boss.Value["progression"]) : 0f,
@@ -60,7 +58,7 @@ namespace <YourModsNamespace>
 						isEvent = boss.Value.ContainsKey("isEvent") ? Convert.ToBoolean(boss.Value["isEvent"]) : false,
 
 						npcIDs = boss.Value.ContainsKey("npcIDs") ? boss.Value["npcIDs"] as List<int> : new List<int>(),
-						spawnItem = boss.Value.ContainsKey("spawnItem") ? boss.Value["spawnItem"] as List<int> : new List<int>(),
+						spawnItem = boss.Value.ContainsKey("spawnItems") ? boss.Value["spawnItems"] as List<int> : new List<int>(),
 						loot = boss.Value.ContainsKey("loot") ? boss.Value["loot"] as List<int> : new List<int>(),
 						collection = boss.Value.ContainsKey("collection") ? boss.Value["collection"] as List<int> : new List<int>(),
 					});

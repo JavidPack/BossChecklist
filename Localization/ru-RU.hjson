@@ -211,6 +211,7 @@ Mods: {
 		}
 
 		BossSpawnInfo: {
+			// Unknown: Spawn conditions unknown
 			KingSlime: Используйте [i:560] в любой точке карты мира или убейте 150 слизней во время слизнепада.
 			EyeofCthulhu: Используйте [i:43] ночью или дождитесь, пока босс придёт естественным образом ночью с шансом 33%, когда его здоровье больше 200.
 			EaterofWorldsHead: Используйте [i:70] или сломайте 3 теневых сферы в пучинах искажения.
@@ -505,6 +506,16 @@ Mods: {
 						Это также должно отображать сообщение в чате, когда появляется сообщение об исчезновении, если включено «Сообщение об исчезновении босса».
 						Эти сообщения должны появляться при победе над боссом или при его исчезновении, соответственно.
 						'''
+				}
+
+				DisableAutoLocalization: {
+					// Label: Disable Auto Localization
+					/* Tooltip:
+						'''
+						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
+						The new calls do not require these localizations but will default to them if null is passed.
+						Set to true to prevent new localizations from being created by BossChecklist.
+						''' */
 				}
 
 				DisableNewRecords: {
