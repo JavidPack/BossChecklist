@@ -353,8 +353,8 @@ namespace BossChecklist
 				modSource: "Terraria",
 				internalName: nameKey,
 				progression: val,
-				npcIDs: new List<int>() { npcID },
 				downed: downed,
+				npcIDs: new List<int>() { npcID },
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
@@ -395,8 +395,8 @@ namespace BossChecklist
 				modSource: "Terraria",
 				internalName: nameKey,
 				progression: val,
-				npcIDs: ids,
 				downed: downed,
+				npcIDs: ids,
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
@@ -414,8 +414,8 @@ namespace BossChecklist
 				modSource: "Terraria",
 				internalName: nameKey,
 				progression: val,
-				npcIDs: BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				downed: downed,
+				npcIDs: BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
