@@ -153,8 +153,8 @@ namespace BossChecklist
 						submittedMod, // Mod
 						internalName, // Internal Name
 						Convert.ToSingle(args[3]), // Prog
-						InterpretObjectAsListOfInt(args[4]), // NPC IDs
-						args[5] as Func<bool>, // Downed
+						args[4] as Func<bool>, // Downed
+						InterpretObjectAsListOfInt(args[5]), // NPC IDs
 						args[6] as Dictionary<string, object>
 					);
 					return "Success";

@@ -192,7 +192,7 @@ namespace BossChecklist
 			return true; // if it passes all the checks, it should be shown
 		}
 
-		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, List<int> npcIDs, Func<bool> downed, Dictionary<string, object> extraData = null) {
+		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, Func<bool> downed, List<int> npcIDs, Dictionary<string, object> extraData = null) {
 			// Add the mod source to the opted mods list of the credits page if its not already and add the entry type
 			if (modSource != "Terraria" && modSource != "Unknown") {
 				BossUISystem.Instance.RegisteredMods.TryAdd(modSource, new int[3]);
@@ -204,9 +204,8 @@ namespace BossChecklist
 			this.type = entryType;
 			this.modSource = modSource;
 			this.progression = progression;
-
-			this.npcIDs = npcIDs ?? new List<int>();
 			this.downed = downed;
+			this.npcIDs = npcIDs ?? new List<int>();
 
 			// Localization checks
 			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;

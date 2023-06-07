@@ -1089,9 +1089,9 @@ namespace BossChecklist
 			ItemID.MusicBoxOWHallow,
 		};
 
-		internal void AddEntry(EntryType type, Mod mod, string iName, float val, List<int> id, Func<bool> down, Dictionary<string, object> extra = null) {
+		internal void AddEntry(EntryType type, Mod mod, string iName, float val, Func<bool> down, List<int> id, Dictionary<string, object> extra = null) {
 			EnsureBossIsNotDuplicate(mod?.Name ?? "Unknown", iName);
-			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, val, id, down, extra));
+			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, val, down, id, extra));
 			LogNewBoss(mod?.Name ?? "Unknown", iName);
 		}
 
