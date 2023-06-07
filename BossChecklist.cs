@@ -21,17 +21,6 @@ namespace BossChecklist
 
 		public static Dictionary<int, int> itemToMusicReference;
 
-		// Mods that have been added manually
-		internal bool vanillaLoaded = true;
-		//internal bool thoriumLoaded;
-
-		// Mods that have been added natively, no longer need code here.
-		internal static bool tremorLoaded;
-		//internal bool bluemagicLoaded;
-		//internal bool joostLoaded;
-		//internal bool calamityLoaded;
-		//internal bool pumpkingLoaded;
-
 		internal static ClientConfiguration ClientConfig;
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
@@ -44,8 +33,6 @@ namespace BossChecklist
 			instance = this;
 			ToggleChecklistHotKey = KeybindLoader.RegisterKeybind(this, "ToggleChecklist", "P");
 			ToggleBossLog = KeybindLoader.RegisterKeybind(this, "ToggleLog", "L");
-
-			tremorLoaded = ModLoader.TryGetMod("Tremor", out Mod mod);
 
 			FieldInfo itemToMusicField = typeof(MusicLoader).GetField("itemToMusic", BindingFlags.Static | BindingFlags.NonPublic);
 			itemToMusicReference = (Dictionary<int, int>)itemToMusicField.GetValue(null);

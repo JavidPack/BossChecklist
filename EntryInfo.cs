@@ -325,7 +325,6 @@ namespace BossChecklist
 		}
 		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
-			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
 			Func<NPC, LocalizedText> customMessages = null;
 			if (type == EntryType.Boss) { // BossChecklist only has despawn messages for vanilla Bosses
@@ -358,7 +357,7 @@ namespace BossChecklist
 				npcIDs: new List<int>() { npcID },
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
-					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}") },
+					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
@@ -368,7 +367,6 @@ namespace BossChecklist
 
 		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
-			string tremor = nameKey == "MoodLord" && BossChecklist.tremorLoaded ? "_Tremor" : "";
 
 			Func<NPC, LocalizedText> customMessages = null;
 			if (type == EntryType.Boss) { // BossChecklist only has despawn messages for vanilla Bosses
@@ -401,7 +399,7 @@ namespace BossChecklist
 				npcIDs: ids,
 				downed: downed,
 				extraData: new Dictionary<string, object>() {
-					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}{tremor}") },
+					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossChecklist.bossTracker.EntryCollections.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
