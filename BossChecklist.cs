@@ -267,7 +267,7 @@ namespace BossChecklist
 				if (despawnMessage != null) { // optional, don't register unless provided
 					if (despawnMessage is string)
 						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => GetLocalizationEntryValueFromObsoleteSubmission(despawnMessage as string));
-					else if (despawnMessage is Func<NPC, string> || despawnMessage is null)
+					else if (despawnMessage is Func<NPC, string>)
 						modNPC.GetLocalization("BossChecklistIntegration.DespawnMessage", () => "{0} is no longer after you...");
 				}
 			}
