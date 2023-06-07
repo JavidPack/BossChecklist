@@ -175,7 +175,7 @@ Mods: {
 			}
 
 			Defeated: {
-				Tower: {0}已被摧毁!
+				Tower: "{0}已被摧毁!"
 				Limb: "{0}已被击倒!"
 			}
 
