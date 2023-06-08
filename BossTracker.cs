@@ -4,7 +4,6 @@ using System.Linq;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -281,12 +280,24 @@ namespace BossChecklist
 			// Entries are now finalized. Entries can no longer be added or edited through Mod Calls.
 			EntriesFinalized = true;
 			if (AnyModHasOldCall) {
-				foreach (var oldCall in OldCalls) {
-					string entryType = oldCall.Key.Substring(3);
-					if (entryType.EndsWith("WithInfo"))
-						entryType = entryType.Substring(0, entryType.Length - "WithInfo".Length);
+				string OldToNewCall(string message) {
+					return message switch {
+						"AddBoss" => "LogBoss",
+						"AddBossWithInfo" => "LogBoss",
+						"AddMiniBoss" => "LogMiniBoss",
+						"AddMiniBossWithInfo" => "LogMiniBoss",
+						"AddEvent" => "LogEvent",
+						"AddEventWithInfo" => "LogEvent",
+						"AddToBossLoot" => "SubmitEntryLoot",
+						"AddToBossCollection" => "SubmitEntryCollectibles",
+						"AddToBossSpawnItems" => "SubmitEntrySpawnItems",
+						"AddToEventNPCs" => "SubmitEventNPCs",
+						_ => "invalid mod call detected"
+					};
+				}
 
-					BossChecklist.instance.Logger.Info($"The '{oldCall.Key}' call is an old call and is now obsolete. Use 'Log{entryType}' instead. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
+				foreach (var oldCall in OldCalls) {
+					BossChecklist.instance.Logger.Info($"The '{oldCall.Key}' call is an old call and is now obsolete. Use '{OldToNewCall(oldCall.Key)}' instead. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
 				}
 				OldCalls.Clear();
 				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call");

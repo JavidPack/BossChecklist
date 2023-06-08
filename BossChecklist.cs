@@ -223,6 +223,9 @@ namespace BossChecklist
 						bossTracker.AnyModHasOldCall = true;
 						AddToOldCalls(message, entryNameValue);
 					}
+					else if (message == "AddToBossLoot" || message == "AddToBossCollection" || message == "AddToBossSpawnItems" || message == "AddToEventNPCs") {
+						AddToOldCalls(message, args[1] as string);
+					}
 				}
 			}
 			catch (Exception e) {
