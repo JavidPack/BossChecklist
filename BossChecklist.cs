@@ -163,8 +163,8 @@ namespace BossChecklist
 					OrphanType? DetermineOrphanType() {
 						return message switch {
 							"SubmitEntryLoot" => OrphanType.Loot,
-							"SubmitEntryCollections" => OrphanType.Collection,
-							"SubmitEntrySpawnItems" => OrphanType.SpawnItem,
+							"SubmitEntryCollectibles" => OrphanType.Collectibles,
+							"SubmitEntrySpawnItems" => OrphanType.SpawnItems,
 							"SubmitEventNPCs" => OrphanType.EventNPC,
 							_ => null
 						};

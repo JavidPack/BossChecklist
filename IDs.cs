@@ -2,7 +2,7 @@
 
 namespace BossChecklist
 {
-	internal enum CollectionType
+	internal enum CollectibleType
 	{
 		Generic,
 		Trophy,

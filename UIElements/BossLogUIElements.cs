@@ -419,9 +419,10 @@ namespace BossChecklist.UIElements
 				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
-				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X) / 2), inner.Y + 5);
+				float scale = 0.9f;
+				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X * scale) / 2), inner.Y + 5);
 
-				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 			}
 		}
 
@@ -518,7 +519,7 @@ namespace BossChecklist.UIElements
 				item.color = oldColor; // if the item was masked
 
 				// Draw golden border around items that are considered collectibles
-				if (entry.collection.Contains(item.type))
+				if (entry.collectibles.Contains(item.type))
 					spriteBatch.Draw(BossLogUI.RequestResource("Extra_HighlightedCollectible").Value, inner.TopLeft(), Color.White);
 
 				// Similar to the logic of deciding the itemslot color, decide what should be drawn and what text should show when hovering over
@@ -570,12 +571,12 @@ namespace BossChecklist.UIElements
 				}
 
 				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
-				if (BossChecklist.DebugConfig.ShowCollectionType && entry.collectType.TryGetValue(item.type, out CollectionType type)) {
+				if (BossChecklist.DebugConfig.ShowCollectionType && entry.collectibleType.TryGetValue(item.type, out CollectibleType type)) {
 					string iconType = type.ToString();
-					if (type == CollectionType.Mount) {
+					if (type == CollectibleType.Mount) {
 						iconType = "Pet";
 					}
-					else if (type == CollectionType.Relic) {
+					else if (type == CollectibleType.Relic) {
 						iconType = "Trophy";
 					}
 

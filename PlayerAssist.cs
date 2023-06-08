@@ -74,7 +74,7 @@ namespace BossChecklist
 				AllStoredRecords.Add(bossRecords.Key, SavedStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
 			}
 
-			// Prepare the collections for the player. Putting unloaded bosses in the back and new/existing ones up front
+			// Prepare the collectibles for the player. Putting unloaded bosses in the back and new/existing ones up front
 			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList();
 		}
 

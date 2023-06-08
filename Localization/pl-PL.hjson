@@ -25,7 +25,7 @@ Mods: {
 					''' */
 				// Records: Records
 				// SpawnInfo: Spawn Info
-				// LootAndCollectibles: Loot & Collection
+				// LootAndCollectibles: Loot & Collectibles
 			}
 
 			Indicator: {
@@ -490,8 +490,8 @@ Mods: {
 				}
 
 				CollectionTypeDetection: {
-					// Label: Show Auto-detected Collection Type
-					// Tooltip: Boss collection itemslots will be labeled with the assigned collection type
+					// Label: Show Auto-detected Collectible Type
+					// Tooltip: Boss collectible itemslots will be labeled with the assigned collectible type
 				}
 
 				InactiveBossCheck: {
@@ -537,8 +537,8 @@ Mods: {
 					// Label: Enable Reset Loot and Collection Items Option
 					/* Tooltip:
 						'''
-						Remove a selected item from your saved loot/collection by alt + right-clicking the selected item slot.
-						Clear the entire loot/collection list by alt + right-clicking the 'Loot & Collection' button.
+						Remove a selected item from your saved loot/collectibles by alt + right-clicking the selected item slot.
+						Clear the entire loot/collectibles list by alt + right-clicking the 'Loot & Collectibles' button.
 						This will apply to ALL boss loot lists.
 						''' */
 				}

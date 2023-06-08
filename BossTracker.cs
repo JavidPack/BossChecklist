@@ -205,10 +205,10 @@ namespace BossChecklist
 					if (orphan.type == OrphanType.Loot) {
 						entry.lootItemTypes.AddRange(InterpretDataAsListOfInt);
 					}
-					else if (orphan.type == OrphanType.Collection) {
-						entry.collection.AddRange(InterpretDataAsListOfInt);
+					else if (orphan.type == OrphanType.Collectibles) {
+						entry.collectibles.AddRange(InterpretDataAsListOfInt);
 					}
-					else if (orphan.type == OrphanType.SpawnItem) {
+					else if (orphan.type == OrphanType.SpawnItems) {
 						entry.spawnItem.AddRange(InterpretDataAsListOfInt);
 					}
 					else if (orphan.type == OrphanType.EventNPC) {
@@ -226,38 +226,38 @@ namespace BossChecklist
 			}
 		}
 
-		internal void FinalizeCollectionTypes() {
+		internal void FinalizeCollectibleTypes() {
 			foreach (EntryInfo boss in SortedEntries) {
-				foreach (int type in boss.collection) {
+				foreach (int type in boss.collectibles) {
 					if (!ContentSamples.ItemsByType.TryGetValue(type, out Item temp))
 						continue;
 
 					if (temp.headSlot > 0 && temp.vanity) {
-						boss.collectType.Add(type, CollectionType.Mask);
+						boss.collectibleType.Add(type, CollectibleType.Mask);
 					}
 					else if (vanillaMusicBoxTypes.Contains(type) || otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
-						boss.collectType.Add(type, CollectionType.Music);
+						boss.collectibleType.Add(type, CollectibleType.Music);
 					}
 					else if (Main.projPet[temp.shoot] || ProjectileID.Sets.LightPet[temp.shoot]) {
-						boss.collectType.Add(type, CollectionType.Pet);
+						boss.collectibleType.Add(type, CollectibleType.Pet);
 					}
 					else if (temp.master && temp.mountType > MountID.None) {
-						boss.collectType.Add(type, CollectionType.Mount);
+						boss.collectibleType.Add(type, CollectibleType.Mount);
 					}
 					else if (temp.createTile > TileID.Dirt) {
 						TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
 						if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
-							boss.collectType.Add(type, CollectionType.Trophy);
+							boss.collectibleType.Add(type, CollectibleType.Trophy);
 						}
 						else if (temp.master && data.Width == 3 && data.Height == 4) {
-							boss.collectType.Add(type, CollectionType.Relic);
+							boss.collectibleType.Add(type, CollectibleType.Relic);
 						}
 						else {
-							boss.collectType.Add(type, CollectionType.Generic);
+							boss.collectibleType.Add(type, CollectibleType.Generic);
 						}
 					}
 					else {
-						boss.collectType.Add(type, CollectionType.Generic);
+						boss.collectibleType.Add(type, CollectibleType.Generic);
 					}
 				}
 			}
@@ -275,7 +275,7 @@ namespace BossChecklist
 				}
 				entry.npcIDs.ForEach(x => EntryCache[x] = true); // Mark all NPCs as an entry NPC for verifying purposes
 				entry.lootItemTypes.ForEach(x => EntryLootCache[x] = true); // Mark loot items to be "obtainable" for loot checklist
-				entry.collection.ForEach(x => EntryLootCache[x] = true); // Mark collection items to be "obtainable" for loot checklist
+				entry.collectibles.ForEach(x => EntryLootCache[x] = true); // Mark collectibles items to be "obtainable" for loot checklist
 			}
 
 			// Entries are now finalized. Entries can no longer be added or edited through Mod Calls.
@@ -452,7 +452,7 @@ namespace BossChecklist
 			#endregion
 		};
 
-		internal readonly Dictionary<string, List<int>> EntryCollections = new Dictionary<string, List<int>>() {
+		internal readonly Dictionary<string, List<int>> EntryCollectibles = new Dictionary<string, List<int>>() {
 			#region Boss Collectibles
 			{ "Terraria KingSlime",
 				new List<int>() {

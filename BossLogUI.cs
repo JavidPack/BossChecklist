@@ -1085,7 +1085,7 @@ namespace BossChecklist
 								continue; // Skips items that are dropped within the opposing world evil
 						}
 
-						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && entry.collection.Contains(loot))
+						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && entry.collectibles.Contains(loot))
 							continue; // If the CheckedDroppedLoot config enabled, skip loot items that are considered collectibles for the check
 
 						Item checkItem = ContentSamples.ItemsByType[loot];
@@ -1103,12 +1103,12 @@ namespace BossChecklist
 						}
 					}
 
-					if (entry.collection.Count == 0) {
-						allCollect = allLoot; // If no collection items were setup, consider it false until all loot has been obtained
+					if (entry.collectibles.Count == 0) {
+						allCollect = allLoot; // If no collectible items were setup, consider it false until all loot has been obtained
 					}
 					else {
 						int collectCount = 0;
-						foreach (int collectible in entry.collection) {
+						foreach (int collectible in entry.collectibles) {
 							if (collectible == -1 || collectible == 0)
 								continue; // Skips empty items
 
@@ -1133,7 +1133,7 @@ namespace BossChecklist
 							}
 						}
 
-						if (collectCount == entry.collection.Count)
+						if (collectCount == entry.collectibles.Count)
 							allCollect = false; // If all the items were skipped due to the DroppedLootCheck config, don't mark as all collectibles obtained
 					}
 				}
@@ -1650,7 +1650,7 @@ namespace BossChecklist
 			PageTwo.Append(treasureBag);
 
 			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
-			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collection)); // combined list of loot and collectibles
+			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collectibles)); // combined list of loot and collectibles
 			bossItems.Remove(GetLogEntryInfo.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
 
 			// Prevents itemslot creation for items that are dropped from within the opposite world evil, if applicable

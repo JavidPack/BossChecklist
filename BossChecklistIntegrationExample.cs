@@ -31,7 +31,7 @@ namespace <YourModsNamespace>
 			internal List<int> npcIDs = new List<int>(); // Does not include minions, only npcids that count towards the NPC still being alive.
 			internal List<int> spawnItem = new List<int>();
 			internal List<int> loot = new List<int>();
-			internal List<int> collection = new List<int>();
+			internal List<int> collectibles = new List<int>();
 		}
 
 		public static Dictionary<string, BossChecklistBossInfo> bossInfos = new Dictionary<string, BossChecklistBossInfo>();
@@ -60,7 +60,7 @@ namespace <YourModsNamespace>
 						npcIDs = boss.Value.ContainsKey("npcIDs") ? boss.Value["npcIDs"] as List<int> : new List<int>(),
 						spawnItem = boss.Value.ContainsKey("spawnItems") ? boss.Value["spawnItems"] as List<int> : new List<int>(),
 						loot = boss.Value.ContainsKey("loot") ? boss.Value["loot"] as List<int> : new List<int>(),
-						collection = boss.Value.ContainsKey("collection") ? boss.Value["collection"] as List<int> : new List<int>(),
+						collectibles = boss.Value.ContainsKey("collectibles") ? boss.Value["collectibles"] as List<int> : new List<int>(),
 					});
 
 					IntegrationSuccessful = true;
