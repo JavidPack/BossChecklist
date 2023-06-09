@@ -38,8 +38,7 @@ namespace BossChecklist
 		internal List<string> relatedEntries;
 
 		internal List<int> spawnItem;
-		internal LocalizedText spawnInfo;
-		internal object[] spawnInfo_Format;
+		internal Func<LocalizedText> spawnInfo;
 
 		internal int treasureBag = 0;
 		internal List<int> collectibles;
@@ -103,7 +102,7 @@ namespace BossChecklist
 
 		internal string DisplayName => name.Value;
 
-		internal string DisplaySpawnInfo => spawnInfo.Format((object[])spawnInfo_Format); // must be a cast
+		internal string DisplaySpawnInfo => spawnInfo().Value;
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
@@ -210,14 +209,21 @@ namespace BossChecklist
 
 			// Localization checks
 			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;
-			LocalizedText spawnInfo = extraData?.ContainsKey("spawnInfo") == true ? extraData["spawnInfo"] as LocalizedText : null;
-			this.spawnInfo_Format = extraData?.ContainsKey("spawnInfoFormat") == true ? extraData["spawnInfoFormat"] as object[] : Array.Empty<object>();
-
+			Func<LocalizedText> spawnInfo = null;
+			if (extraData?.ContainsKey("spawnInfo") == true) {
+				if (extraData["spawnInfo"] is Func<LocalizedText>) {
+					spawnInfo = extraData["spawnInfo"] as Func<LocalizedText>;
+				}
+				else if (extraData["spawnInfo"] is LocalizedText) {
+					spawnInfo = () => extraData["spawnInfo"] as LocalizedText;
+				}
+			}
+			
 			if (name == null || spawnInfo == null) {
 				// Modded. Ensure that all nulls passed in autoregister a localization key.
 				if (type == EntryType.Event) {
 					name ??= Language.GetOrRegister($"Mods.{modSource}.BossChecklistIntegration.{internalName}.EntryName", () => Regex.Replace(internalName, "([A-Z])", " $1").Trim()); // Add spaces before each capital letter.
-					spawnInfo ??= Language.GetOrRegister($"Mods.{modSource}.BossChecklistIntegration.{internalName}.SpawnInfo", () => "Spawn conditions unknown");
+					spawnInfo ??= () => Language.GetOrRegister($"Mods.{modSource}.BossChecklistIntegration.{internalName}.SpawnInfo", () => "Spawn conditions unknown");
 				}
 				else {
 					int primaryNPCID = npcIDs?.Count > 0 ? npcIDs[0] : 0;
@@ -227,12 +233,12 @@ namespace BossChecklist
 						if (/*internalName == modNPC.Name &&*/ npcIDs.Count == 1 && !Language.Exists($"{prefix}.EntryName"))
 							name ??= modNPC.DisplayName;
 						name ??= Language.GetOrRegister($"{prefix}.EntryName", () => Regex.Replace(internalName, "([A-Z])", " $1").Trim());
-						spawnInfo ??= Language.GetOrRegister($"{prefix}.SpawnInfo", () => "Spawn conditions unknown"); // Register English/default, not localized.
+						spawnInfo ??= () => Language.GetOrRegister($"{prefix}.SpawnInfo", () => "Spawn conditions unknown"); // Register English/default, not localized.
 					}
 					else {
 						// Mod registered boss for vanilla npc or no npcids?
 						name ??= Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
-						spawnInfo ??= Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
+						spawnInfo ??= () => Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
 					}
 				}
 			}
