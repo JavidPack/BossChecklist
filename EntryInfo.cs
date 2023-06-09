@@ -449,10 +449,10 @@ namespace BossChecklist
 			foreach (string Key in values.Keys) {
 				if (!Key.Contains(' ')) {
 					values.Remove(Key); // remove submissions with invalid keys (no space between modSource and internalName)
-					BossChecklist.instance.Logger.Warn($"A {type} call from {modSource} contains an invalid key ({Key})");
+					BossChecklist.instance.Logger.Warn($"A {type} call from {modSource} contains an invalid key ({Key}) and has been removed.");
 				}
-				else if (!ModLoader.TryGetMod(Key.Substring(0, Key.IndexOf(" ")), out Mod mod)) {
-					values.Remove(Key); // remove submissions that use an entry key from an unloaded mod
+				else if (!Key.StartsWith("Terraria ") && !ModLoader.TryGetMod(Key.Substring(0, Key.IndexOf(" ")), out Mod mod)) {
+					values.Remove(Key); // remove submissions that use an entry key from an unloaded mod (no need to log removed entries for unloaded mods)
 				}
 			}
 			this.values = values;

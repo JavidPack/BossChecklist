@@ -194,7 +194,7 @@ namespace BossChecklist
 				foreach (KeyValuePair<string, object> submission in orphan.values) {
 					EntryInfo entry = SortedEntries.Find(entry => submission.Key == entry.Key);
 					if (entry is null) {
-						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key})");
+						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key}) and will be ignored.");
 						continue;
 					}
 
