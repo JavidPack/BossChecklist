@@ -39,6 +39,7 @@ namespace BossChecklist
 
 		internal List<int> spawnItem;
 		internal LocalizedText spawnInfo;
+		internal object[] spawnInfo_Format;
 
 		internal int treasureBag = 0;
 		internal List<int> collectibles;
@@ -102,7 +103,7 @@ namespace BossChecklist
 
 		internal string DisplayName => name.Value;
 
-		internal string DisplaySpawnInfo => spawnInfo.Value;
+		internal string DisplaySpawnInfo => spawnInfo_Format.Length == 0 ? spawnInfo.Value : spawnInfo.WithFormatArgs(spawnInfo_Format).Value;
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
@@ -210,6 +211,7 @@ namespace BossChecklist
 			// Localization checks
 			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;
 			LocalizedText spawnInfo = extraData?.ContainsKey("spawnInfo") == true ? extraData["spawnInfo"] as LocalizedText : null;
+			object[] formatArgs = extraData?.ContainsKey("spawnInfoFormat") == true ? extraData["spawnInfoFormat"] as object[] : Array.Empty<object>();
 
 			if (name == null || spawnInfo == null) {
 				// Modded. Ensure that all nulls passed in autoregister a localization key.
