@@ -103,7 +103,7 @@ namespace BossChecklist
 
 		internal string DisplayName => name.Value;
 
-		internal string DisplaySpawnInfo => spawnInfo_Format.Length == 0 ? spawnInfo.Value : spawnInfo.WithFormatArgs(spawnInfo_Format).Value;
+		internal string DisplaySpawnInfo => spawnInfo.Format((object[])spawnInfo_Format); // must be a cast
 		
 		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
 
@@ -211,7 +211,7 @@ namespace BossChecklist
 			// Localization checks
 			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;
 			LocalizedText spawnInfo = extraData?.ContainsKey("spawnInfo") == true ? extraData["spawnInfo"] as LocalizedText : null;
-			object[] formatArgs = extraData?.ContainsKey("spawnInfoFormat") == true ? extraData["spawnInfoFormat"] as object[] : Array.Empty<object>();
+			this.spawnInfo_Format = extraData?.ContainsKey("spawnInfoFormat") == true ? extraData["spawnInfoFormat"] as object[] : Array.Empty<object>();
 
 			if (name == null || spawnInfo == null) {
 				// Modded. Ensure that all nulls passed in autoregister a localization key.
@@ -325,6 +325,7 @@ namespace BossChecklist
 			}
 			return this;
 		}
+
 		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
 
