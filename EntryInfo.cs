@@ -91,9 +91,11 @@ namespace BossChecklist
 				{ "isEvent", type.Equals(EntryType.Event) },
 
 				{ "npcIDs", new List<int>(npcIDs) },
+				{ "spawnInfo", new Func<LocalizedText>(spawnInfo) },
 				{ "spawnItems", new List<int>(spawnItem) },
 				{ "treasureBag", treasureBag },
-				{ "loot", new List<DropRateInfo>(loot) },
+				{ "dropRateInfo", new List<DropRateInfo>(loot) },
+				{ "loot", new List<int>(lootItemTypes) },
 				{ "collectibles", new List<int>(collectibles) }
 			};
 
