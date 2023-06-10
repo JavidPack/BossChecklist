@@ -19,7 +19,7 @@ namespace <YourModsNamespace>
 		{
 			internal string key = ""; // unique identifier for an entry
 			internal string modSource = "";
-			internal string displayName = "";
+			internal LocalizedText displayName = null;
 
 			internal float progression = 0f; // See https://github.com/JavidPack/BossChecklist/blob/master/BossTracker.cs#L13 for vanilla boss values
 			internal Func<bool> downed = () => false;
@@ -29,7 +29,10 @@ namespace <YourModsNamespace>
 			internal bool isEvent = false;
 
 			internal List<int> npcIDs = new List<int>(); // Does not include minions, only npcids that count towards the NPC still being alive.
-			internal List<int> spawnItem = new List<int>();
+			internal Func<LocalizedText> spawnInfo = null;
+			internal List<int> spawnItems = new List<int>();
+			internal int treasureBag = 0;
+			internal List<int> dropRateInfo = new List<DropRateInfo>();
 			internal List<int> loot = new List<int>();
 			internal List<int> collectibles = new List<int>();
 		}
@@ -48,7 +51,7 @@ namespace <YourModsNamespace>
 					bossInfos = bossInfoList.ToDictionary(boss => boss.Key, boss => new BossChecklistBossInfo() {
 						key = boss.Value.ContainsKey("key") ? boss.Value["key"] as string : "",
 						modSource = boss.Value.ContainsKey("modSource") ? boss.Value["modSource"] as string : "",
-						displayName = boss.Value.ContainsKey("displayName") ? boss.Value["displayName"] as string : "",
+						displayName = boss.Value.ContainsKey("displayName") ? boss.Value["displayName"] as LocalizedText : null,
 
 						progression = boss.Value.ContainsKey("progression") ? Convert.ToSingle(boss.Value["progression"]) : 0f,
 						downed = boss.Value.ContainsKey("downed") ? boss.Value["downed"] as Func<bool> : () => false,
@@ -58,7 +61,10 @@ namespace <YourModsNamespace>
 						isEvent = boss.Value.ContainsKey("isEvent") ? Convert.ToBoolean(boss.Value["isEvent"]) : false,
 
 						npcIDs = boss.Value.ContainsKey("npcIDs") ? boss.Value["npcIDs"] as List<int> : new List<int>(),
-						spawnItem = boss.Value.ContainsKey("spawnItems") ? boss.Value["spawnItems"] as List<int> : new List<int>(),
+						spawnInfo = boss.Value.ContainsKey("spawnInfo") ? boss.Value["spawnInfo"] as Func<LocalizedText> : null,
+						spawnItems = boss.Value.ContainsKey("spawnItems") ? boss.Value["spawnItems"] as List<int> : new List<int>(),
+						treasureBag = boss.Value.ContainsKey("treasureBag") ? boss.Value["treasureBag"] as int : 0,
+						dropRateInfo = boss.Value.ContainsKey("dropRateInfo") ? boss.Value["dropRateInfo"] as List<DropRateInfo> : new List<DropRateInfo>(),
 						loot = boss.Value.ContainsKey("loot") ? boss.Value["loot"] as List<int> : new List<int>(),
 						collectibles = boss.Value.ContainsKey("collectibles") ? boss.Value["collectibles"] as List<int> : new List<int>(),
 					});
