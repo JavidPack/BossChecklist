@@ -87,7 +87,7 @@ namespace BossChecklist
 						}
 					}
 
-					if (BossChecklist.DebugConfig.ShowInactiveBossCheck)
+					if (BossChecklist.DebugConfig.ShowInactiveBossCheck && Main.netMode != NetmodeID.Server)
 						Main.NewText(npc.FullName + ": " + FullyInactive(npc, index));
 
 					WorldAssist.worldRecords[recordIndex].stats.totalKills++;
