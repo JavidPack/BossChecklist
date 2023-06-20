@@ -172,12 +172,11 @@ namespace BossChecklist
 		/// <returns>If the entry should be visible</returns>
 		internal bool VisibleOnChecklist() {
 			bool HideUnsupported = modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
-			bool HideUnavailable = !available() && BossChecklist.BossLogConfig.HideUnavailable && !BossUISystem.Instance.BossLog.showHidden && !IsDownedOrMarked; // entries that are labeled as not available
+			bool HideUnavailable = !available() && BossChecklist.BossLogConfig.HideUnavailable && (!BossUISystem.Instance.BossLog.showHidden || (BossUISystem.Instance.BossLog.showHidden && !IsDownedOrMarked)); // entries that are labeled as not available
 			bool HideHidden = hidden && !BossUISystem.Instance.BossLog.showHidden; // entries that are labeled as hidden
 			bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
-			if (HideUnavailable || HideHidden || SkipNonBosses || HideUnsupported) {
+			if (HideUnavailable || HideHidden || SkipNonBosses || HideUnsupported)
 				return false;
-			}
 
 			// Make sure the filters allow the entry to be visible
 			string bFilter = BossChecklist.BossLogConfig.FilterBosses;
@@ -187,9 +186,8 @@ namespace BossChecklist
 			bool FilterBoss = type == EntryType.Boss && bFilter == "Hide when completed" && IsDownedOrMarked;
 			bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide when completed" && IsDownedOrMarked));
 			bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide when completed" && IsDownedOrMarked));
-			if (FilterBoss || FilterMiniBoss || FilterEvent) {
+			if (FilterBoss || FilterMiniBoss || FilterEvent)
 				return false;
-			}
 
 			return true; // if it passes all the checks, it should be shown
 		}
