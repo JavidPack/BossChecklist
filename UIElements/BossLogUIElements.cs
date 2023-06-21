@@ -719,7 +719,7 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, progression + entry.DisplayName, pos, Color.Goldenrod);
 
 						pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
-						Utils.DrawBorderString(spriteBatch, entry.SourceDisplayName, pos, new Color(150, 150, 255));
+						Utils.DrawBorderString(spriteBatch, entry.ModDisplayName, pos, new Color(150, 150, 255));
 					}
 					else if (Id == "PageTwo" && entry.modSource != "Unknown") {
 						if (BossLogUI.SelectedSubPage == SubPage.Records) {
@@ -1011,7 +1011,7 @@ namespace BossChecklist.UIElements
 
 			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
 				this.icon = GetModIcon(modName);
-				this.name = EntryInfo.SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modName).DisplayName);
+				this.name = BossUISystem.RemoveChatTags(ModLoader.GetMod(modName).DisplayName);
 				this.entryCounts = BossUISystem.Instance.RegisteredMods[modName];
 			}
 

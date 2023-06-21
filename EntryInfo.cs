@@ -106,7 +106,7 @@ namespace BossChecklist
 
 		internal string DisplaySpawnInfo => spawnInfo().Value;
 		
-		internal string SourceDisplayName => modSource == "Terraria" || modSource == "Unknown" ? modSource : SourceDisplayNameWithoutChatTags(ModLoader.GetMod(modSource).DisplayName);
+		internal string ModDisplayName => ModLoader.TryGetMod(modSource, out Mod mod) ? BossUISystem.RemoveChatTags(mod.DisplayName) : modSource;
 
 		internal bool MarkedAsDowned => WorldAssist.MarkedEntries.Contains(this.Key);
 
@@ -115,35 +115,6 @@ namespace BossChecklist
 		internal int GetIndex => BossChecklist.bossTracker.SortedEntries.IndexOf(this);
 
 		internal int GetRecordIndex => BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
-
-		internal static string SourceDisplayNameWithoutChatTags(string modSource) {
-			string editedName = "";
-
-			for (int c = 0; c < modSource.Length; c++) {
-				// Add each character one by one to find chattags in order
-				// Chat tags cannot be contained inside other chat tags so no need to worry about overlap
-				editedName += modSource[c];
-				if (editedName.Contains("[i:") && editedName.EndsWith("]")) {
-					// Update return name if a complete item chat tag is found
-					editedName = editedName.Substring(0, editedName.IndexOf("[i:"));
-					continue;
-				}
-				if (editedName.Contains("[i/") && editedName.EndsWith("]")) {
-					// Update return name if a complete item chat tag is found
-					editedName = editedName.Substring(0, editedName.IndexOf("[i/"));
-					continue;
-				}
-				if (editedName.Contains("[c/") && editedName.Contains(":") && editedName.EndsWith("]")) {
-					// Color chat tags are edited differently as we want to keep the text that's nested inside them
-					string part1 = editedName.Substring(0, editedName.IndexOf("[c/"));
-					string part2 = editedName.Substring(editedName.IndexOf(":") + 1);
-					part2 = part2.Substring(0, part2.Length - 1);
-					editedName = part1 + part2;
-					continue;
-				}
-			}
-			return editedName;
-		}
 
 		/// <summary>
 		/// Determines what despawn message should be used based on client configuration and submitted entry data.
