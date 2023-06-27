@@ -470,7 +470,7 @@ namespace BossChecklist
 			if (headNum != -1) {
 				EntryInfo entry = BossChecklist.bossTracker.SortedEntries[headNum];
 				int headOffset = 0;
-				foreach (Asset<Texture2D> headIcon in entry.headIconTextures) {
+				foreach (Asset<Texture2D> headIcon in entry.headIconTextures()) {
 					spriteBatch.Draw(headIcon.Value, new Vector2(Main.mouseX + 15 + headOffset, Main.mouseY + 15), MaskBoss(entry));
 					headOffset += headIcon.Value.Width + 2;
 				}
@@ -1389,7 +1389,7 @@ namespace BossChecklist
 					foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
 						EntryInfo relatedEntry = BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == entryKey)];
 
-						Asset<Texture2D> headIcon = relatedEntry.headIconTextures[0];
+						Asset<Texture2D> headIcon = relatedEntry.headIconTextures().First();
 						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 						Color iconColor = relatedEntry.IsDownedOrMarked ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 

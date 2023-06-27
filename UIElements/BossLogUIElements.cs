@@ -677,7 +677,7 @@ namespace BossChecklist.UIElements
 						int offset = 0;
 						int totalWidth = 0;
 						int lastX = 0;
-						foreach (Asset<Texture2D> headTexture in entry.headIconTextures.Reverse<Asset<Texture2D>>()) {
+						foreach (Asset<Texture2D> headTexture in entry.headIconTextures().Reverse<Asset<Texture2D>>()) {
 							Texture2D head = headTexture.Value;
 							Rectangle src = new Rectangle(0, 0, head.Width, head.Height);
 							// Weird special case for Deerclops. Its head icon has a significant amount of whitespace.

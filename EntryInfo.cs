@@ -48,7 +48,7 @@ namespace BossChecklist
 
 		internal Asset<Texture2D> portraitTexture; // used for vanilla entry portrait drawing
 		internal Action<SpriteBatch, Rectangle, Color> customDrawing; // used for modded entry portrait drawing
-		internal List<Asset<Texture2D>> headIconTextures;
+		internal Func<List<Asset<Texture2D>>> headIconTextures;
 
 		/*
 		internal ExpandoObject ConvertToExpandoObject() {
@@ -244,21 +244,34 @@ namespace BossChecklist
 				}
 			}
 
-			headIconTextures = new List<Asset<Texture2D>>();
+			headIconTextures = () => new List<Asset<Texture2D>> { TextureAssets.NpcHead[0] }; // If the head textures is empty, fill it with the '?' head icon so modder's see something is wrong
 			if (extraData?.ContainsKey("overrideHeadTextures") == true) {
-				foreach (string texturePath in InterpretObjectAsListOfStrings(extraData["overrideHeadTextures"])) {
-					headIconTextures.Add(ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad));
+				object headIconData = extraData["overrideHeadTextures"];
+				if (headIconData is Func<List<string>>) {
+					headIconTextures = headIconData as Func<List<Asset<Texture2D>>>;
 				}
-			}
-			else {
-				foreach (int npc in npcIDs) {
-					if (entryType != EntryType.Event && NPCID.Sets.BossHeadTextures[npc] != -1)
-						headIconTextures.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]); // Skip events. Events must use a custom icon to display.
-				}
-			}
+				else if (InterpretObjectAsListOfStrings(headIconData) is List<string> pathList) {
+					List<Asset<Texture2D>> icons = new List<Asset<Texture2D>>();
+					foreach (string texturePath in pathList) {
+						if (ModContent.HasAsset(texturePath))
+							icons.Add(ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad));
+					}
 
-			if (headIconTextures.Count == 0)
-				headIconTextures.Add(TextureAssets.NpcHead[0]); // If the head textures is empty, fill it with the '?' head icon so modder's see something is wrong
+					if (pathList.Count > 0)
+						headIconTextures = () => icons;
+				}
+			}
+			else if (entryType != EntryType.Event) {
+				// Skip events, as they must use a custom icon to display.
+				List<Asset<Texture2D>> icons = new List<Asset<Texture2D>>();
+				foreach (int npc in npcIDs) {
+					if (NPCID.Sets.BossHeadTextures[npc] != -1)
+						icons.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]);
+				}
+
+				if (icons.Count > 0)
+					headIconTextures = () => icons;
+			}
 		}
 
 		// Workaround for vanilla events with illogical translation keys.
@@ -282,24 +295,24 @@ namespace BossChecklist
 
 		internal EntryInfo WithCustomHeadIcon(string texturePath) {
 			if (ModContent.HasAsset(texturePath)) {
-				this.headIconTextures = new List<Asset<Texture2D>>() { ModContent.Request<Texture2D>(texturePath) };
+				this.headIconTextures = () => new List<Asset<Texture2D>>() { ModContent.Request<Texture2D>(texturePath) };
 			}
 			else {
-				this.headIconTextures = new List<Asset<Texture2D>>() { TextureAssets.NpcHead[0] };
+				this.headIconTextures = () => new List<Asset<Texture2D>>() { TextureAssets.NpcHead[0] };
 			}
 			return this;
 		}
 
 		internal EntryInfo WithCustomHeadIcon(List<string> texturePaths) {
-			this.headIconTextures = new List<Asset<Texture2D>>();
+			List<Asset<Texture2D>> icons = new List<Asset<Texture2D>>();
 			foreach (string path in texturePaths) {
-				if (ModContent.HasAsset(path)) {
-					this.headIconTextures.Add(ModContent.Request<Texture2D>(path));
-				}
+				if (ModContent.HasAsset(path))
+					icons.Add(ModContent.Request<Texture2D>(path));
 			}
-			if (headIconTextures.Count == 0) {
-				this.headIconTextures = new List<Asset<Texture2D>>() { TextureAssets.NpcHead[0] };
-			}
+			if (icons.Count == 0)
+				icons = new List<Asset<Texture2D>>() { TextureAssets.NpcHead[0] };
+
+			this.headIconTextures = () => icons;
 			return this;
 		}
 
