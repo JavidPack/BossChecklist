@@ -501,7 +501,7 @@ namespace BossChecklist.UIElements
 				// Any other case should leave the itemslot color as is
 				var backup = TextureAssets.InventoryBack7;
 				Color oldColor = item.color;
-				if (progressRestricted) {
+				if (progressRestricted || !entry.available()) {
 					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
 					item.color = Color.Black; // item should be masked in a black silhouette
 				}
@@ -527,7 +527,7 @@ namespace BossChecklist.UIElements
 				// If the item has not been obtained, check for item restrictions and apply those icons and texts
 				// If no item restrictions exist, display normal item tooltips, and draw a checkmark for obtained items
 				Vector2 pos = new Vector2(inner.X + inner.Width / 2, inner.Y + inner.Height / 2);
-				if (progressRestricted) {
+				if (progressRestricted || !entry.available()) {
 					if (IsMouseHovering) {
 						BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.MaskedItems";
 						BossUISystem.Instance.UIHoverTextColor = Color.IndianRed;
