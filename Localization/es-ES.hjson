@@ -168,6 +168,18 @@ Mods: {
 			}
 		}
 
+		Checklist: {
+			// ToggleCompletedTooltip: Toggle Completed
+			// ToggleMiniBossesTooltip: Toggle Mini Bosses
+			// ToggleEventsTooltip: Toggle Events
+			/* ToggleShowHiddenBossesTooltip:
+				'''
+				Toggle Show Hidden Bosses
+				(Alt-Click to clear Hidden bosses)
+				(Alt-Click on boss to hide)
+				''' */
+		}
+
 		ChatMessages: {
 			Despawn: {
 				Generic: "{0} ya no va a por ti..."
