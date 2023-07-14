@@ -96,7 +96,7 @@ Mods: {
 					FirstVictory: Время игры
 					PersonalBest: У/С-соотношение
 					WorldRecord: Общий У\С
-					Duration:   Длительность битвы
+					Duration: Длительность битвы
 					DurationWorld: Самая быстрая битва
 					HitsTaken: Получено ударов
 					HitsTakenWorld: Мин. кол-во ударов

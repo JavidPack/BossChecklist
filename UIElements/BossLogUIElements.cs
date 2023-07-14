@@ -34,6 +34,14 @@ namespace BossChecklist.UIElements
 		}
 
 		/// <summary>
+		/// Calculates the desired text scale needed to fit text in a UI element.
+		/// </summary>
+		/// <param name="textWidth">The width of the text value. Usually obtained using FontAssets.MouseText.Value.MeasureString</param>
+		/// <param name="maxWidth">The maximum width the text is allowed to take up. Usually the element's width with some padding.</param>
+		/// <param name="defaultScale">If the text does not need to be scaled down, this will serve as the default desired scale.</param>
+		static float AutoScaleText(float textWidth, float maxWidth, float defaultScale = 1f) => textWidth * defaultScale > maxWidth ? maxWidth / textWidth : defaultScale;
+
+		/// <summary>
 		/// All Log related UIElements should hide mouse over interactions and lock the vanilla scroll wheel
 		/// </summary>
 		internal class LogUIElement : UIElement {
@@ -419,7 +427,7 @@ namespace BossChecklist.UIElements
 				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
-				float scale = 0.9f;
+				float scale = AutoScaleText(stringAdjust.X, this.Width.Pixels - 20f, 0.9f); // translated text value may exceed button size
 				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X * scale) / 2), inner.Y + 5);
 
 				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
@@ -622,18 +630,18 @@ namespace BossChecklist.UIElements
 						string message = Language.GetTextValue($"{BossLogUI.LangLog}.ProgressionMode.BeforeYouBegin");
 						Utils.DrawBorderString(spriteBatch, message, pos, Color.White, 0.8f);
 
-						float textScale = 1f;
 						message = Language.GetTextValue($"{BossLogUI.LangLog}.ProgressionMode.AskEnable");
-						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
-						pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
-						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message);
+						float scale = AutoScaleText(stringSize.X, this.Width.Pixels - 15f * 2); // header might exceed page width
+						pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X * scale / 2), pageRect.Y + 40);
+						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, scale);
 					}
 					else if (Id == "PageTwo") {
-						float textScale = 1f;
 						string message = Language.GetTextValue($"{BossLogUI.LangLog}.ProgressionMode.SelectAnOption");
-						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message) * textScale;
-						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X / 2), pageRect.Y + 40);
-						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, textScale);
+						Vector2 stringSize = FontAssets.MouseText.Value.MeasureString(message);
+						float scale = AutoScaleText(stringSize.X, this.Width.Pixels - 15f * 2); // header might exceed page width
+						Vector2 pos = new Vector2(pageRect.X + (pageRect.Width / 2) - (stringSize.X * scale / 2), pageRect.Y + 40);
+						Utils.DrawBorderString(spriteBatch, message, pos, Colors.RarityAmber, scale);
 					}
 				}
 				else if (selectedLogPage >= 0) {
@@ -984,15 +992,17 @@ namespace BossChecklist.UIElements
 				if (!string.IsNullOrEmpty(title)) {
 					Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(title);
 					Color col = slotID == 0 ? Color.Goldenrod : Color.Gold;
-					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (int)(stringAdjust.X / 2) + 2, inner.Y + (int)(stringAdjust.Y / 3));
-					Utils.DrawBorderString(spriteBatch, title, pos, col);
+					float scl = AutoScaleText(stringAdjust.X, this.Width.Pixels - (64 * 2) - 15f); // record title may overlap with icon
+					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (int)(stringAdjust.X * scl / 2) + 2, inner.Y + (int)(stringAdjust.Y * scl / 3));
+					Utils.DrawBorderString(spriteBatch, title, pos, col, scl);
 				}
 
 				if (!string.IsNullOrEmpty(value)) {
 					Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(value);
 					Color col = slotID == 0 ? Color.LightYellow : Color.White;
-					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (int)(stringAdjust.X / 2) + 2, inner.Y + inner.Height - (int)stringAdjust.Y);
-					Utils.DrawBorderString(spriteBatch, value, pos, col);
+					float scl = AutoScaleText(stringAdjust.X, this.Width.Pixels - (64f * 2) - 15f); // record value may overlap with icon
+					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (int)(stringAdjust.X * scl / 2) + 2, inner.Y + inner.Height - (int)stringAdjust.Y * scl);
+					Utils.DrawBorderString(spriteBatch, value, pos, col, scl);
 				}
 			}
 		}
@@ -1039,13 +1049,15 @@ namespace BossChecklist.UIElements
 				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + (isMod ? 95 : 80), inner.Y + 11), Color.White); // Draw the dev/mod name as a string
 
 				if (!string.IsNullOrEmpty(devTitle)) {
-					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + 85, inner.Y + 45), Color.LemonChiffon); // Draw the dev title as a string
+					float scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(devTitle).X, 210); // Mod name might exceed panel size
+					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + 85, inner.Y + 45), Color.LemonChiffon, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev title as a string
 				}
 				else if (entryCounts != null) {
 					int xOffset = 94 + (70 * 2 / 3); // draw each entry count submitted by the mod
 					foreach (int entryNum in entryCounts) {
-						Vector2 textSize = FontAssets.MouseText.Value.MeasureString(entryNum.ToString());
-						spriteBatch.DrawString(FontAssets.MouseText.Value, entryNum.ToString(), new Vector2(inner.X + xOffset - (int)(textSize.X / 2), inner.Y + 54), Color.LemonChiffon);
+						Vector2 textSize = FontAssets.MouseText.Value.MeasureString(entryNum.ToString()); // no need to auto-scale as it is unlikely for a mod to submit 100+ entries
+						Vector2 pos = new Vector2(inner.X + xOffset - (int)(textSize.X / 2), inner.Y + 54);
+						spriteBatch.DrawString(FontAssets.MouseText.Value, entryNum.ToString(), pos, Color.LemonChiffon);
 						xOffset += 74;
 					}
 				}
