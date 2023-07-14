@@ -169,15 +169,15 @@ Mods: {
 		}
 
 		Checklist: {
-			// ToggleCompletedTooltip: Toggle Completed
-			// ToggleMiniBossesTooltip: Toggle Mini Bosses
-			// ToggleEventsTooltip: Toggle Events
-			/* ToggleShowHiddenBossesTooltip:
+			ToggleCompletedTooltip: 开关显示已完成的
+			ToggleMiniBossesTooltip: 开关显示小Boss
+			ToggleEventsTooltip: 开关显示事件
+			ToggleShowHiddenBossesTooltip:
 				'''
-				Toggle Show Hidden Bosses
-				(Alt-Click to clear Hidden bosses)
-				(Alt-Click on boss to hide)
-				''' */
+				开关显示隐藏的Boss
+				(Alt-点击以清除被隐藏的Boss)
+				(Alt-点击Boss以将其隐藏)
+				'''
 		}
 
 		ChatMessages: {
