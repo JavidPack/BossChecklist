@@ -3,11 +3,11 @@ Mods: {
 		Log: {
 			Common: {
 				BossLog: Босс-журнал
-				Boss: Боссы
+				Boss: босс
 				BossPlural: Боссы
-				MiniBoss: Мини-боссы
+				MiniBoss: мини-босс
 				MiniBossPlural: Мини-боссы
-				Event: События
+				Event: событие
 				EventPlural: События
 				Enabled: включён
 				Disabled: выключен
@@ -20,7 +20,7 @@ Mods: {
 				Credits: Конец
 				NextEntry:
 					'''
-					Следующие {0}:
+					Следующий {0}:
 					{1}
 					'''
 				Records: Рекорды
@@ -479,7 +479,7 @@ Mods: {
 					Debug: "[i:3625] [c/ffeb6e:Инструменты для разработчиков модов]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:Инструменты отладки отслеживания рекордов]"
 					DebugResetData: "[i:575] [c/ffeb6e:Опции сброса данных]"
-					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
+					FeatureTesting: "[i:2172] [c/ffeb6e:Тестирование функций]"
 				}
 
 				ModCallVerbose: {
