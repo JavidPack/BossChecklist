@@ -3,11 +3,11 @@ Mods: {
 		Log: {
 			Common: {
 				BossLog: Босс-журнал
-				Boss: Боссы
+				Boss: Босс
 				BossPlural: Боссы
-				MiniBoss: Мини-боссы
+				MiniBoss: Мини-босс
 				MiniBossPlural: Мини-боссы
-				Event: События
+				Event: Событие
 				EventPlural: События
 				Enabled: включён
 				Disabled: выключен
@@ -20,7 +20,7 @@ Mods: {
 				Credits: Конец
 				NextEntry:
 					'''
-					Следующие {0}:
+					След. {0}:
 					{1}
 					'''
 				Records: Рекорды
@@ -48,7 +48,7 @@ Mods: {
 					Hide: "{0}: Скрыты"
 					HideWhenCompleted: "{0}: Скрыты после победы"
 					ToggleVisibility: Переключить видимость скрытых целей
-					Disabled: Фильтер отключён из-за настройки 'Босс-журнал показывает только боссов'
+					Disabled: Фильтр отключён из-за настройки 'Босс-журнал показывает только боссов'
 				}
 			}
 
@@ -173,14 +173,14 @@ Mods: {
 		}
 
 		Checklist: {
-			ToggleCompletedTooltip: Показать пройденных
-			ToggleMiniBossesTooltip: Показать мини-боссов
-			ToggleEventsTooltip: Показать события
+			ToggleCompletedTooltip: Отображение пройденного
+			ToggleMiniBossesTooltip: Отображение мини-боссов
+			ToggleEventsTooltip: Отображение событий
 			ToggleShowHiddenBossesTooltip:
 				'''
-				Показать скрытых боссов
-				(Alt-Click чтобы восстановить по умолчанию)
-				(Alt-Click по боссу, чтобы скрыть)
+				Переключение отображения скрытых боссов
+				(Alt-ЛКМ, чтобы сбросить скрытых боссов)
+				(Alt-ЛКМ по боссу, чтобы скрыть его)
 				'''
 		}
 
@@ -223,7 +223,7 @@ Mods: {
 		}
 
 		BossSpawnInfo: {
-			// Unknown: Spawn conditions unknown
+			Unknown: Условия для призыва неизвестны.
 			KingSlime: Используйте [i:560] в любой точке карты мира или убейте 150 слизней во время слизнепада.
 			EyeofCthulhu: Используйте [i:43] ночью или дождитесь, пока босс придёт естественным образом ночью с шансом 33%, когда его здоровье больше 200.
 			EaterofWorldsHead: Используйте [i:70] или сломайте 3 теневых сферы в пучинах искажения.
@@ -267,8 +267,8 @@ Mods: {
 		}
 
 		Keybinds: {
-			ToggleChecklist.DisplayName: Открыть Босс-список
-			ToggleLog.DisplayName: Открыть Босс-журна
+			ToggleChecklist.DisplayName: Открыть Boss Checklist
+			ToggleLog.DisplayName: Открыть Босс-журнал
 		}
 
 		Configs: {
@@ -316,17 +316,17 @@ Mods: {
 
 				FilterBosses: {
 					Label: Фильтр боссов в списке
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				FilterMiniBosses: {
 					Label: Фильтр мини-боссов в списке
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				FilterEvents: {
 					Label: Фильтр событий в списке
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				ColoredBossText: {
@@ -340,7 +340,7 @@ Mods: {
 
 				SelectedCheckmarkType: {
 					Label: Тип отметки в чеклисте
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				DrawNextMark: {
@@ -360,12 +360,12 @@ Mods: {
 
 				EnableProgressionMode: {
 					Label: Включить режим прогрессии
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				DisableProgressionMode: {
 					Label: Отключить режим прогрессии
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				ProgressionPrompt: {
@@ -375,12 +375,12 @@ Mods: {
 
 				MaskTextures: {
 					Label: Скрыть текстуры до победы над целью
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				MaskNames: {
 					Label: Скрыть имена до победы над целью
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				UnmaskNextCheck: {
@@ -390,7 +390,7 @@ Mods: {
 
 				MaskBossLoot: {
 					Label: Скрыть выпадаемые предметы босса до победы
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				MaskHardMode: {
@@ -438,22 +438,22 @@ Mods: {
 
 				TreasureBags: {
 					Label: Отображение мешков с сокровищами на карте
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				Fragments: {
 					Label: Отображение фрагментов на карте
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				Scales: {
 					Label: Отображение теневых чешуек и образцов ткани на карте
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				BossRadar: {
 					Label: Включить босс-радар
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				RadarMiniBosses: {
@@ -479,7 +479,7 @@ Mods: {
 					Debug: "[i:3625] [c/ffeb6e:Инструменты для разработчиков модов]"
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:Инструменты отладки отслеживания рекордов]"
 					DebugResetData: "[i:575] [c/ffeb6e:Опции сброса данных]"
-					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
+					FeatureTesting: "[i:2172] [c/ffeb6e:Тестирование функций]"
 				}
 
 				ModCallVerbose: {
@@ -521,12 +521,13 @@ Mods: {
 				}
 
 				DisableAutoLocalization: {
-					Label: Отключить автоматическую локализацию
+					Label: Отключение автоматической локализации
 					Tooltip:
 						'''
-						BossChecklist обнаружит старые вызовы и создаст локализации для отправки LocalizedText, необходимых для новых вызовов.
-						Новые вызовы не требуют этих локализаций, но будут использоваться по умолчанию, если передано значение null.
-						Установите значение true, чтобы BossChecklist не создавал новых локализаций.
+						BossChecklist будет автоматически обнаруживать устаревшие вызовы и
+						создавать локализации для представленных LocalizedText, которые требуются для новых вызовов.
+						Новые вызовы не зависят от этих локализаций, но по умолчанию будут использовать их, если передано значение null.
+						Установите значение ВКЛ, чтобы запретить Boss Checklist создавать новые локализации автоматически.
 						'''
 				}
 
@@ -541,7 +542,7 @@ Mods: {
 
 				DisableRecordTracking: {
 					Label: Отключить отслеживание рекордов
-					// Tooltip: ""
+					Tooltip: ""
 				}
 
 				ShowRecordTracking: {
@@ -579,20 +580,22 @@ Mods: {
 				}
 
 				RecordFeatureTesting: {
-					Label: Отключить 'Boss Record' тестирование функций
+					Label: Отключить тестирование функции 'Рекорды босса'
 					Tooltip:
 						'''
-						Предотвращает сохранения Boss Records, отключая его во время тестирования функций.
-						Эта функция требует тестирования и отчетов об ошибках, прежде чем она будет снята с тестирования функций и полностью включена для всех пользователей
+						Эта настройка предотвращает выполнение кода, отвечающего за функцию 'Рекорды босса',
+						и фактически отключает её во время тестирования функциональности.
+						Прежде чем данная функция будет полностью включена для всех пользователей, она требует тестирования и сообщений об ошибках.
 						'''
 				}
 
 				WorldRecordFeatureTesting: {
-					Label: Отключить 'World Record' тестирование функций
+					Label: Отключить тестирование функции 'Рекорды мира'
 					Tooltip:
 						'''
-						Предотвращает сохранения World Record, отключая его во время тестирования функций.
-						На данный момент известно, что эта функция не работает и могут быть ошибки.
+						Эта настройка предотвращает выполнение кода, отвечающего за функцию 'Рекорды мира',
+						и фактически отключает её во время тестирования функциональности.
+						На данный момент известно, что эта функция не работает должным образом и может вызывать проблемы.
 						'''
 				}
 			}
