@@ -242,6 +242,9 @@ namespace BossChecklist
 		/// Handles all of BossChecklist's custom downed variables, makring them as defeated and updating all clients when needed.
 		/// </summary>
 		public void HandleDownedNPCs(int npcType) {
+			if (!WorldAssist.TrackingDowns)
+				return;
+
 			if ((npcType == NPCID.DD2DarkMageT1 || npcType == NPCID.DD2DarkMageT3) && !WorldAssist.downedDarkMage) {
 				WorldAssist.downedDarkMage = true;
 				if (Main.netMode == NetmodeID.Server) {

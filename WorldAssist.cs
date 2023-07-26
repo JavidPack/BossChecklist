@@ -48,6 +48,7 @@ namespace BossChecklist
 		bool Tracker_PumpkinMoon = false;
 		bool Tracker_FrostMoon = false;
 		bool Tracker_SolarEclipse = false;
+		public static bool TrackingDowns = false;
 
 		public override void Load() {
 			On_DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
@@ -61,7 +62,7 @@ namespace BossChecklist
 				downedInvasionT3Ours = true;
 		}
 
-		private void ClearDownedBools() {
+		private void ClearDownedBools(bool startTrackingDowns = false) {
 			// Events
 			downedBloodMoon = false;
 			downedFrostMoon = false;
@@ -84,13 +85,15 @@ namespace BossChecklist
 			downedInvasionT2Ours = false;
 			downedInvasionT3Ours = false;
 			downedTorchGod = false;
+
+			TrackingDowns = startTrackingDowns;
 		}
 
 		public override void OnWorldLoad() {
 			HiddenEntries.Clear();
 			MarkedEntries.Clear();
 
-			ClearDownedBools();
+			ClearDownedBools(true);
 
 			// Record related lists that should be the same count of record tracking entries
 			worldRecords = new WorldRecord[BossChecklist.bossTracker.BossRecordKeys.Count];
@@ -324,6 +327,9 @@ namespace BossChecklist
 		}
 
 		public void HandleMoonDowns() {
+			if (!TrackingDowns)
+				return; // Do not track moon phase when it shouldn't. Should help with data leaking into other worlds.
+
 			// Blood Moon
 			if (Main.bloodMoon) {
 				Tracker_BloodMoon = true;
