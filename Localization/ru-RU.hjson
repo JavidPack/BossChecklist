@@ -3,11 +3,11 @@ Mods: {
 		Log: {
 			Common: {
 				BossLog: Босс-журнал
-				Boss: Босс
+				Boss: Босса
 				BossPlural: Боссы
-				MiniBoss: Мини-босс
+				MiniBoss: Мини-босса
 				MiniBossPlural: Мини-боссы
-				Event: Событие
+				Event: События
 				EventPlural: События
 				Enabled: включён
 				Disabled: выключен
@@ -119,7 +119,7 @@ Mods: {
 				Noncraftable: Этот предмет не может быть создан
 				NoSpawnItem:
 					'''
-					У этого {0] нет предмета
+					У этого {0} нет предмета
 					для призыва
 					'''
 				ByHand: Вручную
