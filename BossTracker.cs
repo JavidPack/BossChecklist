@@ -330,9 +330,11 @@ namespace BossChecklist
 					entry.loot.AddRange(itemDropInfo);
 
 					foreach (DropRateInfo dropRate in itemDropInfo) {
-						if (!entry.lootItemTypes.Contains(dropRate.itemId)) {
+						if (dropRate.itemId <= 0)
+							continue;
+
+						if (!entry.lootItemTypes.Contains(dropRate.itemId))
 							entry.lootItemTypes.Add(dropRate.itemId);
-						}
 					}
 
 					// Add Torch God's Favor since its not technically an NPC drop.
@@ -376,11 +378,13 @@ namespace BossChecklist
 					entry.loot.AddRange(itemDropInfo);
 
 					foreach (DropRateInfo dropRate in itemDropInfo) {
+						if (dropRate.itemId <= 0)
+							continue;
+
 						Item item = ContentSamples.ItemsByType[dropRate.itemId];
 						if (item.expert || item.expertOnly || item.master || item.masterOnly) {
-							if (!entry.lootItemTypes.Contains(dropRate.itemId)) {
+							if (!entry.lootItemTypes.Contains(dropRate.itemId))
 								entry.lootItemTypes.Add(dropRate.itemId);
-							}
 						}
 					}
 				}
