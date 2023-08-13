@@ -1187,23 +1187,25 @@ namespace BossChecklist
 				hardmodeList.SetScrollbar(scrollTwo);
 			}
 
-			// Order matters here
-			prehardmodeBar = new ProgressBar(false);
-			prehardmodeBar.Left.Pixels = (int)(PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10);
-			prehardmodeBar.Height.Pixels = 14;
-			prehardmodeBar.Top.Pixels = (int)(PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2));
-			prehardmodeBar.Width.Pixels = (int)(PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2));
+			if (BossChecklist.BossLogConfig.ShowProgressBars) {
+				// Order matters here
+				prehardmodeBar = new ProgressBar(false);
+				prehardmodeBar.Left.Pixels = (int)(PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10);
+				prehardmodeBar.Height.Pixels = 14;
+				prehardmodeBar.Top.Pixels = (int)(PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2));
+				prehardmodeBar.Width.Pixels = (int)(PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2));
 
-			// Order matters here
-			hardmodeBar = new ProgressBar(true);
-			hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
-			hardmodeBar.Height.Pixels = 14;
-			hardmodeBar.Top.Pixels = prehardmodeBar.Top.Pixels;
-			hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
+				// Order matters here
+				hardmodeBar = new ProgressBar(true);
+				hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
+				hardmodeBar.Height.Pixels = 14;
+				hardmodeBar.Top.Pixels = prehardmodeBar.Top.Pixels;
+				hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
 
-			PageOne.Append(prehardmodeBar);
-			if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode)
-				PageTwo.Append(hardmodeBar);
+				PageOne.Append(prehardmodeBar);
+				if (!BossChecklist.BossLogConfig.MaskHardMode || Main.hardMode)
+					PageTwo.Append(hardmodeBar);
+			}
 		}
 
 		/// <summary>

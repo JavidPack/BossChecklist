@@ -393,6 +393,11 @@ Mods: {
 					Label: 隐藏困难模式内容直至玩家处于困难模式
 					Tooltip: 隐藏所有内容, 覆盖上面选择的选项.
 				}
+
+				ShowProgressBars: {
+					// Label: Show Progress Bars
+					// Tooltip: When disabled, the total progress bars at the bottom of the table of contents will not show.
+				}
 			}
 
 			ClientConfiguration: {

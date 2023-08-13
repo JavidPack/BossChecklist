@@ -393,6 +393,11 @@ Mods: {
 					// Label: Hide hardmode content until in hardmode
 					// Tooltip: Hides ALL content, overriding the options you have toggled above.
 				}
+
+				ShowProgressBars: {
+					// Label: Show Progress Bars
+					// Tooltip: When disabled, the total progress bars at the bottom of the table of contents will not show.
+				}
 			}
 
 			ClientConfiguration: {
