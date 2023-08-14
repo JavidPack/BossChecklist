@@ -16,15 +16,17 @@ namespace BossChecklist
 
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight
 		public override void OnSpawn(NPC npc, IEntitySource source) {
-			// Only single player and server should be starting the record tracking process
-			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return; // Only single player and server should be starting the record tracking process
 
 			if (GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || WorldAssist.Tracker_ActiveEntry[recordIndex])
 				return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
 
 			// If not marked active, set to active and reset trackers for all players to start tracking records for this fight
 			WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
+
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+				return;
 
 			if (Main.netMode == NetmodeID.SinglePlayer) {
 				WorldAssist.Tracker_StartingPlayers[recordIndex, Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted

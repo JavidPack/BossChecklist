@@ -272,8 +272,6 @@ namespace BossChecklist
 
 		public override void PreUpdateWorld() {
 			HandleMoonDowns();
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
 
 			foreach (NPC npc in Main.npc) {
 				if (NPCAssist.GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || CheckedRecordIndexes[recordIndex])
