@@ -165,12 +165,7 @@ namespace BossChecklist
 						if (Main.netMode != NetmodeID.SinglePlayer)
 							return true;
 
-						EntryInfo entry = NPCAssist.GetEntryInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type);
-						if (entry == null)
-							return true;
-
-						int recordIndex = entry.GetRecordIndex;
-						if (recordIndex == -1)
+						if (NPCAssist.GetEntryInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false)
 							return true;
 
 						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();

@@ -114,7 +114,10 @@ namespace BossChecklist
 
 		internal int GetIndex => BossChecklist.bossTracker.SortedEntries.IndexOf(this);
 
-		internal int GetRecordIndex => BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
+		internal bool IsRecordIndexed(out int recordIndex) {
+			recordIndex = BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
+			return BossChecklist.bossTracker.BossRecordKeys.Contains(this.Key);
+		}
 
 		/// <summary>
 		/// Determines what despawn message should be used based on client configuration and submitted entry data.

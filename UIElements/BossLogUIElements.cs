@@ -208,7 +208,8 @@ namespace BossChecklist.UIElements
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 
 				if (Id == "SubCategory") {
-					PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[BossUISystem.Instance.BossLog.GetLogEntryInfo.GetRecordIndex].stats;
+					BossUISystem.Instance.BossLog.GetLogEntryInfo.IsRecordIndexed(out int recordIndex);
+					PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
 					if (stats.kills == 0) {
 						BossLogUI.RecordSubCategory = BossLogUI.RecordSubCategory == SubCategory.PreviousAttempt ? SubCategory.WorldRecord : SubCategory.PreviousAttempt;
 					}
@@ -891,9 +892,9 @@ namespace BossChecklist.UIElements
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
 
-				EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
-				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[entry.GetRecordIndex].stats;
-				WorldStats worldStats = WorldAssist.worldRecords[entry.GetRecordIndex].stats;
+				BossUISystem.Instance.BossLog.GetLogEntryInfo.IsRecordIndexed(out int RecordIndex);
+				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[RecordIndex].stats;
+				WorldStats worldStats = WorldAssist.worldRecords[RecordIndex].stats;
 
 				slotID = slot;
 				title = GetTitle(subCategory)[slot];

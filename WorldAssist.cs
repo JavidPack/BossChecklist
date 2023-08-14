@@ -104,7 +104,8 @@ namespace BossChecklist
 
 			// Populate world records list
 			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-				worldRecords[BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == key)].GetRecordIndex] = new WorldRecord(key);
+				if (BossChecklist.bossTracker.SortedEntries.Find(x => x.Key == key) is EntryInfo entry && entry.IsRecordIndexed(out int recordIndex))
+					worldRecords[recordIndex] = new WorldRecord(key);
 			}
 		}
 
@@ -157,17 +158,15 @@ namespace BossChecklist
 			unloadedWorldRecords.Clear();
 			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("WorldRecords").ToList();
 			foreach (WorldRecord record in SavedWorldRecords) {
-				int sortedIndex = BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == record.bossKey);
-				if (sortedIndex == -1) {
+				if (BossChecklist.bossTracker.SortedEntries.Find(x => x.Key == record.bossKey) is not EntryInfo entry) {
 					unloadedWorldRecords.Add(record); // Add any unloaded entries to this list
 					continue; // Entry is not loaded
 				}
-				else if (BossChecklist.bossTracker.SortedEntries[sortedIndex].type != EntryType.Boss)
-					continue; // Loaded entry is not a boss
-
-				// Set record data to list based on record index
-				// Data here can't be null as the key is checked beforehand
-				worldRecords[BossChecklist.bossTracker.SortedEntries[sortedIndex].GetRecordIndex] = record;
+				else if (entry.IsRecordIndexed(out int recordIndex)) {
+					// Set record data to list based on record index
+					// if there is no record value, skip the entry as it is not a boss
+					worldRecords[recordIndex] = record;
+				}
 			}
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
@@ -277,12 +276,7 @@ namespace BossChecklist
 				return;
 
 			foreach (NPC npc in Main.npc) {
-				EntryInfo entry = NPCAssist.GetEntryInfo(npc.type);
-				if (entry == null)
-					continue;
-
-				int recordIndex = entry.GetRecordIndex;
-				if (recordIndex == -1 || CheckedRecordIndexes[recordIndex])
+				if (NPCAssist.GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || CheckedRecordIndexes[recordIndex])
 					continue; // If the NPC's record index is invalid OR was already handled, move on to the next NPC
 
 				CheckedRecordIndexes[recordIndex] = true; // record index will be handled, so no need to check it again

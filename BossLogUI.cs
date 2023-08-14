@@ -245,11 +245,8 @@ namespace BossChecklist
 				//ResetUIPositioning();
 				Main.playerInventory = false; // hide the player inventory
 			}
-			else if (PageNum >= 0) {
-				// If UI is closed on a new record page, remove the new record from the list
-				int selectedEntryIndex = GetLogEntryInfo.GetRecordIndex;
-				if (selectedEntryIndex != -1 && modPlayer.hasNewRecord.Length > 0)
-					modPlayer.hasNewRecord[selectedEntryIndex] = false;
+			else if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int selectedEntryIndex) && modPlayer.hasNewRecord.Length > 0) {
+				modPlayer.hasNewRecord[selectedEntryIndex] = false; // If UI is closed on a new record page, remove the new record from the list
 			}
 
 			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
@@ -640,7 +637,9 @@ namespace BossChecklist
 				return; // player must be holding alt
 
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			int recordIndex = GetLogEntryInfo.GetRecordIndex;
+			if (!GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
+				return; // entry must have a record index
+
 			PersonalStats stats = modPlayer.RecordsForWorld[recordIndex].stats;
 			stats.kills = 0;
 			stats.deaths = 0;
@@ -854,8 +853,8 @@ namespace BossChecklist
 				return;
 			// Remove new records when navigating from a page with a new record
 			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && GetLogEntryInfo.GetRecordIndex != -1)
-				modPlayer.hasNewRecord[GetLogEntryInfo.GetRecordIndex] = false;
+			if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
+				modPlayer.hasNewRecord[recordIndex] = false;
 
 			// Calculate what page the Log needs to update to
 			List<EntryInfo> BossList = BossChecklist.bossTracker.SortedEntries;
@@ -1143,7 +1142,7 @@ namespace BossChecklist
 					textColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
 				}
 				else if (BossChecklist.BossLogConfig.ColoredBossText) {
-					if (entry.GetRecordIndex != -1 && Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[entry.GetRecordIndex]) {
+					if (entry.IsRecordIndexed(out int recordIndex) && Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[recordIndex]) {
 						textColor = Main.DiscoColor;
 					}
 					else {
@@ -1304,8 +1303,9 @@ namespace BossChecklist
 			// Only bosses have records (Events will have banners of the enemies in the event drawn on it)
 			// The entry also must be fully supported to have these buttons created
 
-			if (GetLogEntryInfo.type == EntryType.Boss) {
-				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[GetLogEntryInfo.GetRecordIndex].stats;
+			if (GetLogEntryInfo.IsRecordIndexed(out int recordIndex)) {
+
+				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
 				bool noKills = stats.kills == 0; // has the player killed this boss before?
 				if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
 					RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.

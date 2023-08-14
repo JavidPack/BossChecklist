@@ -20,41 +20,37 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
-			EntryInfo entry = GetEntryInfo(npc.type);
-			if (entry == null)
-				return; // Make sure the npc is an entry
+			if (GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || WorldAssist.Tracker_ActiveEntry[recordIndex])
+				return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
 
 			// If not marked active, set to active and reset trackers for all players to start tracking records for this fight
-			int recordIndex = entry.GetRecordIndex;
-			if (!WorldAssist.Tracker_ActiveEntry[recordIndex]) {
-				WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
+			WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
 
-				if (Main.netMode == NetmodeID.SinglePlayer) {
-					WorldAssist.Tracker_StartingPlayers[recordIndex, Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted
-					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (Main.netMode == NetmodeID.SinglePlayer) {
+				WorldAssist.Tracker_StartingPlayers[recordIndex, Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				modPlayer.Tracker_Duration[recordIndex] = 0;
+				modPlayer.Tracker_HitsTaken[recordIndex] = 0;
+			}
+			else if (Main.netMode == NetmodeID.Server) {
+				foreach (Player player in Main.player) {
+					if (!player.active)
+						continue; // skip any inactive players
+
+					WorldAssist.Tracker_StartingPlayers[recordIndex, player.whoAmI] = true; // Active players when the boss spawns will be counted
+
+					// This is updated serverside
+					PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
 					modPlayer.Tracker_Duration[recordIndex] = 0;
 					modPlayer.Tracker_HitsTaken[recordIndex] = 0;
-				}
-				else if (Main.netMode == NetmodeID.Server) {
-					foreach (Player player in Main.player) {
-						if (!player.active)
-							continue; // skip any inactive players
 
-						WorldAssist.Tracker_StartingPlayers[recordIndex, player.whoAmI] = true; // Active players when the boss spawns will be counted
-
-						// This is updated serverside
-						PlayerAssist modPlayer = player.GetModPlayer<PlayerAssist>();
-						modPlayer.Tracker_Duration[recordIndex] = 0;
-						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
-
-						// Needs to be updated client side as well
-						// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
-						ModPacket packet = Mod.GetPacket();
-						packet.Write((byte)PacketMessageType.ResetTrackers);
-						packet.Write(recordIndex);
-						packet.Write(player.whoAmI);
-						packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client
-					}
+					// Needs to be updated client side as well
+					// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
+					ModPacket packet = Mod.GetPacket();
+					packet.Write((byte)PacketMessageType.ResetTrackers);
+					packet.Write(recordIndex);
+					packet.Write(player.whoAmI);
+					packet.Send(toClient: player.whoAmI); // Server --> Multiplayer client
 				}
 			}
 		}
@@ -68,35 +64,30 @@ namespace BossChecklist
 				return;
 
 			// Stop record trackers and record them to the player while also checking for records and world records
-			
-			EntryInfo entry = GetEntryInfo(npc.type);
-			if (entry != null) {
-				int index = entry.GetIndex;
-				int recordIndex = entry.GetRecordIndex;
-				if (FullyInactive(npc, index, true)) {
-					if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
-						if (Main.netMode == NetmodeID.Server) {
-							Networking.UpdateServerRecords(npc, recordIndex);
-						}
-						else if (Main.netMode == NetmodeID.SinglePlayer) {
-							CheckRecords(npc, recordIndex);
-						}
-						else if (Main.netMode == NetmodeID.MultiplayerClient) {
-							Networking.SubmitPlayTimeToServer(npc, recordIndex);
-						}
-					}
+			if (GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || !FullyInactive(npc, entry.GetIndex, true))
+				return;
 
-					if (BossChecklist.DebugConfig.ShowInactiveBossCheck)
-						Main.NewText(npc.FullName + ": " + FullyInactive(npc, index));
-
-					WorldAssist.worldRecords[recordIndex].stats.totalKills++;
-
-					// Reset world variables after record checking takes place
-					WorldAssist.Tracker_ActiveEntry[recordIndex] = false;
-					for (int i = 0; i < Main.maxPlayers; i++) {
-						WorldAssist.Tracker_StartingPlayers[recordIndex, i] = false;
-					}
+			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
+				if (Main.netMode == NetmodeID.Server) {
+					Networking.UpdateServerRecords(npc, recordIndex);
 				}
+				else if (Main.netMode == NetmodeID.SinglePlayer) {
+					CheckRecords(npc, recordIndex);
+				}
+				else if (Main.netMode == NetmodeID.MultiplayerClient) {
+					Networking.SubmitPlayTimeToServer(npc, recordIndex);
+				}
+			}
+
+			if (BossChecklist.DebugConfig.ShowInactiveBossCheck)
+				Main.NewText(npc.FullName + ": " + FullyInactive(npc, entry.GetIndex));
+
+			WorldAssist.worldRecords[recordIndex].stats.totalKills++;
+
+			// Reset world variables after record checking takes place
+			WorldAssist.Tracker_ActiveEntry[recordIndex] = false;
+			for (int i = 0; i < Main.maxPlayers; i++) {
+				WorldAssist.Tracker_StartingPlayers[recordIndex, i] = false;
 			}
 		}
 
@@ -110,7 +101,7 @@ namespace BossChecklist
 				return null; // the entry hasn't been registered
 
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
-				if (entry.type == EntryType.Boss && entry.npcIDs.Contains(npcType))
+				if (entry.IsRecordIndexed(out int recordIndex) && entry.npcIDs.Contains(npcType))
 					return entry; // if the npc pool contains the npc type, return the current the index
 			}
 
