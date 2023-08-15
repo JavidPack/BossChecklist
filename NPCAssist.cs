@@ -16,17 +16,14 @@ namespace BossChecklist
 
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight
 		public override void OnSpawn(NPC npc, IEntitySource source) {
-			if (Main.netMode == NetmodeID.MultiplayerClient)
+			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // Only single player and server should be starting the record tracking process
 
-			if (GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || WorldAssist.Tracker_ActiveEntry[recordIndex])
+			if (GetEntryInfo(npc.type, out int recordIndex) is null || WorldAssist.Tracker_ActiveEntry[recordIndex])
 				return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
 
 			// If not marked active, set to active and reset trackers for all players to start tracking records for this fight
 			WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
-
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
 
 			if (Main.netMode == NetmodeID.SinglePlayer) {
 				WorldAssist.Tracker_StartingPlayers[recordIndex, Main.LocalPlayer.whoAmI] = true; // Active players when the boss spawns will be counted
@@ -66,7 +63,7 @@ namespace BossChecklist
 				return;
 
 			// Stop record trackers and record them to the player while also checking for records and world records
-			if (GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || !FullyInactive(npc, entry.GetIndex, true))
+			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || !FullyInactive(npc, entry.GetIndex, true))
 				return;
 
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
@@ -94,20 +91,20 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type.
-		/// This method is mainly used for boss record purposes.
+		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type with a record index.
 		/// </summary>
 		/// <returns>A valid EntryInfo entry within the registered entries. Returns null if no entry can be found.</returns>
-		public static EntryInfo GetEntryInfo(int npcType) {
+		public static EntryInfo GetEntryInfo(int npcType, out int recordIndex) {
+			recordIndex = -1;
 			if (!BossChecklist.bossTracker.EntryCache[npcType])
 				return null; // the entry hasn't been registered
 
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
-				if (entry.IsRecordIndexed(out int recordIndex) && entry.npcIDs.Contains(npcType))
+				if (entry.IsRecordIndexed(out recordIndex) && recordIndex != -1 && entry.npcIDs.Contains(npcType))
 					return entry; // if the npc pool contains the npc type, return the current the index
 			}
 
-			return null; // no entry found
+			return null; // no valid entry found (may be an entry, but is not record indexed.
 		}
 
 		/// <summary>

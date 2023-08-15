@@ -27,6 +27,8 @@ namespace BossChecklist
 
 		public static bool[] CheckedRecordIndexes;
 
+		public static bool[] DespawnFlags;
+
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
 		public static HashSet<string> MarkedEntries = new HashSet<string>();
 
@@ -99,6 +101,7 @@ namespace BossChecklist
 			worldRecords = new WorldRecord[BossChecklist.bossTracker.BossRecordKeys.Count];
 			unloadedWorldRecords = new List<WorldRecord>();
 			CheckedRecordIndexes = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			DespawnFlags = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			Tracker_ActiveEntry = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			Tracker_StartingPlayers = new bool[BossChecklist.bossTracker.BossRecordKeys.Count, Main.maxPlayers];
 
@@ -272,9 +275,13 @@ namespace BossChecklist
 
 		public override void PreUpdateWorld() {
 			HandleMoonDowns();
+			HandleDespawnFlags();
+
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+				return;
 
 			foreach (NPC npc in Main.npc) {
-				if (NPCAssist.GetEntryInfo(npc.type) is not EntryInfo entry || entry.IsRecordIndexed(out int recordIndex) is false || CheckedRecordIndexes[recordIndex])
+				if (NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || CheckedRecordIndexes[recordIndex])
 					continue; // If the NPC's record index is invalid OR was already handled, move on to the next NPC
 
 				CheckedRecordIndexes[recordIndex] = true; // record index will be handled, so no need to check it again
@@ -288,17 +295,8 @@ namespace BossChecklist
 					}
 
 					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
-					if (NPCAssist.FullyInactive(npc, entry.GetIndex)) {
+					if (NPCAssist.FullyInactive(npc, entry.GetIndex))
 						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-						if (entry.GetDespawnMessage(npc) is LocalizedText message) {
-							if (Main.netMode == NetmodeID.SinglePlayer) {
-								Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
-							}
-							else {
-								ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
-							}
-						}
-					}
 				}
 			}
 
@@ -378,6 +376,26 @@ namespace BossChecklist
 					downedSolarEclipse = true;
 					if (Main.netMode == NetmodeID.Server) {
 						NetMessage.SendData(MessageID.WorldData);
+					}
+				}
+			}
+		}
+
+		public void HandleDespawnFlags() {
+			foreach (NPC npc in Main.npc) {
+				if (NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
+					continue; // If the NPC's record index is invalid OR was already handled, move on to the next NPC
+
+				if (!DespawnFlags[recordIndex] && npc.active)
+					DespawnFlags[recordIndex] = true;
+
+				if (DespawnFlags[recordIndex] && NPCAssist.FullyInactive(npc, entry.GetIndex) && entry.GetDespawnMessage(npc) is LocalizedText message) {
+					DespawnFlags[recordIndex] = false;
+					if (Main.netMode == NetmodeID.SinglePlayer) {
+						Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
+					}
+					else {
+						ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
 					}
 				}
 			}

@@ -1356,10 +1356,10 @@ namespace BossChecklist
 					break; // Mini-bosses and Events only display the first slot
 
 				if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE && i > 0 && RecordSubCategory != SubCategory.WorldRecord)
-					break;
+					break; // only draws the first instance of a record slot if records are disabled
 
 				if (BossChecklist.DebugConfig.DisableWorldRecords && i > 0 && RecordSubCategory == SubCategory.WorldRecord)
-					break;
+					break; // only draws the first instance of a record slot if world records are disabled
 
 				RecordDisplaySlot slot;
 				if (GetLogEntryInfo.type == EntryType.Boss) {
