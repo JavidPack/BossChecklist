@@ -433,10 +433,10 @@ namespace BossChecklist
 			#region Boss SpawnItems
 			{ "Terraria KingSlime", new List<int>() { ItemID.SlimeCrown } },
 			{ "Terraria EyeofCthulhu", new List<int>() { ItemID.SuspiciousLookingEye } },
-			{ "Terraria EaterofWorldsHead", new List<int>() { ItemID.WormFood } },
+			{ "Terraria EaterofWorlds", new List<int>() { ItemID.WormFood } },
 			{ "Terraria BrainofCthulhu", new List<int>() { ItemID.BloodySpine } },
 			{ "Terraria QueenBee", new List<int>() { ItemID.Abeemination } },
-			{ "Terraria SkeletronHead", new List<int>() { ItemID.ClothierVoodooDoll } },
+			{ "Terraria Skeletron", new List<int>() { ItemID.ClothierVoodooDoll } },
 			{ "Terraria Deerclops", new List<int>() { ItemID.DeerThing } },
 			{ "Terraria WallofFlesh", new List<int>() { ItemID.GuideVoodooDoll } },
 			{ "Terraria QueenSlimeBoss", new List<int>() { ItemID.QueenSlimeCrystal } },
@@ -491,7 +491,7 @@ namespace BossChecklist
 					ItemID.BadgersHat
 				}
 			},
-			{ "Terraria EaterofWorldsHead",
+			{ "Terraria EaterofWorlds",
 				new List<int>() {
 					ItemID.EaterofWorldsMasterTrophy,
 					ItemID.EaterOfWorldsPetItem,
@@ -524,7 +524,7 @@ namespace BossChecklist
 					ItemID.Nectar,
 				}
 			},
-			{ "Terraria SkeletronHead",
+			{ "Terraria Skeletron",
 				new List<int>() {
 					ItemID.SkeletronMasterTrophy,
 					ItemID.SkeletronPetItem,
@@ -991,7 +991,7 @@ namespace BossChecklist
 			{ "Terraria EaterofWorlds", ItemID.EaterOfWorldsBossBag },
 			{ "Terraria BrainofCthulhu", ItemID.BrainOfCthulhuBossBag },
 			{ "Terraria QueenBee", ItemID.QueenBeeBossBag },
-			{ "Terraria SkeletronHead", ItemID.SkeletronBossBag },
+			{ "Terraria Skeletron", ItemID.SkeletronBossBag },
 			{ "Terraria WallofFlesh", ItemID.WallOfFleshBossBag },
 			{ "Terraria TheTwins", ItemID.TwinsBossBag },
 			{ "Terraria TheDestroyer", ItemID.DestroyerBossBag },
