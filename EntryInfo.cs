@@ -363,6 +363,8 @@ namespace BossChecklist
 
 		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
+			if (nameKey.EndsWith("Head"))
+				nameKey = nameKey.Substring(0, nameKey.Length - 4);
 
 			Func<NPC, LocalizedText> customMessages = null;
 			if (type == EntryType.Boss) { // BossChecklist only has despawn messages for vanilla Bosses
