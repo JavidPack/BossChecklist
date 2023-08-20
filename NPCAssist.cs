@@ -19,7 +19,7 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient || GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
-			WorldAssist.ActiveEntryFlag[npc.whoAmI] = entry.GetIndex;
+			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 			//Main.NewText($"NPC #{npc.whoAmI} has entry index of {entry.GetIndex}"); // debug text
 
 			if (WorldAssist.Tracker_ActiveEntry[recordIndex] || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)

@@ -28,7 +28,7 @@ namespace BossChecklist
 		public static bool[] CheckedRecordIndexes;
 
 		//public static bool[] DespawnFlags;
-		public static int[] ActiveEntryFlag;
+		public static int[] ActiveNPCEntryFlags;
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
 		public static HashSet<string> MarkedEntries = new HashSet<string>();
@@ -103,9 +103,9 @@ namespace BossChecklist
 			unloadedWorldRecords = new List<WorldRecord>();
 			CheckedRecordIndexes = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			//DespawnFlags = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			ActiveEntryFlag = new int[Main.maxNPCs];
+			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 			for (int i = 0; i < Main.maxNPCs; i++) {
-				ActiveEntryFlag[i] = -1;
+				ActiveNPCEntryFlags[i] = -1;
 			}
 			Tracker_ActiveEntry = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			Tracker_StartingPlayers = new bool[BossChecklist.bossTracker.BossRecordKeys.Count, Main.maxPlayers];
@@ -388,16 +388,16 @@ namespace BossChecklist
 
 		public void HandleDespawnFlags() {
 			int entryValue = -1;
-			for (int i = 0; i < ActiveEntryFlag.Length - 1; i++) {
-				entryValue = ActiveEntryFlag[i]; // keep track of the active entry
+			for (int i = 0; i < ActiveNPCEntryFlags.Length - 1; i++) {
+				entryValue = ActiveNPCEntryFlags[i]; // keep track of the active entry
 				if (entryValue == -1)
 					continue; // skip non-boss entries
 
 				NPC npc = Main.npc[i];
 				if (!npc.active) {
-					ActiveEntryFlag[i] = -1; // if the npc tracked is inactive, remove entry value
+					ActiveNPCEntryFlags[i] = -1; // if the npc tracked is inactive, remove entry value
 
-					if (ActiveEntryFlag.Any(x => x == entryValue))
+					if (ActiveNPCEntryFlags.Any(x => x == entryValue))
 						continue; // if the entry value no longer exists in the array, display the message. Otherwise, do nothing until all respective npcs are inactive.
 
 					if (BossChecklist.bossTracker.SortedEntries[entryValue].GetDespawnMessage(npc) is LocalizedText message) {
