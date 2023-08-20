@@ -16,10 +16,13 @@ namespace BossChecklist
 
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight
 		public override void OnSpawn(NPC npc, IEntitySource source) {
-			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+			if (Main.netMode == NetmodeID.MultiplayerClient || GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
-			if (GetEntryInfo(npc.type, out int recordIndex) is null || WorldAssist.Tracker_ActiveEntry[recordIndex])
+			WorldAssist.ActiveEntryFlag[npc.whoAmI] = entry.GetIndex;
+			//Main.NewText($"NPC #{npc.whoAmI} has entry index of {entry.GetIndex}"); // debug text
+
+			if (WorldAssist.Tracker_ActiveEntry[recordIndex] || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
 
 			// If not marked active, set to active and reset trackers for all players to start tracking records for this fight
@@ -91,9 +94,10 @@ namespace BossChecklist
 		}
 
 		/// <summary>
-		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type with a record index.
+		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type.
+		/// Only returns with an entry if the entry has a record index.
 		/// </summary>
-		/// <returns>A valid EntryInfo entry within the registered entries. Returns null if no entry can be found.</returns>
+		/// <returns>Returns null if no valid entry can be found.</returns>
 		public static EntryInfo GetEntryInfo(int npcType, out int recordIndex) {
 			recordIndex = -1;
 			if (!BossChecklist.bossTracker.EntryCache[npcType])
