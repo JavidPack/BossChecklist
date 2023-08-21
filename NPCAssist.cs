@@ -19,6 +19,9 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient || GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
+			if (BossChecklist.bossTracker.VanillaBossLimbs.Contains(npc.type))
+				return; // blacklisted npcs for despawn message comptability (killed rather than set to inactive)
+
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 			//Main.NewText($"NPC #{npc.whoAmI} has entry index of {entry.GetIndex}"); // debug text
 
@@ -270,7 +273,9 @@ namespace BossChecklist
 		/// These messages will not appear if the related configs are disabled.
 		/// </summary>
 		public void SendEntryMessage(NPC npc) {
-			if (NPCisLimb(npc)) {
+			bool isTwinsRet = npc.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
+			bool isTwinsSpaz = npc.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
+			if (BossChecklist.bossTracker.VanillaBossLimbs.Contains(npc.type) || isTwinsRet || isTwinsSpaz) {
 				if (!BossChecklist.ClientConfig.LimbMessages)
 					return;
 
@@ -297,30 +302,6 @@ namespace BossChecklist
 					ChatHelper.BroadcastChatMessage(NetworkText.FromKey(defeatedTower, npcName), Colors.RarityPurple);
 				}
 			}
-		}
-
-		// This feature will not be extended to modded entries as those mods can handle limb messages themselves with ease, if desired.
-		/// <summary>
-		/// A 'limb' NPC is a part of a boss that is an extension of the boss, such as Skeletron's hands.
-		/// This also considers boss's that are multiple entities, such as the Twins consisting of Retinazer and Spazmatism.
-		/// </summary>
-		/// <returns>Whether or not the npc is considered a 'limb'.</returns>
-		public bool NPCisLimb(NPC npc) {
-			int[] limbNPCs = new int[] {
-				NPCID.PrimeSaw,
-				NPCID.PrimeLaser,
-				NPCID.PrimeCannon,
-				NPCID.PrimeVice,
-				NPCID.SkeletronHand,
-				NPCID.GolemFistLeft,
-				NPCID.GolemFistRight,
-				NPCID.GolemHead
-			};
-
-			bool isTwinsRet = npc.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
-			bool isTwinsSpaz = npc.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
-
-			return limbNPCs.Contains(npc.type) || isTwinsRet || isTwinsSpaz;
 		}
 	}
 }

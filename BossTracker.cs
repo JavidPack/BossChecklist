@@ -814,6 +814,17 @@ namespace BossChecklist
 			#endregion
 		};
 
+		internal readonly HashSet<int> VanillaBossLimbs = new HashSet<int>() {
+			NPCID.SkeletronHand, // Skeletron
+			NPCID.PrimeSaw, // Skeletron Prime
+			NPCID.PrimeLaser,
+			NPCID.PrimeCannon,
+			NPCID.PrimeVice,
+			NPCID.GolemFistLeft, // Golem
+			NPCID.GolemFistRight,
+			NPCID.GolemHead
+		};
+
 		internal readonly Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
 			{ "Terraria TorchGod",
 				new List<int>() {
