@@ -100,8 +100,9 @@ namespace BossChecklist
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "NPCName.SkeletronPrime", NPCID.SkeletronPrime, () => NPC.downedMechBoss3)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronPrime}"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "NPCName.Plantera", NPCID.Plantera, () => NPC.downedPlantBoss),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "NPCName.Golem", new List<int>() { NPCID.Golem, NPCID.GolemHead }, () => NPC.downedGolemBoss)
-					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}"),
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "NPCName.Golem", new List<int>() { NPCID.GolemHeadFree, NPCID.GolemHead, NPCID.Golem, NPCID.GolemFistLeft, NPCID.GolemFistRight }, () => NPC.downedGolemBoss)
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}")
+					.WithCustomHeadIcon($"Terraria/Images/NPC_Head_Boss_5"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "NPCName.DD2Betsy", NPCID.DD2Betsy, () => WorldAssist.downedInvasionT3Ours)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2Betsy}"),
 					// No despawn message due to being in an event
@@ -820,9 +821,10 @@ namespace BossChecklist
 			NPCID.PrimeLaser,
 			NPCID.PrimeCannon,
 			NPCID.PrimeVice,
-			NPCID.GolemFistLeft, // Golem
+			NPCID.Golem, // Golem (uses NPCID.GolemHeadFree for main body part)
+			NPCID.GolemHead,
+			NPCID.GolemFistLeft,
 			NPCID.GolemFistRight,
-			NPCID.GolemHead
 		};
 
 		internal readonly Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
