@@ -23,7 +23,6 @@ namespace BossChecklist
 				return; // blacklisted npcs for despawn message comptability (killed rather than set to inactive)
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
-			//Main.NewText($"NPC #{npc.whoAmI} has entry index of {entry.GetIndex}"); // debug text
 
 			if (WorldAssist.Tracker_ActiveEntry[recordIndex] || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
@@ -276,8 +275,8 @@ namespace BossChecklist
 			bool isTwinsRet = npc.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
 			bool isTwinsSpaz = npc.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
 			if (BossChecklist.bossTracker.VanillaBossLimbs.Contains(npc.type) || isTwinsRet || isTwinsSpaz) {
-				if (!BossChecklist.ClientConfig.LimbMessages)
-					return;
+				if (!BossChecklist.ClientConfig.LimbMessages || Main.player.All(plr => !plr.active || plr.dead))
+					return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
 
 				// Skeletron's hands just use Skeletron's name instead of their own, so a custom name is needed
 				string partName = npc.type == NPCID.SkeletronHand ? Lang.GetItemNameValue(ItemID.SkeletronHand) : npc.GetFullNetName().ToString();
