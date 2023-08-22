@@ -430,7 +430,7 @@ namespace BossChecklist
 			}
 		}
 
-		internal readonly Dictionary<string, List<int>> EntrySpawnItems = new Dictionary<string, List<int>>() {
+		internal readonly static Dictionary<string, List<int>> EntrySpawnItems = new Dictionary<string, List<int>>() {
 			#region Boss SpawnItems
 			{ "Terraria KingSlime", new List<int>() { ItemID.SlimeCrown } },
 			{ "Terraria EyeofCthulhu", new List<int>() { ItemID.SuspiciousLookingEye } },
@@ -468,7 +468,7 @@ namespace BossChecklist
 			#endregion
 		};
 
-		internal readonly Dictionary<string, List<int>> EntryCollectibles = new Dictionary<string, List<int>>() {
+		internal readonly static Dictionary<string, List<int>> EntryCollectibles = new Dictionary<string, List<int>>() {
 			#region Boss Collectibles
 			{ "Terraria KingSlime",
 				new List<int>() {
@@ -815,7 +815,7 @@ namespace BossChecklist
 			#endregion
 		};
 
-		internal readonly HashSet<int> VanillaBossLimbs = new HashSet<int>() {
+		internal readonly static HashSet<int> VanillaBossLimbs = new HashSet<int>() {
 			NPCID.SkeletronHand, // Skeletron
 			NPCID.PrimeSaw, // Skeletron Prime
 			NPCID.PrimeLaser,
@@ -827,7 +827,13 @@ namespace BossChecklist
 			NPCID.GolemFistRight,
 		};
 
-		internal readonly Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
+		internal readonly static HashSet<int> BossesThatAreKilledBeforeDespawning = new HashSet<int>() {
+			NPCID.BrainofCthulhu,
+			NPCID.GolemHeadFree,
+			NPCID.CultistBoss
+		};
+
+		internal readonly static Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
 			{ "Terraria TorchGod",
 				new List<int>() {
 					NPCID.TorchGod,
@@ -996,13 +1002,6 @@ namespace BossChecklist
 					NPCID.StardustWormHead,
 				}
 			}
-		};
-
-
-		internal readonly static HashSet<int> BossesThatAreKilledBeforeDespawning = new HashSet<int>() {
-			NPCID.BrainofCthulhu,
-			NPCID.GolemHeadFree,
-			NPCID.CultistBoss
 		};
 
 		internal readonly static Dictionary<string, int> vanillaBossBags = new Dictionary<string, int>() {

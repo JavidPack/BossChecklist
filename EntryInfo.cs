@@ -357,8 +357,8 @@ namespace BossChecklist
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
-					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
-					{ "collectibles", BossChecklist.bossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
 				}
 			);
@@ -401,8 +401,8 @@ namespace BossChecklist
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
-					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
-					{ "collectibles", BossChecklist.bossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
 				}
 			);
@@ -416,12 +416,12 @@ namespace BossChecklist
 				internalName: nameKey,
 				progression: val,
 				downed: downed,
-				npcIDs: BossChecklist.bossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
+				npcIDs: BossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
 					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
-					{ "spawnItems", BossChecklist.bossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
-					{ "collectibles", BossChecklist.bossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 				}
 			);
 		}
