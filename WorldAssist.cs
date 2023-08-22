@@ -27,7 +27,6 @@ namespace BossChecklist
 
 		public static bool[] CheckedRecordIndexes;
 
-		//public static bool[] DespawnFlags;
 		public static int[] ActiveNPCEntryFlags;
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
@@ -102,7 +101,6 @@ namespace BossChecklist
 			worldRecords = new WorldRecord[BossChecklist.bossTracker.BossRecordKeys.Count];
 			unloadedWorldRecords = new List<WorldRecord>();
 			CheckedRecordIndexes = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			//DespawnFlags = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				ActiveNPCEntryFlags[i] = -1;
@@ -410,28 +408,6 @@ namespace BossChecklist
 					}
 				}
 			}
-			/*
-			foreach (NPC npc in Main.npc) {
-				if (!BossChecklist.bossTracker.EntryCache[npc.type])
-					continue;
-
-				if (NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
-					continue; // If the NPC's record index is invalid OR was already handled, move on to the next NPC
-
-				if (!DespawnFlags[recordIndex] && npc.active)
-					DespawnFlags[recordIndex] = true;
-
-				if (DespawnFlags[recordIndex] && NPCAssist.FullyInactive(npc, entry.GetIndex) && entry.GetDespawnMessage(npc) is LocalizedText message) {
-					DespawnFlags[recordIndex] = false;
-					if (Main.netMode == NetmodeID.SinglePlayer) {
-						Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
-					}
-					else {
-						ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
-					}
-				}
-			}
-			*/
 		}
 	}
 }
