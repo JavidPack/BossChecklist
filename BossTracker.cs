@@ -998,6 +998,13 @@ namespace BossChecklist
 			}
 		};
 
+
+		internal readonly static HashSet<int> BossesThatAreKilledBeforeDespawning = new HashSet<int>() {
+			NPCID.BrainofCthulhu,
+			NPCID.GolemHeadFree,
+			NPCID.CultistBoss
+		};
+
 		internal readonly static Dictionary<string, int> vanillaBossBags = new Dictionary<string, int>() {
 			{ "Terraria KingSlime", ItemID.KingSlimeBossBag },
 			{ "Terraria EyeofCthulhu", ItemID.EyeOfCthulhuBossBag },
