@@ -124,8 +124,8 @@ namespace BossChecklist
 		/// </summary>
 		/// <returns>A LocalizedText of the despawn message of the passed npc. Returns null if no message can be found.</returns>
 		internal LocalizedText GetDespawnMessage(NPC npc) {
-			if (npc.life <= 0)
-				return null; // If the boss was killed, don't display a despawn message
+			if (npc.life <= 0 && npc.type != NPCID.GolemHeadFree)
+				return null; // If the boss was killed, don't display a despawn message (special case added for Golem)
 
 			// When unique despawn messages are enabled, pass the NPC for the custom message function provided by the entry
 			if (BossChecklist.ClientConfig.DespawnMessageType == "Unique" && customDespawnMessages(npc) is LocalizedText message)
