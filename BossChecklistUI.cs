@@ -17,8 +17,7 @@ using Terraria.Localization;
 
 namespace BossChecklist.UIElements
 {
-	class BossChecklistUI : UIState
-	{
+	class BossChecklistUI : UIState {
 		public UIHoverImageButton toggleCompletedButton;
 		public UIHoverImageButton toggleMiniBossButton;
 		public UIHoverImageButton toggleEventButton;

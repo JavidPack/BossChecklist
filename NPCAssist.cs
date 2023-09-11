@@ -10,8 +10,7 @@ using Terraria.ModLoader;
 
 namespace BossChecklist
 {
-	class NPCAssist : GlobalNPC
-	{
+	class NPCAssist : GlobalNPC {
 		public const string LangChat = "Mods.BossChecklist.ChatMessages";
 
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight

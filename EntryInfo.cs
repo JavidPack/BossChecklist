@@ -20,8 +20,7 @@ namespace BossChecklist
 		Event
 	}
 
-	internal class EntryInfo // Inheritance for Event instead?
-	{
+	internal class EntryInfo {
 		// This localization-ignoring string is used for cross mod queries and networking. Each key is completely unique.
 		internal string Key { get; init; }
 
@@ -436,8 +435,7 @@ namespace BossChecklist
 		EventNPC
 	}
 
-	internal class OrphanInfo
-	{
+	internal class OrphanInfo {
 		internal OrphanType type;
 		internal string modSource;
 		internal Dictionary<string, object> values;

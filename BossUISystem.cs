@@ -13,8 +13,7 @@ using Terraria.UI;
 
 namespace BossChecklist
 {
-	class BossUISystem : ModSystem
-	{
+	class BossUISystem : ModSystem {
 		public static BossUISystem Instance { get; private set; }
 
 		internal static UserInterface bossChecklistInterface;

@@ -10,8 +10,7 @@ using Terraria.ModLoader.Config;
 namespace BossChecklist
 {
 	[BackgroundColor(30, 60, 30, 200)]
-	public class BossLogConfiguration : ModConfig
-	{
+	public class BossLogConfiguration : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.BossLogConfig = this;
 
@@ -226,8 +225,7 @@ namespace BossChecklist
 		}
 	}
 
-	public class ClientConfiguration : ModConfig
-	{
+	public class ClientConfiguration : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.ClientConfig = this;
 
@@ -301,8 +299,7 @@ namespace BossChecklist
 	}
 
 	[BackgroundColor(128, 83, 0, 200)]
-	public class DebugConfiguration : ModConfig
-	{
+	public class DebugConfiguration : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
 		

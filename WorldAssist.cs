@@ -11,8 +11,7 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
-	public class WorldAssist : ModSystem
-	{
+	public class WorldAssist : ModSystem {
 		// Since only 1 set of records is saved per boss, there is no need to put it into a dictionary
 		// A separate list of World Records is needed to hold information about unloaded entries
 		public static WorldRecord[] worldRecords;

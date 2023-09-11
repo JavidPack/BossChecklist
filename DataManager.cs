@@ -28,8 +28,7 @@ namespace BossChecklist
 	/// <summary>
 	/// Record container for player-based records. All personal records should be stored here and saved to a ModPlayer.
 	/// </summary>
-	public class BossRecord : TagSerializable
-	{
+	public class BossRecord : TagSerializable {
 		internal string bossKey;
 		internal PersonalStats stats = new PersonalStats();
 
@@ -56,8 +55,7 @@ namespace BossChecklist
 	/// <summary>
 	/// Record container for world-based records. All world records should be stored within this class and saved to a ModSystem.
 	/// </summary>
-	public class WorldRecord : TagSerializable
-	{
+	public class WorldRecord : TagSerializable {
 		internal string bossKey;
 		internal WorldStats stats = new WorldStats();
 
@@ -98,8 +96,7 @@ namespace BossChecklist
 	/// <item> <term>HitsTaken</term> <description>The amount of times a player has taken damage while fighting the boss.</description> </item>
 	/// </list>
 	/// </summary>
-	public class PersonalStats : TagSerializable
-	{
+	public class PersonalStats : TagSerializable {
 		/// Statistics
 		public int kills;
 		public int deaths;
@@ -371,8 +368,7 @@ namespace BossChecklist
 	/// In multiplayer, players are able to set world records against other players.
 	/// This will contain global kills and deaths as well as the best record's value and holder.
 	/// </summary>
-	public class WorldStats : TagSerializable
-	{
+	public class WorldStats : TagSerializable {
 		public int totalKills;
 		public int totalDeaths;
 

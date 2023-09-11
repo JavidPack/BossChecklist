@@ -4,8 +4,7 @@ using Terraria.UI;
 
 namespace BossChecklist.UIElements
 {
-	internal class FixedUIScrollbar : UIScrollbar
-	{
+	internal class FixedUIScrollbar : UIScrollbar {
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			UserInterface temp = UserInterface.ActiveInstance;
 			UserInterface.ActiveInstance = BossUISystem.bossChecklistInterface;
@@ -27,8 +26,7 @@ namespace BossChecklist.UIElements
 		}
 	}
 
-	internal class LogScrollbar : UIScrollbar
-	{
+	internal class LogScrollbar : UIScrollbar {
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			UserInterface temp = UserInterface.ActiveInstance;
 			UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;

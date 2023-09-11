@@ -8,8 +8,7 @@ using Terraria.ModLoader.Config;
 
 namespace BossChecklist
 {
-	class ItemAssist : GlobalItem
-	{
+	class ItemAssist : GlobalItem {
 		public override bool OnPickup(Item item, Player player) {
 			if (Main.netMode != NetmodeID.Server && Main.myPlayer == player.whoAmI && BossChecklist.bossTracker.EntryLootCache[item.type]) {
 				// Add the item to the list if it is not already present

@@ -5,8 +5,7 @@ using Terraria.ModLoader;
 
 namespace BossChecklist
 {
-	class BossChecklistPlayer : ModPlayer
-	{
+	class BossChecklistPlayer : ModPlayer {
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			if (BossChecklist.ToggleChecklistHotKey.JustPressed) {
 				if (!BossChecklistUI.Visible) {

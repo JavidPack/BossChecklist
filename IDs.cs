@@ -2,8 +2,7 @@
 
 namespace BossChecklist
 {
-	internal enum CollectibleType
-	{
+	internal enum CollectibleType {
 		Generic,
 		Trophy,
 		Mask,
@@ -13,15 +12,13 @@ namespace BossChecklist
 		Mount
 	}
 
-	internal enum SubPage
-	{
+	internal enum SubPage {
 		Records,
 		SpawnInfo,
 		LootAndCollectibles
 	}
 
-	internal enum SubCategory
-	{
+	internal enum SubCategory {
 		PreviousAttempt,
 		PersonalBest,
 		FirstVictory,

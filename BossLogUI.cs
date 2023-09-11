@@ -22,8 +22,7 @@ using System.Reflection;
 
 namespace BossChecklist
 {
-	class BossLogUI : UIState
-	{
+	class BossLogUI : UIState {
 		public OpenLogButton bosslogbutton; // The main button to open the Boss Log
 		public LogPanel BookArea; // The main panel for the UI. All content is aligned within this area.
 		public LogPanel PageOne; // left page content panel

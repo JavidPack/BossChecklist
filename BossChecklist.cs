@@ -11,8 +11,7 @@ using Terraria.ModLoader.Config;
 
 namespace BossChecklist
 {
-	internal class BossChecklist : Mod
-	{
+	internal class BossChecklist : Mod {
 		internal static BossChecklist instance;
 		internal static BossTracker bossTracker;
 		internal static ModKeybind ToggleChecklistHotKey;

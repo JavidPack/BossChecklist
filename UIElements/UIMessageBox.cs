@@ -13,8 +13,7 @@ using Terraria.UI.Chat;
 namespace BossChecklist.UIElements
 {
 	// This class is a WIP implementation migrated from RecipeBrowser.
-	internal class UIMessageBox : UIPanel
-	{
+	internal class UIMessageBox : UIPanel {
 		private string text;
 		protected UIScrollbar _scrollbar;
 		private float height;

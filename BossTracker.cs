@@ -9,8 +9,7 @@ using Terraria.ObjectData;
 
 namespace BossChecklist
 {
-	internal class BossTracker
-	{
+	internal class BossTracker {
 		// Bosses
 		public const float KingSlime = 1f;
 		public const float EyeOfCthulhu = 2f;

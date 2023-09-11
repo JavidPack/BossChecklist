@@ -5,8 +5,7 @@ using Terraria.GameContent.UI.Elements;
 
 namespace BossChecklist.UIElements
 {
-	internal class UIHoverImageButton : UIImageButton
-	{
+	internal class UIHoverImageButton : UIImageButton {
 		internal string hoverText;
 
 		public UIHoverImageButton(Asset<Texture2D> texture, string hoverText) : base(texture) {
