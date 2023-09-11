@@ -9,8 +9,7 @@ using Terraria.ID;
 
 namespace BossChecklist
 {
-	public static class MapAssist
-	{
+	public static class MapAssist {
 		public static List<Vector2> whitelistPos;
 		public static List<int> whitelistType;
 

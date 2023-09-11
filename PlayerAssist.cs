@@ -10,8 +10,7 @@ using Terraria.ModLoader.IO;
 
 namespace BossChecklist
 {
-	public class PlayerAssist : ModPlayer
-	{
+	public class PlayerAssist : ModPlayer {
 		// For the 'never opened' button glow for players who haven't noticed the new feature yet.
 		public bool hasOpenedTheBossLog;
 		// When players jon a different world, the boss log PageNum should reset back to its original state

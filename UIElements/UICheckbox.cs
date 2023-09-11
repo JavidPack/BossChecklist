@@ -7,8 +7,7 @@ using Terraria.UI;
 
 namespace BossChecklist.UIElements
 {
-	class UICheckbox : UIText
-	{
+	class UICheckbox : UIText {
 		internal static Asset<Texture2D> checkboxTexture;
 		internal static Asset<Texture2D> checkmarkTexture;
 		public event EventHandler SelectedChanged;

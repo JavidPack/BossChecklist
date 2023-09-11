@@ -13,8 +13,7 @@ using Terraria.UI.Chat;
 namespace BossChecklist.UIElements
 {
 	// TODO: investigate DD event problem: complete dd1, dd2 and 3 are checked off. -> vanilla bug.
-	class UIBossCheckbox : UIElement
-	{
+	class UIBossCheckbox : UIElement {
 		internal UICheckbox checkbox;
 		internal UIHoverImageButton moreInfo;
 		internal bool expanded;
