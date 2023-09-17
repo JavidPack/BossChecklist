@@ -234,7 +234,7 @@ namespace BossChecklist
 					if (temp.headSlot > 0 && temp.vanity) {
 						boss.collectibleType.Add(type, CollectibleType.Mask);
 					}
-					else if (vanillaMusicBoxTypes.Contains(type) || otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type)) {
+					else if (IsRegisteredMusicBox(type)) {
 						boss.collectibleType.Add(type, CollectibleType.Music);
 					}
 					else if (Main.projPet[temp.shoot] || ProjectileID.Sets.LightPet[temp.shoot]) {
@@ -1028,8 +1028,10 @@ namespace BossChecklist
 			{ "Terraria CultistBoss", ItemID.CultistBossBag }
 		};
 
+		public bool IsRegisteredMusicBox(int type) => vanillaMusicBoxTypes.Contains(type) || otherWorldMusicBoxTypes.Contains(type) || BossChecklist.itemToMusicReference.ContainsKey(type);
+
 		// Vanilla and Other World music boxes are in order given by the official Terraria wiki
-		public readonly static List<int> vanillaMusicBoxTypes = new List<int>() {
+		public readonly List<int> vanillaMusicBoxTypes = new List<int>() {
 			ItemID.MusicBoxOverworldDay,
 			ItemID.MusicBoxAltOverworldDay,
 			ItemID.MusicBoxNight,
@@ -1092,7 +1094,7 @@ namespace BossChecklist
 			ItemID.MusicBoxTitle,
 		};
 
-		public readonly static List<int> otherWorldMusicBoxTypes = new List<int>() {
+		public readonly List<int> otherWorldMusicBoxTypes = new List<int>() {
 			ItemID.MusicBoxOWRain,
 			ItemID.MusicBoxOWDay,
 			ItemID.MusicBoxOWNight,

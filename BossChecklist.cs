@@ -38,6 +38,7 @@ namespace BossChecklist
 
 			bossTracker = new BossTracker();
 
+			On_Player.ApplyMusicBox += Player_ApplyMusicBox;
 			MapAssist.FullMapInitialize();
 
 			/*
@@ -77,6 +78,14 @@ namespace BossChecklist
 				saveMethodInfo.Invoke(null, new object[] { bossLogConfig });
 			else
 				BossChecklist.instance.Logger.Warn("In-game SaveConfig failed, code update required");
+		}
+
+		private void Player_ApplyMusicBox(On_Player.orig_ApplyMusicBox orig, Player player, Item item) {
+			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
+			if (bossTracker.IsRegisteredMusicBox(item.type) && !modplayer.BossItemsCollected.Contains(new ItemDefinition(item.type)))
+				modplayer.BossItemsCollected.Add(new ItemDefinition(item.type));
+
+			orig(player, item);
 		}
 
 		// An alternative approach to the weak reference approach is to do the following in YOUR mod in PostSetupContent

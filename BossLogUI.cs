@@ -1122,7 +1122,7 @@ namespace BossChecklist
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue; // Skip items that are master exclusive if not in an master world
 
-							if (!OtherworldUnlocked && BossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
+							if (!OtherworldUnlocked && BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
 								continue;
 
 							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
@@ -1669,7 +1669,7 @@ namespace BossChecklist
 			}
 
 			// If the boss items contains any otherworld music boxes
-			if (bossItems.Intersect(BossTracker.otherWorldMusicBoxTypes).Any()) {
+			if (bossItems.Intersect(BossChecklist.bossTracker.otherWorldMusicBoxTypes).Any()) {
 				FieldInfo TOWMusicUnlocked = typeof(Main).GetField("TOWMusicUnlocked", BindingFlags.Static | BindingFlags.NonPublic);
 				bool OWUnlocked = (bool)TOWMusicUnlocked.GetValue(null);
 				if (OtherworldUnlocked != OWUnlocked)
