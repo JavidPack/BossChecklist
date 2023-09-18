@@ -17,12 +17,6 @@ namespace BossChecklist
 					itemsList.Add(new ItemDefinition(item.type));
 				}
 			}
-			if (item.type == ItemID.TorchGodsFavor && !WorldAssist.downedTorchGod) {
-				WorldAssist.downedTorchGod = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData);
-				}
-			}
 			return base.OnPickup(item, player);
 		}
 
@@ -33,16 +27,6 @@ namespace BossChecklist
 					itemsList.Add(new ItemDefinition(item.type));
 				}
 			}
-		}
-
-		public override bool? UseItem(Item item, Player player) {
-			if (item.type == ItemID.TorchGodsFavor && !WorldAssist.downedTorchGod) {
-				WorldAssist.downedTorchGod = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData);
-				}
-			}
-			return null;
 		}
 	}
 }

@@ -43,7 +43,6 @@ namespace BossChecklist
 
 		public static bool downedInvasionT2Ours;
 		public static bool downedInvasionT3Ours;
-		public static bool downedTorchGod;
 
 		bool Tracker_BloodMoon = false;
 		bool Tracker_PumpkinMoon = false;
@@ -85,7 +84,6 @@ namespace BossChecklist
 			// Vanilla additions
 			downedInvasionT2Ours = false;
 			downedInvasionT3Ours = false;
-			downedTorchGod = false;
 
 			TrackingDowns = startTrackingDowns;
 		}
@@ -147,8 +145,6 @@ namespace BossChecklist
 				downed.Add("invasionT2Ours");
 			if (downedInvasionT3Ours)
 				downed.Add("invasionT3Ours");
-			if (downedTorchGod)
-				downed.Add("torchgod");
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
@@ -195,7 +191,6 @@ namespace BossChecklist
 			downedMartianSaucer = downed.Contains("martiansaucer");
 			downedInvasionT2Ours = downed.Contains("invasionT2Ours");
 			downedInvasionT3Ours = downed.Contains("invasionT3Ours");
-			downedTorchGod = downed.Contains("torchgod");
 		}
 
 		public override void NetSend(BinaryWriter writer) {
@@ -221,7 +216,6 @@ namespace BossChecklist
 				[3] = NPC.downedTowerStardust,
 				[4] = downedInvasionT2Ours,
 				[5] = downedInvasionT3Ours,
-				[6] = downedTorchGod
 			};
 			writer.Write(flags);
 
@@ -254,7 +248,6 @@ namespace BossChecklist
 			NPC.downedTowerStardust = flags[3];
 			downedInvasionT2Ours = flags[4];
 			downedInvasionT3Ours = flags[5];
-			downedTorchGod = flags[6];
 
 			HiddenEntries.Clear();
 			int count = reader.ReadInt32();
