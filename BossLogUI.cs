@@ -1411,7 +1411,7 @@ namespace BossChecklist
 							Anchor = relatedEntry.GetIndex,
 							hoverText = hoverText
 						};
-						entryIcon.Left.Pixels = (int)(slot.Width.Pixels - entryIcon.Width.Pixels - 15);
+						entryIcon.Left.Pixels = GetLogEntryInfo.type == EntryType.Event ? 15 + offset : (int)(slot.Width.Pixels - entryIcon.Width.Pixels - 15);
 						entryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - entryIcon.Height.Pixels / 2);
 						slot.Append(entryIcon);
 
