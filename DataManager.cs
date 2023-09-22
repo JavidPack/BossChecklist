@@ -114,6 +114,9 @@ namespace BossChecklist
 		public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
 
+		public bool UnlockedFirstVictory => playTimeFirst > 0;
+		public bool UnlockedPersonalBest => kills >= 2;
+
 		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
 
 		public PersonalStats() { }

@@ -20,8 +20,8 @@ namespace BossChecklist
 
 	internal enum SubCategory {
 		PreviousAttempt,
-		PersonalBest,
 		FirstVictory,
+		PersonalBest,
 		WorldRecord,
 		None
 	}

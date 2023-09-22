@@ -98,6 +98,7 @@ namespace BossChecklist
 		// Record page related
 		public static SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public static SubCategory CompareState = SubCategory.None; // Compare record values to one another
+		public List<NavigationalButton> RecordCategoryButtons;
 
 		// Spawn Info page related
 		public static int SpawnItemSelected = 0;
@@ -425,6 +426,17 @@ namespace BossChecklist
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)lootButton.Width.Pixels / 2;
 			lootButton.Top.Pixels = 5 + Texture_Nav_SubPage.Value.Height + 10;
 			lootButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
+
+			// Record Type navigation buttons
+			RecordCategoryButtons = new List<NavigationalButton>();
+			for (int value = 0; value < 4; value++) {
+				RecordCategoryButtons.Add(
+					new NavigationalButton(RequestResource($"Nav_Record_{(SubCategory)value}"), true) {
+						Record_Anchor = (SubCategory)value,
+						hoverText = $"{LangLog}.Records.Category.{(SubCategory)value}"
+					}
+				);
+			}
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
 			scrollOne = new LogScrollbar();
@@ -1303,50 +1315,37 @@ namespace BossChecklist
 			// The entry also must be fully supported to have these buttons created
 
 			if (GetLogEntryInfo.IsRecordIndexed(out int recordIndex)) {
-
 				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-				bool noKills = stats.kills == 0; // has the player killed this boss before?
-				if (noKills && RecordSubCategory != SubCategory.PreviousAttempt && RecordSubCategory != SubCategory.WorldRecord) {
-					RecordSubCategory = SubCategory.PreviousAttempt; // If a boss record does not have the selected subcategory type, it should default back to previous attempt.
+				bool[] buttonConditions = {
+					true, // always shown
+					stats.UnlockedFirstVictory,
+					stats.UnlockedPersonalBest,
+					Main.netMode == NetmodeID.MultiplayerClient // only shows up on servers
+				};
+				int count = 0;
+				int total = buttonConditions.Count(true);
+				foreach (NavigationalButton button in RecordCategoryButtons) {
+					if (buttonConditions[RecordCategoryButtons.IndexOf(button)]) {
+						PageTwo.Append(button);
+						int xOffset = count % 2 == 0 ? (count + 1 == total ? 15 : 0) : 30;
+						int yOffset = count > 1 ? 30 : (total > 2 ? 0 : 15);
+						button.Left.Pixels = (int)(lootButton.Left.Pixels + lootButton.Width.Pixels + 20 + xOffset);
+						button.Top.Pixels = (int)(lootButton.Top.Pixels + yOffset);
+						count++;
+					}
 				}
+
+				if (buttonConditions[(int)RecordSubCategory] is false)
+					RecordSubCategory = SubCategory.PreviousAttempt; // If no access granted, default back to previous attempt
 
 				if (BossChecklist.DebugConfig.ResetRecordsBool) {
-					// TODO: Add the functionaility of clearing a singular record by alt+reight-clicking the record achievement icon
-					Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
-					NavigationalButton tips = new NavigationalButton(icon, true) {
+					NavigationalButton tips = new NavigationalButton(RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName"), true) {
 						hoverText = $"{LangLog}.HintTexts.ClearAllRecords"
 					};
-					tips.Left.Pixels = lootButton.Left.Pixels / 2 - icon.Value.Width / 2;
-					tips.Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - icon.Value.Height / 2;
+					tips.Left.Pixels = (int)(lootButton.Left.Pixels / 2 - tips.Width.Pixels / 2);
+					tips.Top.Pixels = (int)(lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - tips.Height.Pixels / 2);
 					PageTwo.Append(tips);
 				}
-
-				#region Experimental Feature Notice
-				// TODO: Experimental feature notice, eventually will need to be removed
-				Asset<Texture2D> bnuuy = RequestVanillaTexture("Images/UI/Creative/Journey_Toggle");
-				string noticeText;
-				if (RecordSubCategory == SubCategory.WorldRecord) {
-					noticeText = $"World Records are currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
-						"\nThe World Records feature is still under construction." +
-						"\nThis feature is known to not work and cause issues, so enable at your own risk." +
-						$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
-				}
-				else {
-					noticeText = $"Boss Records are currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
-						"\nThis section of the Boss Log is still under construction." +
-						"\nAny features or configs related to this page may not work or cause issues." +
-						$"\nBoss Records can be toggled under the Feature Testing configs.";
-				}
-
-				NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, false) {
-					Id = "bnuuyIcon",
-					hoverText = noticeText,
-					hoverTextColor = Color.Gold
-				};
-				bnuuyIcon.Left.Pixels = (PageTwo.Width.Pixels - (lootButton.Left.Pixels / 2) - bnuuy.Value.Width / 2);
-				bnuuyIcon.Top.Pixels = lootButton.Top.Pixels;
-				PageTwo.Append(bnuuyIcon);
-				#endregion
 			}
 
 			// create 4 slots for each stat category value
@@ -1360,53 +1359,68 @@ namespace BossChecklist
 				if (BossChecklist.DebugConfig.DisableWorldRecords && i > 0 && RecordSubCategory == SubCategory.WorldRecord)
 					break; // only draws the first instance of a record slot if world records are disabled
 
-				RecordDisplaySlot slot;
-				if (GetLogEntryInfo.type == EntryType.Boss) {
-					slot = new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i);
-					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2;
-					slot.Top.Pixels = 35 + (75 * (i + 1));
-					PageTwo.Append(slot);
-				}
-				else {
-					slot = new RecordDisplaySlot(Texture_Content_RecordSlot, null, null);
-					slot.Left.Pixels = PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2;
-					slot.Top.Pixels = 35 + (75 * (i + 1));
-					PageTwo.Append(slot);
-				}
+				RecordDisplaySlot slot = GetLogEntryInfo.type == EntryType.Boss ? new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i) : new RecordDisplaySlot(Texture_Content_RecordSlot);
+				slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2);
+				slot.Top.Pixels = (int)(35 + (75 * (i + 1)));
+				PageTwo.Append(slot);
 
 				if (i == 0) {
 					if (GetLogEntryInfo.type == EntryType.Boss) {
-						Asset<Texture2D> recordIcon = RequestResource($"Nav_Record_{RecordSubCategory}");
-						NavigationalButton RecordSubCategoryButton = new NavigationalButton(recordIcon, true) {
-							Id = "SubCategory",
-							hoverText = $"{LangLog}.Records.Category.Cycle"
-						};
-						RecordSubCategoryButton.Left.Pixels = slot.Width.Pixels - recordIcon.Value.Width - 15;
-						RecordSubCategoryButton.Top.Pixels = slot.Height.Pixels / 2 - recordIcon.Value.Height / 2;
-						slot.Append(RecordSubCategoryButton);
+						UIImage categoryIcon = new UIImage(RequestResource($"Nav_Record_{RecordSubCategory}"));
+						categoryIcon.Left.Pixels = 15;
+						categoryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - categoryIcon.Height.Pixels / 2);
+						slot.Append(categoryIcon);
 					}
 
-					int offset = 0;
+					#region Experimental Feature Notice
+					// TODO: Experimental feature notice, eventually will need to be removed
+					Asset<Texture2D> bnuuy = RequestVanillaTexture("Images/UI/Creative/Journey_Toggle");
+					string noticeText;
+					if (RecordSubCategory == SubCategory.WorldRecord) {
+						noticeText = $"World Records are currently {(BossChecklist.DebugConfig.DisableWorldRecords ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+							"\nThe World Records feature is still under construction." +
+							"\nThis feature is known to not work and cause issues, so enable at your own risk." +
+							$"\nWorld Records can be {(BossChecklist.DebugConfig.DisableWorldRecords ? "enabled" : "disabled")} under the Feature Testing configs.";
+					}
+					else {
+						noticeText = $"Boss Records are currently {(BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE ? $"[c/{Color.Red.Hex3()}:disabled]" : $"[c/{Color.LightGreen.Hex3()}:enabled]")}" +
+							"\nThis section of the Boss Log is still under construction." +
+							"\nAny features or configs related to this page may not work or cause issues." +
+							$"\nBoss Records can be toggled under the Feature Testing configs.";
+					}
+
+					NavigationalButton bnuuyIcon = new NavigationalButton(bnuuy, false) {
+						Id = "bnuuyIcon",
+						hoverText = noticeText,
+						hoverTextColor = Color.Gold
+					};
+					bnuuyIcon.Left.Pixels = (int)(slot.Width.Pixels - bnuuyIcon.Width.Pixels - 15);
+					bnuuyIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - bnuuyIcon.Height.Pixels / 2);
+					slot.AddOrRemoveChild(bnuuyIcon, GetLogEntryInfo.type == EntryType.Boss);
+					#endregion
+
+					float offset = 0;
 					foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
 						EntryInfo relatedEntry = BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == entryKey)];
 
-						Asset<Texture2D> headIcon = relatedEntry.headIconTextures().First();
 						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 						Color iconColor = relatedEntry.IsDownedOrMarked ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
-						NavigationalButton entryIcon = new NavigationalButton(headIcon, false, iconColor) {
+						NavigationalButton entryIcon = new NavigationalButton(relatedEntry.headIconTextures().First(), false, iconColor) {
 							Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
 							Anchor = relatedEntry.GetIndex,
 							hoverText = hoverText
 						};
-						entryIcon.Left.Pixels = 15 + offset;
-						entryIcon.Top.Pixels = slot.Height.Pixels / 2 - headIcon.Value.Height / 2;
+						entryIcon.Left.Pixels = (int)(slot.Width.Pixels - entryIcon.Width.Pixels - 15);
+						entryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - entryIcon.Height.Pixels / 2);
 						slot.Append(entryIcon);
 
-						if (GetLogEntryInfo.type == EntryType.Boss || GetLogEntryInfo.type == EntryType.MiniBoss)
+						if (GetLogEntryInfo.type == EntryType.Boss || GetLogEntryInfo.type == EntryType.MiniBoss) {
+							slot.RemoveChild(bnuuyIcon); // TODO: Removes debug tooltip, will need removing once records are restored
 							break;
+						}
 
-						offset += 10 + headIcon.Value.Width;
+						offset += 10 + entryIcon.Width.Pixels;
 					}
 				}
 			}

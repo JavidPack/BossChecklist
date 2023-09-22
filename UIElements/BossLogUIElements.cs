@@ -188,17 +188,18 @@ namespace BossChecklist.UIElements
 		internal class NavigationalButton : LogUIElement {
 			public string Id { get; init; } = "";
 			public int? Anchor { get; init; } = null;
+			public SubCategory? Record_Anchor { get; init; }
 
 			internal Asset<Texture2D> texture;
 			internal Color iconColor;
 			internal bool hoverButton;
 
-			public NavigationalButton(Asset<Texture2D> texture, bool hoverButton, Color color = default) {
+			public NavigationalButton(Asset<Texture2D> texture, bool hoverButton, Color? color = null) {
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
 
 				this.texture = texture;
-				this.iconColor = hoverButton || color == default ? Color.White : color;
+				this.iconColor = hoverButton || color == null ? Color.White : color.Value;
 				this.hoverButton = hoverButton;
 			}
 
@@ -207,18 +208,10 @@ namespace BossChecklist.UIElements
 				if (Anchor.HasValue)
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 
-				if (Id == "SubCategory") {
+				if (Record_Anchor.HasValue) {
 					BossUISystem.Instance.BossLog.GetLogEntryInfo.IsRecordIndexed(out int recordIndex);
 					PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-					if (stats.kills == 0) {
-						BossLogUI.RecordSubCategory = BossLogUI.RecordSubCategory == SubCategory.PreviousAttempt ? SubCategory.WorldRecord : SubCategory.PreviousAttempt;
-					}
-					else {
-						BossLogUI.RecordSubCategory++;
-					}
-
-					if (BossLogUI.RecordSubCategory == SubCategory.None)
-						BossLogUI.RecordSubCategory = SubCategory.PreviousAttempt;
+					BossLogUI.RecordSubCategory = Record_Anchor.Value;
 
 					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
@@ -232,30 +225,23 @@ namespace BossChecklist.UIElements
 				}
 			}
 
-			public override void RightClick(UIMouseEvent evt) {
-				base.RightClick(evt);
-
-				if (Id == "SubCategory") {
-					if (BossLogUI.RecordSubCategory == SubCategory.PreviousAttempt) {
-						BossLogUI.RecordSubCategory = SubCategory.WorldRecord;
-					}
-					else {
-						BossLogUI.RecordSubCategory--;
-					}
-
-					BossUISystem.Instance.BossLog.RefreshPageContent();
-				}
-			}
-
 			public override void MouseOver(UIMouseEvent evt) {
 				if (hoverButton)
 					SoundEngine.PlaySound(SoundID.MenuTick);
+
+				if (Record_Anchor.HasValue)
+					this.hoverText = $"{BossLogUI.LangLog}.Records.Category.{Record_Anchor.Value}"; // TODO: find a better way to declare this
 			}
 
 			private Color HoverColor => ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface ? Color.White : BossLogUI.faded;
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), hoverButton ? HoverColor : iconColor);
+				if (Record_Anchor.HasValue) {
+					spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), BossLogUI.RecordSubCategory == Record_Anchor.Value ? iconColor : HoverColor);
+				}
+				else {
+					spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), hoverButton ? HoverColor : iconColor);
+				}
 				base.Draw(spriteBatch);
 			}
 		}
@@ -882,7 +868,7 @@ namespace BossChecklist.UIElements
 			internal Point ach;
 			internal string tooltip;
 
-			public RecordDisplaySlot(Asset<Texture2D> texture, string title, string value) : base(texture) {
+			public RecordDisplaySlot(Asset<Texture2D> texture, string title = null, string value = null) : base(texture) {
 				this.title = title;
 				this.value = value;
 				this.ach = new Point(-1, -1);
