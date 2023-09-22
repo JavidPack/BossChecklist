@@ -725,12 +725,14 @@ namespace BossChecklist.UIElements
 								// Mini-boss Records SubPage
 							}
 							else if (entry.type == EntryType.Event) {
-								int offset = 0;
-								int offsetY = 85;
-								int rows = 0;
+								int offset = 25;
+								int offsetY = 64;
+								int rowCount = 0;
+								int bannerCount = 0;
+								const int bannersPerRow = 12;
 
 								foreach (int npcID in entry.npcIDs) {
-									if (offset == 0 && rows == 3)
+									if (rowCount == 3)
 										break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
 
 									if (npcID < NPCID.Count) {
@@ -760,7 +762,7 @@ namespace BossChecklist.UIElements
 											continue;
 
 										for (int j = 0; j < 3; j++) {
-											Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + (16 * j) + offsetY, 16, 16);
+											Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (offset * (bannerCount % bannersPerRow)), pageRect.Y + 185 + (16 * j) + (offsetY * rowCount), 16, 16);
 											Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
 											spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
 
@@ -773,22 +775,20 @@ namespace BossChecklist.UIElements
 												BossUISystem.Instance.UIHoverText = npcName + killcount;
 											}
 										}
-										offset += 25;
-										if (offset == 14 * 25) {
-											offset = 0;
-											offsetY += 64;
-											rows++;
-										}
+
+										bannerCount++; // increase banner count after banner is fully drawn
+										if (bannerCount % bannersPerRow == 0)
+											rowCount++; // if banners per row has been reached, increase row count
 									}
 									else { // Its a modded NPC
 										Main.instance.LoadNPC(npcID);
 
 										int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
 										if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item))
-											continue;
+											continue; // a banner is not assigned or is invalid
 
 										if (item.createTile <= -1)
-											continue;
+											continue; // item does not create a tile to draw
 
 										Main.instance.LoadTiles(item.createTile);
 										Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
@@ -803,16 +803,8 @@ namespace BossChecklist.UIElements
 											styleColumn %= tileData.StyleWrapLimit; // remainder
 										}
 
-										int x;
-										int y;
-										if (tileData.StyleHorizontal) {
-											x = tileData.CoordinateFullWidth * styleColumn;
-											y = tileData.CoordinateFullHeight * styleRow;
-										}
-										else {
-											x = tileData.CoordinateFullWidth * styleRow;
-											y = tileData.CoordinateFullHeight * styleColumn;
-										}
+										int x = tileData.StyleHorizontal ? tileData.CoordinateFullWidth * styleColumn : tileData.CoordinateFullWidth * styleRow;
+										int y = tileData.StyleHorizontal ? tileData.CoordinateFullHeight * styleRow : tileData.CoordinateFullHeight * styleColumn;
 
 										int bannerID = NPCLoader.GetNPC(npcID).Banner;
 										int bannerItem = NPCLoader.GetNPC(npcID).BannerItem;
@@ -825,7 +817,7 @@ namespace BossChecklist.UIElements
 										int heightOffSet = 0;
 										int heightOffSetTexture = 0;
 										for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-											Rectangle bannerPos = new Rectangle(pageRect.X + offset + 15, pageRect.Y + 100 + heightOffSet + offsetY, 16, 16);
+											Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (offset * (bannerCount % bannersPerRow)), pageRect.Y + 185 + heightOffSet + (offsetY * rowCount), 16, 16);
 											Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
 											Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
 											heightOffSet += heights[j];
@@ -840,12 +832,10 @@ namespace BossChecklist.UIElements
 												BossUISystem.Instance.UIHoverText = npcName + killcount;
 											}
 										}
-										offset += 25;
-										if (offset == 14 * 25) {
-											offset = 0;
-											offsetY += 64;
-											rows++;
-										}
+
+										bannerCount++; // increase banner count after banner is fully drawn
+										if (bannerCount % bannersPerRow == 0)
+											rowCount++; // if banners per row has been reached, increase row count
 									}
 								}
 							}
