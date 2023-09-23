@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Linq;
 using Terraria;
 using Terraria.Chat;
@@ -23,8 +22,18 @@ namespace BossChecklist
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
-			if (WorldAssist.Tracker_ActiveEntry[recordIndex] || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+				return;
+
+			foreach (Player player in Main.player) {
+				if (player.active) {
+					PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+					bossrecord.StartTracking(); // start tracking for active players
+				}
+			}
+
+			//if (WorldAssist.Tracker_ActiveEntry[recordIndex] || BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+			return; // Make sure the npc is an entry, has a recordIndex, and is marked as not active
 
 			// If not marked active, set to active and reset trackers for all players to start tracking records for this fight
 			WorldAssist.Tracker_ActiveEntry[recordIndex] = true;
@@ -66,9 +75,18 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
-			// Stop record trackers and record them to the player while also checking for records and world records
-			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || !FullyInactive(npc, entry.GetIndex, true))
-				return;
+			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
+				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
+
+			// stop tracking and record stats for those who had interactions with the boss
+			foreach (Player player in Main.player) {
+				if (player.active) {
+					PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+					bossrecord.StopTracking(npc.playerInteraction[player.whoAmI], npc.playerInteraction[player.whoAmI]);
+				}
+			}
+
+			return;
 
 			if (!BossChecklist.DebugConfig.RecordTrackingDisabled) {
 				if (Main.netMode == NetmodeID.Server) {

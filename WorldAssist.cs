@@ -26,7 +26,7 @@ namespace BossChecklist
 
 		public static bool[] CheckedRecordIndexes;
 
-		public static int[] ActiveNPCEntryFlags;
+		public static int[] ActiveNPCEntryFlags; // Used for despawn messages, which will occur when the npc is unflagged
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
 		public static HashSet<string> MarkedEntries = new HashSet<string>();
@@ -272,7 +272,7 @@ namespace BossChecklist
 			HandleMoonDowns();
 			HandleDespawnFlags();
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+			//if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
 			foreach (NPC npc in Main.npc) {
@@ -376,26 +376,43 @@ namespace BossChecklist
 			}
 		}
 
+		/// <summary>
+		/// Loops through all NPCs to check their active status.
+		/// Once inactive, the entry is unflagged and will have its despawn message displayed in chat.
+		/// Any record trackers currently active will stop if all instances of the entry's NPCs are no longer active.
+		/// </summary>
 		public void HandleDespawnFlags() {
-			int entryValue = -1;
 			for (int i = 0; i < ActiveNPCEntryFlags.Length - 1; i++) {
-				entryValue = ActiveNPCEntryFlags[i]; // keep track of the active entry
-				if (entryValue == -1)
-					continue; // skip non-boss entries
+				if (ActiveNPCEntryFlags[i] == -1)
+					continue; // skip invalid entries
 
 				NPC npc = Main.npc[i];
+				EntryInfo selectedEntry = BossChecklist.bossTracker.SortedEntries[ActiveNPCEntryFlags[i]];
 				if (!npc.active) {
 					ActiveNPCEntryFlags[i] = -1; // if the npc tracked is inactive, remove entry value
 
-					if (ActiveNPCEntryFlags.Any(x => x == entryValue))
-						continue; // if the entry value no longer exists in the array, display the message. Otherwise, do nothing until all respective npcs are inactive.
+					if (ActiveNPCEntryFlags.Any(x => x == selectedEntry.GetIndex))
+						continue; // do nothing if any respective npcs are still active
 
-					if (BossChecklist.bossTracker.SortedEntries[entryValue].GetDespawnMessage(npc) is LocalizedText message) {
+					// Now that the entry no longer exists within ActiveNPCEntryFlags, it is determined to have despawned
+					if (selectedEntry.GetDespawnMessage(npc) is LocalizedText message) {
 						if (Main.netMode == NetmodeID.SinglePlayer) {
 							Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 						}
 						else {
 							ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
+						}
+					}
+
+					if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+						return;
+
+					// When a boss despawns, stop tracking it for all players
+					selectedEntry.IsRecordIndexed(out int recordIndex);
+					foreach (Player player in Main.player) {
+						if (player.active) {
+							BossRecord bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
+							bossRecord.stats.StopTracking(false, npc.playerInteraction[player.whoAmI]);
 						}
 					}
 				}

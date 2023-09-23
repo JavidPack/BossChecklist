@@ -103,6 +103,11 @@ namespace BossChecklist
 		public int attempts;
 		public long playTimeFirst = -1;
 
+		/// Trackers
+		public int Tracker_Duration;
+		public int Tracker_HitsTaken;
+		public int Tracker_Deaths;
+
 		/// Records
 		public int durationPrev = -1;
 		public int durationBest = -1;
@@ -155,6 +160,61 @@ namespace BossChecklist
 				{ nameof(hitsTakenPrevBest), hitsTakenPrevBest },
 				{ nameof(hitsTakenFirst), hitsTakenFirst },
 			};
+		}
+
+		internal bool IsCurrentlyBeingTracked => IsTracking; // value cannot be changed outside of PersonalStats.
+		private bool IsTracking = false;
+
+		internal void StartTracking() {
+			if (IsTracking)
+				return; // do not reset or start tracking if it currently is tracking already
+
+			IsTracking = true;
+			Tracker_Duration = Tracker_HitsTaken = Tracker_Deaths = 0;
+		}
+
+		internal void StopTracking(bool allowRecordSaving, bool savePreviousAttempt = true) {
+			if (!IsTracking)
+				return; // do not change any stats if tracking is not currently enabled
+
+			IsTracking = false;
+			attempts++; // attempts always increase by one for every fight, not matter the outcome
+			deaths += Tracker_Deaths; // same goes for tracked deaths
+
+			// update previous attempt records
+			if (savePreviousAttempt) {
+				durationPrev = Tracker_Duration;
+				hitsTakenPrev = Tracker_HitsTaken;
+			}
+
+			// record should only occur when the boss is defeated
+			if (allowRecordSaving) {
+				kills++; // increase kill counter when recording
+				if (kills == 1) {
+					// if this was the first kill, update the first victory records
+					playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks;
+					durationFirst = Tracker_Duration;
+					hitsTakenFirst = Tracker_HitsTaken;
+
+					// personal best records are also updated, even if not displayed
+					durationBest = Tracker_Duration;
+					hitsTakenBest = Tracker_HitsTaken;
+
+				}
+				else {
+					// every kill after the first has the tracked record individually compared for a personal best
+					// if applicable, the previous best record stats must be updated first
+					if (durationBest > Tracker_Duration) {
+						durationPrevBest = durationBest;
+						durationBest = Tracker_Duration;
+					}
+
+					if (hitsTakenBest > Tracker_HitsTaken) {
+						hitsTakenPrevBest = hitsTakenBest;
+						hitsTakenBest = Tracker_HitsTaken;
+					}
+				}
+			}
 		}
 
 		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {

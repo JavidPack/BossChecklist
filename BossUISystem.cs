@@ -167,15 +167,16 @@ namespace BossChecklist
 						if (NPCAssist.GetEntryInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, out int recordIndex) is not EntryInfo entry)
 							return true;
 
-						PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						if (modPlayer.Tracker_Duration == null || modPlayer.Tracker_Duration.Length == 0)
-							return true; // fixes a silent error on servers when the trackers have not yet been populated
+						if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld is not List<BossRecord> records || records.Count == 0)
+							return true;
+
+						PersonalStats personalrecords = records[recordIndex].stats;
 						
 						string debugText =
 							$"[#{entry.GetIndex}] {entry.DisplayName} [{recordIndex}]" +
-							$"\nTime: {modPlayer.Tracker_Duration[recordIndex]}" +
-							$"\nTimes Hit: {modPlayer.Tracker_HitsTaken[recordIndex]}" +
-							$"\nDeaths: {modPlayer.Tracker_Deaths[recordIndex]}";
+							$"\nTime: {personalrecords.Tracker_Duration}" +
+							$"\nTimes Hit: {personalrecords.Tracker_HitsTaken}" +
+							$"\nDeaths: {personalrecords.Tracker_Deaths}";
 						Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
 						return true;
 					},

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -146,8 +147,7 @@ namespace BossChecklist
 			}
 		}
 
-		// Continually track the duration of boss fights while boss NPCs are active
-		// If a player dies at any point while a boss is active, add to the death tracker for later
+		// Track each tick that passes during boss fights.
 		public override void PreUpdate() {
 			/* Debug tool for opening the Progression Mode prompt
 			if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
@@ -156,6 +156,13 @@ namespace BossChecklist
 
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
+
+			foreach (BossRecord record in RecordsForWorld) {
+				if (record.stats.IsCurrentlyBeingTracked)
+					record.stats.Tracker_Duration++;
+			}
+
+			return;
 
 			for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
 				// If a boss is marked active and this player is a 'starting player'
@@ -168,25 +175,17 @@ namespace BossChecklist
 			}
 		}
 
-		// When a player is dead they are marked as such in the Death tracker
-		// On respawn, add to the total deaths towards marked bosses
-		// ActiveBossesList and StartingPlayers doesn't need to be checked since it was checked when setting the tracker bool to true
-		public override void OnRespawn() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
-				return;
-
-			for (int recordIndex = 0; recordIndex < Tracker_Deaths.Length; recordIndex++) {
-				if (Tracker_Deaths[recordIndex]) {
-					Tracker_Deaths[recordIndex] = false;
-					RecordsForWorld[recordIndex].stats.deaths++;
-					WorldAssist.worldRecords[recordIndex].stats.totalDeaths++;
-				}
-			}
-		}
-		// Whenever the player is hurt, add to the HitsTaken tracker
+		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
 		public override void OnHurt(Player.HurtInfo info) {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
+
+			foreach (BossRecord record in RecordsForWorld) {
+				if (record.stats.IsCurrentlyBeingTracked)
+					record.stats.Tracker_HitsTaken++;
+			}
+
+			return;
 
 			for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
 				if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
@@ -195,6 +194,28 @@ namespace BossChecklist
 			}
 		}
 
+		// Track player deaths during boss fights.
+		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
+				return;
+
+			foreach (BossRecord record in RecordsForWorld) {
+				if (record.stats.IsCurrentlyBeingTracked)
+					record.stats.Tracker_Deaths++;
+			}
+		}
+
+		// Record tracking should stop if the player disconnects from the world.
+		public override void PlayerDisconnect() {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
+				return;
+
+			foreach (BossRecord record in RecordsForWorld) {
+				record.stats.StopTracking(false, false); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
+			}
+		}
+		
+		// Respawn timer feature
 		public override void UpdateDead() {
 			if (Main.netMode == NetmodeID.Server || Player.whoAmI == 255)
 				return;
