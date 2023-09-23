@@ -119,8 +119,8 @@ namespace BossChecklist
 		public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
 
-		public bool UnlockedFirstVictory => playTimeFirst > 0;
-		public bool UnlockedPersonalBest => kills >= 2;
+		public bool UnlockedFirstVictory => playTimeFirst > 0; // unlocked in log once a play time is tracked
+		public bool UnlockedPersonalBest => kills >= 2; // unlocked in log once the boss has been killed at least twice
 
 		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
 
@@ -190,7 +190,7 @@ namespace BossChecklist
 			// record should only occur when the boss is defeated
 			if (allowRecordSaving) {
 				kills++; // increase kill counter when recording
-				if (kills == 1) {
+				if (!UnlockedFirstVictory) {
 					// if this was the first kill, update the first victory records
 					playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks;
 					durationFirst = Tracker_Duration;
