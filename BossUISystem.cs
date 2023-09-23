@@ -174,7 +174,7 @@ namespace BossChecklist
 						
 						string debugText =
 							$"[#{entry.GetIndex}] {entry.DisplayName} [{recordIndex}]" +
-							$"\nTime: {personalrecords.Tracker_Duration}" +
+							$"\nTime: {PersonalStats.TimeConversion(personalrecords.Tracker_Duration)}" +
 							$"\nTimes Hit: {personalrecords.Tracker_HitsTaken}" +
 							$"\nDeaths: {personalrecords.Tracker_Deaths}";
 						Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
