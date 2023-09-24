@@ -891,7 +891,7 @@ namespace BossChecklist.UIElements
 
 			private string[] GetValue(SubCategory sub, PersonalStats stats, WorldStats worldStats) {
 				// Defaults to Previous Attempt, the subcategory users will first see
-				string unique = stats.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : stats.attempts.ToString();
+				string unique = stats.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : $"#{stats.attempts}";
 				string duration = PersonalStats.TimeConversion(stats.durationPrev);
 				string hitsTaken = PersonalStats.HitCount(stats.hitsTakenPrev);
 
