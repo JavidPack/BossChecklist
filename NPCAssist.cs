@@ -75,6 +75,8 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
+			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
+
 			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
