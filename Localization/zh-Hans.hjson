@@ -409,6 +409,43 @@ Mods: {
 					BossRadar: "[i:3084] [c/ffeb6e:Boss雷达]"
 					ChatMessages: "[i:3037] [c/ffeb6e:聊天栏信息]"
 					ItemMapDetection: "[i:893] [c/ffeb6e:物品小地图检测]"
+					// BossRecords: "[i:3095] [c/ffeb6e:Boss Records]"
+				}
+
+				RecordTrackingEnabled: {
+					// Label: Enable Boss Record Tracking
+					/* Tooltip:
+						'''
+						When enabled, records can be made for the bosses you fight!
+						Note: Strictly for singleplayer. Servers will ignore this config and will track records reguardless.
+						''' */
+				}
+
+				AllowNewRecords: {
+					// Label: Allow New Records
+					/* Tooltip:
+						'''
+						When disabled, only your previous attempt is recorded.
+						First victory and personal best records will not be overwritten.
+						''' */
+				}
+
+				TimeValueFormat: {
+					// Label: Time Value Format
+					/* Tooltip:
+						'''
+						Standard: [0:00:0.0]
+						Simple: [0h 0m 0.0s]
+						''' */
+				}
+
+				DisplayRecordTracking: {
+					// Label: Display Record Tracker Values
+					/* Tooltip:
+						'''
+						When enabled, record tracking values are shown and updated during a boss fight.
+						Note: Strictly for singleplayer, currently. Does not work in multiplayer.
+						''' */
 				}
 
 				DespawnMessageType: {
@@ -531,25 +568,6 @@ Mods: {
 						新的调用不需要这些本地化, 但如果传递了null,  则默认使用它们.
 						设置为true可防止Boss清单创建新的本地化.
 						'''
-				}
-
-				DisableNewRecords: {
-					Label: 禁用更新新记录
-					Tooltip:
-						'''
-						启用后除了除了上次的尝试外所有的个人记录都不会被覆盖.
-						这也会禁止向世界记录服务器发送记录数据.
-						'''
-				}
-
-				DisableRecordTracking: {
-					Label: 禁用完整的跟踪记录
-					Tooltip: ""
-				}
-
-				ShowRecordTracking: {
-					Label: 显示所选Boss的记录计时器和记录器
-					Tooltip: 必须启用记录跟踪才会显示
 				}
 
 				ResetLoot: {

@@ -413,6 +413,43 @@ Mods: {
 					BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
 					ChatMessages: "[i:3037] [c/ffeb6e:Сообщения чата]"
 					ItemMapDetection: "[i:893] [c/ffeb6e:Определение предметов на карте]"
+					// BossRecords: "[i:3095] [c/ffeb6e:Boss Records]"
+				}
+
+				RecordTrackingEnabled: {
+					// Label: Enable Boss Record Tracking
+					/* Tooltip:
+						'''
+						When enabled, records can be made for the bosses you fight!
+						Note: Strictly for singleplayer. Servers will ignore this config and will track records reguardless.
+						''' */
+				}
+
+				AllowNewRecords: {
+					// Label: Allow New Records
+					/* Tooltip:
+						'''
+						When disabled, only your previous attempt is recorded.
+						First victory and personal best records will not be overwritten.
+						''' */
+				}
+
+				TimeValueFormat: {
+					// Label: Time Value Format
+					/* Tooltip:
+						'''
+						Standard: [0:00:0.0]
+						Simple: [0h 0m 0.0s]
+						''' */
+				}
+
+				DisplayRecordTracking: {
+					// Label: Display Record Tracker Values
+					/* Tooltip:
+						'''
+						When enabled, record tracking values are shown and updated during a boss fight.
+						Note: Strictly for singleplayer, currently. Does not work in multiplayer.
+						''' */
 				}
 
 				DespawnMessageType: {
@@ -536,25 +573,6 @@ Mods: {
 						Новые вызовы не зависят от этих локализаций, но по умолчанию будут использовать их, если передано значение null.
 						Установите значение ВКЛ, чтобы запретить Boss Checklist создавать новые локализации автоматически.
 						'''
-				}
-
-				DisableNewRecords: {
-					Label: Отключить обновление личных рекордов
-					Tooltip:
-						'''
-						Если эта настройка включена, все личные рекорды не будут перезаписываться, за исключением предыдущей попытки.
-						Это также отключит отправку данных о рекордах на сервер для рекордов мира.
-						'''
-				}
-
-				DisableRecordTracking: {
-					Label: Отключить отслеживание рекордов
-					Tooltip: ""
-				}
-
-				ShowRecordTracking: {
-					Label: Отображение таймера и показателей рекорда для выбранного босса
-					Tooltip: Для отображения этой информации требуется включить «Отслеживание рекордов».
 				}
 
 				ResetLoot: {

@@ -409,6 +409,43 @@ Mods: {
 					BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
 					ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
 					ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
+					BossRecords: "[i:3095] [c/ffeb6e:Boss Records]"
+				}
+
+				RecordTrackingEnabled: {
+					Label: Enable Boss Record Tracking
+					Tooltip:
+						'''
+						When enabled, records can be made for the bosses you fight!
+						Note: Strictly for singleplayer. Servers will ignore this config and will track records reguardless.
+						'''
+				}
+
+				AllowNewRecords: {
+					Label: Allow New Records
+					Tooltip:
+						'''
+						When disabled, only your previous attempt is recorded.
+						First victory and personal best records will not be overwritten.
+						'''
+				}
+
+				TimeValueFormat: {
+					Label: Time Value Format
+					Tooltip:
+						'''
+						Standard: [0:00:0.0]
+						Simple: [0h 0m 0.0s]
+						'''
+				}
+
+				DisplayRecordTracking: {
+					Label: Display Record Tracker Values
+					Tooltip:
+						'''
+						When enabled, record tracking values are shown and updated during a boss fight.
+						Note: Strictly for singleplayer, currently. Does not work in multiplayer.
+						'''
 				}
 
 				DespawnMessageType: {
@@ -416,7 +453,7 @@ Mods: {
 					Tooltip:
 						'''
 						Despawn messages will appear in chat when a boss becomes inactive.
-						If enabled, choose betweem generic or unique messages.
+						If enabled, choose between generic or unique messages.
 						'''
 				}
 
@@ -531,25 +568,6 @@ Mods: {
 						The new calls do not require these localizations but will default to them if null is passed.
 						Set to true to prevent new localizations from being created by BossChecklist.
 						'''
-				}
-
-				DisableNewRecords: {
-					Label: Disable updating personal records
-					Tooltip:
-						'''
-						While enabled, all personal records will not be overwritten except for Previous Attempt.
-						This will also disable sending record data to the server for world records.
-						'''
-				}
-
-				DisableRecordTracking: {
-					Label: Disable record tracking
-					Tooltip: ""
-				}
-
-				ShowRecordTracking: {
-					Label: Show record timers and counters of a selected Boss
-					Tooltip: Record Tracking must be enabled for this to show
 				}
 
 				ResetLoot: {

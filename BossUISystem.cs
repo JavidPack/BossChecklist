@@ -164,7 +164,7 @@ namespace BossChecklist
 						if (Main.netMode != NetmodeID.SinglePlayer)
 							return true;
 
-						if (NPCAssist.GetEntryInfo(BossChecklist.DebugConfig.ShowTimerOrCounter.Type, out int recordIndex) is not EntryInfo entry)
+						if (NPCAssist.GetEntryInfo(BossChecklist.ClientConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
 							return true;
 
 						if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld is not List<BossRecord> records || records.Count == 0)

@@ -132,7 +132,10 @@ namespace BossChecklist
 				hasOpenedTheBossLog = false;
 			*/
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+				return;
+
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
 			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -144,7 +147,10 @@ namespace BossChecklist
 
 		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
 		public override void OnHurt(Player.HurtInfo info) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+				return;
+
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
 			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -156,7 +162,10 @@ namespace BossChecklist
 
 		// Track player deaths during boss fights.
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+				return;
+
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
 			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -168,7 +177,10 @@ namespace BossChecklist
 
 		// Record tracking should stop if the player disconnects from the world.
 		public override void PlayerDisconnect() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+				return;
+
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {

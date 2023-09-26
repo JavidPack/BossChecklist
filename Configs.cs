@@ -229,6 +229,56 @@ namespace BossChecklist
 		public override ConfigScope Mode => ConfigScope.ClientSide;
 		public override void OnLoaded() => BossChecklist.ClientConfig = this;
 
+		private bool TrackingEnabled;
+		private bool NewRecordsEnabled;
+
+		[Header("BossRecords")]
+
+		[DefaultValue(true)]
+		public bool RecordTrackingEnabled {
+
+			get => TrackingEnabled;
+			set {
+				if (!Main.gameMenu) {
+					foreach (NPC npc in Main.npc) {
+						if (!npc.active || NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || entry.type != EntryType.Boss)
+							continue;
+
+						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
+						return; // If a boss is active, debug features are disabled until all bosses are inactive
+					}
+				}
+				TrackingEnabled = value;
+				if (value is false)
+					NewRecordsEnabled = false;
+			}
+		}
+
+		[DefaultValue(true)]
+		public bool AllowNewRecords {
+			get => RecordTrackingEnabled && NewRecordsEnabled;
+			set {
+				if (!Main.gameMenu) {
+					foreach (NPC npc in Main.npc) {
+						if (!npc.active || NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || entry.type != EntryType.Boss)
+							continue;
+
+						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
+						return; // If a boss is active, debug features are disabled until all bosses are inactive
+					}
+				}
+				if (TrackingEnabled)
+					NewRecordsEnabled = value;
+			}
+		}
+
+		[DrawTicks]
+		[OptionStrings(new string[] { "Standard", "Simple" })]
+		[DefaultValue("Standard")]
+		public string TimeValueFormat { get; set; }
+
+		public NPCDefinition DisplayRecordTracking { get; set; } = new NPCDefinition();
+
 		[Header("ChatMessages")]
 
 		[DrawTicks]
@@ -337,59 +387,6 @@ namespace BossChecklist
 
 		[BackgroundColor(80, 80, 80)]
 		public bool DisableAutoLocalization { get; set; }
-
-		[Header("DebugRecordTracker")]
-
-		[BackgroundColor(255, 250, 250)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.DisableNewRecords.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.DisableNewRecords.Tooltip")]
-		public bool NewRecordsDisabled {
-			get => processRecord == 1 && nrEnabled;
-			set {
-				if (!Main.gameMenu) {
-					foreach (NPC npc in Main.npc) {
-						if (!npc.active || NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || entry.type != EntryType.Boss)
-							continue;
-
-						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
-						return; // If a boss is active, debug features are disabled until all bosses are inactive
-					}
-				}
-				if (value) {
-					processRecord = 1;
-				}
-				nrEnabled = value;
-			}
-		}
-
-		[BackgroundColor(80, 80, 80)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.DisableRecordTracking.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.DisableRecordTracking.Tooltip")]
-		public bool RecordTrackingDisabled {
-			get => processRecord == 2 && rtEnabled;
-			set {
-				if (!Main.gameMenu) {
-					foreach (NPC npc in Main.npc) {
-						if (!npc.active || NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || entry.type != EntryType.Boss)
-							continue;
-
-						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
-						return; // If a boss is active, debug features are disabled until all bosses are inactive
-					}
-				}
-				if (value) {
-					processRecord = 2;
-				}
-				rtEnabled = value;
-			}
-		}
-
-		[BackgroundColor(255, 250, 250)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ShowRecordTracking.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ShowRecordTracking.Tooltip")]
-		public NPCDefinition ShowTimerOrCounter { get; set; } = new NPCDefinition();
 
 		[Header("DebugResetData")]
 

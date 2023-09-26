@@ -366,7 +366,12 @@ namespace BossChecklist
 			const int TicksPerMinute = TicksPerSecond * 60;
 			int minutes = ticks / TicksPerMinute; // Minutes will still show if 0
 			float seconds = (float)(ticks - (float)(minutes * TicksPerMinute)) / TicksPerSecond;
-			return $"{sign}{minutes}:{seconds.ToString("00.00")}";
+			float milliseconds = (float)((seconds - (int)seconds) * 1000);
+
+			return BossChecklist.ClientConfig.TimeValueFormat switch {
+				"Simple" => $"{sign}{(minutes > 0 ? $"{minutes}m " : "")}{(int)seconds}s ({milliseconds:0}ms)",
+				_ => $"{sign}{minutes}:{seconds:00.000}"
+			};
 		}
 
 		/// <summary>
@@ -472,7 +477,12 @@ namespace BossChecklist
 			int hours = (int)(playTimeFirst / TimeSpan.TicksPerHour);
 			int minutes = (int)((playTimeFirst - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
 			float seconds = (float)((playTimeFirst - (float)(hours * TimeSpan.TicksPerHour) - (float)(minutes * TimeSpan.TicksPerMinute)) / TimeSpan.TicksPerSecond);
-			return $"{(hours > 0 ? hours + ":" : "")}{(hours > 0 ? minutes.ToString("00") : minutes)}:{seconds.ToString("00.00")}";
+			float milliseconds = (float)((seconds - (int)seconds) * 1000);
+
+			return BossChecklist.ClientConfig.TimeValueFormat switch {
+				"Simple" => $"{(hours > 0 ? hours + "h " : "")}{minutes}m {(int)seconds}s ({milliseconds:0}ms)",
+				_ => $"{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds:0.000}"
+			};
 		}
 	}
 

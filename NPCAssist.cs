@@ -62,7 +62,7 @@ namespace BossChecklist
 					}
 					else {
 						PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-						bossrecord.StopTracking(interaction, interaction);
+						bossrecord.StopTracking(interaction && BossChecklist.ClientConfig.AllowNewRecords, interaction);
 					}
 				}
 			}
