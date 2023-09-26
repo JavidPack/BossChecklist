@@ -342,6 +342,7 @@ namespace BossChecklist
 					}
 					break;
 				case PacketMessageType.SendAllRecordsFromPlayerToServer:
+					// Multiplayer client --> Server (always)
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
 					int totalCount = reader.ReadInt32();
 					int invalidConflicts = 0;
@@ -374,22 +375,17 @@ namespace BossChecklist
 					Console.ResetColor();
 					break;
 				case PacketMessageType.UpdateRecordsFromServerToPlayer:
-					// The server just sent updated information for a player's records and it will be used to update the records for the client as well
-					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
+					// Server --> Multiplayer client (always)
 					int recordIndex = reader.ReadInt32();
 					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;
-				case PacketMessageType.WorldRecordUpdate:
-					// World Records should be shared to all clients
+				case PacketMessageType.SendWorldRecordsFromServerToPlayers:
+					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
 					WorldAssist.worldRecords[recordIndex].stats.NetRecieve(reader);
 					break;
-				case PacketMessageType.PlayTimeRecordUpdate:
-					recordIndex = reader.ReadInt32();
-					long playTime = reader.ReadInt64();
-					ServerCollectedRecords[whoAmI][recordIndex].stats.playTimeFirst = playTime;
-					break;
 				case PacketMessageType.ResetTrackers:
+					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
 					int plrIndex = reader.ReadInt32();
 					modPlayer = Main.player[plrIndex].GetModPlayer<PlayerAssist>();

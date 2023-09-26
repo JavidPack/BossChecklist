@@ -17,15 +17,6 @@ namespace BossChecklist
 		public static WorldRecord[] worldRecords;
 		public static List<WorldRecord> unloadedWorldRecords;
 
-		// Bosses will be set to true when they spawn and will only be set back to false when the boss despawns or dies
-		public static bool[] Tracker_ActiveEntry;
-
-		// Players that are in the server when a boss fight starts
-		// Prevents players that join a server mid bossfight from messing up records
-		public static bool[,] Tracker_StartingPlayers;
-
-		public static bool[] CheckedRecordIndexes;
-
 		public static int[] ActiveNPCEntryFlags; // Used for despawn messages, which will occur when the npc is unflagged
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
@@ -97,13 +88,10 @@ namespace BossChecklist
 			// Record related lists that should be the same count of record tracking entries
 			worldRecords = new WorldRecord[BossChecklist.bossTracker.BossRecordKeys.Count];
 			unloadedWorldRecords = new List<WorldRecord>();
-			CheckedRecordIndexes = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				ActiveNPCEntryFlags[i] = -1;
 			}
-			Tracker_ActiveEntry = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_StartingPlayers = new bool[BossChecklist.bossTracker.BossRecordKeys.Count, Main.maxPlayers];
 
 			// Populate world records list
 			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
@@ -271,33 +259,6 @@ namespace BossChecklist
 		public override void PreUpdateWorld() {
 			HandleMoonDowns();
 			HandleDespawnFlags();
-
-			//if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
-
-			foreach (NPC npc in Main.npc) {
-				if (NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || CheckedRecordIndexes[recordIndex])
-					continue; // If the NPC's record index is invalid OR was already handled, move on to the next NPC
-
-				CheckedRecordIndexes[recordIndex] = true; // record index will be handled, so no need to check it again
-
-				// If marked as active...
-				if (Tracker_ActiveEntry[recordIndex]) {
-					// ...remove any players that become inactive during the fight
-					foreach (Player player in Main.player) {
-						if (!player.active)
-							Tracker_StartingPlayers[recordIndex, player.whoAmI] = false;
-					}
-
-					// ...check if the npc is actually still active or not and display a despawn message if they are no longer active (but not killed!)
-					if (NPCAssist.FullyInactive(npc, entry.GetIndex))
-						Tracker_ActiveEntry[recordIndex] = false; // No longer an active boss (only other time this is set to false is NPC.OnKill)
-				}
-			}
-
-			for (int i = 0; i < CheckedRecordIndexes.Length; i++) {
-				CheckedRecordIndexes[i] = false; // reset all handled record indexes to false after iterating through all NPCs
-			}
 		}
 
 		public void AnnounceEventEnd(string eventType) {

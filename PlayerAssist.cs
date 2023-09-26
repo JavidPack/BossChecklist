@@ -25,10 +25,6 @@ namespace BossChecklist
 		public List<BossRecord> RecordsForWorld;
 		public List<ItemDefinition> BossItemsCollected;
 
-		// The 'in progress' values for records. This is what is updated during boss fights.
-		public int[] Tracker_Duration;
-		public int[] Tracker_HitsTaken;
-		public bool[] Tracker_Deaths;
 		public bool[] hasNewRecord;
 
 		public override void Initialize() {
@@ -39,10 +35,6 @@ namespace BossChecklist
 			RecordsForWorld = new List<BossRecord>();
 			BossItemsCollected = new List<ItemDefinition>();
 
-			// For being able to complete records in Multiplayer
-			Tracker_Duration = Array.Empty<int>();
-			Tracker_Deaths = Array.Empty<bool>();
-			Tracker_HitsTaken = Array.Empty<int>();
 			hasNewRecord = Array.Empty<bool>();
 		}
 
@@ -107,11 +99,6 @@ namespace BossChecklist
 				AllStoredRecords.Add(WorldID, RecordsForWorld);
 			}
 
-			// Reset record tracker numbers. Has to be reset after entering a world.
-			// Add values to all record trackers after RecordsForWorld are determined
-			Tracker_Duration = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_Deaths = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
@@ -153,18 +140,6 @@ namespace BossChecklist
 				if (record.stats.IsCurrentlyBeingTracked)
 					record.stats.Tracker_Duration++;
 			}
-
-			return;
-
-			for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
-				// If a boss is marked active and this player is a 'starting player'
-				if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
-					if (Player.dead) {
-						Tracker_Deaths[recordIndex] = true;
-					}
-					Tracker_Duration[recordIndex]++;
-				}
-			}
 		}
 
 		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
@@ -176,14 +151,6 @@ namespace BossChecklist
 			foreach (BossRecord record in EntryRecords) {
 				if (record.stats.IsCurrentlyBeingTracked)
 					record.stats.Tracker_HitsTaken++;
-			}
-
-			return;
-
-			for (int recordIndex = 0; recordIndex < BossChecklist.bossTracker.BossRecordKeys.Count; recordIndex++) {
-				if (WorldAssist.Tracker_ActiveEntry[recordIndex] && WorldAssist.Tracker_StartingPlayers[recordIndex, Player.whoAmI]) {
-					Tracker_HitsTaken[recordIndex]++;
-				}
 			}
 		}
 
