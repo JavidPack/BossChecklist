@@ -357,7 +357,7 @@ namespace BossChecklist
 		/// If the designated boss has not been defeated yet, 'No Record' will be returned instead.
 		/// </summary>
 		/// <param name="ticks">The about of ticks a fight took.</param>
-		/// <param name="sign">Only used when find a time difference using <see cref="TimeConversionDiff"/>.</param>
+		/// <param name="sign">Only used when finding a time difference using <see cref="TimeConversionDiff"/>.</param>
 		public static string TimeConversion(int ticks, string sign = "") {
 			if (ticks == -1)
 				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoRecord");
