@@ -114,15 +114,6 @@ namespace BossChecklist
 			Tracker_HitsTaken = new int[BossChecklist.bossTracker.BossRecordKeys.Count];
 			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
-			// Send this info to the server to populate the arrays server-sided
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				ModPacket packet = Mod.GetPacket();
-				packet.Write((byte)PacketMessageType.ResetTrackers);
-				packet.Write(-1);
-				packet.Write(Player.whoAmI);
-				packet.Send(); // Multiplayer client --> Server
-			}
-
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
 				return;
 			}
@@ -131,7 +122,7 @@ namespace BossChecklist
 			// The server doesn't need player records from every world, just the current one
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				ModPacket packet = Mod.GetPacket();
-				packet.Write((byte)PacketMessageType.SendRecordsToServer);
+				packet.Write((byte)PacketMessageType.SendAllRecordsFromPlayerToServer);
 				packet.Write(RecordsForWorld.Count);
 				for (int i = 0; i < RecordsForWorld.Count; i++) {
 					// The only records that we need to compare between other players are previous and best records
@@ -157,7 +148,8 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			foreach (BossRecord record in RecordsForWorld) {
+			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			foreach (BossRecord record in EntryRecords) {
 				if (record.stats.IsCurrentlyBeingTracked)
 					record.stats.Tracker_Duration++;
 			}
@@ -180,7 +172,8 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			foreach (BossRecord record in RecordsForWorld) {
+			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			foreach (BossRecord record in EntryRecords) {
 				if (record.stats.IsCurrentlyBeingTracked)
 					record.stats.Tracker_HitsTaken++;
 			}
@@ -199,7 +192,8 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			foreach (BossRecord record in RecordsForWorld) {
+			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			foreach (BossRecord record in EntryRecords) {
 				if (record.stats.IsCurrentlyBeingTracked)
 					record.stats.Tracker_Deaths++;
 			}
@@ -210,8 +204,16 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || BossChecklist.DebugConfig.RecordTrackingDisabled || Player.whoAmI == 255)
 				return;
 
-			foreach (BossRecord record in RecordsForWorld) {
-				record.stats.StopTracking(false, false); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
+			if (Main.netMode == NetmodeID.Server) {
+				foreach (BossRecord record in BossChecklist.ServerCollectedRecords[Player.whoAmI]) {
+					BossChecklist.bossTracker.SortedEntries.Find(x => x.Key == record.bossKey).IsRecordIndexed(out int recordIndex);
+					record.stats.StopTracking_Server(Player.whoAmI, recordIndex, false, false);
+				}
+			}
+			else {
+				foreach (BossRecord record in RecordsForWorld) {
+					record.stats.StopTracking(false, false); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
+				}
 			}
 		}
 		

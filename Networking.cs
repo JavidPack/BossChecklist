@@ -10,8 +10,8 @@ namespace BossChecklist
 		RequestClearHidden,
 		RequestMarkedDownEntry,
 		RequestClearMarkedDowns,
-		SendRecordsToServer,
-		RecordUpdate,
+		SendAllRecordsFromPlayerToServer,
+		UpdateRecordsFromServerToPlayer,
 		WorldRecordUpdate,
 		ResetTrackers,
 		PlayTimeRecordUpdate
@@ -110,7 +110,7 @@ namespace BossChecklist
 				// The trackers will be compared against all record category types in an attempt to update them
 				// If a record is beaten by any trackers, the record will be overwritten using a NetRecordID flag
 				// If the tracked records do NOT override any other records, only the Previous Attempt record category will be updated
-				NetRecordID recordType = NetRecordID.PreviousAttemptOnly;
+				NetRecordID recordType = NetRecordID.PreviousAttempt;
 				serverRecords.kills++;
 				serverRecords.durationPrev = trackedDuration;
 				serverRecords.hitsTakenPrev = trackedHitsTaken;
@@ -193,7 +193,7 @@ namespace BossChecklist
 				
 				// Then send the mod packet to the client
 				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.RecordUpdate);
+				packet.Write((byte)PacketMessageType.UpdateRecordsFromServerToPlayer);
 				packet.Write(recordIndex);
 				BossChecklist.ServerCollectedRecords[plrRecord.Key][recordIndex].stats.NetSend(packet, plrRecord.Value);
 				packet.Send(toClient: plrRecord.Key); // Server --> Multiplayer client (Player's only need to see their own records)

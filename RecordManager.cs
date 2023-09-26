@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace BossChecklist
@@ -12,16 +14,17 @@ namespace BossChecklist
 	[Flags]
 	internal enum NetRecordID : int {
 		None = 0,
-		PreviousAttemptOnly = 1,
+		PreviousAttempt = 1,
 		FirstVictory = 2,
-		PersonalBest_Duration = 4,
-		PersonalBest_HitsTaken = 8,
+		SuccessfulAttempt = 4,
+		PersonalBest_Duration = 8,
+		PersonalBest_HitsTaken = 16,
 		NewPersonalBest = PersonalBest_Duration | PersonalBest_HitsTaken,
-		WorldRecord_Duration = 16,
-		WorldRecord_HitsTaken = 32,
+		WorldRecord_Duration = 32,
+		WorldRecord_HitsTaken = 64,
 		WorldRecord = WorldRecord_Duration | WorldRecord_HitsTaken,
-		PersonalBest_Reset = 64, // Resetting personal best records will also remove record from World Records
-		FirstVictory_Reset = 128,
+		PersonalBest_Reset = 128, // Resetting personal best records will also remove record from World Records
+		FirstVictory_Reset = 256,
 		ResettingRecord = PersonalBest_Reset | FirstVictory_Reset
 	}
 
@@ -165,18 +168,33 @@ namespace BossChecklist
 		internal bool IsCurrentlyBeingTracked => IsTracking; // value cannot be changed outside of PersonalStats.
 		private bool IsTracking = false;
 
-		internal void StartTracking() {
+		internal bool StartTracking() {
 			if (IsTracking)
-				return; // do not reset or start tracking if it currently is tracking already
+				return false; // do not reset or start tracking if it currently is tracking already
 
 			IsTracking = true;
 			Tracker_Duration = Tracker_HitsTaken = Tracker_Deaths = 0;
+			return true;
 		}
 
-		internal void StopTracking(bool allowRecordSaving, bool savePreviousAttempt = true) {
-			if (!IsTracking)
-				return; // do not change any stats if tracking is not currently enabled
+		internal void StartTracking_Server(int whoAmI, int recordIndex) {
+			if (Main.netMode != NetmodeID.Server || StartTracking() is false)
+				return;
 
+			// Needs to be updated client side as well
+			// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
+			ModPacket packet = BossChecklist.instance.GetPacket();
+			packet.Write((byte)PacketMessageType.ResetTrackers);
+			packet.Write(recordIndex);
+			packet.Write(whoAmI);
+			packet.Send(toClient: whoAmI); // Server --> Multiplayer client
+		}
+
+		internal NetRecordID? StopTracking(bool allowRecordSaving, bool savePreviousAttempt) {
+			if (!IsTracking)
+				return null; // do not change any stats if tracking is not currently enabled
+
+			NetRecordID serverParse = NetRecordID.None;
 			IsTracking = false;
 			attempts++; // attempts always increase by one for every fight, not matter the outcome
 			deaths += Tracker_Deaths; // same goes for tracked deaths
@@ -185,14 +203,16 @@ namespace BossChecklist
 			if (savePreviousAttempt) {
 				durationPrev = Tracker_Duration;
 				hitsTakenPrev = Tracker_HitsTaken;
+				serverParse |= NetRecordID.PreviousAttempt;
 			}
 
 			// record should only occur when the boss is defeated
 			if (allowRecordSaving) {
 				kills++; // increase kill counter when recording
+				serverParse |= NetRecordID.SuccessfulAttempt;
 				if (!UnlockedFirstVictory) {
 					// if this was the first kill, update the first victory records
-					playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks;
+					playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // TODO: Find out how to calculate this server side. Maybe request play time before records are determined? Or maybe do afterwards when a player recieves new records!!!!
 					durationFirst = Tracker_Duration;
 					hitsTakenFirst = Tracker_HitsTaken;
 
@@ -200,6 +220,7 @@ namespace BossChecklist
 					durationBest = Tracker_Duration;
 					hitsTakenBest = Tracker_HitsTaken;
 
+					serverParse |= NetRecordID.FirstVictory;
 				}
 				else {
 					// every kill after the first has the tracked record individually compared for a personal best
@@ -207,40 +228,64 @@ namespace BossChecklist
 					if (durationBest > Tracker_Duration) {
 						durationPrevBest = durationBest;
 						durationBest = Tracker_Duration;
+						serverParse |= NetRecordID.PersonalBest_Duration;
 					}
 
 					if (hitsTakenBest > Tracker_HitsTaken) {
 						hitsTakenPrevBest = hitsTakenBest;
 						hitsTakenBest = Tracker_HitsTaken;
+						serverParse |= NetRecordID.PersonalBest_HitsTaken;
+					}
+
+					if (Main.netMode != NetmodeID.Server) {
+						if (serverParse.HasFlag(NetRecordID.NewPersonalBest) && !serverParse.HasFlag(NetRecordID.FirstVictory)) {
+							CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New Record!", true);
+						}
 					}
 				}
 			}
+
+			return serverParse;
+		}
+
+		internal void StopTracking_Server(int whoAmI, int recordIndex, bool allowRecordSaving, bool savePreviousAttempt) {
+			if (Main.netMode != NetmodeID.Server || StopTracking(allowRecordSaving, savePreviousAttempt) is not NetRecordID netRecord)
+				return; // do not change any stats if tracking is not currently enabled
+
+			// Then send the mod packet to the client
+			ModPacket packet = BossChecklist.instance.GetPacket();
+			packet.Write((byte)PacketMessageType.UpdateRecordsFromServerToPlayer);
+			packet.Write(recordIndex);
+			BossChecklist.ServerCollectedRecords[whoAmI][recordIndex].stats.NetSend(packet, netRecord);
+			packet.Send(toClient: whoAmI); // Server --> Multiplayer client (Player's only need to see their own records)
 		}
 
 		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {
 			writer.Write((int)recordType); // Write the record type(s) we are changing as NetRecieve will need to read this value.
 
-			// If the record type is a reset, nothing else needs to be done, as the records will be wiped. Otherwise...
-			if (!recordType.HasFlag(NetRecordID.ResettingRecord)) {
-				// ...previous records are always overwritten for the player to view...
+			if (recordType.HasFlag(NetRecordID.ResettingRecord))
+				return; // If records are being reset, nothing else needs to be done as the records will be wiped
+
+			writer.Write(deaths); // deaths are always tracked
+
+			if (recordType.HasFlag(NetRecordID.PreviousAttempt)) {
 				writer.Write(durationPrev);
 				writer.Write(hitsTakenPrev);
+			}
 
-				// ... and any first or new records we set will be flagged for sending
-				if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
-					writer.Write(durationBest);
-					writer.Write(durationPrevBest);
-				}
+			if (recordType.HasFlag(NetRecordID.FirstVictory)) {
+				writer.Write(durationFirst);
+				writer.Write(hitsTakenFirst);
+			}
 
-				if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
-					writer.Write(hitsTakenBest);
-					writer.Write(hitsTakenPrevBest);
-				}
+			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_Duration)) {
+				writer.Write(durationBest);
+				writer.Write(durationPrevBest);
+			}
 
-				if (recordType.HasFlag(NetRecordID.FirstVictory)) {
-					writer.Write(durationFirst);
-					writer.Write(hitsTakenFirst);
-				}
+			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_HitsTaken)) {
+				writer.Write(hitsTakenBest);
+				writer.Write(hitsTakenPrevBest);
 			}
 		}
 
@@ -255,34 +300,42 @@ namespace BossChecklist
 				if (recordType.HasFlag(NetRecordID.PersonalBest_Reset)) {
 					durationBest = durationPrevBest = hitsTakenBest = hitsTakenPrevBest = -1;
 				}
+
+				return; // records wiped, no need to continue
 			}
-			else {
-				kills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
+
+			attempts++; // attempts always increase by one
+			deaths = reader.ReadInt32();
+			if (recordType.HasFlag(NetRecordID.SuccessfulAttempt))
+				kills++;
+
+			if (recordType.HasFlag(NetRecordID.PreviousAttempt)) {
 				durationPrev = reader.ReadInt32();
 				hitsTakenPrev = reader.ReadInt32();
+			}
 
-				if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
-					durationBest = reader.ReadInt32();
-					durationPrevBest = reader.ReadInt32();
-				}
+			if (recordType.HasFlag(NetRecordID.FirstVictory)) {
+				durationFirst = reader.ReadInt32();
+				hitsTakenFirst = reader.ReadInt32();
+				playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // Server cannot send this information, nor needs to
+			}
 
-				if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
-					hitsTakenBest = reader.ReadInt32();
-					hitsTakenPrevBest = reader.ReadInt32();
-				}
+			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_Duration)) {
+				durationBest = reader.ReadInt32();
+				durationPrevBest = reader.ReadInt32();
+			}
 
-				if (recordType.HasFlag(NetRecordID.FirstVictory)) {
-					durationFirst = reader.ReadInt32();
-					hitsTakenFirst = reader.ReadInt32();
-				}
+			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_HitsTaken)) {
+				hitsTakenBest = reader.ReadInt32();
+				hitsTakenPrevBest = reader.ReadInt32();
+			}
 
-				// This should always be read by Multiplayer clients, so create combat texts on new records
-				if (recordType.HasFlag(NetRecordID.WorldRecord)) {
-					CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New Record!", true);
-				}
-				else if (recordType.HasFlag(NetRecordID.NewPersonalBest)) {
-					CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New World Record!", true);
-				}
+			// This method should only be read by Multiplayer clients, so creating combat texts on new records should be fine
+			if (recordType.HasFlag(NetRecordID.NewPersonalBest) && !recordType.HasFlag(NetRecordID.FirstVictory)) {
+				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New Record!", true);
+			}
+			else if (recordType.HasFlag(NetRecordID.WorldRecord)) {
+				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New World Record!", true);
 			}
 		}
 

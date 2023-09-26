@@ -341,7 +341,7 @@ namespace BossChecklist
 						NetMessage.SendData(MessageID.WorldData);
 					}
 					break;
-				case PacketMessageType.SendRecordsToServer:
+				case PacketMessageType.SendAllRecordsFromPlayerToServer:
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
 					int totalCount = reader.ReadInt32();
 					int invalidConflicts = 0;
@@ -373,7 +373,7 @@ namespace BossChecklist
 					}
 					Console.ResetColor();
 					break;
-				case PacketMessageType.RecordUpdate:
+				case PacketMessageType.UpdateRecordsFromServerToPlayer:
 					// The server just sent updated information for a player's records and it will be used to update the records for the client as well
 					// Since the packet is being sent with 'toClient: i', LocalPlayer can be used here
 					int recordIndex = reader.ReadInt32();
@@ -393,15 +393,7 @@ namespace BossChecklist
 					recordIndex = reader.ReadInt32();
 					int plrIndex = reader.ReadInt32();
 					modPlayer = Main.player[plrIndex].GetModPlayer<PlayerAssist>();
-					if (recordIndex != -1) {
-						modPlayer.Tracker_Duration[recordIndex] = 0;
-						modPlayer.Tracker_HitsTaken[recordIndex] = 0;
-					}
-					else {
-						modPlayer.Tracker_Duration = new int[bossTracker.BossRecordKeys.Count];
-						modPlayer.Tracker_Deaths = new bool[bossTracker.BossRecordKeys.Count];
-						modPlayer.Tracker_HitsTaken = new int[bossTracker.BossRecordKeys.Count];
-					}
+					modPlayer.RecordsForWorld[recordIndex].stats.StartTracking();
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");
