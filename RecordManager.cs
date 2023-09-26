@@ -211,8 +211,10 @@ namespace BossChecklist
 				kills++; // increase kill counter when recording
 				serverParse |= NetRecordID.SuccessfulAttempt;
 				if (!UnlockedFirstVictory) {
+					if (Main.netMode == NetmodeID.SinglePlayer)
+						playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // server cant easily get this information
+
 					// if this was the first kill, update the first victory records
-					playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // TODO: Find out how to calculate this server side. Maybe request play time before records are determined? Or maybe do afterwards when a player recieves new records!!!!
 					durationFirst = Tracker_Duration;
 					hitsTakenFirst = Tracker_HitsTaken;
 
