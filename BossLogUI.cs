@@ -752,7 +752,7 @@ namespace BossChecklist
 			}
 
 			UIImage[] buttons = new UIImage[] {
-				new UIImage(RequestVanillaTexture($"Images/Item_{ItemID.Binoculars}")),
+				new UIImage(RequestVanillaTexture($"Images/Item_{ItemID.ReflectiveShades}")),
 				new UIImage(RequestVanillaTexture($"Images/Item_{ItemID.Blindfold}")),
 				new UIImage(RequestVanillaTexture($"Images/UI/Camera_1")),
 				new UIImage(Texture_Check_Box)
