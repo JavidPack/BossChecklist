@@ -1601,8 +1601,7 @@ namespace BossChecklist
 
 			if (requiredTiles.Count == 0) {
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
-				// TODO: Change the Power Glove to the Hand of Creation
-				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.PowerGlove), ItemSlot.Context.EquipArmorVanity, 0.85f) {
+				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.HandOfCreation), ItemSlot.Context.EquipArmorVanity, 0.85f) {
 					hoverText = $"{LangLog}.SpawnInfo.ByHand"
 				};
 				craftItem.Top.Pixels = 240 + (48 * (row + 2));
