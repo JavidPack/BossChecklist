@@ -413,43 +413,43 @@ Mods: {
 					BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
 					ChatMessages: "[i:3037] [c/ffeb6e:Сообщения чата]"
 					ItemMapDetection: "[i:893] [c/ffeb6e:Определение предметов на карте]"
-					// BossRecords: "[i:3095] [c/ffeb6e:Boss Records]"
+					BossRecords: "[i:3095] [c/ffeb6e:Рекорды боссов]"
 				}
 
 				RecordTrackingEnabled: {
-					// Label: Enable Boss Record Tracking
-					/* Tooltip:
+					Label: Отслеживание рекордов боссов
+					Tooltip:
 						'''
-						When enabled, records can be made for the bosses you fight!
-						Note: Strictly for singleplayer. Servers will ignore this config and will track records reguardless.
-						''' */
+						Если эта настройка включена, вы сможете сохранять рекорды боссов, с которыми вы сражаетесь!
+						Обратите внимание: данная функция применима только в одиночной игре. На серверах эта настройка игнорируется, и рекорды будут сохраняться в любом случае.
+						'''
 				}
 
 				AllowNewRecords: {
-					// Label: Allow New Records
-					/* Tooltip:
+					Label: Разрешать новые рекорды
+					Tooltip:
 						'''
-						When disabled, only your previous attempt is recorded.
-						First victory and personal best records will not be overwritten.
-						''' */
+						Если эта настройка выключена, то сохраняется только предыдущая попытка.
+						Первая победа и личный лучший рекорд не будут перезаписаны.
+						'''
 				}
 
 				TimeValueFormat: {
-					// Label: Time Value Format
-					/* Tooltip:
+					Label: Формат временного значения
+					Tooltip:
 						'''
-						Standard: [0:00:0.0]
-						Simple: [0h 0m 0.0s]
-						''' */
+						Стандартный: [0:00:0.0]
+						Простой: [0ч 0м 0.0с]
+						'''
 				}
 
 				DisplayRecordTracking: {
-					// Label: Display Record Tracker Values
-					/* Tooltip:
+					Label: Значения отслеживания рекордов
+					Tooltip:
 						'''
-						When enabled, record tracking values are shown and updated during a boss fight.
-						Note: Strictly for singleplayer, currently. Does not work in multiplayer.
-						''' */
+						Если эта настройка включена, то во время битвы с боссом отображаются и обновляются значения отслеживания рекордов.
+						Обратите внимание: данная функция на данный момент доступна только в одиночной игре и не работает в мультиплеере.
+						'''
 				}
 
 				DespawnMessageType: {
