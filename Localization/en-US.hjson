@@ -434,8 +434,8 @@ Mods: {
 					Label: Time Value Format
 					Tooltip:
 						'''
-						Standard: [0:00:0.0]
-						Simple: [0h 0m 0.0s]
+						Standard: [0:00:00.000]
+						Simple: [0h 0m 0s 0ms]
 						'''
 				}
 

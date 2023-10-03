@@ -3,7 +3,7 @@ de-DE, 0/275, 0%, missing 275
 it-IT, 0/275, 0%, missing 275
 fr-FR, 0/275, 0%, missing 275
 es-ES, 84/275, 31%, missing 191
-ru-RU, 271/275, 99%, missing 4
-zh-Hans, 271/275, 99%, missing 4
+ru-RU, 275/275, 100%, missing 0
+zh-Hans, 275/275, 100%, missing 0
 pt-BR, 63/275, 23%, missing 212
 pl-PL, 0/275, 0%, missing 275
