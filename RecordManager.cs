@@ -45,7 +45,8 @@ namespace BossChecklist
 		public BossRecord(string bossKey) {
 			this.bossKey = bossKey;
 		}
-		public override string ToString() => $"Personal Records for: '{bossKey}'";
+
+		public override string ToString() => $"Personal Records for: #{BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == bossKey)} '{bossKey}'";
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
@@ -80,7 +81,7 @@ namespace BossChecklist
 			};
 		}
 
-		public override string ToString() => $"World Records for: '{bossKey}'";
+		public override string ToString() => $"World Records for: #{BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == bossKey)} '{bossKey}'";
 	}
 
 	/// <summary>
@@ -506,8 +507,8 @@ namespace BossChecklist
 		public List<string> hitsTakenHolder = new List<string> { };
 		public int hitsTakenWorld = -1;
 
-		public bool DurationEmpty => durationHolder.Count == 0 || durationWorld == -1;
-		public bool HitsTakenEmpty => hitsTakenHolder.Count == 0 || hitsTakenWorld == -1;
+		public bool DurationNotRecorded => durationHolder.Count == 0 || durationWorld == -1;
+		public bool HitsTakenNotRecorded => hitsTakenHolder.Count == 0 || hitsTakenWorld == -1;
 
 		public static Func<TagCompound, WorldStats> DESERIALIZER = tag => new WorldStats(tag);
 
@@ -537,8 +538,59 @@ namespace BossChecklist
 			};
 		}
 
+		internal void CheckForWorldRecords_Server(int recordIndex) {
+			if (Main.netMode != NetmodeID.Server)
+				return; // Only the server should be able to adjust world records
+
+			NetRecordID netRecord = NetRecordID.None;
+			totalKills++; // kills always increase by one when an entry dies
+
+			foreach (Player player in Main.player) {
+				if (!player.active)
+					return;
+
+				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+				totalDeaths += playerRecords.Tracker_Deaths;
+
+				bool Beaten_Duration = playerRecords.Tracker_Duration == durationWorld;
+				bool Matched_Duration = playerRecords.Tracker_Duration < durationWorld;
+
+				if (DurationNotRecorded || Beaten_Duration || Matched_Duration) {
+					netRecord |= NetRecordID.WorldRecord_Duration;
+					durationWorld = playerRecords.Tracker_Duration;
+					if (Beaten_Duration)
+						durationHolder.Clear();
+					durationHolder.Add(Main.player[player.whoAmI].name);
+				}
+
+				bool Beaten_HitsTaken = playerRecords.Tracker_HitsTaken == hitsTakenWorld;
+				bool Matched_HitsTaken = playerRecords.Tracker_HitsTaken < hitsTakenWorld;
+
+				if (HitsTakenNotRecorded || Beaten_HitsTaken || Matched_HitsTaken) {
+					netRecord |= NetRecordID.WorldRecord_HitsTaken;
+					hitsTakenWorld = playerRecords.Tracker_HitsTaken;
+					if (Beaten_HitsTaken)
+						hitsTakenHolder.Clear();
+					hitsTakenHolder.Add(Main.player[player.whoAmI].name);
+				}
+			}
+
+			if (netRecord.HasFlag(NetRecordID.WorldRecord)) {
+				foreach (Player player in Main.player) {
+					if (!player.active)
+						return;
+
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayers);
+					NetSend(packet, netRecord);
+					packet.Send(player.whoAmI);
+				}
+			}
+		}
+
 		internal void NetSend(BinaryWriter writer, NetRecordID netRecords) {
 			writer.Write((int)netRecords); // Write the record type(s) we are changing. NetRecieve will need to read this value.
+			writer.Write(totalDeaths);
 
 			// Packet should have any beaten record values and holders written on it
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_Duration)) {
@@ -561,7 +613,7 @@ namespace BossChecklist
 		internal void NetRecieve(BinaryReader reader) {
 			NetRecordID netRecords = (NetRecordID)reader.ReadInt32(); // Read the type of record being updated
 			totalKills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
-			//TODO: figure out death counts
+			totalDeaths = reader.ReadInt32();
 
 			// Set the world record values and holders
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_Duration)) {
@@ -599,7 +651,7 @@ namespace BossChecklist
 		/// If the entry has not yet been defated, 'Be the first to claim the world record!' will be returned instead.
 		/// </summary>
 		public string ListDurationRecordHolders() {
-			if (DurationEmpty)
+			if (DurationNotRecorded)
 				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.ClaimRecord");
 
 			string list = Language.GetTextValue($"{BossLogUI.LangLog}.Records.RecordHolder");
@@ -614,7 +666,7 @@ namespace BossChecklist
 		/// If the entry has not yet been defated, 'Be the first to claim the world record!' will be returned instead.
 		/// </summary>
 		public string ListHitsTakenRecordHolders() {
-			if (HitsTakenEmpty)
+			if (HitsTakenNotRecorded)
 				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.ClaimRecord");
 
 			string list = Language.GetTextValue($"{BossLogUI.LangLog}.Records.RecordHolder");
