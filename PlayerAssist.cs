@@ -185,7 +185,7 @@ namespace BossChecklist
 
 			if (Main.netMode == NetmodeID.Server) {
 				foreach (BossRecord record in BossChecklist.ServerCollectedRecords[Player.whoAmI]) {
-					BossChecklist.bossTracker.SortedEntries.Find(x => x.Key == record.bossKey).IsRecordIndexed(out int recordIndex);
+					BossChecklist.bossTracker.FindEntryFromKey(record.bossKey).IsRecordIndexed(out int recordIndex);
 					record.stats.StopTracking_Server(Player.whoAmI, recordIndex, false, false);
 				}
 			}

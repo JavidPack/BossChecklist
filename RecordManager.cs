@@ -46,7 +46,7 @@ namespace BossChecklist
 			this.bossKey = bossKey;
 		}
 
-		public override string ToString() => $"Personal Records for: #{BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == bossKey)} '{bossKey}'";
+		public override string ToString() => $"Personal Records for: #{BossChecklist.bossTracker.FindEntryFromKey(bossKey).GetIndex} '{bossKey}'";
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
@@ -81,7 +81,7 @@ namespace BossChecklist
 			};
 		}
 
-		public override string ToString() => $"World Records for: #{BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == bossKey)} '{bossKey}'";
+		public override string ToString() => $"World Records for: #{BossChecklist.bossTracker.FindEntryFromKey(bossKey).GetIndex} '{bossKey}'";
 	}
 
 	/// <summary>

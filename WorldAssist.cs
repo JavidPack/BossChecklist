@@ -95,7 +95,7 @@ namespace BossChecklist
 
 			// Populate world records list
 			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-				if (BossChecklist.bossTracker.SortedEntries.Find(x => x.Key == key) is EntryInfo entry && entry.IsRecordIndexed(out int recordIndex))
+				if (BossChecklist.bossTracker.FindEntryFromKey(key) is EntryInfo entry && entry.IsRecordIndexed(out int recordIndex))
 					worldRecords[recordIndex] = new WorldRecord(key);
 			}
 		}
@@ -147,7 +147,7 @@ namespace BossChecklist
 			unloadedWorldRecords.Clear();
 			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("WorldRecords").ToList();
 			foreach (WorldRecord record in SavedWorldRecords) {
-				if (BossChecklist.bossTracker.SortedEntries.Find(x => x.Key == record.bossKey) is not EntryInfo entry) {
+				if (BossChecklist.bossTracker.FindEntryFromKey(record.bossKey) is not EntryInfo entry) {
 					unloadedWorldRecords.Add(record); // Add any unloaded entries to this list
 					continue; // Entry is not loaded
 				}

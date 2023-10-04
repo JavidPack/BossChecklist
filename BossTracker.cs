@@ -57,6 +57,7 @@ namespace BossChecklist
 		/// When updating vanilla progression values, please also update the version number of <see cref="BossChecklist.LastVanillaProgressionRevision"/>.
 		/// </summary>
 		internal List<EntryInfo> SortedEntries;
+		internal EntryInfo FindEntryFromKey(string lookupKey) => SortedEntries.Find(entry => entry.Key == lookupKey);
 		internal bool[] EntryCache;
 		internal bool[] EntryLootCache;
 		internal List<OrphanInfo> ExtraData;
@@ -192,7 +193,7 @@ namespace BossChecklist
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {
 				foreach (KeyValuePair<string, object> submission in orphan.values) {
-					EntryInfo entry = SortedEntries.Find(entry => submission.Key == entry.Key);
+					EntryInfo entry = FindEntryFromKey(submission.Key);
 					if (entry is null) {
 						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key}) and will be ignored.");
 						continue;

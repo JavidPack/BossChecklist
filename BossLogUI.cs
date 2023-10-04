@@ -1401,7 +1401,7 @@ namespace BossChecklist
 
 					float offset = 0;
 					foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
-						EntryInfo relatedEntry = BossChecklist.bossTracker.SortedEntries[BossChecklist.bossTracker.SortedEntries.FindIndex(x => x.Key == entryKey)];
+						EntryInfo relatedEntry = BossChecklist.bossTracker.FindEntryFromKey(entryKey);
 
 						string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 						Color iconColor = relatedEntry.IsDownedOrMarked ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
