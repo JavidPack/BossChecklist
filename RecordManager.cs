@@ -301,7 +301,7 @@ namespace BossChecklist
 			}
 		}
 
-		internal void NetRecieve(BinaryReader reader) {
+		internal void NetRecieve(BinaryReader reader, int recordIndex, int whoAmI) {
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
 			if (recordType.HasFlag(NetRecordID.ResettingRecord)) {
 				if (recordType.HasFlag(NetRecordID.FirstVictory_Reset)) {
@@ -349,6 +349,14 @@ namespace BossChecklist
 			else if (recordType.HasFlag(NetRecordID.WorldRecord)) {
 				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New World Record!", true);
 			}
+
+			// Get the player's play time and send it to the server
+			ModPacket packet = BossChecklist.instance.GetPacket();
+			packet.Write((byte)PacketMessageType.SendPlayTimeToServer);
+			packet.Write(recordIndex);
+			packet.Write(whoAmI);
+			packet.Write(playTimeFirst);
+			packet.Send();
 		}
 
 		/// <summary>
@@ -584,22 +592,27 @@ namespace BossChecklist
 				}
 			}
 
-			if (netRecord.HasFlag(NetRecordID.WorldRecord)) {
-				foreach (Player player in Main.player) {
-					if (!player.active)
-						return;
+			foreach (Player player in Main.player) {
+				if (!player.active)
+					return;
 
-					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayers);
-					NetSend(packet, netRecord);
-					packet.Send(player.whoAmI);
-				}
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayers);
+				packet.Write(recordIndex);
+				NetSend(packet, netRecord);
+				packet.Send(player.whoAmI);
 			}
 		}
 
 		internal void NetSend(BinaryWriter writer, NetRecordID netRecords) {
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.White;
+
 			writer.Write((int)netRecords); // Write the record type(s) we are changing. NetRecieve will need to read this value.
+			Console.WriteLine($"+1 kill");
 			writer.Write(totalDeaths);
+			Console.WriteLine($"Players have accumulated a total of {totalDeaths} deaths after this fight");
+			Console.WriteLine($"KDR: {totalKills} / {totalDeaths}");
 
 			// Packet should have any beaten record values and holders written on it
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_Duration)) {
@@ -608,6 +621,7 @@ namespace BossChecklist
 				foreach (string name in durationHolder) {
 					writer.Write(name);
 				}
+				Console.WriteLine($"Someone achieved a world record for duration!");
 			}
 
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_HitsTaken)) {
@@ -616,13 +630,19 @@ namespace BossChecklist
 				foreach (string name in hitsTakenHolder) {
 					writer.Write(name);
 				}
+				Console.WriteLine($"Someone achieved a world record for hits taken!");
 			}
+
+			Console.ResetColor();
 		}
 
 		internal void NetRecieve(BinaryReader reader) {
 			NetRecordID netRecords = (NetRecordID)reader.ReadInt32(); // Read the type of record being updated
 			totalKills++; // Kills always increase by 1, since records will only be updated when a boss is defeated
 			totalDeaths = reader.ReadInt32();
+			Main.NewText("+1 Kill");
+			Main.NewText($"New death total: {totalDeaths}");
+			Main.NewText($"KDR: {totalKills} / {totalDeaths}");
 
 			// Set the world record values and holders
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_Duration)) {
@@ -632,6 +652,7 @@ namespace BossChecklist
 				for (int i = 0; i < durationHolderTotal; i++) {
 					durationHolder.Add(reader.ReadString());
 				}
+				Main.NewText($"Duration updated");
 			}
 
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_HitsTaken)) {
@@ -641,6 +662,7 @@ namespace BossChecklist
 				for (int i = 0; i < hitsTakenHolderTotal; i++) {
 					hitsTakenHolder.Add(reader.ReadString());
 				}
+				Main.NewText($"Hits Taken updated");
 			}
 		}
 

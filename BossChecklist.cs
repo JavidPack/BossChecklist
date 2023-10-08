@@ -377,7 +377,7 @@ namespace BossChecklist
 				case PacketMessageType.UpdateRecordsFromServerToPlayer:
 					// Server --> Multiplayer client (always)
 					int recordIndex = reader.ReadInt32();
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader);
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader, recordIndex, Main.LocalPlayer.whoAmI);
 					break;
 				case PacketMessageType.SendWorldRecordsFromServerToPlayers:
 					// Server --> Multiplayer client (always)
@@ -390,6 +390,12 @@ namespace BossChecklist
 					int plrIndex = reader.ReadInt32();
 					modPlayer = Main.player[plrIndex].GetModPlayer<PlayerAssist>();
 					modPlayer.RecordsForWorld[recordIndex].stats.StartTracking();
+					break;
+				case PacketMessageType.SendPlayTimeToServer:
+					recordIndex = reader.ReadInt32();
+					plrIndex = reader.ReadInt32();
+					long playTimeSent = reader.ReadInt64();
+					ServerCollectedRecords[whoAmI][recordIndex].stats.playTimeFirst = playTimeSent;
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");
