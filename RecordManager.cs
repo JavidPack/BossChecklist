@@ -123,6 +123,15 @@ namespace BossChecklist
 		public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
 
+		public Point GetStats(int category) {
+			return category switch {
+				(int)SubCategory.PreviousAttempt => new Point(durationPrev, hitsTakenPrev),
+				(int)SubCategory.FirstVictory => new Point(durationFirst, hitsTakenFirst),
+				(int)SubCategory.PersonalBest => new Point(durationBest, hitsTakenBest),
+				_ => new Point(-1, -1)
+			};
+		}
+
 		public bool UnlockedFirstVictory => playTimeFirst > 0; // unlocked in log once a play time is tracked
 		public bool UnlockedPersonalBest => kills >= 2; // unlocked in log once the boss has been killed at least twice
 
@@ -398,16 +407,16 @@ namespace BossChecklist
 			string sign;
 			if (tickDiff > 0) {
 				sign = "+";
-				diff = Color.Red;
+				diff = Colors.RarityRed;
 			}
 			else if (tickDiff == 0) {
 				sign = "±";
-				diff = Color.Yellow;
+				diff = Colors.RarityYellow;
 			}
 			else {
 				tickDiff *= -1;
 				sign = "-";
-				diff = Color.Green;
+				diff = Colors.RarityGreen;
 			}
 
 			return TimeConversion(tickDiff, sign);
@@ -426,7 +435,7 @@ namespace BossChecklist
 			if (count == 0)
 				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoHit");
 			
-			return count.ToString();
+			return $"{count} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hit{(count == 1 ? "" : "Plural")}")}";
 		}
 
 		/// <summary>
@@ -452,16 +461,16 @@ namespace BossChecklist
 			string sign;
 			if (countDiff > 0) {
 				sign = "+";
-				diff = Color.Red;
+				diff = Colors.RarityRed;
 			}
 			else if (countDiff == 0) {
 				sign = "±";
-				diff = Color.Yellow;
+				diff = Colors.RarityYellow;
 			}
 			else {
 				countDiff *= -1;
 				sign = "-";
-				diff = Color.Green;
+				diff = Colors.RarityGreen;
 			}
 
 			return $"{sign}{countDiff}";

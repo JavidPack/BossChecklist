@@ -209,10 +209,9 @@ namespace BossChecklist.UIElements
 					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
 
 				if (Record_Anchor.HasValue) {
-					BossUISystem.Instance.BossLog.GetLogEntryInfo.IsRecordIndexed(out int recordIndex);
-					PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
 					BossLogUI.RecordSubCategory = Record_Anchor.Value;
-
+					if (Record_Anchor.Value == BossLogUI.CompareState)
+						BossLogUI.CompareState = SubCategory.None;
 					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
 
@@ -222,6 +221,14 @@ namespace BossChecklist.UIElements
 						Platform.Get<IClipboard>().Value = bossKey;
 						SoundEngine.PlaySound(SoundID.Unlock);
 					}
+				}
+			}
+
+			public override void RightClick(UIMouseEvent evt) {
+				base.RightClick(evt);
+				if (Record_Anchor.HasValue && Record_Anchor.Value != BossLogUI.RecordSubCategory) {
+					BossLogUI.CompareState = BossLogUI.CompareState == Record_Anchor.Value ? SubCategory.None : Record_Anchor.Value;
+					BossUISystem.Instance.BossLog.RefreshPageContent();
 				}
 			}
 

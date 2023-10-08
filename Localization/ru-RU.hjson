@@ -79,6 +79,8 @@ Mods: {
 				Deaths: смертей
 				Total: Всего
 				NoHit: Без урона!
+				// Hit: hit
+				// HitPlural: hits
 				PreviousBest: Пред. лучший результат
 				ClaimRecord: Будьте первым, кто установит рекорд мира!
 				RecordHolder: Рекорд обладателя(ей)

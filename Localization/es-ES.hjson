@@ -79,6 +79,8 @@ Mods: {
 				Deaths: derrotas
 				Total: Total
 				// NoHit: No hit!
+				// Hit: hit
+				// HitPlural: hits
 				// PreviousBest: Your Previous Best
 				// ClaimRecord: Be the first to claim the world record!
 				// RecordHolder: Record Holder(s)
