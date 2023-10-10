@@ -79,8 +79,8 @@ Mods: {
 				Deaths: 死亡次数
 				Total: 总计
 				NoHit: 无伤!
-				// Hit: hit
-				// HitPlural: hits
+				Hit: 受击
+				HitPlural: 受击
 				PreviousBest: 你以前的最佳纪录
 				ClaimRecord: 成为第一个打破世界纪录的人!
 				RecordHolder: 记录保持者
