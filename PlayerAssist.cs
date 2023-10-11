@@ -75,7 +75,29 @@ namespace BossChecklist
 			// Upon entering a world, determine if records already exist for a player and copy them into 'RecordsForWorld'
 			// If personal records do not exist for this world, create a new entry for the player to use
 			string WorldID = Main.ActiveWorldFileData.UniqueId.ToString();
-			if (!AllStoredRecords.TryGetValue(WorldID, out List<BossRecord> tempRecords)) {
+			if (AllStoredRecords.TryGetValue(WorldID, out List<BossRecord> tempRecords)) {
+				List<BossRecord> unloadedRecords = new List<BossRecord>();
+				List<BossRecord> sortedRecords = new List<BossRecord>();
+				foreach (BossRecord record in tempRecords) {
+					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey)) {
+						unloadedRecords.Add(record); // any saved records from an unloaded boss must be perserved
+					}
+				}
+
+				// iterate through the record keys to keep the data in order
+				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+					int index = tempRecords.FindIndex(x => x.bossKey == key);
+					if (index == -1) {
+						sortedRecords.Add(new BossRecord(key)); // if not in the list, make a new entry
+					}
+					else {
+						sortedRecords.Add(tempRecords[index]);
+					}
+				}
+
+				AllStoredRecords[WorldID] = sortedRecords.Concat(unloadedRecords).ToList();
+			}
+			else {
 				List<BossRecord> NewRecordListForWorld = new List<BossRecord>();
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
 					NewRecordListForWorld.Add(new BossRecord(key));
