@@ -309,11 +309,8 @@ namespace BossChecklist
 				BossChecklist.ServerCollectedRecords = new List<BossRecord>[Main.maxPlayers];
 				for (int i = 0; i < Main.maxPlayers; i++) {
 					BossChecklist.ServerCollectedRecords[i] = new List<BossRecord>();
-					foreach (EntryInfo info in BossChecklist.bossTracker.SortedEntries) {
-						// Be sure to only populate with Boss type entries as they are the only entries that can have records to begin with
-						if (info.type == EntryType.Boss) {
-							BossChecklist.ServerCollectedRecords[i].Add(new BossRecord(info.Key));
-						}
+					foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+						BossChecklist.ServerCollectedRecords[i].Add(new BossRecord(key));
 					}
 				}
 			}
