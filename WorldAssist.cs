@@ -14,8 +14,7 @@ namespace BossChecklist
 	public class WorldAssist : ModSystem {
 		// Since only 1 set of records is saved per boss, there is no need to put it into a dictionary
 		// A separate list of World Records is needed to hold information about unloaded entries
-		public static WorldRecord[] worldRecords;
-		public static List<WorldRecord> unloadedWorldRecords;
+		public static List<WorldRecord> worldRecords;
 
 		public static int[] ActiveNPCEntryFlags; // Used for despawn messages, which will occur when the npc is unflagged
 
@@ -86,8 +85,7 @@ namespace BossChecklist
 			ClearDownedBools(true);
 
 			// Record related lists that should be the same count of record tracking entries
-			worldRecords = new WorldRecord[BossChecklist.bossTracker.BossRecordKeys.Count];
-			unloadedWorldRecords = new List<WorldRecord>();
+			worldRecords = new List<WorldRecord>();
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				ActiveNPCEntryFlags[i] = -1;
@@ -139,24 +137,32 @@ namespace BossChecklist
 			tag["downed_Forced"] = MarkedAsDownedList;
 
 			if (worldRecords != null) {
-				tag["WorldRecords"] = worldRecords.Concat(unloadedWorldRecords).ToList(); // Combine loaded and unloaded data to prevent lost world record data
+				tag["WorldRecords"] = worldRecords;
 			}
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
-			unloadedWorldRecords.Clear();
 			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("WorldRecords").ToList();
+			List<WorldRecord> WorldRecords_Loaded = new List<WorldRecord>();
+			List<WorldRecord> WorldRecords_Unloaded = new List<WorldRecord>();
+
 			foreach (WorldRecord record in SavedWorldRecords) {
-				if (BossChecklist.bossTracker.FindEntryFromKey(record.bossKey) is not EntryInfo entry) {
-					unloadedWorldRecords.Add(record); // Add any unloaded entries to this list
-					continue; // Entry is not loaded
-				}
-				else if (entry.IsRecordIndexed(out int recordIndex)) {
-					// Set record data to list based on record index
-					// if there is no record value, skip the entry as it is not a boss
-					worldRecords[recordIndex] = record;
+				if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey)) {
+					WorldRecords_Unloaded.Add(record); // any saved records from an unloaded boss must be perserved
 				}
 			}
+
+			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+				int index = SavedWorldRecords.FindIndex(x => x.bossKey == key);
+				if (index == -1) {
+					WorldRecords_Loaded.Add(new WorldRecord(key)); // if not in the list, make a new entry
+				}
+				else {
+					WorldRecords_Loaded.Add(SavedWorldRecords[index]);
+				}
+			}
+
+			worldRecords = WorldRecords_Loaded.Concat(WorldRecords_Unloaded).ToList();
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {
