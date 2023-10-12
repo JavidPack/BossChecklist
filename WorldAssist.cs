@@ -85,16 +85,9 @@ namespace BossChecklist
 			ClearDownedBools(true);
 
 			// Record related lists that should be the same count of record tracking entries
-			worldRecords = new List<WorldRecord>();
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				ActiveNPCEntryFlags[i] = -1;
-			}
-
-			// Populate world records list
-			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-				if (BossChecklist.bossTracker.FindEntryFromKey(key) is EntryInfo entry && entry.IsRecordIndexed(out int recordIndex))
-					worldRecords[recordIndex] = new WorldRecord(key);
 			}
 		}
 
