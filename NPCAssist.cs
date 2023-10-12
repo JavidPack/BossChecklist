@@ -68,7 +68,7 @@ namespace BossChecklist
 			}
 
 			// after the trackers have stopped, use them to check for world records
-			WorldAssist.worldRecords[recordIndex].stats.CheckForWorldRecords_Server(recordIndex);
+			WorldAssist.WorldRecordsForWorld[recordIndex].stats.CheckForWorldRecords_Server(recordIndex);
 		}
 
 		/// <summary>

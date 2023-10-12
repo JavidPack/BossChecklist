@@ -1341,7 +1341,7 @@ namespace BossChecklist
 			}
 			else if (GetLogEntryInfo.IsRecordIndexed(out int recordIndex)) {
 				PersonalStats playerStats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-				WorldStats worldStats = WorldAssist.worldRecords[recordIndex].stats;
+				WorldStats worldStats = WorldAssist.WorldRecordsForWorld[recordIndex].stats;
 
 				bool[] buttonConditions = {
 					true, // always shown

@@ -877,7 +877,7 @@ namespace BossChecklist.UIElements
 
 				BossUISystem.Instance.BossLog.GetLogEntryInfo.IsRecordIndexed(out int RecordIndex);
 				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[RecordIndex].stats;
-				WorldStats worldStats = WorldAssist.worldRecords[RecordIndex].stats;
+				WorldStats worldStats = WorldAssist.WorldRecordsForWorld[RecordIndex].stats;
 
 				slotID = slot;
 				title = GetTitle(subCategory)[slot];

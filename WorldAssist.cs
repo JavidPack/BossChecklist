@@ -12,10 +12,7 @@ using Terraria.ModLoader.IO;
 namespace BossChecklist
 {
 	public class WorldAssist : ModSystem {
-		// Since only 1 set of records is saved per boss, there is no need to put it into a dictionary
-		// A separate list of World Records is needed to hold information about unloaded entries
-		public static List<WorldRecord> worldRecords;
-
+		public static List<WorldRecord> WorldRecordsForWorld; // A list of all world records for each boss, saved to each world individually
 		public static int[] ActiveNPCEntryFlags; // Used for despawn messages, which will occur when the npc is unflagged
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
@@ -129,8 +126,8 @@ namespace BossChecklist
 			tag["HiddenBossesList"] = HiddenBossesList;
 			tag["downed_Forced"] = MarkedAsDownedList;
 
-			if (worldRecords != null) {
-				tag["WorldRecords"] = worldRecords;
+			if (WorldRecordsForWorld != null) {
+				tag["WorldRecords"] = WorldRecordsForWorld;
 			}
 		}
 
@@ -155,7 +152,7 @@ namespace BossChecklist
 				}
 			}
 
-			worldRecords = WorldRecords_Loaded.Concat(WorldRecords_Unloaded).ToList();
+			WorldRecordsForWorld = WorldRecords_Loaded.Concat(WorldRecords_Unloaded).ToList();
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {

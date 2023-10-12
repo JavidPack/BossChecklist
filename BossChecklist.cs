@@ -382,7 +382,7 @@ namespace BossChecklist
 				case PacketMessageType.SendWorldRecordsFromServerToPlayers:
 					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
-					WorldAssist.worldRecords[recordIndex].stats.NetRecieve(reader);
+					WorldAssist.WorldRecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)
