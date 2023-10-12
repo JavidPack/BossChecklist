@@ -4,6 +4,6 @@ it-IT, 0/277, 0%, missing 277
 fr-FR, 0/277, 0%, missing 277
 es-ES, 84/277, 30%, missing 193
 ru-RU, 275/277, 99%, missing 2
-zh-Hans, 275/277, 99%, missing 2
+zh-Hans, 277/277, 100%, missing 0
 pt-BR, 63/277, 23%, missing 214
 pl-PL, 0/277, 0%, missing 277
