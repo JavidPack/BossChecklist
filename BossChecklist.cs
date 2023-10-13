@@ -369,7 +369,6 @@ namespace BossChecklist
 					break;
 				case PacketMessageType.SendPlayTimeToServer:
 					recordIndex = reader.ReadInt32();
-					plrIndex = reader.ReadInt32();
 					long playTimeSent = reader.ReadInt64();
 					ServerCollectedRecords[whoAmI][recordIndex].stats.playTimeFirst = playTimeSent;
 					break;

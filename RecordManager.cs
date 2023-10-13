@@ -354,7 +354,6 @@ namespace BossChecklist
 			ModPacket packet = BossChecklist.instance.GetPacket();
 			packet.Write((byte)PacketMessageType.SendPlayTimeToServer);
 			packet.Write(recordIndex);
-			packet.Write(whoAmI);
 			packet.Write(playTimeFirst);
 			packet.Send();
 		}
