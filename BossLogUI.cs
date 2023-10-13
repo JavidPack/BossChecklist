@@ -52,6 +52,8 @@ namespace BossChecklist
 		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on an entry page.
 		/// </summary>
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
+		public PersonalStats GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats : null;
+		public WorldStats GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? WorldAssist.WorldRecordsForWorld[recordIndex].stats : null;
 
 		// Navigation
 		public NavigationalButton NextPage;
@@ -646,20 +648,18 @@ namespace BossChecklist
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return; // player must be holding alt
-
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (!GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
+			
+			if (GetPlayerRecords is null)
 				return; // entry must have a record index
 
-			PersonalStats stats = modPlayer.RecordsForWorld[recordIndex].stats;
-			stats.kills = 0;
-			stats.deaths = 0;
+			GetPlayerRecords.kills = 0;
+			GetPlayerRecords.deaths = 0;
 
-			stats.durationBest = -1;
-			stats.durationPrev = -1;
+			GetPlayerRecords.durationBest = -1;
+			GetPlayerRecords.durationPrev = -1;
 
-			stats.hitsTakenBest = -1;
-			stats.hitsTakenPrev = -1;
+			GetPlayerRecords.hitsTakenBest = -1;
+			GetPlayerRecords.hitsTakenPrev = -1;
 			RefreshPageContent();  // update page to show changes
 		}
 
@@ -1340,13 +1340,10 @@ namespace BossChecklist
 				}
 			}
 			else if (GetLogEntryInfo.IsRecordIndexed(out int recordIndex)) {
-				PersonalStats playerStats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-				WorldStats worldStats = WorldAssist.WorldRecordsForWorld[recordIndex].stats;
-
 				bool[] buttonConditions = {
 					true, // always shown
-					playerStats.UnlockedFirstVictory,
-					playerStats.UnlockedPersonalBest,
+					GetPlayerRecords.UnlockedFirstVictory,
+					GetPlayerRecords.UnlockedPersonalBest,
 					Main.netMode == NetmodeID.MultiplayerClient // only shows up on servers
 				};
 				int count = 0;
@@ -1449,19 +1446,19 @@ namespace BossChecklist
 						NavigationalButton trophy = null;
 						if (RecordSubCategory == SubCategory.WorldRecord) {
 							trophy = new NavigationalButton(RequestVanillaTexture($"Images/Item_{ItemID.GolfTrophyGold}"), false) {
-								hoverText = i == 2 ? worldStats.ListDurationRecordHolders() : worldStats.ListHitsTakenRecordHolders()
+								hoverText = i == 2 ? GetWorldRecords.ListDurationRecordHolders() : GetWorldRecords.ListHitsTakenRecordHolders()
 							};
 						}
 						else if (CompareState != SubCategory.None) {
 							// default to world records as these are shared among all players and only have one record type value
-							int recordValue = i == 2 ? worldStats.durationWorld : worldStats.hitsTakenWorld;
-							int compValue = i == 2 ? worldStats.durationWorld : worldStats.hitsTakenWorld;
+							int recordValue = i == 2 ? GetWorldRecords.durationWorld : GetWorldRecords.hitsTakenWorld;
+							int compValue = i == 2 ? GetWorldRecords.durationWorld : GetWorldRecords.hitsTakenWorld;
 
 							if (RecordSubCategory != SubCategory.WorldRecord)
-								recordValue = i == 2 ? playerStats.GetStats((int)RecordSubCategory).X : playerStats.GetStats((int)RecordSubCategory).Y;
+								recordValue = i == 2 ? GetPlayerRecords.GetStats((int)RecordSubCategory).X : GetPlayerRecords.GetStats((int)RecordSubCategory).Y;
 
 							if (CompareState != SubCategory.WorldRecord)
-								compValue = i == 2 ? playerStats.GetStats((int)CompareState).X : playerStats.GetStats((int)CompareState).Y;
+								compValue = i == 2 ? GetPlayerRecords.GetStats((int)CompareState).X : GetPlayerRecords.GetStats((int)CompareState).Y;
 
 							string compValueString = i == 2 ? PersonalStats.TimeConversion(compValue) : PersonalStats.HitCount(compValue);
 							string diffValue = i == 2 ? PersonalStats.TimeConversionDiff(recordValue, compValue, out Color color) : PersonalStats.HitCountDiff(recordValue, compValue, out color);
@@ -1472,9 +1469,9 @@ namespace BossChecklist
 								hoverTextColor = color
 							};
 						}
-						else if (RecordSubCategory == SubCategory.PersonalBest && ((i == 2 && playerStats.durationPrevBest != -1) || (i == 3 && playerStats.hitsTakenPrevBest != -1))) {
-							string compValueString = i == 2 ? PersonalStats.TimeConversion(playerStats.durationPrevBest) : PersonalStats.HitCount(playerStats.hitsTakenPrevBest);
-							string diffValue = i == 2 ? PersonalStats.TimeConversionDiff(playerStats.durationBest, playerStats.durationPrevBest, out Color color) : PersonalStats.HitCountDiff(playerStats.hitsTakenBest, playerStats.hitsTakenPrevBest, out color);
+						else if (RecordSubCategory == SubCategory.PersonalBest && ((i == 2 && GetPlayerRecords.durationPrevBest != -1) || (i == 3 && GetPlayerRecords.hitsTakenPrevBest != -1))) {
+							string compValueString = i == 2 ? PersonalStats.TimeConversion(GetPlayerRecords.durationPrevBest) : PersonalStats.HitCount(GetPlayerRecords.hitsTakenPrevBest);
+							string diffValue = i == 2 ? PersonalStats.TimeConversionDiff(GetPlayerRecords.durationBest, GetPlayerRecords.durationPrevBest, out Color color) : PersonalStats.HitCountDiff(GetPlayerRecords.hitsTakenBest, GetPlayerRecords.hitsTakenPrevBest, out color);
 							string path = $"{LangLog}.Records.PreviousBest";
 							trophy = new NavigationalButton(RequestVanillaTexture($"Images/Item_{ItemID.GolfTrophyBronze}"), false) {
 								hoverText = $"[c/{Color.Wheat.Hex3()}:{Language.GetTextValue(path)}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",
