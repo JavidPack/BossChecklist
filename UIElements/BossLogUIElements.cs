@@ -871,11 +871,10 @@ namespace BossChecklist.UIElements
 				this.ach = new Point(-1, -1);
 			}
 
-			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot) : base(texture) {
+			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot, int RecordIndex) : base(texture) {
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
 
-				BossUISystem.Instance.BossLog.GetLogEntryInfo.IsRecordIndexed(out int RecordIndex);
 				PersonalStats stats = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[RecordIndex].stats;
 				WorldStats worldStats = WorldAssist.WorldRecordsForWorld[RecordIndex].stats;
 

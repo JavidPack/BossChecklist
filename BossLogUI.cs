@@ -1388,7 +1388,7 @@ namespace BossChecklist
 					if (BossChecklist.DebugConfig.DisableWorldRecords && i > 0 && RecordSubCategory == SubCategory.WorldRecord)
 						break; // only draws the first instance of a record slot if world records are disabled
 
-					RecordDisplaySlot slot = new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i);
+					RecordDisplaySlot slot = new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i, recordIndex);
 					slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2);
 					slot.Top.Pixels = (int)(35 + (75 * (i + 1)));
 					PageTwo.Append(slot);
