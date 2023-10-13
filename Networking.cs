@@ -12,7 +12,9 @@ namespace BossChecklist
 		RequestClearMarkedDowns,
 		SendPersonalBestRecordsToServer,
 		UpdateRecordsFromServerToPlayer,
-		SendWorldRecordsFromServerToPlayers,
+		RequestWorldRecords,
+		SendWorldRecordsFromServerToPlayer,
+		UpdateWorldRecordsToAllPlayers,
 		ResetTrackers,
 		SendPlayTimeToServer
 	}

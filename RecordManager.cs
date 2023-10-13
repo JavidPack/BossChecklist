@@ -81,6 +81,43 @@ namespace BossChecklist
 			};
 		}
 
+		internal void NetSend(BinaryWriter writer) {
+			writer.Write(bossKey);
+			writer.Write(stats.totalKills);
+			writer.Write(stats.totalDeaths);
+			writer.Write(stats.durationWorld);
+			writer.Write(stats.hitsTakenWorld);
+
+			writer.Write(stats.durationHolder.Count);
+			foreach (string name in stats.durationHolder) {
+				writer.Write(name);
+			}
+
+			writer.Write(stats.hitsTakenHolder.Count);
+			foreach (string name in stats.hitsTakenHolder) {
+				writer.Write(name);
+			}
+		}
+
+		internal void NetRecieve(BinaryReader reader) {
+			stats.totalKills = reader.ReadInt32();
+			stats.totalDeaths = reader.ReadInt32();
+			stats.durationWorld = reader.ReadInt32();
+			stats.hitsTakenWorld = reader.ReadInt32();
+
+			int durationHolderCount = reader.ReadInt32();
+			stats.durationHolder.Clear();
+			for (int i = 0; i < durationHolderCount; i++) {
+				stats.durationHolder.Add(reader.ReadString());
+			}
+
+			int hitsTakenHolderCount = reader.ReadInt32();
+			stats.hitsTakenHolder.Clear();
+			for (int i = 0; i < hitsTakenHolderCount; i++) {
+				stats.hitsTakenHolder.Add(reader.ReadString());
+			}
+		}
+
 		public override string ToString() => $"World Records for: #{BossChecklist.bossTracker.FindEntryFromKey(bossKey).GetIndex} '{bossKey}'";
 	}
 
@@ -596,7 +633,7 @@ namespace BossChecklist
 					return;
 
 				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayers);
+				packet.Write((byte)PacketMessageType.UpdateWorldRecordsToAllPlayers);
 				packet.Write(recordIndex);
 				NetSend(packet, netRecord);
 				packet.Send(player.whoAmI);

@@ -124,6 +124,10 @@ namespace BossChecklist
 					}
 				}
 				packet.Send(); // Multiplayer client --> Server
+
+				packet = Mod.GetPacket(); // new packet
+				packet.Write((byte)PacketMessageType.RequestWorldRecords);
+				packet.Send();
 			}
 		}
 

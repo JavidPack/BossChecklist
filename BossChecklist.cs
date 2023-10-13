@@ -355,8 +355,31 @@ namespace BossChecklist
 					int recordIndex = reader.ReadInt32();
 					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader, recordIndex, Main.LocalPlayer.whoAmI);
 					break;
-				case PacketMessageType.SendWorldRecordsFromServerToPlayers:
-					// Server --> Multiplayer client (always)
+				case PacketMessageType.RequestWorldRecords:
+					// Multiplayer client --> Server
+					ModPacket packet = GetPacket();
+					packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayer);
+					packet.Write(bossTracker.BossRecordKeys.Count);
+					foreach (string key in bossTracker.BossRecordKeys) {
+						int index = WorldAssist.WorldRecordsForWorld.FindIndex(x => x.bossKey == key);
+						if (index != -1)
+							WorldAssist.WorldRecordsForWorld[index].NetSend(packet);
+					}
+					packet.Send(whoAmI); // Server --> Multiplayer client
+					break;
+				case PacketMessageType.SendWorldRecordsFromServerToPlayer:
+					// Server --> Multiplayer client
+					int maxCapacity = reader.ReadInt32();
+					WorldAssist.WorldRecordsForWorld = new List<WorldRecord>();
+					foreach (string key in bossTracker.BossRecordKeys) {
+						WorldAssist.WorldRecordsForWorld.Add(new WorldRecord(key));
+						EntryInfo entry = bossTracker.FindEntryFromKey(reader.ReadString());
+						entry.IsRecordIndexed(out recordIndex);
+						WorldAssist.WorldRecordsForWorld[recordIndex].NetRecieve(reader);
+					}
+					break;
+				case PacketMessageType.UpdateWorldRecordsToAllPlayers:
+					// Server --> Multiplayer client
 					recordIndex = reader.ReadInt32();
 					WorldAssist.WorldRecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;

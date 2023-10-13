@@ -132,7 +132,7 @@ namespace BossChecklist
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
-			List<WorldRecord> SavedWorldRecords = tag.Get<List<WorldRecord>>("WorldRecords").ToList();
+			List<WorldRecord> SavedWorldRecords = tag.GetList<WorldRecord>("WorldRecords").ToList();
 			List<WorldRecord> WorldRecords_Loaded = new List<WorldRecord>();
 			List<WorldRecord> WorldRecords_Unloaded = new List<WorldRecord>();
 
