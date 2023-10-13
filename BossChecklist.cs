@@ -341,38 +341,14 @@ namespace BossChecklist
 						NetMessage.SendData(MessageID.WorldData);
 					}
 					break;
-				case PacketMessageType.SendAllRecordsFromPlayerToServer:
+				case PacketMessageType.SendPersonalBestRecordsToServer:
 					// Multiplayer client --> Server (always)
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
-					int totalCount = reader.ReadInt32();
-					int invalidConflicts = 0;
-					for (int i = 0; i < totalCount; i++) {
-						// Read the bossKey and attempt to locate its position within the server's collection of records
-						// If index is invalid (which it shouldn't be), send a relay message and continue the process
-						string key = reader.ReadString();
-						int index = ServerCollectedRecords[whoAmI].FindIndex(x => x.bossKey == key);
-						if (index == -1) {
-							invalidConflicts++;
-							continue;
-						}
-
-						// Read the stats sent to the server and update them
-						PersonalStats bossStats = ServerCollectedRecords[whoAmI][index].stats;
-						bossStats.durationPrev = reader.ReadInt32();
-						bossStats.durationBest = reader.ReadInt32();
-						bossStats.hitsTakenPrev = reader.ReadInt32();
-						bossStats.hitsTakenBest = reader.ReadInt32();
+					// ServerCollectedRecords is already sorted properly using BossTracker keys and can recieve data the order it is sent in
+					foreach (BossRecord serverRecord in ServerCollectedRecords[whoAmI]) {
+						serverRecord.stats.durationBest = reader.ReadInt32();
+						serverRecord.stats.hitsTakenBest = reader.ReadInt32();
 					}
-
-					if (invalidConflicts > 0) {
-						Console.ForegroundColor = ConsoleColor.DarkRed;
-						Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has been retrieved with {invalidConflicts} conflicts");
-					}
-					else {
-						Console.ForegroundColor = ConsoleColor.Green;
-						Console.WriteLine($"Personal records for player '{Main.player[whoAmI].name}' has successfully been retrieved!");
-					}
-					Console.ResetColor();
 					break;
 				case PacketMessageType.UpdateRecordsFromServerToPlayer:
 					// Server --> Multiplayer client (always)

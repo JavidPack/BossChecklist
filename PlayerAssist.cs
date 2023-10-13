@@ -111,21 +111,17 @@ namespace BossChecklist
 				return;
 			}
 
-			// When a player joins a world, their Records will need to be sent to the server
+			// When a player joins a world, their Personal Best records will need to be sent to the server for new Personal Best comparing
 			// The server doesn't need player records from every world, just the current one
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				ModPacket packet = Mod.GetPacket();
-				packet.Write((byte)PacketMessageType.SendAllRecordsFromPlayerToServer);
-				packet.Write(RecordsForWorld.Count);
-				for (int i = 0; i < RecordsForWorld.Count; i++) {
-					// The only records that we need to compare between other players are previous and best records
-					// The statisctics and first records are strictly for the assigned client
-					PersonalStats stat = RecordsForWorld[i].stats;
-					packet.Write(RecordsForWorld[i].bossKey);
-					packet.Write(stat.durationBest);
-					packet.Write(stat.durationPrev);
-					packet.Write(stat.hitsTakenBest);
-					packet.Write(stat.hitsTakenPrev);
+				packet.Write((byte)PacketMessageType.SendPersonalBestRecordsToServer);
+				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+					int index = RecordsForWorld.FindIndex(x => x.bossKey == key);
+					if (index != -1) {
+						packet.Write(RecordsForWorld[index].stats.durationBest);
+						packet.Write(RecordsForWorld[index].stats.hitsTakenBest);
+					}
 				}
 				packet.Send(); // Multiplayer client --> Server
 			}

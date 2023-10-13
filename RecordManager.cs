@@ -278,7 +278,7 @@ namespace BossChecklist
 			if (recordType.HasFlag(NetRecordID.ResettingRecord))
 				return; // If records are being reset, nothing else needs to be done as the records will be wiped
 
-			writer.Write(deaths); // deaths are always tracked
+			writer.Write(Tracker_Deaths); // deaths are always tracked
 
 			if (recordType.HasFlag(NetRecordID.PreviousAttempt)) {
 				writer.Write(durationPrev);
@@ -317,7 +317,7 @@ namespace BossChecklist
 			}
 
 			attempts++; // attempts always increase by one
-			deaths = reader.ReadInt32();
+			deaths += reader.ReadInt32(); // since tracked deaths are being sent, just increase the value by the tracked amount
 			if (recordType.HasFlag(NetRecordID.SuccessfulAttempt))
 				kills++;
 
