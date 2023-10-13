@@ -127,7 +127,7 @@ namespace BossChecklist
 
 				packet = Mod.GetPacket(); // new packet
 				packet.Write((byte)PacketMessageType.RequestWorldRecords);
-				packet.Send();
+				packet.Send(); // Multiplayer client --> Server
 			}
 		}
 

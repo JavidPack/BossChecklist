@@ -359,17 +359,17 @@ namespace BossChecklist
 					// Multiplayer client --> Server
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayer);
-					packet.Write(bossTracker.BossRecordKeys.Count);
 					foreach (string key in bossTracker.BossRecordKeys) {
 						int index = WorldAssist.WorldRecordsForWorld.FindIndex(x => x.bossKey == key);
-						if (index != -1)
+						if (index != -1) {
+							packet.Write(key);
 							WorldAssist.WorldRecordsForWorld[index].NetSend(packet);
+						}
 					}
 					packet.Send(whoAmI); // Server --> Multiplayer client
 					break;
 				case PacketMessageType.SendWorldRecordsFromServerToPlayer:
 					// Server --> Multiplayer client
-					int maxCapacity = reader.ReadInt32();
 					WorldAssist.WorldRecordsForWorld = new List<WorldRecord>();
 					foreach (string key in bossTracker.BossRecordKeys) {
 						WorldAssist.WorldRecordsForWorld.Add(new WorldRecord(key));

@@ -82,7 +82,6 @@ namespace BossChecklist
 		}
 
 		internal void NetSend(BinaryWriter writer) {
-			writer.Write(bossKey);
 			writer.Write(stats.totalKills);
 			writer.Write(stats.totalDeaths);
 			writer.Write(stats.durationWorld);

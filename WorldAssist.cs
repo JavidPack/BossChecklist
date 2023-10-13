@@ -136,23 +136,19 @@ namespace BossChecklist
 			List<WorldRecord> WorldRecords_Loaded = new List<WorldRecord>();
 			List<WorldRecord> WorldRecords_Unloaded = new List<WorldRecord>();
 
+			// Iterate through the saved data and store any records that are not loaded/active with the current mods
 			foreach (WorldRecord record in SavedWorldRecords) {
-				if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey)) {
+				if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey))
 					WorldRecords_Unloaded.Add(record); // any saved records from an unloaded boss must be perserved
-				}
 			}
 
+			// Iterate through the boss record keys to assign each record to where itshould be placed
 			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
 				int index = SavedWorldRecords.FindIndex(x => x.bossKey == key);
-				if (index == -1) {
-					WorldRecords_Loaded.Add(new WorldRecord(key)); // if not in the list, make a new entry
-				}
-				else {
-					WorldRecords_Loaded.Add(SavedWorldRecords[index]);
-				}
+				WorldRecords_Loaded.Add(index == -1 ? new WorldRecord(key) : SavedWorldRecords[index]); // create a new entry if not in the list, otherwise use the saved data
 			}
 
-			WorldRecordsForWorld = WorldRecords_Loaded.Concat(WorldRecords_Unloaded).ToList();
+			WorldRecordsForWorld = WorldRecords_Loaded.Concat(WorldRecords_Unloaded).ToList(); // preserve all data by concatenating the lists
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {
