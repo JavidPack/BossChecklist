@@ -15,8 +15,7 @@ namespace BossChecklist
 		RequestWorldRecords,
 		SendWorldRecordsFromServerToPlayer,
 		UpdateWorldRecordsToAllPlayers,
-		ResetTrackers,
-		SendPlayTimeToServer
+		ResetTrackers
 	}
 
 	internal class Networking {

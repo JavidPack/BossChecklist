@@ -390,11 +390,6 @@ namespace BossChecklist
 					modPlayer = Main.player[plrIndex].GetModPlayer<PlayerAssist>();
 					modPlayer.RecordsForWorld[recordIndex].stats.StartTracking();
 					break;
-				case PacketMessageType.SendPlayTimeToServer:
-					recordIndex = reader.ReadInt32();
-					long playTimeSent = reader.ReadInt64();
-					ServerCollectedRecords[whoAmI][recordIndex].stats.playTimeFirst = playTimeSent;
-					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");
 					break;

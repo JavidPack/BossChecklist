@@ -385,13 +385,6 @@ namespace BossChecklist
 			else if (recordType.HasFlag(NetRecordID.WorldRecord)) {
 				CombatText.NewText(Main.LocalPlayer.getRect(), Color.LightYellow, "New World Record!", true);
 			}
-
-			// Get the player's play time and send it to the server
-			ModPacket packet = BossChecklist.instance.GetPacket();
-			packet.Write((byte)PacketMessageType.SendPlayTimeToServer);
-			packet.Write(recordIndex);
-			packet.Write(playTimeFirst);
-			packet.Send();
 		}
 
 		/// <summary>
