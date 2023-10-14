@@ -417,7 +417,6 @@ namespace BossChecklist
 			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - (int)recordButton.Width.Pixels - 8;
 			recordButton.Top.Pixels = 5;
 			recordButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Records);
-			recordButton.OnRightClick += (a, b) => ResetStats();
 
 			spawnButton = new SubPageButton(Texture_Nav_SubPage, SubPage.SpawnInfo);
 			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
@@ -637,30 +636,23 @@ namespace BossChecklist
 
 		/// <summary>
 		/// While in debug mode, users are able to reset their records of a specific boss by alt and right-clicking the recordnavigation button
-		/// <para>TODO: Update to allow clearing Best Records only, First Records only, and All Records (including previous, excluding world records)</para>
 		/// </summary>
-		private void ResetStats() {
+		private void ResetStats(int recordIndex) {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // temporary block is recordcode is disabled
 
-			if (!BossChecklist.DebugConfig.ResetRecordsBool || SelectedSubPage != 0)
-				return; // do not do anything if not on the record page (ex. can't reset record on loot page)
+			if (!BossChecklist.DebugConfig.ResetRecordsBool || SelectedSubPage != SubPage.Records || GetPlayerRecords is null)
+				return; // must be on a valid record page and must have the reset records config enabled
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return; // player must be holding alt
-			
-			if (GetPlayerRecords is null)
-				return; // entry must have a record index
 
-			GetPlayerRecords.kills = 0;
-			GetPlayerRecords.deaths = 0;
-
-			GetPlayerRecords.durationBest = -1;
-			GetPlayerRecords.durationPrev = -1;
-
-			GetPlayerRecords.hitsTakenBest = -1;
-			GetPlayerRecords.hitsTakenPrev = -1;
+			GetPlayerRecords.ResetStats(RecordSubCategory, recordIndex);
 			RefreshPageContent();  // update page to show changes
+		}
+
+		private void RemovePlayerFromWorldRecord() {
+			// TODO: Localhost can remove players from record holders list
 		}
 
 		/// <summary>
@@ -1394,6 +1386,7 @@ namespace BossChecklist
 						UIImage categoryIcon = new UIImage(RequestResource($"Nav_Record_{RecordSubCategory}"));
 						categoryIcon.Left.Pixels = 15;
 						categoryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - categoryIcon.Height.Pixels / 2);
+						categoryIcon.OnRightClick += (a, b) => ResetStats(recordIndex);
 						slot.Append(categoryIcon);
 
 						#region Experimental Feature Notice

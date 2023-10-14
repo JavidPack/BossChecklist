@@ -353,7 +353,7 @@ namespace BossChecklist
 				case PacketMessageType.UpdateRecordsFromServerToPlayer:
 					// Server --> Multiplayer client (always)
 					int recordIndex = reader.ReadInt32();
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader, recordIndex, Main.LocalPlayer.whoAmI);
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.RequestWorldRecords:
 					// Multiplayer client --> Server
@@ -382,6 +382,11 @@ namespace BossChecklist
 					// Server --> Multiplayer client
 					recordIndex = reader.ReadInt32();
 					WorldAssist.WorldRecordsForWorld[recordIndex].stats.NetRecieve(reader);
+					break;
+				case PacketMessageType.ResetPlayerRecordForServer:
+					// Multiplayer client --> Server
+					recordIndex = reader.ReadInt32();
+					ServerCollectedRecords[whoAmI][recordIndex].stats.NetRecieve(reader);
 					break;
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)

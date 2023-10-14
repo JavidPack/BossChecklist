@@ -15,6 +15,7 @@ namespace BossChecklist
 		RequestWorldRecords,
 		SendWorldRecordsFromServerToPlayer,
 		UpdateWorldRecordsToAllPlayers,
+		ResetPlayerRecordForServer,
 		ResetTrackers
 	}
 

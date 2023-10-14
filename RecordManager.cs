@@ -308,6 +308,33 @@ namespace BossChecklist
 			packet.Send(toClient: whoAmI); // Server --> Multiplayer client (Player's only need to see their own records)
 		}
 
+		internal void ResetStats(SubCategory category, int recordIndex) {
+			// No point in clearing Previous Attempt, its always updated each fight
+			// World Records cannot be reset through normal means (localhost must remove all players from the holders list)
+			NetRecordID resetType = NetRecordID.None;
+			if (category == SubCategory.FirstVictory) {
+				playTimeFirst = durationFirst = hitsTakenFirst = -1;
+				resetType = NetRecordID.FirstVictory_Reset;
+			}
+			else if (category == SubCategory.PersonalBest) {
+				kills = deaths = 0;
+				durationBest = hitsTakenBest = -1;
+				durationPrevBest = hitsTakenPrevBest = -1;
+				resetType = NetRecordID.PersonalBest_Reset;
+			}
+
+			if (resetType == NetRecordID.None)
+				return;
+
+			// This method is only called by a Multiplayer client, as it derives from the UI
+			// Send a ModPacket to update the server records accordingly
+			ModPacket packet = BossChecklist.instance.GetPacket();
+			packet.Write((byte)PacketMessageType.ResetPlayerRecordForServer);
+			packet.Write(recordIndex);
+			packet.Write((int)resetType);
+			packet.Send(); // Multiplayer client --> Server
+		}
+
 		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {
 			writer.Write((int)recordType); // Write the record type(s) we are changing as NetRecieve will need to read this value.
 
@@ -337,16 +364,17 @@ namespace BossChecklist
 			}
 		}
 
-		internal void NetRecieve(BinaryReader reader, int recordIndex, int whoAmI) {
+		internal void NetRecieve(BinaryReader reader) {
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
 			if (recordType.HasFlag(NetRecordID.ResettingRecord)) {
 				if (recordType.HasFlag(NetRecordID.FirstVictory_Reset)) {
-					playTimeFirst = -1;
-					durationFirst = hitsTakenFirst = -1;
+					playTimeFirst = durationFirst = hitsTakenFirst = -1;
 				}
 
 				if (recordType.HasFlag(NetRecordID.PersonalBest_Reset)) {
-					durationBest = durationPrevBest = hitsTakenBest = hitsTakenPrevBest = -1;
+					kills = deaths = 0;
+					durationBest = hitsTakenBest = -1;
+					durationPrevBest = hitsTakenPrevBest = -1;
 				}
 
 				return; // records wiped, no need to continue
