@@ -291,7 +291,6 @@ namespace BossChecklist
 
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			PacketMessageType msgType = (PacketMessageType)reader.ReadByte();
-			PlayerAssist modPlayer;
 			switch (msgType) {
 				// Sent from Client to Server
 				case PacketMessageType.RequestHideBoss:
@@ -391,9 +390,7 @@ namespace BossChecklist
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
-					int plrIndex = reader.ReadInt32();
-					modPlayer = Main.player[plrIndex].GetModPlayer<PlayerAssist>();
-					modPlayer.RecordsForWorld[recordIndex].stats.StartTracking();
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.StartTracking();
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");

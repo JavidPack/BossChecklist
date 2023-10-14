@@ -232,7 +232,6 @@ namespace BossChecklist
 			ModPacket packet = BossChecklist.instance.GetPacket();
 			packet.Write((byte)PacketMessageType.ResetTrackers);
 			packet.Write(recordIndex);
-			packet.Write(whoAmI);
 			packet.Send(toClient: whoAmI); // Server --> Multiplayer client
 		}
 
