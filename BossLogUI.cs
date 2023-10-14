@@ -70,6 +70,8 @@ namespace BossChecklist
 		public LogTab BossTab;
 		public LogTab MiniBossTab;
 		public LogTab EventTab;
+		public IndicatorPanel AltInteractionsTab;
+		public IndicatorIcon InteractionIcon;
 		public IndicatorPanel IndicatorTab;
 		public List<IndicatorIcon> Indicators;
 		public FilterIcon FilterPanel; // contains the filter buttons, (not a filter icon, but it works)
@@ -181,6 +183,7 @@ namespace BossChecklist
 					Append(ToCTab);
 					Append(FilterPanel);
 					Append(IndicatorTab);
+					Append(AltInteractionsTab);
 					Append(CreditsTab);
 					Append(BossTab);
 					Append(MiniBossTab);
@@ -195,6 +198,7 @@ namespace BossChecklist
 					RemoveChild(MiniBossTab);
 					RemoveChild(BossTab);
 					RemoveChild(CreditsTab);
+					RemoveChild(AltInteractionsTab);
 					RemoveChild(IndicatorTab);
 					RemoveChild(FilterPanel);
 					RemoveChild(ToCTab);
@@ -384,11 +388,11 @@ namespace BossChecklist
 				offsetY += 34;
 			}
 
-			IndicatorTab = new IndicatorPanel();
 			Indicators = new List<IndicatorIcon>() {
 				new IndicatorIcon(RequestResource("Indicator_OnlyBosses")) { Id = "OnlyBosses" },
 				new IndicatorIcon(RequestResource("Indicator_Progression")) { Id = "Progression" },
 			};
+			IndicatorTab = new IndicatorPanel(Indicators.Count) { Id = "Configurations" };
 
 			int offsetX = 0;
 			foreach (IndicatorIcon icon in Indicators) {
@@ -397,6 +401,12 @@ namespace BossChecklist
 				IndicatorTab.Append(icon);
 				offsetX += 22;
 			}
+
+			InteractionIcon = new IndicatorIcon(RequestResource("Indicator_Interaction"));
+			AltInteractionsTab = new IndicatorPanel(1) { Id = "Interactions" };
+			InteractionIcon.Left.Pixels = (int)(AltInteractionsTab.Width.Pixels / 2 - InteractionIcon.Width.Pixels / 2);
+			InteractionIcon.Top.Pixels = 8;
+			AltInteractionsTab.Append(InteractionIcon);
 
 			NextPage = new NavigationalButton(Texture_Nav_Next, true) {
 				Id = "Next"
@@ -508,6 +518,8 @@ namespace BossChecklist
 			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
 			IndicatorTab.Left.Pixels = PageTwo.Left.Pixels + PageTwo.Width.Pixels - 25 - IndicatorTab.Width.Pixels;
 			IndicatorTab.Top.Pixels = PageTwo.Top.Pixels - IndicatorTab.Height.Pixels - 6;
+			AltInteractionsTab.Left.Pixels = PageOne.Left.Pixels + 25;
+			AltInteractionsTab.Top.Pixels = PageTwo.Top.Pixels - AltInteractionsTab.Height.Pixels - 6;
 			UpdateFilterTabPos(false); // Update filter tab visibility
 			CreditsTab.Left.Pixels = BookArea.Left.Pixels + BookArea.Width.Pixels - 12;
 			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
@@ -927,6 +939,7 @@ namespace BossChecklist
 				return; // If the page is somehow the prompt, redirect to the open prompt method
 			}
 
+			RegenerateInteractionHoverTexts(); // Updates the hover text for the alternate interactive keys list has
 			ResetUIPositioning(); // Repositions common ui elements when the UI is updated
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
 
@@ -948,6 +961,33 @@ namespace BossChecklist
 					OpenLoot();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Updates the hovertext for the key combinations (ex. Alt+Right-Click element) that are available to the current page.
+		/// </summary>
+		private void RegenerateInteractionHoverTexts() {
+			string interactions = null;
+			if (PageNum == Page_TableOfContents) {
+				interactions =
+					Language.GetTextValue($"{LangLog}.HintTexts.MarkEntry") +
+					(BossChecklist.DebugConfig.ResetForcedDowns ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearMarked") : "") +
+					"\n" + Language.GetTextValue($"{LangLog}.HintTexts.HideEntry") +
+					(BossChecklist.DebugConfig.ResetHiddenEntries ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearHidden") : "")
+				;
+			}
+			else if (PageNum >= 0) {
+				if (SelectedSubPage == SubPage.Records) {
+					interactions = $"{LangLog}.HintTexts.ClearAllRecords";
+				}
+				else if (SelectedSubPage == SubPage.LootAndCollectibles && BossChecklist.DebugConfig.ResetLootItems) {
+					interactions = 
+						Language.GetTextValue($"{LangLog}.HintTexts.RemoveItem") + "\n" +
+						Language.GetTextValue($"{LangLog}.HintTexts.ClearItems")
+					;
+				}
+			}
+			AltInteractionsTab.hoverText = interactions;
 		}
 
 		/// <summary>
@@ -1022,22 +1062,6 @@ namespace BossChecklist
 			PageTwoTitle.SetText(title);
 			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			PageTwo.Append(PageTwoTitle);
-
-			string hintText = Language.GetTextValue($"{LangLog}.HintTexts.MarkEntry") + "\n" + Language.GetTextValue($"{LangLog}.HintTexts.HideEntry");
-			if (BossChecklist.DebugConfig.ResetForcedDowns) {
-				hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearMarked");
-			}
-			if (BossChecklist.DebugConfig.ResetHiddenEntries) {
-				hintText += "\n" + Language.GetTextValue($"{BossLogUI.LangLog}.HintTexts.ClearHidden");
-			}
-
-			Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
-			NavigationalButton tips = new NavigationalButton(icon, true) {
-				hoverText = hintText
-			};
-			tips.Left.Pixels = PageOneTitle.Left.Pixels / 2 - icon.Value.Width / 2;
-			tips.Top.Pixels = PageOneTitle.Top.Pixels - 10;
-			PageOne.Append(tips);
 
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
@@ -1359,15 +1383,6 @@ namespace BossChecklist
 
 				if (CompareState != SubCategory.None && buttonConditions[(int)CompareState] is false)
 					CompareState = SubCategory.None; // If no access granted, default back to None
-
-				if (BossChecklist.DebugConfig.ResetRecordsBool) {
-					NavigationalButton tips = new NavigationalButton(RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName"), true) {
-						hoverText = $"{LangLog}.HintTexts.ClearAllRecords"
-					};
-					tips.Left.Pixels = (int)(lootButton.Left.Pixels / 2 - tips.Width.Pixels / 2);
-					tips.Top.Pixels = (int)(lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - tips.Height.Pixels / 2);
-					PageTwo.Append(tips);
-				}
 
 				// create 4 slots for each stat category value
 				for (int i = 0; i < 4; i++) {
@@ -1798,16 +1813,6 @@ namespace BossChecklist
 
 				PageTwo.Append(scrollTwo);
 				pageTwoItemList.SetScrollbar(scrollTwo);
-			}
-
-			if (BossChecklist.DebugConfig.ResetLootItems) {
-				Asset<Texture2D> icon = RequestVanillaTexture("Images/UI/WorldCreation/IconRandomName");
-				NavigationalButton tips = new NavigationalButton(icon, true) {
-					hoverText = Language.GetTextValue($"{LangLog}.HintTexts.RemoveItem") + "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearItems")
-				};
-				tips.Left.Pixels = lootButton.Left.Pixels / 2 - icon.Value.Width / 2;
-				tips.Top.Pixels = lootButton.Top.Pixels + lootButton.Height.Pixels / 2 - icon.Value.Height / 2;
-				PageTwo.Append(tips);
 			}
 		}
 

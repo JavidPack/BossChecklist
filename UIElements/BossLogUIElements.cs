@@ -254,17 +254,21 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class IndicatorPanel : LogUIElement {
+			public string Id { get; init; } = "";
 			private readonly Asset<Texture2D> section = BossLogUI.RequestResource("LogUI_IndicatorSection");
 			private readonly Asset<Texture2D> end = BossLogUI.RequestResource("LogUI_IndicatorEnd");
 			private readonly Asset<Texture2D> back = BossLogUI.RequestResource("Indicator_Back");
 
-			public IndicatorPanel() {
-				Width.Pixels = (end.Value.Width + back.Value.Width) * 2;
+			public IndicatorPanel(int iconCount) {
+				Width.Pixels = (end.Value.Width * 2) + (back.Value.Width * iconCount);
 				Height.Pixels = end.Value.Height;
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				if (BossUISystem.Instance.BossLog.PageNum == BossLogUI.Page_Prompt)
+					return;
+
+				if (Id == "Interactions" && string.IsNullOrEmpty(hoverText))
 					return;
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
@@ -275,10 +279,12 @@ namespace BossChecklist.UIElements
 				spriteBatch.Draw(section.Value, centerPanel, Color.White);
 				spriteBatch.Draw(end.Value, endPanel, end.Value.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 0f);
 
-				for (int i = 0; i < Children.Count(); i++) {
-					spriteBatch.Draw(back.Value, new Vector2(inner.X + 8 + (22 * i), inner.Y + 6), Color.White);
+				if (Id == "Configurations") {
+					for (int i = 0; i < Children.Count(); i++) {
+						spriteBatch.Draw(back.Value, new Vector2(inner.X + 8 + (22 * i), inner.Y + 6), Color.White);
+					}
 				}
-
+				
 				base.Draw(spriteBatch);
 			}
 		}
