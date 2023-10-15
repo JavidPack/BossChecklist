@@ -211,5 +211,31 @@ namespace BossChecklist
 			if (BossChecklist.ClientConfig.TimerSounds && Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0)
 				SoundEngine.PlaySound(SoundID.MaxMana);
 		}
+
+		// Adds items that are picked up to the collected boss loot list
+		public override bool OnPickup(Item item) {
+			if (Main.netMode == NetmodeID.Server || Player.whoAmI == 255)
+				return base.OnPickup(item);
+
+			// Only add the item to the list if it is not already present
+			if (BossChecklist.bossTracker.EntryLootCache[item.type] && !BossItemsCollected.Any(x => x.Type == item.type))
+				BossItemsCollected.Add(new ItemDefinition(item.type));
+
+			return base.OnPickup(item);
+		}
+
+		/*
+		
+		// Temporarily(?) removed
+		
+		public override void OnCreated(Item item, ItemCreationContext context) {
+			if (Main.netMode != NetmodeID.Server && BossChecklist.bossTracker.EntryLootCache[item.type]) {
+				List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
+				if (!itemsList.Any(x => x.Type == item.type)) {
+					itemsList.Add(new ItemDefinition(item.type));
+				}
+			}
+		}
+		*/
 	}
 }
