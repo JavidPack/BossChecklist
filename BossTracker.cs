@@ -214,6 +214,12 @@ namespace BossChecklist
 					else if (orphan.type == OrphanType.EventNPC) {
 						if (entry.type == EntryType.Event) {
 							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
+							if (EventKeysWhoHaveBelongToInvasionSets.Contains(entry.Key)) {
+								BossChecklist.instance.Logger.Info(
+								$"{entry.Key} is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets." +
+								$"SubmitEventNPCs will still be supported, but it is recommended to use the sets where given." +
+								$"Sets when creating ModNPCs to automatically add them to an entry's NPC pool");
+							}
 						}
 						else {
 							BossChecklist.instance.Logger.Warn($"{entry.Key} is not an event entry and cannot take calls from {OrphanType.EventNPC}");
@@ -830,6 +836,14 @@ namespace BossChecklist
 			NPCID.CultistBoss
 		};
 
+		internal readonly static List<string> EventKeysWhoHaveBelongToInvasionSets = new List<string>() {
+			$"Terraria GoblinArmy",
+			$"Terraria OldOnesArmy",
+			$"Terraria FrostLegion",
+			$"Terraria PirateInvasion",
+			$"Terraria MartianMadness",
+		};
+
 		internal readonly static Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
 			{ "Terraria TorchGod",
 				new List<int>() {
@@ -858,17 +872,9 @@ namespace BossChecklist
 					NPCID.BloodNautilus,
 				}
 			},
-			{ "Terraria GoblinArmy",
-					new List<int>() {
-					NPCID.GoblinScout,
-					NPCID.GoblinPeon,
-					NPCID.GoblinSorcerer,
-					NPCID.GoblinThief,
-					NPCID.GoblinWarrior,
-					NPCID.GoblinArcher,
-					NPCID.GoblinSummoner,
-				}
-			},
+			
+			// Goblin Army uses BelongsToInvasion set
+
 			{ "Terraria OldOnesArmy",
 				new List<int>() {
 					NPCID.DD2GoblinT3,
@@ -885,13 +891,9 @@ namespace BossChecklist
 					NPCID.DD2Betsy
 				}
 			},
-			{ "Terraria FrostLegion",
-				new List<int>() {
-					NPCID.MisterStabby,
-					NPCID.SnowmanGangsta,
-					NPCID.SnowBalla,
-				}
-			},
+			
+			// Frost Legion uses BelongsToInvasion set
+
 			{ "Terraria Eclipse",
 				new List<int>() {
 					NPCID.Eyezor,
@@ -911,18 +913,9 @@ namespace BossChecklist
 					NPCID.MothronSpawn,
 				}
 			},
-			{ "Terraria PirateInvasion",
-				new List<int>() {
-					NPCID.PirateDeckhand,
-					NPCID.PirateDeadeye,
-					NPCID.PirateCorsair,
-					NPCID.PirateCrossbower,
-					NPCID.PirateCaptain,
-					NPCID.PirateGhost,
-					NPCID.Parrot,
-					NPCID.PirateShip,
-				}
-			},
+			
+			// Pirate Invasion uses BelongsToInvasion set
+
 			{ "Terraria PumpkinMoon",
 				new List<int>() {
 					NPCID.Scarecrow1,
@@ -950,23 +943,9 @@ namespace BossChecklist
 					NPCID.IceQueen
 				}
 			},
-			{ "Terraria MartianMadness",
-				new List<int>() {
-					NPCID.MartianSaucerCore,
-					NPCID.MartianSaucer,
-					NPCID.Scutlix,
-					NPCID.ScutlixRider,
-					NPCID.MartianWalker,
-					NPCID.MartianDrone,
-					NPCID.MartianTurret,
-					NPCID.GigaZapper,
-					NPCID.MartianEngineer,
-					NPCID.MartianOfficer,
-					NPCID.RayGunner,
-					NPCID.GrayGrunt,
-					NPCID.BrainScrambler
-				}
-			},
+			
+			// Martian Madness uses BelongsToInvasion set
+
 			{ "Terraria LunarEvent",
 				new List<int>() {
 					NPCID.LunarTowerSolar,
