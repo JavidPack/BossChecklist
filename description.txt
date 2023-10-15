@@ -4,6 +4,9 @@ Toggle the checklist with the hotkey assigned to it in the settings. Visit 'Sett
 
 If you would like a mod to be supported, please encourage the modder to add support to this mod.
 
+If you are a modder, you can learn how to register your bosses and more using this guide on GitHub:
+https://github.com/JavidPack/BossChecklist/wiki/%5B1.4.4%5D-Boss-Log-Entry-Mod-Call
+
 Introducing the Boss Log, which enhances the traditional boss checklist experience with customization and features with configs.
 [i:903] Improved boss checklist
 [i:3619] View more information about bosses

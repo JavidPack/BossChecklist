@@ -143,6 +143,7 @@ namespace BossChecklist
 
 		public static Asset<Texture2D> Texture_Credit_DevSlot;
 		public static Asset<Texture2D> Texture_Credit_ModSlot;
+		public static Asset<Texture2D> Texture_Credit_Register;
 
 		public static Asset<Texture2D> Texture_Content_RecordSlot;
 		public static Asset<Texture2D> Texture_Content_Cycle;
@@ -294,6 +295,7 @@ namespace BossChecklist
 
 			Texture_Credit_DevSlot = RequestResource("Credits_Panel_Dev");
 			Texture_Credit_ModSlot = RequestResource("Credits_Panel_Mod");
+			Texture_Credit_Register = RequestResource("Credits_Panel_Register");
 
 			Texture_Content_RecordSlot = RequestResource("Extra_RecordSlot");
 			Texture_Content_Cycle = RequestResource("Extra_CycleRecipe");
@@ -1279,43 +1281,37 @@ namespace BossChecklist
 			creditList.SetScrollbar(scrollOne);
 			PageOne.Append(scrollOne); // scroll bar for developers
 
+			// Registered Mods Display
+			pageTwoItemList.Clear();
+			pageTwoItemList.Width.Pixels = Texture_Credit_ModSlot.Value.Width;
+			pageTwoItemList.Height.Pixels = Texture_Credit_ModSlot.Value.Height * 3 + 15;
+			pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2) - 8;
+			pageTwoItemList.Top.Pixels = 85;
 			if (BossUISystem.Instance.RegisteredMods.Count > 0) {
-				// Registered Mods Display
-				pageTwoItemList.Clear();
-				pageTwoItemList.Width.Pixels = Texture_Credit_ModSlot.Value.Width;
-				pageTwoItemList.Height.Pixels = Texture_Credit_ModSlot.Value.Height * 3 + 15;
-				pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2) - 8;
-				pageTwoItemList.Top.Pixels = 85;
 				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
 					pageTwoItemList.Add(new ContributorCredit(Texture_Credit_ModSlot, mod));
 				}
-				PageTwo.Append(pageTwoItemList);
-
-				scrollTwo.SetView(10f, 1000f);
-				scrollTwo.Top.Pixels = 87;
-				scrollTwo.Left.Pixels = -8;
-				scrollTwo.Height.Set(-60f, 0.75f);
-				scrollTwo.HAlign = 1f;
-				pageTwoItemList.SetScrollbar(scrollTwo);
-				if (BossUISystem.Instance.RegisteredMods.Count > 3)
-					PageTwo.Append(scrollTwo); // scroll bar for registered mods
 			}
 			else {
-				// No mods are using the updated mod calls to use the Log, so create a text panel to inform the user
-				UIPanel brokenPanel = new UIPanel();
-				brokenPanel.Height.Pixels = 220;
-				brokenPanel.Width.Pixels = 340;
-				brokenPanel.Top.Pixels = 120;
-				brokenPanel.Left.Pixels = 18;
-				PageTwo.Append(brokenPanel);
-
-				FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.Credits.ModsEmpty");
-				brokenDisplay.Height.Pixels = 200;
-				brokenDisplay.Width.Pixels = 340;
-				brokenDisplay.Top.Pixels = 0;
-				brokenDisplay.Left.Pixels = -15;
-				brokenPanel.Append(brokenDisplay);
+				// if none of the loaded mods have registered an entry, convey this to the user
+				string NoModsTitle = Language.GetTextValue($"{LangLog}.Credits.ModsEmpty");
+				pageTwoItemList.Add(new ContributorCredit(RequestResource("Credits_Panel_NoMods"), NoModsTitle, "") { Id = "NoMods" });
 			}
+
+			// add a slot that tells mod developers they can register their own mods
+			string RegisterTitle = Language.GetTextValue($"{LangLog}.Credits.Register");
+			string RegisterDescription = Language.GetTextValue($"{LangLog}.Credits.Learn");
+			pageTwoItemList.Add(new ContributorCredit(Texture_Credit_Register, RegisterTitle, RegisterDescription) { Id = "Register" });
+			PageTwo.Append(pageTwoItemList);
+
+			scrollTwo.SetView(10f, 1000f);
+			scrollTwo.Top.Pixels = 87;
+			scrollTwo.Left.Pixels = -8;
+			scrollTwo.Height.Set(-60f, 0.75f);
+			scrollTwo.HAlign = 1f;
+			pageTwoItemList.SetScrollbar(scrollTwo);
+			if (BossUISystem.Instance.RegisteredMods.Count > 3)
+				PageTwo.Append(scrollTwo); // scroll bar for registered mods
 		}
 
 		/// <summary>

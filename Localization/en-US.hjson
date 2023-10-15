@@ -57,7 +57,9 @@ Mods: {
 				Mods: Registered Mods
 				Notice: "[List only contains loaded mods]"
 				NoIcon: Mod icon not found!
-				ModsEmpty: None of the loaded mods have any submissions registered to the Boss Log. If you want your favorite mods to be included, inform the mod's team on their steam workshop page or discord server!
+				ModsEmpty: None of your loaded mods are registered!
+				Register: Register your own mod!
+				Learn: View the mod desciption to learn how
 			}
 
 			EntryPage: {
@@ -311,7 +313,7 @@ Mods: {
 
 				OnlyBosses: {
 					Label: Boss Log only shows boss content
-					Tooltip: 
+					Tooltip:
 						'''
 						If enabled, the checklist and page navigation will only give access boss entries.
 						Note: Filter configs below will be ignored when enabled.

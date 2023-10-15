@@ -58,6 +58,8 @@ Mods: {
 				Notice: "[列表仅包含已加载的Mod]"
 				NoIcon: 未找到Mod图标!
 				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请在Mod的Steam创意工坊页面或Discord服务器告知他们!
+				// Register: Register your own mod!
+				// Learn: View mod desciption to learn how.
 			}
 
 			EntryPage: {

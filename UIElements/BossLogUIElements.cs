@@ -997,21 +997,30 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class ContributorCredit : UIImage {
+			internal string Id { get; init; }
 			internal Asset<Texture2D> icon;
 			internal string name;
 			internal string devTitle;
 			internal int[] entryCounts = null;
 
 			public ContributorCredit(Asset<Texture2D> texture, Asset<Texture2D> character, string name, string title) : base(texture) {
+				Id = "Dev";
 				this.icon = character;
 				this.name = name;
 				this.devTitle = title;
 			}
 
 			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
+				Id = "Mod";
 				this.icon = GetModIcon(modName);
 				this.name = BossUISystem.RemoveChatTags(ModLoader.GetMod(modName).DisplayName);
 				this.entryCounts = BossUISystem.Instance.RegisteredMods[modName];
+			}
+
+			public ContributorCredit(Asset<Texture2D> texture, string name, string description) : base(texture) {
+				this.icon = null;
+				this.name = name;
+				this.devTitle = description;
 			}
 
 			private Asset<Texture2D> GetModIcon(string modName) {
@@ -1025,21 +1034,44 @@ namespace BossChecklist.UIElements
 				return BossLogUI.RequestResource("Credits_NoIcon");
 			}
 
+			private Point MaxLength() {
+				return Id switch {
+					"Dev" => new Point(224, 224),
+					"Mod" => new Point(208, -1), // -1 because unused
+					"NoMods" => new Point(260, -1),
+					"Register" => new Point(280, 275),
+					_ => new Point(-1, -1)
+				};
+			}
+
+			private Point GetTextPos() {
+				return Id switch {
+					"Dev" => new Point(80, 85),
+					"Mod" => new Point(95, -1), // -1 because unused
+					"NoMods" => new Point(40, -1),
+					"Register" => new Point(45, 25),
+					_ => new Point(-1, -1)
+				};
+			}
+
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
 				Rectangle inner = GetInnerDimensions().ToRectangle();
-				bool isMod = string.IsNullOrEmpty(devTitle);
+				int ModOffset = string.IsNullOrEmpty(devTitle) ? 8 : 0;
 
-				Rectangle iconRect = new Rectangle(inner.X + (isMod ? 8 : 0), inner.Y + (isMod ? 8 : 0), 80, 80);
-				spriteBatch.Draw(icon.Value, iconRect, Color.White); // character/icon drawing
-				if (icon.Name == "Resources\\Credits_NoIcon" && Main.MouseScreen.Between(iconRect.TopLeft(), iconRect.BottomRight()))
-					BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.Credits.NoIcon";
+				if (icon is not null) {
+					Rectangle iconRect = new Rectangle(inner.X + ModOffset, inner.Y + ModOffset, 80, 80);
+					spriteBatch.Draw(icon.Value, iconRect, Color.White); // character/icon drawing
+					if (icon.Name == "Resources\\Credits_NoIcon" && Main.MouseScreen.Between(iconRect.TopLeft(), iconRect.BottomRight()))
+						BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.Credits.NoIcon";
+				}
 
-				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + (isMod ? 95 : 80), inner.Y + 11), Color.White); // Draw the dev/mod name as a string
+				float scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(name).X, MaxLength().X);
+				spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(inner.X + GetTextPos().X, inner.Y + 11), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev/mod name as a string
 
 				if (!string.IsNullOrEmpty(devTitle)) {
-					float scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(devTitle).X, 210); // Mod name might exceed panel size
-					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + 85, inner.Y + 45), Color.LemonChiffon, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev title as a string
+					scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(devTitle).X, MaxLength().Y); // Mod name might exceed panel size
+					spriteBatch.DrawString(FontAssets.MouseText.Value, devTitle, new Vector2(inner.X + GetTextPos().Y, inner.Y + 45), Color.LemonChiffon, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev title as a string
 				}
 				else if (entryCounts != null) {
 					int xOffset = 94 + (70 * 2 / 3); // draw each entry count submitted by the mod
