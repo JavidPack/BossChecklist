@@ -40,22 +40,11 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		public bool HideUnsupported { get; set; }
 
-		private bool BossesOnly;
-
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(false)]
 		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.OnlyBosses.Label")]
 		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.OnlyBosses.Tooltip")]
-		public bool OnlyShowBossContent {
-			get => BossesOnly;
-			set {
-				BossesOnly = value;
-				if (value) {
-					FilterMiniBosses = "Hide";
-					FilterEvents = "Hide";
-				}
-			}
-		}
+		public bool OnlyShowBossContent { get; set; }
 
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
@@ -64,37 +53,19 @@ namespace BossChecklist
 		[DefaultValue("Show")]
 		public string FilterBosses { get; set; }
 
-		private string MB_Value = "Show";
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
 		[OptionStrings(new string[] { "Show", "Hide When Completed", "Hide" })]
 		[DefaultValue("Show")]
-		public string FilterMiniBosses {
-			get => MB_Value;
-			set {
-				MB_Value = value;
-				if (value != "Hide") {
-					BossesOnly = false;
-				}
-			}
-		}
+		public string FilterMiniBosses { get; set; }
 
-		private string E_Value = "Show";
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
 		[OptionStrings(new string[] { "Show", "Hide When Completed", "Hide" })]
 		[DefaultValue("Show")]
-		public string FilterEvents {
-			get => E_Value;
-			set {
-				E_Value = value;
-				if (value != "Hide") {
-					BossesOnly = false;
-				}
-			}
-		}
+		public string FilterEvents { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]

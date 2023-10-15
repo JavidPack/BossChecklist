@@ -311,7 +311,11 @@ Mods: {
 
 				OnlyBosses: {
 					Label: Boss Log only shows boss content
-					Tooltip: If enabled, the checklist and page navigation will only give access boss entries.
+					Tooltip: 
+						'''
+						If enabled, the checklist and page navigation will only give access boss entries.
+						Note: Filter configs below will be ignored when enabled.
+						'''
 				}
 
 				FilterBosses: {
