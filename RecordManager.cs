@@ -256,18 +256,23 @@ namespace BossChecklist
 				kills++; // increase kill counter when recording
 				serverParse |= NetRecordID.SuccessfulAttempt;
 				if (!UnlockedFirstVictory) {
-					if (Main.netMode == NetmodeID.SinglePlayer)
+					if (Main.netMode == NetmodeID.SinglePlayer) {
 						playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // server cant easily get this information
+					}
+					else if (Main.netMode == NetmodeID.Server) {
+						playTimeFirst = 1; // server does not need actual value, but it needs to be greater than 0 to record Personal Best records
+					}
 
 					// if this was the first kill, update the first victory records
 					durationFirst = Tracker_Duration;
 					hitsTakenFirst = Tracker_HitsTaken;
+					serverParse |= NetRecordID.FirstVictory;
 
 					// personal best records are also updated, even if not displayed
 					durationBest = Tracker_Duration;
 					hitsTakenBest = Tracker_HitsTaken;
-
-					serverParse |= NetRecordID.FirstVictory;
+					serverParse |= NetRecordID.PersonalBest_Duration;
+					serverParse |= NetRecordID.PersonalBest_HitsTaken;
 				}
 				else {
 					// every kill after the first has the tracked record individually compared for a personal best
@@ -352,12 +357,12 @@ namespace BossChecklist
 				writer.Write(hitsTakenFirst);
 			}
 
-			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_Duration)) {
+			if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
 				writer.Write(durationBest);
 				writer.Write(durationPrevBest);
 			}
 
-			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_HitsTaken)) {
+			if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 				writer.Write(hitsTakenBest);
 				writer.Write(hitsTakenPrevBest);
 			}
@@ -395,15 +400,17 @@ namespace BossChecklist
 				playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // Server cannot send this information, nor needs to
 			}
 
-			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_Duration)) {
+			if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
 				durationBest = reader.ReadInt32();
 				durationPrevBest = reader.ReadInt32();
 			}
 
-			if (recordType.HasFlag(NetRecordID.FirstVictory | NetRecordID.PersonalBest_HitsTaken)) {
+			if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 				hitsTakenBest = reader.ReadInt32();
 				hitsTakenPrevBest = reader.ReadInt32();
 			}
+
+			// TODO: Check for world records here? also fix CombatText not displaying
 
 			// This method should only be read by Multiplayer clients, so creating combat texts on new records should be fine
 			if (recordType.HasFlag(NetRecordID.NewPersonalBest) && !recordType.HasFlag(NetRecordID.FirstVictory)) {
