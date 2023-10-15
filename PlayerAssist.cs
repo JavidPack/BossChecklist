@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -28,7 +29,7 @@ namespace BossChecklist
 		/// Do NOT reference when on the game menu.
 		/// </summary>
 		public List<BossRecord> RecordsForWorld => AllStoredRecords[Main.ActiveWorldFileData.UniqueId.ToString()];
-		public List<ItemDefinition> BossItemsCollected;
+		public ConcurrentDictionary<ItemDefinition, object> BossItemsCollected;
 
 		public bool[] hasNewRecord;
 
@@ -37,7 +38,7 @@ namespace BossChecklist
 			enteredWorldReset = false;
 
 			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
-			BossItemsCollected = new List<ItemDefinition>();
+			BossItemsCollected = new ConcurrentDictionary<ItemDefinition, object>();
 
 			hasNewRecord = Array.Empty<bool>();
 		}
@@ -51,7 +52,7 @@ namespace BossChecklist
 
 			tag["BossLogPrompt"] = hasOpenedTheBossLog;
 			tag["StoredRecords"] = TempRecords;
-			tag["BossLootObtained"] = BossItemsCollected;
+			tag["BossLootObtained"] = BossItemsCollected.Keys.ToArray();
 		}
 
 		public override void LoadData(TagCompound tag) {
@@ -65,7 +66,7 @@ namespace BossChecklist
 			}
 
 			// Prepare the collectibles for the player. Putting unloaded bosses in the back and new/existing ones up front
-			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList();
+			BossItemsCollected = new(tag.GetList<ItemDefinition>("BossLootObtained").Select(x => KeyValuePair.Create<ItemDefinition, object>(x, null)));
 		}
 
 		public override void OnEnterWorld() {

@@ -19,6 +19,7 @@ using Terraria.UI.Chat;
 using static BossChecklist.UIElements.BossLogUIElements;
 using Terraria.GameContent.ItemDropRules;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 namespace BossChecklist
 {
@@ -685,11 +686,11 @@ namespace BossChecklist
 			// Note: items removed are removed from ALL boss loot pages retroactively
 			if (listeningElement is NavigationalButton) {
 				foreach (int item in GetLogEntryInfo.lootItemTypes) {
-					modPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
+					modPlayer.BossItemsCollected.TryRemove(new ItemDefinition(item), out _);
 				}
 			}
 			else if (listeningElement is LogItemSlot slot) {
-				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
+				modPlayer.BossItemsCollected.TryRemove(new ItemDefinition(slot.item.type), out _);
 			}
 			RefreshPageContent(); // update page to show changes
 		}
@@ -1125,7 +1126,7 @@ namespace BossChecklist
 
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
-						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
+						if (!modPlayer.BossItemsCollected.ContainsKey(new ItemDefinition(loot))) {
 							allLoot = false; // If the item is not located in the player's obtained list, allLoot must be false
 							break; // end further item checking
 						}
@@ -1155,7 +1156,7 @@ namespace BossChecklist
 							if (!OtherworldUnlocked && BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
 								continue;
 
-							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
+							if (!modPlayer.BossItemsCollected.ContainsKey(new ItemDefinition(collectible))) {
 								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
 								break; // end further item checking
 							}
@@ -1737,7 +1738,7 @@ namespace BossChecklist
 			treasureBag.OnRightClick += RemoveItem;
 			PageTwo.Append(treasureBag);
 
-			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
+			ConcurrentDictionary<ItemDefinition, object> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
 			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collectibles)); // combined list of loot and collectibles
 			bossItems.Remove(GetLogEntryInfo.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
 
@@ -1769,7 +1770,7 @@ namespace BossChecklist
 
 			foreach (int item in bossItems) {
 				Item selectedItem = ContentSamples.ItemsByType[item];
-				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
+				bool hasObtained = obtainedItems.ContainsKey(new ItemDefinition(item));
 
 				// Create an item slot for the current item
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, ItemSlot.Context.TrashItem) {
