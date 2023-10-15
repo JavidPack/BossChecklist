@@ -57,9 +57,9 @@ Mods: {
 				// Mods: Registered Mods
 				// Notice: "[List only contains loaded mods]"
 				// NoIcon: Mod icon not found!
-				// ModsEmpty: None of the loaded mods have registered!
+				// ModsEmpty: None of your loaded mods are registered!
 				// Register: Register your own mod!
-				// Learn: View mod desciption to learn how.
+				// Learn: View the mod desciption to learn how
 			}
 
 			EntryPage: {
