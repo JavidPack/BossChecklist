@@ -116,6 +116,10 @@ namespace BossChecklist
 		public bool ShowProgressBars { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
+		[DefaultValue(true)]
+		public bool ShowInteractionTooltips { get; set; }
+
+		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(false)]
 		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.LootChecklist.Label")]
 		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.LootChecklist.Tooltip")]

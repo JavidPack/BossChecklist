@@ -518,7 +518,7 @@ namespace BossChecklist
 			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
 			IndicatorTab.Left.Pixels = PageTwo.Left.Pixels + PageTwo.Width.Pixels - 25 - IndicatorTab.Width.Pixels;
 			IndicatorTab.Top.Pixels = PageTwo.Top.Pixels - IndicatorTab.Height.Pixels - 6;
-			AltInteractionsTab.Left.Pixels = PageOne.Left.Pixels + 25;
+			AltInteractionsTab.Left.Pixels = IndicatorTab.Left.Pixels - AltInteractionsTab.Width.Pixels - 2;
 			AltInteractionsTab.Top.Pixels = PageTwo.Top.Pixels - AltInteractionsTab.Height.Pixels - 6;
 			UpdateFilterTabPos(false); // Update filter tab visibility
 			CreditsTab.Left.Pixels = BookArea.Left.Pixels + BookArea.Width.Pixels - 12;
@@ -987,7 +987,7 @@ namespace BossChecklist
 					;
 				}
 			}
-			AltInteractionsTab.hoverText = interactions;
+			AltInteractionsTab.hoverText = BossChecklist.BossLogConfig.ShowInteractionTooltips ? interactions : null;
 		}
 
 		/// <summary>

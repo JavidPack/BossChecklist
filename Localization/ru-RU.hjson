@@ -406,6 +406,15 @@ Mods: {
 					Label: Отображение шкалы прогресса
 					Tooltip: При выключении, шкала прогресса в нижней части журнала не будет отображаться.
 				}
+
+				ShowInteractionTooltips: {
+					// Label: Enable Interactions Tab
+					/* Tooltip:
+						'''
+						When enabled, a small tab can be hovered over to explain how to use the alternative interactions of the current page.
+						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
+						''' */
+				}
 			}
 
 			ClientConfiguration: {

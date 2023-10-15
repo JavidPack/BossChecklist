@@ -402,6 +402,15 @@ Mods: {
 					Label: 显示进度栏
 					Tooltip: 禁用后, 目录底部的总进度栏将不会显示.
 				}
+
+				ShowInteractionTooltips: {
+					// Label: Enable Interactions Tab
+					/* Tooltip:
+						'''
+						When enabled, a small tab can be hovered over to explain how to use the alternative interactions of the current page.
+						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
+						''' */
+				}
 			}
 
 			ClientConfiguration: {
