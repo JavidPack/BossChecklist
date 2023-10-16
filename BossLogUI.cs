@@ -1287,8 +1287,8 @@ namespace BossChecklist
 			pageTwoItemList.Height.Pixels = Texture_Credit_ModSlot.Value.Height * 3 + 15;
 			pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2) - 8;
 			pageTwoItemList.Top.Pixels = 85;
-			if (BossUISystem.Instance.RegisteredMods.Count > 0) {
-				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
+			if (BossChecklist.bossTracker.RegisteredMods.Count > 0) {
+				foreach (string mod in BossChecklist.bossTracker.RegisteredMods.Keys) {
 					pageTwoItemList.Add(new ContributorCredit(Texture_Credit_ModSlot, mod));
 				}
 			}
@@ -1310,7 +1310,7 @@ namespace BossChecklist
 			scrollTwo.Height.Set(-60f, 0.75f);
 			scrollTwo.HAlign = 1f;
 			pageTwoItemList.SetScrollbar(scrollTwo);
-			if (BossUISystem.Instance.RegisteredMods.Count > 3)
+			if (BossChecklist.bossTracker.RegisteredMods.Count > 3)
 				PageTwo.Append(scrollTwo); // scroll bar for registered mods
 		}
 

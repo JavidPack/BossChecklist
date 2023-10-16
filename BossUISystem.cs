@@ -23,7 +23,6 @@ namespace BossChecklist
 		internal static UserInterface BossRadarUIInterface;
 		internal BossRadarUI BossRadarUI;
 
-		internal Dictionary<string, int[]> RegisteredMods; // Key: mod internal name, Value: Entries registered by type
 		internal string UIHoverText = "";
 		internal Color UIHoverTextColor = default;
 
@@ -52,8 +51,6 @@ namespace BossChecklist
 				BossRadarUIInterface = new UserInterface();
 				BossRadarUIInterface.SetState(BossRadarUI);
 			}
-
-			RegisteredMods = new Dictionary<string, int[]>();
 		}
 
 		public override void Unload() {

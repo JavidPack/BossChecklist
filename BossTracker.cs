@@ -58,6 +58,7 @@ namespace BossChecklist
 		/// </summary>
 		internal List<EntryInfo> SortedEntries;
 		internal EntryInfo FindEntryFromKey(string lookupKey) => SortedEntries.Find(entry => entry.Key == lookupKey);
+		internal Dictionary<string, int[]> RegisteredMods; // Key: mod internal name, Value: Entries registered by type]
 		internal bool[] EntryCache;
 		internal bool[] EntryLootCache;
 		internal List<OrphanInfo> ExtraData;
@@ -71,6 +72,7 @@ namespace BossChecklist
 			InitializeVanillaEntries();
 			ExtraData = new List<OrphanInfo>();
 			BossRecordKeys = new List<string>();
+			RegisteredMods = new Dictionary<string, int[]>();
 		}
 
 		private void InitializeVanillaEntries() {

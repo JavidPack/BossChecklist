@@ -1014,7 +1014,7 @@ namespace BossChecklist.UIElements
 				Id = "Mod";
 				this.icon = GetModIcon(modName);
 				this.name = BossUISystem.RemoveChatTags(ModLoader.GetMod(modName).DisplayName);
-				this.entryCounts = BossUISystem.Instance.RegisteredMods[modName];
+				this.entryCounts = BossChecklist.bossTracker.RegisteredMods[modName];
 			}
 
 			public ContributorCredit(Asset<Texture2D> texture, string name, string description) : base(texture) {
@@ -1370,7 +1370,7 @@ namespace BossChecklist.UIElements
 				}
 
 				// populate dictionary with modded entries
-				foreach (string mod in BossUISystem.Instance.RegisteredMods.Keys) {
+				foreach (string mod in BossChecklist.bossTracker.RegisteredMods.Keys) {
 					PercentagesByMod.TryAdd(mod, CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries.FindAll(entry => entry.modSource == mod), hardMode, out int downed, out int total));
 					if (total == 0)
 						PercentagesByMod.Remove(mod); // If their are no listed entries, remove the mod

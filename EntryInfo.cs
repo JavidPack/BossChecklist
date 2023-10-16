@@ -171,8 +171,8 @@ namespace BossChecklist
 		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, Func<bool> downed, List<int> npcIDs, Dictionary<string, object> extraData = null) {
 			// Add the mod source to the opted mods list of the credits page if its not already and add the entry type
 			if (modSource != "Terraria" && modSource != "Unknown") {
-				BossUISystem.Instance.RegisteredMods.TryAdd(modSource, new int[3]);
-				BossUISystem.Instance.RegisteredMods[modSource][(int)entryType]++;
+				BossChecklist.bossTracker.RegisteredMods.TryAdd(modSource, new int[3]);
+				BossChecklist.bossTracker.RegisteredMods[modSource][(int)entryType]++;
 			}
 
 			// required entry data
