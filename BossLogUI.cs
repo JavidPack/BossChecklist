@@ -1285,7 +1285,7 @@ namespace BossChecklist
 			pageTwoItemList.Clear();
 			pageTwoItemList.Width.Pixels = Texture_Credit_ModSlot.Value.Width;
 			pageTwoItemList.Height.Pixels = Texture_Credit_ModSlot.Value.Height * 3 + 15;
-			pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2) - 8;
+			pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Credit_ModSlot.Value.Width / 2);
 			pageTwoItemList.Top.Pixels = 85;
 			if (BossChecklist.bossTracker.RegisteredMods.Count > 0) {
 				foreach (string mod in BossChecklist.bossTracker.RegisteredMods.Keys) {
@@ -1310,8 +1310,10 @@ namespace BossChecklist
 			scrollTwo.Height.Set(-60f, 0.75f);
 			scrollTwo.HAlign = 1f;
 			pageTwoItemList.SetScrollbar(scrollTwo);
-			if (BossChecklist.bossTracker.RegisteredMods.Count > 3)
+			if (pageTwoItemList.Count > 3) {
 				PageTwo.Append(scrollTwo); // scroll bar for registered mods
+				pageTwoItemList.Left.Pixels -= 8;
+			}
 		}
 
 		/// <summary>
