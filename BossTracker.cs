@@ -190,11 +190,16 @@ namespace BossChecklist
 		}
 		*/
 
+		internal void FinalizeEventNPCPools() {
+			foreach (string key in EventKeysWhoHaveBelongToInvasionSets) {
+				FindEntryFromKey(key).npcIDs = GetBelongsToInvasionSet(key).GetTrueIndexes();
+			}
+		}
+
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {
 				foreach (KeyValuePair<string, object> submission in orphan.values) {
-					EntryInfo entry = FindEntryFromKey(submission.Key);
-					if (entry is null) {
+					if (FindEntryFromKey(submission.Key) is not EntryInfo entry) {
 						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key}) and will be ignored.");
 						continue;
 					}
@@ -214,11 +219,11 @@ namespace BossChecklist
 					else if (orphan.type == OrphanType.EventNPC) {
 						if (entry.type == EntryType.Event) {
 							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
-							if (EventKeysWhoHaveBelongToInvasionSets.Contains(entry.Key)) {
+							if (EventKeysWhoHaveBelongToInvasionSets.Contains(submission.Key)) {
 								BossChecklist.instance.Logger.Info(
-								$"{entry.Key} is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets." +
-								$"SubmitEventNPCs will still be supported, but it is recommended to use the sets where given." +
-								$"Sets when creating ModNPCs to automatically add them to an entry's NPC pool");
+								$"The key '{submission.Key}' is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. " +
+								$"SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. " +
+								$"Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls.");
 							}
 						}
 						else {
@@ -843,6 +848,17 @@ namespace BossChecklist
 			$"Terraria PirateInvasion",
 			$"Terraria MartianMadness",
 		};
+
+		internal static bool[] GetBelongsToInvasionSet(string Key) {
+			return Key switch {
+				"Terraria GoblinArmy" => NPCID.Sets.BelongsToInvasionGoblinArmy,
+				"Terraria OldOnesArmy" => NPCID.Sets.BelongsToInvasionOldOnesArmy,
+				"Terraria FrostLegion" => NPCID.Sets.BelongsToInvasionFrostLegion,
+				"Terraria PirateInvasion" => NPCID.Sets.BelongsToInvasionPirate,
+				"Terraria MartianMadness" => NPCID.Sets.BelongsToInvasionMartianMadness,
+				_ => null
+			};
+		}
 
 		internal readonly static Dictionary<string, List<int>> EventNPCs = new Dictionary<string, List<int>>() {
 			{ "Terraria TorchGod",

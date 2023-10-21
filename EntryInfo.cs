@@ -181,13 +181,7 @@ namespace BossChecklist
 			this.modSource = modSource;
 			this.progression = progression;
 			this.downed = downed;
-
-			if (GetBelongsToInvasionSet() is bool[] Set) {
-				this.npcIDs = Set.GetTrueIndexes();
-			}
-			else {
-				this.npcIDs = npcIDs ?? new List<int>();
-			}
+			this.npcIDs = npcIDs ?? new List<int>();
 
 			// Localization checks
 			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;
@@ -283,17 +277,6 @@ namespace BossChecklist
 				if (icons.Count > 0)
 					headIconTextures = () => icons;
 			}
-		}
-
-		internal bool[] GetBelongsToInvasionSet() {
-			return Key switch {
-				"Terraria GoblinArmy" => NPCID.Sets.BelongsToInvasionGoblinArmy,
-				"Terraria OldOnesArmy" => NPCID.Sets.BelongsToInvasionOldOnesArmy,
-				"Terraria FrostLegion" => NPCID.Sets.BelongsToInvasionFrostLegion,
-				"Terraria PirateInvasion" => NPCID.Sets.BelongsToInvasionPirate,
-				"Terraria MartianMadness" => NPCID.Sets.BelongsToInvasionMartianMadness,
-				_ => null
-			};
 		}
 
 		// Workaround for vanilla events with illogical translation keys.
