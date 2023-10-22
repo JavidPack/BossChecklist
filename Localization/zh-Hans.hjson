@@ -57,9 +57,9 @@ Mods: {
 				Mods: 已注册的Mod
 				Notice: "[列表仅包含已加载的Mod]"
 				NoIcon: 未找到Mod图标!
-				ModsEmpty: 已加载的Mod没有任何提交注册Boss日志. 如果您希望自己喜欢的Mod的相关信息出现, 请在Mod的Steam创意工坊页面或Discord服务器告知他们!
-				// Register: Register your own mod!
-				// Learn: View the mod desciption to learn how
+				ModsEmpty: 你已加载的Mod没有注册.
+				Register: 注册你自己的Mod!
+				Learn: 查看Mod描述以学习
 			}
 
 			EntryPage: {
@@ -313,7 +313,11 @@ Mods: {
 
 				OnlyBosses: {
 					Label: 在Boss日志中仅显示Boss内容
-					Tooltip: 如果启用, 则清单和导航页仅会显示访问Boss条目.
+					Tooltip:
+						'''
+						如果启用, 则清单和导航页仅会显示访问Boss条目.
+						备注: 启用后会忽略下方的过滤设置.
+						'''
 				}
 
 				FilterBosses: {
@@ -406,12 +410,12 @@ Mods: {
 				}
 
 				ShowInteractionTooltips: {
-					// Label: Enable Interactions Tab
-					/* Tooltip:
+					Label: 启用交互栏
+					Tooltip:
 						'''
-						When enabled, a small tab can be hovered over to explain how to use the alternative interactions of the current page.
-						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
-						''' */
+						启用后, 一个小的标签栏会悬浮在上方, 用以解释如何使用当前页面的可选交互.
+						可选交互示例包括右键条目以手动将其标记为已击败.
+						'''
 				}
 			}
 
@@ -537,7 +541,7 @@ Mods: {
 
 				ModCallVerbose: {
 					Label: Mod.Call日志详细信息
-					Tooltip: 如果为true，日志将显示服务器控制台中添加到Boss清单中的所有Boss
+					Tooltip: 如果为true, 日志将显示服务器控制台中添加到Boss清单中的所有Boss
 				}
 
 				ShowProgressionValue: {
@@ -568,7 +572,7 @@ Mods: {
 					Tooltip:
 						'''
 						启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
-						如果启用了Boss消失信息，则当显Boss消失信息时，这也应该在聊框天中显示一条消息.
+						如果启用了Boss消失信息, 则当显Boss消失信息时, 这也应该在聊框天中显示一条消息.
 						这些信息应该分别在Boss被击败或Boss消失时出现.
 						'''
 				}
