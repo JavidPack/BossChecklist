@@ -22,6 +22,20 @@ using System.Reflection;
 
 namespace BossChecklist
 {
+	internal enum SubPage {
+		Records,
+		SpawnInfo,
+		LootAndCollectibles
+	}
+
+	internal enum SubCategory {
+		PreviousAttempt,
+		FirstVictory,
+		PersonalBest,
+		WorldRecord,
+		None
+	}
+
 	class BossLogUI : UIState {
 		public OpenLogButton bosslogbutton; // The main button to open the Boss Log
 		public LogPanel BookArea; // The main panel for the UI. All content is aligned within this area.

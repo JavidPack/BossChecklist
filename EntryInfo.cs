@@ -20,6 +20,16 @@ namespace BossChecklist
 		Event
 	}
 
+	internal enum CollectibleType {
+		Generic,
+		Trophy,
+		Mask,
+		Music,
+		Relic,
+		Pet,
+		Mount
+	}
+
 	internal class EntryInfo {
 		// This localization-ignoring string is used for cross mod queries and networking. Each key is completely unique.
 		internal string Key { get; init; }
