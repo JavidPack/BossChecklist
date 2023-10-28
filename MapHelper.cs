@@ -8,7 +8,7 @@ using Terraria.ID;
 
 namespace BossChecklist
 {
-	public static class MapAssist {
+	public static class MapHelper {
 		public static void DrawFullscreenMap() {
 			foreach (Item item in Main.item) {
 				if (!item.active || !IsWhitelistedItem(item.type))

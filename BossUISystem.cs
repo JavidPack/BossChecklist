@@ -82,7 +82,7 @@ namespace BossChecklist
 		}
 
 		public override void PostDrawFullscreenMap(ref string mouseText) {
-			MapAssist.DrawFullscreenMap();
+			MapHelper.DrawFullscreenMap();
 		}
 
 		private string[] LayersToHideWhenChecklistVisible = new string[] {
