@@ -39,7 +39,6 @@ namespace BossChecklist
 			bossTracker = new BossTracker();
 
 			On_Player.ApplyMusicBox += Player_ApplyMusicBox;
-			MapAssist.FullMapInitialize();
 
 			/*
 			// Fix some translation keys automatically -- TODO
