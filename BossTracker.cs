@@ -337,33 +337,20 @@ namespace BossChecklist
 							entry.lootItemTypes.Add(dropRate.itemId);
 					}
 
-					// Add Torch God's Favor since its not technically an NPC drop.
-					// The rest of added items are unobtainable vanilla boss bags, and are added only for visual purposes
 					if (entry.Key == "Terraria TorchGod") {
-						entry.lootItemTypes.Add(ItemID.TorchGodsFavor);
+						entry.lootItemTypes.Add(ItemID.TorchGodsFavor); // not dropped by NPC, but rather placed in the inventory
 					}
 					else if (entry.Key == "Terraria BrainofCthulhu") {
-						entry.lootItemTypes.Add(ItemID.TissueSample);
-					}
-					else if (entry.Key == "Terraria DD2DarkMageT3") {
-						entry.lootItemTypes.Add(ItemID.BossBagDarkMage);
-					}
-					else if (entry.Key == "Terraria DD2OgreT3") {
-						entry.lootItemTypes.Add(ItemID.BossBagOgre);
-					}
-					else if (entry.Key == "Terraria CultistBoss") {
-						entry.lootItemTypes.Add(ItemID.CultistBossBag);
+						entry.lootItemTypes.Add(ItemID.TissueSample); // tissue samples are dropped by the minions
 					}
 				}
 
-				// Assign this boss's treasure bag, looking through the loot list provided
-				if (!vanillaBossBags.TryGetValue(entry.Key, out entry.treasureBag)) {
+				// Assign this boss's treasure bag, looking through the loot found by the bestiary
+				if (!vanillaBossBags.TryGetValue(entry.Key, out entry.treasureBag) && entry.type != EntryType.Event) {
 					foreach (int itemType in entry.lootItemTypes) {
-						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item)) {
-							if (ItemID.Sets.BossBag[item.type]) {
-								entry.treasureBag = itemType;
-								break;
-							}
+						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item) && ItemID.Sets.BossBag[item.type]) {
+							entry.treasureBag = itemType;
+							break;
 						}
 					}
 				}
