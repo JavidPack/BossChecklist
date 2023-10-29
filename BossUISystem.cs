@@ -81,12 +81,6 @@ namespace BossChecklist
 			ZoomFactor = transform.Zoom - (Vector2.UnitX + Vector2.UnitY);
 		}
 
-		public override void PostDrawFullscreenMap(ref string mouseText) {
-			MapHelper.DrawFullscreenMap(out string itemText);
-			if (!string.IsNullOrEmpty(itemText))
-				mouseText = itemText; // draws item names if it is being hovered over on the map
-		}
-
 		private string[] LayersToHideWhenChecklistVisible = new string[] {
 			"Vanilla: Map / Minimap", "Vanilla: Resource Bars"
 		};
