@@ -115,7 +115,7 @@ namespace BossChecklist
 
 		internal string DisplaySpawnInfo => spawnInfo().Value;
 		
-		internal string ModDisplayName => ModLoader.TryGetMod(modSource, out Mod mod) ? BossUISystem.RemoveChatTags(mod.DisplayName) : modSource;
+		internal string ModDisplayName => ModLoader.TryGetMod(modSource, out Mod mod) ? BossUISystem.RemoveChatTags(mod) : modSource;
 
 		internal bool MarkedAsDowned => WorldAssist.MarkedEntries.Contains(this.Key);
 

@@ -1013,7 +1013,7 @@ namespace BossChecklist.UIElements
 			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
 				Id = "Mod";
 				this.icon = GetModIcon(modName);
-				this.name = BossUISystem.RemoveChatTags(ModLoader.GetMod(modName).DisplayName);
+				this.name = BossUISystem.RemoveChatTags(ModLoader.GetMod(modName));
 				this.entryCounts = BossChecklist.bossTracker.RegisteredMods[modName];
 			}
 
