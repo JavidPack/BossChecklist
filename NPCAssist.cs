@@ -54,16 +54,17 @@ namespace BossChecklist
 
 			// stop tracking and record stats for those who had interactions with the boss
 			foreach (Player player in Main.player) {
-				if (player.active) {
-					bool interaction = npc.playerInteraction[player.whoAmI];
-					if (Main.netMode == NetmodeID.Server) {
-						PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
-						serverRecords.StopTracking_Server(player.whoAmI, recordIndex, interaction, interaction);
-					}
-					else {
-						PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
-						bossrecord.StopTracking(interaction && BossChecklist.ClientConfig.AllowNewRecords, interaction);
-					}
+				if (!player.active)
+					continue;
+
+				bool interaction = npc.playerInteraction[player.whoAmI];
+				if (Main.netMode == NetmodeID.Server) {
+					PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+					serverRecords.StopTracking_Server(player.whoAmI, recordIndex, interaction, interaction);
+				}
+				else {
+					PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+					bossrecord.StopTracking(interaction && BossChecklist.ClientConfig.AllowNewRecords, interaction);
 				}
 			}
 

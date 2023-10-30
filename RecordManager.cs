@@ -626,7 +626,7 @@ namespace BossChecklist
 
 			foreach (Player player in Main.player) {
 				if (!player.active)
-					return;
+					continue;
 
 				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
 				totalDeaths += playerRecords.Tracker_Deaths;
@@ -656,7 +656,7 @@ namespace BossChecklist
 
 			foreach (Player player in Main.player) {
 				if (!player.active)
-					return;
+					continue;
 
 				ModPacket packet = BossChecklist.instance.GetPacket();
 				packet.Write((byte)PacketMessageType.UpdateWorldRecordsToAllPlayers);
