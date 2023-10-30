@@ -631,8 +631,8 @@ namespace BossChecklist
 				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
 				totalDeaths += playerRecords.Tracker_Deaths;
 
-				bool Beaten_Duration = playerRecords.Tracker_Duration == durationWorld;
-				bool Matched_Duration = playerRecords.Tracker_Duration < durationWorld;
+				bool Beaten_Duration = playerRecords.Tracker_Duration < durationWorld;
+				bool Matched_Duration = playerRecords.Tracker_Duration == durationWorld;
 
 				if (DurationNotRecorded || Beaten_Duration || Matched_Duration) {
 					netRecord |= NetRecordID.WorldRecord_Duration;
@@ -642,8 +642,8 @@ namespace BossChecklist
 					durationHolder.Add(Main.player[player.whoAmI].name);
 				}
 
-				bool Beaten_HitsTaken = playerRecords.Tracker_HitsTaken == hitsTakenWorld;
-				bool Matched_HitsTaken = playerRecords.Tracker_HitsTaken < hitsTakenWorld;
+				bool Beaten_HitsTaken = playerRecords.Tracker_HitsTaken < hitsTakenWorld;
+				bool Matched_HitsTaken = playerRecords.Tracker_HitsTaken == hitsTakenWorld;
 
 				if (HitsTakenNotRecorded || Beaten_HitsTaken || Matched_HitsTaken) {
 					netRecord |= NetRecordID.WorldRecord_HitsTaken;
