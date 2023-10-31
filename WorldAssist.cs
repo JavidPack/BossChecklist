@@ -363,11 +363,21 @@ namespace BossChecklist
 					// When a boss despawns, stop tracking it for all players
 					selectedEntry.IsRecordIndexed(out int recordIndex);
 					foreach (Player player in Main.player) {
-						if (player.active) {
+						if (!player.active)
+							continue;
+
+						if (Main.netMode == NetmodeID.Server) {
+							PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+							serverRecords.StopTracking_Server(player.whoAmI, recordIndex, false, npc.playerInteraction[player.whoAmI]);
+						}
+						else {
 							BossRecord bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
 							bossRecord.stats.StopTracking(false, npc.playerInteraction[player.whoAmI]);
 						}
 					}
+
+					if (Main.netMode == NetmodeID.Server)
+						WorldRecordsForWorld[recordIndex].stats.UpdateGlobalDeaths(recordIndex, npc.playerInteraction.GetTrueIndexes());
 				}
 			}
 		}

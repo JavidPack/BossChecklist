@@ -20,6 +20,9 @@ namespace BossChecklist
 	}
 
 	internal class Networking {
+		public static bool NewPersonalBest(NetRecordID netRecord) => netRecord.HasFlag(NetRecordID.PersonalBest_Duration) || netRecord.HasFlag(NetRecordID.PersonalBest_HitsTaken);
+		public static bool NewWorldRecord(NetRecordID netRecord) => netRecord.HasFlag(NetRecordID.WorldRecord_Duration) || netRecord.HasFlag(NetRecordID.WorldRecord_HitsTaken);
+		public static bool ResettingRecords(NetRecordID netRecord) => netRecord.HasFlag(NetRecordID.PersonalBest_Reset) || netRecord.HasFlag(NetRecordID.FirstVictory_Reset);
 
 		/// <summary>
 		/// Send a packet to the server to add, remove, or clear entries from the hidden entries list.

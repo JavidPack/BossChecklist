@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
 using System.Linq;
 using Terraria;
 using Terraria.Chat;
@@ -52,6 +52,7 @@ namespace BossChecklist
 			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
+			bool newPersonalBestOnServer = false;
 			// stop tracking and record stats for those who had interactions with the boss
 			foreach (Player player in Main.player) {
 				if (!player.active)
@@ -60,7 +61,8 @@ namespace BossChecklist
 				bool interaction = npc.playerInteraction[player.whoAmI];
 				if (Main.netMode == NetmodeID.Server) {
 					PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
-					serverRecords.StopTracking_Server(player.whoAmI, recordIndex, interaction, interaction);
+					if (serverRecords.StopTracking_Server(player.whoAmI, recordIndex, interaction, interaction))
+						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
 				}
 				else {
 					PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
@@ -68,8 +70,11 @@ namespace BossChecklist
 				}
 			}
 
-			// after the trackers have stopped, use them to check for world records
-			WorldAssist.WorldRecordsForWorld[recordIndex].stats.CheckForWorldRecords_Server(recordIndex);
+			// ... check to see if it is a world record and update every player's logs if so
+			if (newPersonalBestOnServer) {
+				Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
+				WorldAssist.WorldRecordsForWorld[recordIndex].stats.CheckForWorldRecords_Server(recordIndex, npc.playerInteraction.GetTrueIndexes());
+			}
 		}
 
 		/// <summary>
