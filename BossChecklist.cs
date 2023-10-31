@@ -384,7 +384,8 @@ namespace BossChecklist
 				case PacketMessageType.ResetPlayerRecordForServer:
 					// Multiplayer client --> Server
 					recordIndex = reader.ReadInt32();
-					ServerCollectedRecords[whoAmI][recordIndex].stats.NetRecieve(reader, recordIndex);
+					NetRecordID resetType = (NetRecordID)reader.ReadInt32();
+					ServerCollectedRecords[whoAmI][recordIndex].stats.ResetStats_Server(resetType);
 					break;
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)

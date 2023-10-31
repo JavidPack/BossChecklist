@@ -333,11 +333,20 @@ namespace BossChecklist
 			packet.Send(); // Multiplayer client --> Server
 		}
 
+		internal void ResetStats_Server(NetRecordID netRecord) {
+			if (netRecord.HasFlag(NetRecordID.FirstVictory_Reset)) {
+				playTimeFirst = durationFirst = hitsTakenFirst = -1;
+			}
+
+			if (netRecord.HasFlag(NetRecordID.PersonalBest_Reset)) {
+				kills = deaths = 0;
+				durationBest = hitsTakenBest = -1;
+				durationPrevBest = hitsTakenPrevBest = -1;
+			}
+		}
+
 		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {
 			writer.Write((int)recordType); // Write the record type(s) we are changing as NetRecieve will need to read this value.
-
-			if (Networking.ResettingRecords(recordType))
-				return; // If records are being reset, nothing else needs to be done as the records will be wiped
 
 			writer.Write(Tracker_Deaths); // deaths are always tracked
 
@@ -364,20 +373,6 @@ namespace BossChecklist
 
 		internal void NetRecieve(BinaryReader reader, int recordIndex) {
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
-			if (Networking.ResettingRecords(recordType)) {
-				if (recordType.HasFlag(NetRecordID.FirstVictory_Reset)) {
-					playTimeFirst = durationFirst = hitsTakenFirst = -1;
-				}
-
-				if (recordType.HasFlag(NetRecordID.PersonalBest_Reset)) {
-					kills = deaths = 0;
-					durationBest = hitsTakenBest = -1;
-					durationPrevBest = hitsTakenPrevBest = -1;
-				}
-
-				return; // records wiped, no need to continue
-			}
-
 			attempts++; // attempts always increase by one
 			deaths += reader.ReadInt32(); // since tracked deaths are being sent, just increase the value by the tracked amount
 			if (recordType.HasFlag(NetRecordID.SuccessfulAttempt))
