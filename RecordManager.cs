@@ -212,6 +212,10 @@ namespace BossChecklist
 		internal bool IsCurrentlyBeingTracked => IsTracking; // value cannot be changed outside of PersonalStats.
 		private bool IsTracking = false;
 
+		/// <summary>
+		/// Restarts the trackers and begins tracking the fight.
+		/// </summary>
+		/// <returns>If the tracker starting was successful. This should typically only return false if an instance of the boss is still active. </returns>
 		internal bool StartTracking() {
 			if (IsTracking)
 				return false; // do not reset or start tracking if it currently is tracking already
@@ -221,6 +225,9 @@ namespace BossChecklist
 			return true;
 		}
 
+		/// <summary>
+		/// Restarts the trackers of each player stored by the server. Afterwards, it restarts the trackers for all clients.
+		/// </summary>
 		internal void StartTracking_Server(int whoAmI, int recordIndex) {
 			if (Main.netMode != NetmodeID.Server || StartTracking() is false)
 				return;
@@ -233,6 +240,12 @@ namespace BossChecklist
 			packet.Send(toClient: whoAmI); // Server --> Multiplayer client
 		}
 
+		/// <summary>
+		/// Stops the trackers from updating and stores the info tracked.
+		/// </summary>
+		/// <param name="allowRecordSaving">Should the tracked data be used to update the records? This should typically be only false when no player interaction occured.</param>
+		/// <param name="savePreviousAttempt">Should the tracked data be recorded as a previous attempt?</param>
+		/// <returns>The NetRecordID provided by the updated data. Used to communicate with the server what data needs to be sent and updated.</returns>
 		internal NetRecordID? StopTracking(bool allowRecordSaving, bool savePreviousAttempt) {
 			if (!IsTracking)
 				return null; // do not change any stats if tracking is not currently enabled
@@ -292,6 +305,15 @@ namespace BossChecklist
 			return serverParse;
 		}
 
+		/// <summary>
+		/// Stops the trackers from updating and stores the info tracked on the server's side.
+		/// Packets with the updated record data are then sent to their respective players.
+		/// </summary>
+		/// <param name="whoAmI">The player whose records are being updated.</param>
+		/// <param name="recordIndex">The recordIndex of the boss tracked.</param>
+		/// <param name="allowRecordSaving">Should the tracked data be used to update the records? This should typically be only false when no player interaction occured.</param>
+		/// <param name="savePreviousAttempt">Should the tracked data be recorded as a previous attempt?</param>
+		/// <returns>If the NetRecordID contains a new personal best. Used to check for World Records for the server later on.</returns>
 		internal bool StopTracking_Server(int whoAmI, int recordIndex, bool allowRecordSaving, bool savePreviousAttempt) {
 			if (Main.netMode != NetmodeID.Server || StopTracking(allowRecordSaving, savePreviousAttempt) is not NetRecordID netRecord)
 				return false; // do not change any stats if tracking is not currently enabled
@@ -300,12 +322,17 @@ namespace BossChecklist
 			ModPacket packet = BossChecklist.instance.GetPacket();
 			packet.Write((byte)PacketMessageType.UpdateRecordsFromServerToPlayer);
 			packet.Write(recordIndex);
-			BossChecklist.ServerCollectedRecords[whoAmI][recordIndex].stats.NetSend(packet, netRecord);
+			BossChecklist.ServerCollectedRecords[whoAmI][recordIndex].stats.NetSendRecords(packet, netRecord);
 			packet.Send(toClient: whoAmI); // Server --> Multiplayer client (Player's only need to see their own records)
 
-			return netRecord.HasFlag(NetRecordID.PersonalBest_Duration) | netRecord.HasFlag(NetRecordID.PersonalBest_HitsTaken);
+			return Networking.NewPersonalBest(netRecord);
 		}
 
+		/// <summary>
+		/// Resets the record data stored back to 'No Record'. If this is run by a multiplayer client, the reset is sent to the server as well via packet.
+		/// </summary>
+		/// <param name="category">Specifies the records being reset by the Log's current subcategory.</param>
+		/// <param name="recordIndex"></param>
 		internal void ResetStats(SubCategory category, int recordIndex) {
 			// No point in clearing Previous Attempt, its always updated each fight
 			// World Records cannot be reset through normal means (localhost must remove all players from the holders list)
@@ -321,7 +348,7 @@ namespace BossChecklist
 				resetType = NetRecordID.PersonalBest_Reset;
 			}
 
-			if (resetType == NetRecordID.None)
+			if (Main.netMode == NetmodeID.SinglePlayer || resetType == NetRecordID.None)
 				return;
 
 			// This method is only called by a Multiplayer client, as it derives from the UI
@@ -333,6 +360,10 @@ namespace BossChecklist
 			packet.Send(); // Multiplayer client --> Server
 		}
 
+		/// <summary>
+		/// Resets the record data stored back to 'No Record' on the server's side.
+		/// </summary>
+		/// <param name="netRecord"></param>
 		internal void ResetStats_Server(NetRecordID netRecord) {
 			if (netRecord.HasFlag(NetRecordID.FirstVictory_Reset)) {
 				playTimeFirst = durationFirst = hitsTakenFirst = -1;
@@ -345,9 +376,13 @@ namespace BossChecklist
 			}
 		}
 
-		internal void NetSend(BinaryWriter writer, NetRecordID recordType) {
+		/// <summary>
+		/// Writes the record data needed to be sent to players.
+		/// </summary>
+		/// <param name="writer"></param>
+		/// <param name="recordType"></param>
+		internal void NetSendRecords(BinaryWriter writer, NetRecordID recordType) {
 			writer.Write((int)recordType); // Write the record type(s) we are changing as NetRecieve will need to read this value.
-
 			writer.Write(Tracker_Deaths); // deaths are always tracked
 
 			if (recordType.HasFlag(NetRecordID.PreviousAttempt)) {
@@ -371,7 +406,12 @@ namespace BossChecklist
 			}
 		}
 
-		internal void NetRecieve(BinaryReader reader, int recordIndex) {
+		/// <summary>
+		/// Receives and reads the record data sent by the server.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="recordIndex"></param>
+		internal void NetReceiveRecords(BinaryReader reader, int recordIndex) {
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
 			attempts++; // attempts always increase by one
 			deaths += reader.ReadInt32(); // since tracked deaths are being sent, just increase the value by the tracked amount
@@ -619,11 +659,16 @@ namespace BossChecklist
 				ModPacket packet = BossChecklist.instance.GetPacket();
 				packet.Write((byte)PacketMessageType.UpdateWorldRecordsToAllPlayers);
 				packet.Write(recordIndex);
-				NetSend(packet, NetRecordID.WorldRecord_OnlyDeaths); // only deaths needs to be update
+				NetSendWorldRecords(packet, NetRecordID.WorldRecord_OnlyDeaths); // only deaths needs to be update
 				packet.Send(player.whoAmI);
 			}
 		}
 
+		/// <summary>
+		/// Compares the world records against the trackers if it is concluded to have a new personal best record.
+		/// </summary>
+		/// <param name="recordIndex"></param>
+		/// <param name="playersInteracted"></param>
 		internal void CheckForWorldRecords_Server(int recordIndex, List<int> playersInteracted) {
 			if (Main.netMode != NetmodeID.Server)
 				return; // Only the server should be able to adjust world records
@@ -674,12 +719,17 @@ namespace BossChecklist
 				ModPacket packet = BossChecklist.instance.GetPacket();
 				packet.Write((byte)PacketMessageType.UpdateWorldRecordsToAllPlayers);
 				packet.Write(recordIndex);
-				NetSend(packet, netRecord);
+				NetSendWorldRecords(packet, netRecord);
 				packet.Send(player.whoAmI);
 			}
 		}
 
-		internal void NetSend(BinaryWriter writer, NetRecordID netRecords) {
+		/// <summary>
+		/// Writes the world record data needed to be sent to all clients.
+		/// </summary>
+		/// <param name="writer"></param>
+		/// <param name="netRecords"></param>
+		internal void NetSendWorldRecords(BinaryWriter writer, NetRecordID netRecords) {
 			writer.Write((int)netRecords); // Write the record type(s) we are changing. NetRecieve will need to read this value.
 			writer.Write(totalDeaths);
 			if (netRecords.HasFlag(NetRecordID.WorldRecord_OnlyDeaths))
@@ -703,7 +753,11 @@ namespace BossChecklist
 			}
 		}
 
-		internal void NetRecieve(BinaryReader reader) {
+		/// <summary>
+		/// Receives and reads the world record data sent by the server.
+		/// </summary>
+		/// <param name="reader"></param>
+		internal void NetReceiveWorldRecords(BinaryReader reader) {
 			NetRecordID netRecords = (NetRecordID)reader.ReadInt32(); // Read the type of record being updated
 
 			totalDeaths = reader.ReadInt32();
