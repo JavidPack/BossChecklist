@@ -1417,6 +1417,7 @@ namespace BossChecklist
 						slot.Append(categoryIcon);
 
 						#region Experimental Feature Notice
+						/*
 						// TODO: Experimental feature notice, eventually will need to be removed
 						Asset<Texture2D> bnuuy = RequestVanillaTexture("Images/UI/Creative/Journey_Toggle");
 						string noticeText;
@@ -1441,6 +1442,7 @@ namespace BossChecklist
 						bnuuyIcon.Left.Pixels = (int)(slot.Width.Pixels - bnuuyIcon.Width.Pixels - 15);
 						bnuuyIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - bnuuyIcon.Height.Pixels / 2);
 						slot.AddOrRemoveChild(bnuuyIcon, GetLogEntryInfo.type == EntryType.Boss);
+						*/
 						#endregion
 
 						float offset = 0;
