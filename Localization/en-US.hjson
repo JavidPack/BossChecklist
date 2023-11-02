@@ -73,8 +73,8 @@ Mods: {
 			}
 
 			Records: {
-				NewRecord: New Record!
-				NewWorldRecord: World Record!
+				NewRecord: New Personal Best!
+				NewWorldRecord: New World Record!
 				NoRecord: No record
 				Unchallenged: Unchallenged
 				Kills: kills
