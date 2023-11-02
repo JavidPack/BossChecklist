@@ -314,7 +314,7 @@ namespace BossChecklist
 					if (Main.netMode == NetmodeID.SinglePlayer && Networking.NewPersonalBest(serverParse)) {
 						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
-						modplayer.SubmitCombatText();
+						modplayer.SubmitCombatText(RecordIndex);
 					}
 				}
 			}
@@ -827,7 +827,7 @@ namespace BossChecklist
 			if (reader.ReadBoolean() && modplayer.NewRecordState == PlayerAssist.RecordState_PersonalBest)
 				modplayer.NewRecordState = PlayerAssist.RecordState_WorldRecord;
 
-			modplayer.SubmitCombatText();
+			modplayer.SubmitCombatText(RecordIndex);
 		}
 
 		/// <summary>

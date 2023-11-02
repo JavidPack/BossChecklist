@@ -38,11 +38,14 @@ namespace BossChecklist
 		public int NewRecordState = 0;
 		public bool[] hasNewRecord;
 
-		public void SubmitCombatText() {
+		public void SubmitCombatText(int recordIndex) {
 			if (NewRecordState == RecordState_PersonalBest)
 				CombatText.NewText(Player.getRect(), Color.LightYellow, Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewRecord"), true);
 			else if (NewRecordState == RecordState_WorldRecord)
 				CombatText.NewText(Player.getRect(), Color.LightYellow, Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewWorldRecord"), true);
+
+			if (NewRecordState != RecordState_NoRecord)
+				hasNewRecord[recordIndex] = true;
 
 			NewRecordState = RecordState_NoRecord;
 		}
