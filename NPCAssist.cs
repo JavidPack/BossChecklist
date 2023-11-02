@@ -29,7 +29,7 @@ namespace BossChecklist
 				if (player.active) {
 					if (Main.netMode == NetmodeID.Server) {
 						PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
-						serverRecords.StartTracking_Server(player.whoAmI, recordIndex);
+						serverRecords.StartTracking_Server(player.whoAmI);
 					}
 					else {
 						PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
@@ -61,7 +61,7 @@ namespace BossChecklist
 				bool interaction = npc.playerInteraction[player.whoAmI];
 				if (Main.netMode == NetmodeID.Server) {
 					PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
-					if (serverRecords.StopTracking_Server(player.whoAmI, recordIndex, interaction, interaction))
+					if (serverRecords.StopTracking_Server(player.whoAmI, interaction, interaction))
 						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
 				}
 				else {
@@ -73,7 +73,7 @@ namespace BossChecklist
 			// ... check to see if it is a world record and update every player's logs if so
 			if (newPersonalBestOnServer) {
 				Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
-				WorldAssist.WorldRecordsForWorld[recordIndex].stats.CheckForWorldRecords_Server(recordIndex, npc.playerInteraction.GetTrueIndexes());
+				WorldAssist.WorldRecordsForWorld[recordIndex].stats.CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
 			}
 		}
 

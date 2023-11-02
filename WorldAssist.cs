@@ -75,6 +75,15 @@ namespace BossChecklist
 			TrackingDowns = startTrackingDowns;
 		}
 
+		public override void ClearWorld() {
+			HiddenEntries.Clear();
+			MarkedEntries.Clear();
+			ClearDownedBools(false);
+			if (WorldRecordsForWorld is not null)
+				WorldRecordsForWorld.Clear();
+			ActiveNPCEntryFlags = new int[Main.maxNPCs];
+		}
+
 		public override void OnWorldLoad() {
 			HiddenEntries.Clear();
 			MarkedEntries.Clear();
@@ -368,7 +377,7 @@ namespace BossChecklist
 
 						if (Main.netMode == NetmodeID.Server) {
 							PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
-							serverRecords.StopTracking_Server(player.whoAmI, recordIndex, false, npc.playerInteraction[player.whoAmI]);
+							serverRecords.StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
 						}
 						else {
 							BossRecord bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
@@ -377,7 +386,7 @@ namespace BossChecklist
 					}
 
 					if (Main.netMode == NetmodeID.Server)
-						WorldRecordsForWorld[recordIndex].stats.UpdateGlobalDeaths(recordIndex, npc.playerInteraction.GetTrueIndexes());
+						WorldRecordsForWorld[recordIndex].stats.UpdateGlobalDeaths(npc.playerInteraction.GetTrueIndexes());
 				}
 			}
 		}

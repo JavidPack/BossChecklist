@@ -675,7 +675,7 @@ namespace BossChecklist
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return; // player must be holding alt
 
-			GetPlayerRecords.ResetStats(RecordSubCategory, recordIndex);
+			GetPlayerRecords.ResetStats(RecordSubCategory);
 			RefreshPageContent();  // update page to show changes
 		}
 

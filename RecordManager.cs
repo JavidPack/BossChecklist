@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Humanizer;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace BossChecklist
 	/// </summary>
 	public class BossRecord : TagSerializable {
 		internal string bossKey;
-		internal PersonalStats stats = new PersonalStats();
+		internal PersonalStats stats;
 
 		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
 
@@ -42,6 +43,8 @@ namespace BossChecklist
 
 		public BossRecord(string bossKey) {
 			this.bossKey = bossKey;
+			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out int recordIndex);
+			this.stats = new PersonalStats(recordIndex);
 		}
 
 		public override string ToString() => $"Personal Records for: #{BossChecklist.bossTracker.FindEntryFromKey(bossKey).GetIndex} '{bossKey}'";
@@ -59,7 +62,7 @@ namespace BossChecklist
 	/// </summary>
 	public class WorldRecord : TagSerializable {
 		internal string bossKey;
-		internal WorldStats stats = new WorldStats();
+		internal WorldStats stats;
 
 		public static Func<TagCompound, WorldRecord> DESERIALIZER = tag => new WorldRecord(tag);
 
@@ -70,6 +73,8 @@ namespace BossChecklist
 
 		public WorldRecord(string bossKey) {
 			this.bossKey = bossKey;
+			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out int recordIndex);
+			this.stats = new WorldStats(recordIndex);
 		}
 
 		public TagCompound SerializeData() {
@@ -157,6 +162,9 @@ namespace BossChecklist
 		public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
 
+		private readonly int recordIndex = -1;
+		public int RecordIndex => recordIndex;
+
 		public Point GetStats(int category) {
 			return category switch {
 				(int)SubCategory.PreviousAttempt => new Point(durationPrev, hitsTakenPrev),
@@ -171,7 +179,9 @@ namespace BossChecklist
 
 		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
 
-		public PersonalStats() { }
+		public PersonalStats(int recordIndex) {
+			this.recordIndex = recordIndex;
+		}
 
 		private PersonalStats(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
@@ -228,7 +238,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Restarts the trackers of each player stored by the server. Afterwards, it restarts the trackers for all clients.
 		/// </summary>
-		internal void StartTracking_Server(int whoAmI, int recordIndex) {
+		internal void StartTracking_Server(int whoAmI) {
 			if (Main.netMode != NetmodeID.Server || StartTracking() is false)
 				return;
 
@@ -236,7 +246,7 @@ namespace BossChecklist
 			// Send packets from the server to all participating players to reset their trackers for the recordIndex provided
 			ModPacket packet = BossChecklist.instance.GetPacket();
 			packet.Write((byte)PacketMessageType.ResetTrackers);
-			packet.Write(recordIndex);
+			packet.Write(RecordIndex);
 			packet.Send(toClient: whoAmI); // Server --> Multiplayer client
 		}
 
@@ -299,6 +309,13 @@ namespace BossChecklist
 						hitsTakenBest = Tracker_HitsTaken;
 						serverParse |= NetRecordID.PersonalBest_HitsTaken;
 					}
+
+					// If a single player client is running this method, no world record can be made, so send the personal best text.
+					if (Main.netMode == NetmodeID.SinglePlayer && Networking.NewPersonalBest(serverParse)) {
+						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
+						modplayer.SubmitCombatText();
+					}
 				}
 			}
 
@@ -310,19 +327,18 @@ namespace BossChecklist
 		/// Packets with the updated record data are then sent to their respective players.
 		/// </summary>
 		/// <param name="whoAmI">The player whose records are being updated.</param>
-		/// <param name="recordIndex">The recordIndex of the boss tracked.</param>
 		/// <param name="allowRecordSaving">Should the tracked data be used to update the records? This should typically be only false when no player interaction occured.</param>
 		/// <param name="savePreviousAttempt">Should the tracked data be recorded as a previous attempt?</param>
 		/// <returns>If the NetRecordID contains a new personal best. Used to check for World Records for the server later on.</returns>
-		internal bool StopTracking_Server(int whoAmI, int recordIndex, bool allowRecordSaving, bool savePreviousAttempt) {
+		internal bool StopTracking_Server(int whoAmI, bool allowRecordSaving, bool savePreviousAttempt) {
 			if (Main.netMode != NetmodeID.Server || StopTracking(allowRecordSaving, savePreviousAttempt) is not NetRecordID netRecord)
 				return false; // do not change any stats if tracking is not currently enabled
 
 			// Then send the mod packet to the client
 			ModPacket packet = BossChecklist.instance.GetPacket();
 			packet.Write((byte)PacketMessageType.UpdateRecordsFromServerToPlayer);
-			packet.Write(recordIndex);
-			BossChecklist.ServerCollectedRecords[whoAmI][recordIndex].stats.NetSendRecords(packet, netRecord);
+			packet.Write(RecordIndex);
+			NetSendRecords(packet, netRecord);
 			packet.Send(toClient: whoAmI); // Server --> Multiplayer client (Player's only need to see their own records)
 
 			return Networking.NewPersonalBest(netRecord);
@@ -332,8 +348,7 @@ namespace BossChecklist
 		/// Resets the record data stored back to 'No Record'. If this is run by a multiplayer client, the reset is sent to the server as well via packet.
 		/// </summary>
 		/// <param name="category">Specifies the records being reset by the Log's current subcategory.</param>
-		/// <param name="recordIndex"></param>
-		internal void ResetStats(SubCategory category, int recordIndex) {
+		internal void ResetStats(SubCategory category) {
 			// No point in clearing Previous Attempt, its always updated each fight
 			// World Records cannot be reset through normal means (localhost must remove all players from the holders list)
 			NetRecordID resetType = NetRecordID.None;
@@ -355,7 +370,7 @@ namespace BossChecklist
 			// Send a ModPacket to update the server records accordingly
 			ModPacket packet = BossChecklist.instance.GetPacket();
 			packet.Write((byte)PacketMessageType.ResetPlayerRecordForServer);
-			packet.Write(recordIndex);
+			packet.Write(RecordIndex);
 			packet.Write((int)resetType);
 			packet.Send(); // Multiplayer client --> Server
 		}
@@ -410,11 +425,11 @@ namespace BossChecklist
 		/// Receives and reads the record data sent by the server.
 		/// </summary>
 		/// <param name="reader"></param>
-		/// <param name="recordIndex"></param>
-		internal void NetReceiveRecords(BinaryReader reader, int recordIndex) {
+		internal void NetReceiveRecords(BinaryReader reader) {
 			NetRecordID recordType = (NetRecordID)reader.ReadInt32();
 			attempts++; // attempts always increase by one
 			deaths += reader.ReadInt32(); // since tracked deaths are being sent, just increase the value by the tracked amount
+			bool beatenBefore = UnlockedFirstVictory;
 			if (recordType.HasFlag(NetRecordID.SuccessfulAttempt))
 				kills++;
 
@@ -429,14 +444,21 @@ namespace BossChecklist
 				playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // Server cannot send this information, nor needs to
 			}
 
+			PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
 				durationBest = reader.ReadInt32();
 				durationPrevBest = reader.ReadInt32();
+
+				if (beatenBefore)
+					modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
 			}
 
 			if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
 				hitsTakenBest = reader.ReadInt32();
 				hitsTakenPrevBest = reader.ReadInt32();
+
+				if (beatenBefore)
+					modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
 			}
 		}
 
@@ -605,12 +627,17 @@ namespace BossChecklist
 		public List<string> hitsTakenHolder = new List<string> { };
 		public int hitsTakenWorld = -1;
 
+		private readonly int recordIndex = -1;
+		public int RecordIndex => recordIndex;
+
 		public bool DurationNotRecorded => durationHolder.Count == 0 || durationWorld == -1;
 		public bool HitsTakenNotRecorded => hitsTakenHolder.Count == 0 || hitsTakenWorld == -1;
 
 		public static Func<TagCompound, WorldStats> DESERIALIZER = tag => new WorldStats(tag);
 
-		public WorldStats() { }
+		public WorldStats(int recordIndex) {
+			this.recordIndex = recordIndex;
+		}
 
 		private WorldStats(TagCompound tag) {
 			totalKills = tag.Get<int>(nameof(totalKills));
@@ -639,7 +666,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Global deaths should still be tracked and updated to all players when the boss despawns.
 		/// </summary>
-		internal void UpdateGlobalDeaths(int recordIndex, List<int> playersInteracted) {
+		internal void UpdateGlobalDeaths(List<int> playersInteracted) {
 			if (Main.netMode != NetmodeID.Server)
 				return; // Only the server should be able to adjust world records
 
@@ -647,7 +674,7 @@ namespace BossChecklist
 				if (!player.active || !playersInteracted.Contains(player.whoAmI))
 					continue;
 
-				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex].stats;
 				totalDeaths += playerRecords.Tracker_Deaths;
 			}
 
@@ -658,7 +685,7 @@ namespace BossChecklist
 
 				ModPacket packet = BossChecklist.instance.GetPacket();
 				packet.Write((byte)PacketMessageType.UpdateWorldRecordsToAllPlayers);
-				packet.Write(recordIndex);
+				packet.Write(RecordIndex);
 				NetSendWorldRecords(packet, NetRecordID.WorldRecord_OnlyDeaths); // only deaths needs to be update
 				packet.Send(player.whoAmI);
 			}
@@ -667,21 +694,23 @@ namespace BossChecklist
 		/// <summary>
 		/// Compares the world records against the trackers if it is concluded to have a new personal best record.
 		/// </summary>
-		/// <param name="recordIndex"></param>
 		/// <param name="playersInteracted"></param>
-		internal void CheckForWorldRecords_Server(int recordIndex, List<int> playersInteracted) {
+		internal void CheckForWorldRecords_Server(List<int> playersInteracted) {
 			if (Main.netMode != NetmodeID.Server)
 				return; // Only the server should be able to adjust world records
 
 			NetRecordID netRecord = NetRecordID.None;
 			totalKills++; // kills always increase by one when an entry dies
 
+			List<int> WorldRecordAchieved_Duration = new List<int>();
+			List<int> WorldRecordAchieved_HitsTaken = new List<int>();
+
 			// only players that have interacted with the boss should have their deaths and records added
 			foreach (Player player in Main.player) {
 				if (!player.active || !playersInteracted.Contains(player.whoAmI))
 					continue;
 
-				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex].stats;
 				totalDeaths += playerRecords.Tracker_Deaths;
 
 				bool Beaten_Duration = playerRecords.Tracker_Duration < durationWorld;
@@ -690,11 +719,15 @@ namespace BossChecklist
 				if (DurationNotRecorded || Beaten_Duration || Matched_Duration) {
 					netRecord |= NetRecordID.WorldRecord_Duration;
 					durationWorld = playerRecords.Tracker_Duration;
-					if (Beaten_Duration)
+					if (Beaten_Duration) {
 						durationHolder.Clear();
+						WorldRecordAchieved_Duration.Clear();
+					}
 
-					if (!durationHolder.Contains(Main.player[player.whoAmI].name))
+					if (!durationHolder.Contains(Main.player[player.whoAmI].name)) {
 						durationHolder.Add(Main.player[player.whoAmI].name);
+						WorldRecordAchieved_Duration.Add(player.whoAmI);
+					}
 				}
 
 				bool Beaten_HitsTaken = playerRecords.Tracker_HitsTaken < hitsTakenWorld;
@@ -703,11 +736,15 @@ namespace BossChecklist
 				if (HitsTakenNotRecorded || Beaten_HitsTaken || Matched_HitsTaken) {
 					netRecord |= NetRecordID.WorldRecord_HitsTaken;
 					hitsTakenWorld = playerRecords.Tracker_HitsTaken;
-					if (Beaten_HitsTaken)
+					if (Beaten_HitsTaken) {
 						hitsTakenHolder.Clear();
+						WorldRecordAchieved_HitsTaken = new List<int>();
+					}
 
-					if (!hitsTakenHolder.Contains(Main.player[player.whoAmI].name))
+					if (!hitsTakenHolder.Contains(Main.player[player.whoAmI].name)) {
 						hitsTakenHolder.Add(Main.player[player.whoAmI].name);
+						WorldRecordAchieved_HitsTaken.Add(player.whoAmI);
+					}
 				}
 			}
 
@@ -718,8 +755,9 @@ namespace BossChecklist
 
 				ModPacket packet = BossChecklist.instance.GetPacket();
 				packet.Write((byte)PacketMessageType.UpdateWorldRecordsToAllPlayers);
-				packet.Write(recordIndex);
+				packet.Write(RecordIndex);
 				NetSendWorldRecords(packet, netRecord);
+				packet.Write(WorldRecordAchieved_Duration.Contains(player.whoAmI) || WorldRecordAchieved_HitsTaken.Contains(player.whoAmI));
 				packet.Send(player.whoAmI);
 			}
 		}
@@ -784,6 +822,12 @@ namespace BossChecklist
 					hitsTakenHolder.Add(reader.ReadString());
 				}
 			}
+
+			PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (reader.ReadBoolean() && modplayer.NewRecordState == PlayerAssist.RecordState_PersonalBest)
+				modplayer.NewRecordState = PlayerAssist.RecordState_WorldRecord;
+
+			modplayer.SubmitCombatText();
 		}
 
 		/// <summary>

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
@@ -30,7 +32,20 @@ namespace BossChecklist
 		public List<BossRecord> RecordsForWorld => AllStoredRecords[Main.ActiveWorldFileData.UniqueId.ToString()];
 		public List<ItemDefinition> BossItemsCollected;
 
+		public const int RecordState_NoRecord = 0;
+		public const int RecordState_PersonalBest = 1;
+		public const int RecordState_WorldRecord = 2;
+		public int NewRecordState = 0;
 		public bool[] hasNewRecord;
+
+		public void SubmitCombatText() {
+			if (NewRecordState == RecordState_PersonalBest)
+				CombatText.NewText(Player.getRect(), Color.LightYellow, Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewRecord"), true);
+			else if (NewRecordState == RecordState_WorldRecord)
+				CombatText.NewText(Player.getRect(), Color.LightYellow, Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewWorldRecord"), true);
+
+			NewRecordState = RecordState_NoRecord;
+		}
 
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
@@ -192,7 +207,7 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.Server) {
 				foreach (BossRecord record in BossChecklist.ServerCollectedRecords[Player.whoAmI]) {
 					BossChecklist.bossTracker.FindEntryFromKey(record.bossKey).IsRecordIndexed(out int recordIndex);
-					record.stats.StopTracking_Server(Player.whoAmI, recordIndex, false, false);
+					record.stats.StopTracking_Server(Player.whoAmI, false, false);
 				}
 			}
 			else {
