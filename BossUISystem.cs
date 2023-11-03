@@ -192,7 +192,7 @@ namespace BossChecklist
 				return;
 
 			int padd = 20;
-			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(text);
+			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(RemoveChatTags(text));
 			Rectangle bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd - 5);
 			bgPos.X = Utils.Clamp(bgPos.X, 0, Main.screenWidth - bgPos.Width);
 			bgPos.Y = Utils.Clamp(bgPos.Y, 0, Main.screenHeight - bgPos.Height);
@@ -209,6 +209,7 @@ namespace BossChecklist
 		/// <summary>
 		/// Removes chat tags from the decalred mod's displayname, presenting it in its pure text form.
 		/// </summary>
-		public static string RemoveChatTags(Mod mod) => string.Join("", ChatManager.ParseMessage(mod.DisplayName, Color.White).Where(x => x.GetType() == typeof(TextSnippet)).Select(x => x.Text));
+		public static string RemoveChatTags(Mod mod) => RemoveChatTags(mod.DisplayName);
+		public static string RemoveChatTags(string text) => string.Join("", ChatManager.ParseMessage(text, Color.White).Where(x => x.GetType() == typeof(TextSnippet)).Select(x => x.Text));
 	}
 }
