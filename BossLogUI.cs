@@ -989,18 +989,18 @@ namespace BossChecklist
 					Language.GetTextValue($"{LangLog}.HintTexts.MarkEntry") +
 					(BossChecklist.DebugConfig.ResetForcedDowns ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearMarked") : "") +
 					"\n" + Language.GetTextValue($"{LangLog}.HintTexts.HideEntry") +
-					(BossChecklist.DebugConfig.ResetHiddenEntries ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearHidden") : "")
-				;
+					(BossChecklist.DebugConfig.ResetHiddenEntries ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearHidden") : "");
 			}
 			else if (PageNum >= 0) {
-				if (SelectedSubPage == SubPage.Records) {
-					interactions = $"{LangLog}.HintTexts.ClearAllRecords";
+				if (SelectedSubPage == SubPage.Records && GetLogEntryInfo.type == EntryType.Boss) {
+					interactions =
+						Language.GetTextValue($"{LangLog}.HintTexts.ClearAllRecords") + "\n " +
+						Language.GetTextValue($"{LangLog}.HintTexts.ClearRecord");
 				}
 				else if (SelectedSubPage == SubPage.LootAndCollectibles && BossChecklist.DebugConfig.ResetLootItems) {
 					interactions = 
 						Language.GetTextValue($"{LangLog}.HintTexts.RemoveItem") + "\n" +
-						Language.GetTextValue($"{LangLog}.HintTexts.ClearItems")
-					;
+						Language.GetTextValue($"{LangLog}.HintTexts.ClearItems");
 				}
 			}
 			AltInteractionsTab.hoverText = BossChecklist.BossLogConfig.ShowInteractionTooltips ? interactions : null;
