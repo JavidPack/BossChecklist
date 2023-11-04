@@ -73,8 +73,8 @@ Mods: {
 			}
 
 			Records: {
-				NewRecord: 新纪录!
-				NewWorldRecord: 世界纪录!
+				NewRecord: 新的个人最佳!
+				NewWorldRecord: 新的世界纪录!
 				NoRecord: 没有记录!
 				Unchallenged: 没有挑战过!
 				Kills: 击杀次数
