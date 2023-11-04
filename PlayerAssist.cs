@@ -62,28 +62,36 @@ namespace BossChecklist
 
 		public override void SaveData(TagCompound tag) {
 			// We cannot save dictionaries, so we'll convert it to a TagCompound instead
-			TagCompound TempRecords = new TagCompound();
-			foreach (KeyValuePair<string, List<BossRecord>> bossRecord in AllStoredRecords) {
-				TempRecords.Add(bossRecord.Key, bossRecord.Value);
+			TagCompound Record_Data = new TagCompound();
+			foreach (KeyValuePair<string, List<BossRecord>> data in AllStoredRecords) {
+				TagCompound Record_PerWorld = new TagCompound(); // new list of records for each world
+				foreach (BossRecord record in data.Value) {
+					Record_PerWorld.Add(record.bossKey, record.SerializeData()); // serialize the boss key and records (for each world)
+				}
+				Record_Data.Add(data.Key, Record_PerWorld);
 			}
 
+			tag["Record_Data"] = Record_Data;
 			tag["BossLogPrompt"] = hasOpenedTheBossLog;
-			tag["StoredRecords"] = TempRecords;
 			tag["BossLootObtained"] = BossItemsCollected;
 		}
 
 		public override void LoadData(TagCompound tag) {
-			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt");
+			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt"); // saved state of the unopened boss log prompt
+			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList(); // Prepare the collectibles for the player.
 
-			// Grab the player's record data so we can grab what we need in OnEnterWorld().
-			TagCompound SavedStoredRecords = tag.Get<TagCompound>("StoredRecords");
-			AllStoredRecords.Clear(); // Clear the list so we can convert our TagCompund back to a Dictionary
-			foreach (KeyValuePair<string, object> bossRecords in SavedStoredRecords) {
-				AllStoredRecords.Add(bossRecords.Key, SavedStoredRecords.GetList<BossRecord>(bossRecords.Key).ToList());
+			if (tag.TryGet("Record_Data", out TagCompound savedData)) {
+				AllStoredRecords.Clear();
+				// foreach unique world key
+				foreach (KeyValuePair<string, object> data in savedData) {
+					List<BossRecord> RecordsByWorldKey = new List<BossRecord>();
+					// foreach 
+					foreach (KeyValuePair<string, object> listofrecords in data.Value as TagCompound) {
+						RecordsByWorldKey.Add(BossRecord.DESERIALIZER(listofrecords.Value as TagCompound)); // deserialize the saved record data
+					}
+					AllStoredRecords.Add(data.Key, RecordsByWorldKey); // add each world key to all stored records
+				}
 			}
-
-			// Prepare the collectibles for the player. Putting unloaded bosses in the back and new/existing ones up front
-			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList();
 		}
 
 		public override void OnEnterWorld() {

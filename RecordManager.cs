@@ -38,7 +38,7 @@ namespace BossChecklist
 
 		private BossRecord(TagCompound tag) {
 			bossKey = tag.Get<string>(nameof(bossKey));
-			stats = tag.Get<PersonalStats>(nameof(stats));
+			stats = PersonalStats.DESERIALIZER(tag.Get<TagCompound>(nameof(stats)));
 		}
 
 		public BossRecord(string bossKey) {
@@ -52,7 +52,7 @@ namespace BossChecklist
 		public TagCompound SerializeData() {
 			return new TagCompound {
 				{ nameof(bossKey), bossKey },
-				{ nameof(stats), stats }
+				{ nameof(stats), stats.SerializeData() }
 			};
 		}
 	}
@@ -68,7 +68,7 @@ namespace BossChecklist
 
 		private WorldRecord(TagCompound tag) {
 			bossKey = tag.Get<string>(nameof(bossKey));
-			stats = tag.Get<WorldStats>(nameof(stats));
+			stats = WorldStats.DESERIALIZER(tag.Get<TagCompound>(nameof(stats)));
 		}
 
 		public WorldRecord(string bossKey) {
@@ -80,7 +80,7 @@ namespace BossChecklist
 		public TagCompound SerializeData() {
 			return new TagCompound {
 				{ nameof(bossKey), bossKey },
-				{ nameof(stats), stats }
+				{ nameof(stats), stats.SerializeData() }
 			};
 		}
 

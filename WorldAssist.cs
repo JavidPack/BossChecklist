@@ -12,7 +12,8 @@ using Terraria.ModLoader.IO;
 namespace BossChecklist
 {
 	public class WorldAssist : ModSystem {
-		public static List<WorldRecord> WorldRecordsForWorld; // A list of all world records for each boss, saved to each world individually
+		public static List<WorldRecord> WorldRecordsForWorld = new List<WorldRecord>(); // A list of all world records for each boss, saved to each world individually
+		public static List<WorldRecord> WorldRecordsForWorld_Unloaded = new List<WorldRecord>(); // A list of all the world records for unloadeded bosses
 		public static int[] ActiveNPCEntryFlags; // Used for despawn messages, which will occur when the npc is unflagged
 
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
@@ -79,8 +80,7 @@ namespace BossChecklist
 			HiddenEntries.Clear();
 			MarkedEntries.Clear();
 			ClearDownedBools(false);
-			if (WorldRecordsForWorld is not null)
-				WorldRecordsForWorld.Clear();
+			WorldRecordsForWorld.Clear();
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 		}
 
@@ -89,6 +89,7 @@ namespace BossChecklist
 			MarkedEntries.Clear();
 
 			ClearDownedBools(true);
+			WorldRecordsForWorld.Clear();
 
 			// Record related lists that should be the same count of record tracking entries
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
@@ -135,29 +136,39 @@ namespace BossChecklist
 			tag["HiddenBossesList"] = HiddenBossesList;
 			tag["downed_Forced"] = MarkedAsDownedList;
 
-			if (WorldRecordsForWorld != null) {
-				tag["WorldRecords"] = WorldRecordsForWorld;
+			// All world record data, loaded or not, needs to be serialized and saved
+			TagCompound WorldRecordTag = new TagCompound();
+			foreach (WorldRecord record in WorldRecordsForWorld) {
+				WorldRecordTag.Add(record.bossKey, record.SerializeData());
 			}
+
+			foreach (WorldRecord record in WorldRecordsForWorld_Unloaded) {
+				WorldRecordTag.Add(record.bossKey, record.SerializeData());
+			}
+
+			tag["World_Records"] = WorldRecordTag;
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
-			List<WorldRecord> SavedWorldRecords = tag.GetList<WorldRecord>("WorldRecords").ToList();
-			List<WorldRecord> WorldRecords_Loaded = new List<WorldRecord>();
-			List<WorldRecord> WorldRecords_Unloaded = new List<WorldRecord>();
+			if (tag.TryGet("World_Records", out TagCompound savedData)) {
+				List<WorldRecord> SavedWorldRecords = new List<WorldRecord>();
 
-			// Iterate through the saved data and store any records that are not loaded/active with the current mods
-			foreach (WorldRecord record in SavedWorldRecords) {
-				if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey))
-					WorldRecords_Unloaded.Add(record); // any saved records from an unloaded boss must be perserved
+				foreach (KeyValuePair<string, object> data in savedData) {
+					SavedWorldRecords.Add(WorldRecord.DESERIALIZER(data.Value as TagCompound)); // deserialize the saved world record data
+				}
+
+				// Iterate through the saved data and store any records that are not loaded/active with the current mods
+				foreach (WorldRecord record in SavedWorldRecords) {
+					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey))
+						WorldRecordsForWorld_Unloaded.Add(record); // any saved records from an unloaded boss must be perserved
+				}
+
+				// Iterate through the boss record keys to assign each record to where itshould be placed
+				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+					int index = SavedWorldRecords.FindIndex(x => x.bossKey == key);
+					WorldRecordsForWorld.Add(index == -1 ? new WorldRecord(key) : SavedWorldRecords[index]); // create a new entry if not in the list, otherwise use the saved data
+				}
 			}
-
-			// Iterate through the boss record keys to assign each record to where itshould be placed
-			foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-				int index = SavedWorldRecords.FindIndex(x => x.bossKey == key);
-				WorldRecords_Loaded.Add(index == -1 ? new WorldRecord(key) : SavedWorldRecords[index]); // create a new entry if not in the list, otherwise use the saved data
-			}
-
-			WorldRecordsForWorld = WorldRecords_Loaded.Concat(WorldRecords_Unloaded).ToList(); // preserve all data by concatenating the lists
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
 			foreach (var bossKey in HiddenBossesList) {

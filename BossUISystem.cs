@@ -163,6 +163,9 @@ namespace BossChecklist
 						if (NPCAssist.GetEntryInfo(BossChecklist.ClientConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
 							return true;
 
+						if (!Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllStoredRecords.ContainsKey(Main.ActiveWorldFileData.UniqueId.ToString()))
+							return true;
+
 						if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld is not List<BossRecord> records || records.Count == 0)
 							return true;
 
