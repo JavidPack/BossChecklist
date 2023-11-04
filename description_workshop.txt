@@ -1,22 +1,24 @@
-Boss Checklist lets you view a boss checklist while playing so you can progress through bosses as you can handle them. 
+[b]Bug reports in the workshop comments here will likely not be seen, come to our Discord or Github to report issues.[/b]
 
-Toggle the checklist with the hotkey assigned to it in the settings. Visit 'Settings->Controls->Keybindings' to set or check the current hotkey.
+[h2]Boss Checklist[/h2]
+Boss Checklist lets you view a checklist of all available bosses while playing so you can progress through them as you defeat them. Toggle the checklist with the hotkey assigned to it in the settings. Visit [u]'Settings->Controls->Keybindings'[/u] to check or set the current hotkey. If you would like a mod to be supported, please encourage the modder to add support to this mod.
 
-If you would like a mod to be supported, please encourage the modder to add support to this mod.
+[h2]Boss Log[/h2]
+The Boss Log is an enhancement of the traditional boss checklist and comes with many configurable features and customizations. Each entry on the checklist will have its own dedicated page with more information about the boss, including which mod it comes from, spawn information, spawn item crafting, loot table checklist and collectible item checklist. Modders are able to register their boss content to the log using Mod calls.
 
-Introducing the Boss Log, which enhances the traditional boss checklist experience with customization and features with configs.
-
-Improved boss checklist
-View more information about bosses
-Set new records for the bosses you fight
-Boss loot and collectible checklists
-
-Boss despawn messages display in chat
-Boss radar for bosses that are off-screen
-Certain items like treasure bags appear on the map
+[h2]Other Features[/h2]
+There are other optional features included as well, which can enhance boss fight gameplay. Features include:
+[list]
+    [*]Boss Log Records, including boss fight duration and hits taken
+    [*]Boss despawn messages displayed in chat
+    [*]Boss radar for bosses that are off-screen
+    [*]Specific boss loot appears on the fullscreen map and mini-map
+[/list]
 
 [h1]Links[/h1]
-Source code hosted on [url=github.com/JavidPack/BossChecklist]GitHub[/url], collaboration welcome
+Learn how to register your boss content and more using the [url=https://github.com/JavidPack/BossChecklist/wiki/%5B1.4.4%5D-Boss-Log-Entry-Mod-Call]GitHub Guide[/url]
+Source code hosted on [url=github.com/JavidPack/BossChecklist]GitHub[/url], collaboration welcome.
 For questions or suggestions, come to my Discord: [url=discord.gg/w8Hcwby][img]https://discordapp.com/api/guilds/276235094622994433/widget.png?style=shield[/img][/url]
-Bug reports in the comments here will not be seen, come to Discord or Github to report issues.
-[url=https://steamcommunity.com/profiles/76561198025715866/myworkshopfiles/?appid=1281930]Check out all my mods[/url]
+
+Check out [url=https://steamcommunity.com/profiles/76561198025715866/myworkshopfiles/?appid=1281930]Jopojelly's other mods[/url].
+Check out [url=https://steamcommunity.com/id/sheepishshepherd/myworkshopfiles/?appid=1281930]Sheepish Shepherd's other mods[/url].
