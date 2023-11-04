@@ -73,8 +73,8 @@ Mods: {
 			}
 
 			Records: {
-				NewRecord: Новый рекорд!
-				NewWorldRecord: Рекорд мира!
+				NewRecord: Новый персональный рекорд!
+				NewWorldRecord: Новый рекорд мира!
 				NoRecord: Нет рекорда
 				Unchallenged: Непобеждён
 				Kills: убийств
