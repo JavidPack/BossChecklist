@@ -166,14 +166,14 @@ namespace BossChecklist
 						if (!Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllStoredRecords.ContainsKey(Main.ActiveWorldFileData.UniqueId.ToString()))
 							return true;
 
-						if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld is not List<BossRecord> records || records.Count == 0)
+						if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld is not List<PersonalRecords> records || records.Count == 0)
 							return true;
 
-						PersonalStats personalrecords = records[recordIndex].stats;
+						PersonalRecords personalrecords = records[recordIndex];
 						
 						string debugText =
 							$"[#{entry.GetIndex}] {entry.DisplayName} [{recordIndex}]" +
-							$"\nTime: {PersonalStats.TimeConversion(personalrecords.Tracker_Duration)}" +
+							$"\nTime: {PersonalRecords.TimeConversion(personalrecords.Tracker_Duration)}" +
 							$"\nTimes Hit: {personalrecords.Tracker_HitsTaken}" +
 							$"\nDeaths: {personalrecords.Tracker_Deaths}";
 						Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);

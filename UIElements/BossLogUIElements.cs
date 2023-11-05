@@ -900,26 +900,26 @@ namespace BossChecklist.UIElements
 
 			private string[] GetValue(SubCategory sub) {
 				// Defaults to Previous Attempt, the subcategory users will first see
-				PersonalStats stats = BossUISystem.Instance.BossLog.GetPlayerRecords;
+				PersonalRecords stats = BossUISystem.Instance.BossLog.GetPlayerRecords;
 				string unique = stats.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : $"#{stats.attempts}";
-				string duration = PersonalStats.TimeConversion(stats.durationPrev);
-				string hitsTaken = PersonalStats.HitCount(stats.hitsTakenPrev);
+				string duration = PersonalRecords.TimeConversion(stats.durationPrev);
+				string hitsTaken = PersonalRecords.HitCount(stats.hitsTakenPrev);
 
 				if (sub == SubCategory.PersonalBest) {
 					unique = stats.GetKDR();
-					duration = PersonalStats.TimeConversion(stats.durationBest);
-					hitsTaken = PersonalStats.HitCount(stats.hitsTakenBest);
+					duration = PersonalRecords.TimeConversion(stats.durationBest);
+					hitsTaken = PersonalRecords.HitCount(stats.hitsTakenBest);
 				}
 				else if (sub == SubCategory.FirstVictory) {
 					unique = stats.PlayTimeToString();
-					duration = PersonalStats.TimeConversion(stats.durationFirst);
-					hitsTaken = PersonalStats.HitCount(stats.hitsTakenFirst);
+					duration = PersonalRecords.TimeConversion(stats.durationFirst);
+					hitsTaken = PersonalRecords.HitCount(stats.hitsTakenFirst);
 				}
 				else if (sub == SubCategory.WorldRecord) {
-					WorldStats worldStats = BossUISystem.Instance.BossLog.GetWorldRecords;
+					WorldRecord worldStats = BossUISystem.Instance.BossLog.GetWorldRecords;
 					unique = worldStats.GetGlobalKDR();
-					duration = PersonalStats.TimeConversion(worldStats.durationWorld);
-					hitsTaken = PersonalStats.HitCount(worldStats.hitsTakenWorld);
+					duration = PersonalRecords.TimeConversion(worldStats.durationWorld);
+					hitsTaken = PersonalRecords.HitCount(worldStats.hitsTakenWorld);
 				}
 
 				return new string[] {
@@ -950,7 +950,7 @@ namespace BossChecklist.UIElements
 					uniqueAch = new Point(7, 10);
 				}
 				else if (sub == SubCategory.WorldRecord) {
-					WorldStats worldStats = BossUISystem.Instance.BossLog.GetWorldRecords;
+					WorldRecord worldStats = BossUISystem.Instance.BossLog.GetWorldRecords;
 					uniqueAch = worldStats.totalKills >= worldStats.totalDeaths ? new Point(4, 10) : new Point(4, 8);
 				}
 

@@ -23,13 +23,13 @@ namespace BossChecklist
 		// AllStored records contains every player record from every world
 		// RecordsForWorld is a reference to the specfic player records of the current world
 		// We split up AllStoredRecords with 'Main.ActiveWorldFileData.UniqueId.ToString()' as keys
-		public Dictionary<string, List<BossRecord>> AllStoredRecords;
+		public Dictionary<string, List<PersonalRecords>> AllStoredRecords;
 
 		/// <summary>
 		/// Fetches the list of records assigned to the current world from the list of all stored records.
 		/// Do NOT reference when on the game menu.
 		/// </summary>
-		public List<BossRecord> RecordsForWorld => AllStoredRecords[Main.ActiveWorldFileData.UniqueId.ToString()];
+		public List<PersonalRecords> RecordsForWorld => AllStoredRecords[Main.ActiveWorldFileData.UniqueId.ToString()];
 		public List<ItemDefinition> BossItemsCollected;
 
 		public const int RecordState_NoRecord = 0;
@@ -54,7 +54,7 @@ namespace BossChecklist
 			hasOpenedTheBossLog = false;
 			enteredWorldReset = false;
 
-			AllStoredRecords = new Dictionary<string, List<BossRecord>>();
+			AllStoredRecords = new Dictionary<string, List<PersonalRecords>>();
 			BossItemsCollected = new List<ItemDefinition>();
 
 			hasNewRecord = Array.Empty<bool>();
@@ -63,10 +63,10 @@ namespace BossChecklist
 		public override void SaveData(TagCompound tag) {
 			// We cannot save dictionaries, so we'll convert it to a TagCompound instead
 			TagCompound Record_Data = new TagCompound();
-			foreach (KeyValuePair<string, List<BossRecord>> data in AllStoredRecords) {
+			foreach (KeyValuePair<string, List<PersonalRecords>> data in AllStoredRecords) {
 				TagCompound Record_PerWorld = new TagCompound(); // new list of records for each world
-				foreach (BossRecord record in data.Value) {
-					Record_PerWorld.Add(record.bossKey, record.SerializeData()); // serialize the boss key and records (for each world)
+				foreach (PersonalRecords record in data.Value) {
+					Record_PerWorld.Add(record.BossKey, record.SerializeData()); // serialize the boss key and records (for each world)
 				}
 				Record_Data.Add(data.Key, Record_PerWorld);
 			}
@@ -84,10 +84,10 @@ namespace BossChecklist
 				AllStoredRecords.Clear();
 				// foreach unique world key
 				foreach (KeyValuePair<string, object> data in savedData) {
-					List<BossRecord> RecordsByWorldKey = new List<BossRecord>();
+					List<PersonalRecords> RecordsByWorldKey = new List<PersonalRecords>();
 					// foreach 
 					foreach (KeyValuePair<string, object> listofrecords in data.Value as TagCompound) {
-						RecordsByWorldKey.Add(BossRecord.DESERIALIZER(listofrecords.Value as TagCompound)); // deserialize the saved record data
+						RecordsByWorldKey.Add(PersonalRecords.DESERIALIZER(listofrecords.Value as TagCompound)); // deserialize the saved record data
 					}
 					AllStoredRecords.Add(data.Key, RecordsByWorldKey); // add each world key to all stored records
 				}
@@ -101,20 +101,20 @@ namespace BossChecklist
 			// Upon entering a world, determine if records already exist for a player and copy them into 'RecordsForWorld'
 			// If personal records do not exist for this world, create a new entry for the player to use
 			string WorldID = Main.ActiveWorldFileData.UniqueId.ToString();
-			if (AllStoredRecords.TryGetValue(WorldID, out List<BossRecord> tempRecords)) {
-				List<BossRecord> unloadedRecords = new List<BossRecord>();
-				List<BossRecord> sortedRecords = new List<BossRecord>();
-				foreach (BossRecord record in tempRecords) {
-					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey)) {
+			if (AllStoredRecords.TryGetValue(WorldID, out List<PersonalRecords> tempRecords)) {
+				List<PersonalRecords> unloadedRecords = new List<PersonalRecords>();
+				List<PersonalRecords> sortedRecords = new List<PersonalRecords>();
+				foreach (PersonalRecords record in tempRecords) {
+					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.BossKey)) {
 						unloadedRecords.Add(record); // any saved records from an unloaded boss must be perserved
 					}
 				}
 
 				// iterate through the record keys to keep the data in order
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-					int index = tempRecords.FindIndex(x => x.bossKey == key);
+					int index = tempRecords.FindIndex(x => x.BossKey == key);
 					if (index == -1) {
-						sortedRecords.Add(new BossRecord(key)); // if not in the list, make a new entry
+						sortedRecords.Add(new PersonalRecords(key)); // if not in the list, make a new entry
 					}
 					else {
 						sortedRecords.Add(tempRecords[index]);
@@ -124,9 +124,9 @@ namespace BossChecklist
 				AllStoredRecords[WorldID] = sortedRecords.Concat(unloadedRecords).ToList();
 			}
 			else {
-				List<BossRecord> NewRecordListForWorld = new List<BossRecord>();
+				List<PersonalRecords> NewRecordListForWorld = new List<PersonalRecords>();
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-					NewRecordListForWorld.Add(new BossRecord(key));
+					NewRecordListForWorld.Add(new PersonalRecords(key));
 				}
 				AllStoredRecords.Add(WorldID, NewRecordListForWorld); // A new entry will be added to AllStoredRecords so that it can be saved when needed
 			}
@@ -143,10 +143,10 @@ namespace BossChecklist
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.SendPersonalBestRecordsToServer);
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-					int index = RecordsForWorld.FindIndex(x => x.bossKey == key);
+					int index = RecordsForWorld.FindIndex(x => x.BossKey == key);
 					if (index != -1) {
-						packet.Write(RecordsForWorld[index].stats.durationBest);
-						packet.Write(RecordsForWorld[index].stats.hitsTakenBest);
+						packet.Write(RecordsForWorld[index].durationBest);
+						packet.Write(RecordsForWorld[index].hitsTakenBest);
 					}
 				}
 				packet.Send(); // Multiplayer client --> Server
@@ -170,10 +170,10 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
-			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
-			foreach (BossRecord record in EntryRecords) {
-				if (record.stats.IsCurrentlyBeingTracked)
-					record.stats.Tracker_Duration++;
+			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			foreach (PersonalRecords record in EntryRecords) {
+				if (record.IsCurrentlyBeingTracked)
+					record.Tracker_Duration++;
 			}
 		}
 
@@ -185,10 +185,10 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
-			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
-			foreach (BossRecord record in EntryRecords) {
-				if (record.stats.IsCurrentlyBeingTracked)
-					record.stats.Tracker_HitsTaken++;
+			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			foreach (PersonalRecords record in EntryRecords) {
+				if (record.IsCurrentlyBeingTracked)
+					record.Tracker_HitsTaken++;
 			}
 		}
 
@@ -200,10 +200,10 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
-			List<BossRecord> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
-			foreach (BossRecord record in EntryRecords) {
-				if (record.stats.IsCurrentlyBeingTracked)
-					record.stats.Tracker_Deaths++;
+			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			foreach (PersonalRecords record in EntryRecords) {
+				if (record.IsCurrentlyBeingTracked)
+					record.Tracker_Deaths++;
 			}
 		}
 
@@ -216,14 +216,13 @@ namespace BossChecklist
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {
-				foreach (BossRecord record in BossChecklist.ServerCollectedRecords[Player.whoAmI]) {
-					BossChecklist.bossTracker.FindEntryFromKey(record.bossKey).IsRecordIndexed(out int recordIndex);
-					record.stats.StopTracking_Server(Player.whoAmI, false, false);
+				foreach (PersonalRecords record in BossChecklist.ServerCollectedRecords[Player.whoAmI]) {
+					record.StopTracking_Server(Player.whoAmI, false, false);
 				}
 			}
 			else {
-				foreach (BossRecord record in RecordsForWorld) {
-					record.stats.StopTracking(false, false); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
+				foreach (PersonalRecords record in RecordsForWorld) {
+					record.StopTracking(false, false); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
 				}
 			}
 		}

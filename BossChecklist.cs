@@ -23,7 +23,7 @@ namespace BossChecklist
 		internal static ClientConfiguration ClientConfig;
 		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
-		public static List<BossRecord>[] ServerCollectedRecords;
+		public static List<PersonalRecords>[] ServerCollectedRecords;
 
 		public BossChecklist() {
 		}
@@ -343,22 +343,22 @@ namespace BossChecklist
 					// Multiplayer client --> Server (always)
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
 					// ServerCollectedRecords is already sorted properly using BossTracker keys and can recieve data the order it is sent in
-					foreach (BossRecord serverRecord in ServerCollectedRecords[whoAmI]) {
-						serverRecord.stats.durationBest = reader.ReadInt32();
-						serverRecord.stats.hitsTakenBest = reader.ReadInt32();
+					foreach (PersonalRecords serverRecord in ServerCollectedRecords[whoAmI]) {
+						serverRecord.durationBest = reader.ReadInt32();
+						serverRecord.hitsTakenBest = reader.ReadInt32();
 					}
 					break;
 				case PacketMessageType.UpdateRecordsFromServerToPlayer:
 					// Server --> Multiplayer client (always)
 					int recordIndex = reader.ReadInt32();
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.NetReceiveRecords(reader);
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].NetReceiveRecords(reader);
 					break;
 				case PacketMessageType.RequestWorldRecords:
 					// Multiplayer client --> Server
 					ModPacket packet = GetPacket();
 					packet.Write((byte)PacketMessageType.SendWorldRecordsFromServerToPlayer);
 					foreach (string key in bossTracker.BossRecordKeys) {
-						int index = WorldAssist.WorldRecordsForWorld.FindIndex(x => x.bossKey == key);
+						int index = WorldAssist.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
 						if (index != -1) {
 							packet.Write(key);
 							WorldAssist.WorldRecordsForWorld[index].NetSend(packet);
@@ -379,18 +379,18 @@ namespace BossChecklist
 				case PacketMessageType.UpdateWorldRecordsToAllPlayers:
 					// Server --> Multiplayer client
 					recordIndex = reader.ReadInt32();
-					WorldAssist.WorldRecordsForWorld[recordIndex].stats.NetReceiveWorldRecords(reader);
+					WorldAssist.WorldRecordsForWorld[recordIndex].NetReceiveWorldRecords(reader);
 					break;
 				case PacketMessageType.ResetPlayerRecordForServer:
 					// Multiplayer client --> Server
 					recordIndex = reader.ReadInt32();
 					NetRecordID resetType = (NetRecordID)reader.ReadInt32();
-					ServerCollectedRecords[whoAmI][recordIndex].stats.ResetStats_Server(resetType);
+					ServerCollectedRecords[whoAmI][recordIndex].ResetStats_Server(resetType);
 					break;
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats.StartTracking();
+					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].StartTracking();
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");

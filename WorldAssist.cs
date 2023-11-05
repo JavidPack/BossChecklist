@@ -139,11 +139,11 @@ namespace BossChecklist
 			// All world record data, loaded or not, needs to be serialized and saved
 			TagCompound WorldRecordTag = new TagCompound();
 			foreach (WorldRecord record in WorldRecordsForWorld) {
-				WorldRecordTag.Add(record.bossKey, record.SerializeData());
+				WorldRecordTag.Add(record.BossKey, record.SerializeData());
 			}
 
 			foreach (WorldRecord record in WorldRecordsForWorld_Unloaded) {
-				WorldRecordTag.Add(record.bossKey, record.SerializeData());
+				WorldRecordTag.Add(record.BossKey, record.SerializeData());
 			}
 
 			tag["World_Records"] = WorldRecordTag;
@@ -159,13 +159,13 @@ namespace BossChecklist
 
 				// Iterate through the saved data and store any records that are not loaded/active with the current mods
 				foreach (WorldRecord record in SavedWorldRecords) {
-					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.bossKey))
+					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.BossKey))
 						WorldRecordsForWorld_Unloaded.Add(record); // any saved records from an unloaded boss must be perserved
 				}
 
 				// Iterate through the boss record keys to assign each record to where itshould be placed
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-					int index = SavedWorldRecords.FindIndex(x => x.bossKey == key);
+					int index = SavedWorldRecords.FindIndex(x => x.BossKey == key);
 					WorldRecordsForWorld.Add(index == -1 ? new WorldRecord(key) : SavedWorldRecords[index]); // create a new entry if not in the list, otherwise use the saved data
 				}
 			}
@@ -387,17 +387,17 @@ namespace BossChecklist
 							continue;
 
 						if (Main.netMode == NetmodeID.Server) {
-							PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+							PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
 							serverRecords.StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
 						}
 						else {
-							BossRecord bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
-							bossRecord.stats.StopTracking(false, npc.playerInteraction[player.whoAmI]);
+							PersonalRecords bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
+							bossRecord.StopTracking(false, npc.playerInteraction[player.whoAmI]);
 						}
 					}
 
 					if (Main.netMode == NetmodeID.Server)
-						WorldRecordsForWorld[recordIndex].stats.UpdateGlobalDeaths(npc.playerInteraction.GetTrueIndexes());
+						WorldRecordsForWorld[recordIndex].UpdateGlobalDeaths(npc.playerInteraction.GetTrueIndexes());
 				}
 			}
 		}

@@ -319,11 +319,11 @@ namespace BossChecklist
 
 			// The server must populate for collected records after all entries have been counted and sorted.
 			if (Main.netMode == NetmodeID.Server) {
-				BossChecklist.ServerCollectedRecords = new List<BossRecord>[Main.maxPlayers];
+				BossChecklist.ServerCollectedRecords = new List<PersonalRecords>[Main.maxPlayers];
 				for (int i = 0; i < Main.maxPlayers; i++) {
-					BossChecklist.ServerCollectedRecords[i] = new List<BossRecord>();
+					BossChecklist.ServerCollectedRecords[i] = new List<PersonalRecords>();
 					foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
-						BossChecklist.ServerCollectedRecords[i].Add(new BossRecord(key));
+						BossChecklist.ServerCollectedRecords[i].Add(new PersonalRecords(key));
 					}
 				}
 			}

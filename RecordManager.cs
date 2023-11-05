@@ -28,102 +28,6 @@ namespace BossChecklist
 	}
 
 	/// <summary>
-	/// Record container for player-based records. All personal records should be stored here and saved to a ModPlayer.
-	/// </summary>
-	public class BossRecord : TagSerializable {
-		internal string bossKey;
-		internal PersonalStats stats;
-
-		public static Func<TagCompound, BossRecord> DESERIALIZER = tag => new BossRecord(tag);
-
-		private BossRecord(TagCompound tag) {
-			bossKey = tag.Get<string>(nameof(bossKey));
-			stats = PersonalStats.DESERIALIZER(tag.Get<TagCompound>(nameof(stats)));
-		}
-
-		public BossRecord(string bossKey) {
-			this.bossKey = bossKey;
-			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out int recordIndex);
-			this.stats = new PersonalStats(recordIndex);
-		}
-
-		public override string ToString() => $"Personal Records for: #{BossChecklist.bossTracker.FindEntryFromKey(bossKey).GetIndex} '{bossKey}'";
-
-		public TagCompound SerializeData() {
-			return new TagCompound {
-				{ nameof(bossKey), bossKey },
-				{ nameof(stats), stats.SerializeData() }
-			};
-		}
-	}
-
-	/// <summary>
-	/// Record container for world-based records. All world records should be stored within this class and saved to a ModSystem.
-	/// </summary>
-	public class WorldRecord : TagSerializable {
-		internal string bossKey;
-		internal WorldStats stats;
-
-		public static Func<TagCompound, WorldRecord> DESERIALIZER = tag => new WorldRecord(tag);
-
-		private WorldRecord(TagCompound tag) {
-			bossKey = tag.Get<string>(nameof(bossKey));
-			stats = WorldStats.DESERIALIZER(tag.Get<TagCompound>(nameof(stats)));
-		}
-
-		public WorldRecord(string bossKey) {
-			this.bossKey = bossKey;
-			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out int recordIndex);
-			this.stats = new WorldStats(recordIndex);
-		}
-
-		public TagCompound SerializeData() {
-			return new TagCompound {
-				{ nameof(bossKey), bossKey },
-				{ nameof(stats), stats.SerializeData() }
-			};
-		}
-
-		internal void NetSend(BinaryWriter writer) {
-			writer.Write(stats.totalKills);
-			writer.Write(stats.totalDeaths);
-			writer.Write(stats.durationWorld);
-			writer.Write(stats.hitsTakenWorld);
-
-			writer.Write(stats.durationHolder.Count);
-			foreach (string name in stats.durationHolder) {
-				writer.Write(name);
-			}
-
-			writer.Write(stats.hitsTakenHolder.Count);
-			foreach (string name in stats.hitsTakenHolder) {
-				writer.Write(name);
-			}
-		}
-
-		internal void NetRecieve(BinaryReader reader) {
-			stats.totalKills = reader.ReadInt32();
-			stats.totalDeaths = reader.ReadInt32();
-			stats.durationWorld = reader.ReadInt32();
-			stats.hitsTakenWorld = reader.ReadInt32();
-
-			int durationHolderCount = reader.ReadInt32();
-			stats.durationHolder.Clear();
-			for (int i = 0; i < durationHolderCount; i++) {
-				stats.durationHolder.Add(reader.ReadString());
-			}
-
-			int hitsTakenHolderCount = reader.ReadInt32();
-			stats.hitsTakenHolder.Clear();
-			for (int i = 0; i < hitsTakenHolderCount; i++) {
-				stats.hitsTakenHolder.Add(reader.ReadString());
-			}
-		}
-
-		public override string ToString() => $"World Records for: #{BossChecklist.bossTracker.FindEntryFromKey(bossKey).GetIndex} '{bossKey}'";
-	}
-
-	/// <summary>
 	/// Players are able to set personal records for boss fights.
 	/// This will hold the statistics and records of those fights, including the player's previous fight, first victory, and personal best.
 	/// <para>[Statistics]</para>
@@ -139,7 +43,7 @@ namespace BossChecklist
 	/// <item> <term>HitsTaken</term> <description>The amount of times a player has taken damage while fighting the boss.</description> </item>
 	/// </list>
 	/// </summary>
-	public class PersonalStats : TagSerializable {
+	public class PersonalRecords : TagSerializable {
 		/// Statistics
 		public int kills;
 		public int deaths;
@@ -162,7 +66,9 @@ namespace BossChecklist
 		public int hitsTakenPrevBest = -1;
 		public int hitsTakenFirst = -1;
 
+		private readonly string bossKey = "";
 		private readonly int recordIndex = -1;
+		public string BossKey => bossKey;
 		public int RecordIndex => recordIndex;
 
 		public Point GetStats(int category) {
@@ -177,13 +83,14 @@ namespace BossChecklist
 		public bool UnlockedFirstVictory => playTimeFirst > 0; // unlocked in log once a play time is tracked
 		public bool UnlockedPersonalBest => kills >= 2; // unlocked in log once the boss has been killed at least twice
 
-		public static Func<TagCompound, PersonalStats> DESERIALIZER = tag => new PersonalStats(tag);
+		public static Func<TagCompound, PersonalRecords> DESERIALIZER = tag => new PersonalRecords(tag);
 
-		public PersonalStats(int recordIndex) {
-			this.recordIndex = recordIndex;
+		public PersonalRecords(string bossKey) {
+			this.bossKey = bossKey;
+			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out this.recordIndex);
 		}
 
-		private PersonalStats(TagCompound tag) {
+		private PersonalRecords(TagCompound tag) {
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
 			attempts = tag.Get<int>(nameof(attempts));
@@ -617,7 +524,7 @@ namespace BossChecklist
 	/// In multiplayer, players are able to set world records against other players.
 	/// This will contain global kills and deaths as well as the best record's value and holder.
 	/// </summary>
-	public class WorldStats : TagSerializable {
+	public class WorldRecord : TagSerializable {
 		public int totalKills;
 		public int totalDeaths;
 
@@ -627,19 +534,22 @@ namespace BossChecklist
 		public List<string> hitsTakenHolder = new List<string> { };
 		public int hitsTakenWorld = -1;
 
+		private readonly string bossKey = "";
 		private readonly int recordIndex = -1;
+		public string BossKey => bossKey;
 		public int RecordIndex => recordIndex;
 
 		public bool DurationNotRecorded => durationHolder.Count == 0 || durationWorld == -1;
 		public bool HitsTakenNotRecorded => hitsTakenHolder.Count == 0 || hitsTakenWorld == -1;
 
-		public static Func<TagCompound, WorldStats> DESERIALIZER = tag => new WorldStats(tag);
+		public static Func<TagCompound, WorldRecord> DESERIALIZER = tag => new WorldRecord(tag);
 
-		public WorldStats(int recordIndex) {
-			this.recordIndex = recordIndex;
+		public WorldRecord(string bossKey) {
+			this.bossKey = bossKey;
+			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out this.recordIndex);
 		}
 
-		private WorldStats(TagCompound tag) {
+		private WorldRecord(TagCompound tag) {
 			totalKills = tag.Get<int>(nameof(totalKills));
 			totalDeaths = tag.Get<int>(nameof(totalDeaths));
 
@@ -674,7 +584,7 @@ namespace BossChecklist
 				if (!player.active || !playersInteracted.Contains(player.whoAmI))
 					continue;
 
-				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex].stats;
+				PersonalRecords playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex];
 				totalDeaths += playerRecords.Tracker_Deaths;
 			}
 
@@ -710,7 +620,7 @@ namespace BossChecklist
 				if (!player.active || !playersInteracted.Contains(player.whoAmI))
 					continue;
 
-				PersonalStats playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex].stats;
+				PersonalRecords playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex];
 				totalDeaths += playerRecords.Tracker_Deaths;
 
 				bool Beaten_Duration = playerRecords.Tracker_Duration < durationWorld;
@@ -759,6 +669,44 @@ namespace BossChecklist
 				NetSendWorldRecords(packet, netRecord);
 				packet.Write(WorldRecordAchieved_Duration.Contains(player.whoAmI) || WorldRecordAchieved_HitsTaken.Contains(player.whoAmI));
 				packet.Send(player.whoAmI);
+			}
+		}
+
+
+
+		internal void NetSend(BinaryWriter writer) {
+			writer.Write(totalKills);
+			writer.Write(totalDeaths);
+			writer.Write(durationWorld);
+			writer.Write(hitsTakenWorld);
+
+			writer.Write(durationHolder.Count);
+			foreach (string name in durationHolder) {
+				writer.Write(name);
+			}
+
+			writer.Write(hitsTakenHolder.Count);
+			foreach (string name in hitsTakenHolder) {
+				writer.Write(name);
+			}
+		}
+
+		internal void NetRecieve(BinaryReader reader) {
+			totalKills = reader.ReadInt32();
+			totalDeaths = reader.ReadInt32();
+			durationWorld = reader.ReadInt32();
+			hitsTakenWorld = reader.ReadInt32();
+
+			int durationHolderCount = reader.ReadInt32();
+			durationHolder.Clear();
+			for (int i = 0; i < durationHolderCount; i++) {
+				durationHolder.Add(reader.ReadString());
+			}
+
+			int hitsTakenHolderCount = reader.ReadInt32();
+			hitsTakenHolder.Clear();
+			for (int i = 0; i < hitsTakenHolderCount; i++) {
+				hitsTakenHolder.Add(reader.ReadString());
 			}
 		}
 

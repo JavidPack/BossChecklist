@@ -66,8 +66,8 @@ namespace BossChecklist
 		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on an entry page.
 		/// </summary>
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
-		public PersonalStats GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats : null;
-		public WorldStats GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? WorldAssist.WorldRecordsForWorld[recordIndex].stats : null;
+		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex] : null;
+		public WorldRecord GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? WorldAssist.WorldRecordsForWorld[recordIndex] : null;
 
 		// Navigation
 		public NavigationalButton NextPage;
@@ -1482,8 +1482,8 @@ namespace BossChecklist
 							if (CompareState != SubCategory.WorldRecord)
 								compValue = i == 2 ? GetPlayerRecords.GetStats((int)CompareState).X : GetPlayerRecords.GetStats((int)CompareState).Y;
 
-							string compValueString = i == 2 ? PersonalStats.TimeConversion(compValue) : PersonalStats.HitCount(compValue);
-							string diffValue = i == 2 ? PersonalStats.TimeConversionDiff(recordValue, compValue, out Color color) : PersonalStats.HitCountDiff(recordValue, compValue, out color);
+							string compValueString = i == 2 ? PersonalRecords.TimeConversion(compValue) : PersonalRecords.HitCount(compValue);
+							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(recordValue, compValue, out Color color) : PersonalRecords.HitCountDiff(recordValue, compValue, out color);
 							string path = $"{LangLog}.Records.Category.{CompareState}";
 							trophy = new NavigationalButton(RequestVanillaTexture($"Images/Item_{ItemID.GolfTrophySilver}"), false) {
 								Id = "CompareStat",
@@ -1492,8 +1492,8 @@ namespace BossChecklist
 							};
 						}
 						else if (RecordSubCategory == SubCategory.PersonalBest && ((i == 2 && GetPlayerRecords.durationPrevBest != -1) || (i == 3 && GetPlayerRecords.hitsTakenPrevBest != -1))) {
-							string compValueString = i == 2 ? PersonalStats.TimeConversion(GetPlayerRecords.durationPrevBest) : PersonalStats.HitCount(GetPlayerRecords.hitsTakenPrevBest);
-							string diffValue = i == 2 ? PersonalStats.TimeConversionDiff(GetPlayerRecords.durationBest, GetPlayerRecords.durationPrevBest, out Color color) : PersonalStats.HitCountDiff(GetPlayerRecords.hitsTakenBest, GetPlayerRecords.hitsTakenPrevBest, out color);
+							string compValueString = i == 2 ? PersonalRecords.TimeConversion(GetPlayerRecords.durationPrevBest) : PersonalRecords.HitCount(GetPlayerRecords.hitsTakenPrevBest);
+							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(GetPlayerRecords.durationBest, GetPlayerRecords.durationPrevBest, out Color color) : PersonalRecords.HitCountDiff(GetPlayerRecords.hitsTakenBest, GetPlayerRecords.hitsTakenPrevBest, out color);
 							string path = $"{LangLog}.Records.PreviousBest";
 							trophy = new NavigationalButton(RequestVanillaTexture($"Images/Item_{ItemID.GolfTrophyBronze}"), false) {
 								hoverText = $"[c/{Color.Wheat.Hex3()}:{Language.GetTextValue(path)}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",

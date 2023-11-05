@@ -28,11 +28,11 @@ namespace BossChecklist
 			foreach (Player player in Main.player) {
 				if (player.active) {
 					if (Main.netMode == NetmodeID.Server) {
-						PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+						PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
 						serverRecords.StartTracking_Server(player.whoAmI);
 					}
 					else {
-						PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+						PersonalRecords bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
 						bossrecord.StartTracking(); // start tracking for active players
 					}
 				}
@@ -60,12 +60,12 @@ namespace BossChecklist
 
 				bool interaction = npc.playerInteraction[player.whoAmI];
 				if (Main.netMode == NetmodeID.Server) {
-					PersonalStats serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].stats;
+					PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
 					if (serverRecords.StopTracking_Server(player.whoAmI, interaction, interaction))
 						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
 				}
 				else {
-					PersonalStats bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex].stats;
+					PersonalRecords bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
 					bossrecord.StopTracking(interaction && BossChecklist.ClientConfig.AllowNewRecords, interaction);
 				}
 			}
@@ -73,7 +73,7 @@ namespace BossChecklist
 			// ... check to see if it is a world record and update every player's logs if so
 			if (newPersonalBestOnServer) {
 				Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
-				WorldAssist.WorldRecordsForWorld[recordIndex].stats.CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
+				WorldAssist.WorldRecordsForWorld[recordIndex].CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
 			}
 		}
 
