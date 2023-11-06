@@ -105,20 +105,14 @@ namespace BossChecklist
 				List<PersonalRecords> unloadedRecords = new List<PersonalRecords>();
 				List<PersonalRecords> sortedRecords = new List<PersonalRecords>();
 				foreach (PersonalRecords record in tempRecords) {
-					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.BossKey)) {
+					if (!BossChecklist.bossTracker.BossRecordKeys.Contains(record.BossKey))
 						unloadedRecords.Add(record); // any saved records from an unloaded boss must be perserved
-					}
 				}
 
 				// iterate through the record keys to keep the data in order
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
 					int index = tempRecords.FindIndex(x => x.BossKey == key);
-					if (index == -1) {
-						sortedRecords.Add(new PersonalRecords(key)); // if not in the list, make a new entry
-					}
-					else {
-						sortedRecords.Add(tempRecords[index]);
-					}
+					sortedRecords.Add(index == -1 ? new PersonalRecords(key) : tempRecords[index]);
 				}
 
 				AllStoredRecords[WorldID] = sortedRecords.Concat(unloadedRecords).ToList();
@@ -133,9 +127,8 @@ namespace BossChecklist
 
 			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
-			}
 
 			// When a player joins a world, their Personal Best records will need to be sent to the server for new Personal Best comparing
 			// The server doesn't need player records from every world, just the current one
