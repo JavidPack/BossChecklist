@@ -66,7 +66,8 @@ namespace BossChecklist
 			foreach (KeyValuePair<string, List<PersonalRecords>> data in AllStoredRecords) {
 				TagCompound Record_PerWorld = new TagCompound(); // new list of records for each world
 				foreach (PersonalRecords record in data.Value) {
-					Record_PerWorld.Add(record.BossKey, record.SerializeData()); // serialize the boss key and records (for each world)
+					if (record.CanBeSaved)
+						Record_PerWorld.Add(record.BossKey, record.SerializeData()); // serialize the boss key and records (for each world)
 				}
 				Record_Data.Add(data.Key, Record_PerWorld);
 			}

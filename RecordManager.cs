@@ -70,6 +70,8 @@ namespace BossChecklist
 		public string BossKey => bossKey;
 		public int RecordIndex => recordIndex;
 
+		public bool CanBeSaved => attempts > 0;
+
 		public Point GetStats(int category) {
 			return category switch {
 				(int)SubCategory.PreviousAttempt => new Point(durationPrev, hitsTakenPrev),
@@ -90,6 +92,8 @@ namespace BossChecklist
 		}
 
 		private PersonalRecords(TagCompound tag) {
+			bossKey = tag.Get<string>(nameof(BossKey));
+
 			kills = tag.Get<int>(nameof(kills));
 			deaths = tag.Get<int>(nameof(deaths));
 			attempts = tag.Get<int>(nameof(attempts));
@@ -108,6 +112,8 @@ namespace BossChecklist
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
+				{ nameof(BossKey), BossKey },
+
 				{ nameof(kills), kills },
 				{ nameof(deaths), deaths },
 				{ nameof(attempts), attempts },
@@ -537,6 +543,8 @@ namespace BossChecklist
 		private readonly int recordIndex = -1;
 		public string BossKey => bossKey;
 		public int RecordIndex => recordIndex;
+		
+		public bool CanBeSaved => totalKills > 0 || totalDeaths > 0;
 
 		public bool DurationNotRecorded => durationHolder.Count == 0 || durationWorld == -1;
 		public bool HitsTakenNotRecorded => hitsTakenHolder.Count == 0 || hitsTakenWorld == -1;
@@ -549,6 +557,8 @@ namespace BossChecklist
 		}
 
 		private WorldRecord(TagCompound tag) {
+			bossKey = tag.Get<string>(nameof(BossKey));
+
 			totalKills = tag.Get<int>(nameof(totalKills));
 			totalDeaths = tag.Get<int>(nameof(totalDeaths));
 
@@ -561,6 +571,8 @@ namespace BossChecklist
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
+				{ nameof(BossKey), BossKey },
+
 				{ nameof(totalKills), totalKills },
 				{ nameof(totalDeaths), totalDeaths },
 

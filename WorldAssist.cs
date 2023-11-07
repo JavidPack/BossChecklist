@@ -139,12 +139,11 @@ namespace BossChecklist
 			// All world record data, loaded or not, needs to be serialized and saved
 			TagCompound WorldRecordTag = new TagCompound();
 			foreach (WorldRecord record in WorldRecordsForWorld) {
-				WorldRecordTag.Add(record.BossKey, record.SerializeData());
+				if (record.CanBeSaved)
+					WorldRecordTag.Add(record.BossKey, record.SerializeData());
 			}
 
-			foreach (WorldRecord record in WorldRecordsForWorld_Unloaded) {
-				WorldRecordTag.Add(record.BossKey, record.SerializeData());
-			}
+			WorldRecordsForWorld_Unloaded.ForEach(record => WorldRecordTag.Add(record.BossKey, record.SerializeData()));
 
 			tag["World_Records"] = WorldRecordTag;
 		}
