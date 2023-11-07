@@ -18,6 +18,7 @@ namespace BossChecklist
 		public bool hasOpenedTheBossLog;
 		// When players jon a different world, the boss log PageNum should reset back to its original state
 		public bool enteredWorldReset;
+		public bool PlayerRecordsInitialized;
 
 		// Records are bound to characters, but records are independent between worlds as well.
 		// AllStored records contains every player record from every world
@@ -125,6 +126,7 @@ namespace BossChecklist
 				}
 				AllStoredRecords.Add(WorldID, NewRecordListForWorld); // A new entry will be added to AllStoredRecords so that it can be saved when needed
 			}
+			PlayerRecordsInitialized = true;
 
 			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 

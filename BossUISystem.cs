@@ -163,13 +163,11 @@ namespace BossChecklist
 						if (NPCAssist.GetEntryInfo(BossChecklist.ClientConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
 							return true;
 
-						if (!Main.LocalPlayer.GetModPlayer<PlayerAssist>().AllStoredRecords.ContainsKey(Main.ActiveWorldFileData.UniqueId.ToString()))
+						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						if (!modplayer.PlayerRecordsInitialized)
 							return true;
 
-						if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld is not List<PersonalRecords> records || records.Count == 0)
-							return true;
-
-						PersonalRecords personalrecords = records[recordIndex];
+						PersonalRecords personalrecords = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
 						
 						string debugText =
 							$"[#{entry.GetIndex}] {entry.DisplayName} [{recordIndex}]" +
