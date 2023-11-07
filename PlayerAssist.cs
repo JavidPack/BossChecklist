@@ -54,6 +54,7 @@ namespace BossChecklist
 		public override void Initialize() {
 			hasOpenedTheBossLog = false;
 			enteredWorldReset = false;
+			PlayerRecordsInitialized = false;
 
 			AllStoredRecords = new Dictionary<string, List<PersonalRecords>>();
 			BossItemsCollected = new List<ItemDefinition>();
