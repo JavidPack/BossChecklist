@@ -66,9 +66,8 @@ namespace BossChecklist
 		public int hitsTakenFirst = -1;
 
 		private readonly string bossKey = "";
-		private readonly int recordIndex = -1;
 		public string BossKey => bossKey;
-		public int RecordIndex => recordIndex;
+		public int RecordIndex => BossChecklist.bossTracker.BossRecordKeys.IndexOf(BossKey);
 
 		public bool CanBeSaved => attempts > 0;
 
@@ -88,7 +87,6 @@ namespace BossChecklist
 
 		public PersonalRecords(string bossKey) {
 			this.bossKey = bossKey;
-			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out this.recordIndex);
 		}
 
 		private PersonalRecords(TagCompound tag) {
@@ -540,9 +538,8 @@ namespace BossChecklist
 		public int hitsTakenWorld = -1;
 
 		private readonly string bossKey = "";
-		private readonly int recordIndex = -1;
 		public string BossKey => bossKey;
-		public int RecordIndex => recordIndex;
+		public int RecordIndex => BossChecklist.bossTracker.BossRecordKeys.IndexOf(BossKey);
 		
 		public bool CanBeSaved => totalKills > 0 || totalDeaths > 0;
 
@@ -553,7 +550,6 @@ namespace BossChecklist
 
 		public WorldRecord(string bossKey) {
 			this.bossKey = bossKey;
-			BossChecklist.bossTracker.FindEntryFromKey(bossKey).IsRecordIndexed(out this.recordIndex);
 		}
 
 		private WorldRecord(TagCompound tag) {
