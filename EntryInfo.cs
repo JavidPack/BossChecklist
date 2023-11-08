@@ -133,12 +133,6 @@ namespace BossChecklist
 		/// </summary>
 		/// <returns>A LocalizedText of the despawn message of the passed npc. Returns null if no message can be found.</returns>
 		internal LocalizedText GetDespawnMessage(NPC npc) {
-			if (npc.life <= 0 && !BossTracker.BossesThatAreKilledBeforeDespawning.Contains(npc.type))
-				return null; // If the boss was killed, don't display a despawn message (special case for certain NPCs)
-
-			if (BossTracker.BossesThatAreKilledBeforeDespawning.Contains(npc.type) && npc.life == 0 && Main.player.Any(plr => plr.active && !plr.dead))
-				return null; // this will prevent despawn messages from appearing when a player kills any boss that is technically killed when despawning
-
 			// When unique despawn messages are enabled, pass the NPC for the custom message function provided by the entry
 			if (BossChecklist.ClientConfig.DespawnMessageType == "Unique" && customDespawnMessages(npc) is LocalizedText message)
 				return message; // this will only return a unique message if the custom message function properly assigns one

@@ -102,7 +102,7 @@ namespace BossChecklist
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "NPCName.SkeletronPrime", NPCID.SkeletronPrime, () => NPC.downedMechBoss3)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronPrime}"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "NPCName.Plantera", NPCID.Plantera, () => NPC.downedPlantBoss),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "NPCName.Golem", new List<int>() { NPCID.GolemHeadFree, NPCID.GolemHead, NPCID.Golem, NPCID.GolemFistLeft, NPCID.GolemFistRight }, () => NPC.downedGolemBoss)
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "NPCName.Golem", new List<int>() { NPCID.Golem }, () => NPC.downedGolemBoss)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}")
 					.WithCustomHeadIcon($"Terraria/Images/NPC_Head_Boss_5"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "NPCName.DD2Betsy", NPCID.DD2Betsy, () => WorldAssist.downedInvasionT3Ours)
@@ -818,16 +818,9 @@ namespace BossChecklist
 			NPCID.PrimeLaser,
 			NPCID.PrimeCannon,
 			NPCID.PrimeVice,
-			NPCID.Golem, // Golem (uses NPCID.GolemHeadFree for main body part)
-			NPCID.GolemHead,
+			NPCID.GolemHead, // Golem
 			NPCID.GolemFistLeft,
 			NPCID.GolemFistRight,
-		};
-
-		internal readonly static HashSet<int> BossesThatAreKilledBeforeDespawning = new HashSet<int>() {
-			NPCID.BrainofCthulhu,
-			NPCID.GolemHeadFree,
-			NPCID.CultistBoss
 		};
 
 		internal readonly static List<string> EventKeysWhoHaveBelongToInvasionSets = new List<string>() {
