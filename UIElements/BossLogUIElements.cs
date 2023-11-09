@@ -535,7 +535,7 @@ namespace BossChecklist.UIElements
 				// If the item has not been obtained, check for item restrictions and apply those icons and texts
 				// If no item restrictions exist, display normal item tooltips, and draw a checkmark for obtained items
 				Vector2 pos = new Vector2(inner.X + inner.Width / 2, inner.Y + inner.Height / 2);
-				if (progressRestricted || !entry.available()) {
+				if (progressRestricted || (!entry.available() && !entry.IsDownedOrMarked)) {
 					if (IsMouseHovering) {
 						BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.MaskedItems";
 						BossUISystem.Instance.UIHoverTextColor = Color.IndianRed;
