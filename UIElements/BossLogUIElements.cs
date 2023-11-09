@@ -509,7 +509,7 @@ namespace BossChecklist.UIElements
 				// Any other case should leave the itemslot color as is
 				var backup = TextureAssets.InventoryBack7;
 				Color oldColor = item.color;
-				if (progressRestricted || !entry.available()) {
+				if (progressRestricted || (!entry.available() && !entry.IsDownedOrMarked)) {
 					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
 					item.color = Color.Black; // item should be masked in a black silhouette
 				}
