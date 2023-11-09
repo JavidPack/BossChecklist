@@ -58,6 +58,25 @@ namespace BossChecklist
 		/// </summary>
 		internal List<EntryInfo> SortedEntries;
 		internal EntryInfo FindEntryFromKey(string lookupKey) => SortedEntries.Find(entry => entry.Key == lookupKey);
+
+		/// <summary>
+		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type.
+		/// Only returns with an entry if the entry has a record index (is a boss).
+		/// </summary>
+		/// <returns>Returns null if no valid entry can be found.</returns>
+		public EntryInfo FindEntryByNPC(int npcType, out int recordIndex) {
+			recordIndex = -1;
+			if (!EntryCache[npcType])
+				return null; // the entry hasn't been registered
+
+			foreach (EntryInfo entry in SortedEntries) {
+				if (entry.IsRecordIndexed(out recordIndex) && entry.npcIDs.Contains(npcType))
+					return entry; // if the npc pool contains the npc type, return the current the index
+			}
+
+			return null; // no valid entry found (may be an entry, but is not record indexed.
+		}
+
 		internal Dictionary<string, int[]> RegisteredMods; // Key: mod internal name, Value: Entries registered by type]
 		internal bool[] EntryCache;
 		internal bool[] EntryLootCache;

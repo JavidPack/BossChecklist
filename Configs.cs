@@ -216,7 +216,7 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (!npc.active || NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || entry.type != EntryType.Boss)
+						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 							continue;
 
 						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
@@ -235,7 +235,7 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (!npc.active || NPCAssist.GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || entry.type != EntryType.Boss)
+						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 							continue;
 
 						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);

@@ -14,7 +14,7 @@ namespace BossChecklist
 
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight
 		public override void OnSpawn(NPC npc, IEntitySource source) {
-			if (Main.netMode == NetmodeID.MultiplayerClient || GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
+			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
 			if (BossTracker.VanillaBossLimbs.Contains(npc.type))
@@ -44,7 +44,7 @@ namespace BossChecklist
 			HandleDownedNPCs(npc.type); // Custom downed bool code
 			SendEntryMessage(npc); // Display a message for Limbs/Towers if config is enabled
 
-			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry)
+			if (BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry || WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
@@ -78,24 +78,6 @@ namespace BossChecklist
 				Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
 				WorldAssist.WorldRecordsForWorld[recordIndex].CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
 			}
-		}
-
-		/// <summary>
-		/// Loops through all entries in BossTracker.SortedEntries to find EntryInfo that contains the specified npc type.
-		/// Only returns with an entry if the entry has a record index.
-		/// </summary>
-		/// <returns>Returns null if no valid entry can be found.</returns>
-		public static EntryInfo GetEntryInfo(int npcType, out int recordIndex) {
-			recordIndex = -1;
-			if (!BossChecklist.bossTracker.EntryCache[npcType])
-				return null; // the entry hasn't been registered
-
-			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
-				if (entry.IsRecordIndexed(out recordIndex) && recordIndex != -1 && entry.npcIDs.Contains(npcType))
-					return entry; // if the npc pool contains the npc type, return the current the index
-			}
-
-			return null; // no valid entry found (may be an entry, but is not record indexed.
 		}
 
 		/// <summary>

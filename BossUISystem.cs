@@ -160,7 +160,7 @@ namespace BossChecklist
 						if (Main.netMode != NetmodeID.SinglePlayer)
 							return true;
 
-						if (NPCAssist.GetEntryInfo(BossChecklist.ClientConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
+						if (BossChecklist.bossTracker.FindEntryByNPC(BossChecklist.ClientConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
 							return true;
 
 						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
