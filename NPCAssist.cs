@@ -44,13 +44,13 @@ namespace BossChecklist
 			HandleDownedNPCs(npc.type); // Custom downed bool code
 			SendEntryMessage(npc); // Display a message for Limbs/Towers if config is enabled
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
+			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
+				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
 
-			if (GetEntryInfo(npc.type, out int recordIndex) is not EntryInfo entry || WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
-				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
+			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+				return;
 
 			bool newPersonalBestOnServer = false;
 			// stop tracking and record stats for those who had interactions with the boss

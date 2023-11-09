@@ -354,50 +354,51 @@ namespace BossChecklist
 		/// Any record trackers currently active will stop if all instances of the entry's NPCs are no longer active.
 		/// </summary>
 		public void HandleDespawnFlags() {
-			for (int i = 0; i < ActiveNPCEntryFlags.Length - 1; i++) {
+			for (int i = 0; i < Main.maxNPCs; i++) {
 				if (ActiveNPCEntryFlags[i] == -1)
 					continue; // skip invalid entries
 
 				NPC npc = Main.npc[i];
+				if (npc.active)
+					continue; // Don't trigger despawn message or stop trackers if the npc is still active
+
 				EntryInfo selectedEntry = BossChecklist.bossTracker.SortedEntries[ActiveNPCEntryFlags[i]];
-				if (!npc.active) {
-					ActiveNPCEntryFlags[i] = -1; // if the npc tracked is inactive, remove entry value
+				ActiveNPCEntryFlags[i] = -1; // if the npc tracked is inactive, remove entry value
 
-					if (ActiveNPCEntryFlags.Any(x => x == selectedEntry.GetIndex))
-						continue; // do nothing if any respective npcs are still active
+				if (ActiveNPCEntryFlags.Any(x => x == selectedEntry.GetIndex))
+					continue; // do nothing if any other npcs are apart of the entry and are still active
 
-					// Now that the entry no longer exists within ActiveNPCEntryFlags, it is determined to have despawned
-					if (selectedEntry.GetDespawnMessage(npc) is LocalizedText message) {
-						if (Main.netMode == NetmodeID.SinglePlayer) {
-							Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
-						}
-						else {
-							ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
-						}
+				// Now that the entry no longer exists within ActiveNPCEntryFlags, it is determined to have despawned
+				if (selectedEntry.GetDespawnMessage(npc) is LocalizedText message) {
+					if (Main.netMode == NetmodeID.SinglePlayer) {
+						Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 					}
-
-					if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-						return;
-
-					// When a boss despawns, stop tracking it for all players
-					selectedEntry.IsRecordIndexed(out int recordIndex);
-					foreach (Player player in Main.player) {
-						if (!player.active)
-							continue;
-
-						if (Main.netMode == NetmodeID.Server) {
-							PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
-							serverRecords.StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
-						}
-						else {
-							PersonalRecords bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
-							bossRecord.StopTracking(false, npc.playerInteraction[player.whoAmI]);
-						}
+					else {
+						ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
 					}
-
-					if (Main.netMode == NetmodeID.Server)
-						WorldRecordsForWorld[recordIndex].UpdateGlobalDeaths(npc.playerInteraction.GetTrueIndexes());
 				}
+
+				if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
+					return;
+
+				// When a boss despawns, stop tracking it for all players
+				selectedEntry.IsRecordIndexed(out int recordIndex);
+				foreach (Player player in Main.player) {
+					if (!player.active)
+						continue;
+
+					if (Main.netMode == NetmodeID.Server) {
+						PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
+						serverRecords.StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
+					}
+					else {
+						PersonalRecords bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
+						bossRecord.StopTracking(false, npc.playerInteraction[player.whoAmI]);
+					}
+				}
+
+				if (Main.netMode == NetmodeID.Server)
+					WorldRecordsForWorld[recordIndex].UpdateGlobalDeaths(npc.playerInteraction.GetTrueIndexes());
 			}
 		}
 	}
