@@ -77,6 +77,19 @@ namespace BossChecklist
 			return null; // no valid entry found (may be an entry, but is not record indexed.
 		}
 
+		public bool IsEntryLimb(int npcType, EntryInfo specificEntry = null) {
+			if (specificEntry is not null) {
+				return specificEntry.npcLimbs.Contains(npcType);
+			}
+			else {
+				foreach (EntryInfo entry in SortedEntries) {
+					if (entry.npcLimbs.Contains(npcType))
+						return true;
+				}
+			}
+			return false;
+		}
+
 		internal Dictionary<string, int[]> RegisteredMods; // Key: mod internal name, Value: Entries registered by type]
 		internal bool[] EntryCache;
 		internal bool[] EntryLootCache;
@@ -107,6 +120,7 @@ namespace BossChecklist
 					.WithCustomAvailability(() => WorldGen.crimson || Main.drunkWorld || ModLoader.TryGetMod("BothEvils", out Mod mod)),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, QueenBee, "NPCName.QueenBee", NPCID.QueenBee, () => NPC.downedQueenBee),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Skeletron, "NPCName.SkeletronHead", new List<int>() { NPCID.SkeletronHead, NPCID.SkeletronHand }, () => NPC.downedBoss3)
+					.WithCustomLimbs(new List<int>() { NPCID.SkeletronHand })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronHead}"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, DeerClops, "NPCName.Deerclops", NPCID.Deerclops, () => NPC.downedDeerclops)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Deerclops}"),
@@ -119,9 +133,11 @@ namespace BossChecklist
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, TheDestroyer, "NPCName.TheDestroyer", NPCID.TheDestroyer, () => NPC.downedMechBoss1)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.TheDestroyer}"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, SkeletronPrime, "NPCName.SkeletronPrime", NPCID.SkeletronPrime, () => NPC.downedMechBoss3)
+					.WithCustomLimbs(new List<int>() { NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.SkeletronPrime}"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Plantera, "NPCName.Plantera", NPCID.Plantera, () => NPC.downedPlantBoss),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Golem, "NPCName.Golem", new List<int>() { NPCID.Golem }, () => NPC.downedGolemBoss)
+					.WithCustomLimbs(new List<int>() { NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}")
 					.WithCustomHeadIcon($"Terraria/Images/NPC_Head_Boss_5"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "NPCName.DD2Betsy", NPCID.DD2Betsy, () => WorldAssist.downedInvasionT3Ours)
@@ -132,7 +148,8 @@ namespace BossChecklist
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, DukeFishron, "NPCName.DukeFishron", NPCID.DukeFishron, () => NPC.downedFishron),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, LunaticCultist, "NPCName.CultistBoss", NPCID.CultistBoss, () => NPC.downedAncientCultist)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.CultistBoss}"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Enemies.MoonLord", new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordCore, NPCID.MoonLordHand }, () => NPC.downedMoonlord)
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Enemies.MoonLord", new List<int>() { NPCID.MoonLordCore }, () => NPC.downedMoonlord)
+					.WithCustomLimbs(new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordHand })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
@@ -829,17 +846,6 @@ namespace BossChecklist
 				}
 			}
 			#endregion
-		};
-
-		internal readonly static HashSet<int> VanillaBossLimbs = new HashSet<int>() {
-			NPCID.SkeletronHand, // Skeletron
-			NPCID.PrimeSaw, // Skeletron Prime
-			NPCID.PrimeLaser,
-			NPCID.PrimeCannon,
-			NPCID.PrimeVice,
-			NPCID.GolemHead, // Golem
-			NPCID.GolemFistLeft,
-			NPCID.GolemFistRight,
 		};
 
 		internal readonly static List<string> EventKeysWhoHaveBelongToInvasionSets = new List<string>() {

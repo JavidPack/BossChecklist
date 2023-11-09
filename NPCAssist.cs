@@ -17,9 +17,6 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
-			if (BossTracker.VanillaBossLimbs.Contains(npc.type))
-				return; // blacklisted npcs for despawn message comptability (killed rather than set to inactive)
-
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
@@ -120,7 +117,7 @@ namespace BossChecklist
 		public void SendEntryMessage(NPC npc) {
 			bool isTwinsRet = npc.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
 			bool isTwinsSpaz = npc.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
-			if (BossTracker.VanillaBossLimbs.Contains(npc.type) || isTwinsRet || isTwinsSpaz) {
+			if (BossChecklist.bossTracker.IsEntryLimb(npc.type) || isTwinsRet || isTwinsSpaz) {
 				if (!BossChecklist.ClientConfig.LimbMessages || Main.player.All(plr => !plr.active || plr.dead))
 					return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
 
