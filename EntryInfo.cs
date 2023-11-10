@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
+using Terraria.ModLoader.Config;
 
 namespace BossChecklist
 {
@@ -38,7 +39,7 @@ namespace BossChecklist
 		internal string modSource;
 		internal LocalizedText name; // This should not be used for displaying purposes. Use 'EntryInfo.GetDisplayName' instead.
 		internal List<int> npcIDs;
-		internal List<int> npcLimbs;
+		internal Dictionary<int, LocalizedText> npcLimbs;
 		internal float progression;
 		internal Func<bool> downed;
 		internal Func<bool> available;
@@ -238,7 +239,7 @@ namespace BossChecklist
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : new List<int>());
 			List<string> InterpretObjectAsListOfStrings(object data) => data is List<string> ? data as List<string> : (data is string ? new List<string>() { data as string } : null);
 
-			this.npcLimbs = extraData?.ContainsKey("limbs") == true ? InterpretObjectAsListOfInt(extraData["limbs"]) : new List<int>();
+			this.npcLimbs = extraData?.ContainsKey("limbs") == true ? extraData["limbs"] as Dictionary<int, LocalizedText> : new Dictionary<int, LocalizedText>();
 			this.available = extraData?.ContainsKey("availability") == true ? extraData["availability"] as Func<bool> : () => true;
 			this.spawnItem = extraData?.ContainsKey("spawnItems") == true ? InterpretObjectAsListOfInt(extraData["spawnItems"]) : new List<int>();
 			this.collectibles = extraData?.ContainsKey("collectibles") == true ? InterpretObjectAsListOfInt(extraData["collectibles"]) : new List<int>();
@@ -293,7 +294,9 @@ namespace BossChecklist
 		}
 
 		internal EntryInfo WithCustomLimbs(List<int> limbs) {
-			this.npcLimbs = limbs;
+			foreach (int npc in limbs) {
+				this.npcLimbs.Add(npc, Language.GetOrRegister($"Mods.BossChecklist.ChatMessages.Defeated.{new NPCDefinition(npc).Name}"));
+			}
 			return this;
 		}
 

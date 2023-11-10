@@ -36,15 +36,22 @@ namespace BossChecklist
 			}
 		}
 
+		// Special case for moon lord. The hands and head do not 'die' when the messages need to be triggered
+		public override void HitEffect(NPC npc, NPC.HitInfo hit) {
+			if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead) {
+				if (npc.life <= 0)
+					SendEntryMessage(npc);
+			}
+		}
+
 		// When an NPC is killed and fully inactive the fight has ended, so stop all record trackers
 		public override void OnKill(NPC npc) {
 			HandleDownedNPCs(npc.type); // Custom downed bool code
-			SendEntryMessage(npc); // Display a message for Limbs/Towers if config is enabled
+			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
+			SendEntryMessage(npc); // Display a message for Limbs/Towers if config is enabled, which should be checked after the active flags update
 
 			if (BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
-
-			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
 
 			if (WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
 				return;
@@ -115,34 +122,20 @@ namespace BossChecklist
 		/// These messages will not appear if the related configs are disabled.
 		/// </summary>
 		public void SendEntryMessage(NPC npc) {
-			bool isTwinsRet = npc.type == NPCID.Retinazer && Main.npc.Any(x => x.type == NPCID.Spazmatism && x.active);
-			bool isTwinsSpaz = npc.type == NPCID.Spazmatism && Main.npc.Any(x => x.type == NPCID.Retinazer && x.active);
-			if (BossChecklist.bossTracker.IsEntryLimb(npc.type) || isTwinsRet || isTwinsSpaz) {
-				if (!BossChecklist.ClientConfig.LimbMessages || Main.player.All(plr => !plr.active || plr.dead))
-					return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
+			if (!BossChecklist.ClientConfig.LimbMessages || !BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo entry))
+				return; // limb messages must be on and the npc must be a limb
+			
+			if (entry.type == EntryType.Boss && !WorldAssist.ActiveNPCEntryFlags.Contains(entry.GetIndex))
+				return; // stops messages when the main boss part is not active
 
-				// Skeletron's hands just use Skeletron's name instead of their own, so a custom name is needed
-				string partName = npc.type == NPCID.SkeletronHand ? Lang.GetItemNameValue(ItemID.SkeletronHand) : npc.GetFullNetName().ToString();
-				string defeatedLimb = $"{LangChat}.Defeated.Limb";
-				if (Main.netMode == NetmodeID.SinglePlayer) {
-					Main.NewText(Language.GetTextValue(defeatedLimb, partName), Colors.RarityGreen);
-				}
-				else {
-					ChatHelper.BroadcastChatMessage(NetworkText.FromKey(defeatedLimb, partName), Colors.RarityGreen);
-				}
+			if (Main.player.All(plr => !plr.active || plr.dead))
+				return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
+
+			if (Main.netMode == NetmodeID.SinglePlayer) {
+				Main.NewText(entry.npcLimbs[npc.type].Format(npc.FullName), Colors.RarityGreen);
 			}
-			else if (npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerVortex || npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerStardust) {
-				if (!BossChecklist.ClientConfig.PillarMessages)
-					return;
-
-				string defeatedTower = $"{LangChat}.Defeated.Tower";
-				string npcName = npc.GetFullNetName().ToString();
-				if (Main.netMode == NetmodeID.SinglePlayer) {
-					Main.NewText(Language.GetTextValue(defeatedTower, npcName), Colors.RarityPurple);
-				}
-				else {
-					ChatHelper.BroadcastChatMessage(NetworkText.FromKey(defeatedTower, npcName), Colors.RarityPurple);
-				}
+			else {
+				ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(entry.npcLimbs[npc.type].Format(npc.FullName)), Colors.RarityGreen);
 			}
 		}
 	}
