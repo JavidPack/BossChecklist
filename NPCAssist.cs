@@ -122,7 +122,7 @@ namespace BossChecklist
 		/// These messages will not appear if the related configs are disabled.
 		/// </summary>
 		public void SendEntryMessage(NPC npc) {
-			if (!BossChecklist.ClientConfig.LimbMessages || !BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo entry))
+			if (BossChecklist.ClientConfig.LimbMessages == "Disabled" || !BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo entry))
 				return; // limb messages must be on and the npc must be a limb
 			
 			if (entry.type == EntryType.Boss && !WorldAssist.ActiveNPCEntryFlags.Contains(entry.GetIndex))
@@ -131,11 +131,25 @@ namespace BossChecklist
 			if (Main.player.All(plr => !plr.active || plr.dead))
 				return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
 
+			// TODO: Moon lord's head is localized as just 'Moon Lord' which is somewhat off. Not sure how to approach it at the moment.
+			bool IsGeneric = BossChecklist.ClientConfig.LimbMessages == "Generic";
+			string specialCase = "";
+			if (IsGeneric) {
+				if (npc.type == NPCID.SkeletronHand) {
+					specialCase = nameof(NPCID.SkeletronHand);
+				}
+				else if (npc.type == NPCID.MoonLordHead) {
+					specialCase = nameof(NPCID.MoonLordHead);
+				}
+			}
+			LocalizedText MessageType = IsGeneric ? Language.GetText("Mods.BossChecklist.ChatMessages.Defeated.Generic" + specialCase) : entry.npcLimbs[npc.type];
+			string npcName = (IsGeneric && npc.type == NPCID.SkeletronHand) ? Lang.GetItemNameValue(ItemID.SkeletronHand) : npc.FullName;
+
 			if (Main.netMode == NetmodeID.SinglePlayer) {
-				Main.NewText(entry.npcLimbs[npc.type].Format(npc.FullName), Colors.RarityGreen);
+				Main.NewText(MessageType.Format(npcName), Colors.RarityGreen);
 			}
 			else {
-				ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(entry.npcLimbs[npc.type].Format(npc.FullName)), Colors.RarityGreen);
+				ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(MessageType.Format(npcName)), Colors.RarityGreen);
 			}
 		}
 	}

@@ -261,11 +261,10 @@ namespace BossChecklist
 		[DefaultValue("Generic")]
 		public string DespawnMessageType { get; set; }
 
-		[DefaultValue(false)]
-		public bool LimbMessages { get; set; }
-
-		[DefaultValue(true)]
-		public bool PillarMessages { get; set; }
+		[DrawTicks]
+		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
+		[DefaultValue("Generic")]
+		public string LimbMessages { get; set; }
 
 		[DefaultValue(true)]
 		public bool TimerSounds { get; set; }

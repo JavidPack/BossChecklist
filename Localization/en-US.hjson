@@ -192,6 +192,8 @@ Mods: {
 
 			Defeated: {
 				Generic: "{0} is down!"
+				GenericSkeletronHand: Skeletron's Hand is down!
+				GenericMoonLordHead: Moon Lord's Head is down!
 				SkeletronHand: A {0} hand has fractured!
 				PrimeCannon: The {0} has exploded!
 				PrimeSaw: The {0} has malfunctioned!
@@ -490,17 +492,12 @@ Mods: {
 				}
 
 				LimbMessages: {
-					Label: Segment Defeated Messages
+					Label: Non-Boss Defeated Messages
 					Tooltip:
 						'''
-						Multi-segmented bosses will send messages when a segment is defeated
-						Ex. Skeletron's hands
+						Messages will appear in chat when an important component of an entry is defeated.
+						Examples include: Skeletron's Hands, Retinazor/Spazmatism, the Celestial Pillars, etc.
 						'''
-				}
-
-				PillarMessages: {
-					Label: Pillar Defeated Messages
-					Tooltip: When defeated, the chat sends a defeated message for Lunar Pillars
 				}
 
 				TimerSounds: {

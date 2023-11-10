@@ -192,6 +192,8 @@ Mods: {
 
 			Defeated: {
 				// Generic: "{0} is down!"
+				// GenericSkeletronHand: Skeletron's' Hand is down!
+				// GenericMoonLordHeadHead: Moon Lord's' Head is down!
 				// SkeletronHand: A {0} hand has fractured!
 				// PrimeCannon: The {0} has exploded!
 				// PrimeSaw: The {0} has malfunctioned!
@@ -496,11 +498,6 @@ Mods: {
 						拥有多个部分的Boss将在某一个部分被击败时发送信息
 						如: 骷髅王的手
 						'''
-				}
-
-				PillarMessages: {
-					Label: 天界柱被击败信息
-					Tooltip: 当天界柱被击败时, 发送一条来自天界柱的消息
 				}
 
 				TimerSounds: {
