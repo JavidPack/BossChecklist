@@ -340,11 +340,14 @@ namespace BossChecklist
 				case PacketMessageType.SendDespawnMessage:
 					NPC despawnedNPC = Main.npc[reader.ReadInt32()];
 					EntryInfo despawnEntry = BossChecklist.bossTracker.FindEntryByNPC(despawnedNPC.type, out _);
-					Main.NewText(despawnEntry.customDespawnMessages(despawnedNPC).Format(despawnedNPC.FullName, Colors.RarityPurple));
+					if (despawnEntry.GetDespawnMessage(despawnedNPC) is LocalizedText despawnMessage)
+						Main.NewText(despawnMessage.Format(despawnedNPC.FullName), Colors.RarityPurple);
 					break;
 				case PacketMessageType.SendLimbMessage:
-					int npcWhoAmI = reader.ReadInt32();
-					NPCAssist.SendEntryMessage(Main.npc[npcWhoAmI]);
+					NPC limbNPC = Main.npc[reader.ReadInt32()];
+					BossChecklist.bossTracker.IsEntryLimb(limbNPC.type, out EntryInfo limbEntry);
+					if (limbEntry is not null && limbEntry.GetLimbMessage(limbNPC) is LocalizedText limbMessage)
+						Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityGreen);
 					break;
 				case PacketMessageType.SendPersonalBestRecordsToServer:
 					// Multiplayer client --> Server (always)

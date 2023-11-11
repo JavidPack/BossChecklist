@@ -148,6 +148,22 @@ namespace BossChecklist
 		}
 
 		/// <summary>
+		/// Handles the extra npc defeation messages related to boss limbs and towers.
+		/// These messages will not appear if the related configs are disabled.
+		/// </summary>
+		internal LocalizedText GetLimbMessage(NPC npc) {
+			if (BossChecklist.ClientConfig.LimbMessages == "Unique" && npcLimbs[npc.type] is LocalizedText message)
+				return message;
+
+			if (BossChecklist.ClientConfig.LimbMessages != "Disabled") {
+				string specialCase = (npc.type == NPCID.SkeletronHand || npc.type == NPCID.MoonLordHead) ? new NPCDefinition(npc.type).Name : "";
+				return Language.GetText($"{NPCAssist.LangChat}.Defeated.Generic" + specialCase);
+			}
+
+			return null;
+		}
+
+		/// <summary>
 		/// Determines whether or not the entry should be visible on the Table of Contents, 
 		/// based on configurations and filter status.
 		/// </summary>

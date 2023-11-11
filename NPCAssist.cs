@@ -39,8 +39,13 @@ namespace BossChecklist
 		// Special case for moon lord. The hands and head do not 'die' when the messages need to be triggered
 		public override void HitEffect(NPC npc, NPC.HitInfo hit) {
 			if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead) {
-				if (npc.life <= 0)
-					SendEntryMessage(npc);
+				if (npc.life <= 0) {
+					if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
+						if (Main.netMode != NetmodeID.Server) {
+							Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
+						}
+					}
+				}
 			}
 		}
 
@@ -48,7 +53,20 @@ namespace BossChecklist
 		public override void OnKill(NPC npc) {
 			HandleDownedNPCs(npc.type); // Custom downed bool code
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
-			SendEntryMessage(npc); // Display a message for Limbs/Towers if config is enabled, which should be checked after the active flags update
+
+			// Display a message for Limbs/Towers if config is enabled, which should be checked after the active flags update
+			if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
+				if (Main.netMode != NetmodeID.Server) {
+					Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
+				}
+				else {
+					// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)PacketMessageType.SendLimbMessage);
+					packet.Write(npc.whoAmI);
+					packet.Send();
+				}
+			}
 
 			if (BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
@@ -114,48 +132,6 @@ namespace BossChecklist
 				if (Main.netMode == NetmodeID.Server) {
 					NetMessage.SendData(MessageID.WorldData);
 				}
-			}
-		}
-
-		/// <summary>
-		/// Handles the extra npc defeation messages related to boss limbs and towers.
-		/// These messages will not appear if the related configs are disabled.
-		/// </summary>
-		public static void SendEntryMessage(NPC npc) {
-				if (BossChecklist.ClientConfig.LimbMessages == "Disabled" || !BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo entry))
-					return; // limb messages must be on and the npc must be a limb
-
-			if (Main.netMode != NetmodeID.MultiplayerClient) {
-				if (entry.type == EntryType.Boss && !WorldAssist.ActiveNPCEntryFlags.Contains(entry.GetIndex))
-					return; // stops messages when the main boss part is not active
-
-				if (Main.player.All(plr => !plr.active || plr.dead))
-					return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
-			}
-
-			// TODO: Moon lord's head is localized as just 'Moon Lord' which is somewhat off. Not sure how to approach it at the moment.
-			bool IsGeneric = BossChecklist.ClientConfig.LimbMessages == "Generic";
-			string specialCase = "";
-			if (IsGeneric) {
-				if (npc.type == NPCID.SkeletronHand) {
-					specialCase = nameof(NPCID.SkeletronHand);
-				}
-				else if (npc.type == NPCID.MoonLordHead) {
-					specialCase = nameof(NPCID.MoonLordHead);
-				}
-			}
-			LocalizedText MessageType = IsGeneric ? Language.GetText("Mods.BossChecklist.ChatMessages.Defeated.Generic" + specialCase) : entry.npcLimbs[npc.type];
-			string npcName = (IsGeneric && npc.type == NPCID.SkeletronHand) ? Lang.GetItemNameValue(ItemID.SkeletronHand) : npc.FullName;
-
-			if (Main.netMode != NetmodeID.Server) {
-				Main.NewText(MessageType.Format(npcName), Colors.RarityGreen);
-			}
-			else {
-				// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
-				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.SendLimbMessage);
-				packet.Write(npc.whoAmI);
-				packet.Send();
 			}
 		}
 	}
