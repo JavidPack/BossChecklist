@@ -191,8 +191,25 @@ Mods: {
 			}
 
 			Defeated: {
-				// Tower: The {0} has been destroyed!
-				// Limb: "{0} down!"
+				// Generic: "{0} is down!"
+				// GenericSkeletronHand: Skeletron's' Hand is down!
+				// GenericMoonLordHeadHead: Moon Lord's' Head is down!
+				// SkeletronHand: A {0} hand has fractured!
+				// PrimeCannon: The {0} has exploded!
+				// PrimeSaw: The {0} has malfunctioned!
+				// PrimeVice: The {0} has collapsed!
+				// PrimeLaser: The {0} has overheated!
+				// GolemFistLeft: "{0} is destroyed!"
+				// GolemFistRight: "{0} is destroyed!"
+				// GolemHead: The {0} has detached from the body!
+				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
+				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
+				// Retinazer: "{0} has been defeated!"
+				// Spazmatism: "{0} has been defeated!"
+				// LunarTowerVortex: The {0} has fallen!
+				// LunarTowerStardust: The {0} has fallen!
+				// LunarTowerNebula: The {0} has fallen!
+				// LunarTowerSolar: The {0} has fallen!
 			}
 
 			Loss: {
@@ -475,17 +492,12 @@ Mods: {
 				}
 
 				LimbMessages: {
-					// Label: Segment Defeated Messages
+					// Label: Non-Boss Defeated Messages
 					/* Tooltip:
 						'''
-						Multi-segmented bosses will send messages when a segment is defeated
-						Ex. Skeletron's hands
+						Messages will appear in chat when an important component of an entry is defeated.
+						Examples include: Skeletron's Hands, Retinazor/Spazmatism, the Celestial Pillars, etc.
 						''' */
-				}
-
-				PillarMessages: {
-					// Label: Pillar Defeated Messages
-					// Tooltip: When defeated, the chat sends a defeated message for Lunar Pillars
 				}
 
 				TimerSounds: {
