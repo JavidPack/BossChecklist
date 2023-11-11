@@ -337,6 +337,15 @@ namespace BossChecklist
 						NetMessage.SendData(MessageID.WorldData);
 					}
 					break;
+				case PacketMessageType.SendDespawnMessage:
+					NPC despawnedNPC = Main.npc[reader.ReadInt32()];
+					EntryInfo despawnEntry = BossChecklist.bossTracker.FindEntryByNPC(despawnedNPC.type, out _);
+					Main.NewText(despawnEntry.customDespawnMessages(despawnedNPC).Format(despawnedNPC.FullName, Colors.RarityPurple));
+					break;
+				case PacketMessageType.SendLimbMessage:
+					int npcWhoAmI = reader.ReadInt32();
+					NPCAssist.SendEntryMessage(Main.npc[npcWhoAmI]);
+					break;
 				case PacketMessageType.SendPersonalBestRecordsToServer:
 					// Multiplayer client --> Server (always)
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player

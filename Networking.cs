@@ -9,6 +9,8 @@ namespace BossChecklist
 		RequestClearHidden,
 		RequestMarkedDownEntry,
 		RequestClearMarkedDowns,
+		SendDespawnMessage,
+		SendLimbMessage,
 		SendPersonalBestRecordsToServer,
 		UpdateRecordsFromServerToPlayer,
 		RequestWorldRecords,

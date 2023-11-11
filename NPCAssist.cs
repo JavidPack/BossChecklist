@@ -121,15 +121,17 @@ namespace BossChecklist
 		/// Handles the extra npc defeation messages related to boss limbs and towers.
 		/// These messages will not appear if the related configs are disabled.
 		/// </summary>
-		public void SendEntryMessage(NPC npc) {
-			if (BossChecklist.ClientConfig.LimbMessages == "Disabled" || !BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo entry))
-				return; // limb messages must be on and the npc must be a limb
-			
-			if (entry.type == EntryType.Boss && !WorldAssist.ActiveNPCEntryFlags.Contains(entry.GetIndex))
-				return; // stops messages when the main boss part is not active
+		public static void SendEntryMessage(NPC npc) {
+				if (BossChecklist.ClientConfig.LimbMessages == "Disabled" || !BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo entry))
+					return; // limb messages must be on and the npc must be a limb
 
-			if (Main.player.All(plr => !plr.active || plr.dead))
-				return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
+			if (Main.netMode != NetmodeID.MultiplayerClient) {
+				if (entry.type == EntryType.Boss && !WorldAssist.ActiveNPCEntryFlags.Contains(entry.GetIndex))
+					return; // stops messages when the main boss part is not active
+
+				if (Main.player.All(plr => !plr.active || plr.dead))
+					return; // stops messages from appearing when all players are dead (some limb NPCs are killed to despawn)
+			}
 
 			// TODO: Moon lord's head is localized as just 'Moon Lord' which is somewhat off. Not sure how to approach it at the moment.
 			bool IsGeneric = BossChecklist.ClientConfig.LimbMessages == "Generic";
@@ -145,11 +147,15 @@ namespace BossChecklist
 			LocalizedText MessageType = IsGeneric ? Language.GetText("Mods.BossChecklist.ChatMessages.Defeated.Generic" + specialCase) : entry.npcLimbs[npc.type];
 			string npcName = (IsGeneric && npc.type == NPCID.SkeletronHand) ? Lang.GetItemNameValue(ItemID.SkeletronHand) : npc.FullName;
 
-			if (Main.netMode == NetmodeID.SinglePlayer) {
+			if (Main.netMode != NetmodeID.Server) {
 				Main.NewText(MessageType.Format(npcName), Colors.RarityGreen);
 			}
 			else {
-				ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(MessageType.Format(npcName)), Colors.RarityGreen);
+				// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.SendLimbMessage);
+				packet.Write(npc.whoAmI);
+				packet.Send();
 			}
 		}
 	}

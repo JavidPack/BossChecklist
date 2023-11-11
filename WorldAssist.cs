@@ -374,7 +374,12 @@ namespace BossChecklist
 						Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 					}
 					else {
-						ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
+						//ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
+						// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.SendLimbMessage);
+						packet.Write(npc.whoAmI);
+						packet.Send();
 					}
 				}
 
