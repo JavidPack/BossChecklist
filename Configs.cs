@@ -195,7 +195,7 @@ namespace BossChecklist
 			UpdateIndicators();
 		}
 
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) {
 			return true;
 		}
 	}
@@ -317,7 +317,7 @@ namespace BossChecklist
 			BossRadarUI.blacklistChanged = true;
 		}
 
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) {
 			return true;
 		}
 	}
@@ -412,9 +412,9 @@ namespace BossChecklist
 			return false;
 		}
 
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) {
+		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) {
 			if (!IsPlayerLocalServerOwner(Main.player[whoAmI])) {
-				message = Language.GetTextValue("Mods.BossChecklist.Configs.Notice.HostChange");
+				message = NetworkText.FromKey("Mods.BossChecklist.Configs.Notice.HostChange");
 				return false;
 			}
 			return true;
