@@ -196,8 +196,8 @@ Mods: {
 
 			Defeated: {
 				// Generic: "{0} is down!"
-				// GenericSkeletronHand: Skeletron's' Hand is down!
-				// GenericMoonLordHeadHead: Moon Lord's' Head is down!
+				// GenericSkeletronHand: Skeletron's Hand is down!
+				// GenericMoonLordHead: Moon Lord's Head is down!
 				// SkeletronHand: A {0} hand has fractured!
 				// PrimeCannon: The {0} has exploded!
 				// PrimeSaw: The {0} has malfunctioned!
