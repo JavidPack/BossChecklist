@@ -191,25 +191,25 @@ Mods: {
 			}
 
 			Defeated: {
-				// Generic: "{0} is down!"
-				// GenericSkeletronHand: Skeletron's Hand is down!
-				// GenericMoonLordHead: Moon Lord's Head is down!
-				// SkeletronHand: A {0} hand has fractured!
-				// PrimeCannon: The {0} has exploded!
-				// PrimeSaw: The {0} has malfunctioned!
-				// PrimeVice: The {0} has collapsed!
-				// PrimeLaser: The {0} has overheated!
-				// GolemFistLeft: "{0} is destroyed!"
-				// GolemFistRight: "{0} is destroyed!"
-				// GolemHead: The {0} has detached from the body!
-				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
-				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
-				// Retinazer: "{0} has been defeated!"
-				// Spazmatism: "{0} has been defeated!"
-				// LunarTowerVortex: The {0} has fallen!
-				// LunarTowerStardust: The {0} has fallen!
-				// LunarTowerNebula: The {0} has fallen!
-				// LunarTowerSolar: The {0} has fallen!
+				Generic: "{0}已被击倒!"
+				GenericSkeletronHand: 骷髅王的手已被击倒!
+				GenericMoonLordHead: 月亮领主的手已被击倒!
+				SkeletronHand: {0}的一个手断裂了!
+				PrimeCannon: {0}爆炸了!
+				PrimeSaw: {0}发生故障了!
+				PrimeVice: {0}坍塌了!
+				PrimeLaser: The {0}过热了!
+				GolemFistLeft: "{0}被摧毁了!"
+				GolemFistRight: "{0}被摧毁了!"
+				GolemHead: {0}已脱离身体!
+				MoonLordHead: 一颗克苏鲁真眼已离开了{0}的头部!
+				MoonLordHand: 一颗克苏鲁真眼已离开了{0}!
+				Retinazer: "{0}已被击败!"
+				Spazmatism: "{0}已被击败!"
+				LunarTowerVortex: {0}已倒塌!
+				LunarTowerStardust: {0}已倒塌!
+				LunarTowerNebula: {0}已倒塌!
+				LunarTowerSolar: {0}已倒塌!
 			}
 
 			Loss: {
@@ -492,11 +492,11 @@ Mods: {
 				}
 
 				LimbMessages: {
-					Label: 节点击败消息
+					Label: 非Boss的被击败消息
 					Tooltip:
 						'''
-						拥有多个部分的Boss将在某一个部分被击败时发送信息
-						如: 骷髅王的手
+						当一位Boss的重要组成部分被击败时会在聊天栏内发送信息.
+						如: 骷髅王的手、激光眼/魔焰焰、天界柱，诸如此类.
 						'''
 				}
 
