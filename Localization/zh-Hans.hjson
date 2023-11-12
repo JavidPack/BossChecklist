@@ -192,7 +192,7 @@ Mods: {
 
 			Defeated: {
 				Generic: "{0}已被击倒!"
-				GenericSkeletronHand: 骷髅王的手已被击倒!
+				GenericSkeletronHand: 骷髅王之手已被击倒!
 				GenericMoonLordHead: 月亮领主的手已被击倒!
 				SkeletronHand: {0}的一个手断裂了!
 				PrimeCannon: {0}爆炸了!
@@ -202,8 +202,8 @@ Mods: {
 				GolemFistLeft: "{0}被摧毁了!"
 				GolemFistRight: "{0}被摧毁了!"
 				GolemHead: {0}已脱离身体!
-				MoonLordHead: 一颗克苏鲁真眼已离开了{0}的头部!
-				MoonLordHand: 一颗克苏鲁真眼已离开了{0}!
+				MoonLordHead: 一颗克苏鲁真眼已脱离了{0}的头部!
+				MoonLordHand: 一颗克苏鲁真眼已脱离了{0}!
 				Retinazer: "{0}已被击败!"
 				Spazmatism: "{0}已被击败!"
 				LunarTowerVortex: {0}已倒塌!
@@ -496,7 +496,7 @@ Mods: {
 					Tooltip:
 						'''
 						当一位Boss的重要组成部分被击败时会在聊天栏内发送信息.
-						如: 骷髅王的手、激光眼/魔焰焰、天界柱，诸如此类.
+						如: 骷髅王之手、激光眼/魔焰焰、天界柱，诸如此类.
 						'''
 				}
 
