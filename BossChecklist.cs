@@ -16,7 +16,7 @@ namespace BossChecklist
 		internal static BossTracker bossTracker;
 		internal static ModKeybind ToggleChecklistHotKey;
 		public static ModKeybind ToggleBossLog;
-		private string LastVanillaProgressionRevision = "v1.4.0"; // This should be updated whenever a vanilla progression value is changed, or if another vanilla boss is added.
+		private readonly string LastVanillaProgressionRevision = "v1.4.0"; // This should be updated whenever a vanilla progression value is changed, or if another vanilla boss is added.
 
 		public static Dictionary<int, int> itemToMusicReference;
 
