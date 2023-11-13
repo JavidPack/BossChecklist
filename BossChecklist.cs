@@ -353,21 +353,24 @@ namespace BossChecklist
 						NetMessage.SendData(MessageID.WorldData);
 					}
 					break;
-				case PacketMessageType.SendDespawnMessage:
-					NPC despawnedNPC = Main.npc[reader.ReadInt32()];
-					EntryInfo despawnEntry = BossChecklist.bossTracker.FindEntryByNPC(despawnedNPC.type, out _);
-					if (despawnEntry.GetDespawnMessage(despawnedNPC) is LocalizedText despawnMessage)
-						Main.NewText(despawnMessage.Format(despawnedNPC.FullName), Colors.RarityPurple);
-					break;
-				case PacketMessageType.SendLimbMessage:
-					NPC limbNPC = Main.npc[reader.ReadInt32()];
-					BossChecklist.bossTracker.IsEntryLimb(limbNPC.type, out EntryInfo limbEntry);
-					if (limbEntry is not null && limbEntry.GetLimbMessage(limbNPC) is LocalizedText limbMessage)
-						Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityPurple);
-					break;
-				case PacketMessageType.SendMoonMessage:
-					if (WorldAssist.DetermineMoonAnnoucement(reader.ReadString()) is string message)
-						Main.NewText(message, new Color(50, 255, 130));
+				case PacketMessageType.SendClientConfigMessage:
+					ClientMessageType messageType = (ClientMessageType)reader.ReadByte();
+					if (messageType == ClientMessageType.Despawn) {
+						NPC despawnedNPC = Main.npc[reader.ReadInt32()];
+						EntryInfo despawnEntry = bossTracker.FindEntryByNPC(despawnedNPC.type, out _);
+						if (despawnEntry.GetDespawnMessage(despawnedNPC) is LocalizedText despawnMessage)
+							Main.NewText(despawnMessage.Format(despawnedNPC.FullName), Colors.RarityPurple);
+					}
+					else if (messageType == ClientMessageType.Limb) {
+						NPC limbNPC = Main.npc[reader.ReadInt32()];
+						bossTracker.IsEntryLimb(limbNPC.type, out EntryInfo limbEntry);
+						if (limbEntry is not null && limbEntry.GetLimbMessage(limbNPC) is LocalizedText limbMessage)
+							Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityPurple);
+					}
+					else if (messageType == ClientMessageType.Moon) {
+						if (WorldAssist.DetermineMoonAnnoucement(reader.ReadString()) is string message)
+							Main.NewText(message, new Color(50, 255, 130));
+					}
 					break;
 				case PacketMessageType.SendPersonalBestRecordsToServer:
 					// Multiplayer client --> Server (always)

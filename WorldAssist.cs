@@ -293,7 +293,8 @@ namespace BossChecklist
 			else if (Main.netMode == NetmodeID.Server) {
 				// Send a packet to all multiplayer clients. Moon messages are client based, so they will need to read their own configs to determine the message.
 				ModPacket packet = BossChecklist.instance.GetPacket();
-				packet.Write((byte)PacketMessageType.SendMoonMessage);
+				packet.Write((byte)PacketMessageType.SendClientConfigMessage);
+				packet.Write((byte)ClientMessageType.Moon);
 				packet.Write(eventType);
 				packet.Send();
 			}
@@ -393,7 +394,8 @@ namespace BossChecklist
 						//ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
 						// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
 						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.SendDespawnMessage);
+						packet.Write((byte)PacketMessageType.SendClientConfigMessage);
+						packet.Write((byte)ClientMessageType.Despawn);
 						packet.Write(npc.whoAmI);
 						packet.Send();
 					}
