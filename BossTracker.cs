@@ -4,6 +4,7 @@ using System.Linq;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -236,42 +237,38 @@ namespace BossChecklist
 
 		internal void FinalizeOrphanData() {
 			foreach (OrphanInfo orphan in ExtraData) {
+				int typeCount = 0;
 				foreach (KeyValuePair<string, object> submission in orphan.values) {
 					if (FindEntryFromKey(submission.Key) is not EntryInfo entry) {
-						BossChecklist.instance.Logger.Warn($"A {orphan.type} call from {orphan.modSource} contains an invalid key ({submission.Key}) and will be ignored.");
+						BossChecklist.instance.LogWarning("InvalidOrphanKey", requiresConfig: false, orphan.type, orphan.modSource, submission.Key);
 						continue;
 					}
 
 					object data = submission.Value;
 					List<int> InterpretDataAsListOfInt = data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : new List<int>());
-					
-					if (orphan.type == OrphanType.Loot) {
+					typeCount += InterpretDataAsListOfInt.Count;
+
+					if (orphan.type == OrphanType.SubmitEntryLoot) {
 						entry.lootItemTypes.AddRange(InterpretDataAsListOfInt);
 					}
-					else if (orphan.type == OrphanType.Collectibles) {
+					else if (orphan.type == OrphanType.SubmitEntryCollectibles) {
 						entry.collectibles.AddRange(InterpretDataAsListOfInt);
 					}
-					else if (orphan.type == OrphanType.SpawnItems) {
+					else if (orphan.type == OrphanType.SubmitEntrySpawnItems) {
 						entry.spawnItem.AddRange(InterpretDataAsListOfInt);
 					}
-					else if (orphan.type == OrphanType.EventNPC) {
+					else if (orphan.type == OrphanType.SubmitEventNPCs) {
 						if (entry.type == EntryType.Event) {
 							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
-							if (EventKeysWhoHaveBelongToInvasionSets.Contains(submission.Key)) {
-								BossChecklist.instance.Logger.Info(
-								$"The key '{submission.Key}' is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. " +
-								$"SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. " +
-								$"Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls.");
-							}
+							if (EventKeysWhoHaveBelongToInvasionSets.Contains(submission.Key) && BossChecklist.DebugConfig.ModCallLogVerbose)
+								BossChecklist.instance.LogWarning("BelongsToInvasion", requiresConfig: true, orphan.modSource, submission.Key);
 						}
 						else {
-							BossChecklist.instance.Logger.Warn($"{entry.Key} is not an event entry and cannot take calls from {OrphanType.EventNPC}");
+							BossChecklist.instance.LogWarning("InvalidEventEntry", requiresConfig: false, entry.Key, OrphanType.SubmitEventNPCs);
 						}
 					}
-
-					if (BossChecklist.DebugConfig.ModCallLogVerbose)
-						BossChecklist.instance.Logger.Info($"{orphan.modSource} successfully registered {InterpretDataAsListOfInt.Count} '{orphan.type}' orphan data value(s) for {entry.Key}");
 				}
+				BossChecklist.instance.LogModCallInfo("SuccessfulOrphanData", orphan.modSource, typeCount, orphan.type);
 			}
 		}
 
@@ -329,6 +326,33 @@ namespace BossChecklist
 
 			// Entries are now finalized. Entries can no longer be added or edited through Mod Calls.
 			EntriesFinalized = true;
+
+			foreach (KeyValuePair<string, int[]> value in RegisteredMods) {
+				List<string> bossKeys = new List<string>();
+				List<string> minibossKeys = new List<string>();
+				List<string> eventKeys = new List<string>();
+				foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries.Where(x => x.modSource == value.Key)) {
+					if (entry.type == EntryType.Event) {
+						eventKeys.Add(entry.Key.Substring(entry.modSource.Length + 1));
+					}
+					else if (entry.type == EntryType.MiniBoss) {
+						minibossKeys.Add(entry.Key.Substring(entry.modSource.Length + 1));
+					}
+					else {
+						bossKeys.Add(entry.Key.Substring(entry.modSource.Length + 1));
+					}
+				}
+
+				if (bossKeys.Count > 0)
+					BossChecklist.instance.LogModCallInfo("RegisteredBosses", value.Key, value.Value[0], "[" + string.Join(", ", bossKeys) + "]");
+
+				if (minibossKeys.Count > 0)
+					BossChecklist.instance.LogModCallInfo("RegisteredMiniBosses", value.Key, value.Value[1], "[" + string.Join(", ", minibossKeys) + "]");
+
+				if (eventKeys.Count > 0)
+					BossChecklist.instance.LogModCallInfo("RegisteredEvents", value.Key, value.Value[2], "[" + string.Join(", ", eventKeys) + "]");
+			}
+
 			if (AnyModHasOldCall) {
 				string OldToNewCall(string message) {
 					return message switch {
@@ -347,10 +371,10 @@ namespace BossChecklist
 				}
 
 				foreach (var oldCall in OldCalls) {
-					BossChecklist.instance.Logger.Info($"The '{oldCall.Key}' call is an old call and is now obsolete. Use '{OldToNewCall(oldCall.Key)}' instead. {oldCall.Key} entries include: [{string.Join(", ", oldCall.Value)}]");
+					BossChecklist.instance.LogWarning("OldCall", requiresConfig: true, oldCall.Key, OldToNewCall(oldCall.Key), oldCall.Key, string.Join(", ", oldCall.Value));
 				}
 				OldCalls.Clear();
-				BossChecklist.instance.Logger.Info("Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call");
+				BossChecklist.instance.LogModCallInfo("ModCallDocumentation");
 			}
 
 			// The server must populate for collected records after all entries have been counted and sorted.
@@ -849,11 +873,11 @@ namespace BossChecklist
 		};
 
 		internal readonly static List<string> EventKeysWhoHaveBelongToInvasionSets = new List<string>() {
-			$"Terraria GoblinArmy",
-			$"Terraria OldOnesArmy",
-			$"Terraria FrostLegion",
-			$"Terraria PirateInvasion",
-			$"Terraria MartianMadness",
+			"Terraria GoblinArmy",
+			"Terraria OldOnesArmy",
+			"Terraria FrostLegion",
+			"Terraria PirateInvasion",
+			"Terraria MartianMadness",
 		};
 
 		internal static bool[] GetBelongsToInvasionSet(string Key) {
@@ -1132,7 +1156,7 @@ namespace BossChecklist
 
 		internal void AddOrphanData(OrphanType type, Mod mod, Dictionary<string, object> values) {
 			if (values is null) {
-				BossChecklist.instance.Logger.Warn($"{type} mod call from {mod.Name} is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls");
+				BossChecklist.instance.LogWarning("OldCall_Orphan", requiresConfig: false, type, mod.Name);
 			}
 			else {
 				ExtraData.Add(new OrphanInfo(type, mod.Name, values));
@@ -1141,12 +1165,13 @@ namespace BossChecklist
 
 		internal void EnsureBossIsNotDuplicate(string mod, string internalName) {
 			if (SortedEntries.Any(x=> x.Key == $"{mod} {internalName}"))
-				throw new Exception($"Check your code for duplicate entries or typos, as this entry has already been registered: [{mod} {internalName}]");
+				throw new Exception(Language.GetText("DuplicateEntry").Format(mod, internalName));
 		}
 
 		internal void LogNewBoss(string mod, string name) {
 			if (!BossChecklist.DebugConfig.ModCallLogVerbose)
 				return;
+
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("[Boss Checklist] ");
 			Console.ResetColor();
@@ -1157,12 +1182,15 @@ namespace BossChecklist
 			Console.Write(name);
 			Console.WriteLine();
 			Console.ResetColor();
+
+			/*
 			if (OldCalls.Values.Any(x => x.Contains(name))) {
 				BossChecklist.instance.Logger.Warn($"Entry successfully registered to the Boss Log: [{mod} {name}] (outdated mod call)");
 			}
 			else {
 				BossChecklist.instance.Logger.Info($"Entry successfully registered to the Boss Log: [{mod} {name}]");
 			}
+			*/
 		}
 	}
 }

@@ -53,9 +53,9 @@ namespace BossChecklist
 			}
 			*/
 
-			Logger.Info($"Progression values for vanilla entries have been last updated on BossChecklist {LastVanillaProgressionRevision}");
+			Logger.Info(Language.GetText("LastUpdated").Format(LastVanillaProgressionRevision));
 			if (!DebugConfig.ModCallLogVerbose)
-				Logger.Info("Boss Log integration messages will not be logged.");
+				Logger.Info(Language.GetTextValue("NoLogging"));
 		}
 
 		public override void Unload() {
@@ -67,6 +67,22 @@ namespace BossChecklist
 			ClientConfig = null;
 			DebugConfig = null;
 			BossLogConfig = null;
+		}
+
+		internal void LogModCallInfo(string key, params object[] args) {
+			if (!DebugConfig.ModCallLogVerbose)
+				return;
+
+			LocalizedText text = Language.GetText("Mods.BossChecklist.LogMessage." + key);
+			Logger.Info(text.Format(args));
+		}
+
+		internal void LogWarning(string key, bool requiresConfig, params object[] args) {
+			if (requiresConfig && !DebugConfig.ModCallLogVerbose)
+				return;
+
+			LocalizedText text = Language.GetText("Mods.BossChecklist.LogMessage." + key);
+			Logger.Warn(text.Format(args));
 		}
 
 		internal static void SaveConfig(BossLogConfiguration bossLogConfig) {
@@ -127,10 +143,9 @@ namespace BossChecklist
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
 
 					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for GetBossInfoDictionary");
+					if (!bossTracker.EntriesFinalized)
+						LogWarning("LateCall", requiresConfig: false, message);
 
-					if (!bossTracker.EntriesFinalized) {
-						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
-					}
 					//if (message == "GetBossInfoExpando") {
 					//	return bossTracker.SortedBosses.ToDictionary(boss => boss.Key, boss => boss.ConvertToExpandoObject());
 					//}
@@ -145,13 +160,13 @@ namespace BossChecklist
 				
 				if (message == "LogBoss" || message == "LogMiniBoss" || message == "LogEvent") {
 					if (args[1] is not Mod submittedMod) {
-						Logger.Warn($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance to generate an entry key.");
+						LogWarning("MustContainMod", requiresConfig: false, args[1] as string);
 						return "Failure";
 					}
 
 					string internalName = args[2] as string;
 					if (!internalName.All(char.IsLetterOrDigit)) {
-						Logger.Warn($"Invalid internal name passed ({internalName}). Your call must contain a string comprised of letters and/or digits without whitespace characters in order to generate an entry key.");
+						LogWarning("MustContainName", requiresConfig: false, internalName);
 						return "Failure";
 					}
 
@@ -169,10 +184,10 @@ namespace BossChecklist
 				else if (message.StartsWith("Submit")) {
 					OrphanType? DetermineOrphanType() {
 						return message switch {
-							"SubmitEntryLoot" => OrphanType.Loot,
-							"SubmitEntryCollectibles" => OrphanType.Collectibles,
-							"SubmitEntrySpawnItems" => OrphanType.SpawnItems,
-							"SubmitEventNPCs" => OrphanType.EventNPC,
+							"SubmitEntryLoot" => OrphanType.SubmitEntryLoot,
+							"SubmitEntryCollectibles" => OrphanType.SubmitEntryCollectibles,
+							"SubmitEntrySpawnItems" => OrphanType.SubmitEntrySpawnItems,
+							"SubmitEventNPCs" => OrphanType.SubmitEventNPCs,
 							_ => null
 						};
 					}
@@ -183,7 +198,7 @@ namespace BossChecklist
 					}
 
 					if (args[1] is not Mod submittedMod) {
-						Logger.Error($"Invalid mod instance passed ({args[1] as string}). Your call must contain a Mod instance for logging purposes.");
+						LogWarning("MustContainMod_Orphan", requiresConfig: false, args[1] as string);
 						return "Failure";
 					}
 
