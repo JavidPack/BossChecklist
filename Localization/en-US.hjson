@@ -234,10 +234,11 @@ Mods: {
 			}
 
 			EventEnd: {
+				Generic: The {0} has ended...
 				BloodMoon: The Blood Moon falls past the horizon...
 				FrostMoon: The Frost Moon melts as the sun rises...
 				PumpkinMoon: The Pumpkin Moon ends its harvest...
-				SolarEclipse: The solar eclipse has ended... until next time...
+				Eclipse: The solar eclipse has ended... until next time...
 			}
 		}
 
@@ -507,7 +508,7 @@ Mods: {
 				}
 
 				DespawnMessageType: {
-					Label: Boss Despawn Messages
+					Label: Boss Despawn Annoucements
 					Tooltip:
 						'''
 						Despawn messages will appear in chat when a boss becomes inactive.
@@ -516,11 +517,20 @@ Mods: {
 				}
 
 				LimbMessages: {
-					Label: Non-Boss Defeated Messages
+					Label: Non-Boss Defeated Annoucements
 					Tooltip:
 						'''
 						Messages will appear in chat when an important component of an entry is defeated.
 						Examples include: Skeletron's Hands, Retinazor/Spazmatism, the Celestial Pillars, etc.
+						'''
+				}
+
+				MoonMessages: {
+					Label: Moon Event Ending Annoucements
+					Tooltip:
+						'''
+						Messages will appear in chat when a vanilla moon event has ended.
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
 						'''
 				}
 

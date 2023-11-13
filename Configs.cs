@@ -266,6 +266,11 @@ namespace BossChecklist
 		[DefaultValue("Generic")]
 		public string LimbMessages { get; set; }
 
+		[DrawTicks]
+		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
+		[DefaultValue("Generic")]
+		public string MoonMessages { get; set; }
+
 		[DefaultValue(true)]
 		public bool TimerSounds { get; set; }
 

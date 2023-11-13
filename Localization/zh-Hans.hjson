@@ -234,10 +234,11 @@ Mods: {
 			}
 
 			EventEnd: {
+				// Generic: The {0} has ended...
 				BloodMoon: 赤色之月落至地平线之下...
 				FrostMoon: 寒霜之月在日光中融化了...
 				PumpkinMoon: 南瓜月下的狂欢结束了...
-				SolarEclipse: 日食暂时停止了...
+				Eclipse: 日食暂时停止了...
 			}
 		}
 
@@ -522,6 +523,15 @@ Mods: {
 						拥有多个部分的Boss将在某一个部分被击败时发送信息
 						如: 骷髅王的手
 						'''
+				}
+
+				MoonMessages: {
+					// Label: Moon Event Ending Annoucements
+					/* Tooltip:
+						'''
+						Messages will appear in chat when a vanilla moon event has ended.
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
+						''' */
 				}
 
 				TimerSounds: {

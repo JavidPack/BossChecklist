@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -362,7 +363,11 @@ namespace BossChecklist
 					NPC limbNPC = Main.npc[reader.ReadInt32()];
 					BossChecklist.bossTracker.IsEntryLimb(limbNPC.type, out EntryInfo limbEntry);
 					if (limbEntry is not null && limbEntry.GetLimbMessage(limbNPC) is LocalizedText limbMessage)
-						Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityGreen);
+						Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityPurple);
+					break;
+				case PacketMessageType.SendMoonMessage:
+					if (WorldAssist.DetermineMoonAnnoucement(reader.ReadString()) is string message)
+						Main.NewText(message, new Color(50, 255, 130));
 					break;
 				case PacketMessageType.SendPersonalBestRecordsToServer:
 					// Multiplayer client --> Server (always)

@@ -238,10 +238,11 @@ Mods: {
 			}
 
 			EventEnd: {
+				// Generic: The {0} has ended...
 				BloodMoon: Кровавая луна уходит за горизонт...
 				FrostMoon: Морозная луна тает, как солнце восходит...
 				PumpkinMoon: Тыквенная луна прекращает свою жатву...
-				SolarEclipse: Солнечное затмение закончилось... до следующего раза...
+				Eclipse: Солнечное затмение закончилось... до следующего раза...
 			}
 		}
 
@@ -527,6 +528,15 @@ Mods: {
 						При поражении отдельного сегмента босса будет отправляться сообщение в чат
 						Например, Руки Скелетрона
 						'''
+				}
+
+				MoonMessages: {
+					// Label: Moon Event Ending Annoucements
+					/* Tooltip:
+						'''
+						Messages will appear in chat when a vanilla moon event has ended.
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
+						''' */
 				}
 
 				TimerSounds: {

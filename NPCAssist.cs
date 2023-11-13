@@ -57,7 +57,7 @@ namespace BossChecklist
 			// Display a message for Limbs/Towers if config is enabled, which should be checked after the active flags update
 			if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
 				if (Main.netMode != NetmodeID.Server) {
-					Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
+					Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 				}
 				else {
 					// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
