@@ -291,12 +291,16 @@ Mods: {
 		}
 
 		LogMessage: {
-			LastUpdated: "Progression values for vanilla entries have been last updated on BossChecklist {0}"
+			LastUpdated: Progression values for vanilla entries have been last updated on BossChecklist {0}
 			NoLogging: Boss Log integration messages will not be logged.
 			LateCall: Call Warning: The attempted message, '{0}', was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.
 			OldCall: The '{0}' call is an old call and is now obsolete. Use '{1}' instead. {2} entries include: [{3}]
 			ModCallDocumentation: Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
-			OldCall_Orphan: "{0} mod call from {1} is structured improperly. Mod developers can refer to link below:\n https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls"
+			OldCall_Orphan:
+				'''
+				{0} mod call from {1} is structured improperly. Mod developers can refer to link below:
+				 https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls
+				'''
 			MustContainMod: Invalid mod instance passed ({0}). Your call must contain a Mod instance to generate an entry key.
 			MustContainName: Invalid internal name passed ({internalName}). Your call must contain a string comprised of letters and/or digits without whitespace characters in order to generate an entry key.
 			MustContainMod_Orphan: Invalid mod instance passed ({0}). Your call must contain a Mod instance for logging purposes.
