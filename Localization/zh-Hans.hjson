@@ -186,8 +186,8 @@ Mods: {
 
 		ChatMessages: {
 			Despawn: {
-				Generic: "{0} 失去了对你的兴趣..."
-				Day: "{0} 在黎明时逃跑了..."
+				Generic: "{0}失去了对你的兴趣..."
+				Day: "{0}在黎明时逃跑了..."
 			}
 
 			Defeated: {
@@ -213,7 +213,7 @@ Mods: {
 			}
 
 			Loss: {
-				Generic: "{0} 杀死了所有玩家!"
+				Generic: "{0}杀死了所有玩家!"
 				KingSlime: "{0}班师回朝..."
 				EyeofCthulhu: "{0}隐没在暮色中..."
 				EaterofWorlds: "{0}钻回了地下..."
@@ -234,10 +234,11 @@ Mods: {
 			}
 
 			EventEnd: {
+				Generic: {0}结束了...
 				BloodMoon: 赤色之月落至地平线之下...
 				FrostMoon: 寒霜之月在日光中融化了...
 				PumpkinMoon: 南瓜月下的狂欢结束了...
-				SolarEclipse: 日食暂时停止了...
+				Eclipse: 日食暂时停止了...
 			}
 		}
 
@@ -288,6 +289,30 @@ Mods: {
 		Keybinds: {
 			ToggleChecklist.DisplayName: 开关Boss清单
 			ToggleLog.DisplayName: 开关Boss日志
+		}
+
+		LogMessage: {
+			LastUpdated: BossChecklist {0}最近更新了原版条目的进度值
+			NoLogging: Boss日志的集成信息将不会被记录.
+			LateCall: 调用警告: 尝试的消息, '{0}', 过早发送. 预计将不会返回完整的调用信息. 为了获得最佳结果, 请在PostAddRecipes中进行调用.
+			OldCall: 调用'{0}'已过时且已被废弃. 请立即使用'{1}'. {2}条目包括: [{3}]
+			ModCallDocumentation: 已更新的BossChecklist的Mod.Call文档在此处: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
+			OldCall_Orphan:
+				'''
+				来自{1}的{0}Mod调用结构不正确. Mod开发者可以参阅以下链接:
+				 https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls
+				'''
+			MustContainMod: ({0}) 传递的Mod实例无效. 你的调用必须包含Mod实例才能生成条目键.
+			MustContainName: ({internalName}) 传递的内部名称无效. 你的调用必须包含由字母和/或数字组成的字符串, 并且其中不含空白字符, 以便生成条目键.
+			MustContainMod_Orphan: ({0}) 传递的Mod实例无效. 为了日志记录，你的调用必须包含Mod实例.
+			DuplicateEntry: 检查你的代码是否存在重复条目或拼写错误，因为此条目已被注册: [{0}{1}]
+			RegisteredBosses: "{0}已成功注册{1}Boss: {2}"
+			RegisteredMiniBosses: "{0}已成功注册{1}小Boss: {2}"
+			RegisteredEvents: "{0}已成功注册{1}事件: {2}"
+			SuccessfulOrphanData: "{0}已成功注册{1}'{2}'孤立数据值"
+			InvalidOrphanKey: 来自{1}的'{0}'调用包含无效键 ({2}) , 将被忽略.
+			InvalidEventEntry: "{0}不是事件条目并且无法响应{1}的调用"
+			BelongsToInvasion: "{0}已尝试编辑'{1}'的NPC池. 此条目是一个由tModLoader的'NPCID.Sets.BelongsToInvasion'集支持的事件. SubmitEventNPCs仍然受到支持，但建议在给定的情况下使用这些集. 使用这些集用于ModNPCs会自动将它们添加到条目的NPC池中, 而无需额外的mod调用."
 		}
 
 		Configs: {
@@ -483,7 +508,7 @@ Mods: {
 				}
 
 				DespawnMessageType: {
-					Label: Boss消失信息
+					Label: Boss消失通告
 					Tooltip:
 						'''
 						当Boss消失时, 消失信息将出现在聊天栏中.
@@ -492,11 +517,20 @@ Mods: {
 				}
 
 				LimbMessages: {
-					Label: 非Boss的被击败消息
+					Label: 非Boss的被击败通告
 					Tooltip:
 						'''
 						当一位Boss的重要组成部分被击败时会在聊天栏内发送信息.
 						如: 骷髅王之手、激光眼/魔焰焰、天界柱，诸如此类.
+						'''
+				}
+
+				MoonMessages: {
+					Label: 月亮事件结束通告
+					Tooltip:
+						'''
+						当原版的月亮事件结束时, 信息将出现在聊天栏中.
+						月亮事件包括: 血月、日食、南瓜月和霜月
 						'''
 				}
 
@@ -553,7 +587,11 @@ Mods: {
 
 				ModCallVerbose: {
 					Label: Mod.Call日志详细信息
-					Tooltip: 如果为true, 日志将显示服务器控制台中添加到Boss清单中的所有Boss
+					Tooltip:
+						'''
+						如果为true, tModLoader的日志中会显示更多关于创建的条目数据的信息.
+						无论设置如何, 都会显示无效或不正确的Mod调用使用
+						'''
 				}
 
 				ShowProgressionValue: {
