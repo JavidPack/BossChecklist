@@ -186,34 +186,34 @@ Mods: {
 
 		ChatMessages: {
 			Despawn: {
-				Generic: "{0} 失去了对你的兴趣..."
-				Day: "{0} 在黎明时逃跑了..."
+				Generic: "{0}失去了对你的兴趣..."
+				Day: "{0}在黎明时逃跑了..."
 			}
 
 			Defeated: {
-				// Generic: "{0} is down!"
-				// GenericSkeletronHand: Skeletron's Hand is down!
-				// GenericMoonLordHead: Moon Lord's Head is down!
-				// SkeletronHand: A {0} hand has fractured!
-				// PrimeCannon: The {0} has exploded!
-				// PrimeSaw: The {0} has malfunctioned!
-				// PrimeVice: The {0} has collapsed!
-				// PrimeLaser: The {0} has overheated!
-				// GolemFistLeft: "{0} is destroyed!"
-				// GolemFistRight: "{0} is destroyed!"
-				// GolemHead: The {0} has detached from the body!
-				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
-				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
-				// Retinazer: "{0} has been defeated!"
-				// Spazmatism: "{0} has been defeated!"
-				// LunarTowerVortex: The {0} has fallen!
-				// LunarTowerStardust: The {0} has fallen!
-				// LunarTowerNebula: The {0} has fallen!
-				// LunarTowerSolar: The {0} has fallen!
+				Generic: "{0}已被击倒!"
+				GenericSkeletronHand: 骷髅王之手已被击倒!
+				GenericMoonLordHead: 月亮领主的手已被击倒!
+				SkeletronHand: {0}的一个手断裂了!
+				PrimeCannon: {0}爆炸了!
+				PrimeSaw: {0}发生故障了!
+				PrimeVice: {0}坍塌了!
+				PrimeLaser: The {0}过热了!
+				GolemFistLeft: "{0}被摧毁了!"
+				GolemFistRight: "{0}被摧毁了!"
+				GolemHead: {0}已脱离身体!
+				MoonLordHead: 一颗克苏鲁真眼已脱离了{0}的头部!
+				MoonLordHand: 一颗克苏鲁真眼已脱离了{0}!
+				Retinazer: "{0}已被击败!"
+				Spazmatism: "{0}已被击败!"
+				LunarTowerVortex: {0}已倒塌!
+				LunarTowerStardust: {0}已倒塌!
+				LunarTowerNebula: {0}已倒塌!
+				LunarTowerSolar: {0}已倒塌!
 			}
 
 			Loss: {
-				Generic: "{0} 杀死了所有玩家!"
+				Generic: "{0}杀死了所有玩家!"
 				KingSlime: "{0}班师回朝..."
 				EyeofCthulhu: "{0}隐没在暮色中..."
 				EaterofWorlds: "{0}钻回了地下..."
@@ -234,7 +234,7 @@ Mods: {
 			}
 
 			EventEnd: {
-				// Generic: The {0} has ended...
+				Generic: {0}结束了...
 				BloodMoon: 赤色之月落至地平线之下...
 				FrostMoon: 寒霜之月在日光中融化了...
 				PumpkinMoon: 南瓜月下的狂欢结束了...
@@ -292,27 +292,27 @@ Mods: {
 		}
 
 		LogMessage: {
-			// LastUpdated: Progression values for vanilla entries have been last updated on BossChecklist {0}
-			// NoLogging: Boss Log integration messages will not be logged.
-			// LateCall: Call Warning: The attempted message, '{0}', was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.
-			// OldCall: The '{0}' call is an old call and is now obsolete. Use '{1}' instead. {2} entries include: [{3}]
-			// ModCallDocumentation: Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
-			/* OldCall_Orphan:
+			LastUpdated: BossChecklist {0}最近更新了原版条目的进度值
+			NoLogging: Boss日志的集成信息将不会被记录.
+			LateCall: 调用警告: 尝试的消息, '{0}', 过早发送. 预计将不会返回完整的调用信息. 为了获得最佳结果, 请在PostAddRecipes中进行调用.
+			OldCall: 调用'{0}'已过时且已被废弃. 请立即使用'{1}'. {2}条目包括: [{3}]
+			ModCallDocumentation: 已更新的BossChecklist的Mod.Call文档在此处: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
+			OldCall_Orphan:
 				'''
-				{0} mod call from {1} is structured improperly. Mod developers can refer to link below:
+				来自{1}的{0}Mod调用结构不正确. Mod开发者可以参阅以下链接:
 				 https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls
-				''' */
-			// MustContainMod: Invalid mod instance passed ({0}). Your call must contain a Mod instance to generate an entry key.
-			// MustContainName: Invalid internal name passed ({internalName}). Your call must contain a string comprised of letters and/or digits without whitespace characters in order to generate an entry key.
-			// MustContainMod_Orphan: Invalid mod instance passed ({0}). Your call must contain a Mod instance for logging purposes.
-			// DuplicateEntry: Check your code for duplicate entries or typos, as this entry has already been registered: [{0} {1}]
-			// RegisteredBosses: "{0} has successfully registered {1} bosses: {2}"
-			// RegisteredMiniBosses: "{0} has successfully registered {1} mini-bosses: {2}"
-			// RegisteredEvents: "{0} has successfully registered {1} events: {2}"
-			// SuccessfulOrphanData: "{0} successfully registered {1} '{2}' orphan data value(s)"
-			// InvalidOrphanKey: A '{0}' call from {1} contains an invalid key ({2}) and will be ignored.
-			// InvalidEventEntry: "{0} is not an event entry and cannot take calls from {1}"
-			// BelongsToInvasion: "{0} has attempted to edit the npc pool of '{1}'. This entry is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls."
+				'''
+			MustContainMod: ({0}) 传递的Mod实例无效. 你的调用必须包含Mod实例才能生成条目键.
+			MustContainName: ({internalName}) 传递的内部名称无效. 你的调用必须包含由字母和/或数字组成的字符串, 并且其中不含空白字符, 以便生成条目键.
+			MustContainMod_Orphan: ({0}) 传递的Mod实例无效. 为了日志记录，你的调用必须包含Mod实例.
+			DuplicateEntry: 检查你的代码是否存在重复条目或拼写错误，因为此条目已被注册: [{0}{1}]
+			RegisteredBosses: "{0}已成功注册{1}Boss: {2}"
+			RegisteredMiniBosses: "{0}已成功注册{1}小Boss: {2}"
+			RegisteredEvents: "{0}已成功注册{1}事件: {2}"
+			SuccessfulOrphanData: "{0}已成功注册{1}'{2}'孤立数据值"
+			InvalidOrphanKey: 来自{1}的'{0}'调用包含无效键 ({2}) , 将被忽略.
+			InvalidEventEntry: "{0}不是事件条目并且无法响应{1}的调用"
+			BelongsToInvasion: "{0}已尝试编辑'{1}'的NPC池. 此条目是一个由tModLoader的'NPCID.Sets.BelongsToInvasion'集支持的事件. SubmitEventNPCs仍然受到支持，但建议在给定的情况下使用这些集. 使用这些集用于ModNPCs会自动将它们添加到条目的NPC池中, 而无需额外的mod调用."
 		}
 
 		Configs: {
@@ -508,7 +508,7 @@ Mods: {
 				}
 
 				DespawnMessageType: {
-					Label: Boss消失信息
+					Label: Boss消失通告
 					Tooltip:
 						'''
 						当Boss消失时, 消失信息将出现在聊天栏中.
@@ -517,11 +517,20 @@ Mods: {
 				}
 
 				LimbMessages: {
-					Label: 节点击败消息
+					Label: 非Boss的被击败通告
 					Tooltip:
 						'''
-						拥有多个部分的Boss将在某一个部分被击败时发送信息
-						如: 骷髅王的手
+						当一位Boss的重要组成部分被击败时会在聊天栏内发送信息.
+						如: 骷髅王之手、激光眼/魔焰焰、天界柱，诸如此类.
+						'''
+				}
+
+				MoonMessages: {
+					Label: 月亮事件结束通告
+					Tooltip:
+						'''
+						当原版的月亮事件结束时, 信息将出现在聊天栏中.
+						月亮事件包括: 血月、日食、南瓜月和霜月
 						'''
 				}
 
@@ -587,7 +596,11 @@ Mods: {
 
 				ModCallVerbose: {
 					Label: Mod.Call日志详细信息
-					Tooltip: 如果为true, 日志将显示服务器控制台中添加到Boss清单中的所有Boss
+					Tooltip:
+						'''
+						如果为true, tModLoader的日志中会显示更多关于创建的条目数据的信息.
+						无论设置如何, 都会显示无效或不正确的Mod调用使用
+						'''
 				}
 
 				ShowProgressionValue: {
