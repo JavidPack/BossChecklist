@@ -9,8 +9,7 @@ namespace BossChecklist
 		RequestClearHidden,
 		RequestMarkedDownEntry,
 		RequestClearMarkedDowns,
-		SendDespawnMessage,
-		SendLimbMessage,
+		SendClientConfigMessage,
 		SendPersonalBestRecordsToServer,
 		UpdateRecordsFromServerToPlayer,
 		RequestWorldRecords,
@@ -18,6 +17,12 @@ namespace BossChecklist
 		UpdateWorldRecordsToAllPlayers,
 		ResetPlayerRecordForServer,
 		ResetTrackers
+	}
+
+	internal enum ClientMessageType : byte {
+		Despawn,
+		Limb,
+		Moon
 	}
 
 	internal class Networking {

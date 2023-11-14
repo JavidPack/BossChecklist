@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
-using Terraria.Chat;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.Localization;
@@ -272,14 +272,31 @@ namespace BossChecklist
 			HandleDespawnFlags();
 		}
 
-		public void AnnounceEventEnd(string eventType) {
-			// TODO: Custom/Generic announcements
-			NetworkText message = NetworkText.FromKey($"{NPCAssist.LangChat}.EventEnd.{eventType}");
-			if (Main.netMode == NetmodeID.SinglePlayer) {
-				Main.NewText(message.ToString(), Colors.RarityGreen);
+		public static string DetermineMoonAnnoucement(string eventType) {
+			if (BossChecklist.ClientConfig.MoonMessages == "Generic") {
+				string eventTypeLocal = Language.Exists($"Bestiary_Events.{eventType}") ? Language.GetTextValue($"Bestiary_Events.{eventType}") : Language.GetTextValue($"Bestiary_Invasions.{eventType}");
+				if (eventType == "Eclipse")
+					eventTypeLocal = eventTypeLocal.ToLower();
+				return Language.GetText($"{NPCAssist.LangChat}.EventEnd.Generic").Format(eventTypeLocal);
 			}
-			else {
-				ChatHelper.BroadcastChatMessage(message, Colors.RarityGreen);
+			else if (BossChecklist.ClientConfig.MoonMessages == "Unique") {
+				return Language.GetTextValue($"{NPCAssist.LangChat}.EventEnd.{eventType}");
+			}
+
+			return null;
+		}
+
+		public void AnnounceEventEnd(string eventType) {
+			if (Main.netMode == NetmodeID.SinglePlayer && DetermineMoonAnnoucement(eventType) is string message) {
+				Main.NewText(message, new Color(50, 255, 130));
+			}
+			else if (Main.netMode == NetmodeID.Server) {
+				// Send a packet to all multiplayer clients. Moon messages are client based, so they will need to read their own configs to determine the message.
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.SendClientConfigMessage);
+				packet.Write((byte)ClientMessageType.Moon);
+				packet.Write(eventType);
+				packet.Send();
 			}
 		}
 
@@ -338,7 +355,7 @@ namespace BossChecklist
 			}
 			else if (Tracker_SolarEclipse) {
 				Tracker_SolarEclipse = false;
-				AnnounceEventEnd("SolarEclipse");
+				AnnounceEventEnd("Eclipse");
 				if (!downedSolarEclipse) {
 					downedSolarEclipse = true;
 					if (Main.netMode == NetmodeID.Server) {
@@ -373,11 +390,12 @@ namespace BossChecklist
 					if (Main.netMode == NetmodeID.SinglePlayer) {
 						Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 					}
-					else {
+					else if (Main.netMode == NetmodeID.Server) {
 						//ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message.Format(npc.FullName)), Colors.RarityPurple);
 						// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
 						ModPacket packet = BossChecklist.instance.GetPacket();
-						packet.Write((byte)PacketMessageType.SendDespawnMessage);
+						packet.Write((byte)PacketMessageType.SendClientConfigMessage);
+						packet.Write((byte)ClientMessageType.Despawn);
 						packet.Write(npc.whoAmI);
 						packet.Send();
 					}

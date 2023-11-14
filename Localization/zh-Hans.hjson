@@ -534,6 +534,15 @@ Mods: {
 						'''
 				}
 
+				MoonMessages: {
+					// Label: Moon Event Ending Annoucements
+					/* Tooltip:
+						'''
+						Messages will appear in chat when a vanilla moon event has ended.
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
+						''' */
+				}
+
 				TimerSounds: {
 					Label: 重生倒计时声音
 					Tooltip: 如果启用, 重生时间的最后3秒钟将有声音提示

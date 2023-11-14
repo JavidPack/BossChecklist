@@ -665,7 +665,7 @@ namespace BossChecklist
 		/// <summary>
 		/// While in debug mode, users are able to reset their records of a specific boss by alt and right-clicking the recordnavigation button
 		/// </summary>
-		private void ResetStats(int recordIndex) {
+		private void ResetStats() {
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // temporary block is recordcode is disabled
 
@@ -1413,7 +1413,7 @@ namespace BossChecklist
 						UIImage categoryIcon = new UIImage(RequestResource($"Nav_Record_{RecordSubCategory}"));
 						categoryIcon.Left.Pixels = 15;
 						categoryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - categoryIcon.Height.Pixels / 2);
-						categoryIcon.OnRightClick += (a, b) => ResetStats(recordIndex);
+						categoryIcon.OnRightClick += (a, b) => ResetStats();
 						slot.Append(categoryIcon);
 
 						#region Experimental Feature Notice

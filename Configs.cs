@@ -216,7 +216,7 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
+						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is not EntryInfo entry)
 							continue;
 
 						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
@@ -235,7 +235,7 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
+						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is not EntryInfo entry)
 							continue;
 
 						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
@@ -265,6 +265,11 @@ namespace BossChecklist
 		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
 		[DefaultValue("Generic")]
 		public string LimbMessages { get; set; }
+
+		[DrawTicks]
+		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
+		[DefaultValue("Generic")]
+		public string MoonMessages { get; set; }
 
 		[DefaultValue(true)]
 		public bool TimerSounds { get; set; }
@@ -326,10 +331,6 @@ namespace BossChecklist
 	public class DebugConfiguration : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
-		
-		private int processRecord = 0;
-		private bool nrEnabled;
-		private bool rtEnabled;
 
 		[Header("Debug")]
 

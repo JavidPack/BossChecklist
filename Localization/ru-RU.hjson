@@ -238,10 +238,11 @@ Mods: {
 			}
 
 			EventEnd: {
+				// Generic: The {0} has ended...
 				BloodMoon: Кровавая луна уходит за горизонт...
 				FrostMoon: Морозная луна тает, как солнце восходит...
 				PumpkinMoon: Тыквенная луна прекращает свою жатву...
-				SolarEclipse: Солнечное затмение закончилось... до следующего раза...
+				Eclipse: Солнечное затмение закончилось... до следующего раза...
 			}
 		}
 
@@ -292,6 +293,30 @@ Mods: {
 		Keybinds: {
 			ToggleChecklist.DisplayName: Открыть Boss Checklist
 			ToggleLog.DisplayName: Открыть Босс-журнал
+		}
+
+		LogMessage: {
+			// LastUpdated: Progression values for vanilla entries have been last updated on BossChecklist {0}
+			// NoLogging: Boss Log integration messages will not be logged.
+			// LateCall: Call Warning: The attempted message, '{0}', was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.
+			// OldCall: The '{0}' call is an old call and is now obsolete. Use '{1}' instead. {2} entries include: [{3}]
+			// ModCallDocumentation: Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
+			/* OldCall_Orphan:
+				'''
+				{0} mod call from {1} is structured improperly. Mod developers can refer to link below:
+				 https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls
+				''' */
+			// MustContainMod: Invalid mod instance passed ({0}). Your call must contain a Mod instance to generate an entry key.
+			// MustContainName: Invalid internal name passed ({internalName}). Your call must contain a string comprised of letters and/or digits without whitespace characters in order to generate an entry key.
+			// MustContainMod_Orphan: Invalid mod instance passed ({0}). Your call must contain a Mod instance for logging purposes.
+			// DuplicateEntry: Check your code for duplicate entries or typos, as this entry has already been registered: [{0} {1}]
+			// RegisteredBosses: "{0} has successfully registered {1} bosses: {2}"
+			// RegisteredMiniBosses: "{0} has successfully registered {1} mini-bosses: {2}"
+			// RegisteredEvents: "{0} has successfully registered {1} events: {2}"
+			// SuccessfulOrphanData: "{0} successfully registered {1} '{2}' orphan data value(s)"
+			// InvalidOrphanKey: A '{0}' call from {1} contains an invalid key ({2}) and will be ignored.
+			// InvalidEventEntry: "{0} is not an event entry and cannot take calls from {1}"
+			// BelongsToInvasion: "{0} has attempted to edit the npc pool of '{1}'. This entry is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls."
 		}
 
 		Configs: {
@@ -503,6 +528,15 @@ Mods: {
 						При поражении отдельного сегмента босса будет отправляться сообщение в чат
 						Например, Руки Скелетрона
 						'''
+				}
+
+				MoonMessages: {
+					// Label: Moon Event Ending Annoucements
+					/* Tooltip:
+						'''
+						Messages will appear in chat when a vanilla moon event has ended.
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
+						''' */
 				}
 
 				TimerSounds: {

@@ -459,10 +459,10 @@ namespace BossChecklist
 	}
 
 	internal enum OrphanType {
-		Loot,
-		Collectibles,
-		SpawnItems,
-		EventNPC
+		SubmitEntryLoot,
+		SubmitEntryCollectibles,
+		SubmitEntrySpawnItems,
+		SubmitEventNPCs
 	}
 
 	internal class OrphanInfo {
@@ -476,13 +476,8 @@ namespace BossChecklist
 
 			// Sort through the data submissions to remove any invalid data
 			foreach (string Key in values.Keys) {
-				if (!Key.Contains(' ')) {
-					values.Remove(Key); // remove submissions with invalid keys (no space between modSource and internalName)
-					BossChecklist.instance.Logger.Warn($"A {type} call from {modSource} contains an invalid key ({Key}) and has been removed.");
-				}
-				else if (!Key.StartsWith("Terraria ") && !ModLoader.TryGetMod(Key.Substring(0, Key.IndexOf(" ")), out Mod mod)) {
+				if (!Key.StartsWith("Terraria ") && !ModLoader.TryGetMod(Key.Substring(0, Key.IndexOf(" ")), out _))
 					values.Remove(Key); // remove submissions that use an entry key from an unloaded mod (no need to log removed entries for unloaded mods)
-				}
 			}
 			this.values = values;
 		}
