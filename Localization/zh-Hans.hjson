@@ -194,22 +194,22 @@ Mods: {
 				Generic: "{0}已被击倒!"
 				GenericSkeletronHand: 骷髅王之手已被击倒!
 				GenericMoonLordHead: 月亮领主的手已被击倒!
-				SkeletronHand: {0}的一个手断裂了!
-				PrimeCannon: {0}爆炸了!
-				PrimeSaw: {0}发生故障了!
-				PrimeVice: {0}坍塌了!
+				SkeletronHand: "{0}的一个手断裂了!"
+				PrimeCannon: "{0}爆炸了!"
+				PrimeSaw: "{0}发生故障了!"
+				PrimeVice: "{0}坍塌了!"
 				PrimeLaser: The {0}过热了!
 				GolemFistLeft: "{0}被摧毁了!"
 				GolemFistRight: "{0}被摧毁了!"
-				GolemHead: {0}已脱离身体!
+				GolemHead: "{0}已脱离身体!"
 				MoonLordHead: 一颗克苏鲁真眼已脱离了{0}的头部!
 				MoonLordHand: 一颗克苏鲁真眼已脱离了{0}!
 				Retinazer: "{0}已被击败!"
 				Spazmatism: "{0}已被击败!"
-				LunarTowerVortex: {0}已倒塌!
-				LunarTowerStardust: {0}已倒塌!
-				LunarTowerNebula: {0}已倒塌!
-				LunarTowerSolar: {0}已倒塌!
+				LunarTowerVortex: "{0}已倒塌!"
+				LunarTowerStardust: "{0}已倒塌!"
+				LunarTowerNebula: "{0}已倒塌!"
+				LunarTowerSolar: "{0}已倒塌!"
 			}
 
 			Loss: {
@@ -234,7 +234,7 @@ Mods: {
 			}
 
 			EventEnd: {
-				Generic: {0}结束了...
+				Generic: "{0}结束了..."
 				BloodMoon: 赤色之月落至地平线之下...
 				FrostMoon: 寒霜之月在日光中融化了...
 				PumpkinMoon: 南瓜月下的狂欢结束了...
@@ -532,15 +532,6 @@ Mods: {
 						当原版的月亮事件结束时, 信息将出现在聊天栏中.
 						月亮事件包括: 血月、日食、南瓜月和霜月
 						'''
-				}
-
-				MoonMessages: {
-					// Label: Moon Event Ending Annoucements
-					/* Tooltip:
-						'''
-						Messages will appear in chat when a vanilla moon event has ended.
-						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
-						''' */
 				}
 
 				TimerSounds: {
