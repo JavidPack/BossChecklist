@@ -701,6 +701,9 @@ namespace BossChecklist
 				foreach (int item in GetLogEntryInfo.lootItemTypes) {
 					modPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
 				}
+				foreach (int item in GetLogEntryInfo.collectibles) {
+					modPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
+				}
 			}
 			else if (listeningElement is LogItemSlot slot) {
 				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
@@ -1418,7 +1421,6 @@ namespace BossChecklist
 
 						#region Experimental Feature Notice
 						/*
-						// TODO: Experimental feature notice, eventually will need to be removed
 						Asset<Texture2D> bnuuy = RequestVanillaTexture("Images/UI/Creative/Journey_Toggle");
 						string noticeText;
 						if (RecordSubCategory == SubCategory.WorldRecord) {
