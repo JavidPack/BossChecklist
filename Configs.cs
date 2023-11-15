@@ -27,11 +27,6 @@ namespace BossChecklist
 
 		[Header("BossLogChecklist")]
 
-		// TODO: [??] Change HideUnavailable and HideUnsupported to OptionStrings to allow users to choose betweem
-		// 1.) Show on Table of Contents, but skip through page navigation
-		// 2.) Show on Table of Contents, and allow visibility through page navigation
-		// 3.) Hide on Table of Contents and Page Navigation
-
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]
 		public bool HideUnavailable { get; set; }

@@ -235,9 +235,6 @@ namespace BossChecklist.UIElements
 			public override void MouseOver(UIMouseEvent evt) {
 				if (hoverButton)
 					SoundEngine.PlaySound(SoundID.MenuTick);
-
-				if (Record_Anchor.HasValue)
-					this.hoverText = $"{BossLogUI.LangLog}.Records.Category.{Record_Anchor.Value}"; // TODO: find a better way to declare this
 			}
 
 			private Color HoverColor => ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface ? Color.White : BossLogUI.faded;

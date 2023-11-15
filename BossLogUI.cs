@@ -623,8 +623,6 @@ namespace BossChecklist
 			FilterIcons[3].check = showHidden ? Texture_Check_Check : Texture_Check_X;
 		}
 
-		// TODO: [??] Implement separate Reset tabs? Including: Clear Hidden List, Clear Marked Downs, Clear Records, Clear Boss Loot, etc
-
 		public void ClearHiddenList() {
 			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenEntries.Count == 0)
 				return;
@@ -635,7 +633,6 @@ namespace BossChecklist
 			WorldAssist.HiddenEntries.Clear();
 			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
 			Networking.RequestHiddenEntryUpdate();
-
 
 			BossTab.Anchor = FindNextEntry(EntryType.Boss);
 			MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
