@@ -994,7 +994,7 @@ namespace BossChecklist
 			else if (PageNum >= 0) {
 				if (SelectedSubPage == SubPage.Records && GetLogEntryInfo.type == EntryType.Boss) {
 					interactions =
-						Language.GetTextValue($"{LangLog}.HintTexts.ClearAllRecords") + "\n " +
+						Language.GetTextValue($"{LangLog}.HintTexts.ClearAllRecords") + "\n" +
 						Language.GetTextValue($"{LangLog}.HintTexts.ClearRecord");
 				}
 				else if (SelectedSubPage == SubPage.LootAndCollectibles && BossChecklist.DebugConfig.ResetLootItems) {
