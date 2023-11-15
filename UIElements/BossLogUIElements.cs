@@ -740,6 +740,7 @@ namespace BossChecklist.UIElements
 								int rowCount = 0;
 								int bannerCount = 0;
 								const int bannersPerRow = 12;
+								List<int> bannerTypes = new List<int>();
 
 								foreach (int npcID in entry.npcIDs) {
 									if (rowCount == 3)
@@ -768,7 +769,7 @@ namespace BossChecklist.UIElements
 										int bannerItem = Item.BannerToItem(bannerID);
 										bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
 										Color bannerColor = reachedKillCount ? Color.White : masked ? Color.Black : BossLogUI.faded;
-										if (bannerID <= 0 || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
+										if (bannerID <= 0 || bannerTypes.Contains(bannerID) || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
 											continue;
 
 										for (int j = 0; j < 3; j++) {
@@ -786,6 +787,7 @@ namespace BossChecklist.UIElements
 											}
 										}
 
+										bannerTypes.Add(bannerID);
 										bannerCount++; // increase banner count after banner is fully drawn
 										if (bannerCount % bannersPerRow == 0)
 											rowCount++; // if banners per row has been reached, increase row count
