@@ -3,7 +3,7 @@ de-DE, 0/311, 0%, missing 311
 it-IT, 0/311, 0%, missing 311
 fr-FR, 0/311, 0%, missing 311
 es-ES, 82/311, 26%, missing 229
-ru-RU, 257/311, 83%, missing 54
+ru-RU, 269/311, 86%, missing 42
 zh-Hans, 308/311, 99%, missing 3
 pt-BR, 61/311, 20%, missing 250
 pl-PL, 0/311, 0%, missing 311

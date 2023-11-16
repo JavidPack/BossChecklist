@@ -663,9 +663,6 @@ namespace BossChecklist
 		/// While in debug mode, users are able to reset their records of a specific boss by alt and right-clicking the recordnavigation button
 		/// </summary>
 		private void ResetStats() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return; // temporary block is recordcode is disabled
-
 			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != SubPage.Records || GetPlayerRecords is null)
 				return; // must be on a valid record page and must have the reset records config enabled
 
@@ -1398,12 +1395,6 @@ namespace BossChecklist
 
 				// create 4 slots for each stat category value
 				for (int i = 0; i < 4; i++) {
-					if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE && i > 0 && RecordSubCategory != SubCategory.WorldRecord)
-						break; // only draws the first instance of a record slot if records are disabled
-
-					if (BossChecklist.DebugConfig.DisableWorldRecords && i > 0 && RecordSubCategory == SubCategory.WorldRecord)
-						break; // only draws the first instance of a record slot if world records are disabled
-
 					RecordDisplaySlot slot = new RecordDisplaySlot(Texture_Content_RecordSlot, RecordSubCategory, i, recordIndex);
 					slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2);
 					slot.Top.Pixels = (int)(35 + (75 * (i + 1)));

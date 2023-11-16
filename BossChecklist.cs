@@ -22,7 +22,6 @@ namespace BossChecklist
 		public static Dictionary<int, int> itemToMusicReference;
 
 		internal static ClientConfiguration ClientConfig;
-		internal static DebugConfiguration DebugConfig;
 		internal static BossLogConfiguration BossLogConfig;
 		public static List<PersonalRecords>[] ServerCollectedRecords;
 
@@ -66,7 +65,6 @@ namespace BossChecklist
 			ToggleBossLog = null;
 			ServerCollectedRecords = null;
 			ClientConfig = null;
-			DebugConfig = null;
 			BossLogConfig = null;
 		}
 

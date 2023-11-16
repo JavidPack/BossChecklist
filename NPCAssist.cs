@@ -19,9 +19,6 @@ namespace BossChecklist
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
-
 			foreach (Player player in Main.player) {
 				if (player.active) {
 					if (Main.netMode == NetmodeID.Server) {
@@ -73,9 +70,6 @@ namespace BossChecklist
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
 			if (WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
-				return;
-
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return;
 
 			bool newPersonalBestOnServer = false;

@@ -360,24 +360,7 @@ namespace BossChecklist
 			return true;
 		}
 	}
-
-	[BackgroundColor(128, 83, 0, 200)]
-	public class DebugConfiguration : ModConfig {
-		public override ConfigScope Mode => ConfigScope.ServerSide;
-		public override void OnLoaded() => BossChecklist.DebugConfig = this;
-
-		[BackgroundColor(255, 99, 71)]
-		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.RecordFeatureTesting.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.RecordFeatureTesting.Tooltip")]
-		public bool DISABLERECORDTRACKINGCODE { get; set; }
-
-		[BackgroundColor(255, 99, 71)]
-		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.WorldRecordFeatureTesting.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.WorldRecordFeatureTesting.Tooltip")]
-		public bool DisableWorldRecords { get; set; }
-
+	/*
 		// Code created by Jopojelly, taken from CheatSheet
 		private bool IsPlayerLocalServerOwner(Player player) {
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -399,5 +382,5 @@ namespace BossChecklist
 			}
 			return true;
 		}
-	}
+	*/
 }

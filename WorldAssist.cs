@@ -401,9 +401,6 @@ namespace BossChecklist
 					}
 				}
 
-				if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-					return;
-
 				// When a boss despawns, stop tracking it for all players
 				selectedEntry.IsRecordIndexed(out int recordIndex);
 				foreach (Player player in Main.player) {

@@ -131,9 +131,6 @@ namespace BossChecklist
 
 			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
-				return;
-
 			// When a player joins a world, their Personal Best records will need to be sent to the server for new Personal Best comparing
 			// The server doesn't need player records from every world, just the current one
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -161,9 +158,6 @@ namespace BossChecklist
 				hasOpenedTheBossLog = false;
 			*/
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
-				return;
-
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
@@ -176,9 +170,6 @@ namespace BossChecklist
 
 		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
 		public override void OnHurt(Player.HurtInfo info) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
-				return;
-
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
 				return;
 
@@ -191,7 +182,7 @@ namespace BossChecklist
 
 		// Track player deaths during boss fights.
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+			if (Player.whoAmI == 255)
 				return;
 
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
@@ -206,7 +197,7 @@ namespace BossChecklist
 
 		// Record tracking should stop if the player disconnects from the world.
 		public override void PlayerDisconnect() {
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE || Player.whoAmI == 255)
+			if (Player.whoAmI == 255)
 				return;
 
 			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)

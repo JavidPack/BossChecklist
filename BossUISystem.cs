@@ -147,10 +147,6 @@ namespace BossChecklist
 				);
 			}
 
-			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE) {
-				return;
-			}
-
 			#region DEBUG
 			int playerChatIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Player Chat"));
 			if (playerChatIndex != -1) {
