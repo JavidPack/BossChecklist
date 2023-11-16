@@ -339,6 +339,20 @@ Mods: {
 						'''
 				}
 
+				ShowInteractionTooltips: {
+					Label: 启用交互栏
+					Tooltip:
+						'''
+						启用后, 一个小的标签栏会悬浮在上方, 用以解释如何使用当前页面的可选交互.
+						可选交互示例包括右键条目以手动将其标记为已击败.
+						'''
+				}
+
+				Debug: {
+					// Label: "[i:3625] [c/ffeb6e:Debug Tools for Mod Developers] [i:3619]"
+					// Tooltip: ""
+				}
+
 				HideUnavailable: {
 					Label: 隐藏不可用的Boss
 					Tooltip:
@@ -450,13 +464,69 @@ Mods: {
 					Label: 显示进度栏
 					Tooltip: 禁用后, 目录底部的总进度栏将不会显示.
 				}
+			}
 
-				ShowInteractionTooltips: {
-					Label: 启用交互栏
+			DebugTools: {
+				// Tooltip: ""
+
+				ModCallLogVerbose: {
+					Label: Mod.Call日志详细信息
 					Tooltip:
 						'''
-						启用后, 一个小的标签栏会悬浮在上方, 用以解释如何使用当前页面的可选交互.
-						可选交互示例包括右键条目以手动将其标记为已击败.
+						如果为true, tModLoader的日志中会显示更多关于创建的条目数据的信息.
+						无论设置如何, 都会显示无效或不正确的Mod调用使用
+						'''
+				}
+
+				DisableAutoLocalization: {
+					Label: 禁用自动本地化
+					Tooltip:
+						'''
+						Boss清单会检测旧调用并为新调用所需的LocalizedText提交创建本地化.
+						新的调用不需要这些本地化, 但如果传递了null,  则默认使用它们.
+						设置为true可防止Boss清单创建新的本地化.
+						'''
+				}
+
+				EnabledResetOptions: {
+					// Label: Enable Reset Data Options
+					/* Tooltip:
+						'''
+						When enabled, your able to clear or reset certain data within the Boss Log.
+						Includes: Clearing hidden entries, clearing marked entries, resetting loot checklist, and resetting records.
+						''' */
+				}
+
+				ShowProgressionValue: {
+					Label: 使用进度值
+					Tooltip:
+						'''
+						当光标悬停在目录中的条目上以及查看条目的页面时, 显示其进度值.
+						进度值决定了条目在清单中的排序.
+						'''
+				}
+
+				AccessInternalNames: {
+					Label: 访问内部名称
+					Tooltip:
+						'''
+						在Boss的条目页面上添加一个按钮, 其可以将Boss键值和Mod源复制到游戏中的剪贴板.
+						对于制作跨Mod内容的Mod开发人员很有用."
+						'''
+				}
+
+				ShowCollectionType: {
+					Label: 显示自动检测的集合类型
+					Tooltip: Boss的收藏品物品栏会被标记为指定的集合类型
+				}
+
+				InactiveBossCheck: {
+					Label: 检查不活跃的Boss
+					Tooltip:
+						'''
+						启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
+						如果启用了Boss消失信息, 则当显Boss消失信息时, 这也应该在聊框天中显示一条消息.
+						这些信息应该分别在Boss被击败或Boss消失时出现.
 						'''
 				}
 			}
@@ -583,87 +653,6 @@ Mods: {
 					DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
 					DebugResetData: "[i:575] [c/ffeb6e:重置数据选项]"
 					FeatureTesting: "[i:2172] [c/ffeb6e:功能测试]"
-				}
-
-				ModCallVerbose: {
-					Label: Mod.Call日志详细信息
-					Tooltip:
-						'''
-						如果为true, tModLoader的日志中会显示更多关于创建的条目数据的信息.
-						无论设置如何, 都会显示无效或不正确的Mod调用使用
-						'''
-				}
-
-				ShowProgressionValue: {
-					Label: 使用进度值
-					Tooltip:
-						'''
-						当光标悬停在目录中的条目上以及查看条目的页面时, 显示其进度值.
-						进度值决定了条目在清单中的排序.
-						'''
-				}
-
-				AccessInternalNames: {
-					Label: 访问内部名称
-					Tooltip:
-						'''
-						在Boss的条目页面上添加一个按钮, 其可以将Boss键值和Mod源复制到游戏中的剪贴板.
-						对于制作跨Mod内容的Mod开发人员很有用."
-						'''
-				}
-
-				CollectionTypeDetection: {
-					Label: 显示自动检测的集合类型
-					Tooltip: Boss的收藏品物品栏会被标记为指定的集合类型
-				}
-
-				InactiveBossCheck: {
-					Label: 检查不活跃的Boss
-					Tooltip:
-						'''
-						启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
-						如果启用了Boss消失信息, 则当显Boss消失信息时, 这也应该在聊框天中显示一条消息.
-						这些信息应该分别在Boss被击败或Boss消失时出现.
-						'''
-				}
-
-				DisableAutoLocalization: {
-					Label: 禁用自动本地化
-					Tooltip:
-						'''
-						Boss清单会检测旧调用并为新调用所需的LocalizedText提交创建本地化.
-						新的调用不需要这些本地化, 但如果传递了null,  则默认使用它们.
-						设置为true可防止Boss清单创建新的本地化.
-						'''
-				}
-
-				ResetLoot: {
-					Label: 开启重置战利品和收藏品选项
-					Tooltip:
-						'''
-						alt + 右键所选的物品栏, 从保存的战利品/收藏品中删除所选物品.
-						alt + 右键'战利品&收藏品'按钮以清除整个战利品/收藏品列表.
-						这会应用于所有Boss战利品列表.
-						'''
-				}
-
-				ResetRecords: {
-					Label: 开启重置记录选项
-					Tooltip:
-						'''
-						alt + 右键所选Boss页面上的记录会重置记录.
-						alt + 右键所选Boss页面上的'记录'按钮会重置所有Boss的记录.
-						'''
-				}
-
-				ResetForcedDowns: {
-					Label: 开启重置被标记为击败的条目选项
-					Tooltip: alt + 右键目录页上的过滤标签以重置所有世界中被标记的击败.
-				}
-
-				ResetHiddenEntries: {
-					Label: 开启重置隐藏的条目选项
-					Tooltip: alt + 右键'过滤'标签中的'显示/隐藏'隐藏的条目按钮以重置所有隐藏的条目.
 				}
 
 				RecordFeatureTesting: {

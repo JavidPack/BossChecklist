@@ -260,7 +260,7 @@ namespace BossChecklist
 					else if (orphan.type == OrphanType.SubmitEventNPCs) {
 						if (entry.type == EntryType.Event) {
 							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
-							if (EventKeysWhoHaveBelongToInvasionSets.Contains(submission.Key) && BossChecklist.DebugConfig.ModCallLogVerbose)
+							if (EventKeysWhoHaveBelongToInvasionSets.Contains(submission.Key) && BossChecklist.BossLogConfig.Debug.ModCallLogVerbose)
 								BossChecklist.instance.LogWarning("BelongsToInvasion", requiresConfig: true, orphan.modSource, submission.Key);
 						}
 						else {
@@ -1169,7 +1169,7 @@ namespace BossChecklist
 		}
 
 		internal void LogNewBoss(string mod, string name) {
-			if (!BossChecklist.DebugConfig.ModCallLogVerbose)
+			if (!BossChecklist.BossLogConfig.Debug.ModCallLogVerbose)
 				return;
 
 			Console.ForegroundColor = ConsoleColor.DarkYellow;

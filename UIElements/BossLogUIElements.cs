@@ -576,7 +576,7 @@ namespace BossChecklist.UIElements
 				}
 
 				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
-				if (BossChecklist.DebugConfig.ShowCollectionType && entry.collectibleType.TryGetValue(item.type, out CollectibleType type)) {
+				if (BossChecklist.BossLogConfig.Debug.ShowCollectionType && entry.collectibleType.TryGetValue(item.type, out CollectibleType type)) {
 					string iconType = type.ToString();
 					if (type == CollectibleType.Mount) {
 						iconType = "Pet";
@@ -720,7 +720,7 @@ namespace BossChecklist.UIElements
 						}
 
 						Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
-						string progression = BossChecklist.DebugConfig.ShowProgressionValue ? $"[{entry.progression}f] " : "";
+						string progression = BossChecklist.BossLogConfig.Debug.ShowProgressionValue ? $"[{entry.progression}f] " : "";
 						Utils.DrawBorderString(spriteBatch, progression + entry.DisplayName, pos, Color.Goldenrod);
 
 						pos = new Vector2(pageRect.X + 5, pageRect.Y + 30);
@@ -1222,7 +1222,7 @@ namespace BossChecklist.UIElements
 
 			public override void MouseOver(UIMouseEvent evt) {
 				BossLogUI.headNum = entry.GetIndex;
-				if (BossChecklist.DebugConfig.ShowProgressionValue) {
+				if (BossChecklist.BossLogConfig.Debug.ShowProgressionValue) {
 					SetText($"[{entry.progression}f] {displayName}");
 				}
 				TextColor = BossChecklist.BossLogConfig.ColoredBossText ? Color.SkyBlue : Color.Silver;

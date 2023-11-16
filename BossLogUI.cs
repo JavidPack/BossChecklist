@@ -624,7 +624,7 @@ namespace BossChecklist
 		}
 
 		public void ClearHiddenList() {
-			if (!BossChecklist.DebugConfig.ResetHiddenEntries || WorldAssist.HiddenEntries.Count == 0)
+			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || WorldAssist.HiddenEntries.Count == 0)
 				return;
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
@@ -643,7 +643,7 @@ namespace BossChecklist
 		}
 
 		private void ClearMarkedDowns() {
-			if (!BossChecklist.DebugConfig.ResetForcedDowns || WorldAssist.MarkedEntries.Count == 0)
+			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || WorldAssist.MarkedEntries.Count == 0)
 				return;
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
@@ -666,7 +666,7 @@ namespace BossChecklist
 			if (BossChecklist.DebugConfig.DISABLERECORDTRACKINGCODE)
 				return; // temporary block is recordcode is disabled
 
-			if (!BossChecklist.DebugConfig.ResetRecordsBool || SelectedSubPage != SubPage.Records || GetPlayerRecords is null)
+			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != SubPage.Records || GetPlayerRecords is null)
 				return; // must be on a valid record page and must have the reset records config enabled
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
@@ -684,7 +684,7 @@ namespace BossChecklist
 		/// While in debug mode, players will be able to remove obtained items from their player save data using the right-click button on the selected item slot.
 		/// </summary>
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
-			if (!BossChecklist.DebugConfig.ResetLootItems || SelectedSubPage != SubPage.LootAndCollectibles)
+			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != SubPage.LootAndCollectibles)
 				return; // do not do anything if the loot page isn't the active
 
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
@@ -987,17 +987,17 @@ namespace BossChecklist
 			if (PageNum == Page_TableOfContents) {
 				interactions =
 					Language.GetTextValue($"{LangLog}.HintTexts.MarkEntry") +
-					(BossChecklist.DebugConfig.ResetForcedDowns ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearMarked") : "") +
+					(BossChecklist.BossLogConfig.Debug.EnabledResetOptions ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearMarked") : "") +
 					"\n" + Language.GetTextValue($"{LangLog}.HintTexts.HideEntry") +
-					(BossChecklist.DebugConfig.ResetHiddenEntries ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearHidden") : "");
+					(BossChecklist.BossLogConfig.Debug.EnabledResetOptions ? "\n" + Language.GetTextValue($"{LangLog}.HintTexts.ClearHidden") : "");
 			}
-			else if (PageNum >= 0) {
+			else if (PageNum >= 0 && BossChecklist.BossLogConfig.Debug.EnabledResetOptions) {
 				if (SelectedSubPage == SubPage.Records && GetLogEntryInfo.type == EntryType.Boss) {
 					interactions =
 						Language.GetTextValue($"{LangLog}.HintTexts.ClearAllRecords") + "\n" +
 						Language.GetTextValue($"{LangLog}.HintTexts.ClearRecord");
 				}
-				else if (SelectedSubPage == SubPage.LootAndCollectibles && BossChecklist.DebugConfig.ResetLootItems) {
+				else if (SelectedSubPage == SubPage.LootAndCollectibles) {
 					interactions = 
 						Language.GetTextValue($"{LangLog}.HintTexts.RemoveItem") + "\n" +
 						Language.GetTextValue($"{LangLog}.HintTexts.ClearItems");
@@ -1022,7 +1022,7 @@ namespace BossChecklist
 			}
 
 			if (PageNum >= 0) {
-				if (BossChecklist.DebugConfig.AccessInternalNames && GetLogEntryInfo.modSource != "Unknown") {
+				if (BossChecklist.BossLogConfig.Debug.AccessInternalNames && GetLogEntryInfo.modSource != "Unknown") {
 					NavigationalButton keyButton = new NavigationalButton(Texture_Content_BossKey, true) {
 						Id = "CopyKey",
 						hoverText = $"{Language.GetTextValue($"{LangLog}.EntryPage.CopyKey")}:\n{GetLogEntryInfo.Key}"

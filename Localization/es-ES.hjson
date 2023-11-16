@@ -339,12 +339,26 @@ Mods: {
 						''' */
 				}
 
+				ShowInteractionTooltips: {
+					// Label: Enable Interactions Tab
+					/* Tooltip:
+						'''
+						When enabled, a small tab can be hovered over for an explanation on how to use the alternative interactions of the current page.
+						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
+						''' */
+				}
+
+				Debug: {
+					// Label: "[i:3625] [c/ffeb6e:Debug Tools for Mod Developers] [i:3619]"
+					// Tooltip: ""
+				}
+
 				HideUnavailable: {
 					// Label: Hide unavailable bosses
 					/* Tooltip:
 						'''
 						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
-						Ex. Frost Legion while it is not Xmas
+						Ex. Frost Legion while it is not Xmas.
 						''' */
 				}
 
@@ -450,13 +464,69 @@ Mods: {
 					// Label: Show Progress Bars
 					// Tooltip: When disabled, the total progress bars at the bottom of the table of contents will not show.
 				}
+			}
 
-				ShowInteractionTooltips: {
-					// Label: Enable Interactions Tab
+			DebugTools: {
+				// Tooltip: ""
+
+				ModCallLogVerbose: {
+					// Label: Mod.Call Log Verbose
 					/* Tooltip:
 						'''
-						When enabled, a small tab can be hovered over to explain how to use the alternative interactions of the current page.
-						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
+						If true, logs will display more information on entry data creation within tModLoader logs.
+						Invalid or incorrect usage of mod calls are displayed regardless of setting.
+						''' */
+				}
+
+				DisableAutoLocalization: {
+					// Label: Disable Auto Localization
+					/* Tooltip:
+						'''
+						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
+						The new calls do not require these localizations but will default to them if null is passed.
+						Set to true to prevent new localizations from being created by BossChecklist.
+						''' */
+				}
+
+				EnabledResetOptions: {
+					// Label: Enable Reset Data Options
+					/* Tooltip:
+						'''
+						When enabled, your able to clear or reset certain data within the Boss Log.
+						Includes: Clearing hidden entries, clearing marked entries, resetting loot checklist, and resetting records.
+						''' */
+				}
+
+				ShowProgressionValue: {
+					// Label: Access Progression Values
+					/* Tooltip:
+						'''
+						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
+						The progression value is what determines how entries are ordered in the checklist.
+						''' */
+				}
+
+				AccessInternalNames: {
+					// Label: Access Internal Names
+					/* Tooltip:
+						'''
+						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
+						Useful for mod developers making cross-mod content.
+						''' */
+				}
+
+				ShowCollectionType: {
+					// Label: Show Auto-detected Collectible Type
+					// Tooltip: Boss collectible itemslots will be labeled with the assigned collectible type.
+				}
+
+				InactiveBossCheck: {
+					// Label: Inactive Boss Check
+					/* Tooltip:
+						'''
+						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
+						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
+						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
 						''' */
 				}
 			}
@@ -530,13 +600,13 @@ Mods: {
 					/* Tooltip:
 						'''
 						Messages will appear in chat when a vanilla moon event has ended.
-						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon.
 						''' */
 				}
 
 				TimerSounds: {
 					// Label: Respawn Timer Sounds
-					// Tooltip: If enabled, the last 3 seconds of your respawn time will have sound indicators
+					// Tooltip: If enabled, the last 3 seconds of your respawn time will have sound indicators.
 				}
 
 				TreasureBags: {
@@ -561,17 +631,17 @@ Mods: {
 
 				RadarMiniBosses: {
 					// Label: Whitelist mini bosses
-					// Tooltip: Note: This only works properly with mini bosses that have head icons
+					// Tooltip: Note: This only works properly with mini bosses that have head icons.
 				}
 
 				RadarOpacity: {
 					// Label: Radar Opacity
-					// Tooltip: Adjust how transparent the radar's icon will be
+					// Tooltip: Adjust how transparent the radar's icon will be.
 				}
 
 				RadarBlacklist: {
 					// Label: Radar Blacklist
-					// Tooltip: The selected NPCs will not be tracked by the radar
+					// Tooltip: The selected NPCs will not be tracked by the radar.
 				}
 			}
 
@@ -583,87 +653,6 @@ Mods: {
 					// DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
 					// DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
 					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
-				}
-
-				ModCallVerbose: {
-					// Label: Mod.Call Log Verbose
-					/* Tooltip:
-						'''
-						If true, logs will display more information on entry data creation within tModLoader logs
-						Invalid or incorrect usage of mod calls are displayed regardless of setting
-						''' */
-				}
-
-				ShowProgressionValue: {
-					// Label: Access Progression Values
-					/* Tooltip:
-						'''
-						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
-						The progression value is what determines how entries are ordered in the checklist.
-						''' */
-				}
-
-				AccessInternalNames: {
-					// Label: Access Internal Names
-					/* Tooltip:
-						'''
-						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
-						Useful for mod developers making cross-mod content.
-						''' */
-				}
-
-				CollectionTypeDetection: {
-					// Label: Show Auto-detected Collectible Type
-					// Tooltip: Boss collectible itemslots will be labeled with the assigned collectible type
-				}
-
-				InactiveBossCheck: {
-					// Label: Inactive Boss Check
-					/* Tooltip:
-						'''
-						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
-						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
-						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
-						''' */
-				}
-
-				DisableAutoLocalization: {
-					// Label: Disable Auto Localization
-					/* Tooltip:
-						'''
-						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
-						The new calls do not require these localizations but will default to them if null is passed.
-						Set to true to prevent new localizations from being created by BossChecklist.
-						''' */
-				}
-
-				ResetLoot: {
-					// Label: Enable Reset Loot and Collection Items Option
-					/* Tooltip:
-						'''
-						Remove a selected item from your saved loot/collectibles by alt + right-clicking the selected item slot.
-						Clear the entire loot/collectibles list by alt + right-clicking the 'Loot & Collectibles' button.
-						This will apply to ALL boss loot lists.
-						''' */
-				}
-
-				ResetRecords: {
-					// Label: Enable Reset Record Option
-					/* Tooltip:
-						'''
-						Reset a singular record by alt + right-clicking on the image of the record on the selected boss page.
-						Reset all records for a boss by alt + right-clicking the 'Records' button of the selected boss page.
-						''' */
-				}
-
-				ResetForcedDowns: {
-					// Label: Enable Reset Marked Downed Entries Option
-					// Tooltip: Reset all world marked downs by alt + right-clicking on the filters tab on the Table of Contents pages.
-				}
-
-				ResetHiddenEntries: {
-					// Label: Enable Reset Hidden Entries Option
-					// Tooltip: Reset all hidden entries by alt + right-clicking on the show/hide hidden entries button, located in the filters tab.
 				}
 
 				RecordFeatureTesting: {

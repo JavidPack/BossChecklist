@@ -17,13 +17,56 @@ namespace BossChecklist
 		[Header("BossLogUI")]
 
 		[BackgroundColor(250, 235, 215)]
+		[SliderColor(87, 181, 92)]
 		[DefaultValue(typeof(Color), "87, 181, 92, 255"), ColorNoAlpha]
 		public Color BossLogColor { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
+		[SliderColor(87, 181, 92)]
 		[DefaultValue(typeof(Vector2), "-270, -50")]
 		[Range(-1920f, 0f)]
 		public Vector2 BossLogPos { get; set; }
+
+		[BackgroundColor(250, 235, 215)]
+		[DefaultValue(true)]
+		public bool ShowInteractionTooltips { get; set; }
+
+		[Expand(false)]
+		[BackgroundColor(100, 70, 60)]
+		public DebugTools Debug { get; set; } = new DebugTools();
+		public class DebugTools {
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool ModCallLogVerbose { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool DisableAutoLocalization { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool EnabledResetOptions { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool ShowProgressionValue { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool AccessInternalNames { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool ShowCollectionType { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool InactiveBossCheck { get; set; }
+
+			public override int GetHashCode() {
+				return new { ModCallLogVerbose, ShowProgressionValue, AccessInternalNames, ShowCollectionType, InactiveBossCheck, DisableAutoLocalization }.GetHashCode();
+			}
+		}
 
 		[Header("BossLogChecklist")]
 
@@ -80,10 +123,6 @@ namespace BossChecklist
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]
 		public bool ShowProgressBars { get; set; }
-
-		[BackgroundColor(250, 235, 215)]
-		[DefaultValue(true)]
-		public bool ShowInteractionTooltips { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(false)]
@@ -326,61 +365,6 @@ namespace BossChecklist
 	public class DebugConfiguration : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public override void OnLoaded() => BossChecklist.DebugConfig = this;
-
-		[Header("Debug")]
-
-		[BackgroundColor(80, 80, 80)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ModCallVerbose.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ModCallVerbose.Tooltip")]
-		public bool ModCallLogVerbose { get; set; }
-
-		[BackgroundColor(255, 250, 250)]
-		[DefaultValue(false)]
-		public bool ShowProgressionValue { get; set; }
-
-		[BackgroundColor(80, 80, 80)]
-		[DefaultValue(false)]
-		public bool AccessInternalNames { get; set; }
-
-		[BackgroundColor(255, 250, 250)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.CollectionTypeDetection.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.CollectionTypeDetection.Tooltip")]
-		public bool ShowCollectionType { get; set; }
-
-		[BackgroundColor(80, 80, 80)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.InactiveBossCheck.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.InactiveBossCheck.Tooltip")]
-		public bool ShowInactiveBossCheck { get; set; }
-
-		[BackgroundColor(80, 80, 80)]
-		public bool DisableAutoLocalization { get; set; }
-
-		[Header("DebugResetData")]
-
-		[BackgroundColor(80, 80, 80)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetLoot.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetLoot.Tooltip")]
-		public bool ResetLootItems { get; set; }
-
-		[BackgroundColor(255, 250, 250)]
-		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetRecords.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.DebugConfiguration.ResetRecords.Tooltip")]
-		public bool ResetRecordsBool { get; set; }
-
-		[BackgroundColor(80, 80, 80)]
-		[DefaultValue(false)]
-		public bool ResetForcedDowns { get; set; }
-
-		[BackgroundColor(255, 250, 250)]
-		[DefaultValue(false)]
-		public bool ResetHiddenEntries { get; set; }
-
-		[Header("FeatureTesting")]
 
 		[BackgroundColor(255, 99, 71)]
 		[DefaultValue(true)]

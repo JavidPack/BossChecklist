@@ -55,7 +55,7 @@ namespace BossChecklist
 			*/
 
 			Logger.Info(Language.GetText("LastUpdated").Format(LastVanillaProgressionRevision));
-			if (!DebugConfig.ModCallLogVerbose)
+			if (!BossLogConfig.Debug.ModCallLogVerbose)
 				Logger.Info(Language.GetTextValue("NoLogging"));
 		}
 
@@ -71,7 +71,7 @@ namespace BossChecklist
 		}
 
 		internal void LogModCallInfo(string key, params object[] args) {
-			if (!DebugConfig.ModCallLogVerbose)
+			if (!BossLogConfig.Debug.ModCallLogVerbose)
 				return;
 
 			LocalizedText text = Language.GetText("Mods.BossChecklist.LogMessage." + key);
@@ -79,7 +79,7 @@ namespace BossChecklist
 		}
 
 		internal void LogWarning(string key, bool requiresConfig, params object[] args) {
-			if (requiresConfig && !DebugConfig.ModCallLogVerbose)
+			if (requiresConfig && !BossLogConfig.Debug.ModCallLogVerbose)
 				return;
 
 			LocalizedText text = Language.GetText("Mods.BossChecklist.LogMessage." + key);
@@ -228,7 +228,7 @@ namespace BossChecklist
 							string keyOrValue = submittedName.StartsWith("$") ? submittedName.Substring(1) : submittedName;
 							entryNameValue = Language.GetTextValue(keyOrValue);
 
-							if (!DebugConfig.DisableAutoLocalization) {
+							if (!BossLogConfig.Debug.DisableAutoLocalization) {
 								if (message.Contains("Event")) {
 									SetupLocalizationForEvent(mod.Name, Language.GetTextValue(entryNameValue.Replace(" ", "")), submittedName, args[9] as string, args[10]);
 								}
