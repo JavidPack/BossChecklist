@@ -273,13 +273,13 @@ namespace BossChecklist
 		}
 
 		public static string DetermineMoonAnnoucement(string eventType) {
-			if (BossChecklist.ClientConfig.MoonMessages == "Generic") {
+			if (BossChecklist.FeatureConfig.MoonMessages == "Generic") {
 				string eventTypeLocal = Language.Exists($"Bestiary_Events.{eventType}") ? Language.GetTextValue($"Bestiary_Events.{eventType}") : Language.GetTextValue($"Bestiary_Invasions.{eventType}");
 				if (eventType == "Eclipse")
 					eventTypeLocal = eventTypeLocal.ToLower();
 				return Language.GetText($"{NPCAssist.LangChat}.EventEnd.Generic").Format(eventTypeLocal);
 			}
-			else if (BossChecklist.ClientConfig.MoonMessages == "Unique") {
+			else if (BossChecklist.FeatureConfig.MoonMessages == "Unique") {
 				return Language.GetTextValue($"{NPCAssist.LangChat}.EventEnd.{eventType}");
 			}
 

@@ -316,6 +316,11 @@ Mods: {
 		}
 
 		Configs: {
+			Common: {
+				// InvalidChange: You cannot change this config while {0} is active!
+				// HostChange: Only the host is allowed to change this config.
+			}
+
 			BossLogConfiguration: {
 				// DisplayName: Boss Log Customization
 
@@ -531,7 +536,7 @@ Mods: {
 				}
 			}
 
-			ClientConfiguration: {
+			FeatureConfiguration: {
 				// DisplayName: Other features
 
 				Headers: {
@@ -609,22 +614,22 @@ Mods: {
 					// Tooltip: If enabled, the last 3 seconds of your respawn time will have sound indicators.
 				}
 
-				TreasureBags: {
+				TreasureBagsOnMap: {
 					// Label: Treasure bags display on the map
 					// Tooltip: ""
 				}
 
-				Fragments: {
+				FragmentsOnMap: {
 					// Label: Fragments display on the map
 					// Tooltip: ""
 				}
 
-				Scales: {
+				ScalesOnMap: {
 					// Label: Shadow Scales and Tissue Samples display on the map
 					// Tooltip: ""
 				}
 
-				BossRadar: {
+				EnableBossRadar: {
 					// Label: Enable Boss Radar
 					// Tooltip: ""
 				}
@@ -643,40 +648,6 @@ Mods: {
 					// Label: Radar Blacklist
 					// Tooltip: The selected NPCs will not be tracked by the radar.
 				}
-			}
-
-			DebugConfiguration: {
-				// DisplayName: Debug Interface
-
-				Headers: {
-					// Debug: "[i:3625] [c/ffeb6e:Mod Developer Tools]"
-					// DebugRecordTracker: "[i:3619] [c/ffeb6e:Record Tracker Debug Tools]"
-					// DebugResetData: "[i:575] [c/ffeb6e:Reset Data Options]"
-					// FeatureTesting: "[i:2172] [c/ffeb6e:Feature Testing]"
-				}
-
-				RecordFeatureTesting: {
-					// Label: Disable 'Boss Record' feature testing
-					/* Tooltip:
-						'''
-						Prevents Boss Records code from running, effectively disabling it while its in feature testing.
-						This feature will need testing and bug reports before its taken out of feature testing and fully enabled across all users.
-						''' */
-				}
-
-				WorldRecordFeatureTesting: {
-					// Label: Disable 'World Record' feature testing
-					/* Tooltip:
-						'''
-						Prevents World Records code from running, effectively disabling it while its in feature testing.
-						As of now this feature is known to not work and may cause issues.
-						''' */
-				}
-			}
-
-			Common: {
-				// InvalidChange: You cannot change this config while {0} is active!
-				// HostChange: Only the host is allowed to change this config.
 			}
 		}
 	}

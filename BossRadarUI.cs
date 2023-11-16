@@ -164,13 +164,13 @@ namespace BossChecklist
 		//Update
 		public override void Update(GameTime gameTime) {
 			base.Update(gameTime);
-			if (!BossChecklist.ClientConfig.BossRadarBool) return;
+			if (!BossChecklist.FeatureConfig.EnableBossRadar) return;
 
 			if (!whitelistFilled || blacklistChanged) {
 				List<int> idList = new List<int>();
 				foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 					if (entry.type == EntryType.Event) continue;
-					if (entry.type == EntryType.MiniBoss && !BossChecklist.ClientConfig.RadarMiniBosses) continue;
+					if (entry.type == EntryType.MiniBoss && !BossChecklist.FeatureConfig.RadarMiniBosses) continue;
 					foreach (int id in entry.npcIDs) {
 						if (!BlackListedID(id) && GetBossHead(id) != TextureAssets.NpcHead[0]) idList.Add(id);
 					}
@@ -187,14 +187,14 @@ namespace BossChecklist
 		private Asset<Texture2D> GetBossHead(int boss) => NPCID.Sets.BossHeadTextures[boss] != -1 ? TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[boss]] : TextureAssets.NpcHead[0];
 
 		private bool BlackListedID(int ID) {
-			return BossChecklist.ClientConfig.RadarBlacklist.Any(npcDef => npcDef.Type == ID);
+			return BossChecklist.FeatureConfig.RadarBlacklist.Any(npcDef => npcDef.Type == ID);
 		}
 
 		//Draw
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			base.DrawSelf(spriteBatch);
 
-			if (!BossChecklist.ClientConfig.BossRadarBool) return;
+			if (!BossChecklist.FeatureConfig.EnableBossRadar) return;
 
 			for (int i = 0; i < type.Count; i++) {
 				Vector2 ldrawPos = drawPos[i]; //contains top left corner of draw pos
@@ -221,13 +221,13 @@ namespace BossChecklist
 				Rectangle outputRect = new Rectangle((int)ldrawPos.X - (finalWidth / 2), (int)ldrawPos.Y - (finalHeight / 2), finalWidth, finalHeight);
 
 				Color color = Color.LightGray;
-				color *= drawLOS[i] ? BossChecklist.ClientConfig.OpacityFloat : BossChecklist.ClientConfig.OpacityFloat - 0.25f;
+				color *= drawLOS[i] ? BossChecklist.FeatureConfig.RadarOpacity : BossChecklist.FeatureConfig.RadarOpacity - 0.25f;
 				spriteBatch.Draw(tex.Value, outputRect, new Rectangle(0, 0, tempWidth, tempHeight), color);
 
 				//draw Arrow
 				Vector2 stupidOffset = drawRotation[i].ToRotationVector2() * 24f;
 				Vector2 drawPosArrow = ldrawPos + stupidOffset;
-				color = drawLOS[i] ? Color.Green * BossChecklist.ClientConfig.OpacityFloat : Color.Red * BossChecklist.ClientConfig.OpacityFloat;
+				color = drawLOS[i] ? Color.Green * BossChecklist.FeatureConfig.RadarOpacity : Color.Red * BossChecklist.FeatureConfig.RadarOpacity;
 				color.A = 150;
 				spriteBatch.Draw(arrowTexture.Value, drawPosArrow, null, color, drawRotation[i], arrowTexture.Value.Bounds.Size() / 2, 1f, SpriteEffects.None, 0f);
 			}

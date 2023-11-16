@@ -316,6 +316,11 @@ Mods: {
 		}
 
 		Configs: {
+			Common: {
+				InvalidChange: 你不能在{0}存在时更改该配置!
+				HostChange: 仅允许主机更改此配置.
+			}
+
 			BossLogConfiguration: {
 				DisplayName: 自定义Boss日志
 
@@ -531,7 +536,7 @@ Mods: {
 				}
 			}
 
-			ClientConfiguration: {
+			FeatureConfiguration: {
 				DisplayName: 其他功能
 
 				Headers: {
@@ -609,22 +614,22 @@ Mods: {
 					Tooltip: 如果启用, 重生时间的最后3秒钟将有声音提示
 				}
 
-				TreasureBags: {
+				TreasureBagsOnMap: {
 					Label: 宝藏袋在小地图上显示
 					Tooltip: ""
 				}
 
-				Fragments: {
+				FragmentsOnMap: {
 					Label: 四柱碎片在小地图上显示
 					Tooltip: ""
 				}
 
-				Scales: {
+				ScalesOnMap: {
 					Label: 暗影鳞片和血腥样本在小地图上显示
 					Tooltip: ""
 				}
 
-				BossRadar: {
+				EnableBossRadar: {
 					Label: 启用Boss雷达
 					Tooltip: ""
 				}
@@ -643,40 +648,6 @@ Mods: {
 					Label: 雷达黑名单
 					Tooltip: 以下被选中的生物将不会被雷达定位
 				}
-			}
-
-			DebugConfiguration: {
-				DisplayName: 调试界面
-
-				Headers: {
-					Debug: "[i:3625] [c/ffeb6e:调试和Mod开发者工具]"
-					DebugRecordTracker: "[i:3619] [c/ffeb6e:记录跟踪器调试工具]"
-					DebugResetData: "[i:575] [c/ffeb6e:重置数据选项]"
-					FeatureTesting: "[i:2172] [c/ffeb6e:功能测试]"
-				}
-
-				RecordFeatureTesting: {
-					Label: 禁用'Boss记录'功能测试
-					Tooltip:
-						'''
-						阻止Boss记录代码的运行, 能够有效的在处于测试功能时将其禁用.
-						在功能测试下线并在所有用户中完全启用之前, 此功能将需要测试和Bug报告.
-						'''
-				}
-
-				WorldRecordFeatureTesting: {
-					Label: 禁用'世界记录'功能测试
-					Tooltip:
-						'''
-						阻止世界记录代码的运行, 能够有效的在处于测试功能时将其禁用.
-						到目前为止, 已知此功能不起作用, 并可能会导致问题.
-						'''
-				}
-			}
-
-			Common: {
-				InvalidChange: 你不能在{0}存在时更改该配置!
-				HostChange: 仅允许主机更改此配置.
 			}
 		}
 	}

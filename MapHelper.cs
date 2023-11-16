@@ -23,13 +23,13 @@ namespace BossChecklist
 
 		public static bool IsWhitelistedItem(int type) {
 			if (ItemID.Sets.BossBag[type]) {
-				return BossChecklist.ClientConfig.TreasureBagsBool;
+				return BossChecklist.FeatureConfig.TreasureBagsOnMap;
 			}
 			else if (type == ItemID.ShadowScale || type == ItemID.TissueSample) {
-				return BossChecklist.ClientConfig.ScalesBool;
+				return BossChecklist.FeatureConfig.ScalesOnMap;
 			}
 			else if (RecipeGroup.recipeGroups[RecipeGroupID.Fragment].ValidItems.Any(x => x == type)) {
-				return BossChecklist.ClientConfig.FragmentsBool;
+				return BossChecklist.FeatureConfig.FragmentsOnMap;
 			}
 			return false;
 		}

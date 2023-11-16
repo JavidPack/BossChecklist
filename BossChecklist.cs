@@ -21,8 +21,8 @@ namespace BossChecklist
 
 		public static Dictionary<int, int> itemToMusicReference;
 
-		internal static ClientConfiguration ClientConfig;
 		internal static BossLogConfiguration BossLogConfig;
+		internal static FeatureConfiguration FeatureConfig;
 		public static List<PersonalRecords>[] ServerCollectedRecords;
 
 		public BossChecklist() {
@@ -64,7 +64,7 @@ namespace BossChecklist
 			bossTracker = null;
 			ToggleBossLog = null;
 			ServerCollectedRecords = null;
-			ClientConfig = null;
+			FeatureConfig = null;
 			BossLogConfig = null;
 		}
 

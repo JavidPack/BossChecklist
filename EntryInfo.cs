@@ -136,12 +136,12 @@ namespace BossChecklist
 		/// <returns>A LocalizedText of the despawn message of the passed npc. Returns null if no message can be found.</returns>
 		internal LocalizedText GetDespawnMessage(NPC npc) {
 			// When unique despawn messages are enabled, pass the NPC for the custom message function provided by the entry
-			if (BossChecklist.ClientConfig.DespawnMessageType == "Unique" && customDespawnMessages(npc) is LocalizedText message)
+			if (BossChecklist.FeatureConfig.DespawnMessageType == "Unique" && customDespawnMessages(npc) is LocalizedText message)
 				return message; // this will only return a unique message if the custom message function properly assigns one
 
 			// If the Unique message was empty/null or the player is using Generic despawn messages, try to find an appropriate despawn message to send
 			// Return a generic despawn message if any player is left alive or return a boss victory despawn message if all player's were killed
-			if (BossChecklist.ClientConfig.DespawnMessageType != "Disabled")
+			if (BossChecklist.FeatureConfig.DespawnMessageType != "Disabled")
 				return Language.GetText(Main.player.Any(plr => plr.active && !plr.dead) ? $"{NPCAssist.LangChat}.Despawn.Generic" : $"{NPCAssist.LangChat}.Loss.Generic");
 
 			return null; // The despawn message feature was disabled. Return an empty message.
@@ -152,10 +152,10 @@ namespace BossChecklist
 		/// These messages will not appear if the related configs are disabled.
 		/// </summary>
 		internal LocalizedText GetLimbMessage(NPC npc) {
-			if (BossChecklist.ClientConfig.LimbMessages == "Unique" && npcLimbs[npc.type] is LocalizedText message)
+			if (BossChecklist.FeatureConfig.LimbMessages == "Unique" && npcLimbs[npc.type] is LocalizedText message)
 				return message;
 
-			if (BossChecklist.ClientConfig.LimbMessages != "Disabled") {
+			if (BossChecklist.FeatureConfig.LimbMessages != "Disabled") {
 				string specialCase = (npc.type == NPCID.SkeletronHand || npc.type == NPCID.MoonLordHead) ? new NPCDefinition(npc.type).Name : "";
 				return Language.GetText($"{NPCAssist.LangChat}.Defeated.Generic" + specialCase);
 			}

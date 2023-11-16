@@ -234,9 +234,9 @@ namespace BossChecklist
 		}
 	}
 
-	public class ClientConfiguration : ModConfig {
+	public class FeatureConfiguration : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ClientSide;
-		public override void OnLoaded() => BossChecklist.ClientConfig = this;
+		public override void OnLoaded() => BossChecklist.FeatureConfig = this;
 
 		private bool TrackingEnabled;
 		private bool NewRecordsEnabled;
@@ -311,37 +311,27 @@ namespace BossChecklist
 		[Header("ItemMapDetection")]
 
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.TreasureBags.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.TreasureBags.Tooltip")]
-		public bool TreasureBagsBool { get; set; }
+		public bool TreasureBagsOnMap { get; set; }
 
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.Fragments.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.Fragments.Tooltip")]
-		public bool FragmentsBool { get; set; }
+		public bool FragmentsOnMap { get; set; }
 
 		[DefaultValue(false)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.Scales.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.Scales.Tooltip")]
-		public bool ScalesBool { get; set; }
+		public bool ScalesOnMap { get; set; }
 
 		[Header("BossRadar")]
 
 		[DefaultValue(true)]
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.BossRadar.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.BossRadar.Tooltip")]
-		public bool BossRadarBool { get; set; }
+		public bool EnableBossRadar { get; set; }
 
 		[DefaultValue(false)]
 		public bool RadarMiniBosses { get; set; }
 
 		public const float OpacityFloatMin = 0.35f;
 		public const float OpacityFloatMax = 0.85f;
-		[LabelKey("$Mods.BossChecklist.Configs.ClientConfiguration.RadarOpacity.Label")]
-		[TooltipKey("$Mods.BossChecklist.Configs.ClientConfiguration.RadarOpacity.Tooltip")]
 		[Range(OpacityFloatMin, OpacityFloatMax)]
 		[DefaultValue(0.75f)]
-		public float OpacityFloat { get; set; }
+		public float RadarOpacity { get; set; }
 
 		public List<NPCDefinition> RadarBlacklist { get; set; } = new List<NPCDefinition>();
 
@@ -349,7 +339,7 @@ namespace BossChecklist
 		internal void OnDeserializedMethod(StreamingContext context) {
 			//Range attribute doesn't enforce it onto the value, it's a limit for the UI only, so we have to clamp it here again if user decides to edit it through the json
 			//If this isn't in here, OpacityFloat can get negative for example, which will lead to a crash later
-			OpacityFloat = Utils.Clamp(OpacityFloat, OpacityFloatMin, OpacityFloatMax);
+			RadarOpacity = Utils.Clamp(RadarOpacity, OpacityFloatMin, OpacityFloatMax);
 		}
 
 		public override void OnChanged() {

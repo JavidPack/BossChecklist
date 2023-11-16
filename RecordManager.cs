@@ -399,7 +399,7 @@ namespace BossChecklist
 			float seconds = (float)(ticks - (float)(minutes * TicksPerMinute)) / TicksPerSecond;
 			float milliseconds = (float)((seconds - (int)seconds) * 1000);
 
-			return BossChecklist.ClientConfig.TimeValueFormat switch {
+			return BossChecklist.FeatureConfig.TimeValueFormat switch {
 				"Simple" => $"{sign}{(minutes > 0 ? $"{minutes}m " : "")}{(int)seconds}s ({milliseconds:0}ms)",
 				_ => $"{sign}{minutes}:{seconds:00.000}"
 			};
@@ -510,7 +510,7 @@ namespace BossChecklist
 			float seconds = (float)((playTimeFirst - (float)(hours * TimeSpan.TicksPerHour) - (float)(minutes * TimeSpan.TicksPerMinute)) / TimeSpan.TicksPerSecond);
 			float milliseconds = (float)((seconds - (int)seconds) * 1000);
 
-			return BossChecklist.ClientConfig.TimeValueFormat switch {
+			return BossChecklist.FeatureConfig.TimeValueFormat switch {
 				"Simple" => $"{(hours > 0 ? hours + "h " : "")}{minutes}m {(int)seconds}s ({milliseconds:0}ms)",
 				_ => $"{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds:0.000}"
 			};

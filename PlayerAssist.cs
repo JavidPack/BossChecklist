@@ -158,7 +158,7 @@ namespace BossChecklist
 				hasOpenedTheBossLog = false;
 			*/
 
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return;
 
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -170,7 +170,7 @@ namespace BossChecklist
 
 		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
 		public override void OnHurt(Player.HurtInfo info) {
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return;
 
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -185,7 +185,7 @@ namespace BossChecklist
 			if (Player.whoAmI == 255)
 				return;
 
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return;
 
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -200,7 +200,7 @@ namespace BossChecklist
 			if (Player.whoAmI == 255)
 				return;
 
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.ClientConfig.RecordTrackingEnabled)
+			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {
@@ -221,7 +221,7 @@ namespace BossChecklist
 				return;
 
 			// Timer sounds when a player is about to respawn
-			if (BossChecklist.ClientConfig.TimerSounds && Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0)
+			if (BossChecklist.FeatureConfig.TimerSounds && Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0)
 				SoundEngine.PlaySound(SoundID.MaxMana);
 		}
 
