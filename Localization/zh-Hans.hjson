@@ -354,8 +354,8 @@ Mods: {
 				}
 
 				Debug: {
-					// Label: "[i:3625] [c/ffeb6e:Debug Tools for Mod Developers] [i:3619]"
-					// Tooltip: ""
+					Label: "[i:3625] [c/ffeb6e:Mod开发者的Debug工具] [i:3619]"
+					Tooltip: ""
 				}
 
 				HideUnavailable: {
@@ -363,7 +363,7 @@ Mods: {
 					Tooltip:
 						'''
 						如果启用, 则在Boss日志的目录中移除不可用的Boss.
-						例如非圣诞节时的雪人军团
+						例如非圣诞节时的雪人军团.
 						'''
 				}
 
@@ -472,7 +472,7 @@ Mods: {
 			}
 
 			DebugTools: {
-				// Tooltip: ""
+				Tooltip: ""
 
 				ModCallLogVerbose: {
 					Label: Mod.Call日志详细信息
@@ -494,12 +494,12 @@ Mods: {
 				}
 
 				EnabledResetOptions: {
-					// Label: Enable Reset Data Options
-					/* Tooltip:
+					Label: 启用重置数据选项
+					Tooltip:
 						'''
-						When enabled, your able to clear or reset certain data within the Boss Log.
-						Includes: Clearing hidden entries, clearing marked entries, resetting loot checklist, and resetting records.
-						''' */
+						启用后, 你可以清除或重置Boss日志中的某些数据.
+						包括: 清除被隐藏的条目、清除被标记的条目、重置战利品清单和重置记录.
+						'''
 				}
 
 				ShowProgressionValue: {
@@ -605,13 +605,13 @@ Mods: {
 					Tooltip:
 						'''
 						当原版的月亮事件结束时, 信息将出现在聊天栏中.
-						月亮事件包括: 血月、日食、南瓜月和霜月
+						月亮事件包括: 血月、日食、南瓜月和霜月.
 						'''
 				}
 
 				TimerSounds: {
 					Label: 重生倒计时声音
-					Tooltip: 如果启用, 重生时间的最后3秒钟将有声音提示
+					Tooltip: 如果启用, 重生时间的最后3秒钟将有声音提示.
 				}
 
 				TreasureBagsOnMap: {
@@ -636,17 +636,17 @@ Mods: {
 
 				RadarMiniBosses: {
 					Label: 定位小Boss
-					Tooltip: 注意: 此选项仅用于有小地图图像的小Boss
+					Tooltip: 注意: 此选项仅用于有小地图图像的小Boss.
 				}
 
 				RadarOpacity: {
 					Label: Boss雷达不透明度
-					Tooltip: 调整雷达图标的透明度
+					Tooltip: 调整雷达图标的透明度.
 				}
 
 				RadarBlacklist: {
 					Label: 雷达黑名单
-					Tooltip: 以下被选中的生物将不会被雷达定位
+					Tooltip: 以下被选中的生物将不会被雷达定位.
 				}
 			}
 		}
