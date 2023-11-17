@@ -3,7 +3,7 @@ de-DE, 0/302, 0%, missing 302
 it-IT, 0/302, 0%, missing 302
 fr-FR, 0/302, 0%, missing 302
 es-ES, 80/302, 26%, missing 222
-ru-RU, 260/302, 86%, missing 42
-zh-Hans, 299/302, 99%, missing 3
+ru-RU, 285/302, 94%, missing 17
+zh-Hans, 302/302, 100%, missing 0
 pt-BR, 61/302, 20%, missing 241
 pl-PL, 0/302, 0%, missing 302

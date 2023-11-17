@@ -198,7 +198,7 @@ Mods: {
 				Generic: "{0} повержен(а)!"
 				GenericSkeletronHand: Рука Скелетрона повержена!
 				GenericMoonLordHead: Голова Лунного лорда повержена!
-				SkeletronHand: "Рука {0}а сломана!"
+				SkeletronHand: Рука {0}а сломана!
 				PrimeCannon: "{0} взорвалась!"
 				PrimeSaw: "{0} вышла из строя!"
 				PrimeVice: "{0} схлопнулись!"
