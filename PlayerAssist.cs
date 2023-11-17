@@ -31,6 +31,7 @@ namespace BossChecklist
 		/// Do NOT reference when on the game menu.
 		/// </summary>
 		public List<PersonalRecords> RecordsForWorld => AllStoredRecords[Main.ActiveWorldFileData.UniqueId.ToString()];
+		public Dictionary<string, int> MiniBossKills;
 		public List<ItemDefinition> BossItemsCollected;
 
 		public const int RecordState_NoRecord = 0;
@@ -57,6 +58,7 @@ namespace BossChecklist
 			PlayerRecordsInitialized = false;
 
 			AllStoredRecords = new Dictionary<string, List<PersonalRecords>>();
+			MiniBossKills = new Dictionary<string, int>();
 			BossItemsCollected = new List<ItemDefinition>();
 
 			hasNewRecord = Array.Empty<bool>();
@@ -74,8 +76,14 @@ namespace BossChecklist
 				Record_Data.Add(data.Key, Record_PerWorld);
 			}
 
+			TagCompound MiniBossKillData = new TagCompound();
+			foreach (KeyValuePair<string, int> pair in MiniBossKills) {
+				MiniBossKillData.Add(pair.Key, pair.Value);
+			}
+
 			tag["Record_Data"] = Record_Data;
 			tag["BossLogPrompt"] = hasOpenedTheBossLog;
+			tag["MiniBossKillCount"] = MiniBossKillData;
 			tag["BossLootObtained"] = BossItemsCollected;
 		}
 
@@ -93,6 +101,30 @@ namespace BossChecklist
 						RecordsByWorldKey.Add(PersonalRecords.DESERIALIZER(listofrecords.Value as TagCompound)); // deserialize the saved record data
 					}
 					AllStoredRecords.Add(data.Key, RecordsByWorldKey); // add each world key to all stored records
+				}
+			}
+
+			if (tag.TryGet("MiniBossKillCount", out TagCompound savedKills)) {
+				MiniBossKills.Clear();
+				// foreach unique world key
+				foreach (KeyValuePair<string, object> data in savedKills) {
+					MiniBossKills.TryAdd(data.Key, (int)data.Value);
+				}
+			}
+		}
+
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			if (!BossChecklist.bossTracker.EntryCache[target.type] || target.life > 0)
+				return;
+
+			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries.Where(x => x.type == EntryType.MiniBoss)) {
+				if (entry.npcIDs.Contains(target.type)) {
+					if (MiniBossKills.ContainsKey(entry.Key)) {
+						MiniBossKills[entry.Key]++;
+					}
+					else {
+						MiniBossKills.Add(entry.Key, 1);
+					}
 				}
 			}
 		}

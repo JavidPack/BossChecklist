@@ -1336,7 +1336,12 @@ namespace BossChecklist
 			// The entry also must be fully supported to have these buttons created
 
 			if (GetLogEntryInfo.type != EntryType.Boss) {
-				RecordDisplaySlot slot = GetLogEntryInfo.type == EntryType.Boss ? new RecordDisplaySlot(Texture_Content_RecordSlot) : new RecordDisplaySlot(Texture_Content_RecordSlot);
+				RecordDisplaySlot slot = new RecordDisplaySlot(Texture_Content_RecordSlot);
+				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+				if (GetLogEntryInfo.type == EntryType.MiniBoss) {
+					slot.title = Language.GetTextValue("Mods.BossChecklist.Log.Records.Kills");
+					slot.value = modPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? modPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
+				}
 				slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2);
 				slot.Top.Pixels = 35 + 75;
 				PageTwo.Append(slot);
