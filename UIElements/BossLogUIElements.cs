@@ -1240,6 +1240,9 @@ namespace BossChecklist.UIElements
 				Rectangle inner = GetInnerDimensions().ToRectangle();
 				Vector2 pos = new Vector2(inner.X - 20, inner.Y - 5);
 
+				if (entry.IsRecordIndexed(out int recordIndex) && Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[recordIndex])
+					this.TextColor = Main.DiscoColor; // constantly updates
+
 				// base drawing comes after colors so they do not flicker when updating check list
 				base.Draw(spriteBatch);
 

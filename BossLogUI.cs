@@ -1182,12 +1182,7 @@ namespace BossChecklist
 					textColor = Color.DimGray; // Hidden or Unavailable entry text color takes priority over all other text color alterations
 				}
 				else if (BossChecklist.BossLogConfig.ColoredBossText) {
-					if (entry.IsRecordIndexed(out int recordIndex) && Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasNewRecord[recordIndex]) {
-						textColor = Main.DiscoColor;
-					}
-					else {
-						textColor = entry.IsDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
-					}
+					textColor = entry.IsDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
 				}
 
 				TableOfContents listedEntry = new TableOfContents(entry.GetIndex, displayName, textColor, allLoot, allCollect) {
