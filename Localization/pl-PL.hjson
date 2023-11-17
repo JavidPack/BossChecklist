@@ -317,7 +317,7 @@ Mods: {
 
 		Configs: {
 			Common: {
-				// InvalidChange: You cannot change the '{0]' config while {1} is active!
+				// InvalidChange: You cannot change the '{0}' config while {1} is active!
 				// HostChange: Only the host is allowed to change this config.
 			}
 
