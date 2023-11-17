@@ -24,6 +24,8 @@ namespace BossChecklist
 		internal static BossLogConfiguration BossLogConfig;
 		internal static FeatureConfiguration FeatureConfig;
 		public static List<PersonalRecords>[] ServerCollectedRecords;
+		public static bool[] Server_AllowTracking;
+		public static bool[] Server_AllowNewRecords;
 
 		public BossChecklist() {
 		}
@@ -39,6 +41,9 @@ namespace BossChecklist
 			bossTracker = new BossTracker();
 
 			On_Player.ApplyMusicBox += Player_ApplyMusicBox;
+
+			Server_AllowTracking = new bool[Main.maxPlayers];
+			Server_AllowNewRecords = new bool[Main.maxPlayers];
 
 			/*
 			// Fix some translation keys automatically -- TODO
@@ -64,6 +69,8 @@ namespace BossChecklist
 			bossTracker = null;
 			ToggleBossLog = null;
 			ServerCollectedRecords = null;
+			Server_AllowTracking = null;
+			Server_AllowNewRecords = null;
 			FeatureConfig = null;
 			BossLogConfig = null;
 		}
@@ -370,11 +377,18 @@ namespace BossChecklist
 							Main.NewText(message, new Color(50, 255, 130));
 					}
 					break;
+				case PacketMessageType.UpdateAllowTracking:
+					Server_AllowTracking[whoAmI] = reader.ReadBoolean();
+					Server_AllowNewRecords[whoAmI] = reader.ReadBoolean(); 
+					break;
 				case PacketMessageType.SendPersonalBestRecordsToServer:
 					// Multiplayer client --> Server (always)
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
 					// ServerCollectedRecords is already sorted properly using BossTracker keys and can recieve data the order it is sent in
 					foreach (PersonalRecords serverRecord in ServerCollectedRecords[whoAmI]) {
+						serverRecord.kills = reader.ReadInt32();
+						if (serverRecord.kills > 0)
+							serverRecord.playTimeFirst = 1; // if had killed before set play time (value does not matter, as long as its >0)
 						serverRecord.durationBest = reader.ReadInt32();
 						serverRecord.hitsTakenBest = reader.ReadInt32();
 					}

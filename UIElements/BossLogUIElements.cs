@@ -115,7 +115,7 @@ namespace BossChecklist.UIElements
 				if (IsMouseHovering || dragging) {
 					borderColor = Color.Goldenrod; // If hovering over or dragging the button, the book will be highlighted in a gold border
 				}
-				else if (!BossChecklist.FeatureConfig.RecordTrackingEnabled || !BossChecklist.FeatureConfig.AllowNewRecords) {
+				else if (!BossChecklist.FeatureConfig.RecordTrackingEnabled || !BossChecklist.FeatureConfig.AllowNewRecords) { // configs can be checked as it is checked from a client
 					borderColor = Color.Firebrick; // If Records are disabled in any way, the book will be highlighted with a red border
 				}
 				else {

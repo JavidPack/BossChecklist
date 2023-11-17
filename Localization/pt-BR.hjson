@@ -317,7 +317,7 @@ Mods: {
 
 		Configs: {
 			Common: {
-				// InvalidChange: You cannot change this config while {0} is active!
+				// InvalidChange: You cannot change the '{0]' config while {1} is active!
 				// HostChange: Only the host is allowed to change this config.
 			}
 
@@ -548,11 +548,7 @@ Mods: {
 
 				RecordTrackingEnabled: {
 					// Label: Enable Boss Record Tracking
-					/* Tooltip:
-						'''
-						When enabled, records can be made for the bosses you fight!
-						Note: Strictly for singleplayer. Servers will ignore this config and will track records reguardless.
-						''' */
+					// Tooltip: When enabled, your fight stats will be tracked for records.
 				}
 
 				AllowNewRecords: {

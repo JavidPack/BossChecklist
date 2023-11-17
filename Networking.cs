@@ -10,6 +10,7 @@ namespace BossChecklist
 		RequestMarkedDownEntry,
 		RequestClearMarkedDowns,
 		SendClientConfigMessage,
+		UpdateAllowTracking,
 		SendPersonalBestRecordsToServer,
 		UpdateRecordsFromServerToPlayer,
 		RequestWorldRecords,

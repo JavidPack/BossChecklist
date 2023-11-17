@@ -137,7 +137,7 @@ namespace BossChecklist
 		/// </summary>
 		/// <returns>If the tracker starting was successful. This should typically only return false if an instance of the boss is still active. </returns>
 		internal bool StartTracking() {
-			if (IsTracking)
+			if (IsTracking || !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return false; // do not reset or start tracking if it currently is tracking already
 
 			IsTracking = true;
@@ -149,7 +149,7 @@ namespace BossChecklist
 		/// Restarts the trackers of each player stored by the server. Afterwards, it restarts the trackers for all clients.
 		/// </summary>
 		internal void StartTracking_Server(int whoAmI) {
-			if (Main.netMode != NetmodeID.Server || StartTracking() is false)
+			if (Main.netMode != NetmodeID.Server || !BossChecklist.Server_AllowTracking[whoAmI] || StartTracking() is false)
 				return;
 
 			// Needs to be updated client side as well
@@ -167,7 +167,7 @@ namespace BossChecklist
 		/// <param name="savePreviousAttempt">Should the tracked data be recorded as a previous attempt?</param>
 		/// <returns>The NetRecordID provided by the updated data. Used to communicate with the server what data needs to be sent and updated.</returns>
 		internal NetRecordID? StopTracking(bool allowRecordSaving, bool savePreviousAttempt) {
-			if (!IsTracking)
+			if (!IsTracking || !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return null; // do not change any stats if tracking is not currently enabled
 
 			NetRecordID serverParse = NetRecordID.None;
@@ -241,7 +241,7 @@ namespace BossChecklist
 		/// <param name="savePreviousAttempt">Should the tracked data be recorded as a previous attempt?</param>
 		/// <returns>If the NetRecordID contains a new personal best. Used to check for World Records for the server later on.</returns>
 		internal bool StopTracking_Server(int whoAmI, bool allowRecordSaving, bool savePreviousAttempt) {
-			if (Main.netMode != NetmodeID.Server || StopTracking(allowRecordSaving, savePreviousAttempt) is not NetRecordID netRecord)
+			if (Main.netMode != NetmodeID.Server || !BossChecklist.Server_AllowTracking[whoAmI] || StopTracking(allowRecordSaving, savePreviousAttempt) is not NetRecordID netRecord)
 				return false; // do not change any stats if tracking is not currently enabled
 
 			// Then send the mod packet to the client

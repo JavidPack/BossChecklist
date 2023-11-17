@@ -131,6 +131,9 @@ namespace BossChecklist
 
 			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
 
+			BossChecklist.Server_AllowTracking[Player.whoAmI] = BossChecklist.FeatureConfig.RecordTrackingEnabled;
+			BossChecklist.Server_AllowNewRecords[Player.whoAmI] = BossChecklist.FeatureConfig.AllowNewRecords;
+
 			// When a player joins a world, their Personal Best records will need to be sent to the server for new Personal Best comparing
 			// The server doesn't need player records from every world, just the current one
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -139,6 +142,7 @@ namespace BossChecklist
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
 					int index = RecordsForWorld.FindIndex(x => x.BossKey == key);
 					if (index != -1) {
+						packet.Write(RecordsForWorld[index].kills);
 						packet.Write(RecordsForWorld[index].durationBest);
 						packet.Write(RecordsForWorld[index].hitsTakenBest);
 					}
@@ -147,6 +151,12 @@ namespace BossChecklist
 
 				packet = Mod.GetPacket(); // new packet
 				packet.Write((byte)PacketMessageType.RequestWorldRecords);
+				packet.Send(); // Multiplayer client --> Server
+
+				packet = Mod.GetPacket();
+				packet.Write((byte)PacketMessageType.UpdateAllowTracking);
+				packet.Write(BossChecklist.FeatureConfig.RecordTrackingEnabled);
+				packet.Write(BossChecklist.FeatureConfig.AllowNewRecords);
 				packet.Send(); // Multiplayer client --> Server
 			}
 		}
@@ -157,10 +167,6 @@ namespace BossChecklist
 			if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
 				hasOpenedTheBossLog = false;
 			*/
-
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
-				return;
-
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
@@ -170,9 +176,6 @@ namespace BossChecklist
 
 		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
 		public override void OnHurt(Player.HurtInfo info) {
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
-				return;
-
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
@@ -185,9 +188,6 @@ namespace BossChecklist
 			if (Player.whoAmI == 255)
 				return;
 
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
-				return;
-
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
@@ -198,9 +198,6 @@ namespace BossChecklist
 		// Record tracking should stop if the player disconnects from the world.
 		public override void PlayerDisconnect() {
 			if (Player.whoAmI == 255)
-				return;
-
-			if (Main.netMode == NetmodeID.SinglePlayer && !BossChecklist.FeatureConfig.RecordTrackingEnabled)
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {

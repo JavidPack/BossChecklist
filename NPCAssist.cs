@@ -81,7 +81,7 @@ namespace BossChecklist
 				bool interaction = npc.playerInteraction[player.whoAmI];
 				if (Main.netMode == NetmodeID.Server) {
 					PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
-					if (serverRecords.StopTracking_Server(player.whoAmI, interaction, interaction))
+					if (serverRecords.StopTracking_Server(player.whoAmI, interaction && BossChecklist.Server_AllowNewRecords[player.whoAmI], interaction))
 						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
 				}
 				else {

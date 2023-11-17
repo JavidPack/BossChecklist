@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using Terraria;
-using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
 namespace BossChecklist
@@ -228,10 +228,6 @@ namespace BossChecklist
 
 			UpdateIndicators();
 		}
-
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) {
-			return true;
-		}
 	}
 
 	public class FeatureConfiguration : ModConfig {
@@ -240,21 +236,22 @@ namespace BossChecklist
 
 		private bool TrackingEnabled;
 		private bool NewRecordsEnabled;
+		private string interferingNPC = "";
+		private string badConfig = "";
 
 		[Header("BossRecords")]
 
 		[DefaultValue(true)]
 		public bool RecordTrackingEnabled {
-
 			get => TrackingEnabled;
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is not EntryInfo entry)
-							continue;
-
-						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
-						return; // If a boss is active, debug features are disabled until all bosses are inactive
+						if (npc.active && BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is EntryInfo entry) {
+							interferingNPC = entry.DisplayName;
+							badConfig = Language.GetTextValue("Mods.BossChecklist.Configs.FeatureConfiguration.RecordTrackingEnabled.Label");
+							return; // If a boss is active, debug features are disabled until all bosses are inactive
+						}
 					}
 				}
 				TrackingEnabled = value;
@@ -269,11 +266,11 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (!npc.active || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is not EntryInfo entry)
-							continue;
-
-						Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugConfiguration.Notice.InvalidChange", entry.DisplayName), Color.Orange);
-						return; // If a boss is active, debug features are disabled until all bosses are inactive
+						if (npc.active && BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is EntryInfo entry) {
+							interferingNPC = entry.DisplayName;
+							badConfig = Language.GetTextValue("Mods.BossChecklist.Configs.FeatureConfiguration.AllowNewRecords.Label");
+							return; // If a boss is active, debug features are disabled until all bosses are inactive
+						}
 					}
 				}
 				if (TrackingEnabled)
@@ -344,10 +341,21 @@ namespace BossChecklist
 
 		public override void OnChanged() {
 			BossRadarUI.blacklistChanged = true;
-		}
 
-		public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) {
-			return true;
+			if (!Main.gameMenu) {
+				if (string.IsNullOrEmpty(interferingNPC)) {
+					ModPacket packet = BossChecklist.instance.GetPacket();
+					packet.Write((byte)PacketMessageType.UpdateAllowTracking);
+					packet.Write(RecordTrackingEnabled);
+					packet.Write(AllowNewRecords);
+					packet.Send();
+				}
+				else {
+					Main.NewText(Language.GetText("Mods.BossChecklist.Configs.Common.InvalidChange").Format(badConfig, interferingNPC), Color.Orange);
+					interferingNPC = "";
+					badConfig = "";
+				}
+			}
 		}
 	}
 	/*
