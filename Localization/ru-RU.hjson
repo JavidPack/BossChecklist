@@ -195,25 +195,25 @@ Mods: {
 			}
 
 			Defeated: {
-				// Generic: "{0} is down!"
-				// GenericSkeletronHand: Skeletron's Hand is down!
-				// GenericMoonLordHead: Moon Lord's Head is down!
-				// SkeletronHand: A {0} hand has fractured!
-				// PrimeCannon: The {0} has exploded!
-				// PrimeSaw: The {0} has malfunctioned!
-				// PrimeVice: The {0} has collapsed!
-				// PrimeLaser: The {0} has overheated!
-				// GolemFistLeft: "{0} is destroyed!"
-				// GolemFistRight: "{0} is destroyed!"
-				// GolemHead: The {0} has detached from the body!
-				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
-				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
-				// Retinazer: "{0} has been defeated!"
-				// Spazmatism: "{0} has been defeated!"
-				// LunarTowerVortex: The {0} has fallen!
-				// LunarTowerStardust: The {0} has fallen!
-				// LunarTowerNebula: The {0} has fallen!
-				// LunarTowerSolar: The {0} has fallen!
+				Generic: "{0} повержен(а)!"
+				GenericSkeletronHand: Рука Скелетрона повержена!
+				GenericMoonLordHead: Голова Лунного лорда повержена!
+				SkeletronHand: "Рука {0}а сломана!"
+				PrimeCannon: "{0} взорвалась!"
+				PrimeSaw: "{0} вышла из строя!"
+				PrimeVice: "{0} схлопнулись!"
+				PrimeLaser: "{0} перегрелся!"
+				GolemFistLeft: "{0} уничтожен!"
+				GolemFistRight: "{0} уничтожен!"
+				GolemHead: "{0} отделилась от тела!"
+				MoonLordHead: Истинный глаз Ктулху вырвался из головы {0}!
+				MoonLordHand: Истинный глаз Ктулху вырывается из {0}!
+				Retinazer: "{0} побеждён!"
+				Spazmatism: "{0} побеждён!"
+				LunarTowerVortex: "{0} пала!"
+				LunarTowerStardust: "{0} пала!"
+				LunarTowerNebula: "{0} пала!"
+				LunarTowerSolar: "{0} пала!"
 			}
 
 			Loss: {
@@ -238,7 +238,7 @@ Mods: {
 			}
 
 			EventEnd: {
-				// Generic: The {0} has ended...
+				Generic: Событие '{0}' законилось...
 				BloodMoon: Кровавая луна уходит за горизонт...
 				FrostMoon: Морозная луна тает, как солнце восходит...
 				PumpkinMoon: Тыквенная луна прекращает свою жатву...
@@ -321,7 +321,7 @@ Mods: {
 
 		Configs: {
 			Common: {
-				InvalidChange: Вы не можете изменить эту настройку, пока {0} активен!
+				InvalidChange: Вы не можете изменить конфигурацию '{0}', пока {1} активен!
 				HostChange: Только хост может изменить эту настройку.
 			}
 
@@ -359,8 +359,8 @@ Mods: {
 				}
 
 				Debug: {
-					// Label: "[i:3625] [c/ffeb6e:Debug Tools for Mod Developers] [i:3619]"
-					// Tooltip: ""
+					Label: "[i:3625] [c/ffeb6e:Инструменты отладки для разработчиков] [i:3619]"
+					Tooltip: ""
 				}
 
 				HideUnavailable: {
@@ -477,7 +477,7 @@ Mods: {
 			}
 
 			DebugTools: {
-				// Tooltip: ""
+				Tooltip: ""
 
 				ModCallLogVerbose: {
 					Label: Подробный журнал Mod.Call
@@ -496,12 +496,12 @@ Mods: {
 				}
 
 				EnabledResetOptions: {
-					// Label: Enable Reset Data Options
-					/* Tooltip:
+					Label: Влючение настройки сброса данных
+					Tooltip:
 						'''
-						When enabled, your able to clear or reset certain data within the Boss Log.
-						Includes: Clearing hidden entries, clearing marked entries, resetting loot checklist, and resetting records.
-						''' */
+						Если эта настройка включена, вы можете очищать или сбрасывать определённые данные в Босс-журнале.
+						Сюда входят: очистка скрытых записей, очистка помеченных записей, сброс списка добычи и сброс рекордов.
+						'''
 				}
 
 				ShowProgressionValue: {
@@ -550,11 +550,7 @@ Mods: {
 
 				RecordTrackingEnabled: {
 					Label: Отслеживание рекордов боссов
-					Tooltip:
-						'''
-						Если эта настройка включена, вы сможете сохранять рекорды боссов, с которыми вы сражаетесь!
-						Обратите внимание: данная функция применима только в одиночной игре. На серверах эта настройка игнорируется, и рекорды будут сохраняться в любом случае.
-						'''
+					Tooltip: Если эта настройка включена, ваша статистика боёв будет заноситься в рекорды.
 				}
 
 				AllowNewRecords: {
@@ -585,7 +581,7 @@ Mods: {
 				}
 
 				DespawnMessageType: {
-					Label: Сообщение об исчезновении босса
+					Label: Оповещение об исчезновении босса
 					Tooltip:
 						'''
 						Сообщения об исчезновении босса отображаются в чате, когда босс неактивен.
@@ -594,21 +590,21 @@ Mods: {
 				}
 
 				LimbMessages: {
-					Label: Сообщения о победе над сегментами
+					Label: Оповещение о победе над врагами не боссами
 					Tooltip:
 						'''
-						При поражении отдельного сегмента босса будет отправляться сообщение в чат
-						Например, Руки Скелетрона
+						При поражении важной части босса будет отправляться сообщение в чат.
+						Сюда входят: Руки Скелетрона, Ретиназер/Спазматизм, Небесные башни и т. д.
 						'''
 				}
 
 				MoonMessages: {
-					// Label: Moon Event Ending Annoucements
-					/* Tooltip:
+					Label: Оповещение об окончании лунного события
+					Tooltip:
 						'''
-						Messages will appear in chat when a vanilla moon event has ended.
-						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon.
-						''' */
+						При завершении ванильного лунного события будет отправляться сообщение в чат.
+						Лунные события включают в себя: Кровавая луна, Солнечное затмение, Тыквенная луна и Морозная луна.
+						'''
 				}
 
 				TimerSounds: {
