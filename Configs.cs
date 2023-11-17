@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -344,11 +345,13 @@ namespace BossChecklist
 
 			if (!Main.gameMenu) {
 				if (string.IsNullOrEmpty(interferingNPC)) {
-					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)PacketMessageType.UpdateAllowTracking);
-					packet.Write(RecordTrackingEnabled);
-					packet.Write(AllowNewRecords);
-					packet.Send();
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.UpdateAllowTracking);
+						packet.Write(RecordTrackingEnabled);
+						packet.Write(AllowNewRecords);
+						packet.Send();
+					}
 				}
 				else {
 					Main.NewText(Language.GetText("Mods.BossChecklist.Configs.Common.InvalidChange").Format(badConfig, interferingNPC), Color.Orange);
