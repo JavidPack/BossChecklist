@@ -879,10 +879,6 @@ namespace BossChecklist
 		private void PageChangerClicked(UIMouseEvent evt, UIElement listeningElement) {
 			if (listeningElement is not NavigationalButton button)
 				return;
-			// Remove new records when navigating from a page with a new record
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
-				modPlayer.hasNewRecord[recordIndex] = false;
 
 			// Calculate what page the Log needs to update to
 			List<EntryInfo> BossList = BossChecklist.bossTracker.SortedEntries;
@@ -930,6 +926,11 @@ namespace BossChecklist
 		/// <param name="subPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist.</param>
 		/// <param name="subCategory">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
 		private void UpdateSelectedPage(int pageNum, SubPage subPage, SubCategory subCategory = SubCategory.None) {
+			// Remove new records when navigating from a page with a new record
+			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
+				modPlayer.hasNewRecord[recordIndex] = false;
+
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
 
 			// Only on boss pages does updating the category page matter
