@@ -292,7 +292,7 @@ Mods: {
 		}
 
 		LogMessage: {
-			// LastUpdated_ModCall: The Boss Log Mod Call has been last updated on BossChecklist ({0}). Check out the GitHub Wiki guide to stay updated on the latest changes!
+			LastUpdated_ModCall: BossChecklist ({0})最近更新了Boss日志的Mod调用. 查看GitHub Wiki指南以了解最近的改动!
 			LastUpdated_Progression: BossChecklist {0}最近更新了原版条目的进度值
 			NoLogging: Boss日志的集成信息将不会被记录.
 			LateCall: 调用警告: 尝试的消息, '{0}', 过早发送. 预计将不会返回完整的调用信息. 为了获得最佳结果, 请在PostAddRecipes中进行调用.
@@ -318,7 +318,7 @@ Mods: {
 
 		Configs: {
 			Common: {
-				InvalidChange: 你不能在{0}存在时更改该配置!
+				InvalidChange: 你不能在{1}存在时更改'{0}'配置!
 				HostChange: 仅允许主机更改此配置.
 			}
 
@@ -549,11 +549,7 @@ Mods: {
 
 				RecordTrackingEnabled: {
 					Label: 启用Boss记录追踪
-					Tooltip:
-						'''
-						启用后, 会生成与你战斗过的Boss记录!
-						备注: 仅适用于单人模式. 服务器会忽略此设置并无规则的进行记录.
-						'''
+					Tooltip: 启用后, 会追踪并生成战斗记录状态
 				}
 
 				AllowNewRecords: {
