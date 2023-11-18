@@ -41,7 +41,7 @@ Mods: {
 				// ProgressBarListTypes: Click to switch to Entry Type mode
 				// AllLoot: All boss loot obtained!
 				// AllDropLoot: All non-collectible boss loot obtained!
-				// AllCollectibles: All boss collectibles Obtained!
+				// AllCollectibles: All boss collectibles obtained!
 
 				Filter: {
 					// Show: "{0}: Shown"
@@ -498,7 +498,7 @@ Mods: {
 					// Label: Enable Reset Data Options
 					/* Tooltip:
 						'''
-						When enabled, your able to clear or reset certain data within the Boss Log.
+						When enabled, your are able to clear or reset certain data within the Boss Log.
 						Includes: Clearing hidden entries, clearing marked entries, resetting loot checklist, and resetting records.
 						''' */
 				}
@@ -549,7 +549,7 @@ Mods: {
 
 				RecordTrackingEnabled: {
 					// Label: Enable Boss Record Tracking
-					// Tooltip: When enabled, your fight stats will be tracked for records.
+					// Tooltip: When enabled, fight stats will be tracked for records.
 				}
 
 				AllowNewRecords: {
