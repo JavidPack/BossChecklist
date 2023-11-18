@@ -65,6 +65,7 @@ namespace BossChecklist
 		}
 
 		public override void AddRecipes() {
+			BossChecklist.instance.LoggingInitialization();
 			//bossTracker.FinalizeLocalization();
 			BossChecklist.bossTracker.FinalizeEventNPCPools();
 			BossChecklist.bossTracker.FinalizeOrphanData(); // Add any remaining boss data, including added NPCs, loot, collectibles and spawn items.

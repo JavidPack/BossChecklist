@@ -17,6 +17,7 @@ namespace BossChecklist
 		internal static BossTracker bossTracker;
 		internal static ModKeybind ToggleChecklistHotKey;
 		public static ModKeybind ToggleBossLog;
+		private readonly string LastModCallUpdate = "v2.0.0"; // This should be updated whenever there are changes or additions to the ModCalls.
 		private readonly string LastVanillaProgressionRevision = "v1.4.0"; // This should be updated whenever a vanilla progression value is changed, or if another vanilla boss is added.
 
 		public static Dictionary<int, int> itemToMusicReference;
@@ -57,10 +58,6 @@ namespace BossChecklist
 				}
 			}
 			*/
-
-			Logger.Info(Language.GetText("LastUpdated").Format(LastVanillaProgressionRevision));
-			if (!BossLogConfig.Debug.ModCallLogVerbose)
-				Logger.Info(Language.GetTextValue("NoLogging"));
 		}
 
 		public override void Unload() {
@@ -73,6 +70,14 @@ namespace BossChecklist
 			Server_AllowNewRecords = null;
 			FeatureConfig = null;
 			BossLogConfig = null;
+		}
+
+		internal void LoggingInitialization() {
+			string LangLogMessage = "Mods.BossChecklist.LogMessage.";
+			Logger.Info(Language.GetText(LangLogMessage + "LastUpdated_ModCall").Format(LastModCallUpdate) + " " + Language.GetTextValue(LangLogMessage + "ModCallDocumentation"));
+			Logger.Info(Language.GetText(LangLogMessage + "LastUpdated_Progression").Format(LastVanillaProgressionRevision));
+			if (!BossLogConfig.Debug.ModCallLogVerbose)
+				Logger.Info(Language.GetTextValue("NoLogging"));
 		}
 
 		internal void LogModCallInfo(string key, params object[] args) {

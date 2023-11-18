@@ -292,7 +292,8 @@ Mods: {
 		}
 
 		LogMessage: {
-			// LastUpdated: Progression values for vanilla entries have been last updated on BossChecklist {0}
+			// LastUpdated_ModCall: The Boss Log Mod Call has been last updated on BossChecklist ({0}). Check out the GitHub Wiki guide to stay updated on the latest changes!
+			// LastUpdated_Progression: Progression values for vanilla entries have been last updated on BossChecklist ({0})
 			// NoLogging: Boss Log integration messages will not be logged.
 			// LateCall: Call Warning: The attempted message, '{0}', was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.
 			// OldCall: The '{0}' call is an old call and is now obsolete. Use '{1}' instead. {2} entries include: [{3}]

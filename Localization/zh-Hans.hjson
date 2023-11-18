@@ -292,7 +292,8 @@ Mods: {
 		}
 
 		LogMessage: {
-			LastUpdated: BossChecklist {0}最近更新了原版条目的进度值
+			// LastUpdated_ModCall: The Boss Log Mod Call has been last updated on BossChecklist ({0}). Check out the GitHub Wiki guide to stay updated on the latest changes!
+			LastUpdated_Progression: BossChecklist {0}最近更新了原版条目的进度值
 			NoLogging: Boss日志的集成信息将不会被记录.
 			LateCall: 调用警告: 尝试的消息, '{0}', 过早发送. 预计将不会返回完整的调用信息. 为了获得最佳结果, 请在PostAddRecipes中进行调用.
 			OldCall: 调用'{0}'已过时且已被废弃. 请立即使用'{1}'. {2}条目包括: [{3}]
