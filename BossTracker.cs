@@ -284,7 +284,7 @@ namespace BossChecklist
 					else if (IsRegisteredMusicBox(type)) {
 						boss.collectibleType.Add(type, CollectibleType.Music);
 					}
-					else if (Main.projPet[temp.shoot] || ProjectileID.Sets.LightPet[temp.shoot]) {
+					else if ((Main.projPet[temp.shoot] && Main.vanityPet[temp.buffType]) || (ProjectileID.Sets.LightPet[temp.shoot] && Main.lightPet[temp.buffType])) {
 						boss.collectibleType.Add(type, CollectibleType.Pet);
 					}
 					else if (temp.master && temp.mountType > MountID.None) {
