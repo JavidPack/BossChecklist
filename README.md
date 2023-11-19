@@ -1,7 +1,7 @@
 # BossChecklist
 Boss Checklist is a tModLoader mod to help users track Boss Progression. Users can view upcoming bosses among many other useful features.
 
-Boss Checklist is currently the **3rd most subscribed mod** for tModLoader, with over **2.5 million subscribers**.
+Boss Checklist is currently the **3rd most subscribed mod** for tModLoader, with over **3 million subscribers**.
 
 Mods can add their bosses to the Boss Log via simple `Mod.Call` code. There are many customization options available to modders who wish to do advanced options as well.
 
