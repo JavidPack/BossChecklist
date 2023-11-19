@@ -145,11 +145,11 @@ namespace BossChecklist
 
 			WorldRecordsForWorld_Unloaded.ForEach(record => WorldRecordTag.Add(record.BossKey, record.SerializeData()));
 
-			tag["World_Records"] = WorldRecordTag;
+			tag["World_Record_Data"] = WorldRecordTag;
 		}
 
 		public override void LoadWorldData(TagCompound tag) {
-			if (tag.TryGet("World_Records", out TagCompound savedData)) {
+			if (tag.TryGet("World_Record_Data", out TagCompound savedData)) {
 				List<WorldRecord> SavedWorldRecords = new List<WorldRecord>();
 
 				foreach (KeyValuePair<string, object> data in savedData) {
@@ -167,6 +167,9 @@ namespace BossChecklist
 					int index = SavedWorldRecords.FindIndex(x => x.BossKey == key);
 					WorldRecordsForWorld.Add(index == -1 ? new WorldRecord(key) : SavedWorldRecords[index]); // create a new entry if not in the list, otherwise use the saved data
 				}
+			}
+			else {
+				BossChecklist.bossTracker.BossRecordKeys.ForEach(key => WorldRecordsForWorld.Add(new WorldRecord(key))); // create a new entry if no saved data was found
 			}
 
 			var HiddenBossesList = tag.GetList<string>("HiddenBossesList");
