@@ -333,7 +333,7 @@ namespace BossChecklist.UIElements
 					"Boss" => BossChecklist.BossLogConfig.FilterBosses.Replace(" ", ""),
 					"MiniBoss" => BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", ""),
 					"Event" => BossChecklist.BossLogConfig.FilterEvents.Replace(" ", ""),
-					_ => "Show"
+					_ => BossLogConfiguration.Option_Show
 				};
 			}
 
@@ -353,9 +353,9 @@ namespace BossChecklist.UIElements
 
 			private string Cycle(string value, bool boss = false) {
 				return value switch {
-					"Show" => "Hide When Completed",
-					"Hide When Completed" => boss ? "Show" : "Hide",
-					"Hide" => "Show",
+					BossLogConfiguration.Option_Show => BossLogConfiguration.Option_HideWhenCompleted,
+					BossLogConfiguration.Option_HideWhenCompleted => boss ? BossLogConfiguration.Option_Show : BossLogConfiguration.Option_Hide,
+					BossLogConfiguration.Option_Hide => BossLogConfiguration.Option_Show,
 					_ => ""
 				};
 			}

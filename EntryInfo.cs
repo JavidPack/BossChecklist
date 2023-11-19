@@ -181,9 +181,9 @@ namespace BossChecklist
 			string mbFilter = BossChecklist.BossLogConfig.FilterMiniBosses;
 			string eFilter = BossChecklist.BossLogConfig.FilterEvents;
 
-			bool FilterBoss = type == EntryType.Boss && bFilter == "Hide When Completed" && IsDownedOrMarked;
-			bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == "Hide" || (mbFilter == "Hide When Completed" && IsDownedOrMarked));
-			bool FilterEvent = type == EntryType.Event && (eFilter == "Hide" || (eFilter == "Hide When Completed" && IsDownedOrMarked));
+			bool FilterBoss = type == EntryType.Boss && bFilter == BossLogConfiguration.Option_HideWhenCompleted && IsDownedOrMarked;
+			bool FilterMiniBoss = type == EntryType.MiniBoss && (mbFilter == BossLogConfiguration.Option_Hide || (mbFilter == BossLogConfiguration.Option_HideWhenCompleted && IsDownedOrMarked));
+			bool FilterEvent = type == EntryType.Event && (eFilter == BossLogConfiguration.Option_Hide || (eFilter == BossLogConfiguration.Option_HideWhenCompleted && IsDownedOrMarked));
 			if (FilterBoss || FilterMiniBoss || FilterEvent)
 				return false;
 

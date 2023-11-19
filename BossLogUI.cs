@@ -589,16 +589,16 @@ namespace BossChecklist
 			}
 
 			// ...Bosses
-			FilterIcons[0].check = BossChecklist.BossLogConfig.FilterBosses == "Show" ? Texture_Check_Check : Texture_Check_Next;
+			FilterIcons[0].check = BossChecklist.BossLogConfig.FilterBosses == BossLogConfiguration.Option_Show ? Texture_Check_Check : Texture_Check_Next;
 
 			// ...Mini-Bosses
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				FilterIcons[1].check = Texture_Check_X;
 			}
-			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Show") {
+			else if (BossChecklist.BossLogConfig.FilterMiniBosses == BossLogConfiguration.Option_Show) {
 				FilterIcons[1].check = Texture_Check_Check;
 			}
-			else if (BossChecklist.BossLogConfig.FilterMiniBosses == "Hide") {
+			else if (BossChecklist.BossLogConfig.FilterMiniBosses == BossLogConfiguration.Option_Hide) {
 				FilterIcons[1].check = Texture_Check_X;
 			}
 			else {
@@ -609,10 +609,10 @@ namespace BossChecklist
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent) {
 				FilterIcons[2].check = Texture_Check_X;
 			}
-			else if (BossChecklist.BossLogConfig.FilterEvents == "Show") {
+			else if (BossChecklist.BossLogConfig.FilterEvents == BossLogConfiguration.Option_Show) {
 				FilterIcons[2].check = Texture_Check_Check;
 			}
-			else if (BossChecklist.BossLogConfig.FilterEvents == "Hide") {
+			else if (BossChecklist.BossLogConfig.FilterEvents == BossLogConfiguration.Option_Hide) {
 				FilterIcons[2].check = Texture_Check_X;
 			}
 			else {

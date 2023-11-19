@@ -85,25 +85,29 @@ namespace BossChecklist
 		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.OnlyBosses.Tooltip")]
 		public bool OnlyShowBossContent { get; set; }
 
+		internal const string Option_Show = "Show";
+		internal const string Option_Hide = "Hide";
+		internal const string Option_HideWhenCompleted = "Hide When Completed";
+
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[OptionStrings(new string[] { "Show", "Hide When Completed" })]
-		[DefaultValue("Show")]
+		[OptionStrings(new string[] { Option_Show, Option_HideWhenCompleted })]
+		[DefaultValue(Option_Show)]
 		public string FilterBosses { get; set; }
 
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[OptionStrings(new string[] { "Show", "Hide When Completed", "Hide" })]
-		[DefaultValue("Show")]
+		[OptionStrings(new string[] { Option_Show, Option_HideWhenCompleted, Option_Hide })]
+		[DefaultValue(Option_Show)]
 		public string FilterMiniBosses { get; set; }
 
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[OptionStrings(new string[] { "Show", "Hide When Completed", "Hide" })]
-		[DefaultValue("Show")]
+		[OptionStrings(new string[] { Option_Show, Option_HideWhenCompleted, Option_Hide })]
+		[DefaultValue(Option_Show)]
 		public string FilterEvents { get; set; }
 
 		[BackgroundColor(250, 235, 215)]
