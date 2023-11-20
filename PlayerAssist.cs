@@ -195,6 +195,8 @@ namespace BossChecklist
 
 		// Track each tick that passes during boss fights.
 		public override void PreUpdate() {
+			if (Main.netMode == NetmodeID.MultiplayerClient || Player.whoAmI == 255)
+				return;
 			/* Debug tool for opening the Progression Mode prompt
 			if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
 				hasOpenedTheBossLog = false;
@@ -208,6 +210,9 @@ namespace BossChecklist
 
 		// Track amount of times damage was taken during a boss fight. Source of damage does not matter.
 		public override void OnHurt(Player.HurtInfo info) {
+			if (Main.netMode == NetmodeID.MultiplayerClient || Player.whoAmI == 255)
+				return;
+
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
@@ -217,7 +222,7 @@ namespace BossChecklist
 
 		// Track player deaths during boss fights.
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
-			if (Player.whoAmI == 255)
+			if (Main.netMode == NetmodeID.MultiplayerClient || Player.whoAmI == 255)
 				return;
 
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
@@ -229,7 +234,7 @@ namespace BossChecklist
 
 		// Record tracking should stop if the player disconnects from the world.
 		public override void PlayerDisconnect() {
-			if (Player.whoAmI == 255)
+			if (Main.netMode == NetmodeID.MultiplayerClient || Player.whoAmI == 255)
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {
