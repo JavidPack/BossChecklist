@@ -66,7 +66,7 @@ namespace BossChecklist
 		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on an entry page.
 		/// </summary>
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
-		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex] : null;
+		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex] : null;
 		public WorldRecord GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? WorldAssist.WorldRecordsForWorld[recordIndex] : null;
 
 		// Navigation

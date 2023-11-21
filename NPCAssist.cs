@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Terraria;
-using Terraria.Chat;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
@@ -20,28 +19,24 @@ namespace BossChecklist
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
 			foreach (Player player in Main.player) {
-				if (player.active) {
-					if (Main.netMode == NetmodeID.Server) {
-						PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
-						serverRecords.StartTracking_Server(player.whoAmI);
-					}
-					else {
-						PersonalRecords bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
-						bossrecord.StartTracking(); // start tracking for active players
-					}
+				if (!player.active)
+					continue;
+
+				if (Main.netMode == NetmodeID.Server) {
+					BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].StartTracking_Server(player.whoAmI);
+				}
+				else if (Main.netMode == NetmodeID.SinglePlayer) {
+					player.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StartTracking(); // start tracking for active players
 				}
 			}
 		}
 
 		// Special case for moon lord. The hands and head do not 'die' when the messages need to be triggered
 		public override void HitEffect(NPC npc, NPC.HitInfo hit) {
-			if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead) {
-				if (npc.life <= 0) {
-					if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
-						if (Main.netMode != NetmodeID.Server) {
-							Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
-						}
-					}
+			if ((npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead) && npc.life <= 0) {
+				if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
+					if (Main.netMode != NetmodeID.Server)
+						Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
 				}
 			}
 		}
@@ -84,9 +79,8 @@ namespace BossChecklist
 					if (serverRecords.StopTracking_Server(player.whoAmI, interaction && BossChecklist.Server_AllowNewRecords[player.whoAmI], interaction))
 						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
 				}
-				else {
-					PersonalRecords bossrecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
-					bossrecord.StopTracking(interaction && BossChecklist.FeatureConfig.AllowNewRecords, interaction);
+				else if (Main.netMode == NetmodeID.SinglePlayer) {
+					player.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StopTracking(interaction && BossChecklist.FeatureConfig.AllowNewRecords, interaction);
 				}
 			}
 

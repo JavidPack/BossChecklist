@@ -27,10 +27,9 @@ namespace BossChecklist
 		public Dictionary<string, List<PersonalRecords>> AllStoredRecords;
 
 		/// <summary>
-		/// Fetches the list of records assigned to the current world from the list of all stored records.
-		/// Do NOT reference when on the game menu.
+		/// Fetches the list of records assigned to the current world from the list of all stored records by the player.
 		/// </summary>
-		public List<PersonalRecords> RecordsForWorld => AllStoredRecords[Main.ActiveWorldFileData.UniqueId.ToString()];
+		public List<PersonalRecords> RecordsForWorld => AllStoredRecords.TryGetValue(Main.ActiveWorldFileData.UniqueId.ToString(), out List<PersonalRecords> ValidKey) ? ValidKey : null;
 		public Dictionary<string, int> MiniBossKills;
 		public List<ItemDefinition> BossItemsCollected;
 
@@ -202,6 +201,9 @@ namespace BossChecklist
 				hasOpenedTheBossLog = false;
 			*/
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			if (EntryRecords is null)
+				return;
+
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
 					record.Tracker_Duration++;
@@ -214,6 +216,9 @@ namespace BossChecklist
 				return;
 
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			if (EntryRecords is null)
+				return;
+
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
 					record.Tracker_HitsTaken++;
@@ -226,6 +231,9 @@ namespace BossChecklist
 				return;
 
 			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			if (EntryRecords is null)
+				return;
+
 			foreach (PersonalRecords record in EntryRecords) {
 				if (record.IsCurrentlyBeingTracked)
 					record.Tracker_Deaths++;
@@ -238,14 +246,10 @@ namespace BossChecklist
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {
-				foreach (PersonalRecords record in BossChecklist.ServerCollectedRecords[Player.whoAmI]) {
-					record.StopTracking_Server(Player.whoAmI, false, false);
-				}
+				BossChecklist.ServerCollectedRecords[Player.whoAmI].ForEach(record => record.StopTracking_Server(Player.whoAmI, false, false));
 			}
 			else {
-				foreach (PersonalRecords record in RecordsForWorld) {
-					record.StopTracking(false, false); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
-				}
+				RecordsForWorld?.ForEach(record => record.StopTracking(false, false)); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.
 			}
 		}
 		

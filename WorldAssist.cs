@@ -415,8 +415,7 @@ namespace BossChecklist
 						serverRecords.StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
 					}
 					else {
-						PersonalRecords bossRecord = player.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
-						bossRecord.StopTracking(false, npc.playerInteraction[player.whoAmI]);
+						player.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StopTracking(false, npc.playerInteraction[player.whoAmI]);
 					}
 				}
 

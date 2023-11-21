@@ -161,16 +161,14 @@ namespace BossChecklist
 							return true;
 
 						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						if (!modplayer.PlayerRecordsInitialized)
+						if (modplayer.RecordsForWorld is not List<PersonalRecords> personalrecords)
 							return true;
-
-						PersonalRecords personalrecords = Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld[recordIndex];
 						
 						string debugText =
 							$"[#{entry.GetIndex}] {entry.DisplayName} [{recordIndex}]" +
-							$"\nTime: {PersonalRecords.TimeConversion(personalrecords.Tracker_Duration)}" +
-							$"\nTimes Hit: {personalrecords.Tracker_HitsTaken}" +
-							$"\nDeaths: {personalrecords.Tracker_Deaths}";
+							$"\nTime: {PersonalRecords.TimeConversion(personalrecords[recordIndex].Tracker_Duration)}" +
+							$"\nTimes Hit: {personalrecords[recordIndex].Tracker_HitsTaken}" +
+							$"\nDeaths: {personalrecords[recordIndex].Tracker_Deaths}";
 						Main.spriteBatch.DrawString(FontAssets.MouseText.Value, debugText, new Vector2(20, Main.screenHeight - 175), Color.Tomato);
 						return true;
 					},
