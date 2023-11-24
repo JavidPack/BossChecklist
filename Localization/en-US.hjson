@@ -127,8 +127,8 @@ Mods: {
 
 			LootAndCollection: {
 				MaskedItems: Defeat this entry to view its loot and collectibles
-				ItemIsExpertOnly: This item is only obtainable in expert mode
-				ItemIsMasterOnly: This item is only obtainable in master mode
+				ItemIsExpertOnly: This item is only obtainable in Expert Mode
+				ItemIsMasterOnly: This item is only obtainable in Master Mode
 				ItemIsLocked: This item has special requirements to unlock
 			}
 
