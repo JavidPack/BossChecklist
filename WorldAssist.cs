@@ -341,7 +341,7 @@ namespace BossChecklist
 		/// </summary>
 		public void HandleDespawnFlags() {
 			foreach (NPC npc in Main.npc) {
-				if (npc.whoAmI > 199 || ActiveNPCEntryFlags[npc.whoAmI] == -1 || npc.active)
+				if (npc.whoAmI >= Main.maxNPCs || ActiveNPCEntryFlags[npc.whoAmI] == -1 || npc.active)
 					continue; // skip unflagged entries. If flagged, don't trigger despawn message or stop trackers if the npc is still active
 
 				EntryInfo selectedEntry = BossChecklist.bossTracker.SortedEntries[ActiveNPCEntryFlags[npc.whoAmI]];
