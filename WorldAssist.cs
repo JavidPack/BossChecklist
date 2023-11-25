@@ -30,26 +30,11 @@ namespace BossChecklist
 		public static bool downedFlyingDutchman;
 		public static bool downedMartianSaucer;
 
-		public static bool downedInvasionT2Ours;
-		public static bool downedInvasionT3Ours;
-
 		bool Tracker_BloodMoon = false;
 		bool Tracker_PumpkinMoon = false;
 		bool Tracker_FrostMoon = false;
 		bool Tracker_SolarEclipse = false;
 		public static bool TrackingDowns = false;
-
-		public override void Load() {
-			On_DD2Event.WinInvasionInternal += DD2Event_WinInvasionInternal;
-		}
-
-		private void DD2Event_WinInvasionInternal(On_DD2Event.orig_WinInvasionInternal orig) {
-			orig();
-			if (DD2Event.OngoingDifficulty == 2)
-				downedInvasionT2Ours = true;
-			if (DD2Event.OngoingDifficulty == 3)
-				downedInvasionT3Ours = true;
-		}
 
 		private void ClearDownedBools(bool startTrackingDowns = false) {
 			// Events
@@ -69,10 +54,6 @@ namespace BossChecklist
 			downedOgre = false;
 			downedFlyingDutchman = false;
 			downedMartianSaucer = false;
-
-			// Vanilla additions
-			downedInvasionT2Ours = false;
-			downedInvasionT3Ours = false;
 
 			TrackingDowns = startTrackingDowns;
 		}
@@ -128,10 +109,6 @@ namespace BossChecklist
 				downed.Add("flyingdutchman");
 			if (downedMartianSaucer)
 				downed.Add("martiansaucer");
-			if (downedInvasionT2Ours)
-				downed.Add("invasionT2Ours");
-			if (downedInvasionT3Ours)
-				downed.Add("invasionT3Ours");
 
 			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
@@ -192,13 +169,10 @@ namespace BossChecklist
 			downedOgre = downed.Contains("ogre");
 			downedFlyingDutchman = downed.Contains("flyingdutchman");
 			downedMartianSaucer = downed.Contains("martiansaucer");
-			downedInvasionT2Ours = downed.Contains("invasionT2Ours");
-			downedInvasionT3Ours = downed.Contains("invasionT3Ours");
 		}
 
 		public override void NetSend(BinaryWriter writer) {
 			// BitBytes can have up to 8 values.
-			// BitsByte flags2 = reader.ReadByte();
 			BitsByte flags = new BitsByte {
 				[0] = downedBloodMoon,
 				[1] = downedFrostMoon,
@@ -211,14 +185,12 @@ namespace BossChecklist
 			};
 			writer.Write(flags);
 
-			// Vanilla doesn't sync these values, so we will.
+			//8 flags added, do not add more, move onto next BitsByte
 			flags = new BitsByte {
 				[0] = NPC.downedTowerSolar,
 				[1] = NPC.downedTowerVortex,
 				[2] = NPC.downedTowerNebula,
 				[3] = NPC.downedTowerStardust,
-				[4] = downedInvasionT2Ours,
-				[5] = downedInvasionT3Ours,
 			};
 			writer.Write(flags);
 
@@ -249,8 +221,6 @@ namespace BossChecklist
 			NPC.downedTowerVortex = flags[1];
 			NPC.downedTowerNebula = flags[2];
 			NPC.downedTowerStardust = flags[3];
-			downedInvasionT2Ours = flags[4];
-			downedInvasionT3Ours = flags[5];
 
 			HiddenEntries.Clear();
 			int count = reader.ReadInt32();

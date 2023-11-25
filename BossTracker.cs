@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent.Events;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
@@ -140,7 +141,7 @@ namespace BossChecklist
 					.WithCustomLimbs(new List<int>() { NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead })
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.Golem}")
 					.WithCustomHeadIcon($"Terraria/Images/NPC_Head_Boss_5"),
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "NPCName.DD2Betsy", NPCID.DD2Betsy, () => WorldAssist.downedInvasionT3Ours)
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, Betsy, "NPCName.DD2Betsy", NPCID.DD2Betsy, () => DD2Event.DownedInvasionT3)
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.DD2Betsy}"),
 					// No despawn message due to being in an event
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, EmpressOfLight, "NPCName.HallowBoss", NPCID.HallowBoss, () => NPC.downedEmpressOfLight)
@@ -163,7 +164,7 @@ namespace BossChecklist
 					.WithCustomTranslationKey("LegacyInterface.88")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventGoblinArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_9"),
-				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => Terraria.GameContent.Events.DD2Event.DownedInvasionAnyDifficulty)
+				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => DD2Event.DownedInvasionAnyDifficulty)
 					.WithCustomTranslationKey("DungeonDefenders2.InvasionProgressTitle")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_79"),
