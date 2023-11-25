@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BossChecklist.UIElements;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -264,7 +265,9 @@ namespace BossChecklist
 			}
 
 			// Update checklist to match Hidden and Marked Downed entries
-			BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+			if (BossChecklistUI.Visible)
+				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+
 			if (BossUISystem.Instance.BossLog.BossLogVisible && BossUISystem.Instance.BossLog.PageNum == -1) {
 				BossUISystem.Instance.BossLog.RefreshPageContent();
 			}
