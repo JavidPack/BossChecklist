@@ -374,18 +374,14 @@ namespace BossChecklist
 		/// Any record trackers currently active will stop if all instances of the entry's NPCs are no longer active.
 		/// </summary>
 		public void HandleDespawnFlags() {
-			for (int i = 0; i < Main.maxNPCs; i++) {
-				if (ActiveNPCEntryFlags[i] == -1)
-					continue; // skip invalid entries
+			foreach (NPC npc in Main.npc) {
+				if (ActiveNPCEntryFlags[npc.whoAmI] == -1 || npc.active)
+					continue; // skip unflagged entries. If flagged, don't trigger despawn message or stop trackers if the npc is still active
 
-				NPC npc = Main.npc[i];
-				if (npc.active)
-					continue; // Don't trigger despawn message or stop trackers if the npc is still active
+				EntryInfo selectedEntry = BossChecklist.bossTracker.SortedEntries[ActiveNPCEntryFlags[npc.whoAmI]];
+				ActiveNPCEntryFlags[npc.whoAmI] = -1; // if the npc tracked is inactive, remove entry value
 
-				EntryInfo selectedEntry = BossChecklist.bossTracker.SortedEntries[ActiveNPCEntryFlags[i]];
-				ActiveNPCEntryFlags[i] = -1; // if the npc tracked is inactive, remove entry value
-
-				if (ActiveNPCEntryFlags.Any(x => x == selectedEntry.GetIndex))
+				if (ActiveNPCEntryFlags.Contains(selectedEntry.GetIndex))
 					continue; // do nothing if any other npcs are apart of the entry and are still active
 
 				// Now that the entry no longer exists within ActiveNPCEntryFlags, it is determined to have despawned
