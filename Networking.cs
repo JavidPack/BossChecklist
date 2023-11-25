@@ -31,6 +31,16 @@ namespace BossChecklist
 		public static bool NewWorldRecord(NetRecordID netRecord) => netRecord.HasFlag(NetRecordID.WorldRecord_Duration) || netRecord.HasFlag(NetRecordID.WorldRecord_HitsTaken);
 		public static bool ResettingRecords(NetRecordID netRecord) => netRecord.HasFlag(NetRecordID.PersonalBest_Reset) || netRecord.HasFlag(NetRecordID.FirstVictory_Reset);
 
+		public static bool DownedEntryCheck(ref bool downed) {
+			bool temp = downed;
+			downed = true;
+			if (temp == false && Main.netMode == NetmodeID.Server) {
+				NetMessage.SendData(MessageID.WorldData);
+				return true;
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Send a packet to the server to add, remove, or clear entries from the hidden entries list.
 		/// </summary>

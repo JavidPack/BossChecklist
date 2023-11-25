@@ -94,34 +94,22 @@ namespace BossChecklist
 		/// <summary>
 		/// Handles all of BossChecklist's custom downed variables, makring them as defeated and updating all clients when needed.
 		/// </summary>
-		public void HandleDownedNPCs(int npcType) {
+		/// <returns>If the corresponding flag was flipped.</returns>
+		internal static bool HandleDownedNPCs(int npcType) {
 			if (!WorldAssist.TrackingDowns)
-				return;
+				return false;
 
-			if ((npcType == NPCID.DD2DarkMageT1 || npcType == NPCID.DD2DarkMageT3) && !WorldAssist.downedDarkMage) {
-				WorldAssist.downedDarkMage = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData);
-				}
-			}
-			else if ((npcType == NPCID.DD2OgreT2 || npcType == NPCID.DD2OgreT3) && !WorldAssist.downedOgre) {
-				WorldAssist.downedOgre = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData);
-				}
-			}
-			else if (npcType == NPCID.PirateShip && !WorldAssist.downedFlyingDutchman) {
-				WorldAssist.downedFlyingDutchman = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData);
-				}
-			}
-			else if (npcType == NPCID.MartianSaucerCore && !WorldAssist.downedMartianSaucer) {
-				WorldAssist.downedMartianSaucer = true;
-				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.WorldData);
-				}
-			}
+			return npcType switch {
+				NPCID.DD2DarkMageT1 | NPCID.DD2DarkMageT1 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
+				NPCID.DD2OgreT2 | NPCID.DD2OgreT3 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),
+				NPCID.PirateShip => Networking.DownedEntryCheck(ref WorldAssist.downedFlyingDutchman),
+				NPCID.MartianSaucerCore => Networking.DownedEntryCheck(ref WorldAssist.downedMartianSaucer),
+				NPCID.LunarTowerVortex => Networking.DownedEntryCheck(ref NPC.downedTowerVortex),
+				NPCID.LunarTowerStardust => Networking.DownedEntryCheck(ref NPC.downedTowerStardust),
+				NPCID.LunarTowerNebula => Networking.DownedEntryCheck(ref NPC.downedTowerNebula),
+				NPCID.LunarTowerSolar => Networking.DownedEntryCheck(ref NPC.downedTowerSolar),
+				_ => false
+			};
 		}
 	}
 }

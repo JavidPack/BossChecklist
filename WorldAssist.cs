@@ -185,14 +185,11 @@ namespace BossChecklist
 			};
 			writer.Write(flags);
 
-			//8 flags added, do not add more, move onto next BitsByte
+			/* 8 flags added, do not add more, move onto next BitsByte
 			flags = new BitsByte {
-				[0] = NPC.downedTowerSolar,
-				[1] = NPC.downedTowerVortex,
-				[2] = NPC.downedTowerNebula,
-				[3] = NPC.downedTowerStardust,
+
 			};
-			writer.Write(flags);
+			writer.Write(flags); */
 
 			writer.Write(HiddenEntries.Count);
 			foreach (var bossKey in HiddenEntries) {
@@ -216,11 +213,7 @@ namespace BossChecklist
 			downedFlyingDutchman = flags[6];
 			downedMartianSaucer = flags[7];
 
-			flags = reader.ReadByte();
-			NPC.downedTowerSolar = flags[0];
-			NPC.downedTowerVortex = flags[1];
-			NPC.downedTowerNebula = flags[2];
-			NPC.downedTowerStardust = flags[3];
+			//flags = reader.ReadByte();
 
 			HiddenEntries.Clear();
 			int count = reader.ReadInt32();
