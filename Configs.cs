@@ -202,8 +202,6 @@ namespace BossChecklist
 		[DefaultValue(false)]
 		public bool MaskHardMode { get; set; }
 
-		internal bool AnyProgressionModeConfigUsed => MaskTextures || MaskNames || MaskBossLoot || MaskHardMode;
-
 		public void UpdateIndicators() {
 			BossLogUI Log = BossUISystem.Instance.BossLog;
 			string LangIndicator = "Mods.BossChecklist.Log.Indicator";
@@ -216,7 +214,7 @@ namespace BossChecklist
 				Log.Indicators[1].Color = Color.Tomato;
 				Log.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.Enabled"));
 			}
-			else if (AnyProgressionModeConfigUsed) {
+			else if (MaskTextures || MaskNames || MaskBossLoot || MaskHardMode) {
 				Log.Indicators[1].Color = Color.Salmon;
 				Log.Indicators[1].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}.PartiallyEnabled"));
 			}
