@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
-using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -376,7 +375,7 @@ namespace BossChecklist
 						PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
 						serverRecords.StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
 					}
-					else {
+					else if (Main.netMode == NetmodeID.SinglePlayer) {
 						player.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StopTracking(false, npc.playerInteraction[player.whoAmI]);
 					}
 				}
