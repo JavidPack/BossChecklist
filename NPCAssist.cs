@@ -18,15 +18,12 @@ namespace BossChecklist
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
-			foreach (Player player in Main.player) {
-				if (!player.active)
-					continue;
-
-				if (Main.netMode == NetmodeID.Server) {
+			if (Main.netMode is NetmodeID.SinglePlayer) {
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StartTracking(); // start tracking for active players
+			}
+			else if (Main.netMode is NetmodeID.Server) {
+				foreach (Player player in Main.player.Where(x => x.active)) {
 					BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].StartTracking_Server(player.whoAmI);
-				}
-				else if (Main.netMode == NetmodeID.SinglePlayer) {
-					player.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StartTracking(); // start tracking for active players
 				}
 			}
 		}
@@ -69,18 +66,16 @@ namespace BossChecklist
 
 			bool newPersonalBestOnServer = false;
 			// stop tracking and record stats for those who had interactions with the boss
-			foreach (Player player in Main.player) {
-				if (!player.active)
-					continue;
 
-				bool interaction = npc.playerInteraction[player.whoAmI];
-				if (Main.netMode == NetmodeID.Server) {
-					PersonalRecords serverRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex];
-					if (serverRecords.StopTracking_Server(player.whoAmI, interaction && BossChecklist.Server_AllowNewRecords[player.whoAmI], interaction))
+			if (Main.netMode is NetmodeID.SinglePlayer) {
+				bool interaction = npc.playerInteraction[Main.LocalPlayer.whoAmI];
+				Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StopTracking(interaction && BossChecklist.FeatureConfig.AllowNewRecords, interaction);
+			}
+			else if (Main.netMode is NetmodeID.Server) {
+				foreach (Player player in Main.player.Where(x => x.active)) {
+					bool interaction = npc.playerInteraction[player.whoAmI];
+					if (BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].StopTracking_Server(player.whoAmI, interaction && BossChecklist.Server_AllowNewRecords[player.whoAmI], interaction))
 						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
-				}
-				else if (Main.netMode == NetmodeID.SinglePlayer) {
-					player.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StopTracking(interaction && BossChecklist.FeatureConfig.AllowNewRecords, interaction);
 				}
 			}
 
