@@ -50,11 +50,13 @@ namespace BossChecklist
 				}
 				else if (Main.netMode == NetmodeID.Server) {
 					// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
-					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)PacketMessageType.SendClientConfigMessage);
-					packet.Write((byte)ClientMessageType.Limb);
-					packet.Write(npc.whoAmI);
-					packet.Send();
+					foreach (Player player in Main.player.Where(p => p.active)) {
+						ModPacket packet = BossChecklist.instance.GetPacket();
+						packet.Write((byte)PacketMessageType.SendClientConfigMessage);
+						packet.Write((byte)ClientMessageType.Limb);
+						packet.Write(npc.whoAmI);
+						packet.Send(player.whoAmI); // Server --> Multiplayer client
+					}
 				}
 			}
 
