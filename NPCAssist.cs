@@ -93,9 +93,6 @@ namespace BossChecklist
 		/// </summary>
 		/// <returns>If the corresponding flag was flipped.</returns>
 		internal static bool HandleDownedNPCs(int npcType) {
-			if (!WorldAssist.TrackingDowns)
-				return false;
-
 			return npcType switch {
 				NPCID.DD2DarkMageT1 | NPCID.DD2DarkMageT1 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
 				NPCID.DD2OgreT2 | NPCID.DD2OgreT3 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),

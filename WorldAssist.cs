@@ -29,48 +29,61 @@ namespace BossChecklist
 		public static bool downedFlyingDutchman;
 		public static bool downedMartianSaucer;
 
-		bool Tracker_BloodMoon = false;
-		bool Tracker_PumpkinMoon = false;
-		bool Tracker_FrostMoon = false;
-		bool Tracker_SolarEclipse = false;
-		public static bool TrackingDowns = false;
+		private static bool TrackingMoons = false; // This will help to prevent moon down checks from leaking into toher worlds
 
-		private void ClearDownedBools(bool startTrackingDowns = false) {
-			// Events
-			downedBloodMoon = false;
-			downedFrostMoon = false;
-			downedPumpkinMoon = false;
-			downedSolarEclipse = false;
+		public override void Load() {
+			On_Main.UpdateTime_StartDay += OnStartDay_CheckMoonEvents;
+			On_Main.UpdateTime_StartNight += OnStartNight_CheckEclipseDown;
+		}
 
-			// Event trackers
-			Tracker_BloodMoon = false;
-			Tracker_FrostMoon = false;
-			Tracker_PumpkinMoon = false;
-			Tracker_SolarEclipse = false;
+		/// <summary>
+		/// Before varibles are change for day (dawn), check for any moon events and mark as defeated it so.
+		/// </summary>
+		internal static void OnStartDay_CheckMoonEvents(On_Main.orig_UpdateTime_StartDay orig, ref bool stopEvents) {
+			if (TrackingMoons) {
+				if (Main.bloodMoon) {
+					AnnounceEventEnd("BloodMoon"); // Sends a message to all players that the moon event has ended
+					Networking.DownedEntryCheck(ref downedBloodMoon);
+				}
+				else if (Main.snowMoon) {
+					AnnounceEventEnd("FrostMoon");
+					Networking.DownedEntryCheck(ref downedFrostMoon);
+				}
+				else if (Main.pumpkinMoon) {
+					AnnounceEventEnd("PumpkinMoon");
+					Networking.DownedEntryCheck(ref downedPumpkinMoon);
+				}
+			}
+			orig(ref stopEvents);
+		}
 
-			// MiniBosses
-			downedDarkMage = false;
-			downedOgre = false;
-			downedFlyingDutchman = false;
-			downedMartianSaucer = false;
-
-			TrackingDowns = startTrackingDowns;
+		/// <summary>
+		/// Before varibles are change for night (dusk), check for the eclipse event and mark as defeated it so.
+		/// </summary>
+		internal static void OnStartNight_CheckEclipseDown(On_Main.orig_UpdateTime_StartNight orig, ref bool stopEvents) {
+			if (Main.eclipse) {
+				AnnounceEventEnd("Eclipse");
+				Networking.DownedEntryCheck(ref downedSolarEclipse);
+			}
+			orig(ref stopEvents);
 		}
 
 		public override void ClearWorld() {
 			HiddenEntries.Clear();
 			MarkedEntries.Clear();
-			ClearDownedBools(false);
 			WorldRecordsForWorld.Clear();
+			TrackingMoons = false; // turn tracker off
+			downedBloodMoon = downedFrostMoon = downedPumpkinMoon = downedSolarEclipse = false; // clear moon downs
+			downedDarkMage = downedOgre = downedFlyingDutchman = downedMartianSaucer = false; // clear mini-boss downs
+			
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 		}
 
 		public override void OnWorldLoad() {
 			HiddenEntries.Clear();
 			MarkedEntries.Clear();
-
-			ClearDownedBools(true);
 			WorldRecordsForWorld.Clear();
+			TrackingMoons = true; // ensure trackers are started again once the world is loaded
 
 			// Record related lists that should be the same count of record tracking entries
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
@@ -79,12 +92,8 @@ namespace BossChecklist
 			}
 		}
 
-		public override void OnWorldUnload() {
-			ClearDownedBools(); // Reset downs and trackers to prevent "defeation" of an entry
-		}
-
 		public override void PreWorldGen() {
-			ClearDownedBools(); // Reset downs and trackers back to false if creating a new world
+			TrackingMoons = false; // World Generation should start with the tracker false before anything (prevents moon defeations leaking into other worlds)
 		}
 
 		public override void SaveWorldData(TagCompound tag) {
@@ -236,7 +245,6 @@ namespace BossChecklist
 		}
 
 		public override void PreUpdateWorld() {
-			HandleMoonDowns();
 			HandleDespawnFlags();
 		}
 
@@ -254,7 +262,7 @@ namespace BossChecklist
 			return null;
 		}
 
-		public void AnnounceEventEnd(string eventType) {
+		public static void AnnounceEventEnd(string eventType) {
 			if (Main.netMode == NetmodeID.SinglePlayer && DetermineMoonAnnoucement(eventType) is string message) {
 				Main.NewText(message, new Color(50, 255, 130));
 			}
@@ -266,71 +274,6 @@ namespace BossChecklist
 					packet.Write((byte)ClientMessageType.Moon);
 					packet.Write(eventType);
 					packet.Send(player.whoAmI); // Server --> Multiplayer client
-				}
-			}
-		}
-
-		public void HandleMoonDowns() {
-			if (!TrackingDowns)
-				return; // Do not track moon phase when it shouldn't. Should help with data leaking into other worlds.
-
-			// Blood Moon
-			if (Main.bloodMoon) {
-				Tracker_BloodMoon = true;
-			}
-			else if (Tracker_BloodMoon) {
-				Tracker_BloodMoon = false;
-				AnnounceEventEnd("BloodMoon"); // Sends a message to all players that the moon event has ended
-				if (!downedBloodMoon) {
-					downedBloodMoon = true;
-					if (Main.netMode == NetmodeID.Server) {
-						NetMessage.SendData(MessageID.WorldData);
-					}
-				}
-			}
-
-			// Frost Moon
-			if (Main.snowMoon) {
-				Tracker_FrostMoon = true;
-			}
-			else if (Tracker_FrostMoon) {
-				Tracker_FrostMoon = false;
-				AnnounceEventEnd("FrostMoon");
-				if (!downedFrostMoon) {
-					downedFrostMoon = true;
-					if (Main.netMode == NetmodeID.Server) {
-						NetMessage.SendData(MessageID.WorldData);
-					}
-				}
-			}
-
-			// Pumpkin Moon
-			if (Main.pumpkinMoon) {
-				Tracker_PumpkinMoon = true;
-			}
-			else if (Tracker_PumpkinMoon) {
-				Tracker_PumpkinMoon = false;
-				AnnounceEventEnd("PumpkinMoon");
-				if (!downedPumpkinMoon) {
-					downedPumpkinMoon = true;
-					if (Main.netMode == NetmodeID.Server) {
-						NetMessage.SendData(MessageID.WorldData);
-					}
-				}
-			}
-
-			// Solar Eclipse
-			if (Main.eclipse) {
-				Tracker_SolarEclipse = true;
-			}
-			else if (Tracker_SolarEclipse) {
-				Tracker_SolarEclipse = false;
-				AnnounceEventEnd("Eclipse");
-				if (!downedSolarEclipse) {
-					downedSolarEclipse = true;
-					if (Main.netMode == NetmodeID.Server) {
-						NetMessage.SendData(MessageID.WorldData);
-					}
 				}
 			}
 		}
