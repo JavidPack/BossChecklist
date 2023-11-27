@@ -161,7 +161,7 @@ namespace BossChecklist
 							return true;
 
 						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						if (modplayer.RecordsForWorld is not List<PersonalRecords> personalrecords || personalrecords.Count == 0)
+						if (modplayer.RecordsForWorld is not List<PersonalRecords> personalrecords || !modplayer.PlayerRecordsInitialized)
 							return true;
 						
 						string debugText =
