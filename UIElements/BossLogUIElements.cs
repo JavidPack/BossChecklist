@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
@@ -428,6 +429,44 @@ namespace BossChecklist.UIElements
 				Vector2 pos = new Vector2(inner.X + (int)((Width.Pixels - stringAdjust.X * scale) / 2), inner.Y + 5);
 
 				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+			}
+		}
+
+		internal class TreasureBag : LogUIElement {
+			internal int itemType = 0;
+			internal Asset<Texture2D> bagTexture = BossLogUI.RequestResource("Extra_TreasureBag");
+
+			public TreasureBag(int bag) {
+				if (bag > 0) {
+					itemType = bag;
+					Main.instance.LoadItem(BossUISystem.Instance.BossLog.GetLogEntryInfo.treasureBag);
+					bagTexture = TextureAssets.Item[bag];
+				}
+
+				Width.Set(bagTexture.Value.Height, 0f);
+				Height.Set(bagTexture.Value.Height, 0f);
+			}
+
+			public override void RightClick(UIMouseEvent evt) {
+				if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || BossLogUI.SelectedSubPage != SubPage.LootAndCollectibles)
+					return; // do not do anything if the loot page isn't the active
+
+				if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
+					return; // player must be holding alt to remove any items
+
+				BossUISystem.Instance.BossLog.GetLogEntryInfo.lootItemTypes.ForEach(item => Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected.RemoveAll(x => x.Type == item));
+				BossUISystem.Instance.BossLog.RefreshPageContent();
+			}
+
+			public override void Draw(SpriteBatch spriteBatch) {
+				if (itemType != 0) {
+					DrawAnimation drawAnim = Main.itemAnimations[itemType];
+					Rectangle sourceRect = drawAnim != null ? drawAnim.GetFrame(bagTexture.Value) : bagTexture.Value.Bounds;
+					spriteBatch.Draw(bagTexture.Value, GetInnerDimensions().ToRectangle(), sourceRect, Color.White);
+				}
+				else {
+					spriteBatch.Draw(bagTexture.Value, GetInnerDimensions().ToRectangle(), Color.White);
+				}
 			}
 		}
 

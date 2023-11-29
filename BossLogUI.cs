@@ -1736,14 +1736,9 @@ namespace BossChecklist
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
 
 			// create an image of the entry's treasure bag
-			if (GetLogEntryInfo.treasureBag > 0)
-				Main.instance.LoadItem(GetLogEntryInfo.treasureBag);
-
-			Asset<Texture2D> bagTexture = GetLogEntryInfo.treasureBag > 0 ? TextureAssets.Item[GetLogEntryInfo.treasureBag] : RequestResource("Extra_TreasureBag");
-			NavigationalButton treasureBag = new NavigationalButton(bagTexture, false);
-			treasureBag.Left.Pixels = PageTwo.Width.Pixels / 2 - bagTexture.Value.Width / 2;
+			TreasureBag treasureBag = new TreasureBag(GetLogEntryInfo.treasureBag);
+			treasureBag.Left.Pixels = PageTwo.Width.Pixels / 2 - treasureBag.Width.Pixels / 2;
 			treasureBag.Top.Pixels = 88;
-			treasureBag.OnRightClick += RemoveItem;
 			PageTwo.Append(treasureBag);
 
 			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
