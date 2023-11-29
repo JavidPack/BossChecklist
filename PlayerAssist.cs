@@ -275,19 +275,5 @@ namespace BossChecklist
 
 			return base.OnPickup(item);
 		}
-
-		/*
-		
-		// Temporarily(?) removed
-		
-		public override void OnCreated(Item item, ItemCreationContext context) {
-			if (Main.netMode != NetmodeID.Server && BossChecklist.bossTracker.EntryLootCache[item.type]) {
-				List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
-				if (!itemsList.Any(x => x.Type == item.type)) {
-					itemsList.Add(new ItemDefinition(item.type));
-				}
-			}
-		}
-		*/
 	}
 }

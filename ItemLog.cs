@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace BossChecklist
 {
@@ -21,6 +23,16 @@ namespace BossChecklist
 						OverrideColor = Colors.RarityYellow
 					};
 					tooltips.Add(line);
+				}
+			}
+		}
+
+		public override void OnCreated(Item item, ItemCreationContext context) {
+			if (context is RecipeItemCreationContext || context is BuyItemCreationContext) {
+				if (Main.netMode != NetmodeID.Server && BossChecklist.bossTracker.EntryLootCache[item.type]) {
+					List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
+					if (!itemsList.Any(x => x.Type == item.type))
+						itemsList.Add(new ItemDefinition(item.type));
 				}
 			}
 		}
