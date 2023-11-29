@@ -562,6 +562,9 @@ namespace BossChecklist.UIElements
 						}
 					}
 					else {
+						if (itemResearched)
+							spriteBatch.Draw(BossLogUI.RequestResource("Checks_Researched").Value, pos, Color.White);
+
 						if (IsMouseHovering) {
 							Main.HoverItem = item;
 							Main.hoverItemName = item.HoverName;
@@ -569,15 +572,15 @@ namespace BossChecklist.UIElements
 					}
 				}
 				else {
+					if (itemResearched)
+						spriteBatch.Draw(BossLogUI.RequestResource("Checks_Researched").Value, pos, Color.White);
+
 					spriteBatch.Draw(BossLogUI.Texture_Check_Check.Value, pos, Color.White);
 					if (IsMouseHovering) {
 						Main.HoverItem = item;
 						Main.hoverItemName = item.HoverName;
 					}
 				}
-
-				if (itemResearched)
-					spriteBatch.Draw(BossLogUI.RequestResource("Checks_Researched").Value, pos, Color.White);
 
 				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
 				if (BossChecklist.BossLogConfig.Debug.ShowCollectionType && entry.collectibleType.TryGetValue(item.type, out CollectibleType type)) {
