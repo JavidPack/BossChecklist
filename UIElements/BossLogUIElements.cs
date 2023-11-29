@@ -46,6 +46,7 @@ namespace BossChecklist.UIElements
 		/// All Log related UIElements should hide mouse over interactions and lock the vanilla scroll wheel
 		/// </summary>
 		internal class LogUIElement : UIElement {
+			internal BossLogUI LogUI => BossUISystem.Instance.BossLog;
 			public string hoverText;
 			internal Color hoverTextColor = Color.White;
 
@@ -207,17 +208,17 @@ namespace BossChecklist.UIElements
 			public override void LeftClick(UIMouseEvent evt) {
 				base.LeftClick(evt);
 				if (Anchor.HasValue)
-					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
+					LogUI.PendingPageNum = Anchor.Value;
 
 				if (Record_Anchor.HasValue) {
 					BossLogUI.RecordSubCategory = Record_Anchor.Value;
 					if (Record_Anchor.Value == BossLogUI.CompareState)
 						BossLogUI.CompareState = SubCategory.None;
-					BossUISystem.Instance.BossLog.RefreshPageContent();
+					LogUI.RefreshPageContent();
 				}
 
 				if (Id == "CopyKey") {
-					string bossKey = BossUISystem.Instance.BossLog.GetLogEntryInfo.Key;
+					string bossKey = LogUI.GetLogEntryInfo.Key;
 					if (Platform.Get<IClipboard>().Value != bossKey) {
 						Platform.Get<IClipboard>().Value = bossKey;
 						SoundEngine.PlaySound(SoundID.Unlock);
@@ -229,7 +230,7 @@ namespace BossChecklist.UIElements
 				base.RightClick(evt);
 				if (Record_Anchor.HasValue && Record_Anchor.Value != BossLogUI.RecordSubCategory) {
 					BossLogUI.CompareState = BossLogUI.CompareState == Record_Anchor.Value ? SubCategory.None : Record_Anchor.Value;
-					BossUISystem.Instance.BossLog.RefreshPageContent();
+					LogUI.RefreshPageContent();
 				}
 			}
 
@@ -263,7 +264,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
-				if (BossUISystem.Instance.BossLog.PageNum == BossLogUI.Page_Prompt)
+				if (LogUI.PageNum == BossLogUI.Page_Prompt)
 					return;
 
 				if (Id == "Interactions" && string.IsNullOrEmpty(hoverText))
@@ -302,13 +303,13 @@ namespace BossChecklist.UIElements
 				base.LeftClick(evt);
 
 				if (Id == "Progression") {
-					BossUISystem.Instance.BossLog.CloseAndConfigure();
+					LogUI.CloseAndConfigure();
 				}
 				else if (Id == "OnlyBosses") {
 					BossChecklist.BossLogConfig.OnlyShowBossContent = !BossChecklist.BossLogConfig.OnlyShowBossContent;
 					BossLogUI.PendingConfigChange = true;
 					BossChecklist.BossLogConfig.UpdateIndicators();
-					BossUISystem.Instance.BossLog.RefreshPageContent();
+					LogUI.RefreshPageContent();
 				}
 			}
 
@@ -375,7 +376,7 @@ namespace BossChecklist.UIElements
 					BossChecklist.BossLogConfig.FilterEvents = ConfigHoverText = Cycle(BossChecklist.BossLogConfig.FilterEvents);
 				}
 				else if (Id == "Hidden") {
-					BossUISystem.Instance.BossLog.showHidden = !BossUISystem.Instance.BossLog.showHidden;
+					LogUI.showHidden = !LogUI.showHidden;
 				}
 				else if (Id == "Marked") {
 					// TODO: list only marked entries
@@ -384,14 +385,14 @@ namespace BossChecklist.UIElements
 				if (!string.IsNullOrEmpty(ConfigHoverText))
 					BossLogUI.PendingConfigChange = true;
 
-				BossUISystem.Instance.BossLog.UpdateFilterCheckAndTooltip(); // Update filter display state when clicked
-				BossUISystem.Instance.BossLog.RefreshPageContent();
+				LogUI.UpdateFilterCheckAndTooltip(); // Update filter display state when clicked
+				LogUI.RefreshPageContent();
 			}
 
 			public override void RightClick(UIMouseEvent evt) {
 				base.RightClick(evt);
 				if (Id == "Hidden")
-					BossUISystem.Instance.BossLog.ClearHiddenList();
+					LogUI.ClearHiddenList();
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -439,7 +440,7 @@ namespace BossChecklist.UIElements
 			public TreasureBag(int bag) {
 				if (bag > 0) {
 					itemType = bag;
-					Main.instance.LoadItem(BossUISystem.Instance.BossLog.GetLogEntryInfo.treasureBag);
+					Main.instance.LoadItem(LogUI.GetLogEntryInfo.treasureBag);
 					bagTexture = TextureAssets.Item[bag];
 				}
 
@@ -454,8 +455,8 @@ namespace BossChecklist.UIElements
 				if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 					return; // player must be holding alt to remove any items
 
-				BossUISystem.Instance.BossLog.GetLogEntryInfo.lootItemTypes.ForEach(item => Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected.RemoveAll(x => x.Type == item));
-				BossUISystem.Instance.BossLog.RefreshPageContent();
+				LogUI.GetLogEntryInfo.lootItemTypes.ForEach(item => LogUI.GetModPlayer.BossItemsCollected.RemoveAll(x => x.Type == item));
+				LogUI.RefreshPageContent();
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -532,7 +533,7 @@ namespace BossChecklist.UIElements
 				}
 
 				/// Everything below is being set up for loot related itemslots ///
-				EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
+				EntryInfo entry = LogUI.GetLogEntryInfo;
 				bool hardModeMasked = BossChecklist.BossLogConfig.MaskHardMode && !Main.hardMode && entry.progression > BossTracker.WallOfFlesh;
 				bool progressRestricted = !entry.IsDownedOrMarked && (BossChecklist.BossLogConfig.MaskBossLoot || hardModeMasked);
 				bool expertRestricted = item.expert && !Main.expertMode;
@@ -666,7 +667,7 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(BossLogUI.Texture_Log_Paper.Value, pageRect, Color.White); //.. and the paper on top
 				}
 
-				int selectedLogPage = BossUISystem.Instance.BossLog.PageNum;
+				int selectedLogPage = LogUI.PageNum;
 				if (selectedLogPage == BossLogUI.Page_Prompt) {
 					if (Id == "PageOne") {
 						Vector2 pos = new Vector2(GetInnerDimensions().X + 10, GetInnerDimensions().Y + 15);
@@ -689,7 +690,7 @@ namespace BossChecklist.UIElements
 				}
 				else if (selectedLogPage >= 0) {
 					// Boss Pages
-					EntryInfo entry = BossUISystem.Instance.BossLog.GetLogEntryInfo;
+					EntryInfo entry = LogUI.GetLogEntryInfo;
 					bool masked = BossLogUI.MaskBoss(entry) == Color.Black;
 					if (Id == "PageOne") {
 						if (entry.customDrawing != null) {
@@ -916,6 +917,9 @@ namespace BossChecklist.UIElements
 			internal Point ach;
 			internal string tooltip;
 
+			PersonalRecords stats_player => BossUISystem.Instance.BossLog.GetPlayerRecords;
+			WorldRecord stats_world => BossUISystem.Instance.BossLog.GetWorldRecords;
+
 			public RecordDisplaySlot(Asset<Texture2D> texture, string title = null, string value = null) : base(texture) {
 				this.title = title;
 				this.value = value;
@@ -945,26 +949,24 @@ namespace BossChecklist.UIElements
 
 			private string[] GetValue(SubCategory sub) {
 				// Defaults to Previous Attempt, the subcategory users will first see
-				PersonalRecords stats = BossUISystem.Instance.BossLog.GetPlayerRecords;
-				string unique = stats.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : $"#{stats.attempts}";
-				string duration = PersonalRecords.TimeConversion(stats.durationPrev);
-				string hitsTaken = PersonalRecords.HitCount(stats.hitsTakenPrev);
+				string unique = stats_player.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : $"#{stats_player.attempts}";
+				string duration = PersonalRecords.TimeConversion(stats_player.durationPrev);
+				string hitsTaken = PersonalRecords.HitCount(stats_player.hitsTakenPrev);
 
 				if (sub == SubCategory.PersonalBest) {
-					unique = stats.GetKDR();
-					duration = PersonalRecords.TimeConversion(stats.durationBest);
-					hitsTaken = PersonalRecords.HitCount(stats.hitsTakenBest);
+					unique = stats_player.GetKDR();
+					duration = PersonalRecords.TimeConversion(stats_player.durationBest);
+					hitsTaken = PersonalRecords.HitCount(stats_player.hitsTakenBest);
 				}
 				else if (sub == SubCategory.FirstVictory) {
-					unique = stats.PlayTimeToString();
-					duration = PersonalRecords.TimeConversion(stats.durationFirst);
-					hitsTaken = PersonalRecords.HitCount(stats.hitsTakenFirst);
+					unique = stats_player.PlayTimeToString();
+					duration = PersonalRecords.TimeConversion(stats_player.durationFirst);
+					hitsTaken = PersonalRecords.HitCount(stats_player.hitsTakenFirst);
 				}
 				else if (sub == SubCategory.WorldRecord) {
-					WorldRecord worldStats = BossUISystem.Instance.BossLog.GetWorldRecords;
-					unique = worldStats.GetGlobalKDR();
-					duration = PersonalRecords.TimeConversion(worldStats.durationWorld);
-					hitsTaken = PersonalRecords.HitCount(worldStats.hitsTakenWorld);
+					unique = stats_world.GetGlobalKDR();
+					duration = PersonalRecords.TimeConversion(stats_world.durationWorld);
+					hitsTaken = PersonalRecords.HitCount(stats_world.hitsTakenWorld);
 				}
 
 				return new string[] {
@@ -995,8 +997,7 @@ namespace BossChecklist.UIElements
 					uniqueAch = new Point(7, 10);
 				}
 				else if (sub == SubCategory.WorldRecord) {
-					WorldRecord worldStats = BossUISystem.Instance.BossLog.GetWorldRecords;
-					uniqueAch = worldStats.totalKills >= worldStats.totalDeaths ? new Point(4, 10) : new Point(4, 8);
+					uniqueAch = stats_world.totalKills >= stats_world.totalDeaths ? new Point(4, 10) : new Point(4, 8);
 				}
 
 				return new Point[] {
@@ -1159,7 +1160,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public bool Visibile() {
-				int page = BossUISystem.Instance.BossLog.PageNum;
+				int page = LogUI.PageNum;
 				if (page == BossLogUI.Page_Prompt)
 					return false; // Tabs never show up on the Progression Mode prompt
 
@@ -1174,7 +1175,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public bool OnLeftSide() {
-				int page = BossUISystem.Instance.BossLog.PageNum;
+				int page = LogUI.PageNum;
 				return Id switch {
 					"TableOfContents" => true,
 					"Credits" => false,
@@ -1185,7 +1186,7 @@ namespace BossChecklist.UIElements
 			public override void LeftClick(UIMouseEvent evt) {
 				base.LeftClick(evt);
 				if (Anchor.HasValue)
-					BossUISystem.Instance.BossLog.PendingPageNum = Anchor.Value;
+					LogUI.PendingPageNum = Anchor.Value;
 			}
 
 			public override void Draw(SpriteBatch spriteBatch) {
@@ -1198,7 +1199,7 @@ namespace BossChecklist.UIElements
 
 					int offsetX = inner.X < Main.screenWidth / 2 ? 2 : -2;
 					Vector2 pos = new Vector2(inner.X + (inner.Width / 2) - (icon.Value.Width / 2) + offsetX, inner.Y + (inner.Height / 2) - (icon.Value.Height / 2));
-					Asset<Texture2D> iconTexture = Id == "TableOfContents" && BossUISystem.Instance.BossLog.PageNum == BossLogUI.Page_TableOfContents ? BossLogUI.Texture_Nav_Filter : icon;
+					Asset<Texture2D> iconTexture = Id == "TableOfContents" && LogUI.PageNum == BossLogUI.Page_TableOfContents ? BossLogUI.Texture_Nav_Filter : icon;
 					spriteBatch.Draw(iconTexture.Value, pos, Color.White);
 				}
 			}
@@ -1213,6 +1214,8 @@ namespace BossChecklist.UIElements
 
 			internal Color defaultColor;
 
+			internal BossLogUI GetParentLog => BossUISystem.Instance.BossLog;
+
 			public TableOfContents(int index, string displayName, Color entryColor, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				this.entry = BossChecklist.bossTracker.SortedEntries[index];
 				this.displayName = displayName;
@@ -1222,7 +1225,7 @@ namespace BossChecklist.UIElements
 				TextColor = this.defaultColor = markAsNext && BossChecklist.BossLogConfig.ColoredBossText ? new Color(248, 235, 91) : entryColor;
 			}
 
-			public override void LeftClick(UIMouseEvent evt) => BossUISystem.Instance.BossLog.PendingPageNum = entry.GetIndex; // jump to entry page
+			public override void LeftClick(UIMouseEvent evt) => GetParentLog.PendingPageNum = entry.GetIndex; // jump to entry page
 
 			public override void RightClick(UIMouseEvent evt) {
 				// Right-click an entry to mark it as completed
@@ -1254,16 +1257,16 @@ namespace BossChecklist.UIElements
 
 				// Update tabs when an entry is hidden/unhidden or marked/unmarked
 				if (entry.type == EntryType.Boss) {
-					BossUISystem.Instance.BossLog.BossTab.Anchor = BossLogUI.FindNextEntry(EntryType.Boss);
+					GetParentLog.BossTab.Anchor = BossLogUI.FindNextEntry(EntryType.Boss);
 				}
 				else if (entry.type == EntryType.MiniBoss) {
-					BossUISystem.Instance.BossLog.MiniBossTab.Anchor = BossLogUI.FindNextEntry(EntryType.MiniBoss);
+					GetParentLog.MiniBossTab.Anchor = BossLogUI.FindNextEntry(EntryType.MiniBoss);
 				}
 				else if (entry.type == EntryType.Event) {
-					BossUISystem.Instance.BossLog.EventTab.Anchor = BossLogUI.FindNextEntry(EntryType.Event);
+					GetParentLog.EventTab.Anchor = BossLogUI.FindNextEntry(EntryType.Event);
 				}
 
-				BossUISystem.Instance.BossLog.RefreshPageContent(); // refresh the page to show visual changes
+				GetParentLog.RefreshPageContent(); // refresh the page to show visual changes
 			}
 
 			public override void MouseOver(UIMouseEvent evt) {
@@ -1456,7 +1459,7 @@ namespace BossChecklist.UIElements
 				int barFull = inner.Width - 12 + 4;
 				int barRemainder = (int)(barFull * this.percentageTotal);
 				int meterX = inner.X + 4;
-				if (BossUISystem.Instance.BossLog.barState) {
+				if (LogUI.barState) {
 					string finalValue = CountsByMod.First().Key;
 					foreach (KeyValuePair<string, Point> pair in CountsByMod) {
 						if (pair.Value.X != 0)
@@ -1507,7 +1510,7 @@ namespace BossChecklist.UIElements
 
 			public override void LeftClick(UIMouseEvent evt) {
 				base.LeftClick(evt);
-				BossUISystem.Instance.BossLog.barState = !BossUISystem.Instance.BossLog.barState;
+				LogUI.barState = !LogUI.barState;
 				GenerateDividers(); // update the dividers based on the new bar state
 			}
 

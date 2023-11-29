@@ -66,8 +66,9 @@ namespace BossChecklist
 		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on an entry page.
 		/// </summary>
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
-		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex] : null;
+		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? GetModPlayer.RecordsForWorld?[recordIndex] : null;
 		public WorldRecord GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? WorldAssist.WorldRecordsForWorld[recordIndex] : null;
+		public PlayerAssist GetModPlayer => Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 
 		// Navigation
 		public NavigationalButton NextPage;
@@ -234,13 +235,11 @@ namespace BossChecklist
 		/// <param name="show">The visibility state desired</param>
 		public void ToggleBossLog(bool show = true) {
 			// First, determine if the player has ever opened the Log before
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-
 			if (show) {
 				// Mark the player as having opened the Log if they have not been so already
-				if (!modPlayer.hasOpenedTheBossLog) {
-					modPlayer.hasOpenedTheBossLog = true; // This will only ever happen once per character
-					modPlayer.enteredWorldReset = false; // If opening for the first time, this doesn't need to occur again until the next world reset
+				if (!GetModPlayer.hasOpenedTheBossLog) {
+					GetModPlayer.hasOpenedTheBossLog = true; // This will only ever happen once per character
+					GetModPlayer.enteredWorldReset = false; // If opening for the first time, this doesn't need to occur again until the next world reset
 
 					// When opening for the first time, open the Progression Mode prompt if enabled. Otherwise, open the Table of Contents.
 					PageNum = BossChecklist.BossLogConfig.PromptDisabled ? Page_TableOfContents : Page_Prompt;
@@ -250,10 +249,10 @@ namespace BossChecklist
 					MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
 					EventTab.Anchor = FindNextEntry(EntryType.Event);
 
-					if (modPlayer.enteredWorldReset) {
+					if (GetModPlayer.enteredWorldReset) {
 						// If the Log has been opened before, check for a world change.
 						// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
-						modPlayer.enteredWorldReset = false;
+						GetModPlayer.enteredWorldReset = false;
 						PageNum = Page_TableOfContents;
 					}
 					else {
@@ -266,8 +265,8 @@ namespace BossChecklist
 				//ResetUIPositioning();
 				Main.playerInventory = false; // hide the player inventory
 			}
-			else if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int selectedEntryIndex) && modPlayer.hasNewRecord.Length > 0) {
-				modPlayer.hasNewRecord[selectedEntryIndex] = false; // If UI is closed on a new record page, remove the new record from the list
+			else if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int selectedEntryIndex) && GetModPlayer.hasNewRecord.Length > 0) {
+				GetModPlayer.hasNewRecord[selectedEntryIndex] = false; // If UI is closed on a new record page, remove the new record from the list
 			}
 
 			BossLogVisible = show; // Setting the state makes the UIElements append/remove making them visible/invisible
@@ -687,20 +686,19 @@ namespace BossChecklist
 			if (!Main.keyState.IsKeyDown(Keys.LeftAlt) && !Main.keyState.IsKeyDown(Keys.RightAlt))
 				return; // player must be holding alt to remove any items
 
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			// Alt right-click the treasure bag icon to clear the items in the selected entry's page from the player's obtained items list
 			// Alt right-click an item slot to remove that item from the player's obtained items list
 			// Note: items removed are removed from ALL boss loot pages retroactively
 			if (listeningElement is NavigationalButton) {
 				foreach (int item in GetLogEntryInfo.lootItemTypes) {
-					modPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
+					GetModPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
 				}
 				foreach (int item in GetLogEntryInfo.collectibles) {
-					modPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
+					GetModPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
 				}
 			}
 			else if (listeningElement is LogItemSlot slot) {
-				modPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
+				GetModPlayer.BossItemsCollected.Remove(new ItemDefinition(slot.item.type));
 			}
 			RefreshPageContent(); // update page to show changes
 		}
@@ -927,9 +925,8 @@ namespace BossChecklist
 		/// <param name="subCategory">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
 		private void UpdateSelectedPage(int pageNum, SubPage subPage, SubCategory subCategory = SubCategory.None) {
 			// Remove new records when navigating from a page with a new record
-			PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 			if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
-				modPlayer.hasNewRecord[recordIndex] = false;
+				GetModPlayer.hasNewRecord[recordIndex] = false;
 
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
 
@@ -1108,7 +1105,6 @@ namespace BossChecklist
 				bool allLoot = false;
 				bool allCollect = false;
 				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
-					PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 					allLoot = allCollect = true;
 
 					// Loop through player saved loot and boss loot to see if every item was obtained
@@ -1137,7 +1133,7 @@ namespace BossChecklist
 
 						// If the item index is not found, end the loop and set allLoot to false
 						// If this never occurs, the user successfully obtained all the items!
-						if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
+						if (!GetModPlayer.BossItemsCollected.Contains(new ItemDefinition(loot))) {
 							allLoot = false; // If the item is not located in the player's obtained list, allLoot must be false
 							break; // end further item checking
 						}
@@ -1167,7 +1163,7 @@ namespace BossChecklist
 							if (!OtherworldUnlocked && BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
 								continue;
 
-							if (!modPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
+							if (!GetModPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
 								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
 								break; // end further item checking
 							}
@@ -1337,10 +1333,9 @@ namespace BossChecklist
 
 			if (GetLogEntryInfo.type != EntryType.Boss) {
 				RecordDisplaySlot slot = new RecordDisplaySlot(Texture_Content_RecordSlot);
-				PlayerAssist modPlayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 				if (GetLogEntryInfo.type == EntryType.MiniBoss) {
 					slot.title = Language.GetTextValue("Mods.BossChecklist.Log.Records.Kills");
-					slot.value = modPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? modPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
+					slot.value = GetModPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? GetModPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
 				}
 				slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - Texture_Content_RecordSlot.Value.Width / 2);
 				slot.Top.Pixels = 35 + 75;
@@ -1741,7 +1736,7 @@ namespace BossChecklist
 			treasureBag.Top.Pixels = 88;
 			PageTwo.Append(treasureBag);
 
-			List<ItemDefinition> obtainedItems = Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected;
+			List<ItemDefinition> obtainedItems = GetModPlayer.BossItemsCollected;
 			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collectibles)); // combined list of loot and collectibles
 			bossItems.Remove(GetLogEntryInfo.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
 
@@ -1779,7 +1774,7 @@ namespace BossChecklist
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item,
 					hasItem = obtainedItems.Any(x => x.Type == item),
-					itemResearched = Main.LocalPlayer.GetModPlayer<PlayerAssist>().IsItemResearched(item)
+					itemResearched = GetModPlayer.IsItemResearched(item)
 				};
 				itemSlot.Left.Pixels = (col * 56) + 15;
 				itemSlot.OnRightClick += RemoveItem; // debug functionality
