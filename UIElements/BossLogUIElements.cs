@@ -437,6 +437,7 @@ namespace BossChecklist.UIElements
 			private readonly int context;
 			private readonly float scale;
 			internal bool hasItem;
+			internal bool itemResearched;
 
 			public LogItemSlot(Item item, int context = ItemSlot.Context.TrashItem, float scale = 1f) {
 				this.context = context;
@@ -575,6 +576,9 @@ namespace BossChecklist.UIElements
 					}
 				}
 
+				if (itemResearched)
+					spriteBatch.Draw(BossLogUI.RequestResource("Checks_Researched").Value, pos, Color.White);
+
 				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
 				if (BossChecklist.BossLogConfig.Debug.ShowCollectionType && entry.collectibleType.TryGetValue(item.type, out CollectibleType type)) {
 					string iconType = type.ToString();
@@ -585,7 +589,7 @@ namespace BossChecklist.UIElements
 						iconType = "Trophy";
 					}
 
-					Vector2 iconPos = new Vector2((int)inner.BottomLeft().X - 4, (int)inner.BottomLeft().Y - 15);
+					Vector2 iconPos = new Vector2(inner.Left - 4, inner.Bottom - 15);
 					spriteBatch.Draw(BossLogUI.RequestResource($"Checks_{iconType}").Value, iconPos, Color.White);
 					if (IsMouseHovering) {
 						Utils.DrawBorderString(spriteBatch, iconType, inner.TopLeft(), Colors.RarityAmber, 0.8f);

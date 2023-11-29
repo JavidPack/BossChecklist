@@ -32,6 +32,7 @@ namespace BossChecklist
 		public List<PersonalRecords> RecordsForWorld => AllStoredRecords.TryGetValue(Main.ActiveWorldFileData.UniqueId.ToString(), out List<PersonalRecords> ValidKey) ? ValidKey : null;
 		public Dictionary<string, int> MiniBossKills;
 		public List<ItemDefinition> BossItemsCollected;
+		public bool IsItemResearched(int itemType) => Player.creativeTracker.ItemSacrifices.TryGetSacrificeNumbers(itemType, out int count, out int max) && count == max;
 
 		public const int RecordState_NoRecord = 0;
 		public const int RecordState_PersonalBest = 1;

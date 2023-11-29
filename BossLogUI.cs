@@ -1777,13 +1777,14 @@ namespace BossChecklist
 			LootRow newRow = new LootRow(0); // the initial row to start with
 
 			foreach (int item in bossItems) {
-				Item selectedItem = ContentSamples.ItemsByType[item];
-				bool hasObtained = obtainedItems.Any(x => x.Type == item) || obtainedItems.Any(x => x.Type == item);
+				if (!ContentSamples.ItemsByType.TryGetValue(item, out Item selectedItem))
+					continue;
 
 				// Create an item slot for the current item
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item,
-					hasItem = hasObtained
+					hasItem = obtainedItems.Any(x => x.Type == item),
+					itemResearched = Main.LocalPlayer.GetModPlayer<PlayerAssist>().IsItemResearched(item)
 				};
 				itemSlot.Left.Pixels = (col * 56) + 15;
 				itemSlot.OnRightClick += RemoveItem; // debug functionality
