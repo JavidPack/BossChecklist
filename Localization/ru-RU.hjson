@@ -134,6 +134,8 @@ Mods: {
 				ItemIsExpertOnly: Этот предмет доступен только в режиме эксперта
 				ItemIsMasterOnly: Этот предмет доступен только в режиме мастера
 				ItemIsLocked: Этот предмет имеет особые условия для разблокировки
+				// Obtained: This item has been obtained!
+				// Researched: This item has been researched!
 			}
 
 			ProgressionMode: {
