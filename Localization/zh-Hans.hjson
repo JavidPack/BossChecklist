@@ -130,8 +130,8 @@ Mods: {
 				ItemIsExpertOnly: 此物品仅在专家模式下可获得
 				ItemIsMasterOnly: 此物品仅在大师模式下可获得
 				ItemIsLocked: 此物品仅在满足特殊需求后解锁
-				// Obtained: This item has been obtained!
-				// Researched: This item has been researched!
+				Obtained: 已获得此物品!
+				Researched: 已研究此物品!
 			}
 
 			ProgressionMode: {
