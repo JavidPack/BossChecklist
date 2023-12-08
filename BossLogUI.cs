@@ -524,9 +524,6 @@ namespace BossChecklist
 			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
 			PageTwo.Top.Pixels = BookArea.Top.Pixels + 12;
 
-			if (PageNum == Page_Prompt)
-				return; // Tab positioning does not need to occur as they will not be drawn
-
 			int offsetY = 50;
 
 			// ToC/Filter Tab and Credits Tab never flips to the other side, just disappears when on said page
