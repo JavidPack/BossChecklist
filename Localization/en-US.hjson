@@ -312,7 +312,7 @@ Mods: {
 			RegisteredBosses: "{0} has successfully registered {1} bosses: {2}"
 			RegisteredMiniBosses: "{0} has successfully registered {1} mini-bosses: {2}"
 			RegisteredEvents: "{0} has successfully registered {1} events: {2}"
-			SuccessfulOrphanData: "{0} successfully registered {1} '{2}' orphan data value(s)"
+			SuccessfulOrphanData: "{0} has successfully registered {1} '{2}' orphan data value(s)"
 			InvalidOrphanKey: A '{0}' call from {1} contains an invalid key ({2}) and will be ignored.
 			InvalidEventEntry: "{0} is not an event entry and cannot take calls from {1}"
 			BelongsToInvasion: "{0} has attempted to edit the npc pool of '{1}'. This entry is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls."

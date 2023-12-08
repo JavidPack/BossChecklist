@@ -467,12 +467,12 @@ namespace BossChecklist
 
 	internal class OrphanInfo {
 		internal OrphanType type;
-		internal string modSource;
+		internal string modCallerDisplayName;
 		internal Dictionary<string, object> values;
 
 		internal OrphanInfo(OrphanType type, string modSource, Dictionary<string, object> values) {
-			this.type = type;
-			this.modSource = modSource;
+			this.type = type; // Type is null checked before being created within ModCall
+			this.modCallerDisplayName = modSource;
 
 			// Sort through the data submissions to remove any invalid data
 			foreach (string Key in values.Keys) {
