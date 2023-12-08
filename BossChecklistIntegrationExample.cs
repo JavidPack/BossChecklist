@@ -32,7 +32,7 @@ namespace <YourModsNamespace>
 			internal Func<LocalizedText> spawnInfo = null;
 			internal List<int> spawnItems = new List<int>();
 			internal int treasureBag = 0;
-			internal List<int> dropRateInfo = new List<DropRateInfo>();
+			internal List<DropRateInfo> dropRateInfo = new List<DropRateInfo>();
 			internal List<int> loot = new List<int>();
 			internal List<int> collectibles = new List<int>();
 		}
@@ -63,7 +63,7 @@ namespace <YourModsNamespace>
 						npcIDs = boss.Value.ContainsKey("npcIDs") ? boss.Value["npcIDs"] as List<int> : new List<int>(),
 						spawnInfo = boss.Value.ContainsKey("spawnInfo") ? boss.Value["spawnInfo"] as Func<LocalizedText> : null,
 						spawnItems = boss.Value.ContainsKey("spawnItems") ? boss.Value["spawnItems"] as List<int> : new List<int>(),
-						treasureBag = boss.Value.ContainsKey("treasureBag") ? boss.Value["treasureBag"] as int : 0,
+						treasureBag = boss.Value.ContainsKey("treasureBag") ? Convert.ToInt32(boss.Value["treasureBag"]) : 0,
 						dropRateInfo = boss.Value.ContainsKey("dropRateInfo") ? boss.Value["dropRateInfo"] as List<DropRateInfo> : new List<DropRateInfo>(),
 						loot = boss.Value.ContainsKey("loot") ? boss.Value["loot"] as List<int> : new List<int>(),
 						collectibles = boss.Value.ContainsKey("collectibles") ? boss.Value["collectibles"] as List<int> : new List<int>(),
