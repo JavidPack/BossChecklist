@@ -518,7 +518,7 @@ Mods: {
 					// Label: Access Entry Keys
 					/* Tooltip:
 						'''
-						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
+						Adds a button on each entry page that displays and copies the Entry Key to the in-game clipboard.
 						Useful for mod developers making cross-mod content.
 						''' */
 				}
