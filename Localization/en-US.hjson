@@ -515,7 +515,7 @@ Mods: {
 				}
 
 				AccessInternalNames: {
-					Label: Access Internal Names
+					Label: Access Entry Keys
 					Tooltip:
 						'''
 						Adds a button on a boss entry's page to copy boss keys and mod sources to the in-game clipboard.
