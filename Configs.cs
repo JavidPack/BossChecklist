@@ -60,12 +60,14 @@ namespace BossChecklist
 			[DefaultValue(false)]
 			public bool ShowCollectionType { get; set; }
 
+			/*
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
 			public bool InactiveBossCheck { get; set; }
+			*/
 
 			public override int GetHashCode() {
-				return new { ModCallLogVerbose, ShowProgressionValue, AccessInternalNames, ShowCollectionType, InactiveBossCheck, DisableAutoLocalization }.GetHashCode();
+				return new { ModCallLogVerbose, ShowProgressionValue, AccessInternalNames, ShowCollectionType, DisableAutoLocalization }.GetHashCode();
 			}
 		}
 
