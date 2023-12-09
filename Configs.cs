@@ -46,7 +46,7 @@ namespace BossChecklist
 
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
-			public bool EnabledResetOptions { get; set; }
+			public bool AccessInternalNames { get; set; }
 
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
@@ -54,11 +54,11 @@ namespace BossChecklist
 
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
-			public bool AccessInternalNames { get; set; }
+			public bool ShowCollectionType { get; set; }
 
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
-			public bool ShowCollectionType { get; set; }
+			public bool EnabledResetOptions { get; set; }
 
 			/*
 			[BackgroundColor(250, 235, 215)]
