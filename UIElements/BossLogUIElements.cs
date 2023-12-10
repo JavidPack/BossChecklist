@@ -635,7 +635,7 @@ namespace BossChecklist.UIElements
 					Vector2 iconPos = new Vector2(inner.Left - 4, inner.Bottom - 15);
 					spriteBatch.Draw(BossLogUI.RequestResource($"Checks_{iconType}").Value, iconPos, Color.White);
 					if (IsMouseHovering) {
-						Utils.DrawBorderString(spriteBatch, iconType, inner.TopLeft(), Colors.RarityAmber, 0.8f);
+						Utils.DrawBorderString(spriteBatch, type.ToString(), inner.TopLeft(), Colors.RarityAmber, 0.8f);
 					}
 				}
 			}
