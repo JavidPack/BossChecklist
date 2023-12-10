@@ -253,7 +253,7 @@ namespace BossChecklist
 						entry.lootItemTypes.AddRange(InterpretDataAsListOfInt);
 					}
 					else if (orphan.type == OrphanType.SubmitEntryCollectibles) {
-						entry.collectibles.AddRange(InterpretDataAsListOfInt);
+						InterpretDataAsListOfInt.ForEach(item => entry.collectibles.TryAdd(item, CollectibleType.Generic));
 					}
 					else if (orphan.type == OrphanType.SubmitEntrySpawnItems) {
 						entry.spawnItem.AddRange(InterpretDataAsListOfInt);
@@ -275,37 +275,37 @@ namespace BossChecklist
 		}
 
 		internal void FinalizeCollectibleTypes() {
-			foreach (EntryInfo boss in SortedEntries) {
-				foreach (int type in boss.collectibles) {
-					if (!ContentSamples.ItemsByType.TryGetValue(type, out Item temp))
+			foreach (EntryInfo entry in SortedEntries) {
+				foreach (int item in entry.collectibles.Keys.ToList()) {
+					if (!ContentSamples.ItemsByType.TryGetValue(item, out Item temp))
 						continue;
 
 					if (temp.headSlot > 0 && temp.vanity) {
-						boss.collectibleType.Add(type, CollectibleType.Mask);
+						entry.collectibles[item] = CollectibleType.Mask;
 					}
-					else if (IsRegisteredMusicBox(type)) {
-						boss.collectibleType.Add(type, CollectibleType.Music);
+					else if (IsRegisteredMusicBox(item)) {
+						entry.collectibles[item] = CollectibleType.Music;
 					}
 					else if ((Main.projPet[temp.shoot] && Main.vanityPet[temp.buffType]) || (ProjectileID.Sets.LightPet[temp.shoot] && Main.lightPet[temp.buffType])) {
-						boss.collectibleType.Add(type, CollectibleType.Pet);
+						entry.collectibles[item] = CollectibleType.Pet;
 					}
 					else if (temp.master && temp.mountType > MountID.None) {
-						boss.collectibleType.Add(type, CollectibleType.Mount);
+						entry.collectibles[item] = CollectibleType.Mount;
 					}
 					else if (temp.createTile > TileID.Dirt) {
 						TileObjectData data = TileObjectData.GetTileData(temp.createTile, temp.placeStyle);
 						if (data.AnchorWall == TileObjectData.Style3x3Wall.AnchorWall && data.Width == 3 && data.Height == 3) {
-							boss.collectibleType.Add(type, CollectibleType.Trophy);
+							entry.collectibles[item] = CollectibleType.Trophy;
 						}
 						else if (temp.master && data.Width == 3 && data.Height == 4) {
-							boss.collectibleType.Add(type, CollectibleType.Relic);
+							entry.collectibles[item] = CollectibleType.Relic;
 						}
 						else {
-							boss.collectibleType.Add(type, CollectibleType.Generic);
+							entry.collectibles[item] = CollectibleType.Generic;
 						}
 					}
 					else {
-						boss.collectibleType.Add(type, CollectibleType.Generic);
+						entry.collectibles[item] = CollectibleType.Generic;
 					}
 				}
 			}
@@ -323,7 +323,7 @@ namespace BossChecklist
 				}
 				entry.npcIDs.ForEach(x => EntryCache[x] = true); // Mark all NPCs as an entry NPC for verifying purposes
 				entry.lootItemTypes.ForEach(x => EntryLootCache[x] = true); // Mark loot items to be "obtainable" for loot checklist
-				entry.collectibles.ForEach(x => EntryLootCache[x] = true); // Mark collectibles items to be "obtainable" for loot checklist
+				entry.collectibles.Keys.ToList().ForEach(x => EntryLootCache[x] = true); // Mark collectibles items to be "obtainable" for loot checklist
 			}
 
 			// Entries are now finalized. Entries can no longer be added or edited through Mod Calls.
@@ -421,18 +421,21 @@ namespace BossChecklist
 				}
 
 				// Assign this boss's treasure bag, looking through the loot found by the bestiary
-				if (!vanillaBossBags.TryGetValue(entry.Key, out entry.treasureBag) && entry.type != EntryType.Event) {
+				if (!vanillaBossBags.TryGetValue(entry.Key, out int bag) && entry.type != EntryType.Event) {
 					foreach (int itemType in entry.lootItemTypes) {
 						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item) && ItemID.Sets.BossBag[item.type]) {
-							entry.treasureBag = itemType;
+							entry.collectibles.Add(itemType, CollectibleType.TreasureBag);
 							break;
 						}
 					}
 				}
+				else {
+					entry.collectibles.Add(bag, CollectibleType.TreasureBag);
+				}
 
 				// If the treasure bag is assigned, look through its loot table for expert exclusive items
-				if (entry.treasureBag != 0) {
-					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForItemID(entry.treasureBag);
+				if (entry.TreasureBag != 0) {
+					List<IItemDropRule> dropRules = Main.ItemDropsDB.GetRulesForItemID(entry.TreasureBag);
 					List<DropRateInfo> itemDropInfo = new List<DropRateInfo>();
 					foreach (IItemDropRule item in dropRules) {
 						item.ReportDroprates(itemDropInfo, new DropRateInfoChainFeed(1f));

@@ -690,7 +690,7 @@ namespace BossChecklist
 				foreach (int item in GetLogEntryInfo.lootItemTypes) {
 					GetModPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
 				}
-				foreach (int item in GetLogEntryInfo.collectibles) {
+				foreach (int item in GetLogEntryInfo.collectibles.Keys.ToList()) {
 					GetModPlayer.BossItemsCollected.Remove(new ItemDefinition(item));
 				}
 			}
@@ -1106,7 +1106,7 @@ namespace BossChecklist
 
 					// Loop through player saved loot and boss loot to see if every item was obtained
 					foreach (int loot in entry.lootItemTypes) {
-						if (loot == entry.treasureBag)
+						if (loot == entry.TreasureBag)
 							continue;
 
 						int index = entry.loot.FindIndex(x => x.itemId == loot);
@@ -1118,7 +1118,7 @@ namespace BossChecklist
 								continue; // Skips items that are dropped within the opposing world evil
 						}
 
-						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && entry.collectibles.Contains(loot))
+						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && entry.collectibles.ContainsKey(loot))
 							continue; // If the CheckedDroppedLoot config enabled, skip loot items that are considered collectibles for the check
 
 						Item checkItem = ContentSamples.ItemsByType[loot];
@@ -1141,7 +1141,7 @@ namespace BossChecklist
 					}
 					else {
 						int collectCount = 0;
-						foreach (int collectible in entry.collectibles) {
+						foreach (int collectible in entry.collectibles.Keys.ToList()) {
 							if (collectible == -1 || collectible == 0)
 								continue; // Skips empty items
 
@@ -1728,14 +1728,14 @@ namespace BossChecklist
 			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
 
 			// create an image of the entry's treasure bag
-			TreasureBag treasureBag = new TreasureBag(GetLogEntryInfo.treasureBag);
+			TreasureBag treasureBag = new TreasureBag(GetLogEntryInfo.TreasureBag);
 			treasureBag.Left.Pixels = PageTwo.Width.Pixels / 2 - treasureBag.Width.Pixels / 2;
 			treasureBag.Top.Pixels = 88;
 			PageTwo.Append(treasureBag);
 
 			List<ItemDefinition> obtainedItems = GetModPlayer.BossItemsCollected;
-			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collectibles)); // combined list of loot and collectibles
-			bossItems.Remove(GetLogEntryInfo.treasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
+			List<int> bossItems = new List<int>(GetLogEntryInfo.lootItemTypes.Union(GetLogEntryInfo.collectibles.Keys.ToList())); // combined list of loot and collectibles
+			bossItems.Remove(GetLogEntryInfo.TreasureBag); // the treasurebag should not be displayed on the loot table, but drawn above it instead
 
 			// Prevents itemslot creation for items that are dropped from within the opposite world evil, if applicable
 			if (!Main.drunkWorld && !ModLoader.TryGetMod("BothEvils", out Mod mod)) {

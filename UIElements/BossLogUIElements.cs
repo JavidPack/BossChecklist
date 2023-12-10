@@ -440,7 +440,7 @@ namespace BossChecklist.UIElements
 			public TreasureBag(int bag) {
 				if (bag > 0) {
 					itemType = bag;
-					Main.instance.LoadItem(LogUI.GetLogEntryInfo.treasureBag);
+					Main.instance.LoadItem(LogUI.GetLogEntryInfo.TreasureBag);
 					bagTexture = TextureAssets.Item[bag];
 				}
 
@@ -565,7 +565,7 @@ namespace BossChecklist.UIElements
 				item.color = oldColor; // if the item was masked
 
 				// Draw golden border around items that are considered collectibles
-				if (entry.collectibles.Contains(item.type))
+				if (entry.collectibles.ContainsKey(item.type))
 					spriteBatch.Draw(BossLogUI.RequestResource("Extra_HighlightedCollectible").Value, inner.TopLeft(), Color.White);
 
 				// Similar to the logic of deciding the itemslot color, decide what should be drawn and what text should show when hovering over
@@ -623,7 +623,7 @@ namespace BossChecklist.UIElements
 				}
 
 				// Finally, if the 'Show collectible type' config is enabled, draw their respective icons and texts where needed
-				if (BossChecklist.BossLogConfig.Debug.ShowCollectionType && entry.collectibleType.TryGetValue(item.type, out CollectibleType type)) {
+				if (BossChecklist.BossLogConfig.Debug.ShowCollectionType && entry.collectibles.TryGetValue(item.type, out CollectibleType type)) {
 					string iconType = type.ToString();
 					if (type == CollectibleType.Mount) {
 						iconType = "Pet";

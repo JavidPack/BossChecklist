@@ -23,10 +23,11 @@ namespace BossChecklist
 
 	internal enum CollectibleType {
 		Generic,
+		TreasureBag,
+		Relic,
 		Trophy,
 		Mask,
 		Music,
-		Relic,
 		Pet,
 		Mount
 	}
@@ -50,10 +51,7 @@ namespace BossChecklist
 
 		internal List<int> spawnItem;
 		internal Func<LocalizedText> spawnInfo;
-
-		internal int treasureBag = 0;
-		internal List<int> collectibles;
-		internal Dictionary<int, CollectibleType> collectibleType;
+		internal Dictionary<int, CollectibleType> collectibles;
 		internal List<DropRateInfo> loot;
 		internal List<int> lootItemTypes;
 
@@ -104,10 +102,11 @@ namespace BossChecklist
 				{ "npcIDs", new List<int>(npcIDs) },
 				{ "spawnInfo", new Func<LocalizedText>(spawnInfo) },
 				{ "spawnItems", new List<int>(spawnItem) },
-				{ "treasureBag", treasureBag },
+				{ "treasureBag", TreasureBag },
+				{ "relic", Relic },
 				{ "dropRateInfo", new List<DropRateInfo>(loot) },
 				{ "loot", new List<int>(lootItemTypes) },
-				{ "collectibles", new List<int>(collectibles) }
+				{ "collectibles", new List<int>(collectibles.Keys.ToList()) }
 			};
 
 			return dict;
@@ -124,6 +123,10 @@ namespace BossChecklist
 		internal bool IsDownedOrMarked => downed() || MarkedAsDowned;
 
 		internal int GetIndex => BossChecklist.bossTracker.SortedEntries.IndexOf(this);
+
+		internal int TreasureBag => collectibles.FirstOrDefault(x => x.Value == CollectibleType.TreasureBag).Key;
+
+		internal int Relic => collectibles.FirstOrDefault(x => x.Value == CollectibleType.Relic).Key;
 
 		internal bool IsRecordIndexed(out int recordIndex) {
 			recordIndex = BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
@@ -249,7 +252,9 @@ namespace BossChecklist
 			this.relatedEntries = new List<string>(); /// Setup in <see cref="BossTracker.SetupEntryRelations"/>
 			this.loot = new List<DropRateInfo>(); /// Setup in <see cref="BossTracker.FinalizeEntryLootTables"/>
 			this.lootItemTypes = new List<int>(); /// Setup in <see cref="BossTracker.FinalizeEntryLootTables"/>
-			this.collectibleType = new Dictionary<int, CollectibleType>(); /// Setup in <see cref="BossTracker.FinalizeCollectibleTypes"/>
+			this.collectibles = new Dictionary<int, CollectibleType>(); /// Setup in <see cref="BossTracker.FinalizeCollectibleTypes"/>
+			if (extraData?.ContainsKey("collectibles") == true)
+				InterpretObjectAsListOfInt(extraData["collectibles"]).ForEach(item => collectibles.TryAdd(item, CollectibleType.Generic)); // default to Generic
 
 			// optional extra data
 			List<int> InterpretObjectAsListOfInt(object data) => data is List<int> ? data as List<int> : (data is int ? new List<int>() { Convert.ToInt32(data) } : new List<int>());
@@ -258,8 +263,8 @@ namespace BossChecklist
 			this.npcLimbs = extraData?.ContainsKey("limbs") == true ? extraData["limbs"] as Dictionary<int, LocalizedText> : new Dictionary<int, LocalizedText>();
 			this.available = extraData?.ContainsKey("availability") == true ? extraData["availability"] as Func<bool> : () => true;
 			this.spawnItem = extraData?.ContainsKey("spawnItems") == true ? InterpretObjectAsListOfInt(extraData["spawnItems"]) : new List<int>();
-			this.collectibles = extraData?.ContainsKey("collectibles") == true ? InterpretObjectAsListOfInt(extraData["collectibles"]) : new List<int>();
 			this.customDrawing = extraData?.ContainsKey("customPortrait") == true ? extraData["customPortrait"] as Action<SpriteBatch, Rectangle, Color> : null;
+
 			if (extraData?.ContainsKey("despawnMessage") == true) {
 				if (extraData["despawnMessage"] is Func<NPC, LocalizedText> multiMessage) {
 					this.customDespawnMessages = multiMessage;
