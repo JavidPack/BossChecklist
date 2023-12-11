@@ -265,15 +265,13 @@ namespace BossChecklist
 			this.spawnItem = extraData?.ContainsKey("spawnItems") == true ? InterpretObjectAsListOfInt(extraData["spawnItems"]) : new List<int>();
 			this.customDrawing = extraData?.ContainsKey("customPortrait") == true ? extraData["customPortrait"] as Action<SpriteBatch, Rectangle, Color> : null;
 
+			this.customDespawnMessages = (NPC npc) => null;
 			if (extraData?.ContainsKey("despawnMessage") == true) {
 				if (extraData["despawnMessage"] is Func<NPC, LocalizedText> multiMessage) {
 					this.customDespawnMessages = multiMessage;
 				}
 				else if (extraData["despawnMessage"] is LocalizedText singleMessage) {
 					this.customDespawnMessages = (NPC npc) => singleMessage;
-				}
-				else {
-					this.customDespawnMessages = null;
 				}
 			}
 
