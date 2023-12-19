@@ -424,13 +424,17 @@ namespace BossChecklist
 				if (!vanillaBossBags.TryGetValue(entry.Key, out int bag) && entry.type != EntryType.Event) {
 					foreach (int itemType in entry.lootItemTypes) {
 						if (ContentSamples.ItemsByType.TryGetValue(itemType, out Item item) && ItemID.Sets.BossBag[item.type]) {
-							entry.collectibles.Add(itemType, CollectibleType.TreasureBag);
+							if (entry.collectibles.TryAdd(itemType, CollectibleType.TreasureBag) is false) {
+								entry.collectibles[itemType] = CollectibleType.TreasureBag;
+							}
 							break;
 						}
 					}
 				}
 				else {
-					entry.collectibles.Add(bag, CollectibleType.TreasureBag);
+					if (entry.collectibles.TryAdd(bag, CollectibleType.TreasureBag) is false) {
+						entry.collectibles[bag] = CollectibleType.TreasureBag;
+					}
 				}
 
 				// If the treasure bag is assigned, look through its loot table for expert exclusive items
