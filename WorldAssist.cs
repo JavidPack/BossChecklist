@@ -131,7 +131,10 @@ namespace BossChecklist
 					WorldRecordTag.Add(record.BossKey, record.SerializeData());
 			}
 
-			WorldRecordsForWorld_Unloaded.ForEach(record => WorldRecordTag.Add(record.BossKey, record.SerializeData()));
+			foreach (WorldRecord record in WorldRecordsForWorld_Unloaded) {
+				if (!WorldRecordTag.ContainsKey(record.BossKey))
+					WorldRecordTag.Add(record.BossKey, record.SerializeData());
+			}
 
 			tag["World_Record_Data"] = WorldRecordTag;
 		}
