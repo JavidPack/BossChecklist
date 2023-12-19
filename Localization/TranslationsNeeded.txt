@@ -3,7 +3,7 @@ de-DE, 0/305, 0%, missing 305
 it-IT, 0/305, 0%, missing 305
 fr-FR, 0/305, 0%, missing 305
 es-ES, 80/305, 26%, missing 225
-ru-RU, 285/305, 93%, missing 20
+ru-RU, 287/305, 94%, missing 18
 zh-Hans, 305/305, 100%, missing 0
 pt-BR, 61/305, 20%, missing 244
 pl-PL, 0/305, 0%, missing 305
