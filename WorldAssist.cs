@@ -139,8 +139,6 @@ namespace BossChecklist
 		public override void LoadWorldData(TagCompound tag) {
 			if (tag.TryGet("World_Record_Data", out TagCompound savedData)) {
 				List<WorldRecord> SavedWorldRecords = new List<WorldRecord>();
-				WorldRecordsForWorld.Clear();
-				WorldRecordsForWorld_Unloaded.Clear();
 
 				foreach (KeyValuePair<string, object> data in savedData) {
 					SavedWorldRecords.Add(WorldRecord.DESERIALIZER(data.Value as TagCompound)); // deserialize the saved world record data
