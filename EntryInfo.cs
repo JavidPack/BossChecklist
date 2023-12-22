@@ -296,6 +296,9 @@ namespace BossChecklist
 				// Skip events, as they must use a custom icon to display.
 				List<Asset<Texture2D>> icons = new List<Asset<Texture2D>>();
 				foreach (int npc in npcIDs) {
+					if (npc == NPCID.DD2DarkMageT1 || npc == NPCID.DD2OgreT2)
+						continue; // skips extra Ogre and Dark Mage head drawing
+
 					if (NPCID.Sets.BossHeadTextures[npc] != -1)
 						icons.Add(TextureAssets.NpcHeadBoss[NPCID.Sets.BossHeadTextures[npc]]);
 				}
