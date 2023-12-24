@@ -13,7 +13,7 @@ namespace BossChecklist
 
 		// When an entry NPC spawns, setup the world and player trackers for the upcoming fight
 		public override void OnSpawn(NPC npc, IEntitySource source) {
-			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
+			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
 			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
@@ -60,7 +60,7 @@ namespace BossChecklist
 				}
 			}
 
-			if (BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
+			if (BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
 			if (WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))

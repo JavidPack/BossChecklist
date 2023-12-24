@@ -252,7 +252,7 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (npc.active && BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is EntryInfo entry) {
+						if (npc.active && BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int _) is EntryInfo entry) {
 							interferingNPC = entry.DisplayName;
 							badConfig = Language.GetTextValue("Mods.BossChecklist.Configs.FeatureConfiguration.RecordTrackingEnabled.Label");
 							return; // If a boss is active, debug features are disabled until all bosses are inactive
@@ -271,7 +271,7 @@ namespace BossChecklist
 			set {
 				if (!Main.gameMenu) {
 					foreach (NPC npc in Main.npc) {
-						if (npc.active && BossChecklist.bossTracker.FindEntryByNPC(npc.type, out int _) is EntryInfo entry) {
+						if (npc.active && BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int _) is EntryInfo entry) {
 							interferingNPC = entry.DisplayName;
 							badConfig = Language.GetTextValue("Mods.BossChecklist.Configs.FeatureConfiguration.AllowNewRecords.Label");
 							return; // If a boss is active, debug features are disabled until all bosses are inactive

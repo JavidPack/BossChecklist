@@ -66,7 +66,7 @@ namespace BossChecklist
 		/// Only returns with an entry if the entry has a record index (is a boss).
 		/// </summary>
 		/// <returns>Returns null if no valid entry can be found.</returns>
-		public EntryInfo FindEntryByNPC(int npcType, out int recordIndex) {
+		public EntryInfo FindBossEntryByNPC(int npcType, out int recordIndex) {
 			recordIndex = -1;
 			if (!EntryCache[npcType])
 				return null; // the entry hasn't been registered

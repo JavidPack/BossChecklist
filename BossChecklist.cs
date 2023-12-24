@@ -367,7 +367,7 @@ namespace BossChecklist
 					ClientMessageType messageType = (ClientMessageType)reader.ReadByte();
 					if (messageType == ClientMessageType.Despawn) {
 						NPC despawnedNPC = Main.npc[reader.ReadInt32()];
-						EntryInfo despawnEntry = bossTracker.FindEntryByNPC(despawnedNPC.type, out _);
+						EntryInfo despawnEntry = bossTracker.FindBossEntryByNPC(despawnedNPC.type, out _);
 						if (despawnEntry.GetDespawnMessage(despawnedNPC) is LocalizedText despawnMessage)
 							Main.NewText(despawnMessage.Format(despawnedNPC.FullName), Colors.RarityPurple);
 					}
