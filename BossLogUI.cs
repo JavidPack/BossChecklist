@@ -1158,7 +1158,10 @@ namespace BossChecklist
 								continue; // Skip items that are master exclusive if not in an master world
 
 							if (!OtherworldUnlocked && BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
-								continue;
+								continue; // skip other worldly music boxes if the user has not unlocked the ability to record them
+
+							if (collectible == entry.TreasureBag)
+								continue; // Skip the treasure bag as it shouldn't be counted towards the completion check
 
 							if (!GetModPlayer.BossItemsCollected.Contains(new ItemDefinition(collectible))) {
 								allCollect = false; // If the item is not located in the player's obtained list, allCollect must be false
