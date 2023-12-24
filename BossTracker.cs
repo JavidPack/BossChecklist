@@ -59,6 +59,12 @@ namespace BossChecklist
 		/// When updating vanilla progression values, please also update the version number of <see cref="BossChecklist.LastVanillaProgressionRevision"/>.
 		/// </summary>
 		internal List<EntryInfo> SortedEntries;
+
+		/// <summary>
+		/// Pass a key to look through <see cref="SortedEntries"/> for the specified entry.
+		/// </summary>
+		/// <param name="lookupKey"></param>
+		/// <returns>An entry with a matching key. If no entry is found, returns null</returns>
 		internal EntryInfo FindEntryFromKey(string lookupKey) => SortedEntries.Find(entry => entry.Key == lookupKey);
 
 		/// <summary>
