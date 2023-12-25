@@ -272,7 +272,7 @@ namespace BossChecklist
 			void AddToOldCalls(string message, string name) {
 				// TODO: maybe spam the log if ModCompile.activelyModding (needs reflection)
 				if (!bossTracker.OldCalls.TryGetValue(message, out List<string> oldCallsList))
-					bossTracker.OldCalls.Add(message, oldCallsList = new List<string>());
+					bossTracker.OldCalls.TryAdd(message, oldCallsList = new List<string>());
 				oldCallsList.Add(name);
 			}
 

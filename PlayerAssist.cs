@@ -100,7 +100,7 @@ namespace BossChecklist
 					foreach (KeyValuePair<string, object> listofrecords in data.Value as TagCompound) {
 						RecordsByWorldKey.Add(PersonalRecords.DESERIALIZER(listofrecords.Value as TagCompound)); // deserialize the saved record data
 					}
-					AllStoredRecords.Add(data.Key, RecordsByWorldKey); // add each world key to all stored records
+					AllStoredRecords.TryAdd(data.Key, RecordsByWorldKey); // add each world key to all stored records
 				}
 			}
 
@@ -123,7 +123,7 @@ namespace BossChecklist
 						MiniBossKills[entry.Key]++;
 					}
 					else {
-						MiniBossKills.Add(entry.Key, 1);
+						MiniBossKills.TryAdd(entry.Key, 1);
 					}
 				}
 			}
@@ -157,7 +157,7 @@ namespace BossChecklist
 				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
 					NewRecordListForWorld.Add(new PersonalRecords(key));
 				}
-				AllStoredRecords.Add(WorldID, NewRecordListForWorld); // A new entry will be added to AllStoredRecords so that it can be saved when needed
+				AllStoredRecords.TryAdd(WorldID, NewRecordListForWorld); // A new entry will be added to AllStoredRecords so that it can be saved when needed
 			}
 			PlayerRecordsInitialized = true;
 

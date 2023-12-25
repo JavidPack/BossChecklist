@@ -1477,7 +1477,7 @@ namespace BossChecklist.UIElements
 						if (pair.Key == finalValue)
 							length += barRemainder - length + 1; // the final rectangle needs to cover any remaining bar left
 
-						Sections.Add(new Rectangle(meterX, inner.Y, length - 1, inner.Height), hoverText);
+						Sections.TryAdd(new Rectangle(meterX, inner.Y, length - 1, inner.Height), hoverText);
 
 						meterX += length;
 						barRemainder -= length;
@@ -1500,7 +1500,7 @@ namespace BossChecklist.UIElements
 						if (pair.Key == finalValue)
 							length += barRemainder - length + 1; // the final rectangle needs to cover any remaining bar left
 
-						Sections.Add(new Rectangle(meterX, inner.Y, length - 1, inner.Height), hoverText);
+						Sections.TryAdd(new Rectangle(meterX, inner.Y, length - 1, inner.Height), hoverText);
 
 						meterX += length;
 						barRemainder -= length;

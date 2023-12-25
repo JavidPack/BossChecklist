@@ -317,7 +317,7 @@ namespace BossChecklist
 
 		internal EntryInfo WithCustomLimbs(List<int> limbs) {
 			foreach (int npc in limbs) {
-				this.npcLimbs.Add(npc, Language.GetOrRegister($"Mods.BossChecklist.ChatMessages.Defeated.{new NPCDefinition(npc).Name}"));
+				this.npcLimbs.TryAdd(npc, Language.GetOrRegister($"Mods.BossChecklist.ChatMessages.Defeated.{new NPCDefinition(npc).Name}"));
 			}
 			return this;
 		}
