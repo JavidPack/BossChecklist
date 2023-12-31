@@ -94,8 +94,10 @@ namespace BossChecklist
 		/// <returns>If the corresponding flag was flipped.</returns>
 		internal static bool HandleDownedNPCs(int npcType) {
 			return npcType switch {
-				NPCID.DD2DarkMageT1 | NPCID.DD2DarkMageT3 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
-				NPCID.DD2OgreT2 | NPCID.DD2OgreT3 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),
+				NPCID.DD2DarkMageT1 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
+				NPCID.DD2DarkMageT3 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
+				NPCID.DD2OgreT2 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),
+				NPCID.DD2OgreT3 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),
 				NPCID.PirateShip => Networking.DownedEntryCheck(ref WorldAssist.downedFlyingDutchman),
 				NPCID.MartianSaucerCore => Networking.DownedEntryCheck(ref WorldAssist.downedMartianSaucer),
 				NPCID.LunarTowerVortex => Networking.DownedEntryCheck(ref NPC.downedTowerVortex),
