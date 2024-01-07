@@ -29,7 +29,7 @@ namespace BossChecklist
 		public static bool downedFlyingDutchman;
 		public static bool downedMartianSaucer;
 
-		private static bool TrackingMoons = false; // This will help to prevent moon down checks from leaking into toher worlds
+		private static bool TrackingMoons = false; // This will help to prevent moon down checks from leaking into other worlds
 
 		public override void Load() {
 			On_Main.UpdateTime_StartDay += OnStartDay_CheckMoonEvents;
@@ -61,7 +61,7 @@ namespace BossChecklist
 		/// Before varibles are change for night (dusk), check for the eclipse event and mark as defeated it so.
 		/// </summary>
 		internal static void OnStartNight_CheckEclipseDown(On_Main.orig_UpdateTime_StartNight orig, ref bool stopEvents) {
-			if (Main.eclipse) {
+			if (TrackingMoons && Main.eclipse) {
 				AnnounceEventEnd("Eclipse");
 				Networking.DownedEntryCheck(ref downedSolarEclipse);
 			}
@@ -92,6 +92,10 @@ namespace BossChecklist
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				ActiveNPCEntryFlags[i] = -1;
 			}
+		}
+
+		public override void OnWorldUnload() {
+			TrackingMoons = false; // Unloaded worlds turns off moon tracking
 		}
 
 		public override void PreWorldGen() {
