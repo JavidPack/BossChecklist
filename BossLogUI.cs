@@ -1770,6 +1770,9 @@ namespace BossChecklist
 				if (!ContentSamples.ItemsByType.TryGetValue(item, out Item selectedItem))
 					continue;
 
+				if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && !GetLogEntryInfo.lootItemTypes.Contains(item))
+					continue; // If only dropped lootis being checked, skip any items not found in the loot table
+
 				// Create an item slot for the current item
 				LogItemSlot itemSlot = new LogItemSlot(selectedItem, ItemSlot.Context.TrashItem) {
 					Id = "loot_" + item,
