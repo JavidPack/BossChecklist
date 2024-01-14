@@ -128,6 +128,8 @@ namespace BossChecklist
 
 		internal int Relic => collectibles.FirstOrDefault(x => x.Value == CollectibleType.Relic).Key;
 
+		internal List<int> CollectibleDrops => lootItemTypes.Intersect(collectibles.Keys).ToList();
+
 		internal bool IsRecordIndexed(out int recordIndex) {
 			recordIndex = BossChecklist.bossTracker.BossRecordKeys.IndexOf(this.Key);
 			return BossChecklist.bossTracker.BossRecordKeys.Contains(this.Key);

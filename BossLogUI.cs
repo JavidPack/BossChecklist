@@ -1099,11 +1099,9 @@ namespace BossChecklist
 					}
 				}
 
-				bool allLoot = false;
-				bool allCollect = false;
+				bool allLoot = BossChecklist.BossLogConfig.LootCheckVisibility;
+				bool allCollect = BossChecklist.BossLogConfig.LootCheckVisibility;
 				if (BossChecklist.BossLogConfig.LootCheckVisibility) {
-					allLoot = allCollect = true;
-
 					// Loop through player saved loot and boss loot to see if every item was obtained
 					foreach (int loot in entry.lootItemTypes) {
 						if (loot == entry.TreasureBag)
@@ -1117,9 +1115,6 @@ namespace BossChecklist
 							if (isCorruptionLocked || isCrimsonLocked)
 								continue; // Skips items that are dropped within the opposing world evil
 						}
-
-						if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && entry.collectibles.ContainsKey(loot))
-							continue; // If the CheckedDroppedLoot config enabled, skip loot items that are considered collectibles for the check
 
 						Item checkItem = ContentSamples.ItemsByType[loot];
 						if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
@@ -1140,15 +1135,12 @@ namespace BossChecklist
 						allCollect = allLoot; // If no collectible items were setup, consider it false until all loot has been obtained
 					}
 					else {
-						int collectCount = 0;
 						foreach (int collectible in entry.collectibles.Keys.ToList()) {
-							if (collectible == -1 || collectible == 0)
+							if (collectible <= 0)
 								continue; // Skips empty items
 
-							if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && !entry.lootItemTypes.Contains(collectible)) {
-								collectCount++;
-								continue; // If the CheckedDroppedLoot config enabled, skip collectible items that aren't also considered loot
-							}
+							if (BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && !entry.CollectibleDrops.Contains(collectible))
+								continue; // If the OnlyCheckDroppedLoot config is enabled, skip collectible items that aren't also drops
 
 							Item checkItem = ContentSamples.ItemsByType[collectible];
 							if (!Main.expertMode && (checkItem.expert || checkItem.expertOnly))
@@ -1168,9 +1160,6 @@ namespace BossChecklist
 								break; // end further item checking
 							}
 						}
-
-						if (collectCount == entry.collectibles.Count)
-							allCollect = false; // If all the items were skipped due to the DroppedLootCheck config, don't mark as all collectibles obtained
 					}
 				}
 

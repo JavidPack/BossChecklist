@@ -1299,22 +1299,11 @@ namespace BossChecklist.UIElements
 				int hardModeOffset = entry.progression > BossTracker.WallOfFlesh ? 10 : 0;
 				string looted = Language.GetTextValue($"{BossLogUI.LangLog}.TableOfContents.AllLoot");
 				string collected = Language.GetTextValue($"{BossLogUI.LangLog}.TableOfContents.AllCollectibles");
-				Texture2D texture = null;
-				string hoverText = "";
 
-				if (allLoot && allCollectibles) {
-					texture = BossLogUI.Texture_Check_GoldChest.Value;
-					hoverText = $"{looted}\n{collected}";
-				}
-				else if (allLoot || allCollectibles) {
-					texture = BossLogUI.Texture_Check_Chest.Value;
-					if (allLoot) {
-						looted = Language.GetTextValue($"{BossLogUI.LangLog}.TableOfContents.AllDropLoot");
-					}
-					hoverText = allLoot ? Language.GetTextValue(looted) : Language.GetTextValue(collected);
-				}
-
-				if (texture != null) {
+				if (allLoot) {
+					// When all loot is obtained, also check for collectibles as a bonus
+					Texture2D texture = !BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && allCollectibles ? BossLogUI.Texture_Check_GoldChest.Value : BossLogUI.Texture_Check_Chest.Value;
+					string hoverText = !BossChecklist.BossLogConfig.OnlyCheckDroppedLoot && allCollectibles ? $"{looted}\n{collected}" : looted;
 					Rectangle chestPos = new Rectangle(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2, texture.Width, texture.Height);
 					spriteBatch.Draw(texture, chestPos, Color.White);
 					if (Main.MouseScreen.Between(chestPos.TopLeft(), chestPos.BottomRight())) {
