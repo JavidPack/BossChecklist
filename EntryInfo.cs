@@ -362,8 +362,10 @@ namespace BossChecklist
 		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
 
+			// BossChecklist only has despawn messages for vanilla Bosses
+			// Betsy does not have a despawn message as Old Ones Army has a message already
 			Func<NPC, LocalizedText> customMessages = null;
-			if (type == EntryType.Boss) { // BossChecklist only has despawn messages for vanilla Bosses
+			if (type == EntryType.Boss && nameKey != "DD2Betsy") {
 				List<int> DayDespawners = new List<int>() {
 					NPCID.EyeofCthulhu,
 					NPCID.Retinazer,
