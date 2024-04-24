@@ -3,7 +3,7 @@ Mods: {
 		Log: {
 			Common: {
 				BossLog: Босс-журнал
-				// Entry: Entry
+				Entry: Запись
 				Boss: Босса
 				BossPlural: Боссы
 				MiniBoss: Мини-босса
@@ -31,8 +31,8 @@ Mods: {
 
 			Indicator: {
 				ProgressionMode: Режим прогрессии {0}
-				// ManualChecklist: Entries must be manually checked off by the user
-				// AutomaticChecklist: The checklist will automatically check off entries
+				ManualChecklist: Пользователь должен вручную помечать все записи
+				AutomaticChecklist: Чеклист будет автоматически помечать выполненные записи
 				OnlyBossContentEnabled: Доступен только контент боссов для отображения
 				OnlyBossContentDisabled: Доступен весь контент для отображения
 			}
@@ -50,8 +50,8 @@ Mods: {
 					Show: "{0}: Показаны"
 					Hide: "{0}: Скрыты"
 					HideWhenCompleted: "{0}: Скрыты после победы"
-					// ToggleHiddenOpen: Open hidden list
-					// ToggleHiddenClose: Confirm & close hidden list
+					ToggleHiddenOpen: Открыть скрытый список
+					ToggleHiddenClose: Подтвердить и закрыть скрытый список
 					Disabled: Фильтр отключён из-за настройки 'Босс-журнал показывает только боссов'
 				}
 			}
@@ -172,9 +172,9 @@ Mods: {
 
 			HintTexts: {
 				MarkEntry: Нажмите ПКМ по записи в списке, чтобы пометить её как выполненную
-				HideEntry: Удерживайте Alt и нажмите ПКМ по записи в списке, чтобы скрыть её
+				HideEntry: Нажмите ЛКМ или ПКМ по записи в списке, чтобы скрыть её
 				ClearMarked: Удерживайте Alt и нажмите ПКМ по вкладке фильтров, чтобы очистить все помеченные записи, вернув их в исходное состояние
-				ClearHidden: Удерживайте Alt и нажмите ПКМ по фильтру 'Переключить видимость скрытых целей', чтобы очистить все скрытые записи, вернув их в исходное скрытое состояние
+				ClearHidden: Удерживайте Alt и нажмите ПКМ по фильтру 'Переключить скрытый список', чтобы очистить все скрытые записи, вернув их в исходное скрытое состояние
 				ClearItems: Удерживайте Alt и нажмите ПКМ по мешку с сокровищами на странице записи, чтобы пометить все предметы как не полученные
 				RemoveItem: Удерживайте Alt и нажмите ПКМ по желаемой ячейке предмета, чтобы пометить её как не полученную
 				ClearAllRecords: Удерживайте Alt и нажмите ПКМ по кнопке 'Категории рекордов', чтобы очистить все рекорды для этого босса
@@ -371,17 +371,17 @@ Mods: {
 				}
 
 				AutomaticChecklist: {
-					// Label: Automatic Checklist
-					/* Tooltip:
+					Label: Автоматический чеклист
+					Tooltip:
 						'''
-						Entries will be marked automatically when defeated. Disabling requires the user to manually check off entries.
-						Whether enabled or disabled, you can manually mark entries using right-click on their name.
-						''' */
+						Записи будут автоматически помечаться как выполненные после победы. Отключение настройки требует от пользователя ручной пометки записей.
+						Независимо от того, включена или отключена автоматическая пометка, вы можете вручную помечать записи, нажав ПКМ по их имени.
+						'''
 				}
 
 				ProgressiveChecklist: {
-					// Label: Progressive Checklist
-					// Tooltip: Hides content until the entry is encountered or beaten.
+					Label: Прогрессивный чеклист
+					Tooltip: Скрывает контент, пока не будет найдена или пройдена соответствующая запись.
 				}
 
 				ProgressionPrompt: {
@@ -512,7 +512,7 @@ Mods: {
 						BossChecklist будет автоматически обнаруживать устаревшие вызовы и
 						создавать локализации для представленных LocalizedText, которые требуются для новых вызовов.
 						Новые вызовы не зависят от этих локализаций, но по умолчанию будут использовать их, если передано значение null.
-						Установите значение ВКЛ, чтобы запретить Boss Checklist создавать новые локализации автоматически.
+						Установите значение ВКЛ, чтобы запретить BossChecklist создавать новые локализации автоматически.
 						'''
 				}
 
