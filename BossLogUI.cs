@@ -143,7 +143,9 @@ namespace BossChecklist
 		// Record page related
 		public SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public SubCategory CompareState = SubCategory.None; // Compare record values to one another
+		public bool RecordEditMode = false;
 		public List<NavigationalButton> RecordCategoryButtons;
+		public NavigationalButton AltRecordCategoryButton;
 
 		// Spawn Info page related
 		public static int SpawnItemSelected = 0;
@@ -403,6 +405,13 @@ namespace BossChecklist
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
 			lootButton.Top.Pixels = 5;
 			lootButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
+
+			AltRecordCategoryButton = new NavigationalButton(BossLogResources.RequestVanillaTexture("UI/Creative/Research_GearA", true), true) {
+				Id = "AltRecordsMenu",
+				hoverText = $"{LangLog}.Records.Category.AltRecordsMenu"
+			};
+			AltRecordCategoryButton.Left.Pixels = (int)(recordButton.Left.Pixels - AltRecordCategoryButton.Width.Pixels - 20);
+			AltRecordCategoryButton.Top.Pixels = (int)(recordButton.Top.Pixels + 5);
 
 			// Record Type navigation buttons
 			RecordCategoryButtons = new List<NavigationalButton>();
@@ -1236,7 +1245,7 @@ namespace BossChecklist
 					true, // always shown
 					GetPlayerRecords.UnlockedFirstVictory,
 					GetPlayerRecords.UnlockedPersonalBest,
-					Main.netMode == NetmodeID.MultiplayerClient // only shows up on servers
+					true//Main.netMode == NetmodeID.MultiplayerClient // only shows up on servers
 				};
 				int count = 0;
 				int total = buttonConditions.Count(true);
@@ -1251,6 +1260,8 @@ namespace BossChecklist
 					}
 				}
 
+				PageTwo.Append(AltRecordCategoryButton);
+
 				if (buttonConditions[(int)RecordSubCategory] is false)
 					RecordSubCategory = SubCategory.PreviousAttempt; // If no access granted, default back to previous attempt
 
@@ -1259,6 +1270,34 @@ namespace BossChecklist
 
 				if (CompareState != SubCategory.None && buttonConditions[(int)CompareState] is false)
 					CompareState = SubCategory.None; // If no access granted, default back to None
+
+				if (RecordEditMode && RecordSubCategory == SubCategory.WorldRecord) {
+
+					UIList durationHolders = new UIList();
+					UIList hitsTakenHolders = new UIList();
+					durationHolders.Left.Pixels = 19;
+					durationHolders.Top.Pixels = (int)(35 + 75);
+					durationHolders.Width.Pixels = PageTwo.Width.Pixels - 60;
+					durationHolders.Height.Pixels = PageTwo.Height.Pixels - 136;
+					durationHolders.PaddingTop = 5;
+
+					LogScrollbar durationScroll = new LogScrollbar();
+					LogScrollbar hitsTakenScroll = new LogScrollbar();
+
+					durationHolders.Add(new UIText($"[0.00s] test"));
+					foreach (string name in GetWorldRecords.durationHolder) {
+						durationHolders.Add(new UIText($"[{PersonalRecords.TimeConversion(GetWorldRecords.durationWorld)}] {name}"));
+					}
+
+					foreach (string name in GetWorldRecords.hitsTakenHolder) {
+						hitsTakenHolders.Append(new UIText($"[{GetWorldRecords.hitsTakenWorld}] {name}"));
+					}
+
+					PageTwo.Append(durationHolders);
+					PageTwo.Append(hitsTakenHolders);
+
+					return;
+				}
 
 				// create 4 slots for each stat category value
 				for (int i = 0; i < 4; i++) {

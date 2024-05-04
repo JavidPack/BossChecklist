@@ -230,7 +230,11 @@ namespace BossChecklist.UIElements
 					LogUI.RefreshPageContent();
 				}
 
-				if (Id == "CopyKey") {
+				if (Id == "AltRecordsMenu") {
+					LogUI.RecordEditMode = !LogUI.RecordEditMode;
+					LogUI.RefreshPageContent();
+				}
+				else if (Id == "CopyKey") {
 					string bossKey = LogUI.GetLogEntryInfo.Key;
 					if (Platform.Get<IClipboard>().Value != bossKey) {
 						Platform.Get<IClipboard>().Value = bossKey;
