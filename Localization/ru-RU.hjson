@@ -183,7 +183,7 @@ Mods: {
 		}
 
 		Checklist: {
-			// CelestialPillars: Celestial Pillars
+			CelestialPillars: Неземные башни
 			ToggleCompletedTooltip: Отображение пройденного
 			ToggleMiniBossesTooltip: Отображение мини-боссов
 			ToggleEventsTooltip: Отображение событий
@@ -586,13 +586,13 @@ Mods: {
 				}
 
 				NewRecordLogGlow: {
-					// Label: Enable New Record Log Glow
-					/* Tooltip:
+					Label: Эффект свечения для новых рекордов
+					Tooltip:
 						'''
-						When enabled, setting a new record will put a rainbow glow on the following:
-						- Boss Log button
-						- Table of Contents entry name
-						''' */
+						Если эта настройка выключена, то при установлении нового рекорда появится радужное свечение вокруг:
+						- Кнопки Босс-журнала
+						- Названия соответствующей записи в Оглавлении
+						'''
 				}
 
 				TimeValueFormat: {
