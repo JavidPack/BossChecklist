@@ -2,76 +2,76 @@ Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
-				// BossLog: Boss Log
-				// Entry: Entry
-				// Boss: Boss
-				// BossPlural: Bosses
-				// MiniBoss: Mini-boss
-				// MiniBossPlural: Mini-bosses
-				// Event: Event
-				// EventPlural: Events
-				// Enabled: enabled
-				// Disabled: disabled
-				// PartiallyEnabled: partially enabled
+				BossLog: Journal des Boss
+				Entry: Entrée
+				Boss: Boss
+				BossPlural: Bosses
+				MiniBoss: Mini-boss
+				MiniBossPlural: Mini-boss
+				Event: Événement
+				EventPlural: Événements
+				Enabled: activé
+				Disabled: désactivé
+				PartiallyEnabled: partiellement activé
 			}
 
 			Tabs: {
-				// ToggleFilters: Toggle Filters
-				// TableOfContents: Table of Contents
-				// Credits: Credits
-				/* NextEntry:
+				ToggleFilters: Activer/désactiver les filtres
+				TableOfContents: Table des matières
+				Credits: Crédits
+				NextEntry:
 					'''
-					Next {0}:
+					Suivant {0}:
 					{1}
 					''' */
-				// Records: Records
-				// SpawnInfo: Spawn Info
-				// LootAndCollectibles: Loot & Collectibles
+				Records: Enregistrements
+				SpawnInfo: Informations sur le spawn
+				LootAndCollectibles: Butin et objets collectables
 			}
 
 			Indicator: {
-				// ProgressionMode: Progression mode is {0}
-				// ManualChecklist: Entries must be manually checked off by the user
-				// AutomaticChecklist: The checklist will automatically check off entries
-				// OnlyBossContentEnabled: Only boss content is available to be displayed
-				// OnlyBossContentDisabled: All content is available to be displayed
+				ProgressionMode: Le mode de progression est {0}
+				ManualChecklist: Les entrées doivent être cochées manuellement par l'utilisateur
+				AutomaticChecklist: La liste de contrôle cochera automatiquement les entrées
+				OnlyBossContentEnabled: Seul le contenu du boss peut être affiché
+				OnlyBossContentDisabled: Tout le contenu disponible peut être affiché
 			}
 
 			TableOfContents: {
-				// PreHardmode: Pre-Hardmode
-				// Hardmode: Hardmode
-				// ProgressBarListMods: Click to switch to Mod List mode
-				// ProgressBarListTypes: Click to switch to Entry Type mode
-				// AllLoot: All boss loot obtained!
-				// AllDropLoot: All non-collectible boss loot obtained!
-				// AllCollectibles: All boss collectibles obtained!
+				PreHardmode: Pre-Hardmode
+				Hardmode: Hardmode
+				ProgressBarListMods: Cliquer pour passer en mode Liste des mods
+				ProgressBarListTypes: Cliquer pour passer en mode Type d'entrée
+				AllLoot: Tous les butins du boss obtenus !
+				AllDropLoot: Tous les butins du boss non collectables obtenus !
+				AllCollectibles: Tous les objets collectables du boss obtenus !
 
 				Filter: {
-					// Show: "{0}: Shown"
-					// Hide: "{0}: Hidden"
-					// HideWhenCompleted: "{0}: Hidden when defeated"
-					// ToggleHiddenOpen: Open hidden list
-					// ToggleHiddenClose: Confirm & close hidden list
-					// Disabled: Filter disabled due to 'Only Show Boss Content' config
+					Show: "{0}: Afficher"
+					Hide: "{0}: Masquer"
+					HideWhenCompleted: "{0}: Caché après la victoire"
+					ToggleHiddenOpen: Ouvrir la liste masquée
+					ToggleHiddenClose: Confirmer et fermer la liste masquée
+					Disabled: Filtre désactivé en raison de la configuration "Afficher uniquement le contenu du boss"
 				}
 			}
 
 			Credits: {
-				// Devs: Contributors
-				// Mods: Registered Mods
-				// Notice: "[List only contains loaded mods]"
-				// NoIcon: Mod icon not found!
-				// ModsEmpty: None of your loaded mods are registered!
-				// Register: Register your own mod!
-				// Learn: View the mod desciption to learn how
+				Devs: Contributeurs
+				Mods: Mods enregistrés
+				Notice: "[La liste ne contient que les mods chargés]"
+				NoIcon: Icône de mod non trouvée !
+				ModsEmpty: Aucun de vos mods chargés n'est enregistré !
+				Register: Enregistrez votre propre mod !
+				Learn: Voir la description du mod pour savoir comment procéder.
 			}
 
 			EntryPage: {
-				// Defeated: Defeated in {0}
-				// Undefeated: Undefeated in {0}
-				// CopyKey: Click to copy internal 'boss key' to clipboard
-				// CopySource: Click to copy internal 'mod source' to clipboard
-				// ViewPage: Click to view page
+				Defeated: Vaincu en {0}
+				Undefeated: Invaincu en {0}
+				CopyKey: Cliquer pour copier l'ID interne du Boss dans le presse-papiers
+				CopySource: Cliquer pour copier la source du mod dans le presse-papiers
+				ViewPage: Cliquer pour voir la page
 				// NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
 				// LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
 			}
