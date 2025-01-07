@@ -23,7 +23,7 @@ Mods: {
 					'''
 					Suivant {0}:
 					{1}
-					''' */
+					'''
 				Records: Enregistrements
 				SpawnInfo: Informations sur le spawn
 				LootAndCollectibles: Butin et objets collectables
@@ -72,24 +72,24 @@ Mods: {
 				CopyKey: Cliquer pour copier l'ID interne du Boss dans le presse-papiers
 				CopySource: Cliquer pour copier la source du mod dans le presse-papiers
 				ViewPage: Cliquer pour voir la page
-				// NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
-				// LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
+				NotImplemented: L'affichage de cette page n'est pas disponible. Le mod n'a pas soumis de page ou l'a mal configurée.
+				LogFeaturesNotAvailable: Les entrées, les objets d'invocation et le tableau de butin de cette page sont désactivés. Le mod n'a pas fourni suffisamment d'informations pour la page ou l'a mal configuré.
 			}
 
 			Records: {
-				// NewRecord: New Personal Best!
-				// NewWorldRecord: New World Record!
-				// NoRecord: No record
-				// Unchallenged: Unchallenged
-				// Kills: kills
-				// Deaths: deaths
-				// Total: Total
-				// NoHit: No hit!
-				// Hit: hit
-				// HitPlural: hits
-				// PreviousBest: Your Previous Best
-				// ClaimRecord: Be the first to claim the world record!
-				// RecordHolder: Record Holder(s)
+				NewRecord: Nouveau record personnel !
+				NewWorldRecord: Nouveau record du monde !
+				NoRecord: Aucun record
+				Unchallenged: Invaincu
+				Kills: Eliminations
+				Deaths: Décès
+				Total: Total
+				NoHit: Aucun dommage !
+				Hit: dommage
+				HitPlural: dommages
+				PreviousBest: Précédent meilleur résultat
+				ClaimRecord: Soyez le premier à établir un record du monde !
+				RecordHolder: Détenteur(s) du record
 
 				Category: {
 					// PreviousAttempt: Previous Attempt
