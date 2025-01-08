@@ -207,61 +207,61 @@ Mods: {
 			}
 
 			Defeated: {
-				Generic: "{0} est tombée!"
+				Generic: "{0} est tombé!"
 				GenericSkeletronHand: "La main de Squeletron est tombée!"
 				GenericMoonLordHead: "La tête du Seigneur de la lune est tombée!"
 				SkeletronHand: "La main de {0} s'est fracturée!"
 				PrimeCannon: "{0} a explosé !"
-				// PrimeSaw: The {0} has malfunctioned!
-				// PrimeVice: The {0} has collapsed!
-				// PrimeLaser: The {0} has overheated!
-				// GolemFistLeft: "{0} is destroyed!"
-				// GolemFistRight: "{0} is destroyed!"
-				// GolemHead: The {0} has detached from the body!
-				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
-				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
-				// Retinazer: "{0} has been defeated!"
-				// Spazmatism: "{0} has been defeated!"
-				// LunarTowerVortex: The {0} has fallen!
-				// LunarTowerStardust: The {0} has fallen!
-				// LunarTowerNebula: The {0} has fallen!
-				// LunarTowerSolar: The {0} has fallen!
+				PrimeSaw: "Le {0} a mal fonctionné!"
+				PrimeVice: "{0} s'est effondré!"
+				PrimeLaser: "{0} a surchauffé!"
+				GolemFistLeft: "{0} est détruit!"
+				GolemFistRight: "{0} est détruit!"
+				GolemHead: "{0} séparé du corps!"
+				MoonLordHead: "Le véritable œil de Cthulhu sort de la tête de {0}!"
+				MoonLordHand: "Le véritable œil de Cthulhu sort de {0}!"
+				Retinazer: "{0} a été vaincu!"
+				Spazmatism: "{0} a été vaincu!"
+				LunarTowerVortex: "{0} est tombé!"
+				LunarTowerStardust: "{0} est tombé!"
+				LunarTowerNebula: "{0} est tombé!"
+				LunarTowerSolar: "{0} est tombé!"
 			}
 
 			Loss: {
-				// Generic: "{0} has killed every player!"
-				// KingSlime: "{0} leaves in triumph..."
-				// EyeofCthulhu: "{0} has disappeared into the night sky..."
-				// EaterofWorlds: "{0} burrows back underground..."
-				// BrainofCthulhu: "{0} vanishes into the pits of the crimson..."
-				// QueenBee: "{0} returns to her colony's nest..."
-				// Skeletron: "{0} continues to torture the Old Man..."
-				// WallofFlesh: "{0} has managed to cross the underworld..."
-				// QueenSlimeBoss: "{0} pompously bounces away..."
-				// TheTwins: "{0} continues its observations..."
-				// TheDestroyer: "{0} seeks for another world to devour..."
-				// SkeletronPrime: "{0} begins searching for a new victim..."
-				// Plantera: "{0} continues its rest within the jungle..."
-				// Golem: "{0} deactivates in the bowels of the temple..."
-				// HallowBoss: "{0} dissipates to hallow light..."
-				// DukeFishron: "{0} returns to the ocean depths..."
-				// CultistBoss: "{0} goes back to its devoted worship..."
-				// MoonLord: "{0} has left this realm..."
+				Generic: "{0} a tué tous les joueurs!"
+				KingSlime: "{0} part en triomphe..."
+				EyeofCthulhu: "{0} a disparu dans le ciel nocturne..."
+				EaterofWorlds: "{0} s'enfouit à nouveau sous terre..."
+				BrainofCthulhu: "{0} disparaît dans les profondeurs du carmin..."
+				QueenBee: "{0} retourne au nid de sa colonie..."
+				Skeletron: "{0} continue de torturer le vieil homme..."
+				WallofFlesh: "{0} a réussi à traverser les enfers..."
+				QueenSlimeBoss: "{0} part en bondissant pompeusement"
+				TheTwins: "{0} continuent leurs observations..."
+				TheDestroyer: "{0} cherche un autre monde à dévorer..."
+				SkeletronPrime: "{0} commence à chercher une nouvelle victime..."
+				Plantera: "{0} continue de se reposer dans la jungle..."
+				Golem: "{0} s'éteint dans les entrailles du temple..."
+				HallowBoss: "{0} se dissout dans le rayonnement sacré..."
+				DukeFishron: "{0} retourne dans les profondeurs de l'océan..."
+				CultistBoss: "{0} retourne à son culte dévoué..."
+				MoonLord: "{0} a quitté ce royaume..."
 			}
 
 			EventEnd: {
-				// Generic: The {0} has ended...
-				// BloodMoon: The Blood Moon falls past the horizon...
-				// FrostMoon: The Frost Moon melts as the sun rises...
-				// PumpkinMoon: The Pumpkin Moon ends its harvest...
-				// Eclipse: The solar eclipse has ended... until next time...
+				Generic: "L'événement '{0}' est terminé..."
+				BloodMoon: La Lune de Sang passe au-dessous de l'horizon...
+				FrostMoon: La Lune de Givre fond alors que le soleil se lève...
+				PumpkinMoon: La Lune Citrouille termine sa récolte...
+				Eclipse: L'éclipse solaire est terminée... jusqu'à la prochaine fois...
 			}
 		}
 
 		BossSpawnInfo: {
-			// Unknown: Spawn conditions unknown
-			// KingSlime: Use [i:560], randomly in outer 3rds of map, or kill 150 slimes during slime rain.
-			// EyeofCthulhu: Use [i:43] at night, or 1/3 chance nightly if over 200 HP.
+			Unknown: Conditions d'apparition inconnues
+			KingSlime: Utiliser [i:560], aléatoirement dans les tiers extérieurs de la carte, ou tuer 150 gelées pendant la pluie de gelées.
+			EyeofCthulhu: Utilisez [i:43] la nuit, ou 1/3 de chance chaque nuit si vous avez plus de 200 PV.
 			// EaterofWorlds: Use [i:70] or break 3 Shadow Orbs in a corruption chasm.
 			// BrainofCthulhu: Use [i:1331] or break 3 Crimson Hearts in a crimson chasm.
 			// QueenBee: Use [i:1133] or break a Bee Hive's Larva found in the jungle.
