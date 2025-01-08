@@ -21,7 +21,7 @@ Mods: {
 				Credits: Crédits
 				NextEntry:
 					'''
-					Suivant {0}:
+					Suivant {0} :
 					{1}
 					'''
 				Records: Enregistrements
@@ -42,14 +42,14 @@ Mods: {
 				Hardmode: Hardmode
 				ProgressBarListMods: Cliquer pour passer en mode Liste des mods
 				ProgressBarListTypes: Cliquer pour passer en mode Type d'entrée
-				AllLoot: Tous les butins du boss obtenus !
-				AllDropLoot: Tous les butins du boss non collectables obtenus !
-				AllCollectibles: Tous les objets collectables du boss obtenus !
+				AllLoot: Tous les butins du boss obtenus!
+				AllDropLoot: Tous les butins du boss non collectables obtenus!
+				AllCollectibles: Tous les objets collectables du boss obtenus!
 
 				Filter: {
-					Show: "{0}: Afficher"
-					Hide: "{0}: Masquer"
-					HideWhenCompleted: "{0}: Caché après la victoire"
+					Show: "{0} : Afficher"
+					Hide: "{0} : Masquer"
+					HideWhenCompleted: "{0} : Caché après la victoire"
 					ToggleHiddenOpen: Ouvrir la liste masquée
 					ToggleHiddenClose: Confirmer et fermer la liste masquée
 					Disabled: Filtre désactivé en raison de la configuration "Afficher uniquement le contenu du boss"
@@ -60,8 +60,8 @@ Mods: {
 				Devs: Contributeurs
 				Mods: Mods enregistrés
 				Notice: "[La liste ne contient que les mods chargés]"
-				NoIcon: Icône de mod non trouvée !
-				ModsEmpty: Aucun de vos mods chargés n'est enregistré !
+				NoIcon: Icône de mod non trouvée!
+				ModsEmpty: Aucun de vos mods chargés n'est enregistré!
 				Register: Enregistrez votre propre mod !
 				Learn: Voir la description du mod pour savoir comment procéder.
 			}
@@ -77,135 +77,141 @@ Mods: {
 			}
 
 			Records: {
-				NewRecord: Nouveau record personnel !
-				NewWorldRecord: Nouveau record du monde !
+				NewRecord: Nouveau record personnel!
+				NewWorldRecord: Nouveau record du monde!
 				NoRecord: Aucun record
 				Unchallenged: Invaincu
 				Kills: Eliminations
 				Deaths: Décès
 				Total: Total
-				NoHit: Aucun dommage !
+				NoHit: Aucun dommage!
 				Hit: dommage
 				HitPlural: dommages
 				PreviousBest: Précédent meilleur résultat
-				ClaimRecord: Soyez le premier à établir un record du monde !
+				ClaimRecord: Soyez le premier à établir un record du monde!
 				RecordHolder: Détenteur(s) du record
 
 				Category: {
-					// PreviousAttempt: Previous Attempt
-					// FirstVictory: First Victory
-					// PersonalBest: Personal Best
-					// WorldRecord: World Records
-					// Cycle: Cycle record categories
+					PreviousAttempt: Tentative précédente
+					FirstVictory: Première victoire
+					PersonalBest: Record personnel
+					WorldRecord: Records du monde
+					Cycle: Changer de catégorie d'enregistrement
 				}
 
 				Title: {
-					// PreviousAttempt: Attempt
-					// FirstVictory: Play Time
-					// PersonalBest: Kill Death Ratio
-					// WorldRecord: Global KDR
-					// Duration: Fight Duration
-					// DurationWorld: Quickest Fight
-					// HitsTaken: Hits Received
-					// HitsTakenWorld: Lowest Hits Taken
+					PreviousAttempt: Tentative
+					FirstVictory: Temps de jeu
+					PersonalBest: Ratio tué/mort
+					//WorldRecord: Global KDR
+					Duration: Durée du combat
+					DurationWorld: Combat le plus rapide
+					HitsTaken: Coups reçus
+					HitsTakenWorld: Min. de coups reçus
 				}
 
 				Tooltip: {
-					// Duration: The quickest time this boss was defeated!
-					// HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
-					// PreviousAttempt: Total times you have encountered this boss!
-					// PersonalBest: Total times you killed this boss and total times this boss has killed you!
-					// FirstVictory: Total play time your character has been active, up until the first boss kill!
-					// WorldRecord: Global kills and deaths from all players for this boss!
+					Duration: Le temps le plus rapide pour vaincre ce boss!
+					HitsTaken: Évitez autant d'attaques que possible! Essayez de vaincre ce boss sans subir de dégâts!
+					PreviousAttempt: Nombre total de fois que vous avez rencontré ce boss!
+					PersonalBest: Nombre total de fois où vous avez tué ce boss et nombre total de fois où ce boss vous a tué!
+					FirstVictory: Temps total de jeu pendant lequel votre personnage a été actif, jusqu'à la mort du premier boss !
+					WorldRecord: Éliminations et décès globaux de tous les joueurs pour ce boss!
 				}
 			}
 
 			SpawnInfo: {
-				// NoInfo: No info available
-				// RecipeFrom: Recipe from: {0}
-				// CycleRecipe: Cycle alternative recipes
-				// Noncraftable: This item is not craftable
-				// NoSpawnItem: This {0} has no spawn item
-				// ByHand: By Hand
+				NoInfo: Aucune information disponible
+				RecipeFrom: Recette de : {0}
+				CycleRecipe: Recettes alternatives
+				Noncraftable: Cet objet ne peut pas être fabriqué
+				NoSpawnItem: Ce {0} n'a pas d'objet d'invocation
+				ByHand: Manuellement
 			}
 
 			LootAndCollection: {
-				// MaskedItems: Defeat this entry to view its loot and collectibles
-				// ItemIsExpertOnly: This item is only obtainable in Expert Mode
-				// ItemIsMasterOnly: This item is only obtainable in Master Mode
-				// ItemIsLocked: This item has special requirements to unlock
-				// Obtained: This item has been obtained!
-				// Researched: This item has been researched!
+				MaskedItems: Battez cette cible pour voir son butin et ses objets de collection
+				ItemIsExpertOnly: Cet objet n'est disponible qu'en mode Expert
+				ItemIsMasterOnly: Cet objet n'est disponible qu'en mode Master
+				ItemIsLocked: Cet objet a des exigences spéciales pour être débloqué
+				Obtained: Cet objet a été obtenu!
+				Researched: Cet article a déjà fait l'objet de recherches!
 			}
 
 			ProgressionMode: {
-				// BeforeYouBegin: Before you begin...
-				// AskEnable: Do you want to enable the Progression Checklist?
-				// SelectAnOption: Please select an option below...
-				/* SelectDisable:
+				BeforeYouBegin: Avant de commencer...
+				AskEnable: Voulez-vous activer le mode progression ? ?
+				SelectAnOption: Veuillez sélectionner une option ci-dessous...
+				SelectDisable:
 					'''
-					Continue with the progressive checklist disabled...
-					* All page info content is unlocked from the start
-					* Nothing hidden. No limits.
-					''' */
-				/* SelectEnable:
+					Continuer avec le mode progression désactivé...
+					* Tout le contenu des informations de la page est déverrouillé dès le début
+					* Rien de caché. Aucune limite.
 					'''
-					Continue with the progressive checklist fully enabled...
-					* Page info content is locked for undefeated entries
-					* Portraits and names are masked
-					* Boss loot locked until entry defeation
-					* Next check enabled, reducing info limitations (recommended)
-					''' */
-				// SelectConfig: Close Boss Log and configure the progressive checklist...
-				// DisablePrompt: Don't show this prompt again
-				// Description: The Progressive Checklist will limit and hide entry content until the entry is defeated or marked as completed. If you are looking to do a blind play-through then you might want to consider enabling this feature. The Boss Log is disabled until you make a selection or reopen it with the prompt configuration disabled
-				/* IsEnabled:
+				SelectEnable:
 					'''
-					[i:888] The Progressive Checklist is fully or partially enabled!
-					This will mask some information about bosses until they have been defeated.
-					To disable or configure the progressive checklist go to:
-					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
-					and scroll down to the Progress Mode configs
-					''' */
+					Continuer avec mode progression entièrement activé...
+					* Le contenu des informations de la page est verrouillé pour les entrées invaincues
+					* Les portraits et les noms sont masqués
+					* Butin du boss verrouillé jusqu'à sa défaite
+					* Vérification suivante activée, réduisant les limitations d'informations (recommandé)
+					'''
+				SelectConfig: Fermez le Journal des Boss et configurez le mode progression...
+				DisablePrompt: Ne plus afficher cette demande
+				Description: 
+					'''
+					Le mode Progression masque certains contenus de boss jusqu'à ce que vous les vainquiez ou remplissiez certaines conditions.
+					Cette fonctionnalité est particulièrement utile pour les joueurs qui souhaitent jouer au jeu au toucher, sans connaître à l'avance tous les boss et leurs fonctionnalités.
+
+					Veuillez noter que le Boss Magazine sera désactivé jusqu'à ce que vous sélectionniez l'une des options!
+					'''
+				IsEnabled:
+					'''
+					[i:888] Le mode Progression est entièrement ou partiellement activé!
+					Il cache certaines informations sur les boss jusqu'à ce qu'ils soient vaincus.
+					Pour désactiver ou configurer le mode progression, accédez à:
+					Paramètres > Paramètres du module > Boss Checklist > Boss Log Customization
+					et faites défiler jusqu'aux paramètres du mode de progression
+					'''
 			}
 
 			HintTexts: {
-				// MarkEntry: Right-click an entry to mark it as defeated
-				// HideEntry: Left-click an entry to hide it from the checklist
-				// ClearMarked: Hold ALT and right-click this button to clear all marked entries
-				// ClearHidden: Hold ALT and right-click this button to clear all hidden entries
-				// ClearItems: Hold ALT and right-click this button to mark the listed items as unobtained
-				// RemoveItem: Hold ALT and right-click an item to mark it as unobtained
-				// ClearAllRecords: Hold ALT and right-click this button to reset the list record values
-				// ClearRecord: Hold ALT and right-click the icon of a record to reset its value
+				MarkEntry: Cliquez droit sur une entrée pour la marquer comme annulée
+				HideEntry: Cliquez gauche sur une entrée pour la masquer de la liste
+				ClearMarked: ALT + clic droit sur ce bouton pour effacer toutes les entrées marquées
+				ClearHidden: ALT + clic droit sur ce bouton pour effacer toutes les entrées masquées
+				ClearItems: ALT + clic droit sur ce bouton pour marquer les éléments répertoriés comme non obtenus
+				RemoveItem: ALT + clic droit sur un élément pour le marquer comme non obtenu
+				ClearAllRecords: ALT + clic droit sur ce bouton pour réinitialiser les valeurs des records
+				ClearRecord: ALT + clic droit sur l'icône d'un record pour le réinitialiser
 			}
 		}
 
 		Checklist: {
-			// CelestialPillars: Celestial Pillars
-			// ToggleCompletedTooltip: Toggle Completed
-			// ToggleMiniBossesTooltip: Toggle Mini Bosses
-			// ToggleEventsTooltip: Toggle Events
-			/* ToggleShowHiddenBossesTooltip:
+			CelestialPillars: Piliers Célestes
+			ToggleCompletedTooltip: Affichage de la progression
+			ToggleMiniBossesTooltip: Affichage des mini-boss
+			ToggleEventsTooltip: Affichage des événements
+			ToggleShowHiddenBossesTooltip:
 				'''
-				Toggle Show Hidden Bosses
-				(Alt-Click to clear Hidden bosses)
-				(Alt-Click on boss to hide)
-				''' */
+				Activer/désactiver l'affichage des boss cachés
+				(Alt-Clic pour effacer les boss masqués)
+				(Alt-Clic sur le boss pour le masquer)
+				'''
 		}
 
 		ChatMessages: {
 			Despawn: {
-				// Generic: "{0} is no longer after you..."
-				// Day: "{0} flees as the sun rises..."
+				Generic: "{0} n'est plus après toi..."
+				Day: "{0} s'enfuit alors que le soleil se lève..."
 			}
 
 			Defeated: {
-				// Generic: "{0} is down!"
-				// GenericSkeletronHand: Skeletron's Hand is down!
-				// GenericMoonLordHead: Moon Lord's Head is down!
-				// SkeletronHand: A {0} hand has fractured!
-				// PrimeCannon: The {0} has exploded!
+				Generic: "{0} est tombée!"
+				GenericSkeletronHand: "La main de Squeletron est tombée!"
+				GenericMoonLordHead: "La tête du Seigneur de la lune est tombée!"
+				SkeletronHand: "La main de {0} s'est fracturée!"
+				PrimeCannon: "{0} a explosé !"
 				// PrimeSaw: The {0} has malfunctioned!
 				// PrimeVice: The {0} has collapsed!
 				// PrimeLaser: The {0} has overheated!
