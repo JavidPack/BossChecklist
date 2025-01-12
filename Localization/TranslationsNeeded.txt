@@ -1,7 +1,7 @@
 en-US, 316/316, 100%, missing 0
 de-DE, 0/316, 0%, missing 316
 it-IT, 0/316, 0%, missing 316
-fr-FR, 0/316, 0%, missing 316
+fr-FR, 316/316, 100%, missing 0
 es-ES, 80/316, 25%, missing 236
 ru-RU, 298/316, 94%, missing 18
 zh-Hans, 314/316, 99%, missing 2
