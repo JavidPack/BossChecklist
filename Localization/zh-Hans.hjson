@@ -587,13 +587,13 @@ Mods: {
 				}
 
 				NewRecordLogGlow: {
-					// Label: Enable New Record Log Glow
-					/* Tooltip:
+					Label: 启用新记录日志发光
+					Tooltip:
 						'''
-						When enabled, setting a new record will put a rainbow glow on the following:
-						- Boss Log button
-						- Table of Contents entry name
-						''' */
+						启用后, 在创造新纪录时下列的内容会发出彩虹光:
+						- Boss日志按钮
+						- 目录的条目名称
+						'''
 				}
 
 				TimeValueFormat: {
