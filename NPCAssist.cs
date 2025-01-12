@@ -83,8 +83,17 @@ namespace BossChecklist
 
 			// ... check to see if it is a world record and update every player's logs if so
 			if (newPersonalBestOnServer) {
-				Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
-				WorldAssist.WorldRecordsForWorld[recordIndex].CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
+				// at this point recordIndex should never be -1, so just ensure the world records collection is properly populated
+				if (recordIndex < WorldAssist.WorldRecordsForWorld.Count) {
+					Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
+					WorldAssist.WorldRecordsForWorld[recordIndex].CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
+				}
+				else {
+					BossChecklist.instance.Logger.Warn(
+						$"A Personal Best was beaten, but something went wrong when comparing with world records. " +
+						$"World Records count is {WorldAssist.WorldRecordsForWorld.Count}. " +
+						$"Record Index is {recordIndex}."); // change to a key? might not need if I can fix this later
+				}
 			}
 		}
 
