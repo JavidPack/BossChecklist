@@ -152,16 +152,18 @@ namespace BossChecklist
 			if (playerChatIndex != -1) {
 				layers.Insert(playerChatIndex, new LegacyGameInterfaceLayer("BossChecklist: Record Tracker Debugger",
 					delegate {
-						// Currently, this debug feature is limited to singleplayer as the server does not display its info.
-						if (Main.netMode != NetmodeID.SinglePlayer || BossChecklist.FeatureConfig.DisplayRecordTracking.IsUnloaded)
-							return true;
+						if (Main.netMode != NetmodeID.SinglePlayer)
+							return true; // Currently, this debug feature is limited to singleplayer as the server does not display its info
+
+						if (BossChecklist.FeatureConfig.DisplayRecordTracking.IsUnloaded || BossChecklist.FeatureConfig.DisplayRecordTracking.Type == NPCID.None)
+							return true; // The Display Record Tracking config must be loaded and cannot be selected as none
 
 						if (BossChecklist.bossTracker.FindBossEntryByNPC(BossChecklist.FeatureConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
-							return true;
+							return true; // The selected NPC must also be assigned to an entry
 
 						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
 						if (modplayer.RecordsForWorld is not List<PersonalRecords> personalrecords || !modplayer.PlayerRecordsInitialized)
-							return true;
+							return true; // The player's records must be initialized to be displayed
 
 						string debugText =
 							$"Boss Checklist: Record Tracker" +
@@ -170,6 +172,7 @@ namespace BossChecklist
 							$"[i:{ItemID.ArmorBracing}] {personalrecords[recordIndex].Tracker_HitsTaken} " +
 							$"[i:{ItemID.Stopwatch}] {PersonalRecords.TimeConversion(personalrecords[recordIndex].Tracker_Duration)}";
 
+						// This positioning draws the text above the health bar of the active boss
 						Vector2 barCenter = Main.ScreenSize.ToVector2() * new Vector2(0.5f, 1f) + new Vector2(0f, -50f);
 						Vector2 debugPos = Utils.CenteredRectangle(barCenter, new Vector2(456, 22)).TopLeft() - new Vector2(0, 24);
 						debugPos.Y -= FontAssets.MouseText.Value.MeasureString(debugText).Y;
