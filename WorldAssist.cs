@@ -175,24 +175,7 @@ namespace BossChecklist
 		}
 
 		public override void NetSend(BinaryWriter writer) {
-			// BitBytes can have up to 8 values.
-			BitsByte flags = new BitsByte {
-				[0] = downedBloodMoon,
-				[1] = downedFrostMoon,
-				[2] = downedPumpkinMoon,
-				[3] = downedSolarEclipse,
-				[4] = downedDarkMage,
-				[5] = downedOgre,
-				[6] = downedFlyingDutchman,
-				[7] = downedMartianSaucer
-			};
-			writer.Write(flags);
-
-			/* 8 flags added, do not add more, move onto next BitsByte
-			flags = new BitsByte {
-
-			};
-			writer.Write(flags); */
+			writer.WriteFlags(downedBloodMoon, downedFrostMoon, downedPumpkinMoon, downedSolarEclipse, downedDarkMage, downedOgre, downedFlyingDutchman, downedMartianSaucer);
 
 			writer.Write(HiddenEntries.Count);
 			foreach (var bossKey in HiddenEntries) {
@@ -206,17 +189,7 @@ namespace BossChecklist
 		}
 
 		public override void NetReceive(BinaryReader reader) {
-			BitsByte flags = reader.ReadByte();
-			downedBloodMoon = flags[0];
-			downedFrostMoon = flags[1];
-			downedPumpkinMoon = flags[2];
-			downedSolarEclipse = flags[3];
-			downedDarkMage = flags[4];
-			downedOgre = flags[5];
-			downedFlyingDutchman = flags[6];
-			downedMartianSaucer = flags[7];
-
-			//flags = reader.ReadByte();
+			reader.ReadFlags(out downedBloodMoon, out downedFrostMoon, out downedPumpkinMoon, out downedSolarEclipse, out downedDarkMage, out downedOgre, out downedFlyingDutchman, out downedMartianSaucer);
 
 			HiddenEntries.Clear();
 			int count = reader.ReadInt32();
