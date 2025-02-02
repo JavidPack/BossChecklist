@@ -375,7 +375,7 @@ namespace BossChecklist
 						NPC limbNPC = Main.npc[reader.ReadInt32()];
 						bossTracker.IsEntryLimb(limbNPC.type, out EntryInfo limbEntry);
 						if (limbEntry is not null && limbEntry.GetLimbMessage(limbNPC) is LocalizedText limbMessage)
-							Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityPurple);
+							Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityGreen);
 					}
 					else if (messageType == ClientMessageType.Moon) {
 						if (WorldAssist.DetermineMoonAnnoucement(reader.ReadString()) is string message)

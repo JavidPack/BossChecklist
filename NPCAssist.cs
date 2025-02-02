@@ -31,9 +31,23 @@ namespace BossChecklist
 		// Special case for moon lord. The hands and head do not 'die' when the messages need to be triggered
 		public override void HitEffect(NPC npc, NPC.HitInfo hit) {
 			if ((npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead) && npc.life <= 0) {
+				if (Main.npc.Any(x => x.type == NPCID.MoonLordCore && x.life <= 0))
+					return; // Messages shouldn't be sent if the Moon Lord's core is defeated as that would mean the entire boss is defeated
+
 				if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
-					if (Main.netMode != NetmodeID.Server)
+					if (Main.netMode == NetmodeID.SinglePlayer) {
 						Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
+					}
+					else if (Main.netMode == NetmodeID.Server) {
+						// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.
+						foreach (Player player in Main.ActivePlayers) {
+							ModPacket packet = BossChecklist.instance.GetPacket();
+							packet.Write((byte)PacketMessageType.SendClientConfigMessage);
+							packet.Write((byte)ClientMessageType.Limb);
+							packet.Write(npc.whoAmI);
+							packet.Send(player.whoAmI); // Server --> Multiplayer client
+						}
+					}
 				}
 			}
 		}
@@ -46,7 +60,7 @@ namespace BossChecklist
 			// Display a message for Limbs/Towers if config is enabled, which should be checked after the active flags update
 			if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
 				if (Main.netMode == NetmodeID.SinglePlayer) {
-					Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
+					Main.NewText(message.Format(npc.FullName), Colors.RarityGreen);
 				}
 				else if (Main.netMode == NetmodeID.Server) {
 					// Send a packet to all multiplayer clients. Limb messages are client based, so they will need to read their own configs to determine the message.

@@ -263,7 +263,8 @@ namespace BossChecklist
 					continue; // do nothing if any other npcs are apart of the entry and are still active
 
 				// Now that the entry no longer exists within ActiveNPCEntryFlags, it is determined to have despawned
-				if (selectedEntry.GetDespawnMessage(npc) is LocalizedText message) {
+				// The Moon Lord has a special case, since it technically despawns when its killed
+				if (selectedEntry.GetDespawnMessage(npc) is LocalizedText message && (selectedEntry.Key != "Terraria MoonLord" || npc.life > 0)) {
 					if (Main.netMode == NetmodeID.SinglePlayer) {
 						Main.NewText(message.Format(npc.FullName), Colors.RarityPurple);
 					}
