@@ -157,7 +157,8 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.CultistBoss}"),
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, Moonlord, "Enemies.MoonLord", new List<int>() { NPCID.MoonLordCore }, () => NPC.downedMoonlord)
 					.WithCustomLimbs(new List<int>() { NPCID.MoonLordHead, NPCID.MoonLordHand })
-					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
+					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}")
+					.WithCustomHeadIcon($"Terraria/Images/NPC_Head_Boss_{NPCID.Sets.BossHeadTextures[NPCID.MoonLordHead]}"),
 
 				// Minibosses and Events -- Vanilla
 				EntryInfo.MakeVanillaEvent(TorchGod, "NPCName.TorchGod", () => Main.LocalPlayer.unlockedBiomeTorches)
