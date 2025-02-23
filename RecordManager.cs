@@ -397,10 +397,10 @@ namespace BossChecklist
 			const int TicksPerMinute = TicksPerSecond * 60;
 			int minutes = ticks / TicksPerMinute; // Minutes will still show if 0
 			float seconds = (float)(ticks - (float)(minutes * TicksPerMinute)) / TicksPerSecond;
-			float milliseconds = (float)((seconds - (int)seconds) * 1000);
+			float milliseconds = (int)Math.Round((float)((seconds - (int)seconds) * 1000));
 
 			return BossChecklist.FeatureConfig.TimeValueFormat switch {
-				"Simple" => $"{sign}{(minutes > 0 ? $"{minutes}m " : "")}{(int)seconds}s ({milliseconds:0}ms)",
+				"Simple" => $"{sign}{(minutes > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Seconds", (int)seconds, milliseconds))}",
 				_ => $"{sign}{minutes}:{seconds:00.000}"
 			};
 		}
@@ -456,7 +456,7 @@ namespace BossChecklist
 			if (count == 0)
 				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoHit");
 			
-			return $"{count} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hit{(count == 1 ? "" : "Plural")}")}";
+			return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hit", count);
 		}
 
 		/// <summary>
@@ -508,10 +508,10 @@ namespace BossChecklist
 			int hours = (int)(playTimeFirst / TimeSpan.TicksPerHour);
 			int minutes = (int)((playTimeFirst - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
 			float seconds = (float)((playTimeFirst - (float)(hours * TimeSpan.TicksPerHour) - (float)(minutes * TimeSpan.TicksPerMinute)) / TimeSpan.TicksPerSecond);
-			float milliseconds = (float)((seconds - (int)seconds) * 1000);
+			float milliseconds = (int)Math.Round((float)((seconds - (int)seconds) * 1000));
 
 			return BossChecklist.FeatureConfig.TimeValueFormat switch {
-				"Simple" => $"{(hours > 0 ? hours + "h " : "")}{minutes}m {(int)seconds}s ({milliseconds:0}ms)",
+				"Simple" => $"{(hours > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hours", hours, minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds))}",
 				_ => $"{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds:0.000}"
 			};
 		}

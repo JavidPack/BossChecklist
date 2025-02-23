@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
@@ -84,9 +84,11 @@ Mods: {
 				Kills: Eliminations
 				Deaths: Décès
 				Total: Total
+				Hours: "{0}h {1}m {2}s ({3}ms)"
+				Minutes: "{0}m {1}s ({2}ms)"
+				Seconds: "{0} second{^0:e;es} ({1}ms)"
 				NoHit: Aucun dommage!
-				Hit: dommage
-				HitPlural: dommages
+				Hit: "{0} dommag{^0:e;es}"
 				PreviousBest: Précédent meilleur résultat
 				ClaimRecord: Soyez le premier à établir un record du monde!
 				RecordHolder: Détenteur(s) du record
