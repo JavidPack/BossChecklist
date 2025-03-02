@@ -4,6 +4,6 @@ it-IT, 0/318, 0%, missing 318
 fr-FR, 317/318, 100%, missing 1
 es-ES, 80/318, 25%, missing 238
 ru-RU, 300/318, 94%, missing 18
-zh-Hans, 315/318, 99%, missing 3
+zh-Hans, 317/318, 100%, missing 1
 pt-BR, 61/318, 19%, missing 257
 pl-PL, 0/318, 0%, missing 318

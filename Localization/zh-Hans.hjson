@@ -1,4 +1,4 @@
-﻿Mods: {
+Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
@@ -84,12 +84,11 @@
 				Kills: 击杀次数
 				Deaths: 死亡次数
 				Total: 总计
-				HitPlural: 受击
 				Hours: "{0}h {1}m {2}s ({3}ms)"
 				Minutes: "{0}m {1}s ({2}ms)"
 				Seconds: "{0} secon{^0:d;ds} ({1}ms)"
 				NoHit: 无伤!
-				Hit: "{0} 受击"
+				// Hit: "{0} {^0:hit;hits}"
 				PreviousBest: 你以前的最佳纪录
 				ClaimRecord: 成为第一个打破世界纪录的人!
 				RecordHolder: 记录保持者
