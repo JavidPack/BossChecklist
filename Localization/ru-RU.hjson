@@ -2,314 +2,305 @@
 	BossChecklist: {
 		Log: {
 			Common: {
-				BossLog: Босс-журнал
-				Entry: Запись
-				Boss: босс
-				BossPlural: Боссы
-				MiniBoss: мини-босс
-				MiniBossPlural: Мини-боссы
-				Event: событие
-				EventPlural: События
-				Enabled: включён
-				Disabled: выключен
-				PartiallyEnabled: включён частично
+				// BossLog: Boss Log
+				// Entry: Entry
+				// Boss: Boss
+				// BossPlural: Bosses
+				// MiniBoss: Mini-boss
+				// MiniBossPlural: Mini-bosses
+				// Event: Event
+				// EventPlural: Events
+				// Enabled: enabled
+				// Disabled: disabled
+				// PartiallyEnabled: partially enabled
 			}
 
 			Tabs: {
-				ToggleFilters: Управление фильтрами
-				TableOfContents: Оглавление
-				Credits: Конец
-				NextEntry:
+				// ToggleFilters: Toggle Filters
+				// TableOfContents: Table of Contents
+				// Credits: Credits
+				/* NextEntry:
 					'''
-					След. {0}:
+					Next {0}:
 					{1}
-					'''
-				Records: Рекорды
-				SpawnInfo: Призыв
-				LootAndCollectibles: Коллекция
+					''' */
+				// Records: Records
+				// SpawnInfo: Spawn Info
+				// LootAndCollectibles: Loot & Collectibles
 			}
 
 			Indicator: {
-				ProgressionMode: Режим прогрессии {0}
-				ManualChecklist: Все записи необходимо помечать вручную
-				AutomaticChecklist: Чеклист будет автоматически помечать выполненные записи
-				OnlyBossContentEnabled: Доступен только контент с боссами
-				OnlyBossContentDisabled: Доступен весь контент
+				// ProgressionMode: Progression mode is {0}
+				// ManualChecklist: Entries must be manually checked off by the user
+				// AutomaticChecklist: The checklist will automatically check off entries
+				// OnlyBossContentEnabled: Only boss content is available to be displayed
+				// OnlyBossContentDisabled: All content is available to be displayed
 			}
 
 			TableOfContents: {
-				PreHardmode: Пре-хардмод
-				Hardmode: Хардмод
-				ProgressBarListMods: Нажмите, чтобы переключиться в режим списка модов
-				ProgressBarListTypes: Нажмите, чтобы переключиться в режим типа записей
-				AllLoot: Все возможные предметы с босса получены!
-				AllDropLoot: Все не коллекционные предметы босса получены!
-				AllCollectibles: Все коллекционные предметы босса получены!
+				// PreHardmode: Pre-Hardmode
+				// Hardmode: Hardmode
+				// ProgressBarListMods: Click to switch to Mod List mode
+				// ProgressBarListTypes: Click to switch to Entry Type mode
+				// AllLoot: All boss loot obtained!
+				// AllDropLoot: All non-collectible boss loot obtained!
+				// AllCollectibles: All boss collectibles obtained!
 
 				Filter: {
-					Show: "{0}: показаны"
-					Hide: "{0}: скрыты"
-					HideWhenCompleted: "{0}: будут скрыты после победы"
-					ToggleHiddenOpen: Открыть скрытый список
-					ToggleHiddenClose: Подтвердить и закрыть скрытый список
-					Disabled: Фильтр отключён из-за настройки 'Босс-журнал показывает только боссов'
+					// Show: "{0}: Shown"
+					// Hide: "{0}: Hidden"
+					// HideWhenCompleted: "{0}: Hidden when defeated"
+					// ToggleHiddenOpen: Open hidden list
+					// ToggleHiddenClose: Confirm & close hidden list
+					// Disabled: Filter disabled due to 'Only Show Boss Content' config
 				}
 			}
 
 			Credits: {
-				Devs: Соавторы
-				Mods: Зарегистрированные моды
-				Notice: "[Список загружённых модов]"
-				NoIcon: Иконка мода не найдена!
-				ModsEmpty: Ни один из включённых у вас модов не был зарегистрирован!
-				Register: Зарегистрируйте свой собственный мод!
-				Learn: Прочтите описание мода, чтобы узнать, как это сделать.
+				// Devs: Contributors
+				// Mods: Registered Mods
+				// Notice: "[List only contains loaded mods]"
+				// NoIcon: Mod icon not found!
+				// ModsEmpty: None of your loaded mods are registered!
+				// Register: Register your own mod!
+				// Learn: View the mod desciption to learn how
 			}
 
 			EntryPage: {
-				Defeated: Побеждён в мире {0}
-				Undefeated: Ещё не был побеждён в мире {0}
-				CopyKey: Нажмите, чтобы скопировать внутренний 'ключ босса' в буфер обмена
-				CopySource: Нажмите, чтобы скопировать внутренний 'ключ мода' в буфер обмена
-				ViewPage: Нажмите, чтобы перейти на страницу конкретной записи
-				NotImplemented: Эта страница недоступна. Мод либо не предоставил страницу для этой записи, либо неправильно её настроил.
-				LogFeaturesNotAvailable: Рекорды, информация о призыве и список добычи для этой страницы недоступны. Мод либо не предоставил достаточно информации для этого, либо неправильно её настроил.
+				// Defeated: Defeated in {0}
+				// Undefeated: Undefeated in {0}
+				// CopyKey: Click to copy internal 'boss key' to clipboard
+				// CopySource: Click to copy internal 'mod source' to clipboard
+				// ViewPage: Click to view page
+				// NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
+				// LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
 			}
 
 			Records: {
-				NewRecord: Вы побили свой рекорд!
-				NewWorldRecord: Вы побили рекорд этого мира!
-				NoRecord: Нет данных
-				Unchallenged: Не сражались
-				Kills: убийств
-				Deaths: смертей
-				Total: Всего
-				Hours: "{0}ч {1}м {2}с ({3}мс)"
-				Minutes: "{0}м {1}с ({2}мс)"
-				Seconds: "{0} секун{^0:да;ды;д} ({1}мс)"
-				NoHit: Без урона!
-				Hit: Получе{^0:н;но} {0} {^0:удар;удара;ударов}
-				PreviousBest: Пред. лучший результат
-				ClaimRecord: Станьте первым, кто установит рекорд в этом мире!
-				RecordHolder: Рекорды игроков
+				// NewRecord: New Personal Best!
+				// NewWorldRecord: New World Record!
+				// NoRecord: No record
+				// Unchallenged: Unchallenged
+				// Kills: kills
+				// Deaths: deaths
+				// Total: Total
+				// Hours: "{0}h {1}m {2}s ({3}ms)"
+				// Minutes: "{0}m {1}s ({2}ms)"
+				// Seconds: "{0} secon{^0:d;ds} ({1}ms)"
+				// NoHit: No hit!
+				// Hit: "{0} {^0:hit;hits}"
+				// PreviousBest: Your Previous Best
+				// ClaimRecord: Be the first to claim the world record!
+				// RecordHolder: Record Holder(s)
 
 				Category: {
-					PreviousAttempt: Последняя попытка
-					FirstVictory: Первая победа
-					PersonalBest: Личный рекорд
-					WorldRecord: Рекорды мира
-					Cycle: Категории рекордов
+					// PreviousAttempt: Previous Attempt
+					// FirstVictory: First Victory
+					// PersonalBest: Personal Best
+					// WorldRecord: World Records
+					// Cycle: Cycle record categories
 				}
 
 				Title: {
-					PreviousAttempt: Попытка:
-					FirstVictory: Время игры:
-					PersonalBest: Убийства/Смерти:
-					WorldRecord: Рекорд по У/С
-					Duration: Длительность битвы:
-					DurationWorld: Самая быстрая битва:
-					HitsTaken: Получено ударов:
-					HitsTakenWorld: Мин. кол-во ударов
+					// PreviousAttempt: Attempt
+					// FirstVictory: Play Time
+					// PersonalBest: Kill Death Ratio
+					// WorldRecord: Global KDR
+					// Duration: Fight Duration
+					// DurationWorld: Quickest Fight
+					// HitsTaken: Hits Received
+					// HitsTakenWorld: Lowest Hits Taken
 				}
 
 				Tooltip: {
-					Duration: Самая быстрая победа над этим боссом!
-					HitsTaken: Изо всех сил старайтесь избегать атак! Попробуйте победить этого босса, не получив урона!
-					PreviousAttempt: Количество попыток победить этого босса!
-					PersonalBest: Количество раз, когда вы убили этого босса, и количество раз, когда этот босс убил вас!
-					FirstVictory: Общее время, которое было наиграно вашим персонажем на момент первой победы над боссом!
-					WorldRecord: Статистика убийств и смертей всех игроков для этого босса!
+					// Duration: The quickest time this boss was defeated!
+					// HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
+					// PreviousAttempt: Total times you have encountered this boss!
+					// PersonalBest: Total times you killed this boss and total times this boss has killed you!
+					// FirstVictory: Total play time your character has been active, up until the first boss kill!
+					// WorldRecord: Global kills and deaths from all players for this boss!
 				}
 			}
 
 			SpawnInfo: {
-				NoInfo: Нет информации о призыве
-				RecipeFrom: Рецепт из: {0}
-				CycleRecipe: Альтернативные рецепты
-				Noncraftable: Этот предмет не создаётся
-				NoSpawnItem:
-					'''
-					{0} не имеет предмета
-					      для призыва
-					'''
-				ByHand: Вручную
+				// NoInfo: No info available
+				// RecipeFrom: Recipe from: {0}
+				// CycleRecipe: Cycle alternative recipes
+				// Noncraftable: This item is not craftable
+				// NoSpawnItem: This {0} has no spawn item
+				// ByHand: By Hand
 			}
 
 			LootAndCollection: {
-				MaskedItems: Сперва одержите победу над этой целью
-				ItemIsExpertOnly: Этот предмет доступен только в режиме эксперта
-				ItemIsMasterOnly: Этот предмет доступен только в режиме мастера
-				ItemIsLocked: Этот предмет имеет особые условия для разблокировки
-				Obtained: Этот предмет уже получен!
-				Researched: Этот предмет уже исследован!
+				// MaskedItems: Defeat this entry to view its loot and collectibles
+				// ItemIsExpertOnly: This item is only obtainable in Expert Mode
+				// ItemIsMasterOnly: This item is only obtainable in Master Mode
+				// ItemIsLocked: This item has special requirements to unlock
+				// Obtained: This item has been obtained!
+				// Researched: This item has been researched!
 			}
 
 			ProgressionMode: {
-				BeforeYouBegin: Прежде чем вы начнёте...
-				AskEnable: Хотите включить режим прогрессии?
-				SelectAnOption: Выберите один из вариантов:
-				SelectDisable:
+				// BeforeYouBegin: Before you begin...
+				// AskEnable: Do you want to enable the Progression Checklist?
+				// SelectAnOption: Please select an option below...
+				/* SelectDisable:
 					'''
-					Продолжить с выключенным режимом прогрессии
-					* Содержимое всех записей доступно сразу.
-					* Ничего не скрыто, никаких ограничений.
+					Continue with the progressive checklist disabled...
+					* All page info content is unlocked from the start
+					* Nothing hidden. No limits.
+					''' */
+				/* SelectEnable:
 					'''
-				SelectEnable:
+					Continue with the progressive checklist fully enabled...
+					* Page info content is locked for undefeated entries
+					* Portraits and names are masked
+					* Boss loot locked until entry defeation
+					* Next check enabled, reducing info limitations (recommended)
+					''' */
+				// SelectConfig: Close Boss Log and configure the progressive checklist...
+				// DisablePrompt: Don't show this prompt again
+				// Description: The Progressive Checklist will limit and hide entry content until the entry is defeated or marked as completed. If you are looking to do a blind play-through then you might want to consider enabling this feature. The Boss Log is disabled until you make a selection or reopen it with the prompt configuration disabled
+				/* IsEnabled:
 					'''
-					Продолжить с полностью включённым режимом прогрессии
-					* Содержимое всех записей закрыто для непобеждённых врагов.
-					* Имена и портреты скрыты.
-					* Информация о предметах открывается после победы.
-					* Включена подсказка о следующей цели, облегчающая прохождение (рекомендуется).
-					'''
-				SelectConfig: Закрыть Босс-журнал и настроить режим прогрессии под себя
-				DisablePrompt: Больше не показывать
-				Description:
-					'''
-					Режим прогрессии скрывает содержимое страниц о боссах, мини-боссах и событиях до тех пор, пока вы не победите их или не выполните определённые условия. Эта функция особенно полезна для игроков, которые хотят пройти игру 'вслепую', не зная заранее о всех боссах и их особенностях.
-
-					Босс-журнал будет недоступен, пока вы не выберете один из предложенных вариантов!
-					'''
-				IsEnabled:
-					'''
-					[i:888] Режим прогрессии полностью или частично включён!
-					Он скрывает некоторую информацию о боссах до тех пор, пока они не будут побеждены.
-					Чтобы отключить или настроить режим прогрессии, перейдите в:
-					Настройки > Конфигурация модов > Boss Checklist: Настройки Босс-журнала
-					и пролистайте вниз до настроек режима прогрессии.
-					'''
+					[i:888] The Progressive Checklist is fully or partially enabled!
+					This will mask some information about bosses until they have been defeated.
+					To disable or configure the progressive checklist go to:
+					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
+					and scroll down to the Progress Mode configs
+					''' */
 			}
 
 			HintTexts: {
-				MarkEntry: Нажмите ПКМ по записи, чтобы пометить её как выполненную
-				HideEntry: Нажмите ЛКМ по записи, чтобы скрыть её
-				ClearMarked: Удерживайте Alt и нажмите ПКМ по этой кнопке, чтобы очистить все помеченные записи
-				ClearHidden: Удерживайте Alt и нажмите ПКМ по этой кнопке, чтобы очистить все скрытые записи
-				ClearItems: Удерживайте Alt и нажмите ПКМ по этой кнопке, чтобы пометить все предметы как не полученные
-				RemoveItem: Удерживайте Alt и нажмите ПКМ по предмету, чтобы пометить его как не полученный
-				ClearAllRecords: Удерживайте Alt и нажмите ПКМ по этой кнопке, чтобы очистить все рекорды
-				ClearRecord: Удерживайте Alt и нажмите ПКМ по иконке рекорда, чтобы очистить этот рекорд
+				// MarkEntry: Right-click an entry to mark it as defeated
+				// HideEntry: Left-click an entry to hide it from the checklist
+				// ClearMarked: Hold ALT and right-click this button to clear all marked entries
+				// ClearHidden: Hold ALT and right-click this button to clear all hidden entries
+				// ClearItems: Hold ALT and right-click this button to mark the listed items as unobtained
+				// RemoveItem: Hold ALT and right-click an item to mark it as unobtained
+				// ClearAllRecords: Hold ALT and right-click this button to reset the list record values
+				// ClearRecord: Hold ALT and right-click the icon of a record to reset its value
 			}
 		}
 
 		Checklist: {
-			CelestialPillars: Небесные башни
-			ToggleCompletedTooltip: Показывать выполненное
-			ToggleMiniBossesTooltip: Показывать мини-боссов
-			ToggleEventsTooltip: Показывать события
-			ToggleShowHiddenBossesTooltip:
+			// CelestialPillars: Celestial Pillars
+			// ToggleCompletedTooltip: Toggle Completed
+			// ToggleMiniBossesTooltip: Toggle Mini Bosses
+			// ToggleEventsTooltip: Toggle Events
+			/* ToggleShowHiddenBossesTooltip:
 				'''
-				Показывать скрытых боссов
-				(Alt+ЛКМ, чтобы сбросить скрытых боссов)
-				(Alt+ЛКМ по боссу, чтобы скрыть его)
-				'''
+				Toggle Show Hidden Bosses
+				(Alt-Click to clear Hidden bosses)
+				(Alt-Click on boss to hide)
+				''' */
 		}
 
 		ChatMessages: {
 			Despawn: {
-				Generic: "{0} больше не преследует вас..."
-				Day: "{0} скрывается с восходом солнца..."
+				// Generic: "{0} is no longer after you..."
+				// Day: "{0} flees as the sun rises..."
 			}
 
 			Defeated: {
-				Generic: "{0} повержен(а)!"
-				GenericSkeletronHand: Рука Скелетрона повержена!
-				GenericMoonLordHead: Голова Лунного лорда повержена!
-				SkeletronHand: Рука {0}а сломана!
-				PrimeCannon: "{0} взорвалась!"
-				PrimeSaw: "{0} вышла из строя!"
-				PrimeVice: "{0} замкнулись!"
-				PrimeLaser: "{0} перегрелся!"
-				GolemFistLeft: "{0} уничтожен!"
-				GolemFistRight: "{0} уничтожен!"
-				GolemHead: "{0} отделилась от тела!"
-				MoonLordHead: Истинный глаз Ктулху вырвался из головы {0}!
-				MoonLordHand: Истинный глаз Ктулху вырывается из {0}!
-				Retinazer: "{0} побеждён!"
-				Spazmatism: "{0} побеждён!"
-				LunarTowerVortex: "{0} пала!"
-				LunarTowerStardust: "{0} пала!"
-				LunarTowerNebula: "{0} пала!"
-				LunarTowerSolar: "{0} пала!"
+				// Generic: "{0} is down!"
+				// GenericSkeletronHand: Skeletron's Hand is down!
+				// GenericMoonLordHead: Moon Lord's Head is down!
+				// SkeletronHand: A {0} hand has fractured!
+				// PrimeCannon: The {0} has exploded!
+				// PrimeSaw: The {0} has malfunctioned!
+				// PrimeVice: The {0} has collapsed!
+				// PrimeLaser: The {0} has overheated!
+				// GolemFistLeft: "{0} is destroyed!"
+				// GolemFistRight: "{0} is destroyed!"
+				// GolemHead: The {0} has detached from the body!
+				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
+				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
+				// Retinazer: "{0} has been defeated!"
+				// Spazmatism: "{0} has been defeated!"
+				// LunarTowerVortex: The {0} has fallen!
+				// LunarTowerStardust: The {0} has fallen!
+				// LunarTowerNebula: The {0} has fallen!
+				// LunarTowerSolar: The {0} has fallen!
 			}
 
 			Loss: {
-				Generic: "{0} убил всех игроков!"
-				KingSlime: "{0} величественно удаляется с поля боя..."
-				EyeofCthulhu: "{0} поспешно скрывается в ночном небе..."
-				EaterofWorlds: "{0} вновь погружается в недра земли..."
-				BrainofCthulhu: "{0} теряется в глубинах багрянца..."
-				QueenBee: "{0} возвращается в улей своей колонии..."
-				Skeletron: "{0} продолжает терзать старика..."
-				WallofFlesh: "{0} пересекает преисподнюю..."
-				QueenSlimeBoss: "{0} с грацией и блеском упрыгивает в неизвестность..."
-				TheTwins: "{0} продолжают свои наблюдения..."
-				TheDestroyer: "{0} отправляется в поисках нового мира для разрушения..."
-				SkeletronPrime: "{0} исчезает в поисках следующей жертвы..."
-				Plantera: "{0} возвращается к своему цветущему царству..."
-				Golem: "{0} отключается в недрах храма..."
-				HallowBoss: "{0} растворяется в священном сиянии..."
-				DukeFishron: "{0} возвращается в глубины океана..."
-				CultistBoss: "{0} возвращается к своему фанатичному обряду..."
-				MoonLord: "{0} исчезает за пределами реальности..."
+				// Generic: "{0} has killed every player!"
+				// KingSlime: "{0} leaves in triumph..."
+				// EyeofCthulhu: "{0} has disappeared into the night sky..."
+				// EaterofWorlds: "{0} burrows back underground..."
+				// BrainofCthulhu: "{0} vanishes into the pits of the crimson..."
+				// QueenBee: "{0} returns to her colony's nest..."
+				// Skeletron: "{0} continues to torture the Old Man..."
+				// WallofFlesh: "{0} has managed to cross the underworld..."
+				// QueenSlimeBoss: "{0} pompously bounces away..."
+				// TheTwins: "{0} continues its observations..."
+				// TheDestroyer: "{0} seeks for another world to devour..."
+				// SkeletronPrime: "{0} begins searching for a new victim..."
+				// Plantera: "{0} continues its rest within the jungle..."
+				// Golem: "{0} deactivates in the bowels of the temple..."
+				// HallowBoss: "{0} dissipates to hallow light..."
+				// DukeFishron: "{0} returns to the ocean depths..."
+				// CultistBoss: "{0} goes back to its devoted worship..."
+				// MoonLord: "{0} has left this realm..."
 			}
 
 			EventEnd: {
-				Generic: Событие '{0}' завершилось...
-				BloodMoon: Кровавая луна уходит за горизонт...
-				FrostMoon: Морозная луна тает, как солнце восходит...
-				PumpkinMoon: Жатва Тыквенной луны подошла к концу...
-				Eclipse: Солнечное затмение закончилось... до следующего раза...
+				// Generic: The {0} has ended...
+				// BloodMoon: The Blood Moon falls past the horizon...
+				// FrostMoon: The Frost Moon melts as the sun rises...
+				// PumpkinMoon: The Pumpkin Moon ends its harvest...
+				// Eclipse: The solar eclipse has ended... until next time...
 			}
 		}
 
 		BossSpawnInfo: {
-			Unknown: Условия для призыва неизвестны.
-			KingSlime: Используйте [i:560] в любой точке мира или убейте 150 слизней во время слизнепада.
-			EyeofCthulhu: Используйте [i:43] ночью или дождитесь, пока босс появится сам, с шансом 33%, если у любого игрока в мире больше 200 ед. здоровья.
-			EaterofWorlds: Используйте [i:70] или разрушьте 3 теневых сферы в разломах искажения молотом или взрывчаткой.
-			BrainofCthulhu: Используйте [i:1331] или разрушьте 3 багряных сердца в разломах багрянца молотом или взрывчаткой.
-			QueenBee: Используйте [i:1133] или разрушьте личинку в любом из пчелиных ульев, которые можно найти в подземных джунглях.
-			Skeletron: Посетите Темницу ночью и поговорите со стариком, или убейте портного, надев [i:1307].
-			Deerclops: Используйте [i:5120] в снежном биоме. В качестве альтернативы появляется естественным образом в полночь во время метели.
-			WallofFlesh: Призывается броском [i:267] в лаву преисподней. [c/FF0000:Убийство этого босса переведёт ваш мир в Хардмод!]
-			QueenSlimeBoss: Используйте [i:4988] в освящении, который можно найти в подземном освящении среди осколков кристаллов на жемчужных камнях и блоках розового льда.
-			TheTwins: 10% шанс случайного появления каждую ночь после разрушения первого алтаря, пока не будет побеждён один из механических боссов. В качестве альтернативы для призыва используйте [i:544] ночью.
-			TheDestroyer: 10% шанс случайного появления каждую ночь после разрушения первого алтаря, пока не будет побеждён один из механических боссов. В качестве альтернативы для призыва используйте [i:556] ночью.
-			SkeletronPrime: 10% шанс случайного появления каждую ночь после разрушения первого алтаря, пока не будет побеждён один из механических боссов. В качестве альтернативы для призыва используйте [i:557] ночью.
-			Plantera: Сломайте в джунглях бутон Плантеры, появляющийся после победы над 3 механическими боссами.
-			Golem: Используйте [i:1293] на алтаре яхщеров, находящемся в недрах храма джунглей.
-			HallowBoss: Убейте [i:4961] в освящении, которую можно найти на поверхности освящения между 19:30 и 00:00 после победы над Плантерой.
-			DD2Betsy: Появляется на последней волне события «Армия Древних» (ранг 3).
-			DukeFishron: Рыбачьте в океане, используя в качестве наживки [i:2673].
-			CultistBoss: Убейте 4 культистов у входа в Темницу, появляющихся после победы над Големом.
-			MoonLord: Используйте [i:3601] или уничтожьте 4 небесных башни.
-			MoonLord_Tremor: Используйте [i:3601] или уничтожьте 5 небесных башен. [c/FF0000:Убийство этого босса переведёт ваш мир в Тремод!]
-			BloodMoon: Дождитесь, пока событие произойдёт естественным образом ночью, когда у любого игрока в мире больше 100 ед. здоровья, и текущая фаза луны НЕ является новолунием. Событие длится до восхода солнца. В качестве альтернативы для призыва используйте [i:4271].
-			GoblinArmy: Дождитесь, пока событие произойдёт естественным образом с шансом 33% на рассвете, если хотя бы одна теневая сфера или багряное сердце было уничтожено, и у любого игрока в мире больше 200 ед. здоровья. В качестве альтернативы для призыва используйте [i:361].
-			OldOnesArmy: После нахождения трактирщика купите и активируйте [i:3816] с помощью [i:3828]. Событие длится до тех пор, пока все волны не будут зачищены.
-			FrostLegion: Используйте [i:602], который можно найти в рождественский сезон, открыв [i:1869].
-			Eclipse: Дождитесь, пока событие произойдёт естественным образом с шансом 5% на рассвете после убийства любого механического босса. В качестве альтернативы для призыва используйте [i:2767]. Событие длится до наступления ночи.
-			PirateInvasion: Дождитесь, пока событие произойдёт естественным образом, когда хотя бы один алтарь будет уничтожен. В качестве альтернативы для призыва используйте [i:1315].
-			PumpkinMoon: Используйте [i:1844] ночью. Событие длится до восхода солнца.
-			FrostMoon: Используйте [i:1958] ночью. Событие длится до восхода солнца.
-			MartianMadness: Найдите марсианский зонд и позвольте ему просканировать вас и сбежать после победы над Големом.
-			LunarEvent: Победите Культиста-лунатика, который появляется за пределами Темницы. Каждая башня появляется в своей области мира. Событие длится до тех пор, пока не будут уничтожены все 4 башни.
-			Pumpking: Появляется на 7-й волне события «Тыквенная луна». Начните событие с помощью [i:1844].
-			MourningWood: Появляется на 4-й волне события «Тыквенная луна». Начните событие с помощью [i:1844].
-			IceQueen: Появляется на 11-й волне события «Морозная луна». Начните событие с помощью [i:1958].
-			SantaNK1: Появляется на 7-й волне события «Морозная луна». Начните событие с помощью [i:1958].
-			Everscream: Появляется на 4-й волне события «Морозная луна». Начните событие с помощью [i:1958].
-			PirateShip: Иногда появляется во время события «Пиратское вторжение». Начните событие с помощью [i:1315].
-			DD2OgreT3: Появляется на 7-й волне (ранг 2), а также на 4-й и 6-й волнах (ранг 3) в ходе события «Армия Древних». Начните событие с помощью [i:3816] и [i:3828].
-			DD2DarkMageT3: Появляется на 5-й волне (ранг 1), а также на 5-й и 6-й волнах (ранг 3) в ходе события «Армия Древних». Начните событие с помощью [i:3816] и [i:3828].
-			MartianSaucer: Появляется случайным образом во время события «Марсианское безумие». Чтобы запустить событие, позвольте инопланетному зонду вас просканировать.
-			TorchGod: Разместите 101 факел близко друг к другу в подземелье. Событие начнётся автоматически, как только вы установите последний факел.
+			// Unknown: Spawn conditions unknown
+			// KingSlime: Use [i:560], randomly in outer 3rds of map, or kill 150 slimes during slime rain.
+			// EyeofCthulhu: Use [i:43] at night, or 1/3 chance nightly if over 200 HP.
+			// EaterofWorlds: Use [i:70] or break 3 Shadow Orbs in a corruption chasm.
+			// BrainofCthulhu: Use [i:1331] or break 3 Crimson Hearts in a crimson chasm.
+			// QueenBee: Use [i:1133] or break a Bee Hive's Larva found in the jungle.
+			// Skeletron: Visit the dungeon and talk to the old man at night or kill the Clothier with [i:1307] at night.
+			// Deerclops: Use [i:5120] in a Snow biome. Spawns naturally at midnight during a Blizzard.
+			// WallofFlesh: Spawn by throwing [i:267] or the Guide into lava in the Underworld. [c/FF0000:Starts Hardmode!]
+			// QueenSlimeBoss: Use [i:4988] in the Hallow biome, which can be found in the Underground Hallow among Crystal Shards growing on Pearlstone and Pink Ice blocks.
+			// TheTwins: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Alternatively, Use [i:544] at night to spawn.
+			// TheDestroyer: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:556] at night to spawn.
+			// SkeletronPrime: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:557] at night to spawn.
+			// Plantera: Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated.
+			// Golem: Use [i:1293] on Lihzahrd Altar, found deep in the Jungle Temple.
+			// HallowBoss: Kill [i:4961] in the Hallow biome, which can be found on the Hallow surface between 7:30pm and 12:00am after Plantera has been defeated.
+			// DD2Betsy: Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).
+			// DukeFishron: Fish in ocean using the [i:2673] as bait, which can be caught in an underground Glowing Mushroom biome during hardmode.
+			// CultistBoss: Kill the 4 cultists outside the dungeon after defeating Golem.
+			// MoonLord: Use [i:3601] or defeat all 4 pillars.
+			// MoonLord_Tremor: Use [i:3601] or defeat all 5 pillars. [c/FF0000:Starts Tremode!]
+			// BloodMoon: Occurs randomly at the start of night or can be summoned with a [i:4271] which can be dropped by any blood moon enemy. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.
+			// GoblinArmy: Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:361]. Lasts until enough enemies are defeated.
+			// OldOnesArmy: After finding the Tavernkeep, purchase and activate [i:3816] with [i:3828]. Lasts until all waves are cleared.
+			// FrostLegion: Use a [i:602], which can be found by opening [i:1869], during the Christmas season. Lasts until enough enemies are defeated.
+			// Eclipse: Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:2767]. Lasts until nightfall.
+			// PirateInvasion: Occurs randomly once at least one altar has been destroyed. Can be summoned with a [i:1315], which can be obtained from killing any enemy in the Ocean biome during Hardmode. Lasts until enough enemies are defeated.
+			// PumpkinMoon: Summoned with a [i:1844] at night. Lasts until sunrise.
+			// FrostMoon: Summoned with a [i:1958] at night. Lasts until sunrise.
+			// MartianMadness: After defeating Golem, find a Martian Probe above ground and allow it to find you and escape. Lasts until enough enemies are defeated.
+			// LunarEvent: Defeat the Lunatic Cultist found outside the dungeon. Each pillar spawns in its own area within the world. Lasts until all 4 pillars are destroyed.
+			// Pumpking: Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
+			// MourningWood: Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
+			// IceQueen: Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:1958]
+			// SantaNK1: Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:1958]
+			// Everscream: Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:1958]
+			// PirateShip: Occasionally appears during a Pirate Invasion! Start Pirate Invasion with [i:1315]
+			// DD2OgreT3: Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
+			// DD2DarkMageT3: Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
+			// MartianSaucer: Occasionally appears during Martian Madness! Start Martian Madness by being detected by an alien probe.
+			// TorchGod: Place 101 torches while underground. The event starts once the last torch is placed.
 		}
 
 		Keybinds: {
-			ToggleChecklist.DisplayName: Открыть Босс-список
-			ToggleLog.DisplayName: Открыть Босс-журнал
+			// ToggleChecklist.DisplayName: Toggle Boss Checklist
+			// ToggleLog.DisplayName: Toggle Boss Log
 		}
 
 		LogMessage: {
@@ -339,355 +330,357 @@
 
 		Configs: {
 			Common: {
-				InvalidChange: Вы не можете изменить настройку '{0}', пока {1} активен!
-				HostChange: Только хост может изменить эту настройку.
+				// InvalidChange: You cannot change the '{0}' config while {1} is active!
+				// HostChange: Only the host is allowed to change this config.
 			}
 
 			BossLogConfiguration: {
-				DisplayName: Настройки Босс-журнала
+				// DisplayName: Boss Log Customization
 
 				Headers: {
-					BossLogUI: "[i:149] [c/ffeb6e:Интерфейс Босс-журнала]"
-					BossLogChecklist: "[i:903] [c/ffeb6e:Отметки Босс-журнала]"
-					BlindMode: "[i:888] [c/ffeb6e:Режим прогрессии - победите боссов, чтобы открыть их запись!]"
+					// BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
+					// BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
+					// BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
 				}
 
 				BossLogColor: {
-					Label: Цвет Босс-журнала
-					Tooltip: Выберите цвет для вашего Босс-журнала!
+					// Label: Boss Log Color
+					// Tooltip: Choose the color of your Boss Log!
 				}
 
 				BossLogPos: {
-					Label: Положение кнопки Босс-журнала
-					Tooltip:
+					// Label: Open Log Button Position
+					/* Tooltip:
 						'''
-						Удерживайте ПКМ, наведя курсор на кнопку Боссс-журнала, чтобы переместить её в любое место на экране!
-						Положение кнопки измеряется относительно нижнего правого угла экрана.
-						'''
+						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
+						Position is measured from bottom right corner of screen.
+						''' */
 				}
 
 				ShowInteractionTooltips: {
-					Label: Отображение подсказок взаимодействия
-					Tooltip:
+					// Label: Enable Interactions Tab
+					/* Tooltip:
 						'''
-						Если эта настройка включена, отображается небольшая вкладка, которая показывает информацию об альтернативных способах взаимодействия с текущей страницей.
-						Примеры: ПКМ по записи в оглавлении для её ручной отметки как выполненной.
-						'''
+						When enabled, a small tab can be hovered over for an explanation on how to use the alternative interactions of the current page.
+						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
+						''' */
 				}
 
 				Debug: {
-					Label: "[i:3625] [c/ffeb6e:Инструменты отладки для разработчиков] [i:3619]"
-					Tooltip: ""
+					// Label: "[i:3625] [c/ffeb6e:Debug Tools for Mod Developers] [i:3619]"
+					// Tooltip: ""
 				}
 
 				AutomaticChecklist: {
-					Label: Автоматический чеклист
-					Tooltip:
+					// Label: Automatic Checklist
+					/* Tooltip:
 						'''
-						Записи будут автоматически помечаться как выполненные после победы над соответствующими боссами.
-						Если настройка отключена, пользователю потребуется помечать записи вручную.
-						Независимо от настроек автоматической отметки, записи можно помечать вручную, нажав ПКМ по их названию.
-						'''
+						Entries will be marked automatically when defeated. Disabling requires the user to manually check off entries.
+						Whether enabled or disabled, you can manually mark entries using right-click on their name.
+						''' */
 				}
 
 				ProgressiveChecklist: {
-					Label: Прогрессивный чеклист
-					Tooltip: Скрывает контент, пока не будет найдена или выполнена соответствующая запись.
+					// Label: Progressive Checklist
+					// Tooltip: Hides content until the entry is encountered or beaten.
 				}
 
 				ProgressionPrompt: {
-					Label: Отключить предупреждение о режиме прогрессии
-					Tooltip: Если настройка включена, предупреждение о режиме прогрессии не будет отображаться для новых персонажей.
+					// Label: Disable Progressive Checklist prompt
+					// Tooltip: While enabled, this will prevent the prompt from appearing for newly-created characters.
 				}
 
 				HideUnavailable: {
-					Label: Скрыть недоступных боссов
-					Tooltip:
+					// Label: Hide unavailable bosses
+					/* Tooltip:
 						'''
-						Если эта настройка включена, недоступные боссы будут скрыты из оглавления Босс-журнала.
-						Например, Морозный легион не отображается до наступления Рождества.
-						'''
+						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
+						Ex. Frost Legion while it is not Xmas.
+						''' */
 				}
 
 				HideUnsupported: {
-					Label: Скрыть неподдерживаемых боссов
-					Tooltip: Если эта настройка включена, боссы, которые ещё не были полностью интегрированы, будут удалены из оглавления Босс-журнала.
+					// Label: Hide unsupported bosses
+					// Tooltip: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
 				}
 
 				OnlyBosses: {
-					Label: Показывать только боссов в Босс-журнале
-					Tooltip:
+					// Label: Boss Log only shows boss content
+					/* Tooltip:
 						'''
-						Если эта настройка включена, в чеклисте и навигации будут отображаться только записи о боссах.
-						Примечание: Эта настройка имеет приоритет над тремя фильтрами ниже.
-						'''
+						If enabled, the checklist and page navigation will only give access boss entries.
+						Note: Filter configs below will be ignored when enabled.
+						''' */
 				}
 
 				FilterBosses: {
-					Label: Боссы в журнале
-					Tooltip: ""
+					// Label: Filter bosses in list
+					// Tooltip: ""
 				}
 
 				FilterMiniBosses: {
-					Label: Мини-боссы в журнале
-					Tooltip: ""
+					// Label: Filter mini bosses in list
+					// Tooltip: ""
 				}
 
 				FilterEvents: {
-					Label: События в журнале
-					Tooltip: ""
+					// Label: Filter events in list
+					// Tooltip: ""
 				}
 
 				ColoredBossText: {
-					Label: Цветной текст боссов
-					Tooltip:
+					// Label: Colored Boss Text
+					/* Tooltip:
 						'''
-						Текст босса в оглавлении будет зелёным, если он побеждён, и красным, если нет.
-						Если включена настройка «Отметка для следующей по списку записи», следующий босс будет выделен жёлтым цветом.
-						'''
+						The boss text in the table of contents will be green when defeated and red when not.
+						If next check is enabled, the next boss will be yellow.
+						''' */
 				}
 
 				SelectedCheckmarkType: {
-					Label: Тип отметки в чеклисте
-					Tooltip: ""
+					// Label: Checklist Marking Type
+					// Tooltip: ""
 				}
 
 				DrawNextMark: {
-					Label: Отметка следующей цели
-					Tooltip: Отмечает кружком запись, указывающий на следующего непобеждённого босса, с которым предстоит сразиться.
+					// Label: Next Boss Check
+					// Tooltip: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
 				}
 
 				LootChecklist: {
-					Label: Отслеживание добычи/коллекции
-					Tooltip: В оглавлении будет отмечаться, собраны ли все доступные предметы с босса.
+					// Label: Enable loot/collectible checklist
+					// Tooltip: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
 				}
 
 				CheckDroppedLoot: {
-					Label: Учитывать только выпадающие предметы
-					Tooltip: Предметы, которые не выпадают напрямую (например, музыкальные шкатулки), не будут учитываться при проверке добычи.
+					// Label: Only check droppable loot
+					// Tooltip: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
 				}
 
 				EnableProgressionMode: {
-					Label: Включить режим прогрессии
-					Tooltip: ""
+					// Label: Enable Progression Mode
+					// Tooltip: ""
 				}
 
 				DisableProgressionMode: {
-					Label: Отключить режим прогрессии
-					Tooltip: ""
+					// Label: Disable Progression Mode
+					// Tooltip: ""
 				}
 
 				MaskTextures: {
-					Label: Скрыть текстуры до победы над целью
-					Tooltip: ""
+					// Label: Hide textures until entry is defeated
+					// Tooltip: ""
 				}
 
 				MaskNames: {
-					Label: Скрыть имена до победы над целью
-					Tooltip: ""
+					// Label: Hide names until entry is defeated
+					// Tooltip: ""
 				}
 
 				UnmaskNextCheck: {
-					Label: Показывать имя следующей цели для битвы
-					Tooltip: Для работы этой настройки необходимо включить «Проверка следующего босса» и «Скрыть имена до победы над боссом».
+					// Label: Show the name of the next entry to fight
+					// Tooltip: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
 				}
 
 				MaskBossLoot: {
-					Label: Скрыть выпадаемые предметы босса до победы
-					Tooltip: ""
+					// Label: Hide boss drops until entry is defeated
+					// Tooltip: ""
 				}
 
 				MaskHardMode: {
-					Label: Скрыть контент Хардмода до его начала
-					Tooltip: Скрывает ВЕСЬ контент, заменяя все выбранные вами настройки выше.
+					// Label: Hide hardmode content until in hardmode
+					// Tooltip: Hides ALL content, overriding the options you have toggled above.
 				}
 
 				ShowProgressBars: {
-					Label: Отображать шкалу прогресса
-					Tooltip: При выключении шкала прогресса в нижней части журнала отображаться не будет.
+					// Label: Show Progress Bars
+					// Tooltip: When disabled, the total progress bars at the bottom of the table of contents will not show.
 				}
 			}
 
 			DebugTools: {
-				Tooltip: ""
+				// Tooltip: ""
 
 				ModCallLogVerbose: {
-					Label: Подробный журнал Mod.Call
-					Tooltip: Если настройка включена, в логах будут отображаться все боссы, добавленные в Boss Checklist в консоли сервера.
+					// Label: Mod.Call Log Verbose
+					/* Tooltip:
+						'''
+						If true, logs will display more information on entry data creation within tModLoader logs.
+						Invalid or incorrect usage of mod calls are displayed regardless of setting.
+						''' */
 				}
 
 				DisableAutoLocalization: {
-					Label: Отключение автоматической локализации
-					Tooltip:
+					// Label: Disable Auto Localization
+					/* Tooltip:
 						'''
-						BossChecklist будет автоматически обнаруживать устаревшие вызовы и
-						создавать локализации для представленных LocalizedText, которые требуются для новых вызовов.
-						Новые вызовы не зависят от этих локализаций, но по умолчанию будут использовать их, если передано значение null.
-						Установите значение ВКЛ, чтобы запретить BossChecklist создавать новые локализации автоматически.
-						'''
+						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
+						The new calls do not require these localizations but will default to them if null is passed.
+						Set to true to prevent new localizations from being created by BossChecklist.
+						''' */
 				}
 
 				EnabledResetOptions: {
-					Label: Влючение настройки сброса данных
-					Tooltip:
+					// Label: Enable Reset Data Options
+					/* Tooltip:
 						'''
-						Если эта настройка включена, вы можете очищать или сбрасывать определённые данные в Босс-журнале.
-						Сюда входят: очистка скрытых записей, очистка помеченных записей, сброс списка добычи и сброс рекордов.
-						[c/FF0000:Для корректного функционирования этой настройки необходимо включить 'Отображение подсказки по взаимодействию'.]
-						'''
+						When enabled, your are able to clear or reset certain data within the Boss Log.
+						Includes: Clearing hidden entries, clearing marked entries, clearing loot checklist, and resetting records.
+						[c/FF0000:The 'Enable Interactions Tab' config is required in order to use this config.]
+						''' */
 				}
 
 				ShowProgressionValue: {
-					Label: Отображение значения прогрессии
-					Tooltip:
+					// Label: Access Progression Values
+					/* Tooltip:
 						'''
-						Отображает значение прогрессии при наведении на запись в оглавлении и при просмотре страницы записи.
-						Значение прогрессии определяет порядок записей в чеклисте.
-						'''
+						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
+						The progression value is what determines how entries are ordered in the checklist.
+						''' */
 				}
 
 				AccessInternalNames: {
-					Label: Доступ к ключам записи
-					Tooltip:
+					// Label: Access Entry Keys
+					/* Tooltip:
 						'''
-						Добавляет кнопку на каждой странице записи, которая отображает и копирует ключ записи в буфер обмена.
-						Полезно для разработчиков модов, создающих контент, взаимодействующий с другими модами.
-						'''
+						Adds a button on each entry page that displays and copies the Entry Key to the in-game clipboard.
+						Useful for mod developers making cross-mod content.
+						''' */
 				}
 
 				ShowCollectionType: {
-					Label: Отображение автоматически обнаруженного типа коллекции
-					Tooltip: Предметы из коллекции будут помечены меткой с автоматически определённым типом коллекции.
+					// Label: Show Auto-detected Collectible Type
+					// Tooltip: Boss collectible itemslots will be labeled with the assigned collectible type.
 				}
 
 				InactiveBossCheck: {
-					Label: Проверка неактивного босса
-					Tooltip:
+					// Label: Inactive Boss Check
+					/* Tooltip:
 						'''
-						Если эта настройка включена, в чате будет отображаться сообщение о начале подсчёта рекордов, если включено «Отслеживание рекордов».
-						Это также должно отображать сообщение в чате, когда появляется сообщение об исчезновении, если включено «Сообщение об исчезновении босса».
-						Эти сообщения должны появляться при победе над боссом или при его исчезновении, соответственно.
-						'''
+						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
+						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
+						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
+						''' */
 				}
 			}
 
 			FeatureConfiguration: {
-				DisplayName: Другие возможности
+				// DisplayName: Other features
 
 				Headers: {
-					BossRadar: "[i:3084] [c/ffeb6e:Босс-радар]"
-					ChatMessages: "[i:3037] [c/ffeb6e:Сообщения в чате]"
-					ItemMapDetection: "[i:893] [c/ffeb6e:Отображение предметов предметов на карте]"
-					BossRecords: "[i:3095] [c/ffeb6e:Босс-рекорды]"
+					// BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
+					// ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
+					// ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
+					// BossRecords: "[i:3095] [c/ffeb6e:Boss Records]"
 				}
 
 				RecordTrackingEnabled: {
-					Label: Отслеживание рекордов боссов
-					Tooltip: Если эта настройка включена, статистика ваших боёв с боссами будет сохраняться в рекордах.
+					// Label: Enable Boss Record Tracking
+					// Tooltip: When enabled, fight stats will be tracked for records.
 				}
 
 				AllowNewRecords: {
-					Label: Разрешить установку новых рекордов
-					Tooltip:
+					// Label: Allow New Records
+					/* Tooltip:
 						'''
-						Если эта настройка выключена, будет сохраняться только последняя попытка.
-						Первая победа и лучший личный рекорд не смогут быть перезаписаны.
-						'''
+						When disabled, only your previous attempt is recorded.
+						First victory and personal best records will not be overwritten.
+						''' */
 				}
 
 				NewRecordLogGlow: {
-					Label: Свечение новых рекордов
-					Tooltip:
+					// Label: Enable New Record Log Glow
+					/* Tooltip:
 						'''
-						Если эта настройка включена, при установлении нового рекорда появится радужное свечение вокруг:
-						- Кнопки Босс-журнала
-						- Названия соответствующей записи в оглавлении
-						'''
+						When enabled, setting a new record will put a rainbow glow on the following:
+						- Boss Log button
+						- Table of Contents entry name
+						''' */
 				}
 
 				TimeValueFormat: {
-					Label: Формат отображения времени
-					Tooltip:
+					// Label: Time Value Format
+					/* Tooltip:
 						'''
-						Стандартный: [0:00:00.000]
-						Простой: [0ч 0м 00с 0мс]
-						'''
+						Standard: [0:00:00.000]
+						Simple: [0h 0m 0s 0ms]
+						''' */
 				}
 
 				DisplayRecordTracking: {
-					Label: Значения отслеживания рекордов
-					Tooltip:
+					// Label: Display Record Tracker Values
+					/* Tooltip:
 						'''
-						Если эта настройка включена, во время битвы с боссом будут отображаться и обновляться данные об отслеживании рекордов.
-						Обратите внимание: данная функция доступна только в одиночной игре и не работает в мультиплеере.
-						'''
+						When enabled, record tracking values are shown and updated during a boss fight.
+						Note: Strictly for singleplayer, currently. Does not work in multiplayer.
+						''' */
 				}
 
 				DespawnMessageType: {
-					Label: Исчезновение босса
-					Tooltip:
+					// Label: Boss Despawn Annoucements
+					/* Tooltip:
 						'''
-						При исчезновении босса будет отправляться сообщение в чат.
-						Если эта настройка включена, выберите тип сообщений: стандартные или уникальные.
-						'''
+						Despawn messages will appear in chat when a boss becomes inactive.
+						If enabled, choose between generic or unique messages.
+						''' */
 				}
 
 				LimbMessages: {
-					Label: Поражение частей боссов
-					Tooltip:
+					// Label: Non-Boss Defeated Annoucements
+					/* Tooltip:
 						'''
-						При уничтожении важной части босса будет отправляться сообщение в чат.
-						К ним относятся: Руки Скелетрона, Ретиназер/Спазматизм, Небесные башни и т. д.
-						'''
+						Messages will appear in chat when an important component of an entry is defeated.
+						Examples include: Skeletron's Hands, Retinazor/Spazmatism, the Celestial Pillars, etc.
+						''' */
 				}
 
 				MoonMessages: {
-					Label: Окончание лунного события
-					Tooltip:
+					// Label: Moon Event Ending Annoucements
+					/* Tooltip:
 						'''
-						При завершении ванильного лунного события будет отправляться сообщение в чат.
-						Лунные события включают: Кровавую луну, Солнечное затмение, Тыквенную луну и Морозную луну.
-						'''
+						Messages will appear in chat when a vanilla moon event has ended.
+						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon.
+						''' */
 				}
 
 				TimerSounds: {
-					Label: Звуки таймера возрождения
-					Tooltip: Если эта настройка включена, последние 3 секунды вашего времени возрождения будут сопровождаться звуковыми сигналами.
+					// Label: Respawn Timer Sounds
+					// Tooltip: If enabled, the last 3 seconds of your respawn time will have sound indicators.
 				}
 
 				TreasureBagsOnMap: {
-					Label: Отображение мешков с сокровищами на карте
-					Tooltip: ""
+					// Label: Treasure bags display on the map
+					// Tooltip: ""
 				}
 
 				FragmentsOnMap: {
-					Label: Отображение фрагментов Небесных башен на карте
-					Tooltip: ""
+					// Label: Fragments display on the map
+					// Tooltip: ""
 				}
 
 				ScalesOnMap: {
-					Label: Отображение теневых чешуек и образцов ткани на карте
-					Tooltip: ""
+					// Label: Shadow Scales and Tissue Samples display on the map
+					// Tooltip: ""
 				}
 
 				EnableBossRadar: {
-					Label: Включить Босс-радар
-					Tooltip: ""
+					// Label: Enable Boss Radar
+					// Tooltip: ""
 				}
 
 				RadarMiniBosses: {
-					Label: Белый список мини-боссов
-					Tooltip: Примечание: Эта функция работает корректно только с мини-боссами, у которых есть иконка на карте.
+					// Label: Whitelist mini bosses
+					// Tooltip: Note: This only works properly with mini bosses that have head icons.
 				}
 
 				RadarOpacity: {
-					Label: Прозрачность Босс-радара
-					Tooltip: Настройка прозрачности иконки радара.
+					// Label: Radar Opacity
+					// Tooltip: Adjust how transparent the radar's icon will be.
 				}
 
 				RadarBlacklist: {
-					Label: Чёрный список Босс-радара
-					Tooltip: На НИПов из чёрного списка не будет указывать радар.
+					// Label: Radar Blacklist
+					// Tooltip: The selected NPCs will not be tracked by the radar.
 				}
 			}
 		}
