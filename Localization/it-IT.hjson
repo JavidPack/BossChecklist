@@ -84,9 +84,11 @@ Mods: {
 				// Kills: kills
 				// Deaths: deaths
 				// Total: Total
+				// Hours: "{0}h {1}m {2}s ({3}ms)"
+				// Minutes: "{0}m {1}s ({2}ms)"
+				// Seconds: "{0} secon{^0:d;ds} ({1}ms)"
 				// NoHit: No hit!
-				// Hit: hit
-				// HitPlural: hits
+				// Hit: "{0} {^0:hit;hits}"
 				// PreviousBest: Your Previous Best
 				// ClaimRecord: Be the first to claim the world record!
 				// RecordHolder: Record Holder(s)
