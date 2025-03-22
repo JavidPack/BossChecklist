@@ -853,118 +853,70 @@ namespace BossChecklist.UIElements
 							else if (entry.type == EntryType.Event) {
 								int offset = 25;
 								int offsetY = 64;
-								int rowCount = 0;
-								int bannerCount = 0;
-								const int bannersPerRow = 12;
-								List<int> bannerTypes = new List<int>();
+								int col = 0;
+								int row = 0;
+								const int maxBannersPerRow = 12;
 
-								foreach (int npcID in entry.npcIDs) {
-									if (rowCount == 3)
+								foreach (int bannerID in LogUI.Banners) {
+									int npcID = Item.BannerToNPC(bannerID);
+									int bannerItem = Item.BannerToItem(bannerID);
+
+									if (bannerID <= 0 || bannerItem <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItem, out Item item) || item?.createTile <= -1)
+										continue; // a banner is not assigned or is invalid
+
+									if (NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
+										continue; // skip over excluded npcs
+
+									bool isModNPC = npcID >= NPCID.Count;
+									int bannerTile = isModNPC ? item.createTile : TileID.Banners;
+									int bannerPlaceStyle = isModNPC ? item.placeStyle : bannerID + 21;
+									Asset<Texture2D> banner = TextureAssets.Tile[bannerTile];
+									Main.instance.LoadTiles(bannerTile);
+
+									bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
+									Color bannerColor = reachedKillCount ? Color.White : masked ? Color.Black : BossLogUI.faded;
+
+									if (banner is null)
+										continue; // no texture given to draw
+
+									/// Code adapted from TileObject.DrawPreview
+									var tileData = TileObjectData.GetTileData(bannerTile, bannerPlaceStyle);
+									int styleColumn = tileData.CalculatePlacementStyle(bannerPlaceStyle, 0, 0); // adjust for StyleMultiplier
+									int styleRow = 0;
+									//int num3 = tileData.DrawYOffset;
+									if (tileData.StyleWrapLimit > 0) {
+										styleRow = styleColumn / tileData.StyleWrapLimit * tileData.StyleLineSkip; // row quotient
+										styleColumn %= tileData.StyleWrapLimit; // remainder
+									}
+									int x = tileData.StyleHorizontal ? tileData.CoordinateFullWidth * styleColumn : tileData.CoordinateFullWidth * styleRow;
+									int y = tileData.StyleHorizontal ? tileData.CoordinateFullHeight * styleRow : tileData.CoordinateFullHeight * styleColumn;
+									int[] heights = tileData.CoordinateHeights;
+									int heightOffSet = 0;
+									int heightOffSetTexture = 0;
+
+									for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
+										Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (offset * (col % maxBannersPerRow)), pageRect.Y + 185 + heightOffSet + (offsetY * row), 16, 16);
+										Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
+										Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
+										heightOffSet += heights[j];
+										heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
+
+										if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
+											string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
+											string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
+											if (!reachedKillCount) {
+												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
+											}
+											BossUISystem.Instance.UIHoverText = npcName + killcount;
+										}
+									}
+
+									col++; // increase banner count after banner is fully drawn
+									if (col % maxBannersPerRow == 0)
+										row++; // if banners per row has been reached, increase row count
+
+									if (row == 3)
 										break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
-
-									if (npcID < NPCID.Count) {
-										int init = Item.NPCtoBanner(npcID) + 21;
-										if (init <= 21)
-											continue;
-
-										Main.instance.LoadNPC(npcID);
-										Main.instance.LoadTiles(TileID.Banners);
-										Asset<Texture2D> banner = TextureAssets.Tile[TileID.Banners];
-
-										int jump = 0;
-										if (init >= 222) {
-											jump = 6;
-											init -= 222;
-										}
-										else if (init >= 111) {
-											jump = 3;
-											init -= 111;
-										}
-
-										int bannerID = Item.NPCtoBanner(npcID);
-										int bannerItem = Item.BannerToItem(bannerID);
-										bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
-										Color bannerColor = reachedKillCount ? Color.White : masked ? Color.Black : BossLogUI.faded;
-										if (bannerID <= 0 || bannerTypes.Contains(bannerID) || NPCID.Sets.PositiveNPCTypesExcludedFromDeathTally[NPCID.FromNetId(npcID)])
-											continue;
-
-										for (int j = 0; j < 3; j++) {
-											Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (offset * (bannerCount % bannersPerRow)), pageRect.Y + 185 + (16 * j) + (offsetY * rowCount), 16, 16);
-											Rectangle rect = new Rectangle(init * 18, (jump * 18) + (j * 18), 16, 16);
-											spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
-
-											if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
-												string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
-												string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
-												if (!reachedKillCount) {
-													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
-												}
-												BossUISystem.Instance.UIHoverText = npcName + killcount;
-											}
-										}
-
-										bannerTypes.Add(bannerID);
-										bannerCount++; // increase banner count after banner is fully drawn
-										if (bannerCount % bannersPerRow == 0)
-											rowCount++; // if banners per row has been reached, increase row count
-									}
-									else { // Its a modded NPC
-										Main.instance.LoadNPC(npcID);
-
-										int bannerItemID = NPCLoader.GetNPC(npcID).BannerItem;
-										if (bannerItemID <= 0 || !ContentSamples.ItemsByType.TryGetValue(bannerItemID, out Item item))
-											continue; // a banner is not assigned or is invalid
-
-										if (item.createTile <= -1)
-											continue; // item does not create a tile to draw
-
-										Main.instance.LoadTiles(item.createTile);
-										Asset<Texture2D> banner = TextureAssets.Tile[item.createTile];
-
-										// Code adapted from TileObject.DrawPreview
-										var tileData = TileObjectData.GetTileData(item.createTile, item.placeStyle);
-										int styleColumn = tileData.CalculatePlacementStyle(item.placeStyle, 0, 0); // adjust for StyleMultiplier
-										int styleRow = 0;
-										//int num3 = tileData.DrawYOffset;
-										if (tileData.StyleWrapLimit > 0) {
-											styleRow = styleColumn / tileData.StyleWrapLimit * tileData.StyleLineSkip; // row quotient
-											styleColumn %= tileData.StyleWrapLimit; // remainder
-										}
-
-										int x = tileData.StyleHorizontal ? tileData.CoordinateFullWidth * styleColumn : tileData.CoordinateFullWidth * styleRow;
-										int y = tileData.StyleHorizontal ? tileData.CoordinateFullHeight * styleRow : tileData.CoordinateFullHeight * styleColumn;
-
-										int bannerID = NPCLoader.GetNPC(npcID).Banner;
-										int bannerItem = NPCLoader.GetNPC(npcID).BannerItem;
-										string source = NPCLoader.GetNPC(npcID).Mod.DisplayName;
-										bool reachedKillCount = NPC.killCount[bannerID] >= ItemID.Sets.KillsToBanner[bannerItem];
-
-										Color bannerColor = NPC.killCount[bannerID] >= 50 ? Color.White : masked ? Color.Black : BossLogUI.faded;
-
-										int[] heights = tileData.CoordinateHeights;
-										int heightOffSet = 0;
-										int heightOffSetTexture = 0;
-										for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-											Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (offset * (bannerCount % bannersPerRow)), pageRect.Y + 185 + heightOffSet + (offsetY * rowCount), 16, 16);
-											Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
-											Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
-											heightOffSet += heights[j];
-											heightOffSetTexture += heights[j] + tileData.CoordinatePadding;
-
-											if (Main.MouseScreen.Between(bannerPos.TopLeft(), bannerPos.BottomRight())) {
-												string npcName = masked ? "???" : Lang.GetNPCNameValue(npcID);
-												string killcount = $"\n{NPC.killCount[Item.NPCtoBanner(npcID)]}";
-												if (!reachedKillCount) {
-													killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
-												}
-												BossUISystem.Instance.UIHoverText = npcName + killcount;
-											}
-										}
-
-										bannerCount++; // increase banner count after banner is fully drawn
-										if (bannerCount % bannersPerRow == 0)
-											rowCount++; // if banners per row has been reached, increase row count
-									}
 								}
 							}
 						}

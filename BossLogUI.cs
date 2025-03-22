@@ -143,6 +143,7 @@ namespace BossChecklist
 		public SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
 		public SubCategory CompareState = SubCategory.None; // Compare record values to one another
 		public List<NavigationalButton> RecordCategoryButtons;
+		public List<int> Banners;
 
 		// Spawn Info page related
 		public static int SpawnItemSelected = 0;
@@ -413,6 +414,8 @@ namespace BossChecklist
 					}
 				);
 			}
+
+			Banners = new List<int>();
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
 			scrollOne = new LogScrollbar();
@@ -892,6 +895,7 @@ namespace BossChecklist
 			}
 
 			if (PageNum >= 0) {
+				Banners.Clear(); // clear event banner list
 				if (BossChecklist.BossLogConfig.Debug.AccessInternalNames && GetLogEntryInfo.modSource != "Unknown") {
 					NavigationalButton keyButton = new NavigationalButton(BossLogResources.Content_BossKey, true) {
 						Id = "CopyKey",
@@ -1228,6 +1232,15 @@ namespace BossChecklist
 					slot.Append(entryIcon);
 
 					offset += 10 + entryIcon.Width.Pixels;
+				}
+
+				// Determine all banner ids and prevent duplicates for event entries
+				if (GetLogEntryInfo.type == EntryType.Event) {
+					foreach (int npc in GetLogEntryInfo.npcIDs) {
+						int bannerID = Item.NPCtoBanner(npc);
+						if (!Banners.Contains(bannerID))
+							Banners.Add(bannerID);
+					}
 				}
 			}
 			else if (GetLogEntryInfo.IsRecordIndexed(out int recordIndex)) {
