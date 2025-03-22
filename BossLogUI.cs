@@ -1561,20 +1561,8 @@ namespace BossChecklist
 					if (tile == -1)
 						break; // Prevents extra empty slots from being created
 
-					string altarType = WorldGen.crimson ? "MapObject.CrimsonAltar" : "MapObject.DemonAltar";
-					Item craftStation = new Item(0);
-					if (tile != TileID.DemonAltar) {
-						// Look for items that create the tile when placed, and use that item for the item slot
-						foreach (Item item in ContentSamples.ItemsByType.Values) {
-							if (item.createTile == tile) {
-								craftStation.SetDefaults(item.type);
-								break;
-							}
-						}
-					}
-
-					LogItemSlot tileList = new LogItemSlot(craftStation, ItemSlot.Context.EquipArmorVanity, 0.85f) {
-						hoverText = tile == TileID.DemonAltar ? altarType : null
+					LogItemSlot tileList = new LogItemSlot(ContentSamples.ItemsByType.Values.FirstOrDefault(x => x.createTile == tile) ?? new Item(0), ItemSlot.Context.EquipArmorVanity, 0.85f) {
+						hoverText = Lang.GetMapObjectName(Terraria.Map.MapHelper.TileToLookup(tile, Recipe.GetRequiredTileStyle(tile))) // retrieves the designated tile name (as it appears on the map)
 					};
 					tileList.Left.Pixels = 20 + (48 * col);
 					tileList.Top.Pixels = 240 + (48 * (row + 2));
