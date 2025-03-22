@@ -1525,6 +1525,15 @@ namespace BossChecklist
 			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
 			// To note, we do not need an item row as recipes have a max ingredient size of 14, so there is no need for a scrollbar
 			foreach (Item item in ingredients) {
+				// if column value hits the maximum amount (per row) attempt to move onto the next row
+				if (col == 7) {
+					col = 0;
+					row++;
+
+					if (row == 2)
+						break; // recipes should not be able to have more than 14 ingredients (2 rows)
+				}
+
 				// Create an item slot for the current item
 				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f) {
 					Id = $"ingredient_{item.type}"
@@ -1534,17 +1543,6 @@ namespace BossChecklist
 				PageTwo.Append(ingList);
 
 				col++;
-				// if col hit the max that can be drawn on the page move onto the next row
-				if (col == 6) {
-					if (row == 1)
-						break; // Recipes should not be able to have more than 14 ingredients, so end the loop
-					
-					if (ingList.item.type == ItemID.None)
-						break; // if the current row ends with a blank item, end the loop. this will prevent another row of blank items
-					
-					col = 0;
-					row++;
-				}
 			}
 
 			if (requiredTiles.Count == 0) {
