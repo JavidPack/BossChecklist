@@ -177,11 +177,15 @@ namespace BossChecklist
 		/// </summary>
 		/// <returns>If the entry should be visible</returns>
 		internal bool VisibleOnChecklist() {
+			if (BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss)
+				return false; // if the user has the config to show strictly boss content and the entry is not a boss
+
+			if (BossUISystem.Instance.BossLog.HiddenEntriesMode)
+				return true; // If the HiddenEntriesMode is currently active, all entries should be shown
+
 			bool HideUnsupported = modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log
-			bool HideUnavailable = !available() && !IsAutoDownedOrMarked && (BossChecklist.BossLogConfig.HideUnavailable || !BossUISystem.Instance.BossLog.HiddenEntriesMode); // entries that are labeled as not available
-			bool HideHidden = hidden && !BossUISystem.Instance.BossLog.HiddenEntriesMode; // entries that are labeled as hidden
-			bool SkipNonBosses = BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss; // if the user has the config to only show bosses and the entry is not a boss
-			if (HideUnavailable || HideHidden || SkipNonBosses || HideUnsupported)
+			bool HideUnavailable = !available() && BossChecklist.BossLogConfig.HideUnavailable && !IsAutoDownedOrMarked; // entries that are labeled as not available
+			if (HideUnsupported || HideUnavailable || hidden)
 				return false;
 
 			// Make sure the filters allow the entry to be visible
