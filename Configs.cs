@@ -152,6 +152,10 @@ namespace BossChecklist
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(false)]
+		public bool SpawnItemCraftingChecklist { get; set; }
+
+		[BackgroundColor(250, 235, 215)]
+		[DefaultValue(false)]
 		[LabelKey("$Mods.BossChecklist.Configs.BossLogConfiguration.LootChecklist.Label")]
 		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.LootChecklist.Tooltip")]
 		public bool LootCheckVisibility { get; set; }

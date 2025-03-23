@@ -562,6 +562,8 @@ namespace BossChecklist.UIElements
 			private Asset<Texture2D> masterModeIcon;
 			private Asset<Texture2D> otherWorldIcon;
 
+			public const string SpawnItemCraftingSlot = "SpawnItemCraftingSlot";
+
 			public LogItemSlot(Item item, int context = ItemSlot.Context.TrashItem, float scale = 1f) {
 				this.context = context;
 				this.scale = scale;
@@ -576,10 +578,10 @@ namespace BossChecklist.UIElements
 				float oldScale = Main.inventoryScale;
 				Main.inventoryScale = scale;
 
-				if (item.type == ItemID.None && string.IsNullOrEmpty(hoverText))
+				if (item.IsAir && string.IsNullOrEmpty(hoverText))
 					return; // blank item slots should not be drawn
 
-				if (!Id.StartsWith("loot_")) {
+				if (Id == SpawnItemCraftingSlot) {
 					ItemSlot.Draw(spriteBatch, ref item, context, inner.TopLeft());
 					Main.inventoryScale = oldScale;
 
@@ -606,6 +608,12 @@ namespace BossChecklist.UIElements
 						}
 					}
 
+					if (BossChecklist.BossLogConfig.SpawnItemCraftingChecklist && hasItem) {
+						Vector2 posC = new Vector2(inner.X + inner.Width / 2, inner.Y + inner.Height / 2);
+						checkmark ??= BossLogResources.Check_Check;
+						spriteBatch.Draw(checkmark.Value, posC, Color.White);
+					}
+
 					// Hover text
 					if (IsMouseHovering && string.IsNullOrEmpty(hoverText)) {
 						Main.HoverItem = item;
@@ -629,7 +637,6 @@ namespace BossChecklist.UIElements
 				// If not obtained and the item is mode or seed restricted, itemslot background is red
 				// Any other case should leave the itemslot color as is
 				var backup = TextureAssets.InventoryBack7;
-				Color oldColor = item.color;
 				if (hasItem) {
 					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack3;
 				}
@@ -641,7 +648,6 @@ namespace BossChecklist.UIElements
 				ItemSlot.Draw(spriteBatch, ref item, context, inner.TopLeft());
 				Main.inventoryScale = oldScale;
 				TextureAssets.InventoryBack7 = backup;
-				item.color = oldColor; // if the item was masked
 
 				// Draw golden border around items that are considered collectibles
 				if (entry.collectibles.ContainsKey(item.type)) {

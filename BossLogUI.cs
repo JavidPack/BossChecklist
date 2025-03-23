@@ -1539,7 +1539,10 @@ namespace BossChecklist
 			// To note, we do not need an item row as recipes have a max ingredient size of 14, so there is no need for a scrollbar
 			foreach (Item item in ingredients) {
 				// Create an item slot for the current item
-				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f);
+				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f) {
+					Id = LogItemSlot.SpawnItemCraftingSlot,
+					hasItem = Main.LocalPlayer.inventory.Any(x => x.type == item.type && x.stack >= item.stack)
+				};
 				ingList.Left.Pixels = 20 + (48 * col);
 				ingList.Top.Pixels = 240 + (48 * (row + 1));
 				PageTwo.Append(ingList);
@@ -1562,12 +1565,14 @@ namespace BossChecklist
 
 			if (requiredTiles.Count == 0) {
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
-				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.HandOfCreation), ItemSlot.Context.EquipArmorVanity, 0.85f) {
-					hoverText = $"{LangLog}.SpawnInfo.ByHand"
+				LogItemSlot byHandCrafting = new LogItemSlot(new Item(ItemID.HandOfCreation), ItemSlot.Context.EquipArmorVanity, 0.85f) {
+					Id = LogItemSlot.SpawnItemCraftingSlot,
+					hoverText = $"{LangLog}.SpawnInfo.ByHand",
+					hasItem = true
 				};
-				craftItem.Top.Pixels = 240 + (48 * (row + 1));
-				craftItem.Left.Pixels = 20;
-				PageTwo.Append(craftItem);
+				byHandCrafting.Top.Pixels = 240 + (48 * (row + 1));
+				byHandCrafting.Left.Pixels = 20;
+				PageTwo.Append(byHandCrafting);
 			}
 			else if (requiredTiles.Count > 0) {
 				// iterate through all required tiles to list them in item slots
@@ -1576,8 +1581,10 @@ namespace BossChecklist
 					if (tile == -1)
 						break; // Prevents extra empty slots from being created
 
-					LogItemSlot tileList = new LogItemSlot(ContentSamples.ItemsByType.Values.FirstOrDefault(x => x.createTile == tile) ?? new Item(0), ItemSlot.Context.EquipArmorVanity, 0.85f) {
-						hoverText = Lang.GetMapObjectName(Terraria.Map.MapHelper.TileToLookup(tile, Recipe.GetRequiredTileStyle(tile))) // retrieves the designated tile name (as it appears on the map)
+					LogItemSlot tileList = new LogItemSlot(ContentSamples.ItemsByType.Values.FirstOrDefault(x => x.createTile == tile) ?? new Item(ItemID.None), ItemSlot.Context.EquipArmorVanity, 0.85f) {
+						Id = LogItemSlot.SpawnItemCraftingSlot,
+						hoverText = Lang.GetMapObjectName(Terraria.Map.MapHelper.TileToLookup(tile, Recipe.GetRequiredTileStyle(tile))), // retrieves the designated tile name (as it appears on the map)
+						hasItem = Main.LocalPlayer.adjTile[tile]
 					};
 					tileList.Left.Pixels = 20 + (48 * col);
 					tileList.Top.Pixels = 240 + (48 * (row + 1));

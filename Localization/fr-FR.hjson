@@ -502,6 +502,16 @@ Mods: {
 					Label: Afficher les barres de progression
 					Tooltip: Lorsque cette option est désactivée, les barres de progression totales au bas de la table des matières ne s'afficheront pas.
 				}
+
+				SpawnItemCraftingChecklist: {
+					// Label: Enable spawn item crafting checklist
+					/* Tooltip:
+						'''
+						When enabled, crafting recipes for spawn info items will function as a checklist.
+						Ingredients will be checked off if the correct amount of items are in the inventory.
+						Crafting stations will be checked off if the player is nearby the correct tiles.
+						''' */
+				}
 			}
 
 			DebugTools: {
