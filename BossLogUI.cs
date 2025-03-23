@@ -1538,24 +1538,26 @@ namespace BossChecklist
 			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
 			// To note, we do not need an item row as recipes have a max ingredient size of 14, so there is no need for a scrollbar
 			foreach (Item item in ingredients) {
-				// if column value hits the maximum amount (per row) attempt to move onto the next row
-				if (col == 7) {
-					col = 0;
-					row++;
-
-					if (row == 2)
-						break; // recipes should not be able to have more than 14 ingredients (2 rows)
-				}
-
 				// Create an item slot for the current item
-				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f) {
-					Id = $"ingredient_{item.type}"
-				};
+				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f);
 				ingList.Left.Pixels = 20 + (48 * col);
 				ingList.Top.Pixels = 240 + (48 * (row + 1));
 				PageTwo.Append(ingList);
 
 				col++;
+				if (col == 7) {
+					col = 0;
+					row++; // if column value hits the maximum amount per row attempt to move onto the next row
+
+					if (row == 2)
+						break; // recipes should not be able to have more than 14 ingredients (2 rows)
+				}
+			}
+
+			// Make a new row if the current one isnt empty
+			if (col != 0) {
+				col = 0;
+				row++;
 			}
 
 			if (requiredTiles.Count == 0) {
@@ -1563,7 +1565,7 @@ namespace BossChecklist
 				LogItemSlot craftItem = new LogItemSlot(new Item(ItemID.HandOfCreation), ItemSlot.Context.EquipArmorVanity, 0.85f) {
 					hoverText = $"{LangLog}.SpawnInfo.ByHand"
 				};
-				craftItem.Top.Pixels = 240 + (48 * (row + 2));
+				craftItem.Top.Pixels = 240 + (48 * (row + 1));
 				craftItem.Left.Pixels = 20;
 				PageTwo.Append(craftItem);
 			}
@@ -1578,7 +1580,7 @@ namespace BossChecklist
 						hoverText = Lang.GetMapObjectName(Terraria.Map.MapHelper.TileToLookup(tile, Recipe.GetRequiredTileStyle(tile))) // retrieves the designated tile name (as it appears on the map)
 					};
 					tileList.Left.Pixels = 20 + (48 * col);
-					tileList.Top.Pixels = 240 + (48 * (row + 2));
+					tileList.Top.Pixels = 240 + (48 * (row + 1));
 					PageTwo.Append(tileList);
 					col++; // if multiple crafting stations are needed
 				}
