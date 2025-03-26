@@ -2,695 +2,695 @@ Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
-				// BossLog: Boss Log
-				// Entry: Entry
-				// Boss: Boss
-				// BossPlural: Bosses
-				// MiniBoss: Mini-boss
-				// MiniBossPlural: Mini-bosses
-				// Event: Event
-				// EventPlural: Events
-				// Enabled: enabled
-				// Disabled: disabled
-				// PartiallyEnabled: partially enabled
+				BossLog: Boss Log
+				Entry: Eintrag
+				Boss: Boss
+				BossPlural: Bosse
+				MiniBoss: Mini-boss
+				MiniBossPlural: Mini-bosse
+				Event: Event
+				EventPlural: Events
+				Enabled: Aktiviert
+				Disabled: Deaktiviert
+				PartiallyEnabled: Teilweise Aktiviert
 			}
 
 			Tabs: {
-				// ToggleFilters: Toggle Filters
-				// TableOfContents: Table of Contents
-				// Credits: Credits
-				/* NextEntry:
+				ToggleFilters: Filter anzeigen/verbergen
+				TableOfContents: Inhaltsübersicht
+				Credits: Credits
+				NextEntry:
 					'''
-					Next {0}:
+					Nächster {0}:
 					{1}
-					''' */
-				// Records: Records
-				// SpawnInfo: Spawn Info
-				// LootAndCollectibles: Loot & Collectibles
+					'''
+				Records: Bisherige versuche
+				SpawnInfo: Spawn Info
+				LootAndCollectibles: Beute & Sammelobjekte
 			}
 
 			Indicator: {
-				// ProgressionMode: Progression mode is {0}
-				// ManualChecklist: Entries must be manually checked off by the user
-				// AutomaticChecklist: The checklist will automatically check off entries
-				// OnlyBossContentEnabled: Only boss content is available to be displayed
-				// OnlyBossContentDisabled: All content is available to be displayed
+				ProgressionMode: Fortschrittsmodus ist {0}
+				ManualChecklist: Einträge müssen manuell vom Benutzer abgehakt werden
+				AutomaticChecklist: Die Checkliste hakt Einträge automatisch ab
+				OnlyBossContentEnabled: Nur der Inhalt vom Boss wird angezeigt
+				OnlyBossContentDisabled: Alle Inhalte werden angezeigt
 			}
 
 			TableOfContents: {
-				// PreHardmode: Pre-Hardmode
-				// Hardmode: Hardmode
-				// ProgressBarListMods: Click to switch to Mod List mode
-				// ProgressBarListTypes: Click to switch to Entry Type mode
-				// AllLoot: All boss loot obtained!
-				// AllDropLoot: All non-collectible boss loot obtained!
-				// AllCollectibles: All boss collectibles obtained!
+				PreHardmode: Vor Hardmode
+				Hardmode: Hardmode
+				ProgressBarListMods: Klicke, um in den Modus "Mod Liste" zu wechseln
+				ProgressBarListTypes: Klicke, um in den Modus "Eintragstyp" zu wechseln
+				AllLoot: Jede Bossbeute erhalten!
+				AllDropLoot: Jede nicht sammelbare Bossbeute erhalten!
+				AllCollectibles: Alle Boss-Sammelobjekte erhalten!
 
 				Filter: {
-					// Show: "{0}: Shown"
-					// Hide: "{0}: Hidden"
-					// HideWhenCompleted: "{0}: Hidden when defeated"
-					// ToggleHiddenOpen: Open hidden list
-					// ToggleHiddenClose: Confirm & close hidden list
-					// Disabled: Filter disabled due to 'Only Show Boss Content' config
+					Show: "{0}: Zeigen"
+					Hide: "{0}: Verstecken"
+					HideWhenCompleted: "{0}: Verstecken wenn besiegt"
+					ToggleHiddenOpen: Versteckte Liste öffnen
+					ToggleHiddenClose: Bestätigen & versteckte Liste schließen
+					Disabled: Filter deaktiviert wegen 'Nur der Inhalt vom Boss' Konfig
 				}
 			}
 
 			Credits: {
-				// Devs: Contributors
-				// Mods: Registered Mods
-				// Notice: "[List only contains loaded mods]"
-				// NoIcon: Mod icon not found!
-				// ModsEmpty: None of your loaded mods are registered!
-				// Register: Register your own mod!
-				// Learn: View the mod desciption to learn how
+				Devs: Mitwirkende
+				Mods: Registrierte Mods
+				Notice: "[Liste enthält nur geladene Mods]"
+				NoIcon: Mod icon nicht gefunden!
+				ModsEmpty: Keiner der geladenen Mods hat im Boss Log einen Eintrag. Wenn ihr wollt, dass eure Lieblingsmods aufgenommen werden, informiert das Mod-Team auf der Steam-Workshop-Seite oder dem Discord-Server!
+				Register: Registriere deine eigene Mod!
+				Learn: Lies die beschreibung für mehr Infos!
 			}
 
 			EntryPage: {
-				// Defeated: Defeated in {0}
-				// Undefeated: Undefeated in {0}
-				// CopyKey: Click to copy internal 'boss key' to clipboard
-				// CopySource: Click to copy internal 'mod source' to clipboard
-				// ViewPage: Click to view page
-				// NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
-				// LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
+				Defeated: Besiegt in {0}
+				Undefeated: Unbesiegt in {0}
+				CopyKey: Klicken, um den internen "boss key" in die Zwischenablage zu kopieren
+				CopySource: Klicken, um die interne "mod source" in die Zwischenablage zu kopieren
+				ViewPage: Zum Anzeigen der Seite klicken
+				NotImplemented: Die Anzeige für diese Seite ist nicht verfügbar. Die Mod hat entweder keine Seite eingereicht oder sie ist nicht richtig eingerichtet.
+				LogFeaturesNotAvailable: Rekorde, Spawngegenstände und die Beutetabelle sind für diese Seite deaktiviert. Die Mod hat entweder nicht genug Informationen für eine Seite eingereicht oder sie nicht richtig eingerichtet.
 			}
 
 			Records: {
-				// NewRecord: New Personal Best!
-				// NewWorldRecord: New World Record!
-				// NoRecord: No record
-				// Unchallenged: Unchallenged
-				// Kills: kills
-				// Deaths: deaths
-				// Total: Total
-				// Hours: "{0}h {1}m {2}s ({3}ms)"
-				// Minutes: "{0}m {1}s ({2}ms)"
-				// Seconds: "{0} secon{^0:d;ds} ({1}ms)"
-				// NoHit: No hit!
-				// Hit: "{0} {^0:hit;hits}"
-				// PreviousBest: Your Previous Best
-				// ClaimRecord: Be the first to claim the world record!
-				// RecordHolder: Record Holder(s)
+				NewRecord: Neuer Rekord!
+				NewWorldRecord: Welt Rekord!
+				NoRecord: Kein Rekord
+				Unchallenged: Nicht herausgefordert
+				Kills: Kills
+				Deaths: Tode
+				Total: Insgesamt
+				Hours: "{0}h {1}m {2}s ({3}ms)"
+				Minutes: "{0}m {1}s ({2}ms)"
+				Seconds: "{0} Sekun{^0:d;den} ({1}ms)"
+				NoHit: Kein einziges mal getroffen!
+				Hit: "{0} {^0:Treffer;Treffer}"
+				PreviousBest: Dein bisheriger bester Versuch
+				ClaimRecord: Sei der Erste, der den Weltrekord aufstellt!
+				RecordHolder: Rekort Halter
 
 				Category: {
-					// PreviousAttempt: Previous Attempt
-					// FirstVictory: First Victory
-					// PersonalBest: Personal Best
-					// WorldRecord: World Records
-					// Cycle: Cycle record categories
+					PreviousAttempt: Vorheriger Versuch
+					FirstVictory: Erster Sieg
+					PersonalBest: Persönliche Bestzeit
+					WorldRecord: Weltrekorde
+					Cycle: Rekord Kategorien durchwechseln
 				}
 
 				Title: {
-					// PreviousAttempt: Attempt
-					// FirstVictory: Play Time
-					// PersonalBest: Kill Death Ratio
-					// WorldRecord: Global KDR
-					// Duration: Fight Duration
-					// DurationWorld: Quickest Fight
-					// HitsTaken: Hits Received
-					// HitsTakenWorld: Lowest Hits Taken
+					PreviousAttempt: Versuch
+					FirstVictory: Spielzeit
+					PersonalBest: Kill Death Ratio
+					WorldRecord: Globale KDR
+					Duration: Kampfdauer
+					DurationWorld: Schnellster Kampf
+					HitsTaken: Eingesteckte Treffer
+					HitsTakenWorld: Wenigste eingesteckte Treffer
 				}
 
 				Tooltip: {
-					// Duration: The quickest time this boss was defeated!
-					// HitsTaken: Avoid as many attacks as you can! Try to defeat this boss untouched!
-					// PreviousAttempt: Total times you have encountered this boss!
-					// PersonalBest: Total times you killed this boss and total times this boss has killed you!
-					// FirstVictory: Total play time your character has been active, up until the first boss kill!
-					// WorldRecord: Global kills and deaths from all players for this boss!
+					Duration: Die schnellste Zeit, in der dieser Boss besiegt wurde!
+					HitsTaken: Weiche so vielen Angriffen aus, wie du kannst! Versuche, diesen Boss unberührt zu besiegen!
+					PreviousAttempt: Gesamtzahl der Begegnungen mit diesem Boss!
+					PersonalBest: Wie oft du diesen Boss getötet hast und wie oft dieser Boss dich getötet hat!
+					FirstVictory: Gesamte Spielzeit, in der dein Charakter aktiv war, bis zum ersten Boss-Kill!
+					WorldRecord: Globale Kills und Todesfälle von allen Spielern für diesen Boss!
 				}
 			}
 
 			SpawnInfo: {
-				// NoInfo: No info available
-				// RecipeFrom: Recipe from: {0}
-				// CycleRecipe: Cycle alternative recipes
-				// Noncraftable: This item is not craftable
-				// NoSpawnItem: This {0} has no spawn item
-				// ByHand: By Hand
+				NoInfo: Keine Informationen verfügbar
+				RecipeFrom: Rezept von: {0}
+				CycleRecipe: Alternative Rezepte durchgehen
+				Noncraftable: Dieser Gegenstand kann nicht hergestellt werden
+				NoSpawnItem: Dieser {0} hat kein Spawn Item
+				ByHand: Von Hand
 			}
 
 			LootAndCollection: {
-				// MaskedItems: Defeat this entry to view its loot and collectibles
-				// ItemIsExpertOnly: This item is only obtainable in Expert Mode
-				// ItemIsMasterOnly: This item is only obtainable in Master Mode
-				// ItemIsLocked: This item has special requirements to unlock
-				// Obtained: This item has been obtained!
-				// Researched: This item has been researched!
+				MaskedItems: Besiege diesen Eintrag, um seine Beute und Sammlerstücke zu sehen
+				ItemIsExpertOnly: Dieser Gegenstand ist nur im Expertenmodus erhältlich
+				ItemIsMasterOnly: Dieser Punkt ist nur im Meistermodus verfügbar.
+				ItemIsLocked: Für das Freischalten dieses Gegenstands gelten besondere Anforderungen
+				Obtained: Dieses Item wurde erhalten!
+				Researched: Dieses Item wurde erforscht!
 			}
 
 			ProgressionMode: {
-				// BeforeYouBegin: Before you begin...
-				// AskEnable: Do you want to enable the Progression Checklist?
-				// SelectAnOption: Please select an option below...
-				/* SelectDisable:
+				BeforeYouBegin: Bevor du anfängst...
+				AskEnable: Willst du den Fortschrittsmodus aktivieren?
+				SelectAnOption: Bitte wähle unten eine Option aus...
+				SelectDisable:
 					'''
-					Continue with the progressive checklist disabled...
-					* All page info content is unlocked from the start
-					* Nothing hidden. No limits.
-					''' */
-				/* SelectEnable:
+					Fortfahren mit deaktivierter Fortschrittscheckliste...
+					* Alle Seiteninhalte sind von Anfang an freigeschaltet
+					* Nichts versteckt. Keine Einschränkungen.
 					'''
-					Continue with the progressive checklist fully enabled...
-					* Page info content is locked for undefeated entries
-					* Portraits and names are masked
-					* Boss loot locked until entry defeation
-					* Next check enabled, reducing info limitations (recommended)
-					''' */
-				// SelectConfig: Close Boss Log and configure the progressive checklist...
-				// DisablePrompt: Don't show this prompt again
-				// Description: The Progressive Checklist will limit and hide entry content until the entry is defeated or marked as completed. If you are looking to do a blind play-through then you might want to consider enabling this feature. The Boss Log is disabled until you make a selection or reopen it with the prompt configuration disabled
-				/* IsEnabled:
+				SelectEnable:
 					'''
-					[i:888] The Progressive Checklist is fully or partially enabled!
-					This will mask some information about bosses until they have been defeated.
-					To disable or configure the progressive checklist go to:
-					Settings > Mod Configurations > Boss Checklist: Boss Log Customization
-					and scroll down to the Progress Mode configs
-					''' */
+					Fortfahren mit vollständig aktivierter Fortschrittscheckliste...
+					* Seiteninhalte sind für unbesiegte Einträge gesperrt
+					* Portraits und Namen sind verborgen
+					* Boss-Beute bleibt gesperrt, bis der Eintrag besiegt wurde
+					* Nächste Überprüfung aktiviert, wodurch Informationsbeschränkungen reduziert werden (empfohlen)
+					'''
+				SelectConfig: Boss Log schließen und Fortschrittscheckliste konfigurieren...
+				DisablePrompt: Diese Aufforderung nicht mehr anzeigen
+				Description: Die Fortschrittscheckliste beschränkt und verbirgt Eintragsinhalt, bis der Eintrag besiegt oder als abgeschlossen markiert wurde. Wenn du einen blinden Durchlauf machen möchtest, solltest du in Betracht ziehen, diese Funktion zu aktivieren. Das Boss Log ist deaktiviert, bis du eine Auswahl triffst oder es mit deaktivierter Aufforderungskonfiguration wieder öffnest.
+				IsEnabled:
+					'''
+					[i:888] Die Fortschrittscheckliste ist vollständig oder teilweise aktiviert!
+					Dies wird einige Informationen über Bosse verbergen, bis sie besiegt wurden.
+					Um die Fortschrittscheckliste zu deaktivieren oder zu konfigurieren, gehe zu:
+					Einstellungen > Mod-Konfigurationen > Boss Checklist: Boss Log Anpassung
+					und scrolle nach unten zu den Fortschrittsmodus-Konfigurationen
+					'''
 			}
 
 			HintTexts: {
-				// MarkEntry: Right-click an entry to mark it as defeated
-				// HideEntry: Left-click an entry to hide it from the checklist
-				// ClearMarked: Hold ALT and right-click this button to clear all marked entries
-				// ClearHidden: Hold ALT and right-click this button to clear all hidden entries
-				// ClearItems: Hold ALT and right-click this button to mark the listed items as unobtained
-				// RemoveItem: Hold ALT and right-click an item to mark it as unobtained
-				// ClearAllRecords: Hold ALT and right-click this button to reset the list record values
-				// ClearRecord: Hold ALT and right-click the icon of a record to reset its value
+				MarkEntry: Markiere einen Eintrag in der Checkliste als besiegt, indem du mit der rechten Maustaste darauf klickst.
+				HideEntry: Verberge einen Eintrag in der Checkliste, indem du die Alt-Taste gedrückt hältst und mit der rechten Maustaste darauf klickst.
+				ClearMarked: Lösche alle markierten Einträge auf ihren ursprünglichen besiegt-Zustand, indem du die Alt-Taste gedrückt hältst und auf die Registerkarte "Filter" klickst.
+				ClearHidden: Lösche alle versteckten Einträge auf ihren ursprünglichen versteckt-Zustand, indem du die Alt-Taste gedrückt hältst und auf den Filter "Versteckte Sichtbarkeit umschalten" klickst.
+				ClearItems: Markiere alle Gegenstände auf der Seite dieses Eintrags als unerlangt, indem du die Alt-Taste gedrückt hältst und auf die Schatztruhe klickst.
+				RemoveItem: Markiere einen Gegenstand als unerlangt, indem du die Alt-Taste gedrückt hältst und auf den gewünschten Gegenstandsschlitz klickst.
+				ClearAllRecords: Lösche alle Aufzeichnungen für diesen Boss, indem du die Alt-Taste gedrückt hältst und auf die Schaltfläche "Aufzeichnungsunterkategorie wechseln" klickst.
+				ClearRecord: Lösche einen Aufzeichnungswert, indem du die Alt-Taste gedrückt hältst und auf sein Symbol klickst.
 			}
 		}
 
 		Checklist: {
-			// CelestialPillars: Celestial Pillars
-			// ToggleCompletedTooltip: Toggle Completed
-			// ToggleMiniBossesTooltip: Toggle Mini Bosses
-			// ToggleEventsTooltip: Toggle Events
-			/* ToggleShowHiddenBossesTooltip:
+			CelestialPillars: Himmlischen Säulen
+			ToggleCompletedTooltip: Abgeschlossene sachen anzeigen/verbergen
+			ToggleMiniBossesTooltip: Mini Bosse anzeigen/verbergen
+			ToggleEventsTooltip: Events anzeigen/verbergen
+			ToggleShowHiddenBossesTooltip:
 				'''
-				Toggle Show Hidden Bosses
-				(Alt-Click to clear Hidden bosses)
-				(Alt-Click on boss to hide)
-				''' */
+				Versteckte Bosse anzeigen/verbergen
+				(Alt-Klick zum Löschen versteckter Bosse)
+				(Alt-Klick auf den Boss zum Verstecken)
+				'''
 		}
 
 		ChatMessages: {
 			Despawn: {
-				// Generic: "{0} is no longer after you..."
-				// Day: "{0} flees as the sun rises..."
+				Generic: "{0} ist nicht mehr hinter dir her..."
+				Day: "{0} flieht, während die Sonne aufgeht..."
 			}
 
 			Defeated: {
-				// Generic: "{0} is down!"
-				// GenericSkeletronHand: Skeletron's Hand is down!
-				// GenericMoonLordHead: Moon Lord's Head is down!
-				// SkeletronHand: A {0} hand has fractured!
-				// PrimeCannon: The {0} has exploded!
-				// PrimeSaw: The {0} has malfunctioned!
-				// PrimeVice: The {0} has collapsed!
-				// PrimeLaser: The {0} has overheated!
-				// GolemFistLeft: "{0} is destroyed!"
-				// GolemFistRight: "{0} is destroyed!"
-				// GolemHead: The {0} has detached from the body!
-				// MoonLordHead: A True Eye of Cthulhu exits the head of the {0}!
-				// MoonLordHand: A True Eye of Cthulhu exits the {0}!
-				// Retinazer: "{0} has been defeated!"
-				// Spazmatism: "{0} has been defeated!"
-				// LunarTowerVortex: The {0} has fallen!
-				// LunarTowerStardust: The {0} has fallen!
-				// LunarTowerNebula: The {0} has fallen!
-				// LunarTowerSolar: The {0} has fallen!
+				Generic: "{0} ist besiegt!"
+				GenericSkeletronHand: Skeletrons Hand ist besiegt!
+				GenericMoonLordHead: Der Kopf des Mondherrens ist besiegt!
+				SkeletronHand: Eine Hand von {0} ist zerbrochen!
+				PrimeCannon: Die {0} ist explodiert!
+				PrimeSaw: Die {0} hat eine Fehlfunktion!
+				PrimeVice: Die {0} ist zusammengebrochen!
+				PrimeLaser: Die {0} hat überhitzt!
+				GolemFistLeft: "{0} ist zerstört!"
+				GolemFistRight: "{0} ist zerstört!"
+				GolemHead: Der Kopf von {0} hat sich vom Körper gelöst!
+				MoonLordHead: Ein Wahres Auge von Cthulhu verlässt den Kopf des {0}!
+				MoonLordHand: Ein Wahres Auge von Cthulhu verlässt die {0}!
+				Retinazer: "{0} ist besiegt!"
+				Spazmatism: "{0} ist besiegt!"
+				LunarTowerVortex: Der {0} ist gefallen!
+				LunarTowerStardust: Der {0} ist gefallen!
+				LunarTowerNebula: Der {0} ist gefallen!
+				LunarTowerSolar: Der {0} ist gefallen!
 			}
 
 			Loss: {
-				// Generic: "{0} has killed every player!"
-				// KingSlime: "{0} leaves in triumph..."
-				// EyeofCthulhu: "{0} has disappeared into the night sky..."
-				// EaterofWorlds: "{0} burrows back underground..."
-				// BrainofCthulhu: "{0} vanishes into the pits of the crimson..."
-				// QueenBee: "{0} returns to her colony's nest..."
-				// Skeletron: "{0} continues to torture the Old Man..."
-				// WallofFlesh: "{0} has managed to cross the underworld..."
-				// QueenSlimeBoss: "{0} pompously bounces away..."
-				// TheTwins: "{0} continues its observations..."
-				// TheDestroyer: "{0} seeks for another world to devour..."
-				// SkeletronPrime: "{0} begins searching for a new victim..."
-				// Plantera: "{0} continues its rest within the jungle..."
-				// Golem: "{0} deactivates in the bowels of the temple..."
-				// HallowBoss: "{0} dissipates to hallow light..."
-				// DukeFishron: "{0} returns to the ocean depths..."
-				// CultistBoss: "{0} goes back to its devoted worship..."
-				// MoonLord: "{0} has left this realm..."
+				Generic: "{0} hat alle Spieler getötet!"
+				KingSlime: "{0} verlässt triumphierend..."
+				EyeofCthulhu: "{0} ist in den nächtlichen Himmel verschwunden..."
+				EaterofWorlds: "{0} gräbt sich wieder unter die Erde..."
+				BrainofCthulhu: "{0} verschwindet in den Abgründen des Purpurnen..."
+				QueenBee: "{0} kehrt zu ihrem Nest im Kolonie zurück..."
+				Skeletron: "{0} foltert den Greis weiterhin..."
+				WallofFlesh: "{0} ist es gelungen, die Unterwelt zu überqueren..."
+				QueenSlimeBoss: "{0} hüpft prahlerisch davon..."
+				TheTwins: "{0} setzt seine Beobachtungen fort..."
+				TheDestroyer: "{0} sucht nach einer anderen Welt, um zu verschlingen..."
+				SkeletronPrime: "{0} beginnt nach einem neuen Opfer zu suchen..."
+				Plantera: "{0} ruht weiterhin im Dschungel..."
+				Golem: "{0} deaktiviert sich in den Tiefen des Tempels..."
+				HallowBoss: "{0} löst sich im heiligen Licht auf..."
+				DukeFishron: "{0} kehrt in die Tiefen des Ozeans zurück..."
+				CultistBoss: "{0} kehrt zu seiner hingebungsvollen Anbetung zurück..."
+				MoonLord: "{0} hat diese Welt verlassen..."
 			}
 
 			EventEnd: {
-				// Generic: The {0} has ended...
-				// BloodMoon: The Blood Moon falls past the horizon...
-				// FrostMoon: The Frost Moon melts as the sun rises...
-				// PumpkinMoon: The Pumpkin Moon ends its harvest...
-				// Eclipse: The solar eclipse has ended... until next time...
+				Generic: "{0} hat geendet..."
+				BloodMoon: Der Blutmond sinkt unter den Horizont...
+				FrostMoon: Der Frostmond schmilzt, wenn die Sonne aufgeht...
+				PumpkinMoon: Der Kürbismond beendet seine Ernte...
+				Eclipse: Die Sonnenfinsternis ist vorbei... bis zum nächsten Mal...
 			}
 		}
 
 		BossSpawnInfo: {
-			// Unknown: Spawn conditions unknown
-			// KingSlime: Use [i:560], randomly in outer 3rds of map, or kill 150 slimes during slime rain.
-			// EyeofCthulhu: Use [i:43] at night, or 1/3 chance nightly if over 200 HP.
-			// EaterofWorlds: Use [i:70] or break 3 Shadow Orbs in a corruption chasm.
-			// BrainofCthulhu: Use [i:1331] or break 3 Crimson Hearts in a crimson chasm.
-			// QueenBee: Use [i:1133] or break a Bee Hive's Larva found in the jungle.
-			// Skeletron: Visit the dungeon and talk to the old man at night or kill the Clothier with [i:1307] at night.
-			// Deerclops: Use [i:5120] in a Snow biome. Spawns naturally at midnight during a Blizzard.
-			// WallofFlesh: Spawn by throwing [i:267] or the Guide into lava in the Underworld. [c/FF0000:Starts Hardmode!]
-			// QueenSlimeBoss: Use [i:4988] in the Hallow biome, which can be found in the Underground Hallow among Crystal Shards growing on Pearlstone and Pink Ice blocks.
-			// TheTwins: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Alternatively, Use [i:544] at night to spawn.
-			// TheDestroyer: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:556] at night to spawn.
-			// SkeletronPrime: 10% chance to randomly spawn each night after the first altar is destroyed, until one mech boss is defeated. Use [i:557] at night to spawn.
-			// Plantera: Break a Plantera's Bulb in jungle after 3 Mechanical bosses have been defeated.
-			// Golem: Use [i:1293] on Lihzahrd Altar, found deep in the Jungle Temple.
-			// HallowBoss: Kill [i:4961] in the Hallow biome, which can be found on the Hallow surface between 7:30pm and 12:00am after Plantera has been defeated.
-			// DD2Betsy: Spawns on Wave 7, the final wave, of Old One's Army (Tier 3).
-			// DukeFishron: Fish in ocean using the [i:2673] as bait, which can be caught in an underground Glowing Mushroom biome during hardmode.
-			// CultistBoss: Kill the 4 cultists outside the dungeon after defeating Golem.
-			// MoonLord: Use [i:3601] or defeat all 4 pillars.
-			// MoonLord_Tremor: Use [i:3601] or defeat all 5 pillars. [c/FF0000:Starts Tremode!]
-			// BloodMoon: Occurs randomly at the start of night or can be summoned with a [i:4271] which can be dropped by any blood moon enemy. Can start when any player in the world has more than 100 health and the current moon phase is NOT a new moon. Lasts until sunrise.
-			// GoblinArmy: Has a 1 in 3 chance of occurring every dawn if at least one Shadow Orb/Crimson Heart has been destroyed, at least one player has 200 health or more, and there is not a Goblin Army already in progress. It can also be summoned manually using a [i:361]. Lasts until enough enemies are defeated.
-			// OldOnesArmy: After finding the Tavernkeep, purchase and activate [i:3816] with [i:3828]. Lasts until all waves are cleared.
-			// FrostLegion: Use a [i:602], which can be found by opening [i:1869], during the Christmas season. Lasts until enough enemies are defeated.
-			// Eclipse: Has a 1/20 chance to occur each day upon dawn, as soon as any Mechanical Boss has been defeated. Alternatively, summon with a [i:2767]. Lasts until nightfall.
-			// PirateInvasion: Occurs randomly once at least one altar has been destroyed. Can be summoned with a [i:1315], which can be obtained from killing any enemy in the Ocean biome during Hardmode. Lasts until enough enemies are defeated.
-			// PumpkinMoon: Summoned with a [i:1844] at night. Lasts until sunrise.
-			// FrostMoon: Summoned with a [i:1958] at night. Lasts until sunrise.
-			// MartianMadness: After defeating Golem, find a Martian Probe above ground and allow it to find you and escape. Lasts until enough enemies are defeated.
-			// LunarEvent: Defeat the Lunatic Cultist found outside the dungeon. Each pillar spawns in its own area within the world. Lasts until all 4 pillars are destroyed.
-			// Pumpking: Spawns during Wave 7 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
-			// MourningWood: Spawns during Wave 4 of Pumpkin Moon. Start Pumpkin Moon with [i:1844]
-			// IceQueen: Spawns during Wave 11 of Frost Moon. Start Frost Moon with [i:1958]
-			// SantaNK1: Spawns during Wave 7 of Frost Moon. Start Frost Moon with [i:1958]
-			// Everscream: Spawns during Wave 4 of Frost Moon. Start Frost Moon with [i:1958]
-			// PirateShip: Occasionally appears during a Pirate Invasion! Start Pirate Invasion with [i:1315]
-			// DD2OgreT3: Appears in wave 7 (Tier 2) and waves 4 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
-			// DD2DarkMageT3: Appears in wave 5 (Tier 1) and waves 5 & 6 (Tier 3) during the Old One's Army event! Start Old One's Army with [i:3816] and [i:3828]
-			// MartianSaucer: Occasionally appears during Martian Madness! Start Martian Madness by being detected by an alien probe.
-			// TorchGod: Place 101 torches while underground. The event starts once the last torch is placed.
+			Unknown: Spawn Bedingungen unbekannt
+			KingSlime: Verwende [i:560], zufällig in den äußeren Dritteln der Welt, oder töte 150 Schleime während eines Schleimregens.
+			EyeofCthulhu: Verwende [i:43] nachts oder mit einer 1/3-Chance jede Nacht, wenn ein Spieler über 200 HP hat.
+			EaterofWorlds: Verwende [i:70] oder zerstöre 3 Schattenkugeln in einem Verderben Untergrund.
+			BrainofCthulhu: Verwende [i:1331] oder zerstöre 3 Purpurherzen in einem Purpur-Abgrund.
+			QueenBee: Verwende [i:1133] oder zerstöre die Larve eines Bienenstocks im Dschungel.
+			Skeletron: Besuche das Verlies und sprich nachts mit dem Greis oder töte den Schneider mit [i:1307] nachts.
+			Deerclops: Verwende [i:5120] in einem Schneebiom. Erscheint natürlich um Mitternacht während eines Schneesturms.
+			WallofFlesh: Erscheint, indem [i:267] oder der Fremdenführer in die Lava in der Hölle geworfen wird. [c/FF0000:Startet Hardmode!]
+			QueenSlimeBoss: Verwende [i:4988] im Heiligen-Biom, das im Untergrund-Heiligen unter Kristallscherben auf Perlenstein- und Pink-Eis-Blöcken zu finden ist.
+			TheTwins: 10% Chance, jede Nacht zufällig zu erscheinen, nachdem der erste Altar zerstört wurde, bis ein Mech-Boss besiegt ist. Alternativ, verwende ein [i:544] nachts, um sie zu beschwören.
+			TheDestroyer: 10% Chance, jede Nacht zufällig zu erscheinen, nachdem der erste Altar zerstört wurde, bis ein Mech-Boss besiegt ist. Verwende [i:556] nachts, um sie zu beschwören.
+			SkeletronPrime: 10% Chance, jede Nacht zufällig zu erscheinen, nachdem der erste Altar zerstört wurde, bis ein Mech-Boss besiegt ist. Verwende [i:557] nachts, um sie zu beschwören.
+			Plantera: Zerstöre eine Planteras Knospe im Dschungel, nachdem 3 Mechanische Bosse besiegt wurden.
+			Golem: Verwende [i:1293] auf dem Lihzahrd-Altar, der tief im Dschungeltempel zu finden ist.
+			HallowBoss: Töte [i:4961] im Heilgen Biom, das zwischen 7:30pm und 12:00am auf der Heiligen-Oberfläche zu finden ist, nachdem Plantera besiegt wurde.
+			DD2Betsy: Erscheint in Welle 7, der letzten Welle, von der Armee des Alten (Stufe 3).
+			DukeFishron: Fische im Ozean mit einem [i:2673] als Köder, den man im Untergrund-Pilzbiom-Biom während des Hardmodes fangen kann.
+			CultistBoss: Töte die 4 Kultisten vor dem Verlies nach dem Besiegen von Golem.
+			MoonLord: Verwende [i:3601] oder besiege alle 4 Säulen.
+			MoonLord_Tremor: Verwende [i:3601] oder besiege alle 5 Säulen. [c/FF0000:Startet Tremode!]
+			BloodMoon: Tritt zufällig zu Beginn der Nacht auf oder kann mit einer [i:4271] beschworen werden, das von einem Blutmondfeind fallen gelassen werden kann. Kann beginnen, wenn ein Spieler in der Welt mehr als 100 Gesundheit hat und die aktuelle Mondphase NICHT Neumond ist. Dauert bis zum Sonnenaufgang.
+			GoblinArmy: Hat eine 1 von 3 Chance, jeden Morgen zu erfolgen, wenn mindestens eine Schattenkugel/Purpurherz zerstört wurde, mindestens ein Spieler 200 oder mehr Gesundheit hat und keine Goblin-Armee läuft. Kann auch manuell mit einem [i:361] beschworen werden. Dauert, bis genug Feinde besiegt sind.
+			OldOnesArmy: Nachdem der Tavernenwirt gefunden wurde, kaufe und aktiviere [i:3816] mit [i:3828]. Dauert, bis alle Wellen beseitigt sind.
+			FrostLegion: Verwende [i:602], der während der Weihnachtszeit in [i:1869] gefunden werden kann. Dauert, bis genug Feinde besiegt sind.
+			Eclipse: Hat eine 1/20 Chance, jeden Tag beim Morgengrauen aufzutreten, sobald ein Mechanischer Boss besiegt wurde. Alternativ beschwören mit einer [i:2767]. Dauert bis zur Abenddämmerung.
+			PirateInvasion: Tritt zufällig auf, sobald mindestens ein Altar zerstört wurde. Kann mit einer [i:1315] beschworen werden, den man im Ozeanbiom während des Hardmodes von einem beliebigen Feind erhalten kann. Dauert, bis genug Feinde besiegt sind.
+			PumpkinMoon: Wird beschwört mit einer [i:1844] nachts. Dauert bis zum Sonnenaufgang.
+			FrostMoon: Wird beschwört mit einer [i:1958] nachts. Dauert bis zum Sonnenaufgang.
+			MartianMadness: Nach dem Besiegen von Golem finde eine Martianische Sonde über der Erde und erlaube ihr, dich zu finden und zu entkommen. Dauert, bis genug Feinde besiegt sind.
+			LunarEvent: Besiege den Irren Kultisten, der draußen am Verlies zu finden ist. Jede Säule erscheint in ihrem eigenen Bereich in der Welt. Dauert, bis alle 4 Säulen zerstört sind.
+			Pumpking: Erscheint während Welle 7 des Kürbismonds. Starte den Kürbismond mit [i:1844].
+			MourningWood: Erscheint während Welle 4 des Kürbismonds. Starte den Kürbismond mit [i:1844].
+			IceQueen: Erscheint während Welle 11 des Frostmonds. Starte den Frostmond mit [i:1958].
+			SantaNK1: Erscheint während Welle 7 des Frostmonds. Starte den Frostmond mit [i:1958].
+			Everscream: Erscheint während Welle 4 des Frostmonds. Starte den Frostmond mit [i:1958].
+			PirateShip: Erscheint gelegentlich während einer Pirateninvasion! Starte die Pirateninvasion mit einer [i:1315].
+			DD2OgreT3: Erscheint in Welle 7 (Stufe 2) und Wellen 4 & 6 (Stufe 3) während des des Armee des Alten Events! Starte Armee des Alten mit [i:3816] und [i:3828].
+			DD2DarkMageT3: Erscheint in Welle 5 (Stufe 1) und Wellen 5 & 6 (Stufe 3) während des Armee des Alten Events! Starte Armee des Alten mit [i:3816] und [i:3828].
+			MartianSaucer: Erscheint gelegentlich während des Marsianerwahnsinn! Starte den Marsianerwahnsinn, indem du von einer außerirdischen Sonde erkannt wirst.
+			TorchGod: Platziere 101 Fackeln im Untergrund. Das Event beginnt, sobald die letzte Fackel platziert ist.
 		}
 
 		Keybinds: {
-			// ToggleChecklist.DisplayName: Toggle Boss Checklist
-			// ToggleLog.DisplayName: Toggle Boss Log
+			ToggleChecklist.DisplayName: Boss Checklist anzeigen/verbergen
+			ToggleLog.DisplayName: Boss Log anzeigen/verbergen
 		}
 
 		LogMessage: {
-			// LastUpdated_ModCall: The Boss Log Mod Call has been last updated on BossChecklist ({0}). Check out the GitHub Wiki guide to stay updated on the latest changes!
-			// LastUpdated_Progression: Progression values for vanilla entries have been last updated on BossChecklist ({0})
-			// NoLogging: Boss Log integration messages will not be logged.
-			// LateCall: Call Warning: The attempted message, '{0}', was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.
-			// OldCall: The '{0}' call is an old call and is now obsolete. Use '{1}' instead. {2} entries include: [{3}]
-			// ModCallDocumentation: Updated Mod.Call documentation for BossChecklist can be found here: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
-			/* OldCall_Orphan:
+			LastUpdated_ModCall: Das Boss Log Mod Call wurde zuletzt auf BossChecklist ({0}) aktualisiert. Schauen Sie im GitHub Wiki vorbei, um über die neuesten Änderungen auf dem Laufenden zu bleiben!
+			LastUpdated_Progression: Progressionswerte für Vanilla-Einträge wurden zuletzt auf BossChecklist ({0}) aktualisiert.
+			NoLogging: Boss Log Integrationsnachrichten werden nicht protokolliert.
+			LateCall: Aufrufwarnung: Die versuchte Nachricht, '{0}', wurde zu früh gesendet. Erwarten Sie, dass die Call-Nachricht unvollständige Daten zurückgibt. Für beste Ergebnisse rufen Sie in PostAddRecipes auf.
+			OldCall: Der Aufruf '{0}' ist veraltet und jetzt obsolet. Verwenden Sie stattdessen '{1}'. {2} Einträge beinhalten: [{3}]
+			ModCallDocumentation: Aktualisierte Mod.Call Dokumentation für BossChecklist finden Sie hier: https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Boss-Log-Entry-Mod-Call
+			OldCall_Orphan:
 				'''
-				{0} mod call from {1} is structured improperly. Mod developers can refer to link below:
+				{0} Mod Call von {1} ist falsch strukturiert. Mod-Entwickler können sich an den unten stehenden Link wenden:
 				 https://github.com/JavidPack/BossChecklist/wiki/[1.4.4]-Other-Mod-Calls
-				''' */
-			// MustContainMod: Invalid mod instance passed ({0}). Your call must contain a Mod instance to generate an entry key.
-			// MustContainName: Invalid internal name passed ({internalName}). Your call must contain a string comprised of letters and/or digits without whitespace characters in order to generate an entry key.
-			// MustContainMod_Orphan: Invalid mod instance passed ({0}). Your call must contain a Mod instance for logging purposes.
-			// DuplicateEntry: Check your code for duplicate entries or typos, as this entry has already been registered: [{0} {1}]
-			// RegisteredBosses: "{0} has successfully registered {1} bosses: {2}"
-			// RegisteredMiniBosses: "{0} has successfully registered {1} mini-bosses: {2}"
-			// RegisteredEvents: "{0} has successfully registered {1} events: {2}"
-			// SuccessfulOrphanData: "{0} has successfully registered {1} '{2}' orphan data value(s)"
-			// InvalidOrphanKey: A '{0}' call from {1} contains an invalid key ({2}) and will be ignored.
-			// InvalidEventEntry: "{0} is not an event entry and cannot take calls from {1}"
-			// BelongsToInvasion: "{0} has attempted to edit the npc pool of '{1}'. This entry is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls."
+				'''
+			MustContainMod: Ungültige Mod-Instanz übergeben ({0}). Ihr Aufruf muss eine Mod-Instanz enthalten, um einen Eintragsschlüssel zu generieren.
+			MustContainName: Ungültiger interner Name übergeben ({internalName}). Ihr Aufruf muss einen aus Buchstaben und/oder Ziffern bestehenden String ohne Leerzeichen enthalten, um einen Eintragsschlüssel zu generieren.
+			MustContainMod_Orphan: Ungültige Mod-Instanz übergeben ({0}). Ihr Aufruf muss eine Mod-Instanz für Protokollzwecke enthalten.
+			DuplicateEntry: Überprüfen Sie Ihren Code auf doppelte Einträge oder Tippfehler, da dieser Eintrag bereits registriert wurde: [{0} {1}]
+			RegisteredBosses: "{0} hat erfolgreich {1} Bosse registriert: {2}"
+			RegisteredMiniBosses: "{0} hat erfolgreich {1} Mini-Bosse registriert: {2}"
+			RegisteredEvents: "{0} hat erfolgreich {1} Ereignisse registriert: {2}"
+			SuccessfulOrphanData: "{0} hat erfolgreich {1} '{2}' Waisendatenwert(e) registriert"
+			InvalidOrphanKey: Ein '{0}' Aufruf von {1} enthält einen ungültigen Schlüssel ({2}) und wird ignoriert.
+			InvalidEventEntry: "{0} ist kein Ereigniseintrag und kann keine Aufrufe von {1} annehmen"
+			BelongsToInvasion: "{0} hat versucht, den NPC-Pool von '{1}' zu bearbeiten. Dieser Eintrag ist ein Ereignis, das von tModLoaders 'NPCID.Sets.BelongsToInvasion' unterstützt wird. SubmitEventNPCs wird weiterhin unterstützt, aber es wird empfohlen, stattdessen die Sets zu verwenden, wo gegeben. Die Verwendung dieser Sets für ModNPCs fügt sie automatisch dem NPC-Pool eines Eintrags hinzu, ohne zusätzliche Mod-Aufrufe."
 		}
 
 		Configs: {
 			Common: {
-				// InvalidChange: You cannot change the '{0}' config while {1} is active!
-				// HostChange: Only the host is allowed to change this config.
+				InvalidChange: Du kannst diese Konfiguration nicht ändern, solange {0} aktiv ist!
+				HostChange: Nur der Host darf diese Konfiguration ändern.
 			}
 
 			BossLogConfiguration: {
-				// DisplayName: Boss Log Customization
+				DisplayName: Boss Log Konfigurationen
 
 				Headers: {
-					// BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
-					// BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
-					// BlindMode: "[i:888] [c/ffeb6e:Progression Mode - Defeat bosses to unlock their entry!]"
+					BossLogUI: "[i:149] [c/ffeb6e:Boss Log UI]"
+					BossLogChecklist: "[i:903] [c/ffeb6e:Boss Log Checklist]"
+					BlindMode: "[i:888] [c/ffeb6e:Fortschrittsmodus - Besiege Bosse, um ihren Eintrag freizuschalten!]"
 				}
 
 				BossLogColor: {
-					// Label: Boss Log Color
-					// Tooltip: Choose the color of your Boss Log!
+					Label: Boss Log Farbe
+					Tooltip: Wähle die Farbe für dein Boss Log
 				}
 
 				BossLogPos: {
-					// Label: Open Log Button Position
-					/* Tooltip:
+					Label: Öffne Log Knopf Position
+					Tooltip:
 						'''
-						Alternatively, hold right-click while hovering over the Boss Log button to move it wherever you'd like with ease!
-						Position is measured from bottom right corner of screen.
-						''' */
+						Alternativ kannst du auch mit der rechten Maustaste auf die Schaltfläche "Boss Log" klicken und sie so ganz einfach an die gewünschte Stelle verschieben!
+						Die Position wird von der rechten unteren Ecke des Bildschirms aus gemessen.
+						'''
 				}
 
 				ShowInteractionTooltips: {
-					// Label: Enable Interactions Tab
-					/* Tooltip:
+					Label: Interaktionstab aktivieren
+					Tooltip:
 						'''
-						When enabled, a small tab can be hovered over for an explanation on how to use the alternative interactions of the current page.
-						Alternative interactions examples include right-clicking on a Table of Contents entry to manually mark it as defeated.
-						''' */
+						Wenn aktiviert, kann über einen kleinen Tab gefahren werden, um eine Erklärung zur Nutzung der alternativen Interaktionen der aktuellen Seite zu erhalten.
+						Beispiele für alternative Interaktionen sind das Rechtsklicken auf einen Eintrag im Inhaltsverzeichnis, um ihn manuell als besiegt zu markieren.
+						'''
 				}
 
 				Debug: {
-					// Label: "[i:3625] [c/ffeb6e:Debug Tools for Mod Developers] [i:3619]"
-					// Tooltip: ""
+					Label: "[i:3625] [c/ffeb6e:Debug-Werkzeuge für Mod-Entwickler] [i:3619]"
+					Tooltip: ""
 				}
 
 				AutomaticChecklist: {
-					// Label: Automatic Checklist
-					/* Tooltip:
+					Label: Automatische Checkliste
+					Tooltip:
 						'''
-						Entries will be marked automatically when defeated. Disabling requires the user to manually check off entries.
-						Whether enabled or disabled, you can manually mark entries using right-click on their name.
-						''' */
+						Einträge werden automatisch markiert, wenn sie besiegt wurden. Deaktivieren erfordert manuelles Abhaken der Einträge.
+						Ob aktiviert oder deaktiviert, Einträge können durch Rechtsklick auf ihren Namen manuell markiert werden.
+						'''
 				}
 
 				ProgressiveChecklist: {
-					// Label: Progressive Checklist
-					// Tooltip: Hides content until the entry is encountered or beaten.
+					Label: Progressive Checkliste
+					Tooltip: Versteckt Inhalte, bis der Eintrag entdeckt oder besiegt wurde.
 				}
 
 				ProgressionPrompt: {
-					// Label: Disable Progressive Checklist prompt
-					// Tooltip: While enabled, this will prevent the prompt from appearing for newly-created characters.
+					Label: Aufforderung zur Fortschrittsmodus deaktivieren
+					Tooltip: Wenn aktiviert, wird dies verhindern, dass die Aufforderung für neu erstellte Charaktere erscheint.
 				}
 
 				HideUnavailable: {
-					// Label: Hide unavailable bosses
-					/* Tooltip:
+					Label: Nicht verfügbare Bosse ausblenden
+					Tooltip:
 						'''
-						If enabled, unavailable bosses will be removed from the Boss Log's table of contents.
-						Ex. Frost Legion while it is not Xmas.
-						''' */
+						Wenn diese Option aktiviert ist, werden nicht verfügbare Bosse aus dem Inhaltsverzeichnis des Boss-Logs entfernt.
+						Beispiel. Frost Legion, wenn es nicht Weihnachten ist
+						'''
 				}
 
 				HideUnsupported: {
-					// Label: Hide unsupported bosses
-					// Tooltip: If enabled, bosses that have not fully integrated will be removed from the Boss Log's table of contents.
+					Label: Nicht unterstützte Bosse verstecken
+					Tooltip: Wenn aktiviert, werden Bosse, die nicht vollständig integriert sind, aus dem Inhaltsverzeichnis des Boss-Logs entfernt.
 				}
 
 				OnlyBosses: {
-					// Label: Boss Log only shows boss content
-					/* Tooltip:
+					Label: Boss Log zeigt nur Boss-Inhalte
+					Tooltip:
 						'''
-						If enabled, the checklist and page navigation will only give access boss entries.
-						Note: Filter configs below will be ignored when enabled.
-						''' */
+						Wenn aktiviert, bieten die Checkliste und die Seitennavigation nur Zugriff auf Boss-Einträge.
+						Hinweis: Die unten stehenden Filter-Konfigurationen werden bei Aktivierung ignoriert.
+						'''
 				}
 
 				FilterBosses: {
-					// Label: Filter bosses in list
-					// Tooltip: ""
+					Label: Filtere Bosse in der Liste
+					Tooltip: ""
 				}
 
 				FilterMiniBosses: {
-					// Label: Filter mini bosses in list
-					// Tooltip: ""
+					Label: Filtere Mini Bosse in der Liste
+					Tooltip: ""
 				}
 
 				FilterEvents: {
-					// Label: Filter events in list
-					// Tooltip: ""
+					Label: Filtere Events in der Liste
+					Tooltip: ""
 				}
 
 				ColoredBossText: {
-					// Label: Colored Boss Text
-					/* Tooltip:
+					Label: Gefärber Boss Text
+					Tooltip:
 						'''
-						The boss text in the table of contents will be green when defeated and red when not.
-						If next check is enabled, the next boss will be yellow.
-						''' */
+						Der Boss-Text im Inhaltsverzeichnis wird grün sein, wenn besiegt, und rot, wenn nicht.
+						Wenn die Option für die nächste Überprüfung aktiviert ist, wird der nächste Boss gelb sein.
+						'''
 				}
 
 				SelectedCheckmarkType: {
-					// Label: Checklist Marking Type
-					// Tooltip: ""
+					Label: Checklisten markierungs Typ
+					Tooltip: ""
 				}
 
 				DrawNextMark: {
-					// Label: Next Boss Check
-					// Tooltip: Puts a circle in the checkbox to indicate it is the next undefeated boss to fight.
+					Label: Nächster Boss Check
+					Tooltip: Setzt einen Kreis im Kontrollkästchen, um anzuzeigen, dass es der nächste unbesiegte Boss ist, gegen den man kämpfen muss.
 				}
 
 				LootChecklist: {
-					// Label: Enable loot/collectible checklist
-					// Tooltip: The table of contents will also check if you've obtained all of a boss's loot and collectible items.
+					Label: Beute-/Sammlungscheckliste aktivieren
+					Tooltip: Das Inhaltsverzeichnis überprüft auch, ob du alle Beute- und Sammelgegenstände eines Bosses erhalten hast.
 				}
 
 				CheckDroppedLoot: {
-					// Label: Only check droppable loot
-					// Tooltip: Items that are not dropped by the entry, such as music boxes, will not be counted towards the loot check.
+					Label: Nur fallenlassbare Beute zählen
+					Tooltip: Gegenstände, die nicht vom Eintrag fallengelassen werden, wie z.B. Musikboxen, werden nicht zur Beuteprüfung gezählt.
 				}
 
 				EnableProgressionMode: {
-					// Label: Enable Progression Mode
-					// Tooltip: ""
+					Label: Fortschrittsmodus aktivieren
+					Tooltip: ""
 				}
 
 				DisableProgressionMode: {
-					// Label: Disable Progression Mode
-					// Tooltip: ""
+					Label: Fortschrittsmodus deaktivieren
+					Tooltip: ""
 				}
 
 				MaskTextures: {
-					// Label: Hide textures until entry is defeated
-					// Tooltip: ""
+					Label: Texturen verstecken bis der Eintrag besiegt wurde
+					Tooltip: ""
 				}
 
 				MaskNames: {
-					// Label: Hide names until entry is defeated
-					// Tooltip: ""
+					Label: Namen verbergen, bis der Eintrag besiegt ist
+					Tooltip: ""
 				}
 
 				UnmaskNextCheck: {
-					// Label: Show the name of the next entry to fight
-					// Tooltip: Note that the Next Boss Check AND Hide Boss Names must be enabled for this to work.
+					Label: Den Namen des nächsten Eintrags anzeigen, der bekämpft werden soll
+					Tooltip: Beachten Sie, dass sowohl die Option "Nächste Bossüberprüfung" als auch "Bossnamen ausblenden" aktiviert sein müssen, damit dies funktioniert.
 				}
 
 				MaskBossLoot: {
-					// Label: Hide boss drops until entry is defeated
-					// Tooltip: ""
+					Label: Beute des Bosses verbergen, bis der Eintrag besiegt ist
+					Tooltip: ""
 				}
 
 				MaskHardMode: {
-					// Label: Hide hardmode content until in hardmode
-					// Tooltip: Hides ALL content, overriding the options you have toggled above.
+					Label: Hardmode-Inhalte verbergen, bis der Hardmode erreicht ist
+					Tooltip: Verbirgt ALLE Inhalte und überschreibt die oben aktivierten Optionen.
 				}
 
 				ShowProgressBars: {
-					// Label: Show Progress Bars
-					// Tooltip: When disabled, the total progress bars at the bottom of the table of contents will not show.
+					Label: Fortschrittsbalken anzeigen
+					Tooltip: Wenn deaktiviert, werden die Gesamt-Fortschrittsbalken unten im Inhaltsverzeichnis nicht angezeigt.
 				}
 
 				SpawnItemCraftingChecklist: {
-					// Label: Enable spawn item crafting checklist
-					/* Tooltip:
+					Label: Aktiviere die Checkliste für Spawn-Item-Herstellung
+					Tooltip:
 						'''
-						When enabled, crafting recipes for spawn info items will function as a checklist.
-						Ingredients will be checked off if the correct amount of items are in the inventory.
-						Crafting stations will be checked off if the player is nearby the correct tiles.
-						''' */
+						Wenn aktiviert, funktionieren Herstellungsrezepte für Spawn-Info-Gegenstände als Checkliste.
+						Zutaten werden abgehakt, wenn die richtige Menge an Gegenständen im Inventar ist.
+						Herstellungsstationen werden abgehakt, wenn der Spieler sich in der Nähe der richtigen Kacheln befindet.
+						'''
 				}
 			}
 
 			DebugTools: {
-				// Tooltip: ""
+				Tooltip: ""
 
 				ModCallLogVerbose: {
-					// Label: Mod.Call Log Verbose
-					/* Tooltip:
+					Label: Ausführliches Mod.Call-Protokoll
+					Tooltip:
 						'''
-						If true, logs will display more information on entry data creation within tModLoader logs.
-						Invalid or incorrect usage of mod calls are displayed regardless of setting.
-						''' */
+						Wenn wahr, werden Protokolle mehr Informationen über die Erstellung von Eintragsdaten innerhalb der tModLoader-Protokolle anzeigen.
+						Ungültige oder falsche Verwendung von Mod-Aufrufen werden unabhängig von der Einstellung angezeigt.
+						'''
 				}
 
 				DisableAutoLocalization: {
-					// Label: Disable Auto Localization
-					/* Tooltip:
+					Label: Automatische Lokalisierung deaktivieren
+					Tooltip:
 						'''
-						BossChecklist will detect old calls and create localizations for LocalizedText submissions needed for the new calls.
-						The new calls do not require these localizations but will default to them if null is passed.
-						Set to true to prevent new localizations from being created by BossChecklist.
-						''' */
+						BossChecklist erkennt alte Aufrufe und erstellt Lokalisierungen für erforderliche LocalizedText-Einsendungen für die neuen Aufrufe.
+						Die neuen Aufrufe erfordern diese Lokalisierungen nicht, werden aber standardmäßig verwendet, wenn null übergeben wird.
+						Aktivieren Sie diese Option, um zu verhindern, dass neue Lokalisierungen von BossChecklist erstellt werden.
+						'''
 				}
 
 				EnabledResetOptions: {
-					// Label: Enable Reset Data Options
-					/* Tooltip:
+					Label: Aktiviere Optionen zum Zurücksetzen von Daten
+					Tooltip:
 						'''
-						When enabled, your are able to clear or reset certain data within the Boss Log.
-						Includes: Clearing hidden entries, clearing marked entries, clearing loot checklist, and resetting records.
-						[c/FF0000:The 'Enable Interactions Tab' config is required in order to use this config.]
-						''' */
+						Wenn aktiviert, kannst du bestimmte Daten im Boss Log löschen oder zurücksetzen.
+						Umfasst: Löschen versteckter Einträge, Löschen markierter Einträge, Löschen der Beute-Checkliste und Zurücksetzen von Rekorden.
+						[c/FF0000:Die Konfiguration 'Interaktionstab aktivieren' ist erforderlich, um diese Konfiguration zu nutzen.]
+						'''
 				}
 
 				ShowProgressionValue: {
-					// Label: Access Progression Values
-					/* Tooltip:
+					Label: Zugriff auf Progressionswerte
+					Tooltip:
 						'''
-						Shows the progression value when hovering over an entry within the table of contents and when viewing an entry's page.
-						The progression value is what determines how entries are ordered in the checklist.
-						''' */
+						Zeigt den Progressionswert an, wenn man mit der Maus über einen Eintrag im Inhaltsverzeichnis fährt und wenn man die Seite eines Eintrags betrachtet.
+						Der Progressionswert bestimmt, wie Einträge in der Checkliste geordnet werden.
+						'''
 				}
 
 				AccessInternalNames: {
-					// Label: Access Entry Keys
-					/* Tooltip:
+					Label: Zugriff auf interne Namen
+					Tooltip:
 						'''
-						Adds a button on each entry page that displays and copies the Entry Key to the in-game clipboard.
-						Useful for mod developers making cross-mod content.
-						''' */
+						Fügt auf der Seite eines Boss-Eintrags einen Button hinzu, um Boss-Schlüssel und Mod-Quellen in die Zwischenablage des Spiels zu kopieren.
+						Nützlich für Mod-Entwickler, die Cross-Mod-Inhalte erstellen.
+						'''
 				}
 
 				ShowCollectionType: {
-					// Label: Show Auto-detected Collectible Type
-					// Tooltip: Boss collectible itemslots will be labeled with the assigned collectible type.
+					Label: Angezeigten Typ von Sammelobjekten anzeigen
+					Tooltip: Boss-Sammelobjekte werden mit dem zugewiesenen Sammeltyp gekennzeichnet.
 				}
 
 				InactiveBossCheck: {
-					// Label: Inactive Boss Check
-					/* Tooltip:
+					Label: Prüfung inaktiver Bosse
+					Tooltip:
 						'''
-						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
-						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
-						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
-						''' */
+						Wenn aktiviert, wird eine Nachricht im Chat angezeigt, wenn die Berechnung der Rekorde beginnt, falls die Rekordverfolgung aktiviert ist.
+						Dies sollte auch eine Nachricht im Chat anzeigen, wenn eine Despawn-Nachricht erscheint, falls Despawn-Nachrichten aktiviert sind.
+						Diese Nachrichten sollten erscheinen, wenn ein Boss besiegt wurde oder ein Boss despawnt ist.
+						'''
 				}
 			}
 
 			FeatureConfiguration: {
-				// DisplayName: Other features
+				DisplayName: Andere Funktionen
 
 				Headers: {
-					// BossRadar: "[i:3084] [c/ffeb6e:Boss Radar]"
-					// ChatMessages: "[i:3037] [c/ffeb6e:Chat Messages]"
-					// ItemMapDetection: "[i:893] [c/ffeb6e:Item Map Detection]"
-					// BossRecords: "[i:3095] [c/ffeb6e:Boss Records]"
+					BossRadar: "[i:3084] [c/ffeb6e:Boss-Radar]"
+					ChatMessages: "[i:3037] [c/ffeb6e:Chat-Nachrichten]"
+					ItemMapDetection: "[i:893] [c/ffeb6e:Gegenstands-Kartenerkennung]"
+					BossRecords: "[i:3095] [c/ffeb6e:Boss-Protokolle]"
 				}
 
 				RecordTrackingEnabled: {
-					// Label: Enable Boss Record Tracking
-					// Tooltip: When enabled, fight stats will be tracked for records.
+					Label: Boss-Record-Tracking aktivieren
+					Tooltip: Wenn aktiviert, werden Kampfstatistiken für Rekorde verfolgt.
 				}
 
 				AllowNewRecords: {
-					// Label: Allow New Records
-					/* Tooltip:
+					Label: Neue Rekorde zulassen
+					Tooltip:
 						'''
-						When disabled, only your previous attempt is recorded.
-						First victory and personal best records will not be overwritten.
-						''' */
+						Wenn deaktiviert, wird nur Ihr vorheriger Versuch aufgezeichnet.
+						Erster Sieg und persönliche Bestleistungen werden nicht überschrieben.
+						'''
 				}
 
 				NewRecordLogGlow: {
-					// Label: Enable New Record Log Glow
-					/* Tooltip:
+					Label: Neuer Rekord Leuchteffekt aktivieren
+					Tooltip:
 						'''
-						When enabled, setting a new record will put a rainbow glow on the following:
-						- Boss Log button
-						- Table of Contents entry name
-						''' */
+						Wenn aktiviert, wird beim Aufstellen eines neuen Rekords ein Regenbogen-Leuchteffekt angezeigt bei:
+						- Boss Log Knopf
+						- Name des Eintrags im Inhaltsverzeichnis
+						'''
 				}
 
 				TimeValueFormat: {
-					// Label: Time Value Format
-					/* Tooltip:
+					Label: Zeitwertformat
+					Tooltip:
 						'''
 						Standard: [0:00:00.000]
-						Simple: [0h 0m 0s 0ms]
-						''' */
+						Einfach: [0h 0m 0s 0ms]
+						'''
 				}
 
 				DisplayRecordTracking: {
-					// Label: Display Record Tracker Values
-					/* Tooltip:
+					Label: Anzeige der Rekord-Tracker-Werte
+					Tooltip:
 						'''
-						When enabled, record tracking values are shown and updated during a boss fight.
-						Note: Strictly for singleplayer, currently. Does not work in multiplayer.
-						''' */
+						Wenn aktiviert, werden die Rekord-Tracking-Werte während eines Bosskampfes angezeigt und aktualisiert.
+						Hinweis: Streng genommen nur für Einzelspieler, derzeit. Funktioniert nicht im Mehrspielermodus.
+						'''
 				}
 
 				DespawnMessageType: {
-					// Label: Boss Despawn Annoucements
-					/* Tooltip:
+					Label: Ankündigungen zum Verschwinden von Bossen
+					Tooltip:
 						'''
-						Despawn messages will appear in chat when a boss becomes inactive.
-						If enabled, choose between generic or unique messages.
-						''' */
+						Despawn-Nachrichten erscheinen im Chat, wenn ein Boss inaktiv wird.
+						Wenn aktiviert, wählen Sie zwischen generischen oder einzigartigen Nachrichten.
+						'''
 				}
 
 				LimbMessages: {
-					// Label: Non-Boss Defeated Annoucements
-					/* Tooltip:
+					Label: Ankündigungen zum Besiegen von Nicht-Bossen
+					Tooltip:
 						'''
-						Messages will appear in chat when an important component of an entry is defeated.
-						Examples include: Skeletron's Hands, Retinazor/Spazmatism, the Celestial Pillars, etc.
-						''' */
+						Nachrichten erscheinen im Chat, wenn eine wichtige Komponente eines Eintrags besiegt wird.
+						Beispiele umfassen: Skeletrons Hände, Retinazor/Spazmatism, die Himmlischen Säulen, etc.
+						'''
 				}
 
 				MoonMessages: {
-					// Label: Moon Event Ending Annoucements
-					/* Tooltip:
+					Label: Ankündigungen zum Ende von Mondereignissen
+					Tooltip:
 						'''
-						Messages will appear in chat when a vanilla moon event has ended.
-						Moon events include: Blood Moon, Eclipse, Pumpkin Moon and Frost Moon.
-						''' */
+						Nachrichten erscheinen im Chat, wenn ein Vanilla-Mondereignis endet.
+						Zu den Mondereignissen gehören: Blutmond, Sonnenfinsternis, Kürbismond und Frostmond.
+						'''
 				}
 
 				TimerSounds: {
-					// Label: Respawn Timer Sounds
-					// Tooltip: If enabled, the last 3 seconds of your respawn time will have sound indicators.
+					Label: Tonsignale für Respawn-Timer
+					Tooltip: Wenn aktiviert, haben die letzten 3 Sekunden Ihrer Respawn-Zeit Tonindikatoren.
 				}
 
 				TreasureBagsOnMap: {
-					// Label: Treasure bags display on the map
-					// Tooltip: ""
+					Label: Schatzbeutel-Anzeige auf der Karte
+					Tooltip: ""
 				}
 
 				FragmentsOnMap: {
-					// Label: Fragments display on the map
-					// Tooltip: ""
+					Label: Fragment-Anzeige auf der Karte
+					Tooltip: ""
 				}
 
 				ScalesOnMap: {
-					// Label: Shadow Scales and Tissue Samples display on the map
-					// Tooltip: ""
+					Label: Schattenschuppen und Gewebeproben auf der Karte anzeigen
+					Tooltip: ""
 				}
 
 				EnableBossRadar: {
-					// Label: Enable Boss Radar
-					// Tooltip: ""
+					Label: Aktiviere Boss Radar
+					Tooltip: ""
 				}
 
 				RadarMiniBosses: {
-					// Label: Whitelist mini bosses
-					// Tooltip: Note: This only works properly with mini bosses that have head icons.
+					Label: Mini-Bosse auf die Whitelist setzen
+					Tooltip: Hinweis: Dies funktioniert nur korrekt mit Mini-Bossen, die Kopf-Symbole haben.
 				}
 
 				RadarOpacity: {
-					// Label: Radar Opacity
-					// Tooltip: Adjust how transparent the radar's icon will be.
+					Label: Radar-Deckkraft
+					Tooltip: Anpassen, wie durchsichtig das Radar-Symbol sein wird.
 				}
 
 				RadarBlacklist: {
-					// Label: Radar Blacklist
-					// Tooltip: The selected NPCs will not be tracked by the radar.
+					Label: Radar-Blacklist
+					Tooltip: Die ausgewählten NPCs werden vom Radar nicht erfasst.
 				}
 			}
 		}
