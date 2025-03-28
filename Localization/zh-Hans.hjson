@@ -16,7 +16,7 @@ Mods: {
 			}
 
 			Tabs: {
-				ToggleFilters: 切换过滤器
+				ToggleFilters: 开关过滤器
 				TableOfContents: 目录
 				Credits: 感谢页面
 				NextEntry:
@@ -26,13 +26,13 @@ Mods: {
 					'''
 				Records: 挑战记录
 				SpawnInfo: 生成信息
-				LootAndCollectibles: 掉落物 & 收藏品
+				LootAndCollectibles: 战利品 & 收藏品
 			}
 
 			Indicator: {
 				ProgressionMode: 渐进式日志已{0}
-				ManualChecklist: 条目必须由用户手动检查
-				AutomaticChecklist: 日志将自动检查条目
+				ManualChecklist: 条目必须由用户手动勾选
+				AutomaticChecklist: 清单将自动检查条目
 				OnlyBossContentEnabled: 只能显示Boss内容
 				OnlyBossContentDisabled: 能显示所有内容
 			}
@@ -73,7 +73,7 @@ Mods: {
 				CopySource: 点击以复制内部'Mod源'至剪切板
 				ViewPage: 点击以查看页面
 				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
-				LogFeaturesNotAvailable: 记录、召唤物和掉落物表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
+				LogFeaturesNotAvailable: 记录、召唤物和战利品表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
 			}
 
 			Records: {
@@ -124,10 +124,10 @@ Mods: {
 
 			SpawnInfo: {
 				NoInfo: 无可用信息
-				RecipeFrom: 此合成配方来自: {0}
-				CycleRecipe: 切换至其他合成配方
-				Noncraftable: 此物品不可被合成
-				NoSpawnItem: 没有生成{0}的物品
+				RecipeFrom: 配方来自: {0}
+				CycleRecipe: 切换至其他配方
+				Noncraftable: 此物品无法制作
+				NoSpawnItem: {0}没有召唤物
 				ByHand: 空手制作
 			}
 
@@ -152,11 +152,11 @@ Mods: {
 					'''
 				SelectEnable:
 					'''
-					继续并完全开启渐进式日志...
+					继续并完全启用渐进式日志...
 					* 锁定未击败条目的页面信息内容
 					* 材质和名称被遮掩
 					* Boss战利品被锁定, 直到被击败
-					* 启用提示下一个要挑战的Boss, 降低信息局限性 (推荐)
+					* 启用提示下个挑战, 降低信息局限性 (推荐)
 					'''
 				SelectConfig: 关闭Boss日志并配置渐进式日志...
 				DisablePrompt: 不再显示此内容
@@ -349,7 +349,7 @@ Mods: {
 				}
 
 				BossLogPos: {
-					Label: 开启Boss日志的按钮的位置
+					Label: 打开Boss日志的按钮的位置
 					Tooltip:
 						'''
 						在游戏中按住鼠标右键即可轻松将按钮移动到任意位置!
@@ -433,12 +433,12 @@ Mods: {
 					Tooltip:
 						'''
 						目录中的Boss文本在被击败时将变为绿色, 在未击败时将变为红色.
-						如果启用了'提示下一个要挑战的Boss', 则下一个Boss将为黄色.
+						如果启用了'提示下一个要挑战的Boss', 则下个Boss将为黄色.
 						'''
 				}
 
 				SelectedCheckmarkType: {
-					Label: 标记模式
+					Label: 清单标记类型
 					Tooltip: ""
 				}
 
@@ -479,7 +479,7 @@ Mods: {
 
 				UnmaskNextCheck: {
 					Label: 显示下一进度条目的名称
-					Tooltip: 备注: 必须启用'检查下个Boss'和'隐藏Boss名称'后才会生效.
+					Tooltip: 备注: 必须启用'提示下一个要挑战的Boss'和'隐藏Boss名称'后才会生效.
 				}
 
 				MaskBossLoot: {
@@ -498,10 +498,10 @@ Mods: {
 				}
 
 				SpawnItemCraftingChecklist: {
-					Label: 启用生成物合成清单
+					Label: 启用召唤物制作清单
 					Tooltip:
 						'''
-						启用后, 生成信息物品的合成配方将作为清单.
+						启用后, 生成信息召唤物的制作配方将作为清单.
 						背包中有对应数量的材料时, 相应材料需求会自动勾选.
 						站在对应的物块的附近时, 相应制作站需求会自动勾选.
 						'''
