@@ -498,13 +498,13 @@ Mods: {
 				}
 
 				SpawnItemCraftingChecklist: {
-					// Label: Enable spawn item crafting checklist
-					/* Tooltip:
+					Label: 启用生成物合成清单
+					Tooltip:
 						'''
-						When enabled, crafting recipes for spawn info items will function as a checklist.
-						Ingredients will be checked off if the correct amount of items are in the inventory.
-						Crafting stations will be checked off if the player is nearby the correct tiles.
-						''' */
+						启用后, 生成信息物品的合成配方将作为清单.
+						背包中有对应数量的材料时, 相应材料需求会自动勾选.
+						站在对应的物块的附近时, 相应制作站需求会自动勾选.
+						'''
 				}
 			}
 
