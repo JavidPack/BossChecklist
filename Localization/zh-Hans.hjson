@@ -127,7 +127,7 @@ Mods: {
 				RecipeFrom: 配方来自: {0}
 				CycleRecipe: 切换至其他配方
 				Noncraftable: 此物品无法制作
-				NoSpawnItem: {0}没有召唤物
+				NoSpawnItem: "{0}没有召唤物"
 				ByHand: 空手制作
 			}
 
