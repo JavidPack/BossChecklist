@@ -1,5 +1,5 @@
 en-US, 320/320, 100%, missing 0
-de-DE, 0/320, 0%, missing 320
+de-DE, 320/320, 100%, missing 0
 it-IT, 0/320, 0%, missing 320
 fr-FR, 317/320, 99%, missing 3
 es-ES, 80/320, 25%, missing 240
