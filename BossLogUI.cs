@@ -228,6 +228,10 @@ namespace BossChecklist
 		public void ToggleBossLog(bool show = true) {
 			// First, determine if the player has ever opened the Log before
 			if (show) {
+				// Reset the position of the button to make sure it updates with the screen res
+				BookArea.Left.Pixels = (Main.screenWidth / 2) - (BookArea.Width.Pixels / 2);
+				BookArea.Top.Pixels = (Main.screenHeight / 2) - (BookArea.Height.Pixels / 2) - 6;
+
 				// Mark the player as having opened the Log if they have not been so already
 				if (!GetModPlayer.hasOpenedTheBossLog) {
 					GetModPlayer.enteredWorldReset = false; // If opening for the first time, this doesn't need to occur again until the next world reset
@@ -473,9 +477,6 @@ namespace BossChecklist
 		/// This includes the main book area, the page areas, and all book tabs.
 		/// </summary>
 		private void ResetUIPositioning() {
-			// Reset the position of the button to make sure it updates with the screen res
-			BookArea.Left.Pixels = (Main.screenWidth / 2) - (BookArea.Width.Pixels / 2);
-			BookArea.Top.Pixels = (Main.screenHeight / 2) - (BookArea.Height.Pixels / 2) - 6;
 			PageOne.Left.Pixels = BookArea.Left.Pixels + 20;
 			PageOne.Top.Pixels = BookArea.Top.Pixels + 12;
 			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
