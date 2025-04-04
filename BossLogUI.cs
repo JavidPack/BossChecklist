@@ -228,7 +228,7 @@ namespace BossChecklist
 		public void ToggleBossLog(bool show = true) {
 			// First, determine if the player has ever opened the Log before
 			if (show) {
-				// Reset the position of the button to make sure it updates with the screen res
+				// Reset the position of the book ui content to make sure it updates with the screen res
 				BookArea.Left.Pixels = (Main.screenWidth / 2) - (BookArea.Width.Pixels / 2);
 				BookArea.Top.Pixels = (Main.screenHeight / 2) - (BookArea.Height.Pixels / 2) - 6;
 
@@ -239,16 +239,14 @@ namespace BossChecklist
 					// When opening for the first time, open the Progression Mode prompt if enabled. Otherwise, open the Table of Contents.
 					PageNum = BossChecklist.BossLogConfig.PromptDisabled ? Page_TableOfContents : Page_Prompt;
 				}
+				else if (GetModPlayer.enteredWorldReset) {
+					// If the Log has been opened before, check for a world change.
+					// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
+					GetModPlayer.enteredWorldReset = false;
+					PageNum = Page_TableOfContents;
+				}
 				else {
-					if (GetModPlayer.enteredWorldReset) {
-						// If the Log has been opened before, check for a world change.
-						// This is to reset the page from what the user previously had back to the Table of Contents when entering another world.
-						GetModPlayer.enteredWorldReset = false;
-						PageNum = Page_TableOfContents;
-					}
-					else {
-						RefreshPageContent(); // Otherwise, just default to the last page selected
-					}
+					RefreshPageContent(); // Otherwise, just default to the last page selected
 				}
 
 				// Update UI Element positioning before marked visible
