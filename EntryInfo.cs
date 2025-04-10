@@ -209,7 +209,7 @@ namespace BossChecklist
 			return VisibleOnChecklist();
 		}
 
-		internal EntryInfo(EntryType entryType, string modSource, string internalName, float progression, Func<bool> downed, List<int> npcIDs, Dictionary<string, object> extraData = null) {
+		internal EntryInfo(EntryType entryType, string modSource, string internalName, out string KeyOutput, float progression, Func<bool> downed, List<int> npcIDs, Dictionary<string, object> extraData = null) {
 			// Add the mod source to the opted mods list of the credits page if its not already and add the entry type
 			if (modSource != "Terraria" && modSource != "Unknown") {
 				BossChecklist.bossTracker.RegisteredMods.TryAdd(modSource, new int[3]);
@@ -217,7 +217,7 @@ namespace BossChecklist
 			}
 
 			// required entry data
-			this.Key = modSource + " " + internalName;
+			this.Key = KeyOutput = modSource + " " + internalName;
 			this.type = entryType;
 			this.modSource = modSource;
 			this.progression = progression;
@@ -411,6 +411,7 @@ namespace BossChecklist
 				entryType: type,
 				modSource: "Terraria",
 				internalName: nameKey,
+				out string generatedKey,
 				progression: val,
 				downed: downed,
 				npcIDs: new List<int>() { npcID },
@@ -455,6 +456,7 @@ namespace BossChecklist
 				entryType: type,
 				modSource: "Terraria",
 				internalName: nameKey,
+				out string generatedKey,
 				progression: val,
 				downed: downed,
 				npcIDs: ids,
@@ -474,6 +476,7 @@ namespace BossChecklist
 				entryType: EntryType.Event,
 				modSource: "Terraria",
 				internalName: nameKey,
+				out string generatedKey,
 				progression: val,
 				downed: downed,
 				npcIDs: BossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),

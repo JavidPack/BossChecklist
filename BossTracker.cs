@@ -1108,8 +1108,8 @@ namespace BossChecklist
 
 		internal void AddEntry(EntryType type, Mod mod, string iName, float val, Func<bool> down, List<int> id, Dictionary<string, object> extra = null) {
 			EnsureBossIsNotDuplicate(mod?.Name ?? "Unknown", iName);
-			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, val, down, id, extra));
-			LogNewBoss(mod?.DisplayName ?? "Unknown", iName);
+			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, out string key, val, down, id, extra));
+			LogNewBoss(mod?.DisplayName ?? "Unknown", iName, key);
 		}
 
 		internal void AddOrphanData(OrphanType type, Mod mod, Dictionary<string, object> values) {
@@ -1126,10 +1126,11 @@ namespace BossChecklist
 				throw new Exception(Language.GetText("DuplicateEntry").Format(mod, internalName));
 		}
 
-		internal void LogNewBoss(string mod, string name) {
+		internal void LogNewBoss(string mod, string name, string entryKey) {
 			if (!BossChecklist.BossLogConfig.Debug.ModCallLogVerbose)
 				return;
 
+			// Console logging for Multiplayer Networking
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
 			Console.Write("[Boss Checklist] ");
 			Console.ResetColor();
@@ -1141,14 +1142,12 @@ namespace BossChecklist
 			Console.WriteLine();
 			Console.ResetColor();
 
-			/*
 			if (OldCalls.Values.Any(x => x.Contains(name))) {
 				BossChecklist.instance.Logger.Warn($"Entry successfully registered to the Boss Log: [{mod} {name}] (outdated mod call)");
 			}
 			else {
-				BossChecklist.instance.Logger.Info($"Entry successfully registered to the Boss Log: [{mod} {name}]");
+				BossChecklist.instance.Logger.Info($"Entry successfully registered to the Boss Log: [{entryKey}]");
 			}
-			*/
 		}
 	}
 }
