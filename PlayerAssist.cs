@@ -181,8 +181,12 @@ namespace BossChecklist
 				}
 				packet.Send(); // Multiplayer client --> Server
 
-				packet = Mod.GetPacket(); // new packet
+				packet = Mod.GetPacket();
 				packet.Write((byte)PacketMessageType.RequestWorldRecords);
+				packet.Write(BossChecklist.bossTracker.BossRecordKeys.Count);
+				foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+					packet.Write(key);
+				}
 				packet.Send(); // Multiplayer client --> Server
 
 				packet = Mod.GetPacket();
