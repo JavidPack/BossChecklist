@@ -696,9 +696,9 @@ Mods: {
 
 			FilterType: {
 				Tooltip: ""
-				// Show.Label: Show
-				// HideWhenCompleted.Label: Hide When Completed
-				// Hide.Label: Hide
+				Show.Label: 显示
+				HideWhenCompleted.Label: 完成后隐藏
+				Hide.Label: 隐藏
 			}
 
 			CheckType: {
@@ -706,20 +706,20 @@ Mods: {
 				Check_Empty.Label: ✓  [ ]
 				Check_X.Label: ✓  X
 				X_Empty.Label: X  [ ]
-				// StrikeThrough.Label: Strike-through
+				StrikeThrough.Label: 删除线
 			}
 
 			TimeFormat: {
 				Tooltip: ""
-				// Standard.Label: Standard
-				// Simple.Label: Simple
+				Standard.Label: 标准
+				Simple.Label: 简易
 			}
 
 			MessageType: {
 				Tooltip: ""
-				// Disabled.Label: Disabled
-				// Generic.Label: Generic
-				// Unique.Label: Unique
+				Disabled.Label: 禁用
+				Generic.Label: 通用
+				Unique.Label: 独特
 			}
 		}
 	}
