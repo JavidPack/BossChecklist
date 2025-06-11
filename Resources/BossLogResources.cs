@@ -60,7 +60,7 @@ namespace BossChecklist.Resources
 		public static Asset<Texture2D> Content_ProgressiveOff;
 		public static Asset<Texture2D>[] Content_CollectibleType;
 
-		public static Dictionary<string, Asset<Texture2D>> FilterToIcon;
+		public static Dictionary<BossLogConfiguration.FilterType, Asset<Texture2D>> FilterToIcon;
 
 		public static Asset<Texture2D> RequestResource(string path, bool immediate = false) => ModContent.Request<Texture2D>("BossChecklist/Resources/" + path, immediate ? AssetRequestMode.ImmediateLoad : AssetRequestMode.AsyncLoad);
 
@@ -144,10 +144,10 @@ namespace BossChecklist.Resources
 				PreloadResource("Checks_Generic"),
 			];
 
-			FilterToIcon = new Dictionary<string, Asset<Texture2D>>() {
-				[BossLogConfiguration.Option_Show] = Check_Check,
-				[BossLogConfiguration.Option_HideWhenCompleted] = Check_Next,
-				[BossLogConfiguration.Option_Hide] = Check_X
+			FilterToIcon = new Dictionary<BossLogConfiguration.FilterType, Asset<Texture2D>>() {
+				[BossLogConfiguration.FilterType.Show] = Check_Check,
+				[BossLogConfiguration.FilterType.HideWhenCompleted] = Check_Next,
+				[BossLogConfiguration.FilterType.Hide] = Check_X
 			};
 		}
 	}

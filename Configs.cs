@@ -101,30 +101,33 @@ namespace BossChecklist
 		[TooltipKey("$Mods.BossChecklist.Configs.BossLogConfiguration.OnlyBosses.Tooltip")]
 		public bool OnlyShowBossContent { get; set; }
 
-		internal const string Option_Show = "Show";
-		internal const string Option_Hide = "Hide";
-		internal const string Option_HideWhenCompleted = "Hide When Completed";
+		private FilterType BossFilter;
+		[SliderColor(87, 181, 92)]
+		[BackgroundColor(200, 188, 172)]
+		[DefaultValue(FilterType.Show)]
+		public FilterType FilterBosses {
+			get => BossFilter;
+			set => BossFilter = (value is FilterType.Hide) ? FilterType.HideWhenCompleted : value;
+		}
 
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[OptionStrings(new string[] { Option_Show, Option_HideWhenCompleted })]
-		[DefaultValue(Option_Show)]
-		public string FilterBosses { get; set; }
+		[DefaultValue(FilterType.Show)]
+		public FilterType FilterMiniBosses { get; set; }
 
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(200, 188, 172)]
 		[DrawTicks]
-		[OptionStrings(new string[] { Option_Show, Option_HideWhenCompleted, Option_Hide })]
-		[DefaultValue(Option_Show)]
-		public string FilterMiniBosses { get; set; }
+		[DefaultValue(FilterType.Show)]
+		public FilterType FilterEvents { get; set; }
 
-		[SliderColor(87, 181, 92)]
-		[BackgroundColor(200, 188, 172)]
-		[DrawTicks]
-		[OptionStrings(new string[] { Option_Show, Option_HideWhenCompleted, Option_Hide })]
-		[DefaultValue(Option_Show)]
-		public string FilterEvents { get; set; }
+		public enum FilterType {
+			Show,
+			[EnumMember(Value = "Hide When Completed")]
+			HideWhenCompleted,
+			Hide
+		}
 
 		[BackgroundColor(250, 235, 215)]
 		[DefaultValue(true)]
@@ -133,14 +136,19 @@ namespace BossChecklist
 		[SliderColor(87, 181, 92)]
 		[BackgroundColor(250, 235, 215)]
 		[DrawTicks]
-		[OptionStrings(new string[] { CheckType_CheckAndEmpty, CheckType_CheckAndX, CheckType_XAndEmpty, CheckType_StrikeThrough })]
-		[DefaultValue(CheckType_CheckAndEmpty)]
-		public string SelectedCheckmarkType { get; set; }
+		[DefaultValue(CheckType.Check_Empty)]
+		public CheckType SelectedCheckmarkType { get; set; }
 
-		public const string CheckType_CheckAndEmpty = "✓  ☐";
-		public const string CheckType_CheckAndX = "✓  X";
-		public const string CheckType_XAndEmpty = "X  ☐";
-		public const string CheckType_StrikeThrough = "Strike-through";
+		public enum CheckType {
+			[EnumMember(Value = "✓  ☐")]
+			Check_Empty,
+			[EnumMember(Value = "✓  X")]
+			Check_X,
+			[EnumMember(Value = "X  ☐")]
+			X_Empty,
+			[EnumMember(Value = "Strike-through")]
+			StrikeThrough
+		}
 
 		[BackgroundColor(200, 188, 172)]
 		[DefaultValue(true)]
@@ -309,28 +317,35 @@ namespace BossChecklist
 		public bool NewRecordLogGlow { get; set; }
 
 		[DrawTicks]
-		[OptionStrings(new string[] { "Standard", "Simple" })]
-		[DefaultValue("Standard")]
-		public string TimeValueFormat { get; set; }
+		[DefaultValue(TimeFormat.Standard)]
+		public TimeFormat TimeValueFormat { get; set; }
+
+		public enum TimeFormat {
+			Standard,
+			Simple
+		}
 
 		public NPCDefinition DisplayRecordTracking { get; set; } = new NPCDefinition();
 
 		[Header("ChatMessages")]
 
 		[DrawTicks]
-		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
-		[DefaultValue("Generic")]
-		public string DespawnMessageType { get; set; }
+		[DefaultValue(MessageType.Generic)]
+		public MessageType DespawnMessageType { get; set; }
 
 		[DrawTicks]
-		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
-		[DefaultValue("Generic")]
-		public string LimbMessages { get; set; }
+		[DefaultValue(MessageType.Generic)]
+		public MessageType LimbMessages { get; set; }
 
 		[DrawTicks]
-		[OptionStrings(new string[] { "Disabled", "Generic", "Unique" })]
-		[DefaultValue("Generic")]
-		public string MoonMessages { get; set; }
+		[DefaultValue(MessageType.Generic)]
+		public MessageType MoonMessages { get; set; }
+
+		public enum MessageType {
+			Disabled,
+			Generic,
+			Unique
+		}
 
 		[DefaultValue(true)]
 		public bool TimerSounds { get; set; }

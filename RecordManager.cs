@@ -400,7 +400,7 @@ namespace BossChecklist
 			float milliseconds = (int)Math.Round((float)((seconds - (int)seconds) * 1000));
 
 			return BossChecklist.FeatureConfig.TimeValueFormat switch {
-				"Simple" => $"{sign}{(minutes > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Seconds", (int)seconds, milliseconds))}",
+				FeatureConfiguration.TimeFormat.Simple => $"{sign}{(minutes > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Seconds", (int)seconds, milliseconds))}",
 				_ => $"{sign}{minutes}:{seconds:00.000}"
 			};
 		}
@@ -511,7 +511,7 @@ namespace BossChecklist
 			float milliseconds = (int)Math.Round((float)((seconds - (int)seconds) * 1000));
 
 			return BossChecklist.FeatureConfig.TimeValueFormat switch {
-				"Simple" => $"{(hours > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hours", hours, minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds))}",
+				FeatureConfiguration.TimeFormat.Simple => $"{(hours > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hours", hours, minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds))}",
 				_ => $"{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds:0.000}"
 			};
 		}

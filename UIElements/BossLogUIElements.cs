@@ -392,9 +392,9 @@ namespace BossChecklist.UIElements
 
 			private string GetConfigValue() {
 				return Id switch {
-					"Boss" => BossChecklist.BossLogConfig.FilterBosses.Replace(" ", ""),
-					"MiniBoss" => BossChecklist.BossLogConfig.FilterMiniBosses.Replace(" ", ""),
-					"Event" => BossChecklist.BossLogConfig.FilterEvents.Replace(" ", ""),
+					"Boss" => BossChecklist.BossLogConfig.FilterBosses.ToString(),
+					"MiniBoss" => BossChecklist.BossLogConfig.FilterMiniBosses.ToString(),
+					"Event" => BossChecklist.BossLogConfig.FilterEvents.ToString(),
 					_ => ""
 				};
 			}
@@ -410,23 +410,24 @@ namespace BossChecklist.UIElements
 				// update the hover tooltips
 				string LangFilter = "Mods.BossChecklist.Log.TableOfContents.Filter";
 				string LangCommon = "Mods.BossChecklist.Log.Common";
+				string LangConfig = "Mods.BossChecklist.Configs.FilterType";
 
 				if (BossChecklist.BossLogConfig.OnlyShowBossContent && (Id == "MiniBoss" || Id == "Event"))
 					hoverText = $"{LangFilter}.Disabled";
 
 				hoverText = Id switch {
-					"Boss" or "MiniBoss" or "Event" => Language.GetTextValue($"{LangFilter}.{GetConfigValue()}", Language.GetTextValue($"{LangCommon}.{Id}Plural")),
+					"Boss" or "MiniBoss" or "Event" => Language.GetTextValue($"{LangCommon}.{Id}Plural") + ": " + Language.GetTextValue($"{LangConfig}.{GetConfigValue()}.Label"),
 					"Hidden" => $"{LangFilter}.ToggleHidden" + (LogUI.HiddenEntriesMode ? "Close" : "Open"),
 					_ => ""
 				};
 			}
 
-			private string CycleFilterState(string value, bool boss = false) {
+			private BossLogConfiguration.FilterType CycleFilterState(BossLogConfiguration.FilterType value, bool boss = false) {
 				return value switch {
-					BossLogConfiguration.Option_Show => BossLogConfiguration.Option_HideWhenCompleted,
-					BossLogConfiguration.Option_HideWhenCompleted => boss ? BossLogConfiguration.Option_Show : BossLogConfiguration.Option_Hide,
-					BossLogConfiguration.Option_Hide => BossLogConfiguration.Option_Show,
-					_ => ""
+					BossLogConfiguration.FilterType.Show => BossLogConfiguration.FilterType.HideWhenCompleted,
+					BossLogConfiguration.FilterType.HideWhenCompleted => boss ? BossLogConfiguration.FilterType.Show : BossLogConfiguration.FilterType.Hide,
+					BossLogConfiguration.FilterType.Hide => BossLogConfiguration.FilterType.Show,
+					_ => BossLogConfiguration.FilterType.Show // if it fails, default to show
 				};
 			}
 
@@ -436,21 +437,23 @@ namespace BossChecklist.UIElements
 				if (Id is null)
 					return; // don't do anything if the panel is clicked
 
-				string ConfigHoverText = "";
+				bool hasPendingChange = true;
 				if (Id == "Boss") {
-					BossChecklist.BossLogConfig.FilterBosses = ConfigHoverText = CycleFilterState(BossChecklist.BossLogConfig.FilterBosses, true);
+					BossChecklist.BossLogConfig.FilterBosses = CycleFilterState(BossChecklist.BossLogConfig.FilterBosses, true);
 				}
 				else if (Id == "MiniBoss" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
-					BossChecklist.BossLogConfig.FilterMiniBosses = ConfigHoverText = CycleFilterState(BossChecklist.BossLogConfig.FilterMiniBosses);
+					BossChecklist.BossLogConfig.FilterMiniBosses = CycleFilterState(BossChecklist.BossLogConfig.FilterMiniBosses);
 				}
 				else if (Id == "Event" && !BossChecklist.BossLogConfig.OnlyShowBossContent) {
-					BossChecklist.BossLogConfig.FilterEvents = ConfigHoverText = CycleFilterState(BossChecklist.BossLogConfig.FilterEvents);
+					BossChecklist.BossLogConfig.FilterEvents = CycleFilterState(BossChecklist.BossLogConfig.FilterEvents);
 				}
-				else if (Id == "Hidden") {
-					LogUI.HiddenEntriesMode = !LogUI.HiddenEntriesMode;
+				else {
+					hasPendingChange = false;
+					if (Id == "Hidden")
+						LogUI.HiddenEntriesMode = !LogUI.HiddenEntriesMode;
 				}
 
-				if (!string.IsNullOrEmpty(ConfigHoverText))
+				if (hasPendingChange)
 					BossLogUI.PendingConfigChange = true;
 
 				UpdateFilterIcon();
@@ -1344,7 +1347,7 @@ namespace BossChecklist.UIElements
 				}					
 
 				Asset<Texture2D> checkGrid = BossLogResources.Check_Box;
-				string checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
+				BossLogConfiguration.CheckType checkType = BossChecklist.BossLogConfig.SelectedCheckmarkType;
 
 				if (GetParentLog.HiddenEntriesMode) {
 					// Do not draw checkmark status if HiddenEntriesMode is enabled. Eye toggle buttons should appear instead.
@@ -1352,10 +1355,10 @@ namespace BossChecklist.UIElements
 					pos.Y += 7;
 				}
 				else if (entry.IsAutoDownedOrMarked) {
-					if (checkType == BossLogConfiguration.CheckType_XAndEmpty) {
+					if (checkType == BossLogConfiguration.CheckType.X_Empty) {
 						checkGrid = BossLogResources.Check_X;
 					}
-					else if (checkType != BossLogConfiguration.CheckType_StrikeThrough) {
+					else if (checkType != BossLogConfiguration.CheckType.StrikeThrough) {
 						checkGrid = BossLogResources.Check_Check;
 					}
 					else {
@@ -1381,7 +1384,7 @@ namespace BossChecklist.UIElements
 					}
 				}
 				else {
-					checkGrid = checkType == BossLogConfiguration.CheckType_CheckAndX ? BossLogResources.Check_X : BossLogResources.Check_Box;
+					checkGrid = checkType == BossLogConfiguration.CheckType.Check_X ? BossLogResources.Check_X : BossLogResources.Check_Box;
 					if (markAsNext) {
 						checkGrid = BossLogResources.Check_Next;
 					}
@@ -1390,7 +1393,7 @@ namespace BossChecklist.UIElements
 				if (GetParentLog.HiddenEntriesMode) {
 					spriteBatch.Draw(checkGrid.Value, pos, Color.White);
 				}
-				else if (!entry.hidden && checkType != BossLogConfiguration.CheckType_StrikeThrough) {
+				else if (!entry.hidden && checkType != BossLogConfiguration.CheckType.StrikeThrough) {
 					spriteBatch.Draw(BossLogResources.Check_Box.Value, pos, Color.White);
 					spriteBatch.Draw(checkGrid.Value, pos, Color.White);
 				}

@@ -693,6 +693,34 @@ Mods: {
 					// Tooltip: The selected NPCs will not be tracked by the radar.
 				}
 			}
+
+			FilterType: {
+				Tooltip: ""
+				// Show.Label: Show
+				// HideWhenCompleted.Label: Hide When Completed
+				// Hide.Label: Hide
+			}
+
+			CheckType: {
+				Tooltip: ""
+				Check_Empty.Label: ✓  [ ]
+				Check_X.Label: ✓  X
+				X_Empty.Label: X  [ ]
+				// StrikeThrough.Label: Strike-through
+			}
+
+			TimeFormat: {
+				Tooltip: ""
+				// Standard.Label: Standard
+				// Simple.Label: Simple
+			}
+
+			MessageType: {
+				Tooltip: ""
+				// Disabled.Label: Disabled
+				// Generic.Label: Generic
+				// Unique.Label: Unique
+			}
 		}
 	}
 }
