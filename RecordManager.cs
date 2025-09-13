@@ -71,12 +71,12 @@ namespace BossChecklist
 
 		public bool CanBeSaved => attempts > 0;
 
-		public Point GetStats(int category) {
+		internal int GetStatByCategory(SubCategory category, bool duration = true) {
 			return category switch {
-				(int)SubCategory.PreviousAttempt => new Point(durationPrev, hitsTakenPrev),
-				(int)SubCategory.FirstVictory => new Point(durationFirst, hitsTakenFirst),
-				(int)SubCategory.PersonalBest => new Point(durationBest, hitsTakenBest),
-				_ => new Point(-1, -1)
+				SubCategory.PreviousAttempt => duration ? durationPrev : hitsTakenPrev,
+				SubCategory.FirstVictory => duration ? durationFirst : hitsTakenFirst,
+				SubCategory.PersonalBest => duration ? durationBest : hitsTakenBest,
+				_ => -1
 			};
 		}
 

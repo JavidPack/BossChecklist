@@ -1341,14 +1341,11 @@ namespace BossChecklist
 						}
 						else if (CompareState != SubCategory.None) {
 							// default to world records as these are shared among all players and only have one record type value
-							int recordValue = i == 2 ? GetWorldRecords.durationWorld : GetWorldRecords.hitsTakenWorld;
+							int recordValue = i == 2 ? GetPlayerRecords.GetStatByCategory(RecordSubCategory) : GetPlayerRecords.GetStatByCategory(RecordSubCategory, false);
 							int compValue = i == 2 ? GetWorldRecords.durationWorld : GetWorldRecords.hitsTakenWorld;
 
-							if (RecordSubCategory != SubCategory.WorldRecord)
-								recordValue = i == 2 ? GetPlayerRecords.GetStats((int)RecordSubCategory).X : GetPlayerRecords.GetStats((int)RecordSubCategory).Y;
-
 							if (CompareState != SubCategory.WorldRecord)
-								compValue = i == 2 ? GetPlayerRecords.GetStats((int)CompareState).X : GetPlayerRecords.GetStats((int)CompareState).Y;
+								compValue = i == 2 ? GetPlayerRecords.GetStatByCategory(CompareState) : GetPlayerRecords.GetStatByCategory(CompareState, false);
 
 							string compValueString = i == 2 ? PersonalRecords.TimeConversion(compValue) : PersonalRecords.HitCount(compValue);
 							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(recordValue, compValue, out Color color) : PersonalRecords.HitCountDiff(recordValue, compValue, out color);
