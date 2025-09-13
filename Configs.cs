@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -232,7 +233,7 @@ namespace BossChecklist
 		*/
 
 		public void UpdateIndicators() {
-			BossLogUI Log = BossUISystem.Instance.BossLog;
+			BossLogUI Log = BossLogSystem.Instance.BossLog;
 			string LangIndicator = "Mods.BossChecklist.Log.Indicator";
 			string LangCommon = "Mods.BossChecklist.Log.Common";
 

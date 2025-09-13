@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.UI;
 using Terraria.ModLoader;
 using Terraria.ID;
+using BossChecklist.Systems;
 
 namespace BossChecklist
 {
@@ -73,8 +74,8 @@ namespace BossChecklist
 
 					//independent of resolution, but scales with zoom factor
 
-					float zoomFactorX = 0.25f * BossUISystem.ZoomFactor.X;
-					float zoomFactorY = 0.25f * BossUISystem.ZoomFactor.Y;
+					float zoomFactorX = 0.25f * BossLogSystem.ZoomFactor.X;
+					float zoomFactorY = 0.25f * BossLogSystem.ZoomFactor.Y;
 					//for some reason with small hitbox NPCs, it starts drawing closer to the player than it should when zoomed in too much
 					if (zoomFactorX > 0.175f) zoomFactorX = 0.175f;
 					if (zoomFactorY > 0.175f) zoomFactorY = 0.175f;

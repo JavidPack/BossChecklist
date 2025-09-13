@@ -1,4 +1,5 @@
-﻿using BossChecklist.UIElements;
+﻿using BossChecklist.Systems;
+using BossChecklist.UIElements;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
@@ -10,7 +11,7 @@ namespace BossChecklist
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			if (BossChecklist.ToggleChecklistHotKey.JustPressed) {
 				if (!BossChecklistUI.Visible) {
-					BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+					BossLogSystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				}
 				BossChecklistUI.Visible = !BossChecklistUI.Visible;
 			}
@@ -27,26 +28,26 @@ namespace BossChecklist
 		}
 
 		public override void SetControls() {
-			if (BossUISystem.Instance.BossLog.BossLogVisible) {
+			if (BossLogSystem.Instance.BossLog.BossLogVisible) {
 				if (Main.LocalPlayer.controlInv) {
-					BossUISystem.Instance.BossLog.ToggleBossLog(false);
+					BossLogSystem.Instance.BossLog.ToggleBossLog(false);
 					Main.LocalPlayer.releaseInventory = false;
 				}
 				else if (Main.LocalPlayer.controlCreativeMenu && Main.LocalPlayer.difficulty == PlayerDifficultyID.Creative) {
-					BossUISystem.Instance.BossLog.ToggleBossLog(false);
+					BossLogSystem.Instance.BossLog.ToggleBossLog(false);
 					Main.LocalPlayer.releaseCreativeMenu = false;
 				}
 			}
 		}
 
 		public override void PostUpdate() {
-			if (Main.LocalPlayer.dead && BossUISystem.Instance.BossLog.BossLogVisible)
-				BossUISystem.Instance.BossLog.ToggleBossLog(false);
+			if (Main.LocalPlayer.dead && BossLogSystem.Instance.BossLog.BossLogVisible)
+				BossLogSystem.Instance.BossLog.ToggleBossLog(false);
 		}
 
 		public override void OnEnterWorld() {
 			BossChecklistUI.Visible = false;
-			BossUISystem.Instance.BossLog.ToggleBossLog(false);
+			BossLogSystem.Instance.BossLog.ToggleBossLog(false);
 		}
 	}
 }

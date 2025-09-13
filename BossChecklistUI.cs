@@ -14,6 +14,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using Terraria.Localization;
+using BossChecklist.Systems;
 
 namespace BossChecklist.UIElements
 {
@@ -27,8 +28,8 @@ namespace BossChecklist.UIElements
 
 		float spacing = 8f;
 		public static bool Visible {
-			get { return BossUISystem.bossChecklistInterface.CurrentState == BossUISystem.Instance.bossChecklistUI; }
-			set { BossUISystem.bossChecklistInterface.SetState(value ? BossUISystem.Instance.bossChecklistUI : null); }
+			get { return BossLogSystem.bossChecklistInterface.CurrentState == BossLogSystem.Instance.bossChecklistUI; }
+			set { BossLogSystem.bossChecklistInterface.SetState(value ? BossLogSystem.Instance.bossChecklistUI : null); }
 		}
 
 		public static bool showCompleted = true;
@@ -59,7 +60,7 @@ namespace BossChecklist.UIElements
 				//toggleHiddenButton.SetImage(TextureAsset(showHiddenToggle));
 				imagesResized = true;
 			}
-			BossUISystem.Instance.bossChecklistUI.checklistPanel.Left.Pixels = Main.playerInventory ? -200 : 0;
+			BossLogSystem.Instance.bossChecklistUI.checklistPanel.Left.Pixels = Main.playerInventory ? -200 : 0;
 		}
 
 		public static Asset<Texture2D> TextureAsset(Texture2D texture) {
@@ -268,7 +269,7 @@ namespace BossChecklist.UIElements
 	{
 		const int paddingForBox = 10;
 		public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y) {
-			if (BossUISystem.Instance.bossChecklistUI.hoveredTextSnippet != null || BossUISystem.Instance.BossLog.hoveredTextSnippet != null) {
+			if (BossLogSystem.Instance.bossChecklistUI.hoveredTextSnippet != null || BossLogSystem.Instance.BossLog.hoveredTextSnippet != null) {
 				var texts = lines.Select(z => z.Text);
 				string longestText = texts.ToList().OrderByDescending(z => z.Length).First();
 				int widthForBox = (int)FontAssets.MouseText.Value.MeasureString(longestText).X;

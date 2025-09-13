@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
@@ -15,7 +16,7 @@ namespace BossChecklist.UIElements
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			base.DrawSelf(spriteBatch);
 			if (IsMouseHovering) {
-				BossUISystem.Instance.UIHoverText = hoverText;
+				BossLogSystem.Instance.UIHoverText = hoverText;
 				//	Main.toolTip = new Item();
 				//	Main.toolTip.name = hoverText;
 			}

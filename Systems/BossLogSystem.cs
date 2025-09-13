@@ -12,10 +12,10 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-namespace BossChecklist
+namespace BossChecklist.Systems
 {
-	class BossUISystem : ModSystem {
-		public static BossUISystem Instance { get; private set; }
+	class BossLogSystem : ModSystem {
+		public static BossLogSystem Instance { get; private set; }
 
 		internal static UserInterface bossChecklistInterface;
 		internal BossChecklistUI bossChecklistUI;
@@ -197,11 +197,11 @@ namespace BossChecklist
 
 			int padd = 20;
 			Vector2 stringVec = FontAssets.MouseText.Value.MeasureString(RemoveChatTags(text));
-			Rectangle bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd - 5);
+			var bgPos = new Rectangle(Main.mouseX + 20, Main.mouseY + 20, (int)stringVec.X + padd, (int)stringVec.Y + padd - 5);
 			bgPos.X = Utils.Clamp(bgPos.X, 0, Main.screenWidth - bgPos.Width);
 			bgPos.Y = Utils.Clamp(bgPos.Y, 0, Main.screenHeight - bgPos.Height);
 
-			Vector2 textPos = new Vector2(bgPos.X + padd / 2, bgPos.Y + padd / 2);
+			var textPos = new Vector2(bgPos.X + padd / 2, bgPos.Y + padd / 2);
 			if (textColor == default) {
 				textColor = Main.MouseTextColorReal;
 			}

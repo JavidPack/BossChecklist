@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
 using Terraria.ModLoader.Config;
+using BossChecklist.Systems;
 
 namespace BossChecklist
 {
@@ -115,7 +116,7 @@ namespace BossChecklist
 
 		internal string DisplaySpawnInfo => spawnInfo().Value;
 		
-		internal string ModDisplayName => ModLoader.TryGetMod(modSource, out Mod mod) ? BossUISystem.RemoveChatTags(mod) : modSource;
+		internal string ModDisplayName => ModLoader.TryGetMod(modSource, out Mod mod) ? BossLogSystem.RemoveChatTags(mod) : modSource;
 
 		internal bool MarkedAsDowned => WorldAssist.MarkedEntries.Contains(this.Key);
 
@@ -180,7 +181,7 @@ namespace BossChecklist
 			if (BossChecklist.BossLogConfig.OnlyShowBossContent && type != EntryType.Boss)
 				return false; // if the user has the config to show strictly boss content and the entry is not a boss
 
-			if (BossUISystem.Instance.BossLog.HiddenEntriesMode)
+			if (BossLogSystem.Instance.BossLog.HiddenEntriesMode)
 				return true; // If the HiddenEntriesMode is currently active, all entries should be shown
 
 			bool HideUnsupported = modSource == "Unknown" && BossChecklist.BossLogConfig.HideUnsupported; // entries not using the new mod calls for the Boss Log

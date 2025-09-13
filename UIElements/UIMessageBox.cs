@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Collections.Generic;
@@ -94,7 +95,7 @@ namespace BossChecklist.UIElements
 					//offset += 20;
 					//offset += texts.Max(t => (int)ChatManager.GetStringSize(FontAssets.MouseText, texts, Vector2.One).X);
 					if (hoveredSnippet > -1 && IsMouseHovering) {
-						BossUISystem.Instance.BossLog.hoveredTextSnippet = texts[hoveredSnippet];
+						BossLogSystem.Instance.BossLog.hoveredTextSnippet = texts[hoveredSnippet];
 						// BossChecklist change: Use hoveredTextSnippet to bypass clippingRectangle and draw order issues.
 						//texts[hoveredSnippet].OnHover();
 						//if (Main.mouseLeft && Main.mouseLeftRelease/* && Terraria.GameInput.PlayerInput.Triggers.JustReleased.MouseLeft*/) {

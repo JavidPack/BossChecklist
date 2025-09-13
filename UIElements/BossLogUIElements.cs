@@ -1,4 +1,5 @@
 ﻿using BossChecklist.Resources;
+using BossChecklist.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -46,7 +47,7 @@ namespace BossChecklist.UIElements
 		/// All Log related UIElements should hide mouse over interactions and lock the vanilla scroll wheel
 		/// </summary>
 		internal class LogUIElement : UIElement {
-			internal BossLogUI LogUI => BossUISystem.Instance.BossLog;
+			internal BossLogUI LogUI => BossLogSystem.Instance.BossLog;
 			public string hoverText;
 			internal Color hoverTextColor = Color.White;
 			internal Texture2D asset = null;
@@ -77,8 +78,8 @@ namespace BossChecklist.UIElements
 				base.Draw(spriteBatch);
 
 				if (ContainsPoint(Main.MouseScreen) && !string.IsNullOrEmpty(hoverText)) {
-					BossUISystem.Instance.UIHoverText = hoverText;
-					BossUISystem.Instance.UIHoverTextColor = hoverTextColor;
+					BossLogSystem.Instance.UIHoverText = hoverText;
+					BossLogSystem.Instance.UIHoverTextColor = hoverTextColor;
 				}
 			}
 		}
@@ -283,7 +284,7 @@ namespace BossChecklist.UIElements
 						// Set all entries to NOT hidden
 						if (WorldAssist.HiddenEntries.Count > 0) {
 							WorldAssist.HiddenEntries.Clear();
-							BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+							BossLogSystem.Instance.bossChecklistUI.UpdateCheckboxes();
 							Networking.RequestHiddenEntryUpdate();
 							LogUI.RefreshPageContent();
 						}
@@ -495,12 +496,12 @@ namespace BossChecklist.UIElements
 				base.DrawSelf(spriteBatch);
 
 				Rectangle inner = GetInnerDimensions().ToRectangle();
-				if (subPageType == BossUISystem.Instance.BossLog.SelectedSubPage) {
+				if (subPageType == BossLogSystem.Instance.BossLog.SelectedSubPage) {
 					selectionBorder ??= BossLogResources.RequestResource("Nav_SubPage_Border");
 					spriteBatch.Draw(selectionBorder.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
-				bool useKillCountText = subPageType == SubPage.Records && BossUISystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
+				bool useKillCountText = subPageType == SubPage.Records && BossLogSystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				float scale = AutoScaleText(stringAdjust.X, this.Width.Pixels - 20f, 0.9f); // translated text value may exceed button size
@@ -674,24 +675,24 @@ namespace BossChecklist.UIElements
 						masterModeIcon ??= BossLogResources.RequestVanillaTexture("UI/WorldCreation/IconDifficultyMaster");
 						spriteBatch.Draw(masterModeIcon.Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsMasterOnly";
-							BossUISystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
+							BossLogSystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsMasterOnly";
+							BossLogSystem.Instance.UIHoverTextColor = new Color(255, (byte)(Main.masterColor * 200f), 0, Main.mouseTextColor); // mimics Master Mode color
 						}
 					}
 					else if (ExpertItemRestricted) {
 						expertModeIcon ??= BossLogResources.RequestVanillaTexture("UI/WorldCreation/IconDifficultyExpert");
 						spriteBatch.Draw(expertModeIcon.Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsExpertOnly";
-							BossUISystem.Instance.UIHoverTextColor = Main.DiscoColor; // mimics Expert Mode color
+							BossLogSystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsExpertOnly";
+							BossLogSystem.Instance.UIHoverTextColor = Main.DiscoColor; // mimics Expert Mode color
 						}
 					}
 					else if (OWmusicRestricted) {
 						otherWorldIcon ??= BossLogResources.RequestVanillaTexture("UI/WorldCreation/IconRandomSeed");
 						spriteBatch.Draw(otherWorldIcon.Value, pos, Color.White);
 						if (IsMouseHovering) {
-							BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsLocked";
-							BossUISystem.Instance.UIHoverTextColor = Color.Goldenrod;
+							BossLogSystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsLocked";
+							BossLogSystem.Instance.UIHoverTextColor = Color.Goldenrod;
 						}
 					}
 					else {
@@ -840,8 +841,8 @@ namespace BossChecklist.UIElements
 						// Hovering over the head icon will display the defeated text
 						Rectangle hoverRect = new Rectangle(lastX, firstHeadPos.Y, totalWidth, firstHeadPos.Height);
 						if (Main.MouseScreen.Between(hoverRect.TopLeft(), hoverRect.BottomRight())) {
-							BossUISystem.Instance.UIHoverText = entry.IsAutoDownedOrMarked ? isDefeated : notDefeated;
-							BossUISystem.Instance.UIHoverTextColor = entry.IsAutoDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
+							BossLogSystem.Instance.UIHoverText = entry.IsAutoDownedOrMarked ? isDefeated : notDefeated;
+							BossLogSystem.Instance.UIHoverTextColor = entry.IsAutoDownedOrMarked ? Colors.RarityGreen : Colors.RarityRed;
 						}
 
 						Vector2 pos = new Vector2(pageRect.X + 5, pageRect.Y + 5);
@@ -916,7 +917,7 @@ namespace BossChecklist.UIElements
 											if (!reachedKillCount) {
 												killcount += $" / {ItemID.Sets.KillsToBanner[Item.BannerToItem(bannerID)]}";
 											}
-											BossUISystem.Instance.UIHoverText = npcName + killcount;
+											BossLogSystem.Instance.UIHoverText = npcName + killcount;
 										}
 									}
 
@@ -947,8 +948,8 @@ namespace BossChecklist.UIElements
 			internal Point ach;
 			internal string tooltip;
 
-			PersonalRecords stats_player => BossUISystem.Instance.BossLog.GetPlayerRecords;
-			WorldRecord stats_world => BossUISystem.Instance.BossLog.GetWorldRecords;
+			PersonalRecords stats_player => BossLogSystem.Instance.BossLog.GetPlayerRecords;
+			WorldRecord stats_world => BossLogSystem.Instance.BossLog.GetWorldRecords;
 
 			public RecordDisplaySlot(Asset<Texture2D> texture, string title = null, string value = null) : base(texture) {
 				this.title = title;
@@ -1049,7 +1050,7 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(achievements.Value, inner.TopLeft(), achSlot, Color.White);
 
 					if (Main.MouseScreen.Between(inner.TopLeft(), new Vector2(inner.X + 64, inner.Y + 64))) {
-						BossUISystem.Instance.UIHoverText = tooltip;
+						BossLogSystem.Instance.UIHoverText = tooltip;
 					}
 				}
 
@@ -1089,7 +1090,7 @@ namespace BossChecklist.UIElements
 			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
 				Id = "Mod";
 				this.icon = GetModIcon(modName);
-				this.name = BossUISystem.RemoveChatTags(ModLoader.GetMod(modName));
+				this.name = BossLogSystem.RemoveChatTags(ModLoader.GetMod(modName));
 				this.entryCounts = BossChecklist.bossTracker.RegisteredMods[modName];
 			}
 
@@ -1139,7 +1140,7 @@ namespace BossChecklist.UIElements
 					Rectangle iconRect = new Rectangle(inner.X + ModOffset, inner.Y + ModOffset, 80, 80);
 					spriteBatch.Draw(icon.Value, iconRect, Color.White); // character/icon drawing
 					if (icon.Name == "Resources\\Credits_NoIcon" && Main.MouseScreen.Between(iconRect.TopLeft(), iconRect.BottomRight()))
-						BossUISystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.Credits.NoIcon";
+						BossLogSystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.Credits.NoIcon";
 				}
 
 				float scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(name).X, MaxLength().X);
@@ -1245,7 +1246,7 @@ namespace BossChecklist.UIElements
 
 			internal Color defaultColor;
 
-			internal BossLogUI GetParentLog => BossUISystem.Instance.BossLog;
+			internal BossLogUI GetParentLog => BossLogSystem.Instance.BossLog;
 
 			public TableOfContents(int index, string displayName, Color entryColor, bool loot, bool collect, float textScale = 1, bool large = false) : base(displayName, textScale, large) {
 				this.entry = BossChecklist.bossTracker.SortedEntries[index];
@@ -1342,7 +1343,7 @@ namespace BossChecklist.UIElements
 					Rectangle chestPos = new Rectangle(parent.X + parent.Width - texture.Width - hardModeOffset, inner.Y - 2, texture.Width, texture.Height);
 					spriteBatch.Draw(texture, chestPos, Color.White);
 					if (Main.MouseScreen.Between(chestPos.TopLeft(), chestPos.BottomRight())) {
-						BossUISystem.Instance.UIHoverText = hoverText;
+						BossLogSystem.Instance.UIHoverText = hoverText;
 					}
 				}					
 
@@ -1587,7 +1588,7 @@ namespace BossChecklist.UIElements
 				// drawing the section dividers as well as the hover text and hover color of each section where applicable
 				foreach (KeyValuePair<Rectangle, string> pair in Sections) {
 					if (Main.MouseScreen.Between(pair.Key.TopLeft(), pair.Key.BottomRight())) {
-						BossUISystem.Instance.UIHoverText = pair.Value;
+						BossLogSystem.Instance.UIHoverText = pair.Value;
 						Rectangle section = new Rectangle(pair.Key.X, pair.Key.Y + 4, pair.Key.Width, pair.Key.Height - 8);
 						spriteBatch.Draw(TextureAssets.MagicPixel.Value, section, BossChecklist.BossLogConfig.BossLogColor);
 					}

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
@@ -7,14 +8,14 @@ namespace BossChecklist.UIElements
 	internal class FixedUIScrollbar : UIScrollbar {
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			UserInterface temp = UserInterface.ActiveInstance;
-			UserInterface.ActiveInstance = BossUISystem.bossChecklistInterface;
+			UserInterface.ActiveInstance = BossLogSystem.bossChecklistInterface;
 			base.DrawSelf(spriteBatch);
 			UserInterface.ActiveInstance = temp;
 		}
 
 		public override void LeftMouseDown(UIMouseEvent evt) {
 			UserInterface temp = UserInterface.ActiveInstance;
-			UserInterface.ActiveInstance = BossUISystem.bossChecklistInterface;
+			UserInterface.ActiveInstance = BossLogSystem.bossChecklistInterface;
 			base.LeftMouseDown(evt);
 			UserInterface.ActiveInstance = temp;
 		}
@@ -29,14 +30,14 @@ namespace BossChecklist.UIElements
 	internal class LogScrollbar : UIScrollbar {
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			UserInterface temp = UserInterface.ActiveInstance;
-			UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
+			UserInterface.ActiveInstance = BossLogSystem.Instance.BossLogInterface;
 			base.DrawSelf(spriteBatch);
 			UserInterface.ActiveInstance = temp;
 		}
 
 		public override void LeftMouseDown(UIMouseEvent evt) {
 			UserInterface temp = UserInterface.ActiveInstance;
-			UserInterface.ActiveInstance = BossUISystem.Instance.BossLogInterface;
+			UserInterface.ActiveInstance = BossLogSystem.Instance.BossLogInterface;
 			base.LeftMouseDown(evt);
 			UserInterface.ActiveInstance = temp;
 		}

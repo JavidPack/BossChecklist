@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BossChecklist.Systems;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
@@ -11,7 +12,7 @@ namespace BossChecklist
 {
 	internal class ItemLog : GlobalItem {
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
-			if (BossUISystem.Instance.BossLog.BossLogVisible && BossUISystem.Instance.BossLog.SelectedSubPage == SubPage.LootAndCollectibles) {
+			if (BossLogSystem.Instance.BossLog.BossLogVisible && BossLogSystem.Instance.BossLog.SelectedSubPage == SubPage.LootAndCollectibles) {
 				if (Main.LocalPlayer.GetModPlayer<PlayerAssist>().BossItemsCollected.Any(x => x.Type == item.type)) {
 					var line = new TooltipLine(Mod, "BossLog_Obtained", "✓ " + Language.GetTextValue("Mods.BossChecklist.Log.LootAndCollection.Obtained")) {
 						OverrideColor = Colors.RarityYellow

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
@@ -47,8 +48,8 @@ namespace BossChecklist.UIElements
 		}
 
 		private void MoreInfo_OnClick(UIMouseEvent evt, UIElement listeningElement) {
-			BossUISystem.Instance.BossLog.ToggleBossLog(true);
-			BossUISystem.Instance.BossLog.PageNum = bossIndex;
+			BossLogSystem.Instance.BossLog.ToggleBossLog(true);
+			BossLogSystem.Instance.BossLog.PageNum = bossIndex;
 		}
 
 		private void Box_OnClick(UIMouseEvent evt, UIElement listeningElement) {
@@ -60,9 +61,9 @@ namespace BossChecklist.UIElements
 					WorldAssist.HiddenEntries.Add(boss.Key);
 				else
 					WorldAssist.HiddenEntries.Remove(boss.Key);
-				BossUISystem.Instance.bossChecklistUI.UpdateCheckboxes();
+				BossLogSystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				if (BossChecklist.BossLogConfig.HideUnavailable) {
-					BossUISystem.Instance.BossLog.PageNum = BossLogUI.Page_TableOfContents;
+					BossLogSystem.Instance.BossLog.PageNum = BossLogUI.Page_TableOfContents;
 				}
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					ModPacket packet = BossChecklist.instance.GetPacket();
@@ -75,7 +76,7 @@ namespace BossChecklist.UIElements
 			}
 
 			UIBossCheckbox clicked = listeningElement as UIBossCheckbox;
-			foreach (var item in BossUISystem.Instance.bossChecklistUI.checklistList._items) {
+			foreach (var item in BossLogSystem.Instance.bossChecklistUI.checklistList._items) {
 				UIBossCheckbox box = (item as UIBossCheckbox);
 				if (box != clicked) {
 					box.expanded = false;
@@ -123,7 +124,7 @@ namespace BossChecklist.UIElements
 
 				if (hoveredSnippet > -1) {
 					// because of draw order, we'll do the hover later.
-					BossUISystem.Instance.bossChecklistUI.hoveredTextSnippet = textSnippets[hoveredSnippet];
+					BossLogSystem.Instance.bossChecklistUI.hoveredTextSnippet = textSnippets[hoveredSnippet];
 					//array[hoveredSnippet].OnHover();
 					//if (Main.mouseLeft && Main.mouseLeftRelease)
 					//{
