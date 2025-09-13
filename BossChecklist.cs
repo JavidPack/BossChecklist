@@ -409,7 +409,7 @@ namespace BossChecklist
 					List<string> keysFound = new List<string>();
 					for (int i = 0; i < keyCount; i++) {
 						string key = reader.ReadString();
-						if (WorldAssist.WorldRecordsForWorld.FindIndex(x => x.BossKey == key) != -1)
+						if (Systems.RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key) != -1)
 							keysFound.Add(key);
 					}
 
@@ -418,24 +418,24 @@ namespace BossChecklist
 					packet.Write(keysFound.Count); // sending the count FIRST is needed to know how much world record data has to be sort through
 					foreach (string key in keysFound) {
 						packet.Write(key); // world record key
-						int index = WorldAssist.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
-						WorldAssist.WorldRecordsForWorld[index].NetSend(packet); // world record data
+						int index = Systems.RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
+						Systems.RecordSystem.WorldRecordsForWorld[index].NetSend(packet); // world record data
 					}
 					packet.Send(whoAmI); // Server --> Multiplayer client
 					break;
 				case PacketMessageType.SendWorldRecordsFromServerToPlayer:
 					// Server --> Multiplayer client
-					WorldAssist.WorldRecordsForWorld = new List<WorldRecord>();
+					Systems.RecordSystem.WorldRecordsForWorld = new List<WorldRecord>();
 					foreach (string key in bossTracker.BossRecordKeys) {
-						WorldAssist.WorldRecordsForWorld.Add(new WorldRecord(key));
+						Systems.RecordSystem.WorldRecordsForWorld.Add(new WorldRecord(key));
 					}
 
 					keyCount = reader.ReadInt32();
 					for (int i = 0; i < keyCount; i++) {
 						string key = reader.ReadString();
-						int keyIndex = WorldAssist.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
+						int keyIndex = Systems.RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
 						if (keyIndex != -1) {
-							WorldAssist.WorldRecordsForWorld[keyIndex].NetRecieve(reader);
+							Systems.RecordSystem.WorldRecordsForWorld[keyIndex].NetRecieve(reader);
 						}
 						else {
 							new WorldRecord(key).NetRecieve(reader);
@@ -445,7 +445,7 @@ namespace BossChecklist
 				case PacketMessageType.UpdateWorldRecordsToAllPlayers:
 					// Server --> Multiplayer client
 					recordIndex = reader.ReadInt32();
-					WorldAssist.WorldRecordsForWorld[recordIndex].NetReceiveWorldRecords(reader);
+					Systems.RecordSystem.WorldRecordsForWorld[recordIndex].NetReceiveWorldRecords(reader);
 					break;
 				case PacketMessageType.ResetPlayerRecordForServer:
 					// Multiplayer client --> Server

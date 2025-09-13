@@ -16,7 +16,7 @@ namespace BossChecklist
 			if (Main.netMode == NetmodeID.MultiplayerClient || BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // Only single player and server should be starting the record tracking process
 
-			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
+			Systems.RecordSystem.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
 			if (Main.netMode is NetmodeID.SinglePlayer) {
 				Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StartTracking(); // start tracking for active players
@@ -55,7 +55,7 @@ namespace BossChecklist
 		// When an NPC is killed and fully inactive the fight has ended, so stop all record trackers
 		public override void OnKill(NPC npc) {
 			HandleDownedNPCs(npc.type); // Custom downed bool code
-			WorldAssist.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
+			Systems.RecordSystem.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
 
 			// Display a message for Limbs/Towers if config is enabled, which should be checked after the active flags update
 			if (BossChecklist.bossTracker.IsEntryLimb(npc.type, out EntryInfo limbEntry) && limbEntry.GetLimbMessage(npc) is LocalizedText message) {
@@ -77,7 +77,7 @@ namespace BossChecklist
 			if (BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
 				return; // make sure NPC has a valid entry and that no other NPCs exist with that entry index
 
-			if (WorldAssist.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
+			if (Systems.RecordSystem.ActiveNPCEntryFlags.Any(x => x == entry.GetIndex))
 				return;
 
 			bool newPersonalBestOnServer = false;
@@ -98,14 +98,14 @@ namespace BossChecklist
 			// ... check to see if it is a world record and update every player's logs if so
 			if (newPersonalBestOnServer) {
 				// at this point recordIndex should never be -1, so just ensure the world records collection is properly populated
-				if (recordIndex < WorldAssist.WorldRecordsForWorld.Count) {
+				if (recordIndex < Systems.RecordSystem.WorldRecordsForWorld.Count) {
 					Console.WriteLine($"A Personal Best was beaten! Comparing against world records...");
-					WorldAssist.WorldRecordsForWorld[recordIndex].CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
+					Systems.RecordSystem.WorldRecordsForWorld[recordIndex].CheckForWorldRecords_Server(npc.playerInteraction.GetTrueIndexes());
 				}
 				else {
 					BossChecklist.instance.Logger.Warn(
 						$"A Personal Best was beaten, but something went wrong when comparing with world records. " +
-						$"World Records count is {WorldAssist.WorldRecordsForWorld.Count}. " +
+						$"World Records count is {Systems.RecordSystem.WorldRecordsForWorld.Count}. " +
 						$"Record Index is {recordIndex}."); // change to a key? might not need if I can fix this later
 				}
 			}
