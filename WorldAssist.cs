@@ -1,5 +1,4 @@
 ﻿using BossChecklist.UIElements;
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,58 +18,11 @@ namespace BossChecklist
 		public static HashSet<string> HiddenEntries = new HashSet<string>();
 		public static HashSet<string> MarkedEntries = new HashSet<string>();
 
-		public static bool downedBloodMoon;
-		public static bool downedFrostMoon;
-		public static bool downedPumpkinMoon;
-		public static bool downedSolarEclipse;
-
-		public static bool downedDarkMage;
-		public static bool downedOgre;
-		public static bool downedFlyingDutchman;
-		public static bool downedMartianSaucer;
-
-		public override void Load() {
-			On_Main.UpdateTime_StartDay += OnStartDay_CheckMoonEvents;
-			On_Main.UpdateTime_StartNight += OnStartNight_CheckEclipseDown;
-		}
-
-		/// <summary>
-		/// Before varibles are change for day (dawn), check for any moon events and mark as defeated it so.
-		/// </summary>
-		internal static void OnStartDay_CheckMoonEvents(On_Main.orig_UpdateTime_StartDay orig, ref bool stopEvents) {
-			if (Main.bloodMoon) {
-				AnnounceEventEnd("BloodMoon"); // Sends a message to all players that the moon event has ended
-				Networking.DownedEntryCheck(ref downedBloodMoon);
-			}
-			if (Main.snowMoon) {
-				AnnounceEventEnd("FrostMoon");
-				Networking.DownedEntryCheck(ref downedFrostMoon);
-			}
-			if (Main.pumpkinMoon) {
-				AnnounceEventEnd("PumpkinMoon");
-				Networking.DownedEntryCheck(ref downedPumpkinMoon);
-			}
-			orig(ref stopEvents);
-		}
-
-		/// <summary>
-		/// Before varibles are change for night (dusk), check for the eclipse event and mark as defeated it so.
-		/// </summary>
-		internal static void OnStartNight_CheckEclipseDown(On_Main.orig_UpdateTime_StartNight orig, ref bool stopEvents) {
-			if (Main.eclipse) {
-				AnnounceEventEnd("Eclipse");
-				Networking.DownedEntryCheck(ref downedSolarEclipse);
-			}
-			orig(ref stopEvents); // Original method turns off any moon states
-		}
-
 		public override void ClearWorld() {
 			HiddenEntries.Clear();
 			MarkedEntries.Clear();
 			WorldRecordsForWorld.Clear();
 			WorldRecordsForWorld_Unloaded.Clear();
-			downedBloodMoon = downedFrostMoon = downedPumpkinMoon = downedSolarEclipse = false; // clear moon downs
-			downedDarkMage = downedOgre = downedFlyingDutchman = downedMartianSaucer = false; // clear mini-boss downs
 			
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 		}
@@ -92,25 +44,6 @@ namespace BossChecklist
 			var HiddenBossesList = new List<string>(HiddenEntries);
 			var MarkedAsDownedList = new List<string>(MarkedEntries);
 
-			var downed = new List<string>();
-			if (downedBloodMoon)
-				downed.Add("bloodmoon");
-			if (downedFrostMoon)
-				downed.Add("frostmoon");
-			if (downedPumpkinMoon)
-				downed.Add("pumpkinmoon");
-			if (downedSolarEclipse)
-				downed.Add("solareclipse");
-			if (downedDarkMage)
-				downed.Add("darkmage");
-			if (downedOgre)
-				downed.Add("ogre");
-			if (downedFlyingDutchman)
-				downed.Add("flyingdutchman");
-			if (downedMartianSaucer)
-				downed.Add("martiansaucer");
-
-			tag["downed"] = downed;
 			tag["HiddenBossesList"] = HiddenBossesList;
 			tag["downed_Forced"] = MarkedAsDownedList;
 
@@ -162,21 +95,9 @@ namespace BossChecklist
 			foreach (var bossKey in MarkedAsDownedList) {
 				MarkedEntries.Add(bossKey);
 			}
-
-			var downed = tag.GetList<string>("downed");
-			downedBloodMoon = downed.Contains("bloodmoon");
-			downedFrostMoon = downed.Contains("frostmoon");
-			downedPumpkinMoon = downed.Contains("pumpkinmoon");
-			downedSolarEclipse = downed.Contains("solareclipse");
-			downedDarkMage = downed.Contains("darkmage");
-			downedOgre = downed.Contains("ogre");
-			downedFlyingDutchman = downed.Contains("flyingdutchman");
-			downedMartianSaucer = downed.Contains("martiansaucer");
 		}
 
 		public override void NetSend(BinaryWriter writer) {
-			writer.WriteFlags(downedBloodMoon, downedFrostMoon, downedPumpkinMoon, downedSolarEclipse, downedDarkMage, downedOgre, downedFlyingDutchman, downedMartianSaucer);
-
 			writer.Write(HiddenEntries.Count);
 			foreach (var bossKey in HiddenEntries) {
 				writer.Write(bossKey);
@@ -189,8 +110,6 @@ namespace BossChecklist
 		}
 
 		public override void NetReceive(BinaryReader reader) {
-			reader.ReadFlags(out downedBloodMoon, out downedFrostMoon, out downedPumpkinMoon, out downedSolarEclipse, out downedDarkMage, out downedOgre, out downedFlyingDutchman, out downedMartianSaucer);
-
 			HiddenEntries.Clear();
 			int count = reader.ReadInt32();
 			for (int i = 0; i < count; i++) {
@@ -214,36 +133,6 @@ namespace BossChecklist
 
 		public override void PreUpdateWorld() {
 			HandleDespawnFlags();
-		}
-
-		public static string DetermineMoonAnnoucement(string eventType) {
-			if (BossChecklist.FeatureConfig.MoonMessages == FeatureConfiguration.MessageType.Generic) {
-				string eventTypeLocal = Language.Exists($"Bestiary_Events.{eventType}") ? Language.GetTextValue($"Bestiary_Events.{eventType}") : Language.GetTextValue($"Bestiary_Invasions.{eventType}");
-				if (eventType == "Eclipse")
-					eventTypeLocal = eventTypeLocal.ToLower();
-				return Language.GetText($"{NPCAssist.LangChat}.EventEnd.Generic").Format(eventTypeLocal);
-			}
-			else if (BossChecklist.FeatureConfig.MoonMessages == FeatureConfiguration.MessageType.Unique) {
-				return Language.GetTextValue($"{NPCAssist.LangChat}.EventEnd.{eventType}");
-			}
-
-			return null;
-		}
-
-		public static void AnnounceEventEnd(string eventType) {
-			if (Main.netMode == NetmodeID.SinglePlayer && DetermineMoonAnnoucement(eventType) is string message) {
-				Main.NewText(message, new Color(50, 255, 130));
-			}
-			else if (Main.netMode == NetmodeID.Server) {
-				// Send a packet to all multiplayer clients. Moon messages are client based, so they will need to read their own configs to determine the message.
-				foreach (Player player in Main.ActivePlayers) {
-					ModPacket packet = BossChecklist.instance.GetPacket();
-					packet.Write((byte)PacketMessageType.SendClientConfigMessage);
-					packet.Write((byte)ClientMessageType.Moon);
-					packet.Write(eventType);
-					packet.Send(player.whoAmI); // Server --> Multiplayer client
-				}
-			}
 		}
 
 		/// <summary>

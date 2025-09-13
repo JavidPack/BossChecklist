@@ -378,8 +378,7 @@ namespace BossChecklist
 							Main.NewText(limbMessage.Format(limbNPC.FullName), Colors.RarityGreen);
 					}
 					else if (messageType == ClientMessageType.Moon) {
-						if (WorldAssist.DetermineMoonAnnoucement(reader.ReadString()) is string message)
-							Main.NewText(message, new Color(50, 255, 130));
+						Systems.DownedSystem.AnnounceMoonEventEnd(reader.ReadString());
 					}
 					break;
 				case PacketMessageType.UpdateAllowTracking:

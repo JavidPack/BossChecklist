@@ -115,19 +115,23 @@ namespace BossChecklist
 		/// Handles all of BossChecklist's custom downed variables, makring them as defeated and updating all clients when needed.
 		/// </summary>
 		/// <returns>If the corresponding flag was flipped.</returns>
-		internal static bool HandleDownedNPCs(int npcType) {
-			return npcType switch {
-				NPCID.DD2DarkMageT1 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
-				NPCID.DD2DarkMageT3 => Networking.DownedEntryCheck(ref WorldAssist.downedDarkMage),
-				NPCID.DD2OgreT2 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),
-				NPCID.DD2OgreT3 => Networking.DownedEntryCheck(ref WorldAssist.downedOgre),
-				NPCID.PirateShip => Networking.DownedEntryCheck(ref WorldAssist.downedFlyingDutchman),
-				NPCID.MartianSaucerCore => Networking.DownedEntryCheck(ref WorldAssist.downedMartianSaucer),
-				NPCID.LunarTowerVortex => Networking.DownedEntryCheck(ref NPC.downedTowerVortex),
-				NPCID.LunarTowerStardust => Networking.DownedEntryCheck(ref NPC.downedTowerStardust),
-				NPCID.LunarTowerNebula => Networking.DownedEntryCheck(ref NPC.downedTowerNebula),
-				NPCID.LunarTowerSolar => Networking.DownedEntryCheck(ref NPC.downedTowerSolar),
-				_ => false
+		internal static void HandleDownedNPCs(int npcType) {
+			switch (npcType) {
+				case NPCID.DD2DarkMageT1:
+				case NPCID.DD2DarkMageT3:
+					NPC.SetEventFlagCleared(ref Systems.DownedSystem.downedDarkMage, -1);
+					break;
+				case NPCID.DD2OgreT2:
+				case NPCID.DD2OgreT3:
+					NPC.SetEventFlagCleared(ref Systems.DownedSystem.downedOgre, -1);
+					break;
+				case NPCID.PirateShip: NPC.SetEventFlagCleared(ref Systems.DownedSystem.downedFlyingDutchman, -1); break;
+				case NPCID.MartianSaucerCore: NPC.SetEventFlagCleared(ref Systems.DownedSystem.downedMartianSaucer, -1); break;
+				case NPCID.LunarTowerVortex: NPC.SetEventFlagCleared(ref NPC.downedTowerVortex, -1); break;
+				case NPCID.LunarTowerStardust: NPC.SetEventFlagCleared(ref NPC.downedTowerStardust, -1); break;
+				case NPCID.LunarTowerNebula: NPC.SetEventFlagCleared(ref NPC.downedTowerNebula, -1); break;
+				case NPCID.LunarTowerSolar: NPC.SetEventFlagCleared(ref NPC.downedTowerSolar, -1); break;
+				default: break;
 			};
 		}
 	}
