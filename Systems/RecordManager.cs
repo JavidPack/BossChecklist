@@ -9,7 +9,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace BossChecklist
+namespace BossChecklist.Systems
 {
 	[Flags]
 	internal enum NetRecordID : int {

@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using BossChecklist.Systems;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
