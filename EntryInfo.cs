@@ -151,7 +151,7 @@ namespace BossChecklist
 			// If the Unique message was empty/null or the player is using Generic despawn messages, try to find an appropriate despawn message to send
 			// Return a generic despawn message if any player is left alive or return a boss victory despawn message if all player's were killed
 			if (BossChecklist.FeatureConfig.DespawnMessageType != FeatureConfiguration.MessageType.Disabled)
-				return Language.GetText(Main.player.Any(plr => plr.active && !plr.dead) ? $"{NPCAssist.LangChat}.Despawn.Generic" : $"{NPCAssist.LangChat}.Loss.Generic");
+				return Language.GetText(Main.player.Any(plr => plr.active && !plr.dead) ? $"{DownedSystem.LangChat}.Despawn.Generic" : $"{DownedSystem.LangChat}.Loss.Generic");
 
 			return null; // The despawn message feature was disabled. Return an empty message.
 		}
@@ -166,7 +166,7 @@ namespace BossChecklist
 
 			if (BossChecklist.FeatureConfig.LimbMessages != FeatureConfiguration.MessageType.Disabled) {
 				string specialCase = (npc.type == NPCID.SkeletronHand || npc.type == NPCID.MoonLordHead) ? new NPCDefinition(npc.type).Name : "";
-				return Language.GetText($"{NPCAssist.LangChat}.Defeated.Generic" + specialCase);
+				return Language.GetText($"{DownedSystem.LangChat}.Defeated.Generic" + specialCase);
 			}
 
 			return null;
@@ -397,14 +397,14 @@ namespace BossChecklist
 
 				customMessages = delegate (NPC npc) {
 					if (Main.player.All(plr => !plr.active || plr.dead)) {
-						return Language.GetText($"{NPCAssist.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
+						return Language.GetText($"{DownedSystem.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
 					}
 					else if (Main.dayTime && DayDespawners.Contains(npc.type)) {
-						return Language.GetText($"{NPCAssist.LangChat}.Despawn.Day"); // Despawn message when it turns to day
+						return Language.GetText($"{DownedSystem.LangChat}.Despawn.Day"); // Despawn message when it turns to day
 					}
 
 					// unique despawn messages should default to the generic message when no conditions are met
-					return Language.GetText($"{NPCAssist.LangChat}.Despawn.Generic");
+					return Language.GetText($"{DownedSystem.LangChat}.Despawn.Generic");
 				};
 			}
 
@@ -442,14 +442,14 @@ namespace BossChecklist
 
 				customMessages = delegate (NPC npc) {
 					if (Main.player.All(plr => !plr.active || plr.dead)) {
-						return Language.GetText($"{NPCAssist.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
+						return Language.GetText($"{DownedSystem.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
 					}
 					else if (Main.dayTime && DayDespawners.Contains(npc.type)) {
-						return Language.GetText($"{NPCAssist.LangChat}.Despawn.Day"); // Despawn message when it turns to day
+						return Language.GetText($"{DownedSystem.LangChat}.Despawn.Day"); // Despawn message when it turns to day
 					}
 
 					// unique despawn messages should default to the generic message when no conditions are met
-					return Language.GetText($"{NPCAssist.LangChat}.Despawn.Generic");
+					return Language.GetText($"{DownedSystem.LangChat}.Despawn.Generic");
 				};
 			}
 
