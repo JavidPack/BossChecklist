@@ -118,7 +118,7 @@ namespace BossChecklist
 		
 		internal string ModDisplayName => ModLoader.TryGetMod(modSource, out Mod mod) ? BossLogSystem.RemoveChatTags(mod) : modSource;
 
-		internal bool MarkedAsDowned => WorldAssist.MarkedEntries.Contains(this.Key);
+		internal bool MarkedAsDowned => BossLogSystem.MarkedEntries.Contains(this.Key);
 
 		internal bool IsAutoDownedOrMarked => (BossChecklist.BossLogConfig.AutomaticChecklist && downed()) || MarkedAsDowned;
 

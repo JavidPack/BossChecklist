@@ -115,10 +115,10 @@ namespace BossChecklist
 				if (value is false) {
 					foreach (KeyValuePair<string, bool> hiddenState in HiddenEntriesPending) {
 						if (!hiddenState.Value) {
-							WorldAssist.HiddenEntries.Remove(hiddenState.Key);
+							BossLogSystem.HiddenEntries.Remove(hiddenState.Key);
 						}
-						else if (!WorldAssist.HiddenEntries.Contains(hiddenState.Key)) {
-							WorldAssist.HiddenEntries.Add(hiddenState.Key);
+						else if (!BossLogSystem.HiddenEntries.Contains(hiddenState.Key)) {
+							BossLogSystem.HiddenEntries.Add(hiddenState.Key);
 						}
 					}
 					SoundEngine.PlaySound(HiddenEntriesPending.Count > 0 ? SoundID.ResearchComplete : SoundID.MenuClose);
@@ -958,7 +958,7 @@ namespace BossChecklist
 			PageTwo.Append(PageTwoTitle);
 
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
-				entry.hidden = WorldAssist.HiddenEntries.Contains(entry.Key);
+				entry.hidden = BossLogSystem.HiddenEntries.Contains(entry.Key);
 
 				if (!entry.VisibleOnChecklist())
 					continue; // If the boss should not be visible on the Table of Contents, skip the entry in the list

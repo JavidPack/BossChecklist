@@ -325,9 +325,9 @@ namespace BossChecklist
 					string bossKey = reader.ReadString();
 					bool hide = reader.ReadBoolean();
 					if (hide)
-						WorldAssist.HiddenEntries.Add(bossKey);
+						BossLogSystem.HiddenEntries.Add(bossKey);
 					else
-						WorldAssist.HiddenEntries.Remove(bossKey);
+						BossLogSystem.HiddenEntries.Remove(bossKey);
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else
@@ -338,7 +338,7 @@ namespace BossChecklist
 					//{
 					//	Main.NewText("Huh? RequestClearHidden on client?");
 					//}
-					WorldAssist.HiddenEntries.Clear();
+					BossLogSystem.HiddenEntries.Clear();
 					if (Main.netMode == NetmodeID.Server)
 						NetMessage.SendData(MessageID.WorldData);
 					//else
@@ -348,10 +348,10 @@ namespace BossChecklist
 					bossKey = reader.ReadString();
 					bool mark = reader.ReadBoolean();
 					if (mark) {
-						WorldAssist.MarkedEntries.Add(bossKey);
+						BossLogSystem.MarkedEntries.Add(bossKey);
 					}
 					else {
-						WorldAssist.MarkedEntries.Remove(bossKey);
+						BossLogSystem.MarkedEntries.Remove(bossKey);
 					}
 
 					if (Main.netMode == NetmodeID.Server) {
@@ -359,7 +359,7 @@ namespace BossChecklist
 					}
 					break;
 				case PacketMessageType.RequestClearMarkedDowns:
-					WorldAssist.MarkedEntries.Clear();
+					BossLogSystem.MarkedEntries.Clear();
 					if (Main.netMode == NetmodeID.Server) {
 						NetMessage.SendData(MessageID.WorldData);
 					}

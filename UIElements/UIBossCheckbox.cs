@@ -58,9 +58,9 @@ namespace BossChecklist.UIElements
 			if (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) {
 				boss.hidden = !boss.hidden;
 				if (boss.hidden)
-					WorldAssist.HiddenEntries.Add(boss.Key);
+					BossLogSystem.HiddenEntries.Add(boss.Key);
 				else
-					WorldAssist.HiddenEntries.Remove(boss.Key);
+					BossLogSystem.HiddenEntries.Remove(boss.Key);
 				BossLogSystem.Instance.bossChecklistUI.UpdateCheckboxes();
 				if (BossChecklist.BossLogConfig.HideUnavailable) {
 					BossLogSystem.Instance.BossLog.PageNum = BossLogUI.Page_TableOfContents;

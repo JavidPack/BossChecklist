@@ -282,8 +282,8 @@ namespace BossChecklist.UIElements
 				if (LogUI.PageNum == BossLogUI.Page_TableOfContents) {
 					if (LogUI.HiddenEntriesMode) {
 						// Set all entries to NOT hidden
-						if (WorldAssist.HiddenEntries.Count > 0) {
-							WorldAssist.HiddenEntries.Clear();
+						if (BossLogSystem.HiddenEntries.Count > 0) {
+							BossLogSystem.HiddenEntries.Clear();
 							BossLogSystem.Instance.bossChecklistUI.UpdateCheckboxes();
 							Networking.RequestHiddenEntryUpdate();
 							LogUI.RefreshPageContent();
@@ -291,8 +291,8 @@ namespace BossChecklist.UIElements
 					}
 					else {
 						// Unmark all entries
-						if (WorldAssist.MarkedEntries.Count > 0) {
-							WorldAssist.MarkedEntries.Clear();
+						if (BossLogSystem.MarkedEntries.Count > 0) {
+							BossLogSystem.MarkedEntries.Clear();
 							Networking.RequestMarkedEntryUpdate();
 							LogUI.RefreshPageContent();
 						}
@@ -1292,11 +1292,11 @@ namespace BossChecklist.UIElements
 				else {
 					// Entries must not already be downed to add/remove them from the MarkedEntries list
 					// Entries that are downed will automatically be removed from the lsit when the TableOfContents list is generated
-					if (WorldAssist.MarkedEntries.Contains(entry.Key)) {
-						WorldAssist.MarkedEntries.Remove(entry.Key);
+					if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
+						BossLogSystem.MarkedEntries.Remove(entry.Key);
 					}
 					else {
-						WorldAssist.MarkedEntries.Add(entry.Key);
+						BossLogSystem.MarkedEntries.Add(entry.Key);
 					}
 
 					Networking.RequestMarkedEntryUpdate(entry.Key, entry.MarkedAsDowned);
