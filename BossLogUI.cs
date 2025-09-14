@@ -68,9 +68,10 @@ namespace BossChecklist
 		/// Gets the EntryInfo of the entry on the selected page. Returns null if not on an entry page.
 		/// </summary>
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
-		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? GetModPlayer.RecordsForWorld?[recordIndex] : null;
+		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? GetRecordModPlayer.RecordsForWorld?[recordIndex] : null;
 		public WorldRecord GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? RecordSystem.WorldRecordsForWorld[recordIndex] : null;
 		public PlayerAssist GetModPlayer => Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+		public RecordModPlayer GetRecordModPlayer => Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
 		public static bool AltKeyIsDown => Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.Right);
 
 		// Navigation
@@ -255,8 +256,8 @@ namespace BossChecklist
 				//ResetUIPositioning();
 				Main.playerInventory = false; // hide the player inventory
 			}
-			else if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int selectedEntryIndex) && GetModPlayer.hasNewRecord.Length > 0) {
-				GetModPlayer.hasNewRecord[selectedEntryIndex] = false; // If UI is closed on a new record page, remove the new record from the list
+			else if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int selectedEntryIndex) && GetRecordModPlayer.hasNewRecord.Length > 0) {
+				GetRecordModPlayer.hasNewRecord[selectedEntryIndex] = false; // If UI is closed on a new record page, remove the new record from the list
 			}
 			else if (PageNum == Page_TableOfContents && HiddenEntriesMode) {
 				HiddenEntriesPending.Clear(); // closing the hide list in anyway other than the filter button should not save hidden statuses
@@ -787,7 +788,7 @@ namespace BossChecklist
 		private void UpdateSelectedPage(int pageNum, SubPage subPage, SubCategory subCategory = SubCategory.None) {
 			// Remove new records when navigating from a page with a new record
 			if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
-				GetModPlayer.hasNewRecord[recordIndex] = false;
+				GetRecordModPlayer.hasNewRecord[recordIndex] = false;
 
 			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
 
@@ -1209,7 +1210,7 @@ namespace BossChecklist
 				RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot);
 				if (GetLogEntryInfo.type == EntryType.MiniBoss) {
 					slot.title = Language.GetTextValue("Mods.BossChecklist.Log.Records.Kills");
-					slot.value = GetModPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? GetModPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
+					slot.value = GetRecordModPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? GetRecordModPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
 				}
 				slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
 				slot.Top.Pixels = 35 + 75;

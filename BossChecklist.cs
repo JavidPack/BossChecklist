@@ -401,7 +401,7 @@ namespace BossChecklist
 				case PacketMessageType.UpdateRecordsFromServerToPlayer:
 					// Server --> Multiplayer client (always)
 					int recordIndex = reader.ReadInt32();
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].NetReceiveRecords(reader);
+					Main.LocalPlayer.GetModPlayer<RecordModPlayer>().RecordsForWorld?[recordIndex].NetReceiveRecords(reader);
 					break;
 				case PacketMessageType.RequestWorldRecords: // Multiplayer client --> Server
 					// read how many boss keys the player recognizes
@@ -457,7 +457,7 @@ namespace BossChecklist
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
-					Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StartTracking();
+					Main.LocalPlayer.GetModPlayer<RecordModPlayer>().RecordsForWorld?[recordIndex].StartTracking();
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");

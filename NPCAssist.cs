@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BossChecklist.Systems;
+using System;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
@@ -19,7 +20,7 @@ namespace BossChecklist
 			Systems.RecordSystem.ActiveNPCEntryFlags[npc.whoAmI] = entry.GetIndex;
 
 			if (Main.netMode is NetmodeID.SinglePlayer) {
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StartTracking(); // start tracking for active players
+				Main.LocalPlayer.GetModPlayer<RecordModPlayer>().RecordsForWorld?[recordIndex].StartTracking(); // start tracking for active players
 			}
 			else if (Main.netMode is NetmodeID.Server) {
 				foreach (Player player in Main.ActivePlayers) {
@@ -85,7 +86,7 @@ namespace BossChecklist
 
 			if (Main.netMode is NetmodeID.SinglePlayer) {
 				bool interaction = npc.playerInteraction[Main.LocalPlayer.whoAmI];
-				Main.LocalPlayer.GetModPlayer<PlayerAssist>().RecordsForWorld?[recordIndex].StopTracking(interaction && BossChecklist.FeatureConfig.AllowNewRecords, interaction);
+				Main.LocalPlayer.GetModPlayer<RecordModPlayer>().RecordsForWorld?[recordIndex].StopTracking(interaction && BossChecklist.FeatureConfig.AllowNewRecords, interaction);
 			}
 			else if (Main.netMode is NetmodeID.Server) {
 				foreach (Player player in Main.ActivePlayers) {

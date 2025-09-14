@@ -222,8 +222,8 @@ namespace BossChecklist.Systems
 
 					// If a single player client is running this method, no world record can be made, so send the personal best text.
 					if (Main.netMode == NetmodeID.SinglePlayer && Networking.NewPersonalBest(serverParse)) {
-						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-						modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
+						RecordModPlayer modplayer = Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
+						modplayer.NewRecordState = RecordModPlayer.RecordState_PersonalBest;
 						modplayer.SubmitCombatText(RecordIndex);
 					}
 				}
@@ -354,13 +354,13 @@ namespace BossChecklist.Systems
 				playTimeFirst = Main.ActivePlayerFileData.GetPlayTime().Ticks; // Server cannot send this information, nor needs to
 			}
 
-			PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+			RecordModPlayer modplayer = Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
 			if (recordType.HasFlag(NetRecordID.PersonalBest_Duration)) {
 				durationBest = reader.ReadInt32();
 				durationPrevBest = reader.ReadInt32();
 
 				if (beatenBefore)
-					modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
+					modplayer.NewRecordState = RecordModPlayer.RecordState_PersonalBest;
 			}
 
 			if (recordType.HasFlag(NetRecordID.PersonalBest_HitsTaken)) {
@@ -368,7 +368,7 @@ namespace BossChecklist.Systems
 				hitsTakenPrevBest = reader.ReadInt32();
 
 				if (beatenBefore)
-					modplayer.NewRecordState = PlayerAssist.RecordState_PersonalBest;
+					modplayer.NewRecordState = RecordModPlayer.RecordState_PersonalBest;
 			}
 		}
 
@@ -772,9 +772,9 @@ namespace BossChecklist.Systems
 				}
 			}
 
-			PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
-			if (reader.ReadBoolean() && modplayer.NewRecordState == PlayerAssist.RecordState_PersonalBest)
-				modplayer.NewRecordState = PlayerAssist.RecordState_WorldRecord;
+			RecordModPlayer modplayer = Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
+			if (reader.ReadBoolean() && modplayer.NewRecordState == RecordModPlayer.RecordState_PersonalBest)
+				modplayer.NewRecordState = RecordModPlayer.RecordState_WorldRecord;
 
 			modplayer.SubmitCombatText(RecordIndex);
 		}

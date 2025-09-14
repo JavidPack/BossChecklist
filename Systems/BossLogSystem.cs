@@ -228,7 +228,7 @@ namespace BossChecklist.Systems
 						if (BossChecklist.bossTracker.FindBossEntryByNPC(BossChecklist.FeatureConfig.DisplayRecordTracking.Type, out int recordIndex) is not EntryInfo entry)
 							return true; // The selected NPC must also be assigned to an entry
 
-						PlayerAssist modplayer = Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+						RecordModPlayer modplayer = Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
 						if (modplayer.RecordsForWorld is not List<PersonalRecords> personalrecords || !modplayer.PlayerRecordsInitialized)
 							return true; // The player's records must be initialized to be displayed
 
