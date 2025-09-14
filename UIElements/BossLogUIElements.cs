@@ -135,7 +135,7 @@ namespace BossChecklist.UIElements
 				else if (!BossChecklist.FeatureConfig.RecordTrackingEnabled || !BossChecklist.FeatureConfig.AllowNewRecords) { // configs can be checked as it is checked from a client
 					borderColor = Color.Firebrick; // If Records are disabled in any way, the book will be highlighted with a red border
 				}
-				else if (!Main.LocalPlayer.GetModPlayer<PlayerAssist>().hasOpenedTheBossLog || (BossChecklist.FeatureConfig.NewRecordLogGlow && Main.LocalPlayer.GetModPlayer<RecordModPlayer>().hasNewRecord.Contains(true))) {
+				else if (!Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().hasOpenedTheBossLog || (BossChecklist.FeatureConfig.NewRecordLogGlow && Main.LocalPlayer.GetModPlayer<RecordModPlayer>().hasNewRecord.Contains(true))) {
 					borderColor = Main.DiscoColor;
 				}
 

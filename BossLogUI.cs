@@ -70,7 +70,7 @@ namespace BossChecklist
 		public EntryInfo GetLogEntryInfo => PageNum >= 0 ? BossChecklist.bossTracker.SortedEntries[PageNum] : null;
 		public PersonalRecords GetPlayerRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? GetRecordModPlayer.RecordsForWorld?[recordIndex] : null;
 		public WorldRecord GetWorldRecords => GetLogEntryInfo.IsRecordIndexed(out int recordIndex) ? RecordSystem.WorldRecordsForWorld[recordIndex] : null;
-		public PlayerAssist GetModPlayer => Main.LocalPlayer.GetModPlayer<PlayerAssist>();
+		public BossLogModPlayer GetModPlayer => Main.LocalPlayer.GetModPlayer<BossLogModPlayer>();
 		public RecordModPlayer GetRecordModPlayer => Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
 		public static bool AltKeyIsDown => Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.Right);
 

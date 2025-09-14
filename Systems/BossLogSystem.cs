@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -282,5 +284,51 @@ namespace BossChecklist.Systems
 		/// </summary>
 		public static string RemoveChatTags(Mod mod) => RemoveChatTags(mod.DisplayName);
 		public static string RemoveChatTags(string text) => string.Join("", ChatManager.ParseMessage(text, Color.White).Where(x => x.GetType() == typeof(TextSnippet)).Select(x => x.Text));
+	}
+
+	public class BossLogModPlayer : ModPlayer {
+		public bool hasOpenedTheBossLog; // For the 'never opened' button glow for players who haven't noticed the new feature yet.
+		public bool enteredWorldReset; // When players jon a different world, the boss log PageNum should reset back to its original state
+		public List<ItemDefinition> BossItemsCollected;
+		public bool IsItemResearched(int itemType) => Player.creativeTracker.ItemSacrifices.TryGetSacrificeNumbers(itemType, out int count, out int max) && count == max;
+
+		public override void Initialize() {
+			hasOpenedTheBossLog = false;
+			enteredWorldReset = false;
+			BossItemsCollected = new List<ItemDefinition>();
+		}
+
+		public override void SaveData(TagCompound tag) {
+			tag["BossLogPrompt"] = hasOpenedTheBossLog;
+			tag["BossLootObtained"] = BossItemsCollected;
+		}
+
+		public override void LoadData(TagCompound tag) {
+			hasOpenedTheBossLog = tag.GetBool("BossLogPrompt"); // saved state of the unopened boss log prompt
+			BossItemsCollected = tag.GetList<ItemDefinition>("BossLootObtained").ToList(); // Prepare the collectibles for the player.
+		}
+
+		public override void OnEnterWorld() {
+			enteredWorldReset = true; // PageNum starts out with an invalid number so jumping between worlds will always reset the BossLog when toggled
+		}
+
+		public override void UpdateDead() {
+			if (Main.netMode == NetmodeID.Server || Player.whoAmI == 255 || Player.whoAmI != Main.myPlayer)
+				return;
+
+			if (BossChecklist.FeatureConfig.TimerSounds && Player.respawnTimer > 0 && Player.respawnTimer <= 180 && Player.respawnTimer % 60 == 0)
+				SoundEngine.PlaySound(SoundID.MaxMana); // Timer sounds when a player is about to respawn
+		}
+
+		public override bool OnPickup(Item item) {
+			if (Main.netMode == NetmodeID.Server || Player.whoAmI == 255)
+				return base.OnPickup(item);
+
+			// Only add the item to the list if it is not already present
+			if (BossChecklist.bossTracker.EntryLootCache[item.type] && !BossItemsCollected.Any(x => x.Type == item.type))
+				BossItemsCollected.Add(new ItemDefinition(item.type)); // Adds items that are picked up to the collected boss loot list
+
+			return base.OnPickup(item);
+		}
 	}
 }

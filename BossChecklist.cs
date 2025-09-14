@@ -108,7 +108,7 @@ namespace BossChecklist
 		}
 
 		private void Player_ApplyMusicBox(On_Player.orig_ApplyMusicBox orig, Player player, Item item) {
-			PlayerAssist modplayer = player.GetModPlayer<PlayerAssist>();
+			BossLogModPlayer modplayer = player.GetModPlayer<BossLogModPlayer>();
 			if (bossTracker.IsRegisteredMusicBox(item.type) && !modplayer.BossItemsCollected.Contains(new ItemDefinition(item.type)))
 				modplayer.BossItemsCollected.Add(new ItemDefinition(item.type));
 
