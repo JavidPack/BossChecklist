@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics;
 using Terraria.ID;
@@ -329,6 +330,39 @@ namespace BossChecklist.Systems
 				BossItemsCollected.Add(new ItemDefinition(item.type)); // Adds items that are picked up to the collected boss loot list
 
 			return base.OnPickup(item);
+		}
+	}
+
+	internal class BossLogItemChecklist : GlobalItem {
+		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
+			if (BossLogSystem.Instance.BossLog.BossLogVisible && BossLogSystem.Instance.BossLog.SelectedSubPage == SubPage.LootAndCollectibles) {
+				if (Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().BossItemsCollected.Any(x => x.Type == item.type)) {
+					var line = new TooltipLine(Mod, "BossLog_Obtained", "✓ " + Language.GetTextValue("Mods.BossChecklist.Log.LootAndCollection.Obtained")) {
+						OverrideColor = Colors.RarityYellow
+					};
+					tooltips.Add(line);
+				}
+
+				// If in journey mode and the item can be researched, display if it is research or how many items left are needed
+				if (Main.LocalPlayer.difficulty == PlayerDifficultyID.Creative && Main.LocalPlayerCreativeTracker.ItemSacrifices.TryGetSacrificeNumbers(item.type, out int count, out int max)) {
+					bool isResearched = Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().IsItemResearched(item.type);
+					string text2 = isResearched ? "Mods.BossChecklist.Log.LootAndCollection.Researched" : "CommonItemTooltip.CreativeSacrificeNeeded";
+					var line = new TooltipLine(Mod, "BossLog_Researched", (isResearched ? "✓ " : "") + Language.GetTextValue(text2, max - count)) {
+						OverrideColor = isResearched ? Colors.RarityYellow : Colors.JourneyMode
+					};
+					tooltips.Add(line);
+				}
+			}
+		}
+
+		public override void OnCreated(Item item, ItemCreationContext context) {
+			if (context is RecipeItemCreationContext || context is BuyItemCreationContext) {
+				if (Main.netMode != NetmodeID.Server && BossChecklist.bossTracker.EntryLootCache[item.type]) {
+					List<ItemDefinition> itemsList = Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().BossItemsCollected;
+					if (!itemsList.Any(x => x.Type == item.type))
+						itemsList.Add(new ItemDefinition(item.type));
+				}
+			}
 		}
 	}
 }
