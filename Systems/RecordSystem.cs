@@ -151,7 +151,6 @@ namespace BossChecklist.Systems
 
 		// When an NPC is killed and fully inactive the fight has ended, so stop all record trackers
 		public override void OnKill(NPC npc) {
-			HandleDownedNPCs(npc.type); // Custom downed bool code
 			RecordSystem.ActiveNPCEntryFlags[npc.whoAmI] = -1; // NPC is killed, unflag their active status
 
 			if (BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int recordIndex) is not EntryInfo entry)
@@ -189,30 +188,6 @@ namespace BossChecklist.Systems
 						$"Record Index is {recordIndex}."); // change to a key? might not need if I can fix this later
 				}
 			}
-		}
-
-		/// <summary>
-		/// Handles all of BossChecklist's custom downed variables, makring them as defeated and updating all clients when needed.
-		/// </summary>
-		/// <returns>If the corresponding flag was flipped.</returns>
-		internal static void HandleDownedNPCs(int npcType) {
-			switch (npcType) {
-				case NPCID.DD2DarkMageT1:
-				case NPCID.DD2DarkMageT3:
-					NPC.SetEventFlagCleared(ref DownedSystem.downedDarkMage, -1);
-					break;
-				case NPCID.DD2OgreT2:
-				case NPCID.DD2OgreT3:
-					NPC.SetEventFlagCleared(ref DownedSystem.downedOgre, -1);
-					break;
-				case NPCID.PirateShip: NPC.SetEventFlagCleared(ref DownedSystem.downedFlyingDutchman, -1); break;
-				case NPCID.MartianSaucerCore: NPC.SetEventFlagCleared(ref DownedSystem.downedMartianSaucer, -1); break;
-				case NPCID.LunarTowerVortex: NPC.SetEventFlagCleared(ref NPC.downedTowerVortex, -1); break;
-				case NPCID.LunarTowerStardust: NPC.SetEventFlagCleared(ref NPC.downedTowerStardust, -1); break;
-				case NPCID.LunarTowerNebula: NPC.SetEventFlagCleared(ref NPC.downedTowerNebula, -1); break;
-				case NPCID.LunarTowerSolar: NPC.SetEventFlagCleared(ref NPC.downedTowerSolar, -1); break;
-				default: break;
-			};
 		}
 	}
 
