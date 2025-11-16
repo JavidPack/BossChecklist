@@ -15,6 +15,7 @@ namespace BossChecklist.Systems
 		public static List<WorldRecord> WorldRecordsForWorld = new List<WorldRecord>(); // A list of all world records for each boss, saved to each world individually
 		public static List<WorldRecord> WorldRecordsForWorld_Unloaded = new List<WorldRecord>(); // A list of all the world records for unloadeded bosses
 		public static int[] ActiveNPCEntryFlags; // Used for despawn messages, which will occur when the npc is unflagged
+		internal static List<PersonalRecords>[] ServerRecordCollection;
 
 		public override void ClearWorld() {
 			WorldRecordsForWorld.Clear();
@@ -31,6 +32,19 @@ namespace BossChecklist.Systems
 			ActiveNPCEntryFlags = new int[Main.maxNPCs];
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				ActiveNPCEntryFlags[i] = -1;
+			}
+
+			// The server must populate for collected records after all entries have been counted and sorted.
+			// This should only happen when a world is loaded, as to not clear existing player data.
+			if (Main.netMode == NetmodeID.Server) {
+				ServerRecordCollection = new List<PersonalRecords>[Main.maxPlayers];
+				for (int i = 0; i < Main.maxPlayers; i++) {
+					ServerRecordCollection[i] = [];
+					foreach (string key in BossChecklist.bossTracker.BossRecordKeys) {
+						ServerRecordCollection[i].Add(new PersonalRecords(key));
+						Console.WriteLine($"added {key} to {i}");
+					}
+				}
 			}
 		}
 
@@ -123,7 +137,7 @@ namespace BossChecklist.Systems
 				}
 				else if (Main.netMode is NetmodeID.Server) {
 					foreach (Player player in Main.ActivePlayers) {
-						BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
+						ServerRecordCollection[player.whoAmI][recordIndex].StopTracking_Server(player.whoAmI, false, npc.playerInteraction[player.whoAmI]);
 					}
 					WorldRecordsForWorld[recordIndex].UpdateGlobalDeaths(npc.playerInteraction.GetTrueIndexes());
 				}
@@ -144,7 +158,7 @@ namespace BossChecklist.Systems
 			}
 			else if (Main.netMode is NetmodeID.Server) {
 				foreach (Player player in Main.ActivePlayers) {
-					BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].StartTracking_Server(player.whoAmI);
+					RecordSystem.ServerRecordCollection[player.whoAmI][recordIndex].StartTracking_Server(player.whoAmI);
 				}
 			}
 		}
@@ -169,7 +183,7 @@ namespace BossChecklist.Systems
 			else if (Main.netMode is NetmodeID.Server) {
 				foreach (Player player in Main.ActivePlayers) {
 					bool interaction = npc.playerInteraction[player.whoAmI];
-					if (BossChecklist.ServerCollectedRecords[player.whoAmI][recordIndex].StopTracking_Server(player.whoAmI, interaction && BossChecklist.Server_AllowNewRecords[player.whoAmI], interaction))
+					if (RecordSystem.ServerRecordCollection[player.whoAmI][recordIndex].StopTracking_Server(player.whoAmI, interaction && BossChecklist.Server_AllowNewRecords[player.whoAmI], interaction))
 						newPersonalBestOnServer = true; // if any player gets a new persoanl best on the server...
 				}
 			}
@@ -319,12 +333,6 @@ namespace BossChecklist.Systems
 				}
 				AllStoredRecords.TryAdd(WorldID, NewRecordListForWorld); // A new entry will be added to AllStoredRecords so that it can be saved when needed
 			}
-			PlayerRecordsInitialized = true;
-
-			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
-
-			BossChecklist.Server_AllowTracking[Player.whoAmI] = BossChecklist.FeatureConfig.RecordTrackingEnabled;
-			BossChecklist.Server_AllowNewRecords[Player.whoAmI] = BossChecklist.FeatureConfig.AllowNewRecords;
 
 			// When a player joins a world, their Personal Best records will need to be sent to the server for new Personal Best comparing
 			// The server doesn't need player records from every world, just the current one
@@ -355,6 +363,11 @@ namespace BossChecklist.Systems
 				packet.Write(BossChecklist.FeatureConfig.AllowNewRecords);
 				packet.Send(); // Multiplayer client --> Server
 			}
+
+			PlayerRecordsInitialized = true;
+			hasNewRecord = new bool[BossChecklist.bossTracker.BossRecordKeys.Count];
+			BossChecklist.Server_AllowTracking[Player.whoAmI] = BossChecklist.FeatureConfig.RecordTrackingEnabled;
+			BossChecklist.Server_AllowNewRecords[Player.whoAmI] = BossChecklist.FeatureConfig.AllowNewRecords;
 		}
 
 		// Track each tick that passes during boss fights.
@@ -365,7 +378,7 @@ namespace BossChecklist.Systems
 			if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
 				hasOpenedTheBossLog = false;
 			*/
-			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? RecordSystem.ServerRecordCollection[Player.whoAmI] : RecordsForWorld;
 			if (EntryRecords is null)
 				return;
 
@@ -380,7 +393,7 @@ namespace BossChecklist.Systems
 			if (Main.netMode == NetmodeID.MultiplayerClient || Player.whoAmI == 255)
 				return;
 
-			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? RecordSystem.ServerRecordCollection[Player.whoAmI] : RecordsForWorld;
 			if (EntryRecords is null)
 				return;
 
@@ -395,7 +408,7 @@ namespace BossChecklist.Systems
 			if (Main.netMode == NetmodeID.MultiplayerClient || Player.whoAmI == 255)
 				return;
 
-			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? BossChecklist.ServerCollectedRecords[Player.whoAmI] : RecordsForWorld;
+			List<PersonalRecords> EntryRecords = Main.netMode == NetmodeID.Server ? RecordSystem.ServerRecordCollection[Player.whoAmI] : RecordsForWorld;
 			if (EntryRecords is null)
 				return;
 
@@ -411,7 +424,7 @@ namespace BossChecklist.Systems
 				return;
 
 			if (Main.netMode == NetmodeID.Server) {
-				BossChecklist.ServerCollectedRecords[Player.whoAmI].ForEach(record => record.StopTracking_Server(Player.whoAmI, false, false));
+				RecordSystem.ServerRecordCollection[Player.whoAmI].ForEach(record => record.StopTracking_Server(Player.whoAmI, false, false));
 			}
 			else {
 				RecordsForWorld?.ForEach(record => record.StopTracking(false, false)); // Note: Disconnecting still tracks attempts and deaths. Does not save last attempt data.

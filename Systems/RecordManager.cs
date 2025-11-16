@@ -591,7 +591,7 @@ namespace BossChecklist.Systems
 				if (!playersInteracted.Contains(player.whoAmI))
 					continue;
 
-				PersonalRecords playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex];
+				PersonalRecords playerRecords = RecordSystem.ServerRecordCollection[player.whoAmI][RecordIndex];
 				totalDeaths += playerRecords.Tracker_Deaths;
 			}
 
@@ -624,7 +624,7 @@ namespace BossChecklist.Systems
 				if (!playersInteracted.Contains(player.whoAmI))
 					continue;
 
-				PersonalRecords playerRecords = BossChecklist.ServerCollectedRecords[player.whoAmI][RecordIndex];
+				PersonalRecords playerRecords = RecordSystem.ServerRecordCollection[player.whoAmI][RecordIndex];
 				totalDeaths += playerRecords.Tracker_Deaths;
 
 				bool Beaten_Duration = playerRecords.Tracker_Duration < durationWorld;

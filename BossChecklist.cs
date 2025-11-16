@@ -1,5 +1,4 @@
 ﻿using BossChecklist.Systems;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +24,6 @@ namespace BossChecklist
 
 		internal static BossLogConfiguration BossLogConfig;
 		internal static FeatureConfiguration FeatureConfig;
-		public static List<PersonalRecords>[] ServerCollectedRecords;
 		public static bool[] Server_AllowTracking;
 		public static bool[] Server_AllowNewRecords;
 
@@ -66,7 +64,6 @@ namespace BossChecklist
 			ToggleChecklistHotKey = null;
 			bossTracker = null;
 			ToggleBossLog = null;
-			ServerCollectedRecords = null;
 			Server_AllowTracking = null;
 			Server_AllowNewRecords = null;
 			FeatureConfig = null;
@@ -390,7 +387,7 @@ namespace BossChecklist
 					// Multiplayer client --> Server (always)
 					// When sending records to the server, it should always be sent from a player client, meaning whoAmI can be used to determine the player
 					// ServerCollectedRecords is already sorted properly using BossTracker keys and can recieve data the order it is sent in
-					foreach (PersonalRecords serverRecord in ServerCollectedRecords[whoAmI]) {
+					foreach (PersonalRecords serverRecord in RecordSystem.ServerRecordCollection[whoAmI]) {
 						serverRecord.kills = reader.ReadInt32();
 						if (serverRecord.kills > 0)
 							serverRecord.playTimeFirst = 1; // if had killed before set play time (value does not matter, as long as its >0)
@@ -419,24 +416,24 @@ namespace BossChecklist
 					packet.Write(keysFound.Count); // sending the count FIRST is needed to know how much world record data has to be sort through
 					foreach (string key in keysFound) {
 						packet.Write(key); // world record key
-						int index = Systems.RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
-						Systems.RecordSystem.WorldRecordsForWorld[index].NetSend(packet); // world record data
+						int index = RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
+						RecordSystem.WorldRecordsForWorld[index].NetSend(packet); // world record data
 					}
 					packet.Send(whoAmI); // Server --> Multiplayer client
 					break;
 				case PacketMessageType.SendWorldRecordsFromServerToPlayer:
 					// Server --> Multiplayer client
-					Systems.RecordSystem.WorldRecordsForWorld = new List<WorldRecord>();
+					RecordSystem.WorldRecordsForWorld = new List<WorldRecord>();
 					foreach (string key in bossTracker.BossRecordKeys) {
-						Systems.RecordSystem.WorldRecordsForWorld.Add(new WorldRecord(key));
+						RecordSystem.WorldRecordsForWorld.Add(new WorldRecord(key));
 					}
 
 					keyCount = reader.ReadInt32();
 					for (int i = 0; i < keyCount; i++) {
 						string key = reader.ReadString();
-						int keyIndex = Systems.RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
+						int keyIndex = RecordSystem.WorldRecordsForWorld.FindIndex(x => x.BossKey == key);
 						if (keyIndex != -1) {
-							Systems.RecordSystem.WorldRecordsForWorld[keyIndex].NetRecieve(reader);
+							RecordSystem.WorldRecordsForWorld[keyIndex].NetRecieve(reader);
 						}
 						else {
 							new WorldRecord(key).NetRecieve(reader);
@@ -446,13 +443,13 @@ namespace BossChecklist
 				case PacketMessageType.UpdateWorldRecordsToAllPlayers:
 					// Server --> Multiplayer client
 					recordIndex = reader.ReadInt32();
-					Systems.RecordSystem.WorldRecordsForWorld[recordIndex].NetReceiveWorldRecords(reader);
+					RecordSystem.WorldRecordsForWorld[recordIndex].NetReceiveWorldRecords(reader);
 					break;
 				case PacketMessageType.ResetPlayerRecordForServer:
 					// Multiplayer client --> Server
 					recordIndex = reader.ReadInt32();
 					NetRecordID resetType = (NetRecordID)reader.ReadInt32();
-					ServerCollectedRecords[whoAmI][recordIndex].ResetStats_Server(resetType);
+					RecordSystem.ServerRecordCollection[whoAmI][recordIndex].ResetStats_Server(resetType);
 					break;
 				case PacketMessageType.ResetTrackers:
 					// Server --> Multiplayer client (always)
