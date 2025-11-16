@@ -59,7 +59,12 @@ namespace BossChecklist
 					OpenProgressionModePrompt();
 				}
 				else if (!HiddenEntriesMode) {
-					UpdateSelectedPage(value, SelectedSubPage);
+					if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
+						GetRecordModPlayer.hasNewRecord[recordIndex] = false; // Remove new records when navigating from a page with a new record
+
+					BossLogPageNumber = value;
+					ToCTab.Anchor = value == Page_TableOfContents ? null : -1; // Update ToC/Filter tab anchor (and hover text)
+					RefreshPageContent();
 				}
 			}
 		}
@@ -396,17 +401,14 @@ namespace BossChecklist
 			recordButton = new SubPageButton(BossLogResources.Nav_SubPage, SubPage.Records);
 			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - BossLogResources.Nav_SubPage.Value.Width / 2;
 			recordButton.Top.Pixels = 5 + BossLogResources.Nav_SubPage.Value.Height + 10;
-			recordButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.Records);
 
 			spawnButton = new SubPageButton(BossLogResources.Nav_SubPage, SubPage.SpawnInfo);
 			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - BossLogResources.Nav_SubPage.Value.Width - 8;
 			spawnButton.Top.Pixels = 5;
-			spawnButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.SpawnInfo);
 
 			lootButton = new SubPageButton(BossLogResources.Nav_SubPage, SubPage.LootAndCollectibles);
 			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
 			lootButton.Top.Pixels = 5;
-			lootButton.OnLeftClick += (a, b) => UpdateSelectedPage(PageNum, SubPage.LootAndCollectibles);
 
 			// Record Type navigation buttons
 			RecordCategoryButtons = new List<NavigationalButton>();
@@ -777,38 +779,6 @@ namespace BossChecklist
 			}
 
 			PageNum = NewPageValue; // Once a valid page is found, change the page.
-		}
-
-		/// <summary>
-		/// Updates desired page, subpage, and subcategory when called. Used for buttons that use navigation.
-		/// </summary>
-		/// <param name="pageNum">The page you want to switch to.</param>
-		/// <param name="subPage">The category page you want to set up, which includes record/event data, summoning info, and loot checklist.</param>
-		/// <param name="subCategory">The alternate category page you want to display. As of now this just applies for the record category page, which includes last attempt, first record, best record, and world record.</param>
-		private void UpdateSelectedPage(int pageNum, SubPage subPage, SubCategory subCategory = SubCategory.None) {
-			// Remove new records when navigating from a page with a new record
-			if (PageNum >= 0 && GetLogEntryInfo.IsRecordIndexed(out int recordIndex))
-				GetRecordModPlayer.hasNewRecord[recordIndex] = false;
-
-			BossLogPageNumber = pageNum; // Directly change the BossLogPageNumber value in order to prevent an infinite loop
-
-			// Only on boss pages does updating the category page matter
-			if (PageNum >= 0) {
-				if (BossChecklist.BossLogConfig.ProgressiveChecklist && !GetLogEntryInfo.IsAutoDownedOrMarked && subPage == SubPage.LootAndCollectibles) {
-					// If Progressive Checklist is enabled, and the Loot subpage is trying to be accessed, deny it
-					// This can also happen if the loot page is already selected and a navigation button is used to access a locked page
-					if (SelectedSubPage == SubPage.LootAndCollectibles)
-						SelectedSubPage = SubPage.SpawnInfo;
-				}
-				else {
-					SelectedSubPage = subPage;
-				}
-				if (subCategory != SubCategory.None)
-					RecordSubCategory = subCategory;
-			}
-
-			ToCTab.Anchor = PageNum == Page_TableOfContents ? null : -1; // Update ToC/Filter tab anchor (and hover text)
-			RefreshPageContent();
 		}
 
 		/// <summary>

@@ -490,6 +490,11 @@ namespace BossChecklist.UIElements
 				subPageType = type;
 			}
 
+			public override void LeftClick(UIMouseEvent evt) {
+				BossLogSystem.Instance.BossLog.SelectedSubPage = subPageType;
+				BossLogSystem.Instance.BossLog.RefreshPageContent();
+			}
+
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.DrawSelf(spriteBatch);
 
