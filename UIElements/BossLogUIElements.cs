@@ -637,6 +637,7 @@ namespace BossChecklist.UIElements
 				bool ExpertItemRestricted = item.type == entry.ExpertItem && !Main.expertMode;
 				bool OWmusicRestricted = BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(item.type) && !BossLogUI.OtherworldUnlocked;
 				bool isRestricted = MasterItemRestricted || ExpertItemRestricted || OWmusicRestricted;
+				bool LootProgress = !hasItem && Id.Contains("loot_") && BossChecklist.BossLogConfig.ProgressiveChecklist;
 
 				// Make a backups of the original itemslot texture and alter the texture to display the color needed
 				// If the config 'Hide boss drops' is enabled and the boss hasn't been defeated yet, the itemslot should appear red, even if the item was already obtained
@@ -649,6 +650,11 @@ namespace BossChecklist.UIElements
 				}
 				else if (isRestricted) {
 					TextureAssets.InventoryBack7 = TextureAssets.InventoryBack11;
+				}
+
+				if (LootProgress) {
+					item = new Item(item.type);
+					item.color = Color.Black;
 				}
 				
 				// Draw the item slot and reset the fields to their original value
@@ -696,6 +702,12 @@ namespace BossChecklist.UIElements
 						if (IsMouseHovering) {
 							BossLogSystem.Instance.UIHoverText = $"{BossLogUI.LangLog}.LootAndCollection.ItemIsLocked";
 							BossLogSystem.Instance.UIHoverTextColor = Color.Goldenrod;
+						}
+					}
+					else if (LootProgress) {
+						if (IsMouseHovering) {
+							BossLogSystem.Instance.UIHoverText = "???";
+							BossLogSystem.Instance.UIHoverTextColor = Color.White;
 						}
 					}
 					else {
