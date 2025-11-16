@@ -882,7 +882,7 @@ namespace BossChecklist
 					PageTwo.Append(recordButton);
 					PageTwo.Append(spawnButton);
 					PageTwo.Append(lootButton);
-					lootButton.isLocked = !GetLogEntryInfo.IsAutoDownedOrMarked;
+					//lootButton.isLocked = !GetLogEntryInfo.IsAutoDownedOrMarked;
 				}
 				else {
 					// Old mod calls are no longer supported and will not add entries

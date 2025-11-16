@@ -480,10 +480,10 @@ namespace BossChecklist.UIElements
 		internal class SubPageButton : UIImage {
 			readonly string buttonText;
 			readonly SubPage subPageType;
-			public bool isLocked = false;
+			//public bool isLocked = false;
 
 			private Asset<Texture2D> selectionBorder;
-			private Asset<Texture2D> locked;
+			//private Asset<Texture2D> locked;
 
 			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
 				buttonText = Language.GetTextValue($"{BossLogUI.LangLog}.Tabs.{type}");
@@ -512,11 +512,13 @@ namespace BossChecklist.UIElements
 
 				spriteBatch.DrawString(FontAssets.MouseText.Value, translated, pos, Color.Gold, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
+				/*
 				if (isLocked && BossChecklist.BossLogConfig.ProgressiveChecklist) {
 					locked ??= BossLogResources.RequestVanillaTexture("UI/Workshop/PublicityPrivate", true);
 					pos = new Vector2(inner.X + (inner.Width / 2 - locked.Value.Width / 2), inner.Y + inner.Height / 2 - locked.Value.Height / 2);
 					spriteBatch.Draw(locked.Value, pos, Color.White);
 				}
+				*/
 			}
 		}
 
