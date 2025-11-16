@@ -1432,9 +1432,11 @@ namespace BossChecklist.UIElements
 
 			internal bool InitializeDividers;
 			internal Dictionary<Rectangle, string> Sections;
+			internal bool barState;
 
 			public ProgressBar(bool hardMode) {
 				InitializeDividers = true; // a progress bar is created, let this UIelement know it should attempt to make section dividers asap
+				this.barState = LogUI.barState;
 
 				// Start with the total percentage and total counts
 				this.percentageTotal = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries, hardMode, out int d, out int t);
@@ -1505,7 +1507,7 @@ namespace BossChecklist.UIElements
 				int barFull = inner.Width - 12 + 4;
 				int barRemainder = (int)(barFull * this.percentageTotal);
 				int meterX = inner.X + 4;
-				if (LogUI.barState) {
+				if (this.barState) {
 					string finalValue = CountsByMod.First().Key;
 					foreach (KeyValuePair<string, Point> pair in CountsByMod) {
 						if (pair.Value.X != 0)
@@ -1557,12 +1559,12 @@ namespace BossChecklist.UIElements
 			public override void LeftClick(UIMouseEvent evt) {
 				base.LeftClick(evt);
 				LogUI.barState = !LogUI.barState;
-				GenerateDividers(); // update the dividers based on the new bar state
 			}
 
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
-				if (InitializeDividers) {
+				if (InitializeDividers || this.barState != LogUI.barState) {
+					this.barState = LogUI.barState;
 					GenerateDividers(); // Can only generate dividers once the dimensions are declared
 					InitializeDividers = false;
 				}
