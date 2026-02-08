@@ -576,7 +576,7 @@ namespace BossChecklist.UIElements
 			public LogItemSlot(Item item, int context = ItemSlot.Context.TrashItem, float scale = 1f) {
 				this.context = context;
 				this.scale = scale;
-				this.item = item;
+				this.item = new Item(item.type);
 
 				Width.Set(TextureAssets.InventoryBack9.Width() * scale, 0f);
 				Height.Set(TextureAssets.InventoryBack9.Height() * scale, 0f);
@@ -658,7 +658,7 @@ namespace BossChecklist.UIElements
 					item = new Item(item.type);
 					item.color = Color.Black;
 				}
-				
+
 				// Draw the item slot and reset the fields to their original value
 				ItemSlot.Draw(spriteBatch, ref item, context, inner.TopLeft());
 				Main.inventoryScale = oldScale;
