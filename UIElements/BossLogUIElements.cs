@@ -655,7 +655,6 @@ namespace BossChecklist.UIElements
 				}
 
 				if (LootProgress) {
-					item = new Item(item.type);
 					item.color = Color.Black;
 				}
 

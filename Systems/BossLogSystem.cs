@@ -335,22 +335,26 @@ namespace BossChecklist.Systems
 
 	internal class BossLogItemChecklist : GlobalItem {
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
+			// These tooltips should only appear on items listed in the loot pages of the Boss Log
 			if (BossLogSystem.Instance.BossLog.BossLogVisible && BossLogSystem.Instance.BossLog.SelectedSubPage == SubPage.LootAndCollectibles) {
+				int ResearchToolTipIndex = tooltips.FindIndex(line => line.Mod == "Terraria" && line.Name == "JourneyResearch");
+
+				// If the player has obtained the boss drop item, appearing before the research item tooltip
 				if (Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().BossItemsCollected.Any(x => x.Type == item.type)) {
-					var line = new TooltipLine(Mod, "BossLog_Obtained", "✓ " + Language.GetTextValue("Mods.BossChecklist.Log.LootAndCollection.Obtained")) {
-						OverrideColor = Colors.RarityYellow
+					var ObtainedItemTooltip = new TooltipLine(Mod, "BossLog_Obtained", "✓ " + Language.GetTextValue("Mods.BossChecklist.Log.LootAndCollection.Obtained")) {
+						OverrideColor = Main.teamColor[4]
 					};
-					tooltips.Add(line);
+					tooltips.Insert(ResearchToolTipIndex != -1 ? ResearchToolTipIndex : tooltips.Count, ObtainedItemTooltip);
 				}
 
-				// If in journey mode and the item can be researched, display if it is research or how many items left are needed
-				if (Main.LocalPlayer.difficulty == PlayerDifficultyID.Creative && Main.LocalPlayerCreativeTracker.ItemSacrifices.TryGetSacrificeNumbers(item.type, out int count, out int max)) {
+				// If the player has obtained the boss drop item, appearing after the obtained item tooltip
+				if (ResearchToolTipIndex == -1 && Main.LocalPlayer.difficulty == PlayerDifficultyID.Creative && Main.LocalPlayerCreativeTracker.ItemSacrifices.TryGetSacrificeNumbers(item.type, out int count, out int max)) {
 					bool isResearched = Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().IsItemResearched(item.type);
 					string text2 = isResearched ? "Mods.BossChecklist.Log.LootAndCollection.Researched" : "CommonItemTooltip.CreativeSacrificeNeeded";
-					var line = new TooltipLine(Mod, "BossLog_Researched", (isResearched ? "✓ " : "") + Language.GetTextValue(text2, max - count)) {
-						OverrideColor = isResearched ? Colors.RarityYellow : Colors.JourneyMode
+					var ResearchItemTooltip = new TooltipLine(Mod, "BossLog_Researched", (isResearched ? "✓ " : "") + Language.GetTextValue(text2, max - count)) {
+						OverrideColor = isResearched ? Main.teamColor[4] : Colors.JourneyMode
 					};
-					tooltips.Add(line);
+					tooltips.Insert(tooltips.Count, ResearchItemTooltip);
 				}
 			}
 		}
