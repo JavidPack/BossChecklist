@@ -1442,7 +1442,7 @@ namespace BossChecklist
 			// search for all recipes that have the item as a result
 			var itemRecipes = Main.recipe
 				.Take(Recipe.numRecipes)
-				.Where(r => r.HasResult(itemType));
+				.Where(r => r.HasResult(itemType) && !r.Disabled);
 
 			// iterate through all the recipes to gather the information we need to display for the recipe
 			int TotalRecipes = 0;
