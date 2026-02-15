@@ -24,13 +24,13 @@ using static BossChecklist.UIElements.BossLogUIElements;
 
 namespace BossChecklist
 {
-	internal enum SubPage {
+	internal enum PageCategory {
 		Records,
 		SpawnInfo,
 		LootAndCollectibles
 	}
 
-	internal enum SubCategory {
+	internal enum RecordCategory {
 		PreviousAttempt,
 		FirstVictory,
 		PersonalBest,
@@ -39,10 +39,10 @@ namespace BossChecklist
 	}
 
 	class BossLogUI : UIState {
-		public OpenLogButton bosslogbutton; // The main button to open the Boss Log
+		public OpenLogButton OpenBossLogButton; // The main button to open the Boss Log
 		public LogPanel BookArea; // The main panel for the UI. All content is aligned within this area.
-		public LogPanel PageOne; // left page content panel
-		public LogPanel PageTwo; // right page content panel
+		public LogPanel LeftPage; // left page content panel
+		public LogPanel RightPage; // right page content panel
 
 		private int BossLogPageNumber;
 		public const int Page_TableOfContents = -1;
@@ -63,7 +63,7 @@ namespace BossChecklist
 						GetRecordModPlayer.hasNewRecord[recordIndex] = false; // Remove new records when navigating from a page with a new record
 
 					BossLogPageNumber = value;
-					ToCTab.Anchor = value == Page_TableOfContents ? null : -1; // Update ToC/Filter tab anchor (and hover text)
+					TableOfContentsTab.Anchor = value == Page_TableOfContents ? null : -1; // Update ToC/Filter tab anchor (and hover text)
 					RefreshPageContent();
 				}
 			}
@@ -80,37 +80,32 @@ namespace BossChecklist
 		public static bool AltKeyIsDown => Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.Right);
 
 		// Navigation
-		public NavigationalButton NextPage;
-		public NavigationalButton PrevPage;
+		public NavigationalButton NextPageButton;
+		public NavigationalButton PreviousPageButton;
 
-		public SubPage SelectedSubPage = SubPage.SpawnInfo;
-		public SubPageButton recordButton;
-		public SubPageButton spawnButton;
-		public SubPageButton lootButton;
+		public PageCategory SelectedSubPage = PageCategory.SpawnInfo;
+		public SubPageButton OpenRecordPageButton;
+		public SubPageButton OpenSpawnPageButton;
+		public SubPageButton OpenLootPageButton;
 
 		// Book Tabs
-		public LogTab ToCTab; // also used for the filter tab
+		public LogTab TableOfContentsTab; // also used for the filter tab
 		public LogTab CreditsTab;
-		public LogTab BossTab;
-		public LogTab MiniBossTab;
-		public LogTab EventTab;
+		public LogTab NextBossTab;
+		public LogTab NextMiniBossTab;
+		public LogTab NextEventTab;
 		public IndicatorPanel AltInteractionsTab;
 		public IndicatorIcon InteractionIcon;
 		public IndicatorPanel IndicatorTab;
 		public List<IndicatorIcon> Indicators;
 		public FilterIcon FilterPanel; // contains the filter buttons, (not a filter icon, but it works)
 		public List<FilterIcon> FilterIcons;
-		public bool filterOpen = false; // when true, the filter panel is visible to the user
+		public bool FilterPanelIsOpen = false; // when true, the filter panel is visible to the user
 
 		// Table of Contents related
-		public UIList prehardmodeList; // lists for pre-hardmode and hardmode entries
-		public UIList hardmodeList;
-		public ProgressBar prehardmodeBar; // progress bars for pre-hardmode and hardmode entries
-		public ProgressBar hardmodeBar;
-		public LogScrollbar scrollOne; // scroll bars for table of contents lists (and other elements too)
-		public LogScrollbar scrollTwo;
-		public bool barState = false; // when true, hovering over the progress bar will split up the entry percentages by mod instead of entry type
-		public UIList pageTwoItemList; // Item slot lists that include: Loot tables, spawn item, and collectibles
+		public LogScrollbar ScrollBarLeftPage; // scroll bars for table of contents lists (and other elements too)
+		public LogScrollbar ScrollBarRightPage;
+		public bool ProgressBarState = false; // when true, hovering over the progress bar will split up the entry percentages by mod instead of entry type
 
 		public Dictionary<string, bool> HiddenEntriesPending = new Dictionary<string, bool>();
 		private bool hiddenListOpen = false;
@@ -137,7 +132,7 @@ namespace BossChecklist
 		}
 
 		// Credits related
-		public static readonly Dictionary<string, string> contributors = new Dictionary<string, string>() {
+		public static readonly Dictionary<string, string> BossChecklistModContributors = new Dictionary<string, string>() {
 			{ "Jopojelly", "Creator & Owner" },
 			{ "SheepishShepherd", "Co-Owner & Maintainer"},
 			{ "direwolf420", "Code Contributor" },
@@ -147,33 +142,28 @@ namespace BossChecklist
 		};
 
 		// Record page related
-		public SubCategory RecordSubCategory = SubCategory.PreviousAttempt;
-		public SubCategory CompareState = SubCategory.None; // Compare record values to one another
+		public RecordCategory SelectedRecordCategory = RecordCategory.PreviousAttempt;
+		public RecordCategory SelectedRecordComparison = RecordCategory.None; // Compare record values to one another
 		public List<NavigationalButton> RecordCategoryButtons;
-		public List<int> Banners;
+		public List<int> EventEntryNPCBannerIDList;
 
 		// Spawn Info page related
 		public static int SpawnItemSelected = 0;
 		public static int RecipeSelected = 0;
 
 		// Loot page related
-		public static bool OtherworldUnlocked = false;
+		public static bool OtherworldMusicUnlocked = false;
 
 		// Extra stuff
-		public const string LangLog = "Mods.BossChecklist.Log";
+		public const string LangLog = "Mods.BossChecklist.Log"; // Short name variable to quickly access the needed string for the Log translations
 		public static int headNum = -1;
 		public static readonly Color faded = new Color(128, 128, 128, 128);
-		public UIImage PromptCheck; // checkmark for the toggle prompt config button
-		public UIText PageOneTitle;
-		public UIText PageTwoTitle;
 
 		// Boss Log visibiltiy helpers
-		private bool bossLogVisible;
 		internal static bool PendingToggleBossLogUI; // Allows toggling boss log visibility from methods not run during UIScale so Main.screenWidth/etc are correct for ResetUIPositioning method
 		internal static bool PendingConfigChange; // Allows configs to be updated on Log close, when needed
 
-		internal List<int> HiddenIndexes;
-		internal static bool PendingHiddenChange; // Updates Table of Contents hidden entries once the hidden list is closed
+		internal static bool PendingHiddenEntryChange; // Updates Table of Contents hidden entries once the hidden list is closed
 		
 		private bool PendingPageChange; // Allows changing the page outside of the UIState without causing ordering or drawing issues.
 		private int PageChangeValue;
@@ -187,6 +177,7 @@ namespace BossChecklist
 			}
 		}
 
+		private bool bossLogVisible;
 		/// <summary>
 		/// Appends or removes UI elements based on the visibility status it is set to.
 		/// </summary>
@@ -195,28 +186,28 @@ namespace BossChecklist
 			set {
 				if (value) {
 					Append(BookArea);
-					Append(ToCTab);
+					Append(TableOfContentsTab);
 					Append(FilterPanel);
 					Append(IndicatorTab);
 					Append(AltInteractionsTab);
 					Append(CreditsTab);
-					Append(BossTab);
-					Append(MiniBossTab);
-					Append(EventTab);
-					Append(PageOne);
-					Append(PageTwo);
+					Append(NextBossTab);
+					Append(NextMiniBossTab);
+					Append(NextEventTab);
+					Append(LeftPage);
+					Append(RightPage);
 				}
 				else {
-					RemoveChild(PageTwo);
-					RemoveChild(PageOne);
-					RemoveChild(EventTab);
-					RemoveChild(MiniBossTab);
-					RemoveChild(BossTab);
+					RemoveChild(RightPage);
+					RemoveChild(LeftPage);
+					RemoveChild(NextEventTab);
+					RemoveChild(NextMiniBossTab);
+					RemoveChild(NextBossTab);
 					RemoveChild(CreditsTab);
 					RemoveChild(AltInteractionsTab);
 					RemoveChild(IndicatorTab);
 					RemoveChild(FilterPanel);
-					RemoveChild(ToCTab);
+					RemoveChild(TableOfContentsTab);
 					RemoveChild(BookArea);
 
 					if (PendingConfigChange) {
@@ -275,29 +266,29 @@ namespace BossChecklist
 		public override void OnInitialize() {
 			BossLogResources.PreloadLogAssets();
 
-			bosslogbutton = new OpenLogButton(BossLogResources.Button_Book);
-			bosslogbutton.Left.Set(Main.screenWidth - bosslogbutton.Width.Pixels - 190, 0f);
-			bosslogbutton.Top.Pixels = Main.screenHeight - bosslogbutton.Height.Pixels - 8;
-			bosslogbutton.OnLeftClick += (a, b) => ToggleBossLog(true);
+			OpenBossLogButton = new OpenLogButton(BossLogResources.Button_Book);
+			OpenBossLogButton.Left.Set(Main.screenWidth - OpenBossLogButton.Width.Pixels - 190, 0f);
+			OpenBossLogButton.Top.Pixels = Main.screenHeight - OpenBossLogButton.Height.Pixels - 8;
+			OpenBossLogButton.OnLeftClick += (a, b) => ToggleBossLog(true);
 
 			BookArea = new LogPanel();
 			BookArea.Width.Pixels = BossLogResources.Log_BackPanel.Value.Width;
 			BookArea.Height.Pixels = BossLogResources.Log_BackPanel.Value.Height;
 
-			ToCTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_TableOfContents) {
+			TableOfContentsTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_TableOfContents) {
 				Id = "TableOfContents"
 			};
-			ToCTab.OnLeftClick += (a, b) => UpdateFilterTabPos(true);
+			TableOfContentsTab.OnLeftClick += (a, b) => UpdateFilterTabPos(true);
 
-			BossTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_Boss) {
+			NextBossTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_Boss) {
 				Id = "Boss"
 			};
 
-			MiniBossTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_MiniBoss) {
+			NextMiniBossTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_MiniBoss) {
 				Id = "MiniBoss"
 			};
 
-			EventTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_Event) {
+			NextEventTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_Event) {
 				Id = "Event"
 			};
 
@@ -307,43 +298,21 @@ namespace BossChecklist
 				hoverText = $"{LangLog}.Tabs.Credits" // hoverText will never change, so initialize it
 			};
 
-			PageOne = new LogPanel() {
+			LeftPage = new LogPanel() {
 				Id = "PageOne",
 			};
-			PageOne.Width.Pixels = 375;
-			PageOne.Height.Pixels = 480;
-
-			PageOneTitle = new UIText("", 0.6f, true) {
-				TextColor = Colors.RarityAmber
-			};
-			PageOneTitle.Top.Pixels = 18;
-
-			PrevPage = new NavigationalButton(BossLogResources.Nav_Prev, true) {
-				Id = "Previous"
-			};
-			PrevPage.Left.Pixels = 8;
-			PrevPage.Top.Pixels = 416;
-			PrevPage.OnLeftClick += PageChangerClicked;
-
-			prehardmodeList = new UIList();
-			prehardmodeList.Left.Pixels = 4;
-			prehardmodeList.Top.Pixels = 44;
-			prehardmodeList.Width.Pixels = PageOne.Width.Pixels - 60;
-			prehardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
-			prehardmodeList.PaddingTop = 5;
-
-			PageTwo = new LogPanel() {
+			RightPage = new LogPanel() {
 				Id = "PageTwo"
 			};
-			PageTwo.Width.Pixels = 375;
-			PageTwo.Height.Pixels = 480;
+			LeftPage.Width.Pixels = RightPage.Width.Pixels = 375; // The left and right pages have the same width and height
+			LeftPage.Height.Pixels = RightPage.Height.Pixels = 480;
 
-			PageTwoTitle = new UIText("", 0.6f, true) {
-				TextColor = Colors.RarityAmber
+			PreviousPageButton = new NavigationalButton(BossLogResources.Nav_Prev, true) {
+				Id = "Previous"
 			};
-			PageTwoTitle.Top.Pixels = 18;
-
-			pageTwoItemList = new UIList();
+			PreviousPageButton.Left.Pixels = 8;
+			PreviousPageButton.Top.Pixels = 416;
+			PreviousPageButton.OnLeftClick += PageChangerClicked;
 
 			FilterPanel = new FilterIcon(BossLogResources.FilterPanel);
 			FilterIcons = new List<FilterIcon>() {
@@ -383,58 +352,49 @@ namespace BossChecklist
 			InteractionIcon.Top.Pixels = 8;
 			AltInteractionsTab.Append(InteractionIcon);
 
-			NextPage = new NavigationalButton(BossLogResources.Nav_Next, true) {
+			NextPageButton = new NavigationalButton(BossLogResources.Nav_Next, true) {
 				Id = "Next"
 			};
-			NextPage.Left.Pixels = PageTwo.Width.Pixels - NextPage.Width.Pixels - 12;
-			NextPage.Top.Pixels = 416;
-			NextPage.OnLeftClick += PageChangerClicked;
-			PageTwo.Append(NextPage);
+			NextPageButton.Left.Pixels = RightPage.Width.Pixels - NextPageButton.Width.Pixels - 12;
+			NextPageButton.Top.Pixels = 416;
+			NextPageButton.OnLeftClick += PageChangerClicked;
+			RightPage.Append(NextPageButton);
 
-			hardmodeList = new UIList();
-			hardmodeList.Left.Pixels = 19;
-			hardmodeList.Top.Pixels = 44;
-			hardmodeList.Width.Pixels = PageOne.Width.Pixels - 60;
-			hardmodeList.Height.Pixels = PageOne.Height.Pixels - 136;
-			hardmodeList.PaddingTop = 5;
+			OpenRecordPageButton = new SubPageButton(BossLogResources.Nav_SubPage, PageCategory.Records);
+			OpenRecordPageButton.Left.Pixels = (int)RightPage.Width.Pixels / 2 - BossLogResources.Nav_SubPage.Value.Width / 2;
+			OpenRecordPageButton.Top.Pixels = 5 + BossLogResources.Nav_SubPage.Value.Height + 10;
 
-			recordButton = new SubPageButton(BossLogResources.Nav_SubPage, SubPage.Records);
-			recordButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - BossLogResources.Nav_SubPage.Value.Width / 2;
-			recordButton.Top.Pixels = 5 + BossLogResources.Nav_SubPage.Value.Height + 10;
+			OpenSpawnPageButton = new SubPageButton(BossLogResources.Nav_SubPage, PageCategory.SpawnInfo);
+			OpenSpawnPageButton.Left.Pixels = (int)RightPage.Width.Pixels / 2 - BossLogResources.Nav_SubPage.Value.Width - 8;
+			OpenSpawnPageButton.Top.Pixels = 5;
 
-			spawnButton = new SubPageButton(BossLogResources.Nav_SubPage, SubPage.SpawnInfo);
-			spawnButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 - BossLogResources.Nav_SubPage.Value.Width - 8;
-			spawnButton.Top.Pixels = 5;
-
-			lootButton = new SubPageButton(BossLogResources.Nav_SubPage, SubPage.LootAndCollectibles);
-			lootButton.Left.Pixels = (int)PageTwo.Width.Pixels / 2 + 8;
-			lootButton.Top.Pixels = 5;
+			OpenLootPageButton = new SubPageButton(BossLogResources.Nav_SubPage, PageCategory.LootAndCollectibles);
+			OpenLootPageButton.Left.Pixels = (int)RightPage.Width.Pixels / 2 + 8;
+			OpenLootPageButton.Top.Pixels = 5;
 
 			// Record Type navigation buttons
 			RecordCategoryButtons = new List<NavigationalButton>();
 			for (int value = 0; value < 4; value++) {
 				RecordCategoryButtons.Add(
 					new NavigationalButton(BossLogResources.Nav_Record_Category[value], true) {
-						Record_Anchor = (SubCategory)value,
-						hoverText = $"{LangLog}.Records.Category.{(SubCategory)value}"
+						Record_Anchor = (RecordCategory)value,
+						hoverText = $"{LangLog}.Records.Category.{(RecordCategory)value}"
 					}
 				);
 			}
 
-			Banners = new List<int>();
+			EventEntryNPCBannerIDList = new List<int>();
 
 			// scroll one currently only appears for the table of contents, so its fields can be set here
-			scrollOne = new LogScrollbar();
-			scrollOne.SetView(100f, 1000f);
-			scrollOne.Top.Pixels = 50f;
-			scrollOne.Left.Pixels = -18;
-			scrollOne.Height.Set(-24f, 0.75f);
-			scrollOne.HAlign = 1f;
+			ScrollBarLeftPage = new LogScrollbar();
+			ScrollBarLeftPage.SetView(100f, 1000f);
+			ScrollBarLeftPage.Top.Pixels = 50f;
+			ScrollBarLeftPage.Left.Pixels = -18;
+			ScrollBarLeftPage.Height.Set(-24f, 0.75f);
+			ScrollBarLeftPage.HAlign = 1f;
 
 			// scroll two is used in more areas, such as the display spawn info message box, so its fields are set when needed
-			scrollTwo = new LogScrollbar();
-
-			HiddenIndexes = new List<int>();
+			ScrollBarRightPage = new LogScrollbar();
 		}
 
 		public override void Update(GameTime gameTime) {
@@ -446,7 +406,7 @@ namespace BossChecklist
 				PendingPageChange = false;
 				PageNum = PageChangeValue;
 			}
-			this.AddOrRemoveChild(bosslogbutton, Main.playerInventory);
+			this.AddOrRemoveChild(OpenBossLogButton, Main.playerInventory);
 			base.Update(gameTime);
 		}
 
@@ -479,34 +439,34 @@ namespace BossChecklist
 		/// This includes the main book area, the page areas, and all book tabs.
 		/// </summary>
 		private void ResetUIPositioning() {
-			PageOne.Left.Pixels = BookArea.Left.Pixels + 20;
-			PageOne.Top.Pixels = BookArea.Top.Pixels + 12;
-			PageTwo.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - PageTwo.Width.Pixels;
-			PageTwo.Top.Pixels = BookArea.Top.Pixels + 12;
+			LeftPage.Left.Pixels = BookArea.Left.Pixels + 20;
+			LeftPage.Top.Pixels = BookArea.Top.Pixels + 12;
+			RightPage.Left.Pixels = BookArea.Left.Pixels - 15 + BookArea.Width.Pixels - RightPage.Width.Pixels;
+			RightPage.Top.Pixels = BookArea.Top.Pixels + 12;
 
 			int offsetY = 50;
 
 			// ToC/Filter Tab and Credits Tab never flips to the other side, just disappears when on said page
-			ToCTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
-			IndicatorTab.Left.Pixels = PageTwo.Left.Pixels + PageTwo.Width.Pixels - 25 - IndicatorTab.Width.Pixels;
-			IndicatorTab.Top.Pixels = PageTwo.Top.Pixels - IndicatorTab.Height.Pixels - 6;
+			TableOfContentsTab.Top.Pixels = BookArea.Top.Pixels + offsetY;
+			IndicatorTab.Left.Pixels = RightPage.Left.Pixels + RightPage.Width.Pixels - 25 - IndicatorTab.Width.Pixels;
+			IndicatorTab.Top.Pixels = RightPage.Top.Pixels - IndicatorTab.Height.Pixels - 6;
 			AltInteractionsTab.Left.Pixels = IndicatorTab.Left.Pixels - AltInteractionsTab.Width.Pixels - 2;
-			AltInteractionsTab.Top.Pixels = PageTwo.Top.Pixels - AltInteractionsTab.Height.Pixels - 6;
+			AltInteractionsTab.Top.Pixels = RightPage.Top.Pixels - AltInteractionsTab.Height.Pixels - 6;
 			AltInteractionsTab.hoverText = GenerateInteractionHoverText();
 			UpdateFilterTabPos(false); // Update filter tab visibility
 			CreditsTab.Left.Pixels = BookArea.Left.Pixels + BookArea.Width.Pixels - 12;
-			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
+			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (NextBossTab.Height.Pixels * 4);
 
 			// Reset book tabs Y positioning after BookArea adjusted
-			BossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 1);
-			MiniBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 2);
-			EventTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 3);
-			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (BossTab.Height.Pixels * 4);
+			NextBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (NextBossTab.Height.Pixels * 1);
+			NextMiniBossTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (NextBossTab.Height.Pixels * 2);
+			NextEventTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (NextBossTab.Height.Pixels * 3);
+			CreditsTab.Top.Pixels = BookArea.Top.Pixels + offsetY + (NextBossTab.Height.Pixels * 4);
 
 			// Update the navigation tabs to the proper positions
-			BossTab.Left.Pixels = BookArea.Left.Pixels + (BossTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
-			MiniBossTab.Left.Pixels = BookArea.Left.Pixels + (MiniBossTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
-			EventTab.Left.Pixels = BookArea.Left.Pixels + (EventTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
+			NextBossTab.Left.Pixels = BookArea.Left.Pixels + (NextBossTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
+			NextMiniBossTab.Left.Pixels = BookArea.Left.Pixels + (NextMiniBossTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
+			NextEventTab.Left.Pixels = BookArea.Left.Pixels + (NextEventTab.OnLeftSide() ? -20 : BookArea.Width.Pixels - 12);
 		}
 
 		/// <summary>
@@ -521,20 +481,20 @@ namespace BossChecklist
 				return; // The Hidden List should be confirmed and closed before being able to close the filters tab
 
 			if (PageNum != Page_TableOfContents) {
-				filterOpen = false; // If the page is not on the Table of Contents, the filters tab should be in the closed position
+				FilterPanelIsOpen = false; // If the page is not on the Table of Contents, the filters tab should be in the closed position
 			}
 			else if (tabClicked) {
-				filterOpen = !filterOpen;
+				FilterPanelIsOpen = !FilterPanelIsOpen;
 			}
 
-			if (filterOpen) {
-				FilterPanel.Top.Pixels = ToCTab.Top.Pixels;
-				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20 - FilterPanel.Width.Pixels;
-				FilterPanel.Left.Pixels = ToCTab.Left.Pixels + ToCTab.Width.Pixels;
+			if (FilterPanelIsOpen) {
+				FilterPanel.Top.Pixels = TableOfContentsTab.Top.Pixels;
+				TableOfContentsTab.Left.Pixels = BookArea.Left.Pixels - 20 - FilterPanel.Width.Pixels;
+				FilterPanel.Left.Pixels = TableOfContentsTab.Left.Pixels + TableOfContentsTab.Width.Pixels;
 				FilterIcons.ForEach(x => x.UpdateFilterIcon()); // Update filter display state when the filter panel is opened
 			}
 			else {
-				ToCTab.Left.Pixels = BookArea.Left.Pixels - 20;
+				TableOfContentsTab.Left.Pixels = BookArea.Left.Pixels - 20;
 				FilterPanel.Top.Pixels = -5000; // throw offscreen
 			}
 		}
@@ -543,13 +503,13 @@ namespace BossChecklist
 		/// While in debug mode, users are able to reset their records of a specific boss by alt and right-clicking the recordnavigation button
 		/// </summary>
 		private void ResetStats() {
-			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != SubPage.Records || GetPlayerRecords is null)
+			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != PageCategory.Records || GetPlayerRecords is null)
 				return; // must be on a valid record page and must have the reset records config enabled
 
 			if (!AltKeyIsDown)
 				return; // player must be holding alt
 
-			GetPlayerRecords.ResetStats(RecordSubCategory); // TODO: Fix this and make a reset for all records of a boss
+			GetPlayerRecords.ResetStats(SelectedRecordCategory); // TODO: Fix this and make a reset for all records of a boss
 			RefreshPageContent();  // update page to show changes
 		}
 
@@ -561,7 +521,7 @@ namespace BossChecklist
 		/// While in debug mode, players will be able to remove obtained items from their player save data using the right-click button on the selected item slot.
 		/// </summary>
 		private void RemoveItem(UIMouseEvent evt, UIElement listeningElement) {
-			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != SubPage.LootAndCollectibles)
+			if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || SelectedSubPage != PageCategory.LootAndCollectibles)
 				return; // do not do anything if the loot page isn't active
 
 			if (listeningElement is not LogItemSlot slot || !AltKeyIsDown)
@@ -607,75 +567,73 @@ namespace BossChecklist
 		private void OpenProgressionModePrompt() {
 			BossLogPageNumber = Page_Prompt; // make sure the page number is updated directly (using PageNum will trigger the page set up)
 			ResetUIPositioning(); // Updates ui elements and tabs to be properly positioned in relation the the new pagenum
-			PageOne.RemoveAllChildren(); // remove all content from both pages before appending new content for the prompt
-			PageTwo.RemoveAllChildren();
+			LeftPage.RemoveAllChildren(); // remove all content from both pages before appending new content for the prompt
+			RightPage.RemoveAllChildren();
 
 			// create a text box for the progression mode description
 			FittedTextPanel textBox = new FittedTextPanel($"{LangLog}.ProgressionMode.Description");
-			textBox.Width.Pixels = PageOne.Width.Pixels - 30;
-			textBox.Height.Pixels = PageOne.Height.Pixels - 70;
+			textBox.Width.Pixels = LeftPage.Width.Pixels - 30;
+			textBox.Height.Pixels = LeftPage.Height.Pixels - 70;
 			textBox.Left.Pixels = 10;
 			textBox.Top.Pixels = 60;
-			PageOne.Append(textBox);
+			LeftPage.Append(textBox);
 
-			// create buttons for the different progression mode options
-			LogUIElement[] backdrops = new LogUIElement[] {
-				new LogUIElement(BossLogResources.Content_PromptSlot.Value),
-				new LogUIElement(BossLogResources.Content_PromptSlot.Value),
-				new LogUIElement(BossLogResources.Content_RecordSlot.Value)
+			LogUIElement selectEnable = new LogUIElement(BossLogResources.Content_PromptSlot.Value) {
+				hoverText = $"{LangLog}.ProgressionMode.SelectEnable"
 			};
+			selectEnable.Left.Pixels = RightPage.Width.Pixels / 2 - BossLogResources.Content_PromptSlot.Value.Width - 10;
+			selectEnable.Top.Pixels = 125;
+			selectEnable.OnLeftClick += (a, b) => SelectProgressionModeState(true);
+			selectEnable.OnMouseOver += (a, b) => { selectEnable.assetColor = BossChecklist.BossLogConfig.BossLogColor; };
+			selectEnable.OnMouseOut += (a, b) => { selectEnable.assetColor = Color.White; };
 
-			backdrops[0].OnLeftClick += (a, b) => SelectProgressionModeState(true);
-			backdrops[1].OnLeftClick += (a, b) => SelectProgressionModeState(false);
-			backdrops[2].OnLeftClick += (a, b) => DisablePromptMessage();
-			foreach (LogUIElement backdrop in backdrops) {
-				backdrop.OnMouseOver += (a, b) => { backdrop.assetColor = BossChecklist.BossLogConfig.BossLogColor;};
-				backdrop.OnMouseOut += (a, b) => { backdrop.assetColor = Color.White; };
-			}
+			UIImage selectEnableImage = new UIImage(BossLogResources.Content_ProgressiveOn);
+			selectEnableImage.Left.Pixels = selectEnable.Width.Pixels / 2 - selectEnableImage.Width.Pixels / 2;
+			selectEnableImage.Top.Pixels = selectEnable.Height.Pixels / 2 - selectEnableImage.Height.Pixels / 2;
 
-			backdrops[0].Left.Pixels = PageTwo.Width.Pixels / 2 - BossLogResources.Content_PromptSlot.Value.Width - 10;
-			backdrops[1].Left.Pixels = PageTwo.Width.Pixels / 2 + 10;
-			backdrops[2].Left.Pixels = 25;
+			selectEnable.Append(selectEnableImage);
+			RightPage.Append(selectEnable);
 
-			backdrops[0].Top.Pixels = 125;
-			backdrops[1].Top.Pixels = 125;
-			backdrops[2].Top.Pixels = 125 + BossLogResources.Content_PromptSlot.Value.Height + 25;
-
-			backdrops[0].hoverText = $"{LangLog}.ProgressionMode.SelectEnable";
-			backdrops[1].hoverText = $"{LangLog}.ProgressionMode.SelectDisable";
-
-			UIImage[] buttons = new UIImage[] {
-				new UIImage(BossLogResources.Content_ProgressiveOn),
-				new UIImage(BossLogResources.Content_ProgressiveOff),
-				new UIImage(BossLogResources.Check_Box)
+			LogUIElement selectDisable = new LogUIElement(BossLogResources.Content_PromptSlot.Value) {
+				hoverText = $"{LangLog}.ProgressionMode.SelectDisable"
 			};
+			selectDisable.Left.Pixels = RightPage.Width.Pixels / 2 + 10;
+			selectDisable.Top.Pixels = 125;
+			selectDisable.OnLeftClick += (a, b) => SelectProgressionModeState(false);
+			selectDisable.OnMouseOver += (a, b) => { selectDisable.assetColor = BossChecklist.BossLogConfig.BossLogColor; };
+			selectDisable.OnMouseOut += (a, b) => { selectDisable.assetColor = Color.White; };
 
-			buttons[0].Left.Pixels = backdrops[0].Width.Pixels / 2 - buttons[0].Width.Pixels / 2;
-			buttons[1].Left.Pixels = backdrops[1].Height.Pixels / 2 - buttons[1].Width.Pixels / 2;
-			buttons[2].Left.Pixels = 15;
+			UIImage selectDisableImage = new UIImage(BossLogResources.Content_ProgressiveOff);
+			selectDisableImage.Left.Pixels = selectDisable.Width.Pixels / 2 - selectDisableImage.Width.Pixels / 2;
+			selectDisableImage.Top.Pixels = selectDisable.Height.Pixels / 2 - selectDisableImage.Height.Pixels / 2;
 
-			buttons[0].Top.Pixels = backdrops[0].Height.Pixels / 2 - buttons[0].Height.Pixels / 2;
-			buttons[1].Top.Pixels = backdrops[1].Height.Pixels / 2 - buttons[1].Height.Pixels / 2;
-			buttons[2].Top.Pixels = backdrops[2].Height.Pixels / 2 - buttons[2].Height.Pixels / 2;
+			selectDisable.Append(selectDisableImage);
+			RightPage.Append(selectDisable);
+
+			LogUIElement togglePrompt = new LogUIElement(BossLogResources.Content_RecordSlot.Value);
+			togglePrompt.Left.Pixels = 25;
+			togglePrompt.Top.Pixels = 125 + BossLogResources.Content_PromptSlot.Value.Height + 25;
+			togglePrompt.OnMouseOver += (a, b) => { selectDisable.assetColor = BossChecklist.BossLogConfig.BossLogColor; };
+			togglePrompt.OnMouseOut += (a, b) => { selectDisable.assetColor = Color.White; };
+
+			UIImage togglePromptCheck = new UIImage(BossLogResources.Check_Box);
+			togglePromptCheck.Left.Pixels = 15;
+			togglePromptCheck.Top.Pixels = togglePrompt.Height.Pixels / 2 - togglePromptCheck.Height.Pixels / 2;
+			UIImage PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? BossLogResources.Check_Check : BossLogResources.Check_X);
+			togglePrompt.OnLeftClick += (a, b) => DisablePromptMessage(PromptCheck); // toggling the prompt check will update the child image
 
 			FittedTextPanel textOptions = new FittedTextPanel($"{LangLog}.ProgressionMode.DisablePrompt");
-			textOptions.Width.Pixels = backdrops[2].Width.Pixels - (buttons[2].Left.Pixels + buttons[2].Width.Pixels + 15);
-			textOptions.Height.Pixels = backdrops[2].Height.Pixels / 2;
-			textOptions.Left.Pixels = buttons[2].Left.Pixels + buttons[2].Width.Pixels;
+			textOptions.Width.Pixels = togglePrompt.Width.Pixels - (togglePromptCheck.Left.Pixels + togglePromptCheck.Width.Pixels + 15);
+			textOptions.Height.Pixels = togglePrompt.Height.Pixels / 2;
+			textOptions.Left.Pixels = togglePromptCheck.Left.Pixels + togglePromptCheck.Width.Pixels;
 			textOptions.Top.Pixels = 5;
 			textOptions.PaddingTop = 0;
 			textOptions.PaddingLeft = 15;
-			backdrops[2].Append(textOptions);
+			togglePrompt.Append(textOptions);
 
-			PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? BossLogResources.Check_Check : BossLogResources.Check_X);
-
-			for (int i = 0; i < buttons.Length; i++) {
-				if (i == backdrops.Length - 1) {
-					buttons[i].Append(PromptCheck);
-				}
-				backdrops[i].Append(buttons[i]);
-				PageTwo.Append(backdrops[i]);
-			}
+			togglePromptCheck.Append(PromptCheck);
+			togglePrompt.Append(togglePromptCheck);
+			RightPage.Append(togglePrompt);
 		}
 
 		/// <summary>
@@ -739,10 +697,10 @@ namespace BossChecklist
 		/// <summary>
 		/// Toggles whether the prompt will show on future characters. This can still be changed under the configs.
 		/// </summary>
-		private void DisablePromptMessage() {
+		private void DisablePromptMessage(UIImage element) {
 			BossChecklist.BossLogConfig.PromptDisabled = !BossChecklist.BossLogConfig.PromptDisabled;
 			PendingConfigChange = true;
-			PromptCheck.SetImage(BossChecklist.BossLogConfig.PromptDisabled ? BossLogResources.Check_Check : BossLogResources.Check_X);
+			element.SetImage(BossChecklist.BossLogConfig.PromptDisabled ? BossLogResources.Check_Check : BossLogResources.Check_X);
 		}
 
 		/// <summary>
@@ -790,9 +748,9 @@ namespace BossChecklist
 				return; // If the page is somehow the prompt, redirect to the open prompt method
 			}
 
-			BossTab.Anchor = FindNextEntry(EntryType.Boss); // Updates the 'next' entries for the tabs and next checkmark
-			MiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
-			EventTab.Anchor = FindNextEntry(EntryType.Event);
+			NextBossTab.Anchor = FindNextEntry(EntryType.Boss); // Updates the 'next' entries for the tabs and next checkmark
+			NextMiniBossTab.Anchor = FindNextEntry(EntryType.MiniBoss);
+			NextEventTab.Anchor = FindNextEntry(EntryType.Event);
 			
 			ResetUIPositioning(); // Repositions common ui elements when the UI is updated
 			ResetBothPages(); // Reset the content of both pages before appending new content for the page
@@ -805,13 +763,13 @@ namespace BossChecklist
 				UpdateCredits();
 			}
 			else {
-				if (SelectedSubPage == SubPage.Records) {
+				if (SelectedSubPage == PageCategory.Records) {
 					OpenRecord();
 				}
-				else if (SelectedSubPage == SubPage.SpawnInfo) {
+				else if (SelectedSubPage == PageCategory.SpawnInfo) {
 					OpenSpawn();
 				}
-				else if (SelectedSubPage == SubPage.LootAndCollectibles) {
+				else if (SelectedSubPage == PageCategory.LootAndCollectibles) {
 					OpenLoot();
 				}
 			}
@@ -836,12 +794,12 @@ namespace BossChecklist
 				}
 			}
 			else if (PageNum >= 0 && BossChecklist.BossLogConfig.Debug.EnabledResetOptions) {
-				if (SelectedSubPage == SubPage.Records && GetLogEntryInfo.type == EntryType.Boss) {
+				if (SelectedSubPage == PageCategory.Records && GetLogEntryInfo.type == EntryType.Boss) {
 					interactions =
 						Language.GetTextValue($"{HiddenTexts}.ClearAllRecords") + "\n" +
 						Language.GetTextValue($"{HiddenTexts}.ClearRecord");
 				}
-				else if (SelectedSubPage == SubPage.LootAndCollectibles) {
+				else if (SelectedSubPage == PageCategory.LootAndCollectibles) {
 					interactions =
 						Language.GetTextValue($"{HiddenTexts}.RemoveItem") + "\n" +
 						Language.GetTextValue($"{HiddenTexts}.ClearItems");
@@ -854,19 +812,19 @@ namespace BossChecklist
 		/// Clears page content and replaces navigational elements.
 		/// </summary>
 		private void ResetBothPages() {
-			PageOne.RemoveAllChildren(); // remove all elements from the pages
-			PageTwo.RemoveAllChildren();
+			LeftPage.RemoveAllChildren(); // remove all elements from the pages
+			RightPage.RemoveAllChildren();
 
 			// Replace all of the page's navigational buttons
 			if (PageNum != Page_Credits) {
-				PageTwo.Append(NextPage); // Next page button can appear on any page except the Credits
+				RightPage.Append(NextPageButton); // Next page button can appear on any page except the Credits
 			}
 			if (PageNum != Page_TableOfContents) {
-				PageOne.Append(PrevPage); // Prev page button can appear on any page except the Table of Contents
+				LeftPage.Append(PreviousPageButton); // Prev page button can appear on any page except the Table of Contents
 			}
 
 			if (PageNum >= 0) {
-				Banners.Clear(); // clear event banner list
+				EventEntryNPCBannerIDList.Clear(); // clear event banner list
 				if (BossChecklist.BossLogConfig.Debug.AccessInternalNames && GetLogEntryInfo.modSource != "Unknown") {
 					NavigationalButton keyButton = new NavigationalButton(BossLogResources.Content_BossKey, true) {
 						Id = "CopyKey",
@@ -874,14 +832,14 @@ namespace BossChecklist
 					};
 					keyButton.Left.Pixels = 5;
 					keyButton.Top.Pixels = 55;
-					PageOne.Append(keyButton);
+					LeftPage.Append(keyButton);
 				}
 
 				// Entry pages need to have the category pages set up, but only for entries fully implemented
 				if (GetLogEntryInfo.modSource != "Unknown") {
-					PageTwo.Append(recordButton);
-					PageTwo.Append(spawnButton);
-					PageTwo.Append(lootButton);
+					RightPage.Append(OpenRecordPageButton);
+					RightPage.Append(OpenSpawnPageButton);
+					RightPage.Append(OpenLootPageButton);
 					//lootButton.isLocked = !GetLogEntryInfo.IsAutoDownedOrMarked;
 				}
 				else {
@@ -892,7 +850,7 @@ namespace BossChecklist
 					brokenPanel.Width.Pixels = 340;
 					brokenPanel.Top.Pixels = 150;
 					brokenPanel.Left.Pixels = 3;
-					PageTwo.Append(brokenPanel);
+					RightPage.Append(brokenPanel);
 
 					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.EntryPage.LogFeaturesNotAvailable");
 					brokenDisplay.Height.Pixels = 200;
@@ -913,20 +871,34 @@ namespace BossChecklist
 			if (GetModPlayer.hasOpenedTheBossLog is false)
 				GetModPlayer.hasOpenedTheBossLog = true; // This will only ever happen once per character
 
-			prehardmodeList.Clear(); // clear both lists before setting up content
-			hardmodeList.Clear();
+			UIList entriesListPreHardmode = new UIList(); // lists for pre-hardmode and hardmode entries
+			UIList entriesListHardmode = new UIList();
+
+			entriesListPreHardmode.Left.Pixels = 4;
+			entriesListHardmode.Left.Pixels = 19;
+
+			entriesListPreHardmode.Top.Pixels = entriesListHardmode.Top.Pixels = 44;
+			entriesListPreHardmode.Width.Pixels = entriesListHardmode.Width.Pixels = LeftPage.Width.Pixels - 60;
+			entriesListPreHardmode.Height.Pixels = entriesListHardmode.Height.Pixels = LeftPage.Height.Pixels - 136;
+			entriesListPreHardmode.PaddingTop = entriesListHardmode.PaddingTop = 5;
 
 			// Pre-Hard Mode List Title
 			string title = Language.GetTextValue($"{LangLog}.TableOfContents.PreHardmode");
-			PageOneTitle.SetText(title);
-			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
-			PageOne.Append(PageOneTitle);
+			UIText leftPageTitle = new UIText(title, 0.6f, true) {
+				TextColor = Colors.RarityAmber
+			};
+			leftPageTitle.Top.Pixels = 18;
+			leftPageTitle.Left.Pixels = (int)((LeftPage.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			LeftPage.Append(leftPageTitle);
 
 			// Hard Mode List Title
 			title = Language.GetTextValue($"{LangLog}.TableOfContents.Hardmode");
-			PageTwoTitle.SetText(title);
-			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
-			PageTwo.Append(PageTwoTitle);
+			UIText rightPageTitle = new UIText(title, 0.6f, true) {
+				TextColor = Colors.RarityAmber
+			};
+			rightPageTitle.Top.Pixels = 18;
+			rightPageTitle.Left.Pixels = (int)((RightPage.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			RightPage.Append(rightPageTitle);
 
 			foreach (EntryInfo entry in BossChecklist.bossTracker.SortedEntries) {
 				entry.hidden = BossLogSystem.HiddenEntries.Contains(entry.Key);
@@ -1002,7 +974,7 @@ namespace BossChecklist
 							if (!Main.masterMode && (checkItem.master || checkItem.masterOnly))
 								continue; // Skip items that are master exclusive if not in an master world
 
-							if (!OtherworldUnlocked && BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
+							if (!OtherworldMusicUnlocked && BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(checkItem.type))
 								continue; // skip other worldly music boxes if the user has not unlocked the ability to record them
 
 							if (collectible == entry.TreasureBag)
@@ -1033,54 +1005,54 @@ namespace BossChecklist
 				};
 
 				if (entry.progression <= BossTracker.WallOfFlesh) {
-					prehardmodeList.Add(listedEntry);
+					entriesListPreHardmode.Add(listedEntry);
 				}
 				else {
-					hardmodeList.Add(listedEntry);
+					entriesListHardmode.Add(listedEntry);
 				}
 			}
 
-			PageOne.Append(prehardmodeList);
-			if (prehardmodeList.Count > 13) {
-				scrollOne.SetView(100f, 1000f);
-				scrollOne.Top.Pixels = 50f;
-				scrollOne.Left.Pixels = -18;
-				scrollOne.Height.Set(-24f, 0.75f);
-				scrollOne.HAlign = 1f;
+			LeftPage.Append(entriesListPreHardmode);
+			if (entriesListPreHardmode.Count > 13) {
+				ScrollBarLeftPage.SetView(100f, 1000f);
+				ScrollBarLeftPage.Top.Pixels = 50f;
+				ScrollBarLeftPage.Left.Pixels = -18;
+				ScrollBarLeftPage.Height.Set(-24f, 0.75f);
+				ScrollBarLeftPage.HAlign = 1f;
 
-				PageOne.Append(scrollOne);
-				prehardmodeList.SetScrollbar(scrollOne);
+				LeftPage.Append(ScrollBarLeftPage);
+				entriesListPreHardmode.SetScrollbar(ScrollBarLeftPage);
 			}
-			PageTwo.Append(hardmodeList);
-			if (hardmodeList.Count > 13) {
-				scrollTwo.SetView(100f, 1000f);
-				scrollTwo.Top.Pixels = 50f;
-				scrollTwo.Left.Pixels = -13;
-				scrollTwo.Height.Set(-24f, 0.75f);
-				scrollTwo.HAlign = 1f;
+			RightPage.Append(entriesListHardmode);
+			if (entriesListHardmode.Count > 13) {
+				ScrollBarRightPage.SetView(100f, 1000f);
+				ScrollBarRightPage.Top.Pixels = 50f;
+				ScrollBarRightPage.Left.Pixels = -13;
+				ScrollBarRightPage.Height.Set(-24f, 0.75f);
+				ScrollBarRightPage.HAlign = 1f;
 
-				PageTwo.Append(scrollTwo);
-				hardmodeList.SetScrollbar(scrollTwo);
+				RightPage.Append(ScrollBarRightPage);
+				entriesListHardmode.SetScrollbar(ScrollBarRightPage);
 			}
 
 			if (BossChecklist.BossLogConfig.ShowProgressBars) {
 				// Order matters here
-				prehardmodeBar = new ProgressBar(false);
-				prehardmodeBar.Left.Pixels = (int)(PrevPage.Left.Pixels + PrevPage.Width.Pixels + 10);
-				prehardmodeBar.Height.Pixels = 14;
-				prehardmodeBar.Top.Pixels = (int)(PrevPage.Top.Pixels + (PrevPage.Height.Pixels / 2) - (prehardmodeBar.Height.Pixels / 2));
-				prehardmodeBar.Width.Pixels = (int)(PageOne.Width.Pixels - (prehardmodeBar.Left.Pixels * 2));
+				ProgressBar preHardmodeProgressBar = new ProgressBar(false);
+				preHardmodeProgressBar.Left.Pixels = (int)(PreviousPageButton.Left.Pixels + PreviousPageButton.Width.Pixels + 10);
+				preHardmodeProgressBar.Height.Pixels = 14;
+				preHardmodeProgressBar.Top.Pixels = (int)(PreviousPageButton.Top.Pixels + (PreviousPageButton.Height.Pixels / 2) - (preHardmodeProgressBar.Height.Pixels / 2));
+				preHardmodeProgressBar.Width.Pixels = (int)(LeftPage.Width.Pixels - (preHardmodeProgressBar.Left.Pixels * 2));
 
 				// Order matters here
-				hardmodeBar = new ProgressBar(true);
-				hardmodeBar.Left.Pixels = NextPage.Left.Pixels - 10 - prehardmodeBar.Width.Pixels;
-				hardmodeBar.Height.Pixels = 14;
-				hardmodeBar.Top.Pixels = prehardmodeBar.Top.Pixels;
-				hardmodeBar.Width.Pixels = prehardmodeBar.Width.Pixels;
+				ProgressBar hardmodeProgressBar = new ProgressBar(true);
+				hardmodeProgressBar.Left.Pixels = NextPageButton.Left.Pixels - 10 - preHardmodeProgressBar.Width.Pixels;
+				hardmodeProgressBar.Height.Pixels = 14;
+				hardmodeProgressBar.Top.Pixels = preHardmodeProgressBar.Top.Pixels;
+				hardmodeProgressBar.Width.Pixels = preHardmodeProgressBar.Width.Pixels;
 
-				PageOne.Append(prehardmodeBar);
+				LeftPage.Append(preHardmodeProgressBar);
 				if (!BossChecklist.BossLogConfig.ProgressiveChecklist || Main.hardMode)
-					PageTwo.Append(hardmodeBar);
+					RightPage.Append(hardmodeProgressBar);
 			}
 		}
 
@@ -1091,76 +1063,81 @@ namespace BossChecklist
 		private void UpdateCredits() {
 			// Developers Title
 			string title = Language.GetTextValue($"{LangLog}.Credits.Devs");
-			PageOneTitle.SetText(title);
-			PageOneTitle.Left.Pixels = (int)((PageOne.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
-			PageOne.Append(PageOneTitle);
+			UIText leftPageTitle = new UIText(title, 0.6f, true) {
+				TextColor = Colors.RarityAmber
+			};
+			leftPageTitle.Left.Pixels = (int)((LeftPage.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			LeftPage.Append(leftPageTitle);
 
 			// Registered Mods Title
 			title = Language.GetTextValue($"{LangLog}.Credits.Mods");
-			PageTwoTitle.SetText(title);
-			PageTwoTitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
-			PageTwo.Append(PageTwoTitle);
+			UIText rightPageTitle = new UIText(title, 0.6f, true) {
+				TextColor = Colors.RarityAmber
+			};
+			rightPageTitle.Top.Pixels = 18;
+			rightPageTitle.Left.Pixels = (int)((RightPage.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
+			RightPage.Append(rightPageTitle);
 
 			// Registered Mods subtitle
 			title = Language.GetTextValue($"{LangLog}.Credits.Notice");
 			UIText subtitle = new UIText(title) {
 				TextColor = Color.Salmon
 			};
-			subtitle.Left.Pixels = (int)((PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(title).X / 2));
+			subtitle.Left.Pixels = (int)((RightPage.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(title).X / 2));
 			subtitle.Top.Pixels = 56;
-			PageTwo.Append(subtitle);
+			RightPage.Append(subtitle);
 
 			// Developers Display
 			UIList creditList = new UIList();
 			creditList.Width.Pixels = BossLogResources.Credit_DevSlot.Value.Width;
 			creditList.Height.Pixels = BossLogResources.Credit_DevSlot.Value.Height * 4 + 20;
-			creditList.Left.Pixels = (int)(PageOne.Width.Pixels / 2 - BossLogResources.Credit_DevSlot.Value.Width / 2) - 8;
+			creditList.Left.Pixels = (int)(LeftPage.Width.Pixels / 2 - BossLogResources.Credit_DevSlot.Value.Width / 2) - 8;
 			creditList.Top.Pixels = 60;
-			foreach (KeyValuePair<string, string> user in contributors) {
-				creditList.Add(new ContributorCredit(BossLogResources.Credit_DevSlot, BossLogResources.Credit_Devs[contributors.Keys.ToList().IndexOf(user.Key)], user.Key, user.Value));
+			foreach (KeyValuePair<string, string> user in BossChecklistModContributors) {
+				creditList.Add(new ContributorCredit(BossLogResources.Credit_DevSlot, BossLogResources.Credit_Devs[BossChecklistModContributors.Keys.ToList().IndexOf(user.Key)], user.Key, user.Value));
 			}
-			PageOne.Append(creditList);
+			LeftPage.Append(creditList);
 
-			scrollOne.SetView(10f, 1000f);
-			scrollOne.Top.Pixels = 80;
-			scrollOne.Left.Pixels = -8;
-			scrollOne.Height.Set(-60f, 0.75f);
-			scrollOne.HAlign = 1f;
-			creditList.SetScrollbar(scrollOne);
-			PageOne.Append(scrollOne); // scroll bar for developers
+			ScrollBarLeftPage.SetView(10f, 1000f);
+			ScrollBarLeftPage.Top.Pixels = 80;
+			ScrollBarLeftPage.Left.Pixels = -8;
+			ScrollBarLeftPage.Height.Set(-60f, 0.75f);
+			ScrollBarLeftPage.HAlign = 1f;
+			creditList.SetScrollbar(ScrollBarLeftPage);
+			LeftPage.Append(ScrollBarLeftPage); // scroll bar for developers
 
 			// Registered Mods Display
-			pageTwoItemList.Clear();
-			pageTwoItemList.Width.Pixels = BossLogResources.Credit_ModSlot.Value.Width;
-			pageTwoItemList.Height.Pixels = BossLogResources.Credit_ModSlot.Value.Height * 3 + 15;
-			pageTwoItemList.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - BossLogResources.Credit_ModSlot.Value.Width / 2);
-			pageTwoItemList.Top.Pixels = 85;
+			UIList registeredModsList = new UIList();
+			registeredModsList.Width.Pixels = BossLogResources.Credit_ModSlot.Value.Width;
+			registeredModsList.Height.Pixels = BossLogResources.Credit_ModSlot.Value.Height * 3 + 15;
+			registeredModsList.Left.Pixels = (int)(RightPage.Width.Pixels / 2 - BossLogResources.Credit_ModSlot.Value.Width / 2);
+			registeredModsList.Top.Pixels = 85;
 			if (BossChecklist.bossTracker.RegisteredMods.Count > 0) {
 				foreach (string mod in BossChecklist.bossTracker.RegisteredMods.Keys) {
-					pageTwoItemList.Add(new ContributorCredit(BossLogResources.Credit_ModSlot, mod));
+					registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_ModSlot, mod));
 				}
 			}
 			else {
 				// if none of the loaded mods have registered an entry, convey this to the user
 				string NoModsTitle = Language.GetTextValue($"{LangLog}.Credits.ModsEmpty");
-				pageTwoItemList.Add(new ContributorCredit(BossLogResources.Credit_NoMods, NoModsTitle, "") { Id = "NoMods" });
+				registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_NoMods, NoModsTitle, "") { Id = "NoMods" });
 			}
 
 			// add a slot that tells mod developers they can register their own mods
 			string RegisterTitle = Language.GetTextValue($"{LangLog}.Credits.Register");
 			string RegisterDescription = Language.GetTextValue($"{LangLog}.Credits.Learn");
-			pageTwoItemList.Add(new ContributorCredit(BossLogResources.Credit_Register, RegisterTitle, RegisterDescription) { Id = "Register" });
-			PageTwo.Append(pageTwoItemList);
+			registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_Register, RegisterTitle, RegisterDescription) { Id = "Register" });
+			RightPage.Append(registeredModsList);
 
-			scrollTwo.SetView(10f, 1000f);
-			scrollTwo.Top.Pixels = 87;
-			scrollTwo.Left.Pixels = -8;
-			scrollTwo.Height.Set(-60f, 0.75f);
-			scrollTwo.HAlign = 1f;
-			pageTwoItemList.SetScrollbar(scrollTwo);
-			if (pageTwoItemList.Count > 3) {
-				PageTwo.Append(scrollTwo); // scroll bar for registered mods
-				pageTwoItemList.Left.Pixels -= 8;
+			ScrollBarRightPage.SetView(10f, 1000f);
+			ScrollBarRightPage.Top.Pixels = 87;
+			ScrollBarRightPage.Left.Pixels = -8;
+			ScrollBarRightPage.Height.Set(-60f, 0.75f);
+			ScrollBarRightPage.HAlign = 1f;
+			registeredModsList.SetScrollbar(ScrollBarRightPage);
+			if (registeredModsList.Count > 3) {
+				RightPage.Append(ScrollBarRightPage); // scroll bar for registered mods
+				registeredModsList.Left.Pixels -= 8;
 			}
 		}
 
@@ -1182,9 +1159,9 @@ namespace BossChecklist
 					slot.title = Language.GetTextValue("Mods.BossChecklist.Log.Records.Kills");
 					slot.value = GetRecordModPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? GetRecordModPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
 				}
-				slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
+				slot.Left.Pixels = (int)(RightPage.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
 				slot.Top.Pixels = 35 + 75;
-				PageTwo.Append(slot);
+				RightPage.Append(slot);
 
 				float offset = 0;
 				foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
@@ -1209,8 +1186,8 @@ namespace BossChecklist
 				if (GetLogEntryInfo.type == EntryType.Event) {
 					foreach (int npc in GetLogEntryInfo.npcIDs) {
 						int bannerID = Item.NPCtoBanner(npc);
-						if (!Banners.Contains(bannerID))
-							Banners.Add(bannerID);
+						if (!EventEntryNPCBannerIDList.Contains(bannerID))
+							EventEntryNPCBannerIDList.Add(bannerID);
 					}
 				}
 			}
@@ -1225,33 +1202,33 @@ namespace BossChecklist
 				int total = buttonConditions.Count(true);
 				foreach (NavigationalButton button in RecordCategoryButtons) {
 					if (buttonConditions[RecordCategoryButtons.IndexOf(button)]) {
-						PageTwo.Append(button);
+						RightPage.Append(button);
 						int xOffset = count % 2 == 0 ? (count + 1 == total ? 15 : 0) : 30;
 						int yOffset = count > 1 ? 30 : (total > 2 ? 0 : 15);
-						button.Left.Pixels = (int)(recordButton.Left.Pixels + recordButton.Width.Pixels + 20 + xOffset);
-						button.Top.Pixels = (int)(recordButton.Top.Pixels + yOffset);
+						button.Left.Pixels = (int)(OpenRecordPageButton.Left.Pixels + OpenRecordPageButton.Width.Pixels + 20 + xOffset);
+						button.Top.Pixels = (int)(OpenRecordPageButton.Top.Pixels + yOffset);
 						count++;
 					}
 				}
 
-				if (buttonConditions[(int)RecordSubCategory] is false)
-					RecordSubCategory = SubCategory.PreviousAttempt; // If no access granted, default back to previous attempt
+				if (buttonConditions[(int)SelectedRecordCategory] is false)
+					SelectedRecordCategory = RecordCategory.PreviousAttempt; // If no access granted, default back to previous attempt
 
-				if (RecordSubCategory == SubCategory.WorldRecord)
-					CompareState = SubCategory.None; // World records are not exclusively set by the player. Also, world record holders are displayed similarly
+				if (SelectedRecordCategory == RecordCategory.WorldRecord)
+					SelectedRecordComparison = RecordCategory.None; // World records are not exclusively set by the player. Also, world record holders are displayed similarly
 
-				if (CompareState != SubCategory.None && buttonConditions[(int)CompareState] is false)
-					CompareState = SubCategory.None; // If no access granted, default back to None
+				if (SelectedRecordComparison != RecordCategory.None && buttonConditions[(int)SelectedRecordComparison] is false)
+					SelectedRecordComparison = RecordCategory.None; // If no access granted, default back to None
 
 				// create 4 slots for each stat category value
 				for (int i = 0; i < 4; i++) {
-					RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot, RecordSubCategory, i, recordIndex);
-					slot.Left.Pixels = (int)(PageTwo.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
+					RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot, SelectedRecordCategory, i, recordIndex);
+					slot.Left.Pixels = (int)(RightPage.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
 					slot.Top.Pixels = (int)(35 + (75 * (i + 1)));
-					PageTwo.Append(slot);
+					RightPage.Append(slot);
 
 					if (i == 0) {
-						UIImage categoryIcon = new UIImage(BossLogResources.Nav_Record_Category[(int)RecordSubCategory]);
+						UIImage categoryIcon = new UIImage(BossLogResources.Nav_Record_Category[(int)SelectedRecordCategory]);
 						categoryIcon.Left.Pixels = 15;
 						categoryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - categoryIcon.Height.Pixels / 2);
 						categoryIcon.OnRightClick += (a, b) => ResetStats();
@@ -1306,29 +1283,29 @@ namespace BossChecklist
 					}
 					else if (i >= 2) {
 						NavigationalButton trophy = null;
-						if (RecordSubCategory == SubCategory.WorldRecord) {
+						if (SelectedRecordCategory == RecordCategory.WorldRecord) {
 							trophy = new NavigationalButton(BossLogResources.RequestItemTexture(ItemID.GolfTrophyGold), false) {
 								hoverText = i == 2 ? GetWorldRecords.ListDurationRecordHolders() : GetWorldRecords.ListHitsTakenRecordHolders()
 							};
 						}
-						else if (CompareState != SubCategory.None) {
+						else if (SelectedRecordComparison != RecordCategory.None) {
 							// default to world records as these are shared among all players and only have one record type value
-							int recordValue = i == 2 ? GetPlayerRecords.GetStatByCategory(RecordSubCategory) : GetPlayerRecords.GetStatByCategory(RecordSubCategory, false);
+							int recordValue = i == 2 ? GetPlayerRecords.GetStatByCategory(SelectedRecordCategory) : GetPlayerRecords.GetStatByCategory(SelectedRecordCategory, false);
 							int compValue = i == 2 ? GetWorldRecords.durationWorld : GetWorldRecords.hitsTakenWorld;
 
-							if (CompareState != SubCategory.WorldRecord)
-								compValue = i == 2 ? GetPlayerRecords.GetStatByCategory(CompareState) : GetPlayerRecords.GetStatByCategory(CompareState, false);
+							if (SelectedRecordComparison != RecordCategory.WorldRecord)
+								compValue = i == 2 ? GetPlayerRecords.GetStatByCategory(SelectedRecordComparison) : GetPlayerRecords.GetStatByCategory(SelectedRecordComparison, false);
 
 							string compValueString = i == 2 ? PersonalRecords.TimeConversion(compValue) : PersonalRecords.HitCount(compValue);
 							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(recordValue, compValue, out Color color) : PersonalRecords.HitCountDiff(recordValue, compValue, out color);
-							string path = $"{LangLog}.Records.Category.{CompareState}";
+							string path = $"{LangLog}.Records.Category.{SelectedRecordComparison}";
 							trophy = new NavigationalButton(BossLogResources.RequestItemTexture(ItemID.GolfTrophySilver), false) {
 								Id = "CompareStat",
 								hoverText = $"[c/{Color.Wheat.Hex3()}:{Language.GetTextValue(path)}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",
 								hoverTextColor = color
 							};
 						}
-						else if (RecordSubCategory == SubCategory.PersonalBest && ((i == 2 && GetPlayerRecords.durationPrevBest != -1) || (i == 3 && GetPlayerRecords.hitsTakenPrevBest != -1))) {
+						else if (SelectedRecordCategory == RecordCategory.PersonalBest && ((i == 2 && GetPlayerRecords.durationPrevBest != -1) || (i == 3 && GetPlayerRecords.hitsTakenPrevBest != -1))) {
 							string compValueString = i == 2 ? PersonalRecords.TimeConversion(GetPlayerRecords.durationPrevBest) : PersonalRecords.HitCount(GetPlayerRecords.hitsTakenPrevBest);
 							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(GetPlayerRecords.durationBest, GetPlayerRecords.durationPrevBest, out Color color) : PersonalRecords.HitCountDiff(GetPlayerRecords.hitsTakenBest, GetPlayerRecords.hitsTakenPrevBest, out color);
 							string path = $"{LangLog}.Records.PreviousBest";
@@ -1344,7 +1321,7 @@ namespace BossChecklist
 							slot.Append(trophy);
 
 							if (trophy.Id == "CompareStat") {
-								UIImage compareIcon = new UIImage(BossLogResources.Nav_Record_Category[(int)CompareState]);
+								UIImage compareIcon = new UIImage(BossLogResources.Nav_Record_Category[(int)SelectedRecordComparison]);
 								compareIcon.Left.Pixels = -(int)(compareIcon.Width.Pixels / 3);
 								compareIcon.Top.Pixels = (int)(trophy.Height.Pixels - compareIcon.Height.Pixels * 2 / 3);
 								trophy.Append(compareIcon);
@@ -1374,16 +1351,16 @@ namespace BossChecklist
 			message.Height.Set(-370f, 1f);
 			message.Top.Set(85f, 0f);
 			message.Left.Set(5f, 0f);
-			PageTwo.Append(message);
+			RightPage.Append(message);
 
 			// create a scroll bar in case the message is too long for the box to contain
-			scrollTwo.SetView(100f, 1000f);
-			scrollTwo.Top.Set(91f, 0f);
-			scrollTwo.Height.Set(-382f, 1f);
-			scrollTwo.Left.Set(-5, 0f);
-			scrollTwo.HAlign = 1f;
-			PageTwo.Append(scrollTwo);
-			message.SetScrollbar(scrollTwo);
+			ScrollBarRightPage.SetView(100f, 1000f);
+			ScrollBarRightPage.Top.Set(91f, 0f);
+			ScrollBarRightPage.Height.Set(-382f, 1f);
+			ScrollBarRightPage.Left.Set(-5, 0f);
+			ScrollBarRightPage.HAlign = 1f;
+			RightPage.Append(ScrollBarRightPage);
+			message.SetScrollbar(ScrollBarRightPage);
 
 			if (SpawnItemSelected >= GetLogEntryInfo.spawnItem.Count)
 				SpawnItemSelected = 0; // the selected spawn item number is greater than how many are in the list, so reset it back to 0
@@ -1392,9 +1369,9 @@ namespace BossChecklist
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
 			if (GetLogEntryInfo.spawnItem.Count == 0 || GetLogEntryInfo.spawnItem[SpawnItemSelected] == ItemID.None) {
 				UIText info = new UIText(Language.GetTextValue($"{LangLog}.SpawnInfo.NoSpawnItem", Language.GetTextValue($"{LangLog}.Common.{GetLogEntryInfo.type}")));
-				info.Left.Pixels = (PageTwo.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
+				info.Left.Pixels = (RightPage.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
-				PageTwo.Append(info);
+				RightPage.Append(info);
 				return; // since no items are listed, the recipe code does not need to occur
 			}
 
@@ -1408,7 +1385,7 @@ namespace BossChecklist
 			LogItemSlot spawnItemSlot = new LogItemSlot(spawn, ItemSlot.Context.EquipDye);
 			spawnItemSlot.Left.Pixels = 48 + (56 * 2);
 			spawnItemSlot.Top.Pixels = 230;
-			PageTwo.Append(spawnItemSlot);
+			RightPage.Append(spawnItemSlot);
 
 			// if more than one item is used for summoning, append navigational button to cycle through the items
 			// a previous item button will appear if it is not the first item listed
@@ -1419,7 +1396,7 @@ namespace BossChecklist
 				PrevItem.Left.Pixels = spawnItemSlot.Left.Pixels - PrevItem.Width.Pixels - 6;
 				PrevItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (PrevItem.Height.Pixels / 2);
 				PrevItem.OnLeftClick += ChangeSpawnItem;
-				PageTwo.Append(PrevItem);
+				RightPage.Append(PrevItem);
 			}
 			// a next button will appear if it is not the last item listed
 			if (SpawnItemSelected < GetLogEntryInfo.spawnItem.Count - 1) {
@@ -1429,7 +1406,7 @@ namespace BossChecklist
 				NextItem.Left.Pixels = spawnItemSlot.Left.Pixels + spawnItemSlot.Width.Pixels + 6;
 				NextItem.Top.Pixels = spawnItemSlot.Top.Pixels + (spawnItemSlot.Height.Pixels / 2) - (NextItem.Height.Pixels / 2);
 				NextItem.OnLeftClick += ChangeSpawnItem;
-				PageTwo.Append(NextItem);
+				RightPage.Append(NextItem);
 			}
 
 			/// Code below handles all of the recipe searching and displaying
@@ -1478,7 +1455,7 @@ namespace BossChecklist
 				UIText craftText = new UIText(noncraftable, 0.8f);
 				craftText.Left.Pixels = 10;
 				craftText.Top.Pixels = 205;
-				PageTwo.Append(craftText);
+				RightPage.Append(craftText);
 				return;
 			}
 			else {
@@ -1487,7 +1464,7 @@ namespace BossChecklist
 				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
 				ModdedRecipe.Left.Pixels = 10;
 				ModdedRecipe.Top.Pixels = 205;
-				PageTwo.Append(ModdedRecipe);
+				RightPage.Append(ModdedRecipe);
 
 				// if more than one recipe exists for the selected item, append a button that cycles through all possible recipes
 				if (TotalRecipes > 1) {
@@ -1498,37 +1475,36 @@ namespace BossChecklist
 					CycleItem.Left.Pixels = 20 + (int)(TextureAssets.InventoryBack9.Width() * 0.85f / 2 - BossLogResources.Content_Cycle.Value.Width / 2);
 					CycleItem.Top.Pixels = 240 + (int)(TextureAssets.InventoryBack9.Height() * 0.85f / 2 - BossLogResources.Content_Cycle.Value.Height / 2);
 					CycleItem.OnLeftClick += ChangeSpawnItem;
-					PageTwo.Append(CycleItem);
+					RightPage.Append(CycleItem);
 				}
 			}
 
-			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
-			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
-			// To note, we do not need an item row as recipes have a max ingredient size of 14, so there is no need for a scrollbar
+			Point slotPos = Point.Zero; // Handles the current position of the current ItemSlot, using X for row and Y for column positions
+			// Since recipe ingredients have a maximum of 14, the UIList pageTwoItemList and its scrollbar element are not needed
 			foreach (Item item in ingredients) {
 				// Create an item slot for the current item
 				LogItemSlot ingList = new LogItemSlot(item, ItemSlot.Context.GuideItem, 0.85f) {
 					Id = LogItemSlot.SpawnItemCraftingSlot,
 					hasItem = Main.LocalPlayer.inventory.Any(x => x.type == item.type && x.stack >= item.stack)
 				};
-				ingList.Left.Pixels = 20 + (48 * col);
-				ingList.Top.Pixels = 240 + (48 * (row + 1));
-				PageTwo.Append(ingList);
+				ingList.Left.Pixels = 20 + (48 * slotPos.Y);
+				ingList.Top.Pixels = 240 + (48 * (slotPos.X + 1));
+				RightPage.Append(ingList);
 
-				col++;
-				if (col == 7) {
-					col = 0;
-					row++; // if column value hits the maximum amount per row attempt to move onto the next row
+				slotPos.Y++;
+				if (slotPos.Y == 7) {
+					slotPos.Y = 0;
+					slotPos.X++; // if column value hits the maximum amount per row attempt to move onto the next row
 
-					if (row == 2)
+					if (slotPos.X == 2)
 						break; // recipes should not be able to have more than 14 ingredients (2 rows)
 				}
 			}
 
 			// Make a new row if the current one isnt empty
-			if (col != 0) {
-				col = 0;
-				row++;
+			if (slotPos.Y != 0) {
+				slotPos.Y = 0;
+				slotPos.X++;
 			}
 
 			if (requiredTiles.Count == 0) {
@@ -1538,13 +1514,13 @@ namespace BossChecklist
 					hoverText = $"{LangLog}.SpawnInfo.ByHand",
 					hasItem = true
 				};
-				byHandCrafting.Top.Pixels = 240 + (48 * (row + 1));
+				byHandCrafting.Top.Pixels = 240 + (48 * (slotPos.X + 1));
 				byHandCrafting.Left.Pixels = 20;
-				PageTwo.Append(byHandCrafting);
+				RightPage.Append(byHandCrafting);
 			}
 			else if (requiredTiles.Count > 0) {
 				// iterate through all required tiles to list them in item slots
-				col = 0; // reset col to zero for the crafting stations
+				slotPos.Y = 0; // reset col to zero for the crafting stations
 				foreach (int tile in requiredTiles) {
 					if (tile == -1)
 						break; // Prevents extra empty slots from being created
@@ -1554,10 +1530,10 @@ namespace BossChecklist
 						hoverText = Lang.GetMapObjectName(Terraria.Map.MapHelper.TileToLookup(tile, Recipe.GetRequiredTileStyle(tile))), // retrieves the designated tile name (as it appears on the map)
 						hasItem = Main.LocalPlayer.adjTile[tile]
 					};
-					tileList.Left.Pixels = 20 + (48 * col);
-					tileList.Top.Pixels = 240 + (48 * (row + 1));
-					PageTwo.Append(tileList);
-					col++; // if multiple crafting stations are needed
+					tileList.Left.Pixels = 20 + (48 * slotPos.Y);
+					tileList.Top.Pixels = 240 + (48 * (slotPos.X + 1));
+					RightPage.Append(tileList);
+					slotPos.Y++; // if multiple crafting stations are needed
 				}
 			}
 		}
@@ -1570,17 +1546,17 @@ namespace BossChecklist
 				return; // Code should only run if it is on an entry page
 
 			// set up an item list for the listed loot itemslots
-			pageTwoItemList.Clear();
-			pageTwoItemList.Left.Pixels = 0;
-			pageTwoItemList.Top.Pixels = 125;
-			pageTwoItemList.Width.Pixels = PageTwo.Width.Pixels - 25;
-			pageTwoItemList.Height.Pixels = PageTwo.Height.Pixels - 125 - 80;
+			UIList lootItemList = new UIList();
+			lootItemList.Left.Pixels = 0;
+			lootItemList.Top.Pixels = 125;
+			lootItemList.Width.Pixels = RightPage.Width.Pixels - 25;
+			lootItemList.Height.Pixels = RightPage.Height.Pixels - 125 - 80;
 
 			// create an image of the entry's treasure bag
 			TreasureBag treasureBag = new TreasureBag(GetLogEntryInfo.TreasureBag);
-			treasureBag.Left.Pixels = PageTwo.Width.Pixels / 2 - treasureBag.Width.Pixels / 2;
+			treasureBag.Left.Pixels = RightPage.Width.Pixels / 2 - treasureBag.Width.Pixels / 2;
 			treasureBag.Top.Pixels = 88;
-			PageTwo.Append(treasureBag);
+			RightPage.Append(treasureBag);
 
 			List<ItemDefinition> obtainedItems = GetModPlayer.BossItemsCollected;
 			List<DropRateInfo> bossDrops = new List<DropRateInfo>(GetLogEntryInfo.loot); // combined list of loot and collectibles
@@ -1634,12 +1610,11 @@ namespace BossChecklist
 			if (bossItems.Intersect(BossChecklist.bossTracker.otherWorldMusicBoxTypes).Any()) {
 				FieldInfo TOWMusicUnlocked = typeof(Main).GetField("TOWMusicUnlocked", BindingFlags.Static | BindingFlags.NonPublic);
 				bool OWUnlocked = (bool)TOWMusicUnlocked.GetValue(null);
-				if (OtherworldUnlocked != OWUnlocked)
-					OtherworldUnlocked = OWUnlocked;
+				if (OtherworldMusicUnlocked != OWUnlocked)
+					OtherworldMusicUnlocked = OWUnlocked;
 			}
 
-			int row = 0; // this will track the row pos, increasing by one after the column limit is reached
-			int col = 0; // this will track the column pos, increasing by one every item, and resetting to zero when the next row is made
+			Point slotPos = Point.Zero; // Handles the current position of the current ItemSlot, using X for row and Y for column positions
 			LootRow newRow = new LootRow(0); // the initial row to start with
 
 			foreach (int item in bossItems) {
@@ -1655,39 +1630,39 @@ namespace BossChecklist
 					hasItem = obtainedItems.Any(x => x.Type == item),
 					itemResearched = GetModPlayer.IsItemResearched(item)
 				};
-				itemSlot.Left.Pixels = (col * 56) + 15;
+				itemSlot.Left.Pixels = (slotPos.Y * 56) + 15;
 				itemSlot.OnRightClick += RemoveItem; // debug functionality
 				newRow.Append(itemSlot); // append the item slot to the current row
 
-				col++; // increase col before moving on to the next item
+				slotPos.Y++; // increase col before moving on to the next item
 				// if col hit the max that can be drawn on the page, add the current row to the list and move onto the next row
-				if (col == 6) {
-					col = 0;
-					row++;
-					pageTwoItemList.Add(newRow);
-					newRow = new LootRow(row);
+				if (slotPos.Y == 6) {
+					slotPos.Y = 0;
+					slotPos.X++;
+					lootItemList.Add(newRow);
+					newRow = new LootRow(slotPos.X);
 				}
 			}
 
 			// Once all our items have been added, append the final row to the list
 			// This does not need to occur if col is at 0, as the current row is empty
-			if (col != 0) {
-				row++;
-				pageTwoItemList.Add(newRow);
+			if (slotPos.Y != 0) {
+				slotPos.X++;
+				lootItemList.Add(newRow);
 			}
 
-			PageTwo.Append(pageTwoItemList); // append the list to the page so the items can be seen
+			RightPage.Append(lootItemList); // append the list to the page so the items can be seen
 
 			// If more than 5 rows exist, a scroll bar is needed to access all items in the loot list
-			if (row > 5) {
-				scrollTwo.SetView(10f, 1000f);
-				scrollTwo.Top.Pixels = 125;
-				scrollTwo.Left.Pixels = -3;
-				scrollTwo.Height.Set(-88f, 0.75f);
-				scrollTwo.HAlign = 1f;
+			if (slotPos.X > 5) {
+				ScrollBarRightPage.SetView(10f, 1000f);
+				ScrollBarRightPage.Top.Pixels = 125;
+				ScrollBarRightPage.Left.Pixels = -3;
+				ScrollBarRightPage.Height.Set(-88f, 0.75f);
+				ScrollBarRightPage.HAlign = 1f;
 
-				PageTwo.Append(scrollTwo);
-				pageTwoItemList.SetScrollbar(scrollTwo);
+				RightPage.Append(ScrollBarRightPage);
+				lootItemList.SetScrollbar(ScrollBarRightPage);
 			}
 		}
 

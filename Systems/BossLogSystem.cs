@@ -336,7 +336,7 @@ namespace BossChecklist.Systems
 	internal class BossLogItemChecklist : GlobalItem {
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
 			// These tooltips should only appear on items listed in the loot pages of the Boss Log
-			if (BossLogSystem.Instance.BossLog.BossLogVisible && BossLogSystem.Instance.BossLog.SelectedSubPage == SubPage.LootAndCollectibles) {
+			if (BossLogSystem.Instance.BossLog.BossLogVisible && BossLogSystem.Instance.BossLog.SelectedSubPage == PageCategory.LootAndCollectibles) {
 				int ResearchToolTipIndex = tooltips.FindIndex(line => line.Mod == "Terraria" && line.Name == "JourneyResearch");
 
 				// If the player has obtained the boss drop item, appearing before the research item tooltip

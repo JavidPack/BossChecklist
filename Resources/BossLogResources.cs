@@ -117,9 +117,9 @@ namespace BossChecklist.Resources
 			Credit_Register = PreloadResource("Credits_Panel_Register");
 			Credit_NoMods = PreloadResource("Credits_Panel_NoMods");
 
-			Credit_Devs = new Asset<Texture2D>[BossLogUI.contributors.Keys.Count];
-			for (int i = 0; i < BossLogUI.contributors.Keys.Count; i++) {
-				Credit_Devs[i] = PreloadResource("Credits_" + BossLogUI.contributors.Keys.ToList()[i]);
+			Credit_Devs = new Asset<Texture2D>[BossLogUI.BossChecklistModContributors.Keys.Count];
+			for (int i = 0; i < BossLogUI.BossChecklistModContributors.Keys.Count; i++) {
+				Credit_Devs[i] = PreloadResource("Credits_" + BossLogUI.BossChecklistModContributors.Keys.ToList()[i]);
 			}
 
 			Indicator_Interaction = PreloadResource("Indicator_Interaction");

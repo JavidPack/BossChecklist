@@ -248,7 +248,7 @@ namespace BossChecklist
 
 			BossChecklist.instance.Logger.Info(Log.Indicators[2].hoverText);
 
-			Log.BossTab.Anchor = BossLogUI.FindNextEntry(EntryType.Boss); // update the Next entry/boss tab based on Indicator selections
+			Log.NextBossTab.Anchor = BossLogUI.FindNextEntry(EntryType.Boss); // update the Next entry/boss tab based on Indicator selections
 
 			if (Log.PageNum == BossLogUI.Page_TableOfContents)
 				Log.RefreshPageContent();

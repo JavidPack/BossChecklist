@@ -71,11 +71,11 @@ namespace BossChecklist.Systems
 
 		public bool CanBeSaved => attempts > 0;
 
-		internal int GetStatByCategory(SubCategory category, bool duration = true) {
+		internal int GetStatByCategory(RecordCategory category, bool duration = true) {
 			return category switch {
-				SubCategory.PreviousAttempt => duration ? durationPrev : hitsTakenPrev,
-				SubCategory.FirstVictory => duration ? durationFirst : hitsTakenFirst,
-				SubCategory.PersonalBest => duration ? durationBest : hitsTakenBest,
+				RecordCategory.PreviousAttempt => duration ? durationPrev : hitsTakenPrev,
+				RecordCategory.FirstVictory => duration ? durationFirst : hitsTakenFirst,
+				RecordCategory.PersonalBest => duration ? durationBest : hitsTakenBest,
 				_ => -1
 			};
 		}
@@ -258,15 +258,15 @@ namespace BossChecklist.Systems
 		/// Resets the record data stored back to 'No Record'. If this is run by a multiplayer client, the reset is sent to the server as well via packet.
 		/// </summary>
 		/// <param name="category">Specifies the records being reset by the Log's current subcategory.</param>
-		internal void ResetStats(SubCategory category) {
+		internal void ResetStats(RecordCategory category) {
 			// No point in clearing Previous Attempt, its always updated each fight
 			// World Records cannot be reset through normal means (localhost must remove all players from the holders list)
 			NetRecordID resetType = NetRecordID.None;
-			if (category == SubCategory.FirstVictory) {
+			if (category == RecordCategory.FirstVictory) {
 				playTimeFirst = durationFirst = hitsTakenFirst = -1;
 				resetType = NetRecordID.FirstVictory_Reset;
 			}
-			else if (category == SubCategory.PersonalBest) {
+			else if (category == RecordCategory.PersonalBest) {
 				kills = deaths = 0;
 				durationBest = hitsTakenBest = -1;
 				durationPrevBest = hitsTakenPrevBest = -1;

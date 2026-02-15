@@ -48,6 +48,7 @@ namespace BossChecklist.UIElements
 		/// </summary>
 		internal class LogUIElement : UIElement {
 			internal BossLogUI LogUI => BossLogSystem.Instance.BossLog;
+			public string Id { get; init; } = "";
 			public string hoverText;
 			internal Color hoverTextColor = Color.White;
 			internal Texture2D asset = null;
@@ -195,9 +196,8 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class NavigationalButton : LogUIElement {
-			public string Id { get; init; } = "";
 			public int? Anchor { get; init; } = null;
-			public SubCategory? Record_Anchor { get; init; }
+			public RecordCategory? Record_Anchor { get; init; }
 
 			internal Asset<Texture2D> texture;
 			internal Color iconColor;
@@ -218,9 +218,9 @@ namespace BossChecklist.UIElements
 					LogUI.PendingPageNum = Anchor.Value;
 
 				if (Record_Anchor.HasValue) {
-					LogUI.RecordSubCategory = Record_Anchor.Value;
-					if (Record_Anchor.Value == LogUI.CompareState)
-						LogUI.CompareState = SubCategory.None;
+					LogUI.SelectedRecordCategory = Record_Anchor.Value;
+					if (Record_Anchor.Value == LogUI.SelectedRecordComparison)
+						LogUI.SelectedRecordComparison = RecordCategory.None;
 					LogUI.RefreshPageContent();
 				}
 
@@ -235,8 +235,8 @@ namespace BossChecklist.UIElements
 
 			public override void RightClick(UIMouseEvent evt) {
 				base.RightClick(evt);
-				if (Record_Anchor.HasValue && Record_Anchor.Value != LogUI.RecordSubCategory) {
-					LogUI.CompareState = LogUI.CompareState == Record_Anchor.Value ? SubCategory.None : Record_Anchor.Value;
+				if (Record_Anchor.HasValue && Record_Anchor.Value != LogUI.SelectedRecordCategory) {
+					LogUI.SelectedRecordComparison = LogUI.SelectedRecordComparison == Record_Anchor.Value ? RecordCategory.None : Record_Anchor.Value;
 					LogUI.RefreshPageContent();
 				}
 			}
@@ -250,7 +250,7 @@ namespace BossChecklist.UIElements
 
 			public override void Draw(SpriteBatch spriteBatch) {
 				if (Record_Anchor.HasValue) {
-					spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), LogUI.RecordSubCategory == Record_Anchor.Value ? iconColor : HoverColor);
+					spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), LogUI.SelectedRecordCategory == Record_Anchor.Value ? iconColor : HoverColor);
 				}
 				else {
 					spriteBatch.Draw(texture.Value, GetInnerDimensions().ToRectangle(), hoverButton ? HoverColor : iconColor);
@@ -260,7 +260,6 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class IndicatorPanel : LogUIElement {
-			public string Id { get; init; } = "";
 			private Asset<Texture2D> section;
 			private Asset<Texture2D> end;
 			private Asset<Texture2D> back;
@@ -297,13 +296,13 @@ namespace BossChecklist.UIElements
 					}
 				}
 				else if (LogUI.PageNum >= 0 && BossChecklist.BossLogConfig.Debug.EnabledResetOptions) {
-					if (LogUI.SelectedSubPage == SubPage.Records && LogUI.GetLogEntryInfo.type == EntryType.Boss) {
+					if (LogUI.SelectedSubPage == PageCategory.Records && LogUI.GetLogEntryInfo.type == EntryType.Boss) {
 						if (LogUI.GetPlayerRecords is not null) {
-							LogUI.GetPlayerRecords.ResetStats(LogUI.RecordSubCategory);
+							LogUI.GetPlayerRecords.ResetStats(LogUI.SelectedRecordCategory);
 							LogUI.RefreshPageContent();
 						}
 					}
-					else if (LogUI.SelectedSubPage == SubPage.LootAndCollectibles) {
+					else if (LogUI.SelectedSubPage == PageCategory.LootAndCollectibles) {
 						// Remove all items from the obtained list
 						foreach (int item in LogUI.GetLogEntryInfo.lootItemTypes) {
 							LogUI.GetModPlayer.BossItemsCollected.RemoveAll(x => x.Type == item);
@@ -345,7 +344,6 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class IndicatorIcon : LogUIElement {
-			public string Id { get; init; }
 			public Color Color { get; set; } = Color.White;
 			internal Asset<Texture2D> texture;
 
@@ -379,7 +377,6 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class FilterIcon : LogUIElement {
-			public string Id { get; init; }
 			internal Asset<Texture2D> icon;
 			public Asset<Texture2D> check;
 
@@ -479,13 +476,13 @@ namespace BossChecklist.UIElements
 
 		internal class SubPageButton : UIImage {
 			readonly string buttonText;
-			readonly SubPage subPageType;
+			readonly PageCategory subPageType;
 			//public bool isLocked = false;
 
 			private Asset<Texture2D> selectionBorder;
 			//private Asset<Texture2D> locked;
 
-			public SubPageButton(Asset<Texture2D> texture, SubPage type) : base(texture) {
+			public SubPageButton(Asset<Texture2D> texture, PageCategory type) : base(texture) {
 				buttonText = Language.GetTextValue($"{BossLogUI.LangLog}.Tabs.{type}");
 				subPageType = type;
 			}
@@ -504,7 +501,7 @@ namespace BossChecklist.UIElements
 					spriteBatch.Draw(selectionBorder.Value, inner, Color.White); // draw a border around the selected subpage
 				}
 
-				bool useKillCountText = subPageType == SubPage.Records && BossLogSystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
+				bool useKillCountText = subPageType == PageCategory.Records && BossLogSystem.Instance.BossLog.GetLogEntryInfo.type != EntryType.Boss; // Event entries should display 'Kill Count' instead of 'Records'
 				string translated = Language.GetTextValue(useKillCountText ? "LegacyInterface.101" : buttonText);
 				Vector2 stringAdjust = FontAssets.MouseText.Value.MeasureString(translated);
 				float scale = AutoScaleText(stringAdjust.X, this.Width.Pixels - 20f, 0.9f); // translated text value may exceed button size
@@ -535,7 +532,7 @@ namespace BossChecklist.UIElements
 			}
 
 			public override void RightClick(UIMouseEvent evt) {
-				if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || LogUI.SelectedSubPage != SubPage.LootAndCollectibles)
+				if (!BossChecklist.BossLogConfig.Debug.EnabledResetOptions || LogUI.SelectedSubPage != PageCategory.LootAndCollectibles)
 					return; // do not do anything if the loot page isn't the active
 
 				if (!BossLogUI.AltKeyIsDown)
@@ -558,7 +555,6 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class LogItemSlot : LogUIElement {
-			public string Id { get; init; } = "";
 			internal Item item;
 			private readonly int context;
 			private readonly float scale;
@@ -637,7 +633,7 @@ namespace BossChecklist.UIElements
 				bool isMasterPet = entry.collectibles.ContainsKey(item.type) && (entry.collectibles[item.type] is CollectibleType.MasterPet);
 				bool MasterItemRestricted = (item.type == entry.Relic || isMasterPet) && !Main.masterMode;
 				bool ExpertItemRestricted = item.type == entry.ExpertItem && !Main.expertMode;
-				bool OWmusicRestricted = BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(item.type) && !BossLogUI.OtherworldUnlocked;
+				bool OWmusicRestricted = BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(item.type) && !BossLogUI.OtherworldMusicUnlocked;
 				bool isRestricted = MasterItemRestricted || ExpertItemRestricted || OWmusicRestricted;
 				bool LootProgress = !hasItem && Id.Contains("loot_") && BossChecklist.BossLogConfig.ProgressiveChecklist;
 
@@ -752,8 +748,6 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class LogPanel : LogUIElement {
-			public string Id { get; init; } = "";
-
 			public override void Draw(SpriteBatch spriteBatch) {
 				base.Draw(spriteBatch);
 				Rectangle pageRect = GetInnerDimensions().ToRectangle();
@@ -869,7 +863,7 @@ namespace BossChecklist.UIElements
 						Utils.DrawBorderString(spriteBatch, entry.ModDisplayName, pos, new Color(150, 150, 255));
 					}
 					else if (Id == "PageTwo" && entry.modSource != "Unknown") {
-						if (LogUI.SelectedSubPage == SubPage.Records) {
+						if (LogUI.SelectedSubPage == PageCategory.Records) {
 							if (entry.type == EntryType.Boss) {
 								// Boss Records SubPage
 							}
@@ -877,13 +871,11 @@ namespace BossChecklist.UIElements
 								// Mini-boss Records SubPage
 							}
 							else if (entry.type == EntryType.Event) {
-								int offset = 25;
-								int offsetY = 64;
-								int col = 0;
-								int row = 0;
+								Point slotPos = Point.Zero; // The row and column of the current banner
+								Point bannerSpacing = new Point(25, 64); // The offset space between each banner
 								const int maxBannersPerRow = 12;
 
-								foreach (int bannerID in LogUI.Banners) {
+								foreach (int bannerID in LogUI.EventEntryNPCBannerIDList) {
 									int npcID = Item.BannerToNPC(bannerID);
 									int bannerItem = Item.BannerToItem(bannerID);
 
@@ -921,7 +913,7 @@ namespace BossChecklist.UIElements
 									int heightOffSetTexture = 0;
 
 									for (int j = 0; j < heights.Length; j++) { // could adjust for non 1x3 here and below if we need to.
-										Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (offset * (col % maxBannersPerRow)), pageRect.Y + 185 + heightOffSet + (offsetY * row), 16, 16);
+										Rectangle bannerPos = new Rectangle(pageRect.X + 40 + (bannerSpacing.X * (slotPos.Y % maxBannersPerRow)), pageRect.Y + 185 + heightOffSet + (bannerSpacing.Y * slotPos.X), 16, 16);
 										Rectangle rect = new Rectangle(x, y + heightOffSetTexture, tileData.CoordinateWidth, tileData.CoordinateHeights[j]);
 										Main.spriteBatch.Draw(banner.Value, bannerPos, rect, bannerColor);
 										heightOffSet += heights[j];
@@ -937,19 +929,19 @@ namespace BossChecklist.UIElements
 										}
 									}
 
-									col++; // increase banner count after banner is fully drawn
-									if (col % maxBannersPerRow == 0)
-										row++; // if banners per row has been reached, increase row count
+									slotPos.Y++; // increase banner count after banner is fully drawn
+									if (slotPos.Y % maxBannersPerRow == 0)
+										slotPos.X++; // if banners per row has been reached, increase row count
 
-									if (row == 3)
+									if (slotPos.X == 3)
 										break; // For now, we stop drawing any banners that exceed the books limit (TODO: might have to reimplement as a UIList for scrolling purposes)
 								}
 							}
 						}
-						else if (LogUI.SelectedSubPage == SubPage.SpawnInfo) {
+						else if (LogUI.SelectedSubPage == PageCategory.SpawnInfo) {
 							// Spawn Item Subpage
 						}
-						else if (LogUI.SelectedSubPage == SubPage.LootAndCollectibles) {
+						else if (LogUI.SelectedSubPage == PageCategory.LootAndCollectibles) {
 							// Loot Table Subpage
 						}
 					}
@@ -973,7 +965,7 @@ namespace BossChecklist.UIElements
 				this.ach = new Point(-1, -1);
 			}
 
-			public RecordDisplaySlot(Asset<Texture2D> texture, SubCategory subCategory, int slot, int RecordIndex) : base(texture) {
+			public RecordDisplaySlot(Asset<Texture2D> texture, RecordCategory subCategory, int slot, int RecordIndex) : base(texture) {
 				Width.Pixels = texture.Value.Width;
 				Height.Pixels = texture.Value.Height;
 
@@ -984,47 +976,47 @@ namespace BossChecklist.UIElements
 				ach = GetAchCoords(subCategory)[slot];
 			}
 
-			private string[] GetTitle(SubCategory sub) {
+			private string[] GetTitle(RecordCategory sub) {
 				string path = $"{BossLogUI.LangLog}.Records";
 				return new string[] {
 					Language.GetTextValue($"{path}.Category.{sub}"),
 					Language.GetTextValue($"{path}.Title.{sub}"),
-					Language.GetTextValue($"{path}.Title.Duration{(sub == SubCategory.WorldRecord ? "World" : "")}"),
-					Language.GetTextValue($"{path}.Title.HitsTaken{(sub == SubCategory.WorldRecord ? "World" : "")}")
+					Language.GetTextValue($"{path}.Title.Duration{(sub == RecordCategory.WorldRecord ? "World" : "")}"),
+					Language.GetTextValue($"{path}.Title.HitsTaken{(sub == RecordCategory.WorldRecord ? "World" : "")}")
 				};
 			}
 
-			private string[] GetValue(SubCategory sub) {
+			private string[] GetValue(RecordCategory sub) {
 				// Defaults to Previous Attempt, the subcategory users will first see
 				string unique = stats_player.attempts == 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged") : $"#{stats_player.attempts}";
 				string duration = PersonalRecords.TimeConversion(stats_player.durationPrev);
 				string hitsTaken = PersonalRecords.HitCount(stats_player.hitsTakenPrev);
 
-				if (sub == SubCategory.PersonalBest) {
+				if (sub == RecordCategory.PersonalBest) {
 					unique = stats_player.GetKDR();
 					duration = PersonalRecords.TimeConversion(stats_player.durationBest);
 					hitsTaken = PersonalRecords.HitCount(stats_player.hitsTakenBest);
 				}
-				else if (sub == SubCategory.FirstVictory) {
+				else if (sub == RecordCategory.FirstVictory) {
 					unique = stats_player.PlayTimeToString();
 					duration = PersonalRecords.TimeConversion(stats_player.durationFirst);
 					hitsTaken = PersonalRecords.HitCount(stats_player.hitsTakenFirst);
 				}
-				else if (sub == SubCategory.WorldRecord) {
+				else if (sub == RecordCategory.WorldRecord) {
 					unique = stats_world.GetGlobalKDR();
 					duration = PersonalRecords.TimeConversion(stats_world.durationWorld);
 					hitsTaken = PersonalRecords.HitCount(stats_world.hitsTakenWorld);
 				}
 
 				return new string[] {
-					Language.GetTextValue(sub == SubCategory.WorldRecord ? Main.worldName : Main.LocalPlayer.name),
+					Language.GetTextValue(sub == RecordCategory.WorldRecord ? Main.worldName : Main.LocalPlayer.name),
 					unique,
 					duration,
 					hitsTaken
 				};
 			}
 
-			private string[] GetTooltip(SubCategory sub) {
+			private string[] GetTooltip(RecordCategory sub) {
 				string path = $"{BossLogUI.LangLog}.Records.Tooltip";
 				return new string[] {
 					"",
@@ -1034,24 +1026,24 @@ namespace BossChecklist.UIElements
 				};
 			}
 
-			private Point[] GetAchCoords(SubCategory sub) {
+			private Point[] GetAchCoords(RecordCategory sub) {
 				Point uniqueAch = new Point(0, 9);
 
-				if (sub == SubCategory.PersonalBest) {
+				if (sub == RecordCategory.PersonalBest) {
 					uniqueAch = new Point(0, 3);
 				}
-				else if (sub == SubCategory.FirstVictory) {
+				else if (sub == RecordCategory.FirstVictory) {
 					uniqueAch = new Point(7, 10);
 				}
-				else if (sub == SubCategory.WorldRecord) {
+				else if (sub == RecordCategory.WorldRecord) {
 					uniqueAch = stats_world.totalKills >= stats_world.totalDeaths ? new Point(4, 10) : new Point(4, 8);
 				}
 
 				return new Point[] {
 					new Point(-1, -1),
 					uniqueAch,
-					sub == SubCategory.WorldRecord ? new Point(2, 12) : new Point(4, 9),
-					sub == SubCategory.WorldRecord ? new Point(0, 7) : new Point(3, 0)
+					sub == RecordCategory.WorldRecord ? new Point(2, 12) : new Point(4, 9),
+					sub == RecordCategory.WorldRecord ? new Point(0, 7) : new Point(3, 0)
 				};
 			}
 
@@ -1179,7 +1171,6 @@ namespace BossChecklist.UIElements
 		}
 
 		internal class LogTab : LogUIElement {
-			public string Id { get; init; } = "";
 			internal Asset<Texture2D> texture;
 			internal Asset<Texture2D> icon;
 
@@ -1437,7 +1428,7 @@ namespace BossChecklist.UIElements
 
 			public ProgressBar(bool hardMode) {
 				InitializeDividers = true; // a progress bar is created, let this UIelement know it should attempt to make section dividers asap
-				this.barState = LogUI.barState;
+				this.barState = LogUI.ProgressBarState;
 
 				// Start with the total percentage and total counts
 				this.percentageTotal = CalculateTotalPercentage(BossChecklist.bossTracker.SortedEntries, hardMode, out int d, out int t);
@@ -1559,13 +1550,13 @@ namespace BossChecklist.UIElements
 
 			public override void LeftClick(UIMouseEvent evt) {
 				base.LeftClick(evt);
-				LogUI.barState = !LogUI.barState;
+				LogUI.ProgressBarState = !LogUI.ProgressBarState;
 			}
 
 			public override void Update(GameTime gameTime) {
 				base.Update(gameTime);
-				if (InitializeDividers || this.barState != LogUI.barState) {
-					this.barState = LogUI.barState;
+				if (InitializeDividers || this.barState != LogUI.ProgressBarState) {
+					this.barState = LogUI.ProgressBarState;
 					GenerateDividers(); // Can only generate dividers once the dimensions are declared
 					InitializeDividers = false;
 				}
