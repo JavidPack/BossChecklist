@@ -98,7 +98,7 @@ namespace BossChecklist
 		public IndicatorIcon InteractionIcon;
 		public IndicatorPanel IndicatorTab;
 		public List<IndicatorIcon> Indicators;
-		public FilterIcon FilterPanel; // contains the filter buttons, (not a filter icon, but it works)
+		public LogUIElement FilterPanel; // contains the filter buttons
 		public List<FilterIcon> FilterIcons;
 		public bool FilterPanelIsOpen = false; // when true, the filter panel is visible to the user
 
@@ -314,7 +314,7 @@ namespace BossChecklist
 			PreviousPageButton.Top.Pixels = 416;
 			PreviousPageButton.OnLeftClick += PageChangerClicked;
 
-			FilterPanel = new FilterIcon(BossLogResources.FilterPanel);
+			FilterPanel = new LogUIElement(BossLogResources.FilterPanel.Value);
 			FilterIcons = new List<FilterIcon>() {
 				new FilterIcon(BossLogResources.Nav_Boss) { Id = "Boss" },
 				new FilterIcon(BossLogResources.Nav_MiniBoss) { Id = "MiniBoss" },
