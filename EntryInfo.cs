@@ -126,7 +126,7 @@ namespace BossChecklist
 
 		internal int GetIndex => BossChecklist.bossTracker.SortedEntries.IndexOf(this);
 
-		internal int TreasureBag => loot.FirstOrDefault(drops => ItemID.Sets.BossBag[drops.itemId] && this.type != EntryType.Event).itemId;
+		internal int TreasureBag => lootItemTypes.FirstOrDefault(itemId => ItemID.Sets.BossBag[itemId] && this.type != EntryType.Event); // skip events as bosses & minibosses are sometimes used within them
 
 		internal int Relic => collectibles.FirstOrDefault(x => x.Value == CollectibleType.Relic).Key;
 
