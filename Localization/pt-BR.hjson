@@ -63,7 +63,7 @@ Mods: {
 				// NoIcon: Mod icon not found!
 				// ModsEmpty: None of your loaded mods are registered!
 				// Register: Register your own mod!
-				// Learn: View the mod desciption to learn how
+				// Learn: View the mod description to learn how.
 			}
 
 			EntryPage: {
@@ -326,6 +326,7 @@ Mods: {
 			// InvalidOrphanKey: A '{0}' call from {1} contains an invalid key ({2}) and will be ignored.
 			// InvalidEventEntry: "{0} is not an event entry and cannot take calls from {1}"
 			// BelongsToInvasion: "{0} has attempted to edit the npc pool of '{1}'. This entry is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls."
+			// DownedIsNull: Submitted parameter determined to be null when creating a Boss Log Entry for [{0}]. Entry will not be added until ModCall is resolved.
 		}
 
 		Configs: {
@@ -696,30 +697,78 @@ Mods: {
 
 			FilterType: {
 				Tooltip: ""
-				// Show.Label: Show
-				// HideWhenCompleted.Label: Hide When Completed
-				// Hide.Label: Hide
+
+				Show: {
+					// Label: Show
+					// Tooltip: ""
+				}
+
+				HideWhenCompleted: {
+					// Label: Hide When Completed
+					// Tooltip: ""
+				}
+
+				Hide: {
+					// Label: Hide
+					// Tooltip: ""
+				}
 			}
 
 			CheckType: {
 				Tooltip: ""
-				Check_Empty.Label: ✓  [ ]
-				Check_X.Label: ✓  X
-				X_Empty.Label: X  [ ]
-				// StrikeThrough.Label: Strike-through
+
+				Check_Empty: {
+					Label: ✓  [ ]
+					// Tooltip: ""
+				}
+
+				Check_X: {
+					Label: ✓  X
+					// Tooltip: ""
+				}
+
+				X_Empty: {
+					Label: X  [ ]
+					// Tooltip: ""
+				}
+
+				StrikeThrough: {
+					// Label: Strike-through
+					// Tooltip: ""
+				}
 			}
 
 			TimeFormat: {
 				Tooltip: ""
-				// Standard.Label: Standard
-				// Simple.Label: Simple
+
+				Standard: {
+					// Label: Standard
+					// Tooltip: ""
+				}
+
+				Simple: {
+					// Label: Simple
+					// Tooltip: ""
+				}
 			}
 
 			MessageType: {
 				Tooltip: ""
-				// Disabled.Label: Disabled
-				// Generic.Label: Generic
-				// Unique.Label: Unique
+
+				Disabled: {
+					// Label: Disabled
+					// Tooltip: ""
+				}
+
+				Generic: {
+					// Label: Generic
+					// Tooltip: ""
+				}
+
+				Unique: {
+					// Label: Unique
+					// Tooltip: ""
+				}
 			}
 		}
 	}

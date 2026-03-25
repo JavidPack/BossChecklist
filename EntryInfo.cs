@@ -222,7 +222,7 @@ namespace BossChecklist
 			this.type = entryType;
 			this.modSource = modSource;
 			this.progression = progression;
-			this.downed = downed;
+			this.downed = downed ?? throw new ArgumentNullException(nameof(downed), BossChecklist.instance.GetLocalization("LogMessage.DownedIsNull").Format(this.Key));
 			this.npcIDs = npcIDs ?? new List<int>();
 
 			// Localization checks

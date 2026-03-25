@@ -326,6 +326,7 @@ Mods: {
 			InvalidOrphanKey: 来自{1}的'{0}'调用包含无效键 ({2}) , 将被忽略.
 			InvalidEventEntry: "{0}不是事件条目并且无法响应{1}的调用"
 			BelongsToInvasion: "{0}已尝试编辑'{1}'的NPC池. 此条目是一个由tModLoader的'NPCID.Sets.BelongsToInvasion'集支持的事件. SubmitEventNPCs仍然受到支持，但建议在给定的情况下使用这些集. 使用这些集用于ModNPCs会自动将它们添加到条目的NPC池中, 而无需额外的mod调用."
+			// DownedIsNull: Submitted parameter determined to be null when creating a Boss Log Entry for [{0}]. Entry will not be added until ModCall is resolved.
 		}
 
 		Configs: {
@@ -696,30 +697,78 @@ Mods: {
 
 			FilterType: {
 				Tooltip: ""
-				Show.Label: 显示
-				HideWhenCompleted.Label: 完成后隐藏
-				Hide.Label: 隐藏
+
+				Show: {
+					Label: 显示
+					// Tooltip: ""
+				}
+
+				HideWhenCompleted: {
+					Label: 完成后隐藏
+					// Tooltip: ""
+				}
+
+				Hide: {
+					Label: 隐藏
+					// Tooltip: ""
+				}
 			}
 
 			CheckType: {
 				Tooltip: ""
-				Check_Empty.Label: ✓  [ ]
-				Check_X.Label: ✓  X
-				X_Empty.Label: X  [ ]
-				StrikeThrough.Label: 删除线
+
+				Check_Empty: {
+					Label: ✓  [ ]
+					// Tooltip: ""
+				}
+
+				Check_X: {
+					Label: ✓  X
+					// Tooltip: ""
+				}
+
+				X_Empty: {
+					Label: X  [ ]
+					// Tooltip: ""
+				}
+
+				StrikeThrough: {
+					Label: 删除线
+					// Tooltip: ""
+				}
 			}
 
 			TimeFormat: {
 				Tooltip: ""
-				Standard.Label: 标准
-				Simple.Label: 简易
+
+				Standard: {
+					Label: 标准
+					// Tooltip: ""
+				}
+
+				Simple: {
+					Label: 简易
+					// Tooltip: ""
+				}
 			}
 
 			MessageType: {
 				Tooltip: ""
-				Disabled.Label: 禁用
-				Generic.Label: 通用
-				Unique.Label: 独特
+
+				Disabled: {
+					Label: 禁用
+					// Tooltip: ""
+				}
+
+				Generic: {
+					Label: 通用
+					// Tooltip: ""
+				}
+
+				Unique: {
+					Label: 独特
+					// Tooltip: ""
+				}
 			}
 		}
 	}

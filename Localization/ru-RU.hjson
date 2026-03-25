@@ -331,6 +331,7 @@ Mods: {
 			// InvalidOrphanKey: A '{0}' call from {1} contains an invalid key ({2}) and will be ignored.
 			// InvalidEventEntry: "{0} is not an event entry and cannot take calls from {1}"
 			// BelongsToInvasion: "{0} has attempted to edit the npc pool of '{1}'. This entry is an event that is supported by tModLoader's 'NPCID.Sets.BelongsToInvasion' sets. SubmitEventNPCs will still be supported, but it is recommended to use the sets instead, where given. Using these sets for ModNPCs will automatically add them to an entry's NPC pool without additional mod calls."
+			// DownedIsNull: Submitted parameter determined to be null when creating a Boss Log Entry for [{0}]. Entry will not be added until ModCall is resolved.
 		}
 
 		Configs: {
@@ -699,30 +700,78 @@ Mods: {
 
 			FilterType: {
 				Tooltip: ""
-				Show.Label: Показать
-				HideWhenCompleted.Label: Скрыть после выполнения
-				Hide.Label: Скрыть
+
+				Show: {
+					Label: Показать
+					// Tooltip: ""
+				}
+
+				HideWhenCompleted: {
+					Label: Скрыть после выполнения
+					// Tooltip: ""
+				}
+
+				Hide: {
+					Label: Скрыть
+					// Tooltip: ""
+				}
 			}
 
 			CheckType: {
 				Tooltip: ""
-				Check_Empty.Label: ✓  [ ]
-				Check_X.Label: ✓  X
-				X_Empty.Label: X  [ ]
-				StrikeThrough.Label: Зачеркнуть
+
+				Check_Empty: {
+					Label: ✓  [ ]
+					// Tooltip: ""
+				}
+
+				Check_X: {
+					Label: ✓  X
+					// Tooltip: ""
+				}
+
+				X_Empty: {
+					Label: X  [ ]
+					// Tooltip: ""
+				}
+
+				StrikeThrough: {
+					Label: Зачеркнуть
+					// Tooltip: ""
+				}
 			}
 
 			TimeFormat: {
 				Tooltip: ""
-				Standard.Label: Стандартный
-				Simple.Label: Простой
+
+				Standard: {
+					Label: Стандартный
+					// Tooltip: ""
+				}
+
+				Simple: {
+					Label: Простой
+					// Tooltip: ""
+				}
 			}
 
 			MessageType: {
 				Tooltip: ""
-				Disabled.Label: Выключено
-				Generic.Label: Обычный
-				Unique.Label: Уникальный
+
+				Disabled: {
+					Label: Выключено
+					// Tooltip: ""
+				}
+
+				Generic: {
+					Label: Обычный
+					// Tooltip: ""
+				}
+
+				Unique: {
+					Label: Уникальный
+					// Tooltip: ""
+				}
 			}
 		}
 	}

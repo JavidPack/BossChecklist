@@ -326,6 +326,7 @@ Mods: {
 			InvalidOrphanKey: Ein '{0}' Aufruf von {1} enthält einen ungültigen Schlüssel ({2}) und wird ignoriert.
 			InvalidEventEntry: "{0} ist kein Ereigniseintrag und kann keine Aufrufe von {1} annehmen"
 			BelongsToInvasion: "{0} hat versucht, den NPC-Pool von '{1}' zu bearbeiten. Dieser Eintrag ist ein Ereignis, das von tModLoaders 'NPCID.Sets.BelongsToInvasion' unterstützt wird. SubmitEventNPCs wird weiterhin unterstützt, aber es wird empfohlen, stattdessen die Sets zu verwenden, wo gegeben. Die Verwendung dieser Sets für ModNPCs fügt sie automatisch dem NPC-Pool eines Eintrags hinzu, ohne zusätzliche Mod-Aufrufe."
+			// DownedIsNull: Submitted parameter determined to be null when creating a Boss Log Entry for [{0}]. Entry will not be added until ModCall is resolved.
 		}
 
 		Configs: {
@@ -696,30 +697,78 @@ Mods: {
 
 			FilterType: {
 				Tooltip: ""
-				// Show.Label: Show
-				// HideWhenCompleted.Label: Hide When Completed
-				// Hide.Label: Hide
+
+				Show: {
+					// Label: Show
+					// Tooltip: ""
+				}
+
+				HideWhenCompleted: {
+					// Label: Hide When Completed
+					// Tooltip: ""
+				}
+
+				Hide: {
+					// Label: Hide
+					// Tooltip: ""
+				}
 			}
 
 			CheckType: {
 				Tooltip: ""
-				Check_Empty.Label: ✓  [ ]
-				Check_X.Label: ✓  X
-				X_Empty.Label: X  [ ]
-				// StrikeThrough.Label: Strike-through
+
+				Check_Empty: {
+					Label: ✓  [ ]
+					// Tooltip: ""
+				}
+
+				Check_X: {
+					Label: ✓  X
+					// Tooltip: ""
+				}
+
+				X_Empty: {
+					Label: X  [ ]
+					// Tooltip: ""
+				}
+
+				StrikeThrough: {
+					// Label: Strike-through
+					// Tooltip: ""
+				}
 			}
 
 			TimeFormat: {
 				Tooltip: ""
-				// Standard.Label: Standard
-				// Simple.Label: Simple
+
+				Standard: {
+					// Label: Standard
+					// Tooltip: ""
+				}
+
+				Simple: {
+					// Label: Simple
+					// Tooltip: ""
+				}
 			}
 
 			MessageType: {
 				Tooltip: ""
-				// Disabled.Label: Disabled
-				// Generic.Label: Generic
-				// Unique.Label: Unique
+
+				Disabled: {
+					// Label: Disabled
+					// Tooltip: ""
+				}
+
+				Generic: {
+					// Label: Generic
+					// Tooltip: ""
+				}
+
+				Unique: {
+					// Label: Unique
+					// Tooltip: ""
+				}
 			}
 		}
 	}
