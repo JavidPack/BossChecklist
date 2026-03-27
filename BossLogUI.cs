@@ -15,7 +15,6 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
@@ -78,6 +77,7 @@ namespace BossChecklist
 		public BossLogModPlayer GetModPlayer => Main.LocalPlayer.GetModPlayer<BossLogModPlayer>();
 		public RecordModPlayer GetRecordModPlayer => Main.LocalPlayer.GetModPlayer<RecordModPlayer>();
 		public static bool AltKeyIsDown => Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.Right);
+		public static string GetLogLocalization(string localizationKey, params object[] args) => BossChecklist.instance.GetLocalization("Log." + localizationKey).Format(args);
 
 		// Navigation
 		public NavigationalButton NextPageButton;
@@ -133,12 +133,12 @@ namespace BossChecklist
 
 		// Credits related
 		public static readonly Dictionary<string, string> BossChecklistModContributors = new Dictionary<string, string>() {
-			{ "Jopojelly", "Creator & Owner" },
-			{ "SheepishShepherd", "Co-Owner & Maintainer"},
-			{ "direwolf420", "Code Contributor" },
-			{ "riveren", "Boss Log Sprites"},
-			{ "Orian", "Early Testing" },
-			{ "Panini", "Early Server Testing" }
+			{ "Jopojelly", "Owner" },
+			{ "SheepishShepherd", "CoOwner" },
+			{ "direwolf420", "Contributor" },
+			{ "riveren", "Sprites"},
+			{ "Orian", "EarlyTesting" },
+			{ "Panini", "EarlyTesting" }
 		};
 
 		// Record page related
@@ -155,7 +155,6 @@ namespace BossChecklist
 		public static bool OtherworldMusicUnlocked = false;
 
 		// Extra stuff
-		public const string LangLog = "Mods.BossChecklist.Log"; // Short name variable to quickly access the needed string for the Log translations
 		public static int headNum = -1;
 		public static readonly Color faded = new Color(128, 128, 128, 128);
 
@@ -295,7 +294,7 @@ namespace BossChecklist
 			CreditsTab = new LogTab(BossLogResources.Log_Tab, BossLogResources.Nav_Credits) {
 				Id = "Credits",
 				Anchor = -2,
-				hoverText = $"{LangLog}.Tabs.Credits" // hoverText will never change, so initialize it
+				hoverText = "Log.Tabs.Credits" // hoverText will never change, so initialize it
 			};
 
 			LeftPage = new LogPanel() {
@@ -378,7 +377,7 @@ namespace BossChecklist
 				RecordCategoryButtons.Add(
 					new NavigationalButton(BossLogResources.Nav_Record_Category[value], true) {
 						Record_Anchor = (RecordCategory)value,
-						hoverText = $"{LangLog}.Records.Category.{(RecordCategory)value}"
+						hoverText = $"Log.Records.Category.{(RecordCategory)value}"
 					}
 				);
 			}
@@ -571,7 +570,7 @@ namespace BossChecklist
 			RightPage.RemoveAllChildren();
 
 			// create a text box for the progression mode description
-			FittedTextPanel textBox = new FittedTextPanel($"{LangLog}.ProgressionMode.Description");
+			FittedTextPanel textBox = new FittedTextPanel("ProgressionMode.Description");
 			textBox.Width.Pixels = LeftPage.Width.Pixels - 30;
 			textBox.Height.Pixels = LeftPage.Height.Pixels - 70;
 			textBox.Left.Pixels = 10;
@@ -579,7 +578,7 @@ namespace BossChecklist
 			LeftPage.Append(textBox);
 
 			LogUIElement selectEnable = new LogUIElement(BossLogResources.Content_PromptSlot.Value) {
-				hoverText = $"{LangLog}.ProgressionMode.SelectEnable"
+				hoverText = "Log.ProgressionMode.SelectEnable"
 			};
 			selectEnable.Left.Pixels = RightPage.Width.Pixels / 2 - BossLogResources.Content_PromptSlot.Value.Width - 10;
 			selectEnable.Top.Pixels = 125;
@@ -595,7 +594,7 @@ namespace BossChecklist
 			RightPage.Append(selectEnable);
 
 			LogUIElement selectDisable = new LogUIElement(BossLogResources.Content_PromptSlot.Value) {
-				hoverText = $"{LangLog}.ProgressionMode.SelectDisable"
+				hoverText = "Log.ProgressionMode.SelectDisable"
 			};
 			selectDisable.Left.Pixels = RightPage.Width.Pixels / 2 + 10;
 			selectDisable.Top.Pixels = 125;
@@ -622,7 +621,7 @@ namespace BossChecklist
 			UIImage PromptCheck = new UIImage(BossChecklist.BossLogConfig.PromptDisabled ? BossLogResources.Check_Check : BossLogResources.Check_X);
 			togglePrompt.OnLeftClick += (a, b) => DisablePromptMessage(PromptCheck); // toggling the prompt check will update the child image
 
-			FittedTextPanel textOptions = new FittedTextPanel($"{LangLog}.ProgressionMode.DisablePrompt");
+			FittedTextPanel textOptions = new FittedTextPanel("ProgressionMode.DisablePrompt");
 			textOptions.Width.Pixels = togglePrompt.Width.Pixels - (togglePromptCheck.Left.Pixels + togglePromptCheck.Width.Pixels + 15);
 			textOptions.Height.Pixels = togglePrompt.Height.Pixels / 2;
 			textOptions.Left.Pixels = togglePromptCheck.Left.Pixels + togglePromptCheck.Width.Pixels;
@@ -780,29 +779,28 @@ namespace BossChecklist
 		/// </summary>
 		private string GenerateInteractionHoverText() {
 			string interactions = null;
-			string HiddenTexts = LangLog + ".HintTexts";
 			if (PageNum == Page_TableOfContents) {
 				if (HiddenEntriesMode) {
 					interactions =
-					Language.GetTextValue($"{HiddenTexts}.HideEntry") +
-					(BossChecklist.BossLogConfig.Debug.EnabledResetOptions ? "\n" + Language.GetTextValue($"{HiddenTexts}.ClearHidden") : "");
+					GetLogLocalization("HintTexts.HideEntry") +
+					(BossChecklist.BossLogConfig.Debug.EnabledResetOptions ? "\n" + GetLogLocalization("HintTexts.ClearHidden") : "");
 				}
 				else {
 					interactions =
-					Language.GetTextValue($"{HiddenTexts}.MarkEntry") +
-					(BossChecklist.BossLogConfig.Debug.EnabledResetOptions ? "\n" + Language.GetTextValue($"{HiddenTexts}.ClearMarked") : "");
+					GetLogLocalization("HintTexts.MarkEntry") +
+					(BossChecklist.BossLogConfig.Debug.EnabledResetOptions ? "\n" + GetLogLocalization("HintTexts.ClearMarked") : "");
 				}
 			}
 			else if (PageNum >= 0 && BossChecklist.BossLogConfig.Debug.EnabledResetOptions) {
 				if (SelectedSubPage == PageCategory.Records && GetLogEntryInfo.type == EntryType.Boss) {
 					interactions =
-						Language.GetTextValue($"{HiddenTexts}.ClearAllRecords") + "\n" +
-						Language.GetTextValue($"{HiddenTexts}.ClearRecord");
+						GetLogLocalization("HintTexts.ClearAllRecords") + "\n" +
+						GetLogLocalization("HintTexts.ClearRecord");
 				}
 				else if (SelectedSubPage == PageCategory.LootAndCollectibles) {
 					interactions =
-						Language.GetTextValue($"{HiddenTexts}.RemoveItem") + "\n" +
-						Language.GetTextValue($"{HiddenTexts}.ClearItems");
+						GetLogLocalization("HintTexts.RemoveItem") + "\n" +
+						GetLogLocalization("HintTexts.ClearItems");
 				}
 			}
 			return BossChecklist.BossLogConfig.ShowInteractionTooltips ? interactions : null;
@@ -828,7 +826,8 @@ namespace BossChecklist
 				if (BossChecklist.BossLogConfig.Debug.AccessInternalNames && GetLogEntryInfo.modSource != "Unknown") {
 					NavigationalButton keyButton = new NavigationalButton(BossLogResources.Content_BossKey, true) {
 						Id = "CopyKey",
-						hoverText = $"{Language.GetTextValue($"{LangLog}.EntryPage.CopyKey")}:\n{GetLogEntryInfo.Key}"
+						hoverText = "Log.EntryPage.CopyKey",
+						hoverTextParams = [GetLogEntryInfo.Key]
 					};
 					keyButton.Left.Pixels = 5;
 					keyButton.Top.Pixels = 55;
@@ -852,7 +851,7 @@ namespace BossChecklist
 					brokenPanel.Left.Pixels = 3;
 					RightPage.Append(brokenPanel);
 
-					FittedTextPanel brokenDisplay = new FittedTextPanel($"{LangLog}.EntryPage.LogFeaturesNotAvailable");
+					FittedTextPanel brokenDisplay = new FittedTextPanel("EntryPage.LogFeaturesNotAvailable");
 					brokenDisplay.Height.Pixels = 200;
 					brokenDisplay.Width.Pixels = 340;
 					brokenDisplay.Top.Pixels = -12;
@@ -883,7 +882,7 @@ namespace BossChecklist
 			entriesListPreHardmode.PaddingTop = entriesListHardmode.PaddingTop = 5;
 
 			// Pre-Hard Mode List Title
-			string title = Language.GetTextValue($"{LangLog}.TableOfContents.PreHardmode");
+			string title = GetLogLocalization("TableOfContents.PreHardmode");
 			UIText leftPageTitle = new UIText(title, 0.6f, true) {
 				TextColor = Colors.RarityAmber
 			};
@@ -892,7 +891,7 @@ namespace BossChecklist
 			LeftPage.Append(leftPageTitle);
 
 			// Hard Mode List Title
-			title = Language.GetTextValue($"{LangLog}.TableOfContents.Hardmode");
+			title = GetLogLocalization("TableOfContents.Hardmode");
 			UIText rightPageTitle = new UIText(title, 0.6f, true) {
 				TextColor = Colors.RarityAmber
 			};
@@ -1062,15 +1061,16 @@ namespace BossChecklist
 		/// </summary>
 		private void UpdateCredits() {
 			// Developers Title
-			string title = Language.GetTextValue($"{LangLog}.Credits.Devs");
+			string title = GetLogLocalization("Credits.Devs");
 			UIText leftPageTitle = new UIText(title, 0.6f, true) {
 				TextColor = Colors.RarityAmber
 			};
+			leftPageTitle.Top.Pixels = 18;
 			leftPageTitle.Left.Pixels = (int)((LeftPage.Width.Pixels / 2) - (FontAssets.DeathText.Value.MeasureString(title).X * 0.6f / 2));
 			LeftPage.Append(leftPageTitle);
 
 			// Registered Mods Title
-			title = Language.GetTextValue($"{LangLog}.Credits.Mods");
+			title = GetLogLocalization("Credits.Mods");
 			UIText rightPageTitle = new UIText(title, 0.6f, true) {
 				TextColor = Colors.RarityAmber
 			};
@@ -1079,7 +1079,7 @@ namespace BossChecklist
 			RightPage.Append(rightPageTitle);
 
 			// Registered Mods subtitle
-			title = Language.GetTextValue($"{LangLog}.Credits.Notice");
+			title = GetLogLocalization("Credits.Notice");
 			UIText subtitle = new UIText(title) {
 				TextColor = Color.Salmon
 			};
@@ -1119,14 +1119,11 @@ namespace BossChecklist
 			}
 			else {
 				// if none of the loaded mods have registered an entry, convey this to the user
-				string NoModsTitle = Language.GetTextValue($"{LangLog}.Credits.ModsEmpty");
-				registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_NoMods, NoModsTitle, "") { Id = "NoMods" });
+				registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_NoMods, "Credits.ModsEmpty") { Id = "NoMods" });
 			}
 
 			// add a slot that tells mod developers they can register their own mods
-			string RegisterTitle = Language.GetTextValue($"{LangLog}.Credits.Register");
-			string RegisterDescription = Language.GetTextValue($"{LangLog}.Credits.Learn");
-			registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_Register, RegisterTitle, RegisterDescription) { Id = "Register" });
+			registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_Register, "Credits.Register", "Credits.Learn") { Id = "Register" });
 			RightPage.Append(registeredModsList);
 
 			ScrollBarRightPage.SetView(10f, 1000f);
@@ -1154,11 +1151,7 @@ namespace BossChecklist
 			// The entry also must be fully supported to have these buttons created
 
 			if (GetLogEntryInfo.type != EntryType.Boss) {
-				RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot);
-				if (GetLogEntryInfo.type == EntryType.MiniBoss) {
-					slot.title = Language.GetTextValue("Mods.BossChecklist.Log.Records.Kills");
-					slot.value = GetRecordModPlayer.MiniBossKills.ContainsKey(GetLogEntryInfo.Key) ? GetRecordModPlayer.MiniBossKills[GetLogEntryInfo.Key].ToString() : "0";
-				}
+				RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot, GetLogEntryInfo);
 				slot.Left.Pixels = (int)(RightPage.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
 				slot.Top.Pixels = 35 + 75;
 				RightPage.Append(slot);
@@ -1167,13 +1160,12 @@ namespace BossChecklist
 				foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
 					EntryInfo relatedEntry = BossChecklist.bossTracker.FindEntryFromKey(entryKey);
 
-					string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 					Color iconColor = relatedEntry.IsAutoDownedOrMarked ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
 					NavigationalButton entryIcon = new NavigationalButton(relatedEntry.headIconTextures().First(), false, iconColor) {
 						Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
 						Anchor = relatedEntry.GetIndex,
-						hoverText = hoverText
+						hoverText = relatedEntry.DisplayName + "\n" + GetLogLocalization("EntryPage.ViewPage")
 					};
 					entryIcon.Left.Pixels = GetLogEntryInfo.type == EntryType.Event ? 15 + offset : (int)(slot.Width.Pixels - entryIcon.Width.Pixels - 15);
 					entryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - entryIcon.Height.Pixels / 2);
@@ -1222,7 +1214,7 @@ namespace BossChecklist
 
 				// create 4 slots for each stat category value
 				for (int i = 0; i < 4; i++) {
-					RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot, SelectedRecordCategory, i, recordIndex);
+					RecordDisplaySlot slot = new RecordDisplaySlot(BossLogResources.Content_RecordSlot, SelectedRecordCategory, i);
 					slot.Left.Pixels = (int)(RightPage.Width.Pixels / 2 - BossLogResources.Content_RecordSlot.Value.Width / 2);
 					slot.Top.Pixels = (int)(35 + (75 * (i + 1)));
 					RightPage.Append(slot);
@@ -1266,13 +1258,12 @@ namespace BossChecklist
 						foreach (string entryKey in GetLogEntryInfo.relatedEntries) {
 							EntryInfo relatedEntry = BossChecklist.bossTracker.FindEntryFromKey(entryKey);
 
-							string hoverText = relatedEntry.DisplayName + "\n" + Language.GetTextValue($"{LangLog}.EntryPage.ViewPage");
 							Color iconColor = relatedEntry.IsAutoDownedOrMarked ? Color.White : MaskBoss(relatedEntry) == Color.Black ? Color.Black : faded;
 
 							NavigationalButton entryIcon = new NavigationalButton(relatedEntry.headIconTextures().First(), false, iconColor) {
 								Id = GetLogEntryInfo.type == EntryType.Event ? "eventIcon" : "bossIcon",
 								Anchor = relatedEntry.GetIndex,
-								hoverText = hoverText
+								hoverText = relatedEntry.DisplayName + "\n" + GetLogLocalization("EntryPage.ViewPage")
 							};
 							entryIcon.Left.Pixels = GetLogEntryInfo.type == EntryType.Event ? 15 + offset : (int)(slot.Width.Pixels - entryIcon.Width.Pixels - 15);
 							entryIcon.Top.Pixels = (int)(slot.Height.Pixels / 2 - entryIcon.Height.Pixels / 2);
@@ -1298,19 +1289,17 @@ namespace BossChecklist
 
 							string compValueString = i == 2 ? PersonalRecords.TimeConversion(compValue) : PersonalRecords.HitCount(compValue);
 							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(recordValue, compValue, out Color color) : PersonalRecords.HitCountDiff(recordValue, compValue, out color);
-							string path = $"{LangLog}.Records.Category.{SelectedRecordComparison}";
 							trophy = new NavigationalButton(BossLogResources.RequestItemTexture(ItemID.GolfTrophySilver), false) {
 								Id = "CompareStat",
-								hoverText = $"[c/{Color.Wheat.Hex3()}:{Language.GetTextValue(path)}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",
+								hoverText = $"[c/{Color.Wheat.Hex3()}:{GetLogLocalization($"Records.Category.{SelectedRecordComparison}")}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",
 								hoverTextColor = color
 							};
 						}
 						else if (SelectedRecordCategory == RecordCategory.PersonalBest && ((i == 2 && GetPlayerRecords.durationPrevBest != -1) || (i == 3 && GetPlayerRecords.hitsTakenPrevBest != -1))) {
 							string compValueString = i == 2 ? PersonalRecords.TimeConversion(GetPlayerRecords.durationPrevBest) : PersonalRecords.HitCount(GetPlayerRecords.hitsTakenPrevBest);
 							string diffValue = i == 2 ? PersonalRecords.TimeConversionDiff(GetPlayerRecords.durationBest, GetPlayerRecords.durationPrevBest, out Color color) : PersonalRecords.HitCountDiff(GetPlayerRecords.hitsTakenBest, GetPlayerRecords.hitsTakenPrevBest, out color);
-							string path = $"{LangLog}.Records.PreviousBest";
 							trophy = new NavigationalButton(BossLogResources.RequestItemTexture(ItemID.GolfTrophyBronze), false) {
-								hoverText = $"[c/{Color.Wheat.Hex3()}:{Language.GetTextValue(path)}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",
+								hoverText = $"[c/{Color.Wheat.Hex3()}:{GetLogLocalization("Records.PreviousBest")}: {compValueString}]{(diffValue != "" ? $"\n{diffValue}" : "")}",
 								hoverTextColor = color
 							};
 						}
@@ -1368,7 +1357,7 @@ namespace BossChecklist
 			// Once the spawn description has been made, start structuring the spawn items showcase
 			// If the spawn item list is empty, inform the player that there are no summon items for the boss/event through text
 			if (GetLogEntryInfo.spawnItem.Count == 0 || GetLogEntryInfo.spawnItem[SpawnItemSelected] == ItemID.None) {
-				UIText info = new UIText(Language.GetTextValue($"{LangLog}.SpawnInfo.NoSpawnItem", Language.GetTextValue($"{LangLog}.Common.{GetLogEntryInfo.type}")));
+				UIText info = new UIText(GetLogLocalization("SpawnInfo.NoSpawnItem", GetLogLocalization($"Common.{GetLogEntryInfo.type}")));
 				info.Left.Pixels = (RightPage.Width.Pixels / 2) - (FontAssets.MouseText.Value.MeasureString(info.Text).X / 2) - 5;
 				info.Top.Pixels = 300;
 				RightPage.Append(info);
@@ -1451,8 +1440,7 @@ namespace BossChecklist
 
 			// If no recipes were found, skip the recipe item slot code and inform the user the item is not craftable
 			if (TotalRecipes == 0) {
-				string noncraftable = Language.GetTextValue($"{LangLog}.SpawnInfo.Noncraftable");
-				UIText craftText = new UIText(noncraftable, 0.8f);
+				UIText craftText = new UIText(GetLogLocalization("SpawnInfo.Noncraftable"), 0.8f);
 				craftText.Left.Pixels = 10;
 				craftText.Top.Pixels = 205;
 				RightPage.Append(craftText);
@@ -1460,8 +1448,7 @@ namespace BossChecklist
 			}
 			else {
 				// display where the recipe originates form
-				string recipeMessage = Language.GetTextValue($"{LangLog}.SpawnInfo.RecipeFrom", recipeMod);
-				UIText ModdedRecipe = new UIText(recipeMessage, 0.8f);
+				UIText ModdedRecipe = new UIText(GetLogLocalization("SpawnInfo.RecipeFrom", recipeMod), 0.8f);
 				ModdedRecipe.Left.Pixels = 10;
 				ModdedRecipe.Top.Pixels = 205;
 				RightPage.Append(ModdedRecipe);
@@ -1470,10 +1457,10 @@ namespace BossChecklist
 				if (TotalRecipes > 1) {
 					NavigationalButton CycleItem = new NavigationalButton(BossLogResources.Content_Cycle, true) {
 						Id = "CycleItem_" + TotalRecipes,
-						hoverText = $"{LangLog}.SpawnInfo.CycleRecipe"
+						hoverText = "Log.SpawnInfo.CycleRecipe"
 					};
-					CycleItem.Left.Pixels = 20 + (int)(TextureAssets.InventoryBack9.Width() * 0.85f / 2 - BossLogResources.Content_Cycle.Value.Width / 2);
-					CycleItem.Top.Pixels = 240 + (int)(TextureAssets.InventoryBack9.Height() * 0.85f / 2 - BossLogResources.Content_Cycle.Value.Height / 2);
+					CycleItem.Left.Pixels = 20 + (48 * 6) + ((int)(TextureAssets.InventoryBack9.Width() * 0.85f) / 2 - CycleItem.Width.Pixels / 2); // appears on the right side, above the 7th ingredient slot
+					CycleItem.Top.Pixels = spawnItemSlot.Top.Pixels + (int)(spawnItemSlot.Height.Pixels / 2 - CycleItem.Height.Pixels / 2);
 					CycleItem.OnLeftClick += ChangeSpawnItem;
 					RightPage.Append(CycleItem);
 				}
@@ -1511,7 +1498,7 @@ namespace BossChecklist
 				// If there were no tiles required for the recipe, add a 'By Hand' slot
 				LogItemSlot byHandCrafting = new LogItemSlot(new Item(ItemID.HandOfCreation), ItemSlot.Context.EquipArmorVanity, 0.85f) {
 					Id = LogItemSlot.SpawnItemCraftingSlot,
-					hoverText = $"{LangLog}.SpawnInfo.ByHand",
+					hoverText = "Log.SpawnInfo.ByHand",
 					hasItem = true
 				};
 				byHandCrafting.Top.Pixels = 240 + (48 * (slotPos.X + 1));

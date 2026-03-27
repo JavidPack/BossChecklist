@@ -249,7 +249,7 @@ namespace BossChecklist
 				int typeCount = 0;
 				foreach (KeyValuePair<string, object> submission in orphan.values) {
 					if (FindEntryFromKey(submission.Key) is not EntryInfo entry) {
-						BossChecklist.instance.LogWarning("InvalidOrphanKey", requiresConfig: false, orphan.type, orphan.modCallerDisplayName, submission.Key);
+						BossChecklist.instance.LogModCallVerbose("InvalidOrphanKey", isWarning: true, orphan.type, orphan.modCallerDisplayName, submission.Key);
 						continue;
 					}
 
@@ -270,15 +270,15 @@ namespace BossChecklist
 						if (entry.type == EntryType.Event) {
 							entry.npcIDs.AddRange(InterpretDataAsListOfInt);
 							if (EventKeysWhoHaveBelongToInvasionSets.Contains(submission.Key) && BossChecklist.BossLogConfig.Debug.ModCallLogVerbose)
-								BossChecklist.instance.LogWarning("BelongsToInvasion", requiresConfig: true, orphan.modCallerDisplayName, submission.Key);
+								BossChecklist.instance.LogModCallVerbose("BelongsToInvasion", isWarning: true, orphan.modCallerDisplayName, submission.Key);
 						}
 						else {
-							BossChecklist.instance.LogWarning("InvalidEventEntry", requiresConfig: false, entry.Key, OrphanType.SubmitEventNPCs);
+							BossChecklist.instance.LogModCallVerbose("InvalidEventEntry", isWarning: true, entry.Key, OrphanType.SubmitEventNPCs);
 						}
 					}
 				}
 
-				BossChecklist.instance.LogModCallInfo("SuccessfulOrphanData", orphan.modCallerDisplayName, typeCount, orphan.type);
+				BossChecklist.instance.LogModCallVerbose("SuccessfulOrphanData", isWarning: false, orphan.modCallerDisplayName, typeCount, orphan.type);
 			}
 		}
 
@@ -359,13 +359,13 @@ namespace BossChecklist
 				string modName = ModLoader.TryGetMod(value.Key, out Mod mod) ? mod.DisplayName : value.Key;
 
 				if (bossKeys.Count > 0)
-					BossChecklist.instance.LogModCallInfo("RegisteredBosses", modName, value.Value[0], "[" + string.Join(", ", bossKeys) + "]");
+					BossChecklist.instance.LogModCallVerbose("RegisteredBosses", isWarning: false, modName, value.Value[0], "[" + string.Join(", ", bossKeys) + "]");
 
 				if (minibossKeys.Count > 0)
-					BossChecklist.instance.LogModCallInfo("RegisteredMiniBosses", modName, value.Value[1], "[" + string.Join(", ", minibossKeys) + "]");
+					BossChecklist.instance.LogModCallVerbose("RegisteredMiniBosses", isWarning: false, modName, value.Value[1], "[" + string.Join(", ", minibossKeys) + "]");
 
 				if (eventKeys.Count > 0)
-					BossChecklist.instance.LogModCallInfo("RegisteredEvents", modName, value.Value[2], "[" + string.Join(", ", eventKeys) + "]");
+					BossChecklist.instance.LogModCallVerbose("RegisteredEvents", isWarning: false, modName, value.Value[2], "[" + string.Join(", ", eventKeys) + "]");
 			}
 
 			if (AnyModHasOldCall) {
@@ -386,10 +386,10 @@ namespace BossChecklist
 				}
 
 				foreach (var oldCall in OldCalls) {
-					BossChecklist.instance.LogWarning("OldCall", requiresConfig: true, oldCall.Key, OldToNewCall(oldCall.Key), oldCall.Key, string.Join(", ", oldCall.Value));
+					BossChecklist.instance.LogModCallVerbose("OldCall", isWarning: true, oldCall.Key, OldToNewCall(oldCall.Key), oldCall.Key, string.Join(", ", oldCall.Value));
 				}
 				OldCalls.Clear();
-				BossChecklist.instance.LogModCallInfo("ModCallDocumentation");
+				BossChecklist.instance.LogModCallVerbose("ModCallDocumentation");
 			}
 		}
 
@@ -1104,7 +1104,7 @@ namespace BossChecklist
 
 		internal void AddOrphanData(OrphanType type, Mod mod, Dictionary<string, object> values) {
 			if (values is null) {
-				BossChecklist.instance.LogWarning("OldCall_Orphan", requiresConfig: false, type, mod.Name);
+				BossChecklist.instance.LogModCallVerbose("OldCall_Orphan", isWarning: true, type, mod.Name);
 			}
 			else {
 				ExtraData.Add(new OrphanInfo(type, mod.DisplayName, values)); // Mod instance is checked to be valid before created within ModCall

@@ -64,13 +64,20 @@ Mods: {
 				ModsEmpty: Aucun de vos mods chargés n'est enregistré!
 				Register: Enregistrez votre propre mod !
 				Learn: Voir la description du mod pour savoir comment procéder.
+
+				Titles: {
+					// Owner: Creator & Owner
+					// CoOwner: Co-Owner & Maintainer
+					// Contributor: Code Contributor
+					// Sprites: Boss Log Sprites
+					// EarlyTesting: Early Testing
+				}
 			}
 
 			EntryPage: {
 				Defeated: Vaincu en {0}
 				Undefeated: Invaincu en {0}
 				CopyKey: Cliquer pour copier l'ID interne du Boss dans le presse-papiers
-				CopySource: Cliquer pour copier la source du mod dans le presse-papiers
 				ViewPage: Cliquer pour voir la page
 				NotImplemented: L'affichage de cette page n'est pas disponible. Le mod n'a pas soumis de page ou l'a mal configurée.
 				LogFeaturesNotAvailable: Les entrées, les objets d'invocation et le tableau de butin de cette page sont désactivés. Le mod n'a pas fourni suffisamment d'informations pour la page ou l'a mal configuré.
@@ -81,9 +88,8 @@ Mods: {
 				NewWorldRecord: Nouveau record du monde!
 				NoRecord: Aucun record
 				Unchallenged: Invaincu
-				Kills: Eliminations
-				Deaths: Décès
-				Total: Total
+				// KDR: "{0} kills / {1} deaths"
+				// TotalKills: Total kills
 				Hours: "{0}h {1}m {2}s ({3}ms)"
 				Minutes: "{0}m {1}s ({2}ms)"
 				Seconds: "{0} second{^0:e;es} ({1}ms)"

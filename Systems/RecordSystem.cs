@@ -227,9 +227,9 @@ namespace BossChecklist.Systems
 
 		public void SubmitCombatText(int recordIndex) {
 			if (NewRecordState == RecordState_PersonalBest)
-				CombatText.NewText(Player.getRect(), Color.LightYellow, Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewRecord"), true);
+				CombatText.NewText(Player.getRect(), Color.LightYellow, BossLogUI.GetLogLocalization("Records.NewRecord"), true);
 			else if (NewRecordState == RecordState_WorldRecord)
-				CombatText.NewText(Player.getRect(), Color.LightYellow, Language.GetTextValue($"{BossLogUI.LangLog}.Records.NewWorldRecord"), true);
+				CombatText.NewText(Player.getRect(), Color.LightYellow, BossLogUI.GetLogLocalization("Records.NewWorldRecord"), true);
 
 			if (NewRecordState != RecordState_NoRecord)
 				hasNewRecord[recordIndex] = true;

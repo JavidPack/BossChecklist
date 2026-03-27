@@ -64,13 +64,20 @@ Mods: {
 				ModsEmpty: 你已加载的Mod没有注册.
 				Register: 注册你自己的Mod!
 				Learn: 查看Mod描述以学习
+
+				Titles: {
+					// Owner: Creator & Owner
+					// CoOwner: Co-Owner & Maintainer
+					// Contributor: Code Contributor
+					// Sprites: Boss Log Sprites
+					// EarlyTesting: Early Testing
+				}
 			}
 
 			EntryPage: {
 				Defeated: 在{0}中已被击败
 				Undefeated: 在{0}中未被击败
 				CopyKey: 点击以复制内部'Boss键值'至剪切板
-				CopySource: 点击以复制内部'Mod源'至剪切板
 				ViewPage: 点击以查看页面
 				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
 				LogFeaturesNotAvailable: 记录、召唤物和战利品表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
@@ -81,9 +88,8 @@ Mods: {
 				NewWorldRecord: 新的世界纪录!
 				NoRecord: 没有记录!
 				Unchallenged: 没有挑战过!
-				Kills: 击杀次数
-				Deaths: 死亡次数
-				Total: 总计
+				// KDR: "{0} kills / {1} deaths"
+				// TotalKills: Total kills
 				Hours: "{0}时{1}分{2}秒({3}毫秒)"
 				Minutes: "{0}分{1}秒({2}毫秒)"
 				Seconds: "{0}秒{^0:分秒;分秒}({1}毫秒)"

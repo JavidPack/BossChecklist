@@ -151,7 +151,7 @@ namespace BossChecklist
 			// If the Unique message was empty/null or the player is using Generic despawn messages, try to find an appropriate despawn message to send
 			// Return a generic despawn message if any player is left alive or return a boss victory despawn message if all player's were killed
 			if (BossChecklist.FeatureConfig.DespawnMessageType != FeatureConfiguration.MessageType.Disabled)
-				return Language.GetText(Main.player.Any(plr => plr.active && !plr.dead) ? $"{DownedSystem.LangChat}.Despawn.Generic" : $"{DownedSystem.LangChat}.Loss.Generic");
+				return BossChecklist.instance.GetLocalization(Main.player.Any(plr => plr.active && !plr.dead) ? "ChatMessages.Despawn.Generic" : "ChatMessages.Loss.Generic");
 
 			return null; // The despawn message feature was disabled. Return an empty message.
 		}
@@ -166,7 +166,7 @@ namespace BossChecklist
 
 			if (BossChecklist.FeatureConfig.LimbMessages != FeatureConfiguration.MessageType.Disabled) {
 				string specialCase = (npc.type == NPCID.SkeletronHand || npc.type == NPCID.MoonLordHead) ? new NPCDefinition(npc.type).Name : "";
-				return Language.GetText($"{DownedSystem.LangChat}.Defeated.Generic" + specialCase);
+				return BossChecklist.instance.GetLocalization($"ChatMessages.Defeated.Generic{specialCase}");
 			}
 
 			return null;
@@ -255,8 +255,8 @@ namespace BossChecklist
 					}
 					else {
 						// Mod registered boss for vanilla npc or no npcids?
-						name ??= Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
-						spawnInfo ??= () => Language.GetText("Mods.BossChecklist.BossSpawnInfo.Unknown");
+						name ??= BossChecklist.instance.GetLocalization("BossSpawnInfo.Unknown");
+						spawnInfo ??= () => BossChecklist.instance.GetLocalization("BossSpawnInfo.Unknown");
 					}
 				}
 			}
@@ -341,7 +341,7 @@ namespace BossChecklist
 
 		internal EntryInfo WithCustomLimbs(List<int> limbs) {
 			foreach (int npc in limbs) {
-				this.npcLimbs.TryAdd(npc, Language.GetOrRegister($"Mods.BossChecklist.ChatMessages.Defeated.{new NPCDefinition(npc).Name}"));
+				this.npcLimbs.TryAdd(npc, Language.GetOrRegister($"Mods.BossChecklist.ChatMessages.Defeated.{new NPCDefinition(npc).Name}")); // future-proofing for limb messages that may be added later
 			}
 			return this;
 		}
@@ -397,14 +397,14 @@ namespace BossChecklist
 
 				customMessages = delegate (NPC npc) {
 					if (Main.player.All(plr => !plr.active || plr.dead)) {
-						return Language.GetText($"{DownedSystem.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
+						return BossChecklist.instance.GetLocalization($"ChatMessages.Loss.{nameKey}"); // Despawn message when all players are dead
 					}
 					else if (Main.dayTime && DayDespawners.Contains(npc.type)) {
-						return Language.GetText($"{DownedSystem.LangChat}.Despawn.Day"); // Despawn message when it turns to day
+						return BossChecklist.instance.GetLocalization("ChatMessages.Despawn.Day"); // Despawn message when it turns to day
 					}
 
 					// unique despawn messages should default to the generic message when no conditions are met
-					return Language.GetText($"{DownedSystem.LangChat}.Despawn.Generic");
+					return BossChecklist.instance.GetLocalization("ChatMessages.Despawn.Generic");
 				};
 			}
 
@@ -418,7 +418,7 @@ namespace BossChecklist
 				npcIDs: new List<int>() { npcID },
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
-					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
+					{ "spawnInfo", BossChecklist.instance.GetLocalization($"BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
@@ -442,14 +442,14 @@ namespace BossChecklist
 
 				customMessages = delegate (NPC npc) {
 					if (Main.player.All(plr => !plr.active || plr.dead)) {
-						return Language.GetText($"{DownedSystem.LangChat}.Loss.{nameKey}"); // Despawn message when all players are dead
+						return BossChecklist.instance.GetLocalization($"ChatMessages.Loss.{nameKey}"); // Despawn message when all players are dead
 					}
 					else if (Main.dayTime && DayDespawners.Contains(npc.type)) {
-						return Language.GetText($"{DownedSystem.LangChat}.Despawn.Day"); // Despawn message when it turns to day
+						return BossChecklist.instance.GetLocalization("ChatMessages.Despawn.Day"); // Despawn message when it turns to day
 					}
 
 					// unique despawn messages should default to the generic message when no conditions are met
-					return Language.GetText($"{DownedSystem.LangChat}.Despawn.Generic");
+					return BossChecklist.instance.GetLocalization("ChatMessages.Despawn.Generic");
 				};
 			}
 
@@ -463,7 +463,7 @@ namespace BossChecklist
 				npcIDs: ids,
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
-					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
+					{ "spawnInfo", BossChecklist.instance.GetLocalization($"BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
@@ -483,7 +483,7 @@ namespace BossChecklist
 				npcIDs: BossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
-					{ "spawnInfo", Language.GetText($"Mods.BossChecklist.BossSpawnInfo.{nameKey}") },
+					{ "spawnInfo", BossChecklist.instance.GetLocalization($"BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 				}

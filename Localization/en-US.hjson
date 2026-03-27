@@ -64,13 +64,24 @@ Mods: {
 				ModsEmpty: None of your loaded mods are registered!
 				Register: Register your own mod!
 				Learn: View the mod description to learn how.
+
+				Titles: {
+					Owner: Creator & Owner
+					CoOwner: Co-Owner & Maintainer
+					Contributor: Code Contributor
+					Sprites: Boss Log Sprites
+					EarlyTesting: Early Testing
+				}
 			}
 
 			EntryPage: {
-				Defeated: Defeated in {0}
+				Defeated: Defeated in {0}{1}
 				Undefeated: Undefeated in {0}
-				CopyKey: Click to copy internal 'boss key' to clipboard
-				CopySource: Click to copy internal 'mod source' to clipboard
+				CopyKey:
+					'''
+					Click to copy the internal 'entry key' to clipboard
+					{0}
+					'''
 				ViewPage: Click to view page
 				NotImplemented: The display for this page is unavailable. The mod has either not submitted a page or has it improperly set up.
 				LogFeaturesNotAvailable: Records, spawn items, and the loot table are disabled for this page. The mod has either not submitted enough info for a page or has it improperly set up.
@@ -81,9 +92,8 @@ Mods: {
 				NewWorldRecord: New World Record!
 				NoRecord: No record
 				Unchallenged: Unchallenged
-				Kills: kills
-				Deaths: deaths
-				Total: Total
+				KDR: "{0} kills / {1} deaths"
+				TotalKills: Total kills
 				Hours: "{0}h {1}m {2}s ({3}ms)"
 				Minutes: "{0}m {1}s ({2}ms)"
 				Seconds: "{0} secon{^0:d;ds} ({1}ms)"

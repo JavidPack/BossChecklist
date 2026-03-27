@@ -23,8 +23,6 @@ namespace BossChecklist.Systems
 		public static bool downedFlyingDutchman = false;
 		public static bool downedMartianSaucer = false;
 
-		public const string LangChat = "Mods.BossChecklist.ChatMessages"; // used in multiple files for custom defeated and despawn messages
-
 		public override void ClearWorld() {
 			downedBloodMoon = downedFrostMoon = downedPumpkinMoon = downedSolarEclipse = false; // clear moon downs
 			downedDarkMage = downedOgre = downedFlyingDutchman = downedMartianSaucer = false; // clear mini-boss downs
@@ -124,10 +122,10 @@ namespace BossChecklist.Systems
 				string announcementType = "";
 				if (BossChecklist.FeatureConfig.MoonMessages == FeatureConfiguration.MessageType.Generic) {
 					string eventTypeLocal = Language.Exists($"Bestiary_Events.{eventType}") ? Language.GetTextValue($"Bestiary_Events.{eventType}") : Language.GetTextValue($"Bestiary_Invasions.{eventType}");
-					announcementType = Language.GetText($"{LangChat}.EventEnd.Generic").Format(eventType == "Eclipse" ? eventTypeLocal.ToLower() : eventTypeLocal);
+					announcementType = BossChecklist.instance.GetLocalization("ChatMessages.EventEnd.Generic").Format(eventType == "Eclipse" ? eventTypeLocal.ToLower() : eventTypeLocal);
 				}
 				else if (BossChecklist.FeatureConfig.MoonMessages == FeatureConfiguration.MessageType.Unique) {
-					announcementType = Language.GetTextValue($"{LangChat}.EventEnd.{eventType}");
+					announcementType = BossChecklist.instance.GetLocalization($"ChatMessages.EventEnd.{eventType}").Value;
 				}
 
 				if (!string.IsNullOrEmpty(announcementType))

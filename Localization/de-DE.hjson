@@ -64,13 +64,20 @@ Mods: {
 				ModsEmpty: Keiner der geladenen Mods hat im Boss Log einen Eintrag. Wenn ihr wollt, dass eure Lieblingsmods aufgenommen werden, informiert das Mod-Team auf der Steam-Workshop-Seite oder dem Discord-Server!
 				Register: Registriere deine eigene Mod!
 				Learn: Lies die beschreibung für mehr Infos!
+
+				Titles: {
+					// Owner: Creator & Owner
+					// CoOwner: Co-Owner & Maintainer
+					// Contributor: Code Contributor
+					// Sprites: Boss Log Sprites
+					// EarlyTesting: Early Testing
+				}
 			}
 
 			EntryPage: {
 				Defeated: Besiegt in {0}
 				Undefeated: Unbesiegt in {0}
 				CopyKey: Klicken, um den internen "boss key" in die Zwischenablage zu kopieren
-				CopySource: Klicken, um die interne "mod source" in die Zwischenablage zu kopieren
 				ViewPage: Zum Anzeigen der Seite klicken
 				NotImplemented: Die Anzeige für diese Seite ist nicht verfügbar. Die Mod hat entweder keine Seite eingereicht oder sie ist nicht richtig eingerichtet.
 				LogFeaturesNotAvailable: Rekorde, Spawngegenstände und die Beutetabelle sind für diese Seite deaktiviert. Die Mod hat entweder nicht genug Informationen für eine Seite eingereicht oder sie nicht richtig eingerichtet.
@@ -81,9 +88,8 @@ Mods: {
 				NewWorldRecord: Welt Rekord!
 				NoRecord: Kein Rekord
 				Unchallenged: Nicht herausgefordert
-				Kills: Kills
-				Deaths: Tode
-				Total: Insgesamt
+				// KDR: "{0} kills / {1} deaths"
+				// TotalKills: Total kills
 				Hours: "{0}h {1}m {2}s ({3}ms)"
 				Minutes: "{0}m {1}s ({2}ms)"
 				Seconds: "{0} Sekun{^0:d;den} ({1}ms)"

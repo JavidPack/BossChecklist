@@ -30,6 +30,7 @@ namespace BossChecklist.Systems
 		internal BossRadarUI BossRadarUI;
 
 		internal string UIHoverText = "";
+		internal object[] UIHoverTextParams = [];
 		internal Color UIHoverTextColor = default;
 
 		//Zoom level, (for UIs)
@@ -205,11 +206,18 @@ namespace BossChecklist.Systems
 				layers.Insert(++mouseTextIndex, new LegacyGameInterfaceLayer("BossChecklist: Custom UI Hover Text",
 					delegate {
 						// Detect if the hover text is a single localization key and draw the hover text accordingly
-						if (!string.IsNullOrEmpty(UIHoverText))
-							DrawTooltipBackground(Language.GetTextValue(UIHoverText), UIHoverTextColor);
+						if (!string.IsNullOrEmpty(UIHoverText)) {
+							if (Language.Exists("Mods.BossChecklist." + UIHoverText)) {
+								DrawTooltipBackground(Mod.GetLocalization(UIHoverText).Format(UIHoverTextParams), UIHoverTextColor);
+							}
+							else {
+								DrawTooltipBackground(Language.GetText(UIHoverText).Format(UIHoverTextParams), UIHoverTextColor);
+							}
+						}
 
 						// Reset text and color back to default state
 						UIHoverText = "";
+						UIHoverTextParams = [];
 						UIHoverTextColor = default;
 						return true;
 					},
@@ -341,7 +349,7 @@ namespace BossChecklist.Systems
 
 				// If the player has obtained the boss drop item, appearing before the research item tooltip
 				if (Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().BossItemsCollected.Any(x => x.Type == item.type)) {
-					var ObtainedItemTooltip = new TooltipLine(Mod, "BossLog_Obtained", "✓ " + Language.GetTextValue("Mods.BossChecklist.Log.LootAndCollection.Obtained")) {
+					var ObtainedItemTooltip = new TooltipLine(Mod, "BossLog_Obtained", "✓ " + Mod.GetLocalization("Log.LootAndCollection.Obtained")) {
 						OverrideColor = Main.teamColor[4]
 					};
 					tooltips.Insert(ResearchToolTipIndex != -1 ? ResearchToolTipIndex : tooltips.Count, ObtainedItemTooltip);
@@ -350,8 +358,8 @@ namespace BossChecklist.Systems
 				// If the player has obtained the boss drop item, appearing after the obtained item tooltip
 				if (ResearchToolTipIndex == -1 && Main.LocalPlayer.difficulty == PlayerDifficultyID.Creative && Main.LocalPlayerCreativeTracker.ItemSacrifices.TryGetSacrificeNumbers(item.type, out int count, out int max)) {
 					bool isResearched = Main.LocalPlayer.GetModPlayer<BossLogModPlayer>().IsItemResearched(item.type);
-					string text2 = isResearched ? "Mods.BossChecklist.Log.LootAndCollection.Researched" : "CommonItemTooltip.CreativeSacrificeNeeded";
-					var ResearchItemTooltip = new TooltipLine(Mod, "BossLog_Researched", (isResearched ? "✓ " : "") + Language.GetTextValue(text2, max - count)) {
+					string text2 = isResearched ? Mod.GetLocalization("Log.LootAndCollection.Researched").Value : Language.GetTextValue("CommonItemTooltip.CreativeSacrificeNeeded", max - count);
+					var ResearchItemTooltip = new TooltipLine(Mod, "BossLog_Researched", (isResearched ? "✓ " : "") + text2) {
 						OverrideColor = isResearched ? Main.teamColor[4] : Colors.JourneyMode
 					};
 					tooltips.Insert(tooltips.Count, ResearchItemTooltip);

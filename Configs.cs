@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
@@ -234,17 +233,16 @@ namespace BossChecklist
 
 		public void UpdateIndicators() {
 			BossLogUI Log = BossLogSystem.Instance.BossLog;
-			string LangIndicator = "Mods.BossChecklist.Log.Indicator";
-			string LangCommon = "Mods.BossChecklist.Log.Common";
 
 			Log.Indicators[0].Color = OnlyShowBossContent ? Color.White : Color.DarkGray;
-			Log.Indicators[0].hoverText = OnlyShowBossContent ? $"{LangIndicator}.OnlyBossContentEnabled" : $"{LangIndicator}.OnlyBossContentDisabled";
+			Log.Indicators[0].hoverText = OnlyShowBossContent ? "Log.Indicator.OnlyBossContentEnabled" : "Log.Indicator.OnlyBossContentDisabled";
 
 			Log.Indicators[1].Color = AutomaticChecklist ? Color.LightGreen : Color.DarkGray;
-			Log.Indicators[1].hoverText = AutomaticChecklist ? $"{LangIndicator}.AutomaticChecklist" : $"{LangIndicator}.ManualChecklist";
+			Log.Indicators[1].hoverText = AutomaticChecklist ? "Log.Indicator.AutomaticChecklist" : "Log.Indicator.ManualChecklist";
 
 			Log.Indicators[2].Color = ProgressiveChecklist ? Color.Tomato : Color.DarkGray;
-			Log.Indicators[2].hoverText = Language.GetTextValue($"{LangIndicator}.ProgressionMode", Language.GetTextValue($"{LangCommon}." + (ProgressiveChecklist ? "Enabled" : "Disabled"))); // PartiallyEnabled no longer available
+			Log.Indicators[2].hoverText = "Log.Indicator.ProgressionMode";
+			Log.Indicators[2].hoverTextParams = new object[] { Mod.GetLocalization($"Log.Common.{(ProgressiveChecklist ? "Enabled" : "Disabled")}") }; // PartiallyEnabled no longer available
 
 			BossChecklist.instance.Logger.Info(Log.Indicators[2].hoverText);
 
@@ -284,7 +282,7 @@ namespace BossChecklist
 					foreach (NPC npc in Main.ActiveNPCs) {
 						if (BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int _) is EntryInfo entry) {
 							interferingNPC = entry.DisplayName;
-							badConfig = Language.GetTextValue("Mods.BossChecklist.Configs.FeatureConfiguration.RecordTrackingEnabled.Label");
+							badConfig = Mod.GetLocalization("Configs.FeatureConfiguration.RecordTrackingEnabled.Label").Value;
 							return; // If a boss is active, debug features are disabled until all bosses are inactive
 						}
 					}
@@ -303,7 +301,7 @@ namespace BossChecklist
 					foreach (NPC npc in Main.ActiveNPCs) {
 						if (BossChecklist.bossTracker.FindBossEntryByNPC(npc.type, out int _) is EntryInfo entry) {
 							interferingNPC = entry.DisplayName;
-							badConfig = Language.GetTextValue("Mods.BossChecklist.Configs.FeatureConfiguration.AllowNewRecords.Label");
+							badConfig = Mod.GetLocalization("Configs.FeatureConfiguration.AllowNewRecords.Label").Value;
 							return; // If a boss is active, debug features are disabled until all bosses are inactive
 						}
 					}
@@ -401,7 +399,7 @@ namespace BossChecklist
 					}
 				}
 				else {
-					Main.NewText(Language.GetText("Mods.BossChecklist.Configs.Common.InvalidChange").Format(badConfig, interferingNPC), Color.Orange);
+					Main.NewText(Mod.GetLocalization("Configs.Common.InvalidChange").Format(badConfig, interferingNPC), Color.Orange);
 					interferingNPC = "";
 					badConfig = "";
 				}

@@ -71,27 +71,17 @@ namespace BossChecklist
 		}
 
 		internal void LoggingInitialization() {
-			string LangLogMessage = "Mods.BossChecklist.LogMessage.";
-			Logger.Info(Language.GetText(LangLogMessage + "LastUpdated_ModCall").Format(LastModCallUpdate) + " " + Language.GetTextValue(LangLogMessage + "ModCallDocumentation"));
-			Logger.Info(Language.GetText(LangLogMessage + "LastUpdated_Progression").Format(LastVanillaProgressionRevision));
+			Logger.Info(GetLocalization("LogMessage.LastUpdated_ModCall").Format(LastModCallUpdate) + " " + GetLocalization("LogMessage.ModCallDocumentation"));
+			Logger.Info(GetLocalization("LogMessage.LastUpdated_Progression").Format(LastVanillaProgressionRevision));
 			if (!BossLogConfig.Debug.ModCallLogVerbose)
-				Logger.Info(Language.GetTextValue("NoLogging"));
+				Logger.Info(GetLocalization("LogMessage.NoLogging"));
 		}
 
-		internal void LogModCallInfo(string key, params object[] args) {
-			if (!BossLogConfig.Debug.ModCallLogVerbose)
-				return;
-
-			LocalizedText text = Language.GetText("Mods.BossChecklist.LogMessage." + key);
-			Logger.Info(text.Format(args));
-		}
-
-		internal void LogWarning(string key, bool requiresConfig, params object[] args) {
-			if (requiresConfig && !BossLogConfig.Debug.ModCallLogVerbose)
-				return;
-
-			LocalizedText text = Language.GetText("Mods.BossChecklist.LogMessage." + key);
-			Logger.Warn(text.Format(args));
+		internal void LogModCallVerbose(string key, bool isWarning = false, params object[] args) {
+			if (isWarning)
+				Logger.Warn(GetLocalization($"LogMessage.{key}").Format(args));
+			else if (BossLogConfig.Debug.ModCallLogVerbose)
+				Logger.Info(GetLocalization($"LogMessage.{key}").Format(args)); // Info displayed in the client.log requires the config to be enabled, unless it is a warning message
 		}
 
 		internal static void SaveConfig(BossLogConfiguration bossLogConfig) {
@@ -153,7 +143,7 @@ namespace BossChecklist
 
 					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for GetBossInfoDictionary");
 					if (!bossTracker.EntriesFinalized)
-						LogWarning("LateCall", requiresConfig: false, message);
+						LogModCallVerbose("LateCall", isWarning: true, message);
 
 					//if (message == "GetBossInfoExpando") {
 					//	return bossTracker.SortedBosses.ToDictionary(boss => boss.Key, boss => boss.ConvertToExpandoObject());
@@ -169,13 +159,13 @@ namespace BossChecklist
 				
 				if (message == "LogBoss" || message == "LogMiniBoss" || message == "LogEvent") {
 					if (args[1] is not Mod submittedMod) {
-						LogWarning("MustContainMod", requiresConfig: false, args[1] as string);
+						LogModCallVerbose("MustContainMod", isWarning: true, args[1] as string);
 						return "Failure";
 					}
 
 					string internalName = args[2] as string;
 					if (!internalName.All(char.IsLetterOrDigit)) {
-						LogWarning("MustContainName", requiresConfig: false, internalName);
+						LogModCallVerbose("MustContainName", isWarning: true, internalName);
 						return "Failure";
 					}
 
@@ -207,7 +197,7 @@ namespace BossChecklist
 					}
 
 					if (args[1] is not Mod submittedMod) {
-						LogWarning("MustContainMod_Orphan", requiresConfig: false, args[1] as string);
+						LogModCallVerbose("MustContainMod_Orphan", isWarning: true, args[1] as string);
 						return "Failure";
 					}
 

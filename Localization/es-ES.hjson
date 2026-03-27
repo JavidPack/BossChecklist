@@ -64,13 +64,20 @@ Mods: {
 				// ModsEmpty: None of your loaded mods are registered!
 				// Register: Register your own mod!
 				// Learn: View the mod description to learn how.
+
+				Titles: {
+					// Owner: Creator & Owner
+					// CoOwner: Co-Owner & Maintainer
+					// Contributor: Code Contributor
+					// Sprites: Boss Log Sprites
+					// EarlyTesting: Early Testing
+				}
 			}
 
 			EntryPage: {
 				Defeated: Derrotado en {0}
 				Undefeated: No derrotado en {0}
 				CopyKey: Haz clic para copiar la 'llave del jefe' interna al portapapeles
-				CopySource: Haz clic para copiar la "fuente del mod" interna al portapapeles
 				ViewPage: Haz clic para ver la página
 				NotImplemented: La presentación de esta página no está disponible. El mod no ha presentado la página o la ha configurado incorrectamente.
 				LogFeaturesNotAvailable: Los registros, los objetos de invocación y la tabla de botín están desactivados para esta página. El mod no ha enviado suficiente información para la página o la ha configurado incorrectamente.
@@ -81,9 +88,8 @@ Mods: {
 				NewWorldRecord: ¡Récord mundial!
 				NoRecord: ¡No hay registros!
 				Unchallenged: ¡No enfrentado!
-				Kills: victorias
-				Deaths: derrotas
-				Total: Total
+				// KDR: "{0} kills / {1} deaths"
+				// TotalKills: Total kills
 				// Hours: "{0}h {1}m {2}s ({3}ms)"
 				// Minutes: "{0}m {1}s ({2}ms)"
 				// Seconds: "{0} secon{^0:d;ds} ({1}ms)"

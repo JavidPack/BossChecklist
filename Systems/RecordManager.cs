@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -378,9 +377,9 @@ namespace BossChecklist.Systems
 		/// </summary>
 		public string GetKDR() {
 			if (kills == 0 && deaths == 0)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged");
+				return BossLogUI.GetLogLocalization("Records.Unchallenged");
 
-			return $"{kills} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Kills")} / {deaths} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Deaths")}";
+			return BossLogUI.GetLogLocalization("Records.KDR", kills, deaths);
 		}
 
 		/// <summary>
@@ -391,7 +390,7 @@ namespace BossChecklist.Systems
 		/// <param name="sign">Only used when finding a time difference using <see cref="TimeConversionDiff"/>.</param>
 		public static string TimeConversion(int ticks, string sign = "") {
 			if (ticks == -1)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoRecord");
+				return BossLogUI.GetLogLocalization("Records.NoRecord");
 
 			const int TicksPerSecond = 60;
 			const int TicksPerMinute = TicksPerSecond * 60;
@@ -400,7 +399,7 @@ namespace BossChecklist.Systems
 			float milliseconds = (int)Math.Round((float)((seconds - (int)seconds) * 1000));
 
 			return BossChecklist.FeatureConfig.TimeValueFormat switch {
-				FeatureConfiguration.TimeFormat.Simple => $"{sign}{(minutes > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Seconds", (int)seconds, milliseconds))}",
+				FeatureConfiguration.TimeFormat.Simple => $"{sign}{(minutes > 0 ? BossLogUI.GetLogLocalization("Records.Minutes", minutes, (int)seconds, milliseconds) : BossLogUI.GetLogLocalization("Records.Seconds", (int)seconds, milliseconds))}",
 				_ => $"{sign}{minutes}:{seconds:00.000}"
 			};
 		}
@@ -451,12 +450,12 @@ namespace BossChecklist.Systems
 		/// <param name="count">The record being checked.</param>
 		public static string HitCount(int count) {
 			if (count == -1)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoRecord");
+				return BossLogUI.GetLogLocalization("Records.NoRecord");
 			
 			if (count == 0)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.NoHit");
+				return BossLogUI.GetLogLocalization("Records.NoHit");
 			
-			return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hit", count);
+			return BossLogUI.GetLogLocalization("Records.Hit", count);
 		}
 
 		/// <summary>
@@ -503,7 +502,7 @@ namespace BossChecklist.Systems
 		/// </summary>
 		public string PlayTimeToString() {
 			if (kills == 0)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged");
+				return "Log.Records.Unchallenged";
 
 			int hours = (int)(playTimeFirst / TimeSpan.TicksPerHour);
 			int minutes = (int)((playTimeFirst - (hours * TimeSpan.TicksPerHour)) / TimeSpan.TicksPerMinute);
@@ -511,7 +510,7 @@ namespace BossChecklist.Systems
 			float milliseconds = (int)Math.Round((float)((seconds - (int)seconds) * 1000));
 
 			return BossChecklist.FeatureConfig.TimeValueFormat switch {
-				FeatureConfiguration.TimeFormat.Simple => $"{(hours > 0 ? Language.GetTextValue($"{BossLogUI.LangLog}.Records.Hours", hours, minutes, (int)seconds, milliseconds) : Language.GetTextValue($"{BossLogUI.LangLog}.Records.Minutes", minutes, (int)seconds, milliseconds))}",
+				FeatureConfiguration.TimeFormat.Simple => $"{(hours > 0 ? BossLogUI.GetLogLocalization("Records.Hours", hours, minutes, (int)seconds, milliseconds) : BossLogUI.GetLogLocalization("Records.Minutes", minutes, (int)seconds, milliseconds))}",
 				_ => $"{(hours > 0 ? hours + ":" : "")}{minutes}:{seconds:0.000}"
 			};
 		}
@@ -785,9 +784,9 @@ namespace BossChecklist.Systems
 		/// </summary>
 		public string GetGlobalKDR() {
 			if (totalKills == 0 && totalDeaths == 0)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.Unchallenged");
+				return BossLogUI.GetLogLocalization("Records.Unchallenged");
 
-			return $"{totalKills} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Kills")} / {totalDeaths} {Language.GetTextValue($"{BossLogUI.LangLog}.Records.Deaths")}";
+			return BossLogUI.GetLogLocalization("Records.KDR", totalKills, totalDeaths);
 		}
 
 		/// <summary>
@@ -796,10 +795,9 @@ namespace BossChecklist.Systems
 		/// </summary>
 		public string ListDurationRecordHolders() {
 			if (DurationNotRecorded)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.ClaimRecord");
+				return BossLogUI.GetLogLocalization("Records.ClaimRecord");
 
-			string list = Language.GetTextValue($"{BossLogUI.LangLog}.Records.RecordHolder");
-			return list + "\n • " + string.Join("\n • ", durationHolder);
+			return BossLogUI.GetLogLocalization("Records.RecordHolder") + "\n • " + string.Join("\n • ", durationHolder);
 		}
 
 		/// <summary>
@@ -808,10 +806,9 @@ namespace BossChecklist.Systems
 		/// </summary>
 		public string ListHitsTakenRecordHolders() {
 			if (HitsTakenNotRecorded)
-				return Language.GetTextValue($"{BossLogUI.LangLog}.Records.ClaimRecord");
+				return BossLogUI.GetLogLocalization("Records.ClaimRecord");
 
-			string list = Language.GetTextValue($"{BossLogUI.LangLog}.Records.RecordHolder");
-			return list + "\n • " + string.Join("\n • ", hitsTakenHolder);
+			return BossLogUI.GetLogLocalization("Records.RecordHolder") + "\n • " + string.Join("\n • ", hitsTakenHolder);
 		}
 	}
 }
