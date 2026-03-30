@@ -66,18 +66,22 @@ Mods: {
 				Learn: 查看Mod描述以学习
 
 				Titles: {
-					// Owner: Creator & Owner
-					// CoOwner: Co-Owner & Maintainer
-					// Contributor: Code Contributor
-					// Sprites: Boss Log Sprites
-					// EarlyTesting: Early Testing
+					Owner: 创造者 & 所有者
+					CoOwner: 共同所有者 & 维护者
+					Contributor: 代码贡献者
+					Sprites: Boss日志贴图
+					EarlyTesting: 早期测试
 				}
 			}
 
 			EntryPage: {
-				Defeated: 在{0}中已被击败
+				Defeated: 在{0}{1}中已被击败
 				Undefeated: 在{0}中未被击败
-				CopyKey: 点击以复制内部'Boss键值'至剪切板
+				CopyKey:
+					'''
+					点击以复制内部'Boss键值'至剪切板
+					{0}
+					'''
 				ViewPage: 点击以查看页面
 				NotImplemented: 该页面暂不可用. 该Mod未提交相关引用或引用设置不正确.
 				LogFeaturesNotAvailable: 记录、召唤物和战利品表不可用. 该Mod未提交足够的信息以供使用或引用不正确.
@@ -88,8 +92,8 @@ Mods: {
 				NewWorldRecord: 新的世界纪录!
 				NoRecord: 没有记录!
 				Unchallenged: 没有挑战过!
-				// KDR: "{0} kills / {1} deaths"
-				// TotalKills: Total kills
+				KDR: "{0}击杀 / {1}死亡"
+				TotalKills: 总击杀
 				Hours: "{0}时{1}分{2}秒({3}毫秒)"
 				Minutes: "{0}分{1}秒({2}毫秒)"
 				Seconds: "{0}秒{^0:分秒;分秒}({1}毫秒)"
@@ -332,7 +336,7 @@ Mods: {
 			InvalidOrphanKey: 来自{1}的'{0}'调用包含无效键 ({2}) , 将被忽略.
 			InvalidEventEntry: "{0}不是事件条目并且无法响应{1}的调用"
 			BelongsToInvasion: "{0}已尝试编辑'{1}'的NPC池. 此条目是一个由tModLoader的'NPCID.Sets.BelongsToInvasion'集支持的事件. SubmitEventNPCs仍然受到支持，但建议在给定的情况下使用这些集. 使用这些集用于ModNPCs会自动将它们添加到条目的NPC池中, 而无需额外的mod调用."
-			// DownedIsNull: Submitted parameter determined to be null when creating a Boss Log Entry for [{0}]. Entry will not be added until ModCall is resolved.
+			DownedIsNull: 在为[{0}]创建Boss日志条目时提交的参数确定为空. 在ModCall问题解决之前, 条目不会被添加.
 		}
 
 		Configs: {
