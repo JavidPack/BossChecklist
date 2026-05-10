@@ -636,7 +636,7 @@ namespace BossChecklist.UIElements
 				bool ExpertItemRestricted = item.type == entry.ExpertItem && !Main.expertMode;
 				bool OWmusicRestricted = BossChecklist.bossTracker.otherWorldMusicBoxTypes.Contains(item.type) && !BossLogUI.OtherworldMusicUnlocked;
 				bool isRestricted = MasterItemRestricted || ExpertItemRestricted || OWmusicRestricted;
-				bool LootProgress = !hasItem && Id.Contains("loot_") && BossChecklist.BossLogConfig.ProgressiveChecklist;
+				bool LootProgress = !hasItem && Id.Contains("loot_") && BossChecklist.BossLogConfig.ProgressiveChecklist && !entry.IsAutoDownedOrMarked;
 
 				// Make a backups of the original itemslot texture and alter the texture to display the color needed
 				// If the config 'Hide boss drops' is enabled and the boss hasn't been defeated yet, the itemslot should appear red, even if the item was already obtained
