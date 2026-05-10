@@ -15,6 +15,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
@@ -1113,8 +1114,10 @@ namespace BossChecklist
 			registeredModsList.Left.Pixels = (int)(RightPage.Width.Pixels / 2 - BossLogResources.Credit_ModSlot.Value.Width / 2);
 			registeredModsList.Top.Pixels = 85;
 			if (BossChecklist.bossTracker.RegisteredMods.Count > 0) {
-				foreach (string mod in BossChecklist.bossTracker.RegisteredMods.Keys) {
-					registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_ModSlot, mod));
+				foreach (string modName in BossChecklist.bossTracker.RegisteredMods.Keys) {
+					if (ModLoader.TryGetMod(modName, out Mod mod)) {
+						registeredModsList.Add(new ContributorCredit(BossLogResources.Credit_ModSlot, mod));
+					}
 				}
 			}
 			else {

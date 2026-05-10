@@ -1090,50 +1090,52 @@ namespace BossChecklist.UIElements
 				Id = "Dev";
 				this.icon = character;
 				this.header = devName;
-				this.subheader = BossLogUI.GetLogLocalization("Log.Credits.Titles." + devTitle);
+				this.subheader = BossLogUI.GetLogLocalization("Credits.Titles." + devTitle);
 			}
 
-			public ContributorCredit(Asset<Texture2D> texture, string modName) : base(texture) {
+			public ContributorCredit(Asset<Texture2D> texture, Mod mod) : base(texture) {
 				Id = "Mod";
-				this.icon = GetModIcon(modName);
-				this.header = BossLogSystem.RemoveChatTags(ModLoader.GetMod(modName));
-				this.entryCounts = BossChecklist.bossTracker.RegisteredMods[modName];
+				this.header = BossLogSystem.RemoveChatTags(mod);
+				this.entryCounts = BossChecklist.bossTracker.RegisteredMods[mod.Name];
+
+				if (mod.HasAsset("icon")) {
+					this.icon = ModContent.Request<Texture2D>(mod.Name + "/icon");
+				}
+				else if (mod.HasAsset("icon_workshop")) {
+					this.icon = ModContent.Request<Texture2D>(mod.Name + "/icon_workshop");
+				}
+				else {
+					this.icon = BossLogResources.RequestResource("Credits_NoIcon");
+				}
 			}
 
 			public ContributorCredit(Asset<Texture2D> texture, string titleKey, string descriptionKey = "") : base(texture) {
 				this.icon = null;
 				this.header = BossLogUI.GetLogLocalization(titleKey);
-				this.subheader = BossLogUI.GetLogLocalization(descriptionKey);
-			}
-
-			private Asset<Texture2D> GetModIcon(string modName) {
-				if (ModLoader.TryGetMod(modName, out Mod mod)) {
-					if (mod.HasAsset("icon"))
-						return ModContent.Request<Texture2D>(mod.Name + "/icon");
-
-					if (mod.HasAsset("icon_workshop"))
-						return ModContent.Request<Texture2D>(mod.Name + "/icon_workshop");
+				if (!string.IsNullOrEmpty(descriptionKey)) {
+					this.subheader = BossLogUI.GetLogLocalization(descriptionKey);
 				}
-				return BossLogResources.RequestResource("Credits_NoIcon");
 			}
 
+			/// <summary>X represents the header's maximum length while Y represents the subheader's maximum length. If header/subheader is unused, the value returns 0.</summary>
 			private Point MaxLength() {
 				return Id switch {
 					"Dev" => new Point(224, 224),
-					"Mod" => new Point(208, -1), // -1 because unused
-					"NoMods" => new Point(260, -1),
+					"Mod" => new Point(208, 0),
+					"NoMods" => new Point(260, 0),
 					"Register" => new Point(280, 275),
-					_ => new Point(-1, -1)
+					_ => Point.Zero
 				};
 			}
 
-			private Point GetTextPos() {
+			/// <summary>X represents the header's left offset while Y represents the subheader's left offset. If header/subheader is unused, the value returns 0.</summary>
+			private Point GetTextXOffset() {
 				return Id switch {
 					"Dev" => new Point(80, 85),
-					"Mod" => new Point(95, -1), // -1 because unused
-					"NoMods" => new Point(40, -1),
+					"Mod" => new Point(95, 0),
+					"NoMods" => new Point(40, 0),
 					"Register" => new Point(45, 25),
-					_ => new Point(-1, -1)
+					_ => Point.Zero
 				};
 			}
 
@@ -1150,11 +1152,11 @@ namespace BossChecklist.UIElements
 				}
 
 				float scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(header).X, MaxLength().X);
-				spriteBatch.DrawString(FontAssets.MouseText.Value, header, new Vector2(inner.X + GetTextPos().X, inner.Y + 11), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev/mod name as a string
+				spriteBatch.DrawString(FontAssets.MouseText.Value, header, new Vector2(inner.X + GetTextXOffset().X, inner.Y + 11), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev/mod name as a string
 
 				if (!string.IsNullOrEmpty(subheader)) {
 					scale = AutoScaleText(FontAssets.MouseText.Value.MeasureString(subheader).X, MaxLength().Y); // Mod name might exceed panel size
-					spriteBatch.DrawString(FontAssets.MouseText.Value, subheader, new Vector2(inner.X + GetTextPos().Y, inner.Y + 45), Color.LemonChiffon, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev title as a string
+					spriteBatch.DrawString(FontAssets.MouseText.Value, subheader, new Vector2(inner.X + GetTextXOffset().Y, inner.Y + 45), Color.LemonChiffon, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f); // Draw the dev title as a string
 				}
 				else if (entryCounts != null) {
 					int xOffset = 94 + (70 * 2 / 3); // draw each entry count submitted by the mod
