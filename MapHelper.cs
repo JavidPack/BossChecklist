@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -20,8 +20,25 @@ namespace BossChecklist
 					continue; // do not draw items that are inacive or not whitelisted
 
 				Main.instance.LoadItem(item.type); // Items SHOULD already be loaded, but in case it isn't have a backup
+				
+				SpriteFrame spriteFrame = new SpriteFrame(1, 1, 0, 0);
+				Texture2D itemTexture = TextureAssets.Item[item.type].Value;
+				
+				// Support for item animations.
+				if (ItemID.Sets.AnimatesAsSoul[item.type]) {
+					Rectangle itemFrame = Main.itemAnimations[item.type].GetFrame(itemTexture);
+					
+					byte columns = (byte)(itemTexture.Width / itemFrame.Width);
+					byte rows = (byte)(itemTexture.Height / itemFrame.Height);
 
-				if (context.Draw(TextureAssets.Item[item.type].Value, item.VisualPosition / 16, Color.White, new SpriteFrame(1, 1, 0, 0), 1f, 1.2f, Alignment.Center).IsMouseOver)
+					spriteFrame = new SpriteFrame(
+						columns,
+						rows,
+						(byte)(itemFrame.X / (itemTexture.Width / columns)),
+						(byte)(itemFrame.Y / (itemTexture.Height / rows)));
+				}
+
+				if (context.Draw(itemTexture, item.VisualPosition / 16, Color.White, spriteFrame, 1f, 1.2f, Alignment.Center).IsMouseOver)
 					text = item.HoverName; // Display the item's hover name when hovering over the icon
 			}
 		}
