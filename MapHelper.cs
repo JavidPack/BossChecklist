@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Map;
 using Terraria.ModLoader;
@@ -19,24 +19,19 @@ namespace BossChecklist
 				if (!IsWhitelistedItem(item.type))
 					continue; // do not draw items that are inacive or not whitelisted
 
-				Main.instance.LoadItem(item.type); // Items SHOULD already be loaded, but in case it isn't have a backup
+				// Using vanilla function to get the item frame and texture, also takes care of loading the texture.
+				Main.GetItemDrawFrame(item.type, out Texture2D itemTexture, out Rectangle itemFrame); 
 				
-				SpriteFrame spriteFrame = new SpriteFrame(1, 1, 0, 0);
-				Texture2D itemTexture = TextureAssets.Item[item.type].Value;
-				
-				// Support for item animations.
-				if (ItemID.Sets.AnimatesAsSoul[item.type]) {
-					Rectangle itemFrame = Main.itemAnimations[item.type].GetFrame(itemTexture);
-					
-					byte columns = (byte)(itemTexture.Width / itemFrame.Width);
-					byte rows = (byte)(itemTexture.Height / itemFrame.Height);
+				// Assuming all frames have an equal width and height, calculate the
+				// amount of columns and rows the spritesheet is supposed to have.
+				int columns = itemTexture.Width / Math.Max(1, itemFrame.Width);
+				int rows = itemTexture.Height / Math.Max(1, itemFrame.Height);
 
-					spriteFrame = new SpriteFrame(
-						columns,
-						rows,
-						(byte)(itemFrame.X / (itemTexture.Width / columns)),
-						(byte)(itemFrame.Y / (itemTexture.Height / rows)));
-				}
+				SpriteFrame spriteFrame = new SpriteFrame(
+					(byte)columns,
+					(byte)rows,
+					(byte)(itemFrame.X / Math.Max(1, itemTexture.Width / Math.Max(1, columns))),
+					(byte)(itemFrame.Y / Math.Max(1, itemTexture.Height / Math.Max(1, rows))));
 
 				if (context.Draw(itemTexture, item.VisualPosition / 16, Color.White, spriteFrame, 1f, 1.2f, Alignment.Center).IsMouseOver)
 					text = item.HoverName; // Display the item's hover name when hovering over the icon
