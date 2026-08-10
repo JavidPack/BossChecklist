@@ -197,8 +197,11 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventGoblinArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_9"),
 				
-				// TODO:Split this to three event
-				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => DD2Event.DownedInvasionAnyDifficulty,(@new) => { Main.NewText("Old One's Army do not support changed defeat state now!"); })
+				// TODO:Split this into three event
+				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => DD2Event.DownedInvasionAnyDifficulty,(@new) => 
+				{ 
+					Main.NewText("Old One's Army do not support changed defeat state now!"); 
+				})
 					.WithCustomTranslationKey("DungeonDefenders2.InvasionProgressTitle")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_79"),
