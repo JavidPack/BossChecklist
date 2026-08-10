@@ -1308,8 +1308,6 @@ namespace BossChecklist.UIElements
 						bool newState = !entry.downed(); 
 
 						Networking.RequestBossStateToggle(entry.Key, newState);
-					
-						Main.NewText("Works Good!");
 					}
 					else {
 						// Entries must not already be downed to add/remove them from the MarkedEntries list [YuBell: fixed this]

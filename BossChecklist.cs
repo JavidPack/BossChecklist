@@ -454,16 +454,29 @@ namespace BossChecklist
 					if (Main.netMode == NetmodeID.Server) {
 						string bossKey1 = reader.ReadString();
 						bool downed1 = reader.ReadBoolean();
+						EntryInfo entry = BossChecklist.bossTracker.FindEntryFromKey(bossKey1);
 
 						if (!Networking.TryApplyBossStateToggle(bossKey1, downed1)) {
-							ChatHelper.BroadcastChatMessage(NetworkText.FromKey(""), Color.Red);
+							ChatHelper.BroadcastChatMessage(
+								instance.GetLocalization("Configs.DebugTools.Failed").ToNetworkText(bossKey1),
+								Color.Red
+							);
 							break;
 						}
 
 						NetMessage.SendData(MessageID.WorldData);
 
-						// show text let other player know which boss's defeat state toggled
-						ChatHelper.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.Configs.DebugTools.Successed",), Color.LightGreen);
+						// show text to let other player know which boss's defeat state toggled
+						ChatHelper.BroadcastChatMessage(
+							instance.GetLocalization("Configs.DebugTools.Successed")
+								.ToNetworkText(
+									entry.name,
+									downed1
+										? instance.GetLocalization("Configs.DebugTools.Defeated")
+										: instance.GetLocalization("Configs.DebugTools.Alive")
+								),
+							Color.LightGreen
+						);
 
 						// in case some mod's data can not be sent
 						ModPacket packet1 = GetPacket();

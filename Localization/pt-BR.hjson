@@ -592,6 +592,11 @@ Mods: {
 						rather than merely marking it as defeated.
 						''' */
 				}
+
+				// Failed: Failed to toggle defeat state of [{0}]!
+				// Successed: Toggled [{0}] -> [{1}] !
+				// Defeated: Defeated
+				// Alive: Alive
 			}
 
 			FeatureConfiguration: {
