@@ -1,10 +1,12 @@
 ﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -175,6 +177,7 @@ namespace BossChecklist
 						internalName, // Internal Name
 						Convert.ToSingle(args[3]), // Prog
 						args[4] as Func<bool>, // Downed
+						// WARN: ADAPT MULTIPLAYER
 						args[5] as Action<bool>, // SetDowned
 						InterpretObjectAsListOfInt(args[6]), // NPC IDs
 						args[7] as Dictionary<string, object>
@@ -446,6 +449,39 @@ namespace BossChecklist
 					// Server --> Multiplayer client (always)
 					recordIndex = reader.ReadInt32();
 					Main.LocalPlayer.GetModPlayer<RecordModPlayer>().RecordsForWorld?[recordIndex].StartTracking();
+					break;
+				case PacketMessageType.RequestBossStateToggle:
+					if (Main.netMode == NetmodeID.Server) {
+						string bossKey1 = reader.ReadString();
+						bool downed1 = reader.ReadBoolean();
+
+						if (!Networking.TryApplyBossStateToggle(bossKey1, downed1)) {
+							ChatHelper.BroadcastChatMessage(NetworkText.FromKey(""), Color.Red);
+							break;
+						}
+
+						NetMessage.SendData(MessageID.WorldData);
+
+						// show text let other player know which boss's defeat state toggled
+						ChatHelper.BroadcastChatMessage(NetworkText.FromKey("Mods.BossChecklist.Configs.DebugTools.Successed",), Color.LightGreen);
+
+						// in case some mod's data can not be sent
+						ModPacket packet1 = GetPacket();
+						packet1.Write((byte)PacketMessageType.SyncBossState);
+						packet1.Write(bossKey1);
+						packet1.Write(downed1);
+						packet1.Send(); // Server --> All Clients
+					}
+					break;
+
+				case PacketMessageType.SyncBossState:
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						string bossKey2 = reader.ReadString();
+						bool downed2 = reader.ReadBoolean();
+
+						if (Networking.TryApplyBossStateToggle(bossKey2, downed2))
+							BossLogSystem.Instance?.BossLog?.RefreshPageContent();
+					}
 					break;
 				default:
 					Logger.Error($"Unknown Message type: {msgType}");

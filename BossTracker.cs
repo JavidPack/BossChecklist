@@ -117,7 +117,7 @@ namespace BossChecklist
 		private void InitializeVanillaEntries() {
 			SortedEntries = new List<EntryInfo> {
 				// Bosses -- Vanilla
-				EntryInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "NPCName.KingSlime", NPCID.KingSlime, () => NPC.downedSlimeKing,(@new) => {NPC.downedSlimeKing = @new; })
+				EntryInfo.MakeVanillaBoss(EntryType.Boss, KingSlime, "NPCName.KingSlime", NPCID.KingSlime, () => NPC.downedSlimeKing,(@new) => {NPC.downedSlimeKing = @new;})
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.KingSlime}"),
 
 				EntryInfo.MakeVanillaBoss(EntryType.Boss, EyeOfCthulhu, "NPCName.EyeofCthulhu", NPCID.EyeofCthulhu, () => NPC.downedBoss1,(@new) => {NPC.downedBoss1 = @new; }),
@@ -179,7 +179,11 @@ namespace BossChecklist
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/Boss{NPCID.MoonLordHead}"),
 
 				// Minibosses and Events -- Vanilla
-				EntryInfo.MakeVanillaEvent(TorchGod, "NPCName.TorchGod", () => Main.LocalPlayer.unlockedBiomeTorches,(@new) => {Main.LocalPlayer.unlockedBiomeTorches = @new; })
+				EntryInfo.MakeVanillaEvent(TorchGod, "NPCName.TorchGod", () => Main.LocalPlayer.unlockedBiomeTorches,(@new) => 
+				{
+					foreach (Player p in Main.player)
+						p.unlockedBiomeTorches = @new;
+				})
 					.WithCustomHeadIcon($"Terraria/Images/Item_{ItemID.TorchGodsFavor}"),
 
 				EntryInfo.MakeVanillaEvent(BloodMoon, "Bestiary_Events.BloodMoon", () => DownedSystem.downedBloodMoon, (@new) => { DownedSystem.downedBloodMoon = @new; })

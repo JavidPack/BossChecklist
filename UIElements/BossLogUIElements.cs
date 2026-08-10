@@ -1305,16 +1305,10 @@ namespace BossChecklist.UIElements
 						Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift);
 
 					if (shiftHeld && BossChecklist.BossLogConfig.Debug.EnableBossStateToggle) {
-						// call the method that to set the downed value provided by source mods
-						// vanilla boss will call the build in delegate
-						entry.setDowned(entry.downed() ? false : true);
+						bool newState = !entry.downed(); 
 
-						// if mark as defeated,when toggled,it shouldn't be mark as defeat
-						// if not mark as defeat,when toggled,it shouldn't be mark down by the codes above
-						if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
-							BossLogSystem.MarkedEntries.Remove(entry.Key);
-						}
-
+						Networking.RequestBossStateToggle(entry.Key, newState);
+					
 						Main.NewText("Works Good!");
 					}
 					else {

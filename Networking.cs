@@ -18,7 +18,9 @@ namespace BossChecklist
 		SendWorldRecordsFromServerToPlayer,
 		UpdateWorldRecordsToAllPlayers,
 		ResetPlayerRecordForServer,
-		ResetTrackers
+		ResetTrackers,
+		RequestBossStateToggle, // Client --> Server
+		SyncBossState,          // Server --> All Clients
 	}
 
 	internal enum ClientMessageType : byte {
@@ -64,6 +66,36 @@ namespace BossChecklist
 				packet.Write(mark);
 			}
 			packet.Send(); // Multiplayer --> Server
+		}
+
+
+		internal static bool TryApplyBossStateToggle(string bossKey, bool downed) {
+
+			EntryInfo entry = BossChecklist.bossTracker.FindEntryFromKey(bossKey);
+
+			if (entry is null || entry.setDowned is null)
+				return false; 
+
+			entry.setDowned(downed);
+			BossLogSystem.MarkedEntries.Remove(bossKey);
+
+			return true; // if true means toggle success
+		}
+
+		public static void RequestBossStateToggle(string bossKey, bool downed) {
+			if (Main.netMode == NetmodeID.SinglePlayer) {
+				TryApplyBossStateToggle(bossKey, downed);
+				return;
+			}
+
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+				return;
+
+			ModPacket packet = BossChecklist.instance.GetPacket();
+			packet.Write((byte)PacketMessageType.RequestBossStateToggle);
+			packet.Write(bossKey);
+			packet.Write(downed);
+			packet.Send();
 		}
 	}
 }
