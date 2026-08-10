@@ -586,6 +586,11 @@ Mods: {
 						Ces messages devraient apparaître lorsqu'un boss a été vaincu ou lorsqu'un boss a disparu, respectivement.
 						'''
 				}
+
+				EnableBossStateToggle: {
+					// Label: Enable Boss State Toggle
+					// Tooltip: ""
+				}
 			}
 
 			FeatureConfiguration: {

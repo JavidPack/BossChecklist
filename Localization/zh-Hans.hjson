@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
@@ -581,6 +581,15 @@ Mods: {
 						启用后, 如果启用了记录跟踪, 当记录开始计算时, 聊天框中将显示一条消息.
 						如果启用了Boss消失信息, 则当显Boss消失信息时, 这也应该在聊框天中显示一条消息.
 						这些信息应该分别在Boss被击败或Boss消失时出现.
+						'''
+				}
+
+				EnableBossStateToggle: {
+					Label: 启用Boss击败状态切换功能
+					Tooltip: 
+						'''
+						启用后,如果在Boss日志UI中 Shift + 右键 Boss可以切换其真实击败状态
+						而非仅仅标记为击败
 						'''
 				}
 			}

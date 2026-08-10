@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
@@ -581,6 +581,15 @@ Mods: {
 						While enabled, a message will be displayed in chat when records have begun calculating, if record tracking is enabled.
 						This should also display a message in chat when a despawn message appears, if despawn messages are enabled.
 						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
+						'''
+				}
+
+				EnableBossStateToggle: {
+					Label: Enable Boss defeated State Toggle
+					Tooltip: 
+						'''
+						While enabled,Shift + Right Click a boss in the Boss Log UI toggles its real defeated state
+						rather than merely marking it as defeated.
 						'''
 				}
 			}

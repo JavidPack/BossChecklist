@@ -582,6 +582,11 @@ Mods: {
 						Эти сообщения должны появляться при победе над боссом или при его исчезновении, соответственно.
 						'''
 				}
+
+				EnableBossStateToggle: {
+					// Label: Enable Boss State Toggle
+					// Tooltip: ""
+				}
 			}
 
 			FeatureConfiguration: {

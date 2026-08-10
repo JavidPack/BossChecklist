@@ -583,6 +583,11 @@ Mods: {
 						These messages should appear when a boss has been defeated or a boss has despawned, respectively.
 						''' */
 				}
+
+				EnableBossStateToggle: {
+					// Label: Enable Boss State Toggle
+					// Tooltip: ""
+				}
 			}
 
 			FeatureConfiguration: {
