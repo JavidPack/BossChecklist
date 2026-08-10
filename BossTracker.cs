@@ -199,8 +199,10 @@ namespace BossChecklist
 				
 				// TODO:Split this into three event
 				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => DD2Event.DownedInvasionAnyDifficulty,(@new) => 
-				{ 
-					Main.NewText("Old One's Army do not support changed defeat state now!"); 
+				{
+					DD2Event.DownedInvasionT1 = @new;
+					DD2Event.DownedInvasionT2 = @new;
+					DD2Event.DownedInvasionT3 = @new;
 				})
 					.WithCustomTranslationKey("DungeonDefenders2.InvasionProgressTitle")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
