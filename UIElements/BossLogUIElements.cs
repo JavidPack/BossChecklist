@@ -1298,14 +1298,35 @@ namespace BossChecklist.UIElements
 					}
 				}
 				else {
-					// Entries must not already be downed to add/remove them from the MarkedEntries list [YuBell: fixed this]
-					// Entries that are downed will automatically be removed from the lsit when the TableOfContents list is generated
-					if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
-						BossLogSystem.MarkedEntries.Remove(entry.Key);
+
+					bool shiftHeld =
+						Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
+						 ||
+						Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift);
+
+					if (shiftHeld && BossChecklist.BossLogConfig.Debug.EnableBossStateToggle) {
+						// call the method that to set the downed value provided by source mods
+						// vanilla boss will call the build in delegate
+						entry.setDowned(entry.downed() ? false : true);
+
+						// if mark as defeated,when toggled,it shouldn't be mark as defeat
+						// if not mark as defeat,when toggled,it shouldn't be mark down by the codes above
+						if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
+							BossLogSystem.MarkedEntries.Remove(entry.Key);
+						}
+
+						Main.NewText("Works Good!");
 					}
 					else {
-						if (!entry.downed())
-							BossLogSystem.MarkedEntries.Add(entry.Key);
+						// Entries must not already be downed to add/remove them from the MarkedEntries list [YuBell: fixed this]
+						// Entries that are downed will automatically be removed from the lsit when the TableOfContents list is generated
+						if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
+							BossLogSystem.MarkedEntries.Remove(entry.Key);
+						}
+						else {
+							if (!entry.downed()) // if this boss is already downed,it shouldn't be mark as downed
+								BossLogSystem.MarkedEntries.Add(entry.Key);
+						}
 					}
 
 					Networking.RequestMarkedEntryUpdate(entry.Key, entry.MarkedAsDowned);

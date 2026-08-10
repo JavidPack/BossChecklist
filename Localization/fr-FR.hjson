@@ -588,8 +588,12 @@ Mods: {
 				}
 
 				EnableBossStateToggle: {
-					// Label: Enable Boss State Toggle
-					// Tooltip: ""
+					// Label: Enable Boss defeated State Toggle
+					/* Tooltip:
+						'''
+						While enabled,Shift + Right Click a boss in the Boss Log UI toggles its real defeated state
+						rather than merely marking it as defeated.
+						''' */
 				}
 			}
 

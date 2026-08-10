@@ -42,6 +42,7 @@ namespace BossChecklist
 		internal Dictionary<int, LocalizedText> npcLimbs;
 		internal float progression;
 		internal Func<bool> downed;
+		internal Action<bool> setDowned;
 		internal Func<bool> available;
 		internal bool hidden;
 		internal Func<NPC, LocalizedText> customDespawnMessages;
@@ -210,7 +211,7 @@ namespace BossChecklist
 			return VisibleOnChecklist();
 		}
 
-		internal EntryInfo(EntryType entryType, string modSource, string internalName, out string KeyOutput, float progression, Func<bool> downed, List<int> npcIDs, Dictionary<string, object> extraData = null) {
+		internal EntryInfo(EntryType entryType, string modSource, string internalName, out string KeyOutput, float progression, Func<bool> downed,Action<bool> setDowned, List<int> npcIDs, Dictionary<string, object> extraData = null) {
 			// Add the mod source to the opted mods list of the credits page if its not already and add the entry type
 			if (modSource != "Terraria" && modSource != "Unknown") {
 				BossChecklist.bossTracker.RegisteredMods.TryAdd(modSource, new int[3]);
@@ -224,6 +225,7 @@ namespace BossChecklist
 			this.progression = progression;
 			this.downed = downed ?? throw new ArgumentNullException(nameof(downed), BossChecklist.instance.GetLocalization("LogMessage.DownedIsNull").Format(this.Key));
 			this.npcIDs = npcIDs ?? new List<int>();
+			this.setDowned = setDowned;
 
 			// Localization checks
 			LocalizedText name = extraData?.ContainsKey("displayName") == true ? extraData["displayName"] as LocalizedText : null;
@@ -381,7 +383,7 @@ namespace BossChecklist
 			return this;
 		}
 
-		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed) {
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed,Action<bool> setDowned) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
 
 			// BossChecklist only has despawn messages for vanilla Bosses
@@ -415,6 +417,7 @@ namespace BossChecklist
 				out string generatedKey,
 				progression: val,
 				downed: downed,
+				setDowned: setDowned,
 				npcIDs: new List<int>() { npcID },
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
@@ -426,7 +429,7 @@ namespace BossChecklist
 			);
 		}
 
-		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed) {
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed, Action<bool> setDowned) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
 			if (nameKey.EndsWith("Head"))
 				nameKey = nameKey.Substring(0, nameKey.Length - 4);
@@ -460,6 +463,7 @@ namespace BossChecklist
 				out string generatedKey,
 				progression: val,
 				downed: downed,
+				setDowned: setDowned,
 				npcIDs: ids,
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },
@@ -471,7 +475,7 @@ namespace BossChecklist
 			);
 		}
 
-		internal static EntryInfo MakeVanillaEvent(float val, string key, Func<bool> downed) {
+		internal static EntryInfo MakeVanillaEvent(float val, string key, Func<bool> downed, Action<bool> setDowned) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
 			return new EntryInfo(
 				entryType: EntryType.Event,
@@ -480,6 +484,7 @@ namespace BossChecklist
 				out string generatedKey,
 				progression: val,
 				downed: downed,
+				setDowned:setDowned,
 				npcIDs: BossTracker.EventNPCs.GetValueOrDefault($"Terraria {nameKey}"),
 				extraData: new Dictionary<string, object>() {
 					{ "displayName", Language.GetText(key) },

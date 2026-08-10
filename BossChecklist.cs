@@ -175,8 +175,9 @@ namespace BossChecklist
 						internalName, // Internal Name
 						Convert.ToSingle(args[3]), // Prog
 						args[4] as Func<bool>, // Downed
-						InterpretObjectAsListOfInt(args[5]), // NPC IDs
-						args[6] as Dictionary<string, object>
+						args[5] as Action<bool>, // SetDowned
+						InterpretObjectAsListOfInt(args[6]), // NPC IDs
+						args[7] as Dictionary<string, object>
 					);
 					return "Success";
 				}

@@ -1,4 +1,4 @@
-﻿Mods: {
+Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
@@ -586,7 +586,7 @@
 
 				EnableBossStateToggle: {
 					Label: 启用Boss击败状态切换功能
-					Tooltip: 
+					Tooltip:
 						'''
 						启用后,如果在Boss日志UI中 Shift + 右键 Boss可以切换其真实击败状态
 						而非仅仅标记为击败
