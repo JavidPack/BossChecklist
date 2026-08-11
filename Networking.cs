@@ -87,7 +87,7 @@ namespace BossChecklist
 		public static void RequestBossStateToggle(string bossKey, bool downed) {
 			if (Main.netMode == NetmodeID.SinglePlayer) {
 				if(!TryApplyBossStateToggle(bossKey, downed)) {
-					Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugTools.Failed", BossChecklist.bossTracker.FindEntryFromKey(bossKey).name, Color.Red));
+					Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugTools.Failed", BossChecklist.bossTracker.FindEntryFromKey(bossKey).name), Color.Red);
 				}
 				return;
 			}
