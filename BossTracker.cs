@@ -198,12 +198,7 @@ namespace BossChecklist
 					.WithCustomHeadIcon("Terraria/Images/Extra_9"),
 				
 				// TODO:Split this into three event
-				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => DD2Event.DownedInvasionAnyDifficulty,(@new) => 
-				{
-					DD2Event.DownedInvasionT1 = @new;
-					DD2Event.DownedInvasionT2 = @new;
-					DD2Event.DownedInvasionT3 = @new;
-				})
+				EntryInfo.MakeVanillaEvent(OldOnesArmy, "Old One's Army", () => DD2Event.DownedInvasionAnyDifficulty,null)
 					.WithCustomTranslationKey("DungeonDefenders2.InvasionProgressTitle")
 					.WithCustomPortrait($"BossChecklist/Resources/BossTextures/EventOldOnesArmy")
 					.WithCustomHeadIcon("Terraria/Images/Extra_79"),
@@ -1144,9 +1139,9 @@ namespace BossChecklist
 			ItemID.MusicBoxOWHallow,
 		};
 
-		internal void AddEntry(EntryType type, Mod mod, string iName, float val, Func<bool> down,Action<bool> setDowned, List<int> id, Dictionary<string, object> extra = null) {
+		internal void AddEntry(EntryType type, Mod mod, string iName, float val, Func<bool> down, List<int> id, Dictionary<string, object> extra = null) {
 			EnsureBossIsNotDuplicate(mod?.Name ?? "Unknown", iName);
-			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, out string key, val, down,setDowned, id, extra));
+			SortedEntries.Add(new EntryInfo(type, mod?.Name ?? "Unknown", iName, out string key, val, down, id, extra));
 			LogNewBoss(mod?.DisplayName ?? "Unknown", iName, key);
 		}
 

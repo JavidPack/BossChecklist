@@ -1,6 +1,8 @@
 ﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BossChecklist
@@ -84,18 +86,21 @@ namespace BossChecklist
 
 		public static void RequestBossStateToggle(string bossKey, bool downed) {
 			if (Main.netMode == NetmodeID.SinglePlayer) {
-				TryApplyBossStateToggle(bossKey, downed);
+				if(!TryApplyBossStateToggle(bossKey, downed)) {
+					Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugTools.Failed", BossChecklist.bossTracker.FindEntryFromKey(bossKey).name, Color.Red));
+				}
 				return;
 			}
 
-			if (Main.netMode != NetmodeID.MultiplayerClient)
+			else if (Main.netMode != NetmodeID.MultiplayerClient)
 				return;
-
-			ModPacket packet = BossChecklist.instance.GetPacket();
-			packet.Write((byte)PacketMessageType.RequestBossStateToggle);
-			packet.Write(bossKey);
-			packet.Write(downed);
-			packet.Send();
+			else {
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.RequestBossStateToggle);
+				packet.Write(bossKey);
+				packet.Write(downed);
+				packet.Send();
+			}
 		}
 	}
 }

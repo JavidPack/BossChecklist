@@ -177,10 +177,8 @@ namespace BossChecklist
 						internalName, // Internal Name
 						Convert.ToSingle(args[3]), // Prog
 						args[4] as Func<bool>, // Downed
-						// WARN: ADAPT MULTIPLAYER
-						args[5] as Action<bool>, // SetDowned
-						InterpretObjectAsListOfInt(args[6]), // NPC IDs
-						args[7] as Dictionary<string, object>
+						InterpretObjectAsListOfInt(args[5]), // NPC IDs
+						args[6] as Dictionary<string, object>
 					);
 					return "Success";
 				}
@@ -458,7 +456,7 @@ namespace BossChecklist
 
 						if (!Networking.TryApplyBossStateToggle(bossKey1, downed1)) {
 							ChatHelper.BroadcastChatMessage(
-								instance.GetLocalization("Configs.DebugTools.Failed").ToNetworkText(bossKey1),
+								instance.GetLocalization("Configs.DebugTools.Failed").ToNetworkText(entry.name),
 								Color.Red
 							);
 							break;
