@@ -242,9 +242,9 @@ namespace BossChecklist
 
 			Log.Indicators[2].Color = ProgressiveChecklist ? Color.Tomato : Color.DarkGray;
 			Log.Indicators[2].hoverText = "Log.Indicator.ProgressionMode";
-			Log.Indicators[2].hoverTextParams = new object[] { Mod.GetLocalization($"Log.Common.{(ProgressiveChecklist ? "Enabled" : "Disabled")}") }; // PartiallyEnabled no longer available
+			Log.Indicators[2].hoverTextParams = new object[] { Mod.GetLocalization($"Log.Common.{(ProgressiveChecklist ? "Enabled" : "Disabled")}").ToString().ToUpper() }; // PartiallyEnabled no longer available
 
-			BossChecklist.instance.Logger.Info(Log.Indicators[2].hoverText);
+			BossChecklist.instance.Logger.Info(Mod.GetLocalization(Log.Indicators[2].hoverText).Format(Log.Indicators[2].hoverTextParams));
 
 			Log.NextBossTab.Anchor = BossLogUI.FindNextEntry(EntryType.Boss); // update the Next entry/boss tab based on Indicator selections
 
