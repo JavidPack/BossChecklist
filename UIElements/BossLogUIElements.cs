@@ -2,6 +2,7 @@
 using BossChecklist.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Content;
 using ReLogic.Graphics;
 using ReLogic.OS;
@@ -1299,10 +1300,7 @@ namespace BossChecklist.UIElements
 				}
 				else {
 
-					bool shiftHeld =
-						Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift)
-						 ||
-						Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift);
+					bool shiftHeld = Main.keyState.IsKeyDown(Keys.LeftShift) || Main.keyState.IsKeyDown(Keys.RightShift);
 
 					if (shiftHeld && BossChecklist.BossLogConfig.Debug.EnableBossStateToggle) {
 						bool newState = !entry.downed(); 
