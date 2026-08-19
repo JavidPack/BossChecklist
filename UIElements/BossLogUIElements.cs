@@ -573,7 +573,7 @@ namespace BossChecklist.UIElements
 			public LogItemSlot(Item item, int context = ItemSlot.Context.TrashItem, float scale = 1f) {
 				this.context = context;
 				this.scale = scale;
-				this.item = new Item(item.type);
+				this.item = item.Clone();
 
 				Width.Set(TextureAssets.InventoryBack9.Width() * scale, 0f);
 				Height.Set(TextureAssets.InventoryBack9.Height() * scale, 0f);
