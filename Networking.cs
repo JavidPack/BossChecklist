@@ -1,6 +1,8 @@
 ﻿using BossChecklist.Systems;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BossChecklist
@@ -18,7 +20,9 @@ namespace BossChecklist
 		SendWorldRecordsFromServerToPlayer,
 		UpdateWorldRecordsToAllPlayers,
 		ResetPlayerRecordForServer,
-		ResetTrackers
+		ResetTrackers,
+		RequestBossStateToggle, // Client --> Server
+		SyncBossState,          // Server --> All Clients
 	}
 
 	internal enum ClientMessageType : byte {
@@ -64,6 +68,39 @@ namespace BossChecklist
 				packet.Write(mark);
 			}
 			packet.Send(); // Multiplayer --> Server
+		}
+
+
+		internal static bool TryApplyBossStateToggle(string bossKey, bool downed) {
+
+			EntryInfo entry = BossChecklist.bossTracker.FindEntryFromKey(bossKey);
+
+			if (entry is null || entry.setDowned is null)
+				return false; 
+
+			entry.setDowned(downed);
+			BossLogSystem.MarkedEntries.Remove(bossKey);
+
+			return true; // if true means toggle success
+		}
+
+		public static void RequestBossStateToggle(string bossKey, bool downed) {
+			if (Main.netMode == NetmodeID.SinglePlayer) {
+				if(!TryApplyBossStateToggle(bossKey, downed)) {
+					Main.NewText(Language.GetTextValue("Mods.BossChecklist.Configs.DebugTools.Failed", BossChecklist.bossTracker.FindEntryFromKey(bossKey).name), Color.Red);
+				}
+				return;
+			}
+
+			else if (Main.netMode != NetmodeID.MultiplayerClient)
+				return;
+			else {
+				ModPacket packet = BossChecklist.instance.GetPacket();
+				packet.Write((byte)PacketMessageType.RequestBossStateToggle);
+				packet.Write(bossKey);
+				packet.Write(downed);
+				packet.Send();
+			}
 		}
 	}
 }

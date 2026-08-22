@@ -42,6 +42,7 @@ namespace BossChecklist
 		internal Dictionary<int, LocalizedText> npcLimbs;
 		internal float progression;
 		internal Func<bool> downed;
+		internal Action<bool> setDowned;
 		internal Func<bool> available;
 		internal bool hidden;
 		internal Func<NPC, LocalizedText> customDespawnMessages;
@@ -330,6 +331,14 @@ namespace BossChecklist
 				if (icons.Count > 0)
 					headIconTextures = () => icons;
 			}
+
+			if (extraData?.ContainsKey("setDowned") == true) {
+				// toggle whether boss is defeated
+				object setDowned = extraData["setDowned"];
+				if (setDowned is Action<bool>) {
+					this.setDowned = setDowned as Action<bool>;
+				}
+			}
 		}
 
 		// Workaround for vanilla events with illogical translation keys.
@@ -381,7 +390,7 @@ namespace BossChecklist
 			return this;
 		}
 
-		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed) {
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, int npcID, Func<bool> downed, Action<bool> setDowned) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1);
 
 			// BossChecklist only has despawn messages for vanilla Bosses
@@ -422,11 +431,12 @@ namespace BossChecklist
 					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
+					{ "setDowned", setDowned },
 				}
 			);
 		}
 
-		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed) {
+		internal static EntryInfo MakeVanillaBoss(EntryType type, float val, string key, List<int> ids, Func<bool> downed, Action<bool> setDowned) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
 			if (nameKey.EndsWith("Head"))
 				nameKey = nameKey.Substring(0, nameKey.Length - 4);
@@ -467,11 +477,12 @@ namespace BossChecklist
 					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "despawnMessage", customMessages },
+					{ "setDowned", setDowned },
 				}
 			);
 		}
 
-		internal static EntryInfo MakeVanillaEvent(float val, string key, Func<bool> downed) {
+		internal static EntryInfo MakeVanillaEvent(float val, string key, Func<bool> downed, Action<bool> setDowned) {
 			string nameKey = key.Substring(key.LastIndexOf(".") + 1).Replace(" ", "").Replace("'", "");
 			return new EntryInfo(
 				entryType: EntryType.Event,
@@ -486,6 +497,7 @@ namespace BossChecklist
 					{ "spawnInfo", BossChecklist.instance.GetLocalization($"BossSpawnInfo.{nameKey}") },
 					{ "spawnItems", BossTracker.EntrySpawnItems.GetValueOrDefault($"Terraria {nameKey}") },
 					{ "collectibles", BossTracker.EntryCollectibles.GetValueOrDefault($"Terraria {nameKey}") },
+					{ "setDowned", setDowned },
 				}
 			);
 		}

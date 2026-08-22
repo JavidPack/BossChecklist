@@ -2,6 +2,7 @@
 using BossChecklist.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Content;
 using ReLogic.Graphics;
 using ReLogic.OS;
@@ -1298,13 +1299,24 @@ namespace BossChecklist.UIElements
 					}
 				}
 				else {
-					// Entries must not already be downed to add/remove them from the MarkedEntries list
-					// Entries that are downed will automatically be removed from the lsit when the TableOfContents list is generated
-					if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
-						BossLogSystem.MarkedEntries.Remove(entry.Key);
+
+					bool shiftHeld = Main.keyState.IsKeyDown(Keys.LeftShift) || Main.keyState.IsKeyDown(Keys.RightShift);
+
+					if (shiftHeld && BossChecklist.BossLogConfig.Debug.EnableBossStateToggle) {
+						bool newState = !entry.downed(); 
+
+						Networking.RequestBossStateToggle(entry.Key, newState);
 					}
 					else {
-						BossLogSystem.MarkedEntries.Add(entry.Key);
+						// Entries must not already be downed to add/remove them from the MarkedEntries list [YuBell: fixed this]
+						// Entries that are downed will automatically be removed from the lsit when the TableOfContents list is generated
+						if (BossLogSystem.MarkedEntries.Contains(entry.Key)) {
+							BossLogSystem.MarkedEntries.Remove(entry.Key);
+						}
+						else {
+							if (!entry.downed()) // if this boss is already downed,it shouldn't be mark as downed
+								BossLogSystem.MarkedEntries.Add(entry.Key);
+						}
 					}
 
 					Networking.RequestMarkedEntryUpdate(entry.Key, entry.MarkedAsDowned);

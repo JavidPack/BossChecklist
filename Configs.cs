@@ -35,7 +35,8 @@ namespace BossChecklist
 		[Expand(false)]
 		[BackgroundColor(100, 70, 60)]
 		public DebugTools Debug { get; set; } = new DebugTools();
-		public class DebugTools {
+		public class DebugTools
+		{
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
 			public bool ModCallLogVerbose { get; set; }
@@ -55,6 +56,10 @@ namespace BossChecklist
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
 			public bool ShowCollectionType { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool EnableBossStateToggle { get; set; }
 
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]

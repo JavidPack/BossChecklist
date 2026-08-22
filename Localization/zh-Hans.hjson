@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	BossChecklist: {
 		Log: {
 			Common: {
@@ -583,6 +583,20 @@ Mods: {
 						这些信息应该分别在Boss被击败或Boss消失时出现.
 						'''
 				}
+
+				EnableBossStateToggle: {
+					Label: 启用Boss击败状态切换功能
+					Tooltip:
+						'''
+						启用后,如果在Boss日志UI中 Shift + 右键 Boss可以切换其真实击败状态
+						而非仅仅标记为击败
+						'''
+				}
+
+				Failed: 切换 [{0}] 击败状态失败!该Boss暂未支持该功能!
+				Successed: 成功切换：[{0}] -> [{1}]
+				Defeated: 已击败
+				Alive: 未击败
 			}
 
 			FeatureConfiguration: {
