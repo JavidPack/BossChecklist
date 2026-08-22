@@ -596,7 +596,7 @@ Mods: {
 						''' */
 				}
 
-				// Failed: Failed to toggle defeat state of [{0}]! This boss do not support this feature now!
+				// Failed: Failed to toggle defeat state of [{0}]! This entry does not currently support this feature!
 				// Successed: Toggled [{0}] -> [{1}] !
 				// Defeated: Defeated
 				// Alive: Alive
