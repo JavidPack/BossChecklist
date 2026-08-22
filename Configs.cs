@@ -39,10 +39,6 @@ namespace BossChecklist
 		{
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
-			public bool EnableBossStateToggle { get; set; }
-
-			[BackgroundColor(250, 235, 215)]
-			[DefaultValue(false)]
 			public bool ModCallLogVerbose { get; set; }
 
 			[BackgroundColor(250, 235, 215)]
@@ -60,6 +56,10 @@ namespace BossChecklist
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
 			public bool ShowCollectionType { get; set; }
+
+			[BackgroundColor(250, 235, 215)]
+			[DefaultValue(false)]
+			public bool EnableBossStateToggle { get; set; }
 
 			[BackgroundColor(250, 235, 215)]
 			[DefaultValue(false)]
