@@ -2,7 +2,7 @@ en-US, 336/336, 100%, missing 0
 de-DE, 319/336, 95%, missing 17
 it-IT, 3/336, 1%, missing 333
 fr-FR, 316/336, 94%, missing 20
-es-ES, 79/336, 24%, missing 257
+es-ES, 336/336, 100%, missing 0
 ru-RU, 317/336, 94%, missing 19
 zh-Hans, 336/336, 100%, missing 0
 pt-BR, 64/336, 19%, missing 272
