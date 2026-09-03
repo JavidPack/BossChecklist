@@ -213,7 +213,7 @@ Mods: {
 			}
 
 			Defeated: {
-				Generic: "¡{0} ha caído!"
+				Generic: ¡{0} ha caído!
 				GenericSkeletronHand: ¡La mano de Esqueletrón ha caído!
 				GenericMoonLordHead: ¡Cabeza del Señor de la Luna caída!
 				SkeletronHand: ¡Una mano de {0} se ha fracturado!
@@ -221,13 +221,13 @@ Mods: {
 				PrimeSaw: ¡El {0} ha fallado!
 				PrimeVice: ¡El {0} se ha derrumbado!
 				PrimeLaser: ¡El {0} se ha sobrecalentado!
-				GolemFistLeft: "¡{0} destruido!"
-				GolemFistRight: "¡{0} destruido!"
+				GolemFistLeft: ¡{0} destruido!
+				GolemFistRight: ¡{0} destruido!
 				GolemHead: ¡La {0} se ha desprendido del cuerpo!
 				MoonLordHead: ¡Un auténtico ojo de Cthulhu sale de la cabeza de {0}!
 				MoonLordHand: ¡Un auténtico ojo de Cthulhu sale de {0}!
-				Retinazer: "¡{0} ha sido derrotado!"
-				Spazmatism: "¡{0} ha sido derrotado!"
+				Retinazer: ¡{0} ha sido derrotado!
+				Spazmatism: ¡{0} ha sido derrotado!
 				LunarTowerVortex: ¡La {0} ha caído!
 				LunarTowerStardust: ¡La {0} ha caído!
 				LunarTowerNebula: ¡La {0} ha caído!
